@@ -1,0 +1,8 @@
+node_modules
+.output
+.wxt
+web-ext.config.ts
+.direnv
+*.log
+.claude/settings.local.json
+CLAUDE.local.md
