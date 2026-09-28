@@ -61,6 +61,14 @@ h2 {
   font-size: 13px;
 }
 
+.here-site {
+  font: 500 16px/1.3 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+  margin-bottom: 6px;
+}
+.here-levels {
+  gap: 12px;
+}
+
 /* Your sites */
 ul {
   list-style: none;

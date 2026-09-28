@@ -27,7 +27,8 @@ Firefox is the default target (`browser: 'firefox'` in `wxt.config.ts`). The `:c
 - `npm run compile`: type-check. Run it after every change.
 - `npm test`: Vitest unit tests in `tests/` (list format, matcher, personal list edits, storage, bundled lists)
 - `npm run e2e`: builds for Chrome and runs `e2e/run.mjs` against mock search pages, saving screenshots to `e2e/shots/`. Needs `CHROMIUM_PATH`. `node e2e/run.mjs subscribe` downloads a real list from GitHub; behind a TLS-intercepting proxy set `PROXY_CA_CERT` to its CA.
-- `npx web-ext lint -s .output/firefox-mv2`: the Mozilla add-on linter; keep it at zero warnings
+- `npx web-ext lint -s .output/firefox-mv2`: the Mozilla add-on linter; keep it at zero warnings (CI treats warnings as errors)
+- `.github/workflows/ci.yml` runs compile, tests, both builds and the lint on pushes to main and on pull requests
 - `npm run zip` / `npm run zip:chrome`: package for the store
 
 ## Layout

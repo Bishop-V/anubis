@@ -9,8 +9,10 @@ export default defineConfig({
   manifest: ({ browser, manifestVersion }) => ({
     name: 'Anubis',
     description: 'Weighs your search results: tag, rerank and hide sites, with lists anyone can publish.',
-    // "storage" saves your list, settings and downloaded lists.
-    permissions: ['storage'],
+    // "storage" saves your list, settings and downloaded lists. "activeTab" lets the
+    // popup read the address of the tab you're on, only when you open it, so you can
+    // weigh that site; it shows no install warning.
+    permissions: ['storage', 'activeTab'],
     // Lists on raw.githubusercontent.com and gists download without any extra
     // permission (they allow cross-origin reads). Lists hosted anywhere else ask
     // for access to that one host, at the moment you subscribe.

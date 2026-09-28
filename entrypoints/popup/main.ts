@@ -1,10 +1,13 @@
 import '@/assets/theme.css';
 import './style.css';
-import { normalizeDomain } from '@/utils/domain';
+import { browser } from '#imports';
+import { domainChoices, normalizeDomain, siteOf } from '@/utils/domain';
+import { engineFor } from '@/utils/engines';
+import { LEVELS } from '@/utils/matcher';
 import { h, icon } from '@/utils/dom';
-import { ICON_CLOSE, LEVEL_CHIPS, LEVEL_ICONS } from '@/utils/icons';
+import { ICON_CLOSE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
 import { send, sendToActiveTab, type PageStats } from '@/utils/messages';
-import { listSites, setSite, setSiteLevel, type PersonalLevel } from '@/utils/personal';
+import { getSite, listSites, setSite, setSiteLevel, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet } from '@/utils/ruleset';
 import { editPersonal, updateSettings } from '@/utils/storage';
 import { summarySentence } from '@/utils/summary';
@@ -72,6 +75,48 @@ async function renderAll() {
 
   const subs = rules.lists.filter((l) => !l.personal);
   $('#lists-summary').textContent = `${plural(subs.length, 'list')}, ${plural(rules.tags.size, 'tag')}`;
+  await renderHere(rules.personalText);
+}
+
+/** The site in the current tab, when it isn't a search page: weigh it for future searches. */
+async function renderHere(personalText: string) {
+  const here = $('#here');
+  const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+  let host = '';
+  try {
+    const url = new URL(tab?.url ?? '');
+    if (/^https?:$/.test(url.protocol) && !engineFor(url.hostname)) host = url.hostname;
+  } catch {
+    // No URL (a browser page, or no access): nothing to weigh.
+  }
+  const domain = host ? (domainChoices(host).find((d) => getSite(personalText, d)) ?? siteOf(host)) : '';
+  if (!domain || !normalizeDomain(domain)) {
+    here.hidden = true;
+    return;
+  }
+  const entry = getSite(personalText, domain);
+  const current = entry?.level === 'allow' ? 'normal' : (entry?.level ?? 'normal');
+  here.hidden = false;
+  here.replaceChildren(
+    h('h2', null, 'This site'),
+    h('p', { class: 'sentence here-site' }, domain),
+    h(
+      'div',
+      { class: 'seg here-levels', attrs: { role: 'group', 'aria-label': `Weight for ${domain}` } },
+      LEVELS.map((level) =>
+        h(
+          'button',
+          {
+            type: 'button',
+            title: `${LEVEL_LABELS[level]} ${domain} in search results`,
+            attrs: { 'aria-pressed': String(current === level) },
+            on: { click: () => void editPersonal((t) => setSiteLevel(t, domain, level === current ? 'normal' : level)) },
+          },
+          LEVEL_LABELS[level],
+        ),
+      ),
+    ),
+  );
 }
 
 function renderPage(stats: PageStats | undefined) {
