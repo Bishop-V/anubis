@@ -54,18 +54,61 @@ function findStructural(engine: EngineDef, root: Document): FoundResult[] {
   const heading = engine.heading!;
   const out: FoundResult[] = [];
   const seen = new Set<HTMLElement>();
+  let previous: HTMLElement | undefined;
   for (const title of root.querySelectorAll<HTMLElement>(heading)) {
     if (title.closest('anubis-chips, anubis-bar, anubis-summary')) continue;
+    // A sitelink, already part of the result before it.
+    if (previous?.contains(title)) continue;
     const link = title.closest<HTMLAnchorElement>('a[href]') ?? title.querySelector<HTMLAnchorElement>('a[href]');
     if (!link || !/^https?:$/.test(link.protocol)) continue;
-    const container = resultContainer(link, heading, engine.boundary, root);
+    let container = resultContainer(link, heading, engine.boundary, root);
     if (seen.has(container)) continue;
     const url = resolveUrl(link, container, engine);
     if (!url) continue;
+    container = widenPastSitelinks(container, siteOfUrl(url), engine, root);
     seen.add(container);
+    previous = container;
     out.push(build(container, link, titleBlockFor(title, link, container), url, title, []));
   }
   return out;
+}
+
+/**
+ * Sitelinks are links under a result with headings of their own but no address
+ * shown (Google's big sitelinks). They stop resultContainer's climb, which leaves
+ * the result as an inner block and makes each sitelink a result of its own. Climb
+ * on past them, so the result is the whole block and its sitelinks go with it.
+ */
+function widenPastSitelinks(container: HTMLElement, site: string, engine: EngineDef, root: Document): HTMLElement {
+  let el = container;
+  for (let depth = 0; depth < 30; depth++) {
+    const parent = el.parentElement;
+    if (!parent || parent === root.body || parent === root.documentElement) break;
+    if (engine.boundary && parent.matches(engine.boundary)) break;
+    const others = [...parent.querySelectorAll<HTMLElement>(engine.heading!)].filter((h) => !el.contains(h));
+    if (!others.every((h) => isSitelink(h, parent, site, engine))) break;
+    el = parent;
+  }
+  return el;
+}
+
+/** A heading in `within`, linking to `site`, with no displayed address in its branch. */
+function isSitelink(heading: HTMLElement, within: HTMLElement, site: string, engine: EngineDef): boolean {
+  const link = heading.closest<HTMLAnchorElement>('a[href]') ?? heading.querySelector<HTMLAnchorElement>('a[href]');
+  if (!link) return false;
+  let branch: HTMLElement = heading;
+  while (branch.parentElement && branch.parentElement !== within) branch = branch.parentElement;
+  if (branch.querySelector(engine.displayed ?? 'cite')) return false;
+  const url = resolveUrl(link, branch, engine);
+  return !!url && siteOfUrl(url) === site;
+}
+
+function siteOfUrl(url: string): string {
+  try {
+    return siteOf(new URL(url).hostname.toLowerCase());
+  } catch {
+    return '';
+  }
 }
 
 function build(

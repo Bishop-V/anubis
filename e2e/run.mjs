@@ -3,7 +3,8 @@
 // prints what Anubis decided for each result and saves screenshots to e2e/shots/.
 //
 //   npm run e2e                 build, then run everything
-//   node e2e/run.mjs pages      one part: pages, popover, ddg-hide, deeper, options
+//   node e2e/run.mjs pages      one part: pages, hostile, grouped, popover, ddg-hide,
+//                               filter, deeper, import, subscribe, options
 //
 // Needs a Chromium build (branded Chrome no longer loads unpacked extensions from
 // the command line). Point CHROMIUM_PATH at it, e.g. CHROMIUM_PATH=$(which chromium).
@@ -93,6 +94,7 @@ async function launch(settings = {}) {
     'https://www.google.com/search?q=anubis&deep=1': google('anubis', ANUBIS_RESULTS, false, '/search?q=anubis&start=10'),
     'https://www.google.com/search?q=anubis&start=10': google('anubis', ANUBIS_PAGE2),
     'https://www.google.com/search?q=anubis&hostile=1': google('anubis', ANUBIS_RESULTS, false, '', true),
+    'https://www.google.com/search?q=anubis&grouped=1': google('anubis', ANUBIS_RESULTS, false, '', false, true),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
   };
   await ctx.route(/^https:\/\/(duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com)\//, (route) => {
@@ -164,6 +166,27 @@ if (!only || only === 'hostile') {
   });
   console.log('\n== hostile google:', JSON.stringify(check));
   await page.screenshot({ path: `${SHOTS}google-hostile.png`, fullPage: true });
+}
+
+if (!only || only === 'grouped') {
+  await page.goto('https://www.google.com/search?q=anubis&grouped=1');
+  await page.waitForTimeout(700);
+  const check = await page.evaluate(() => {
+    const summary = document.querySelector('anubis-summary');
+    const top = (el) => el.getBoundingClientRect().top;
+    const firstTitle = document.querySelector('#rso h3');
+    const results = [...document.querySelectorAll('[data-anubis-result]')];
+    return {
+      results: results.length,
+      sitelinksInFirstResult: !!document.querySelector('.MjjYud[data-anubis-result] .sitelinks'),
+      containersAreResults: results.every((r) => r.classList.contains('MjjYud')),
+      summaryInList: summary?.parentElement?.id === 'rso',
+      summaryBeforeFirstResult: !!summary && summary.nextElementSibling === document.querySelector('#rso > .MjjYud'),
+      summaryAboveFirstTitle: !!summary && !!firstTitle && top(summary) < top(firstTitle),
+    };
+  });
+  console.log('\n== grouped google:', JSON.stringify(check));
+  await page.screenshot({ path: `${SHOTS}google-grouped.png`, fullPage: true });
 }
 
 if (!only || only === 'popover') {

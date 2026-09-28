@@ -104,7 +104,13 @@ export function duckduckgo(query, results, dark = false, more = []) {
 // Firefox: deeper nesting, a title wrapper flipped with a transform (with the
 // page's own children flipped back), a rule hiding stray last children, and an
 // unrelated heading earlier in the page source than the results.
-export function google(query, results, dark = false, next = '', hostile = false) {
+// `grouped` nests results the way Google does for a first result with sitelinks and
+// for a group of results from one site: one level deeper than the rest of the list.
+export function google(query, results, dark = false, next = '', hostile = false, grouped = false) {
+  const sitelinks = (url) =>
+    `<div class="sitelinks">${['History', 'Symbols', 'Worship', 'Family', 'Names', 'Legacy']
+      .map((s) => `<div class="usJj9c"><h3><a href="${url}#${s}">${s}</a></h3><div>About ${s.toLowerCase()}.</div></div>`)
+      .join('')}</div>`;
   const items = results
     .map(([url, title, snippet], i) => {
       const host = hostOf(url);
@@ -121,9 +127,9 @@ export function google(query, results, dark = false, next = '', hostile = false)
             <div><span class="VuuXrf">${esc(host.split('.')[0])}</span><div class="byrV5b"><cite class="qLRx3b tjvcx GvPZzd cHaqb" role="text">${esc(crumbs)}</cite></div></div></div>
           </a><span class="aux"></span></span><div class="B6fmyf">⋮</div></div></div></div>
         <div class="kb0PBd A9Y9g" data-sncf="1"><div class="VwiC3b yXK7lf p4wth r025kc hJNv6b Hdw6tb" style="-webkit-line-clamp:2"><span>${esc(snippet)}</span></div></div>
-      </div></div>${close}</div>`;
-    })
-    .join('');
+      </div>${grouped && i === 0 ? sitelinks(url) : ''}</div>${close}</div>`;
+    });
+  if (grouped) items.splice(1, 2, `<div class="hlcw0c">${items[1]}${items[2]}</div>`);
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${esc(query)} - Google Search</title>
   <style>
     body{margin:0;font:14px/1.58 Arial,sans-serif;background:${dark ? '#1f1f1f' : '#fff'};color:${dark ? '#e3e3e3' : '#202124'}}
@@ -144,6 +150,8 @@ export function google(query, results, dark = false, next = '', hostile = false)
     cite{font-style:normal;font-size:12px;color:${dark ? '#bdc1c6' : '#4d5156'}}
     .VwiC3b{color:${dark ? '#bdc1c6' : '#4d5156'};margin-top:4px}
     .B6fmyf{display:none}
+    .sitelinks{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px;margin:8px 0 0 20px}
+    .sitelinks h3{font-size:16px}
     ${hostile ? `
     .aux{display:none}
     .flipwrap>span{transform:scaleY(-1)}
@@ -154,7 +162,7 @@ export function google(query, results, dark = false, next = '', hostile = false)
   <div class="hdr"><span class="glogo">Google</span><div class="q">${esc(query)}</div></div>
   <div class="tabs"><b>All</b><span>Images</span><span>News</span><span>Videos</span></div>
   ${hostile ? '<div id="top-extra"><a href="https://ads.example.net/offer"><h3>Sponsored offer</h3></a></div>' : ''}
-  <div id="search"><div data-hveid="CAQQAA"><h1 style="display:none">Search Results</h1><div id="rso">${items}</div></div></div>
+  <div id="search"><div data-hveid="CAQQAA"><h1 style="display:none">Search Results</h1><div id="rso">${items.join('')}</div></div></div>
   ${next ? `<table class="AaVjTc" style="margin-left:180px"><tr><td><a id="pnnext" href="${next}">Next</a></td></tr></table>` : ''}
   </body></html>`;
 }

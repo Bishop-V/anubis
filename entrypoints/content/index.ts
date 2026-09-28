@@ -137,7 +137,7 @@ export default defineContentScript({
       rerank(results, scores, rules.settings.rerank && !engine.table);
 
       if (rules.settings.showSummary && !engine.table) {
-        renderSummary(summaryAnchor(results), stats, theme, {
+        renderSummary(summaryAnchor(results, engine.boundary), stats, theme, {
           toggleReveal: () => {
             reveal = !reveal;
             pass();
@@ -381,11 +381,14 @@ function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enable
 }
 
 /**
- * Where the summary goes: before the first result of the list that holds most of
- * the results. The first heading in the page source can belong to something else
- * (a side panel, a carousel, a block the engine shows further down).
+ * Where the summary goes: above the first result of the results area. The area is
+ * found from the list holding most results, widened to the engine's boundary
+ * (Google's #rso) when it has one. Results earlier in the page but outside the
+ * area (a side panel, an off-screen block) don't count. Results inside it do,
+ * even when they aren't in that list: Google nests a first result that has
+ * sitelinks, or a group of results from one site, one level deeper than the rest.
  */
-function summaryAnchor(results: FoundResult[]): HTMLElement | undefined {
+function summaryAnchor(results: FoundResult[], boundary: string | undefined): HTMLElement | undefined {
   const counts = new Map<HTMLElement, number>();
   for (const r of results) {
     const parent = r.container.parentElement;
@@ -393,7 +396,19 @@ function summaryAnchor(results: FoundResult[]): HTMLElement | undefined {
   }
   let main: HTMLElement | undefined;
   for (const [parent, n] of counts) if (!main || n > counts.get(main)!) main = parent;
-  return results.find((r) => r.container.parentElement === main)?.container ?? results[0]?.container;
+  if (!main) return results[0]?.container;
+  const area = (boundary && main.closest<HTMLElement>(boundary)) || main;
+  const inArea = results.filter((r) => area.contains(r.container));
+  const first = inArea[0]?.container;
+  const last = inArea[inArea.length - 1]?.container;
+  if (!first || !last) return results[0]?.container;
+  // Climb to the level of the smallest element holding every result in the area.
+  // Results are in page order, so it's the smallest one holding the first and last.
+  let anchor = first;
+  while (anchor.parentElement && anchor.parentElement !== area && !anchor.parentElement.contains(last)) {
+    anchor = anchor.parentElement;
+  }
+  return anchor;
 }
 
 /** Light or dark, from the setting or, on "auto", from the page's own background. */

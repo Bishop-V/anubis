@@ -19,12 +19,18 @@ DuckDuckGo's own "hide this site" was simulated in the mocks (the result collaps
 
 ## Google in Firefox: flipped tags, missing buttons, misplaced summary
 
+**Follow-up:** after the fixes below, the summary still sometimes appeared below the first results. The anchor was the first result in the list holding most results, and Google nests some results one level deeper than the rest: a first result with sitelinks, or a group of results. The first result then wasn't in that list, so the summary went below it; with six sitelinks, the sitelinks became that list and the summary went inside the first result. A `grouped` Google mock (six sitelinks under the first result, two results in a group) reproduces this on the previous build.
+
+- **Summary anchor, again.** The results area is now the list holding most results, widened to the engine's boundary (Google's `#rso`). The summary goes above the first result anywhere in that area, as a direct child of the smallest element holding every result in it.
+- **Sitelinks.** Each sitelink has its own `h3`, so each was weighed as a result, with its own tags and weigh button, and it cut the first result's container short (its parent held a second heading), leaving the snippet and sitelinks outside it. A heading that links to the same site, and shows no address of its own, now counts as part of the result above it. Grouped results each show an address, so they stay separate.
+- **To confirm live:** that Google's sitelinks still use `h3` inside a link and show no `<cite>`, and that `#rso` still holds the results.
+
 Reported from real use: on Google in Firefox the "Reference" tag and "Hidden" read upside down, the weigh button appeared on only the first two results, and on page 2 the summary sat under the first result with no weigh buttons at all. Google couldn't be loaded from the development sandbox, so the fixes target every mechanism that produces these symptoms, and a hostile Google mock (`google(…, hostile = true)` in `e2e/fixtures.mjs`) reproduces all three on the previous build and passes on the new one.
 
 - **Flipped text.** Some layouts flip a wrapper with a transform and flip their own children back, which leaves anything else inside the wrapper upside down. The tag row was inserted inside the title link's wrapper. It now climbs out of wrappers that hold only the title, steps outside any transformed wrapper, and, as a last resort, adds up its ancestors' transforms and applies the inverse so its text reads upright.
 - **Page CSS reaching Anubis's elements.** A shadow root protects its contents, not the host element, and the page's stylesheets can still match the host (`… > :last-child` and the like), hiding or transforming it. Every host now pins display, visibility, opacity, position and all transform properties inline with `!important`, which beats any page rule.
 - **Nesting depth.** Finding a result's container gave up after 8 levels, a limit carried over from the original script. Google already nests a result about 8 deep, so a few more wrappers left Anubis on an inner block: the weigh button, hiding and reranking all acted on part of a result, and the summary landed inside the first result. The limit is now 30; the real stops are the results boundary and a parent holding a second result.
-- **Summary anchor.** The summary went before the first heading in page order, which can belong to something else. It now goes before the first result in the list that holds most of the results.
+- **Summary anchor.** The summary went before the first heading in page order, which can belong to something else. It now goes before the first result in the list that holds most of the results (revised in the follow-up above).
 - The weigh button now rests at low opacity instead of being invisible until hover, as the original block icon was always visible.
 
 ## Reranking
