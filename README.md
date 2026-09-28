@@ -61,7 +61,7 @@ If the dev browser doesn't open on its own, build and load the extension yoursel
 - **Search pages can only be verified for real in a browser.** The unit tests and `npm run e2e` cover the logic against mock pages; neither proves a live engine still works.
 - **Engines break when they change their markup.** `utils/engines.ts` holds the definitions. When one stops working, diff it against [ublacklist/builtin](https://github.com/ublacklist/builtin) (`serpinfo/*.yml`), which tracks these layouts continuously.
 - **`utils/engines.ts` is imported at build time** to generate the manifest's `matches`, so it must stay free of browser APIs.
-- **The Firefox extension ID lives in `wxt.config.ts`** and is still the placeholder `anubis@example.com`. It needs a real one before any release, and after that it has to stay put: changing it makes an existing install look like a different extension and orphans its stored settings.
+- **The Firefox extension ID lives in `wxt.config.ts`** and has to stay put. It is the add-on's permanent identity, so changing it makes an existing install read as a different extension and orphans its stored settings.
 - **Keep permissions minimal.** Only add one a feature actually needs; hosts for non-GitHub lists are requested at subscribe time, not up front.
 
 ## Documentation

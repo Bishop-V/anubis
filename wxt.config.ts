@@ -19,11 +19,16 @@ export default defineConfig({
     ...(manifestVersion === 3
       ? { optional_host_permissions: ['https://*/*'] }
       : { optional_permissions: ['https://*/*'] }),
-    // Firefox needs an add-on ID for storage.sync. Change before publishing.
+    // Firefox needs an add-on ID for storage.sync. It is the add-on's permanent
+    // identity, so don't change it once anyone has installed: a new ID reads as a
+    // different add-on and orphans the settings stored under the old one.
     // Anubis sends nothing anywhere, which Firefox asks new add-ons to declare.
     ...(browser === 'firefox' && {
       browser_specific_settings: {
-        gecko: { id: 'anubis@example.com', data_collection_permissions: { required: ['none'] } },
+        gecko: {
+          id: '{9ab93008-4ecd-4923-8a62-d81099997d39}',
+          data_collection_permissions: { required: ['none'] },
+        },
       },
     }),
   }),
