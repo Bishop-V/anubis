@@ -7,6 +7,7 @@ import { getSubscriptions, saveSubscriptions } from '@/utils/ruleset';
 import { listCacheItem, type Subscription } from '@/utils/storage';
 import {
   builtinId,
+  displayName,
   downloadList,
   fetchDirectory,
   listText,
@@ -60,18 +61,18 @@ async function subscribe(input: string, entry?: DirectoryEntry): Promise<void> {
     const existing = subs.find((s) => s.id === id || s.url === url);
     const next: Subscription[] = existing
       ? subs.map((s) => (s === existing ? { ...s, enabled: true } : s))
-      : [...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: entry?.builtin || undefined }];
+      : [...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: entry?.builtin || undefined, name: entry?.name }];
     const cache = await listCacheItem.getValue();
     await listCacheItem.setValue({ ...cache, [existing?.id ?? id]: { text, fetchedAt: Date.now() } });
     await saveSubscriptions(next);
     const parsed = parseList(text);
-    flash = { kind: 'ok', text: `Subscribed to ${parsed.meta.name ?? url}: ${plural(parsed.rules.length, 'instruction')}, ${plural(parsed.tags.length, 'tag')}.` };
+    flash = { kind: 'ok', text: `Subscribed to ${displayName({ url, name: entry?.name }, parsed.meta)}: ${plural(parsed.rules.length, 'instruction')}, ${plural(parsed.tags.length, 'tag')}.` };
   } catch (error) {
     // Built-in lists still work from their bundled copy when the download fails.
     if (entry?.builtin) {
       const subs = await getSubscriptions();
       if (!subs.some((s) => s.id === id)) {
-        await saveSubscriptions([...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: true }]);
+        await saveSubscriptions([...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: true, name: entry.name }]);
       }
       flash = { kind: 'ok', text: `Subscribed to ${entry.name} (using the copy bundled with Anubis until it can update).` };
     } else {
@@ -188,7 +189,7 @@ export async function renderLists(): Promise<HTMLElement> {
 function listCard(sub: Subscription, text: string | undefined, cached: { fetchedAt: number; error?: string } | undefined): HTMLElement {
   const parsed: ParsedList | undefined = text ? parseList(text) : undefined;
   const meta = parsed?.meta ?? {};
-  const name = meta.name ?? new URL(sub.url).pathname.split('/').pop() ?? sub.url;
+  const name = displayName(sub, meta);
   const color = meta.avatar ?? colorForTag(sub.id);
 
   const toggle = h('input', { type: 'checkbox', checked: sub.enabled, attrs: { 'aria-label': `Use ${name}` } });

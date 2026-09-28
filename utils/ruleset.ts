@@ -12,7 +12,7 @@ import {
   type Settings,
   type Subscription,
 } from './storage';
-import { defaultSubscriptions, listText } from './subscriptions';
+import { defaultSubscriptions, displayName, listText } from './subscriptions';
 
 export const PERSONAL_ID = 'personal';
 export const PERSONAL_NAME = 'Your list';
@@ -55,7 +55,7 @@ export async function loadRuleSet(): Promise<RuleSet> {
     const text = listText(sub, cache);
     if (!text) continue;
     const parsed = parseList(text);
-    lists.push(compileList(sub.id, parsed, false));
+    lists.push(compileList(sub.id, parsed, false, displayName(sub, parsed.meta)));
     meta[sub.id] = parsed.meta;
   }
 

@@ -73,8 +73,10 @@ export interface Subscription {
   url: string;
   enabled: boolean;
   addedAt: number;
-  /** Set for lists shipped inside the extension (see utils/builtin-lists.ts). */
+  /** Set for lists shipped inside the extension (see BUILTIN_TEXT in utils/subscriptions.ts). */
   builtin?: boolean;
+  /** Name from the directory, for lists whose file doesn't declare one. */
+  name?: string;
 }
 
 export interface CachedList {

@@ -41,6 +41,17 @@ export const BUILTIN_TEXT: Record<string, string> = {
   'builtin:paywalls': paywalls,
 };
 
+/** What to call a list: its own `! name:`, else the directory's name, else the file name. */
+export function displayName(sub: Pick<Subscription, 'url' | 'name'>, meta?: { name?: string }): string {
+  if (meta?.name) return meta.name;
+  if (sub.name) return sub.name;
+  try {
+    return decodeURIComponent(new URL(sub.url).pathname.split('/').pop() || sub.url);
+  } catch {
+    return sub.url;
+  }
+}
+
 export function builtinId(entry: DirectoryEntry): string {
   return `builtin:${entry.id}`;
 }
@@ -52,6 +63,7 @@ export function defaultSubscriptions(): Subscription[] {
     enabled: true,
     addedAt: Date.now(),
     builtin: true,
+    name: e.name,
   }));
 }
 
