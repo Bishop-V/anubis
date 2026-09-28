@@ -93,3 +93,7 @@ Other influences:
 
 - **[Firefox's `web-ext`](https://github.com/mozilla/web-ext)** does the development loading, via [WXT](https://wxt.dev), which builds Chrome MV3 and Firefox MV2 from one codebase.
 - The name and framing come from the Egyptian myth in which Anubis weighs a heart against a feather: sites that fail the weighing are hidden. The menu on each result shows the site's name in a cartouche over a small balance. The motif stays in the look; buttons say plainly what they do.
+
+## License
+
+Anubis is released under the [GNU Affero General Public License v3.0](LICENSE) or any later version. The bundled lists in [`lists/`](lists) are CC0.
