@@ -27,7 +27,7 @@ const NOT_A_BLOCK = '[data-anubis-result], anubis-summary, header, nav, [role="n
  */
 export function findClutter(engine: EngineDef, results: FoundResult[], wanted: Cleanup): Clutter[] {
   if (!results.length || !Object.values(wanted).some(Boolean)) return [];
-  const column = mainColumn(results);
+  const column = mainColumn(results, engine);
   // The page's own search box: the first one in the page. A follow-up box inside an
   // AI answer comes later and doesn't protect the answer.
   const searchBox = document.querySelector('form[role="search"], textarea[name="q"], input[name="q"], input[type="search"]');
@@ -39,11 +39,23 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
     seen.add(block);
     found.push({ block, kind, uncounted });
   };
+  // A panel's header row can be a block of its own, with the videos and "View all"
+  // as the next blocks. When the block is little more than its label, take the
+  // blocks after it too, up to a result, the search box or another section.
+  const addLabelled = (block: HTMLElement | undefined, kind: CleanupKind) => {
+    add(block, kind);
+    if (!block || !seen.has(block) || (block.textContent ?? '').trim().length > 40) return;
+    let next = block.nextElementSibling;
+    for (let i = 0; i < 4 && next instanceof HTMLElement; i++, next = next.nextElementSibling) {
+      if (!safeToRemove(next, column, searchBox) || hasSection(next)) break;
+      add(next, kind, true);
+    }
+  };
 
   for (const heading of document.querySelectorAll<HTMLElement>(HEADINGS)) {
     if (heading.closest('[data-anubis-result], anubis-summary, header, nav, [role="navigation"], form')) continue;
     const kind = cleanupKindFor(heading.textContent ?? '');
-    if (kind && wanted[kind]) add(blockAround(heading, engine, column, levelOf(heading)), kind);
+    if (kind && wanted[kind]) addLabelled(blockAround(heading, engine, column, levelOf(heading)), kind);
   }
 
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
@@ -57,7 +69,8 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
     if (!el || el.closest(NOT_A_BLOCK)) continue;
     // A label is the block's title: judge its level like a heading's. A marker sits
     // anywhere in the block, so only the column decides how far it reaches.
-    add(blockAround(el, engine, column, label ? levelOf(el.closest<HTMLElement>(HEADINGS) ?? el) : undefined), kind);
+    if (label) addLabelled(blockAround(el, engine, column, levelOf(el.closest<HTMLElement>(HEADINGS) ?? el)), kind);
+    else add(blockAround(el, engine, column), kind);
   }
 
   for (const [kind, selector] of Object.entries(CLEANUP_SELECTORS[engine.id] ?? {}) as [CleanupKind, string][]) {
@@ -88,15 +101,19 @@ interface Column {
   results: HTMLElement[];
 }
 
-function mainColumn(results: FoundResult[]): Column {
+function mainColumn(results: FoundResult[], engine: EngineDef): Column {
+  // Web results show their address; videos in a panel don't, and a panel of them
+  // can outnumber the results in any one wrapper (Google groups some results).
+  const withAddress = results.filter((r) => r.container.querySelector(engine.displayed ?? 'cite'));
+  const main = withAddress.length ? withAddress : results;
   const counts = new Map<Element, number>();
-  for (const r of results) {
+  for (const r of main) {
     const parent = r.container.parentElement;
     if (parent) counts.set(parent, (counts.get(parent) ?? 0) + 1);
   }
   let list: Element | undefined;
   for (const [parent, n] of counts) if (!list || n > counts.get(list)!) list = parent;
-  return { list, results: results.filter((r) => r.container.parentElement === list).map((r) => r.container) };
+  return { list, results: main.map((r) => r.container) };
 }
 
 /**
@@ -132,10 +149,29 @@ function levelOf(heading: HTMLElement): number {
 
 function hasSiblingSection(parent: HTMLElement, block: HTMLElement, level: number): boolean {
   for (const other of parent.querySelectorAll<HTMLElement>(HEADINGS)) {
-    // Titles of items in the panel (a video's title in its link) aren't sections.
-    if (block.contains(other) || other.closest('[data-anubis-result], a')) continue;
+    if (block.contains(other) || other.closest('[data-anubis-result]') || isItemTitle(other, parent)) continue;
     if (getComputedStyle(other).display === 'none') continue;
     if (levelOf(other) <= level && (other.textContent ?? '').trim()) return true;
+  }
+  return false;
+}
+
+/** Holds a heading that starts a section of its own, not just items' titles. */
+function hasSection(el: HTMLElement): boolean {
+  const headings = el.matches(HEADINGS) ? [el] : [...el.querySelectorAll<HTMLElement>(HEADINGS)];
+  return headings.some((h) => !isItemTitle(h, el) && (h.textContent ?? '').trim());
+}
+
+/**
+ * The title of one item in a panel (a video in a row of videos), not a section of
+ * it: it's a link or holds one, or it sits in one of several look-alike cards.
+ */
+function isItemTitle(heading: HTMLElement, within: HTMLElement): boolean {
+  if (heading.closest('a') || heading.querySelector('a[href]')) return true;
+  for (let el: HTMLElement | null = heading; el && el !== within; el = el.parentElement) {
+    const siblings = el.parentElement ? [...el.parentElement.children] : [];
+    const alike = siblings.filter((s) => s.tagName === el!.tagName && s.className === el!.className && (s.matches(HEADINGS) || s.querySelector(HEADINGS)));
+    if (alike.length >= 2 && el.className) return true;
   }
   return false;
 }

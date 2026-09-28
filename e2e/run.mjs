@@ -100,6 +100,9 @@ async function launch(settings = {}) {
     'https://www.google.com/search?q=anubis&grouped=1': google('anubis', ANUBIS_RESULTS, { grouped: true }),
     'https://www.google.com/search?q=anubis&modules=1': google('anubis', ANUBIS_RESULTS, { modules: true }),
     'https://www.google.com/search?q=anubis&ailabel=1': google('anubis', ANUBIS_RESULTS, { aiLabel: true }),
+    'https://www.google.com/search?q=anubis&videos=titles': google('anubis', ANUBIS_RESULTS, { videos: 'titles' }),
+    'https://www.google.com/search?q=anubis&videos=groups': google('anubis', ANUBIS_RESULTS, { videos: 'groups' }),
+    'https://www.google.com/search?q=anubis&videos=split': google('anubis', ANUBIS_RESULTS, { videos: 'split' }),
     'https://www.google.com/search?q=anubis&udm=14': google('anubis', ANUBIS_RESULTS),
     'https://noai.duckduckgo.com/?q=javascript+promises': duckduckgo('javascript promises', JS_RESULTS),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
@@ -315,6 +318,22 @@ if (!only || only === 'cleanup') {
     ),
   );
   console.log('   removed:', JSON.stringify((await statsNow())?.removed));
+
+  // Video panels laid out like Google's: the whole panel goes, not just its header.
+  for (const layout of ['titles', 'groups', 'split']) {
+    await page.goto(`https://www.google.com/search?q=anubis&videos=${layout}`);
+    await page.waitForTimeout(800);
+    const check = await page.evaluate(() => {
+      const visible = (el) => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0;
+      return {
+        header: visible(document.querySelector('.vpanel .vhead')),
+        videos: visible(document.querySelector('.vpanel .vlist')),
+        viewAll: visible(document.querySelector('.vpanel .vall')),
+        results: [...document.querySelectorAll('[data-anubis-result]')].filter(visible).length,
+      };
+    });
+    console.log(`== video panel (${layout}):`, JSON.stringify(check));
+  }
 
   // Forcing it: DuckDuckGo opens its no-AI version, Google its Web tab.
   await page.goto('https://duckduckgo.com/?q=javascript+promises');

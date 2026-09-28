@@ -108,7 +108,7 @@ export function duckduckgo(query, results, dark = false, more = []) {
 // Anubis's elements; `grouped`, results nested the way Google does for a first
 // result with sitelinks and for a group of results from one site; `modules`, the
 // blocks that aren't results (AI Overview, videos, "People also ask", a side panel).
-export function google(query, results, { dark = false, next = '', hostile = false, grouped = false, modules = false, aiLabel = false } = {}) {
+export function google(query, results, { dark = false, next = '', hostile = false, grouped = false, modules = false, aiLabel = false, videos = '' } = {}) {
   const sitelinks = (url) =>
     `<div class="sitelinks">${['History', 'Symbols', 'Worship', 'Family', 'Names', 'Legacy']
       .map((s) => `<div class="usJj9c"><h3><a href="${url}#${s}">${s}</a></h3><div>About ${s.toLowerCase()}.</div></div>`)
@@ -132,6 +132,29 @@ export function google(query, results, { dark = false, next = '', hostile = fals
       </div>${grouped && i === 0 ? sitelinks(url) : ''}</div>${close}</div>`;
     });
   if (grouped) items.splice(1, 2, `<div class="hlcw0c">${items[1]}${items[2]}</div>`);
+  // `videos`: a video panel laid out like Google's (a header row with a menu, a list
+  // of cards, "View all"), in two ways a panel can defeat clean-up. `titles`: each
+  // video's title is a heading outside its link, so it looks like a section of the
+  // panel. `groups`: titles are <h3> links, so the videos look like results, and the
+  // real results come in pairs, so the three videos are the biggest list. `split`:
+  // titles as in `titles`, with the panel's parts as separate blocks.
+  if (videos) {
+    const card = (t, i) =>
+      videos !== 'groups'
+        ? `<div class="vcard"><a class="thumb" href="https://www.youtube.com/watch?v=${i}">▶</a><div><div role="heading">${t}</div><div>YouTube · Channel ${i}</div></div></div>`
+        : `<div class="vcard"><a class="thumb" href="https://www.youtube.com/watch?v=${i}">▶</a><div><a href="https://www.youtube.com/watch?v=${i}"><h3>${t}</h3></a><div>YouTube · Channel ${i}</div></div></div>`;
+    if (videos === 'groups') {
+      const pairs = [];
+      for (let i = 0; i < items.length; i += 2) pairs.push(`<div class="pair">${items.slice(i, i + 2).join('')}</div>`);
+      items.splice(0, items.length, ...pairs);
+    }
+    const head = `<div class="vhead"><div role="heading" aria-level="2"><span>Videos</span></div><div class="vmenu">⋮</div></div>`;
+    const list = `<div class="vlist">${['What is a fandom?', 'Stop using Fandom', 'What exactly is Fandom?'].map(card).join('')}</div>`;
+    const all = `<div class="vall"><a href="/search?q=anubis&tbm=vid">View all</a></div>`;
+    // `split`: the header row, the videos and "View all" are separate blocks in the list.
+    if (videos === 'split') items.splice(1, 0, `<div class="MjjYud vpanel">${head}</div>`, `<div class="MjjYud vpanel">${list}</div>`, `<div class="MjjYud vpanel">${all}</div>`);
+    else items.splice(1, 0, `<div class="MjjYud"><div class="module vpanel">${head}${list}${all}</div></div>`);
+  }
   if (aiLabel) {
     // A video panel whose videos each have an <h3> title in a link, so they look
     // like results, and whose "Videos" label has no heading level.
