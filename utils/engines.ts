@@ -42,6 +42,8 @@ export interface EngineDef {
   button?: { top: string; right: string };
   /** How "Weigh deeper" gets more results onto the page. */
   more?: MoreResults;
+  /** Changes for the phone layout some engines send to mobile browsers (Firefox for Android). */
+  mobile?: Partial<Omit<EngineDef, 'id' | 'name' | 'matches' | 'host' | 'mobile'>>;
 }
 
 /**
@@ -81,6 +83,16 @@ export const ENGINES: EngineDef[] = [
     displayed: 'cite',
     button: { top: '2px', right: '2px' },
     more: { kind: 'link', next: 'a#pnnext' },
+    // On phones, titles are ARIA headings rather than h3 and the address isn't a
+    // <cite>. From uBlacklist's "Web (mobile)" rules; unverified on a live page.
+    // Top stories cards have the same headings, so they're left out. The phone
+    // layout's paging is unknown, so Load more results waits until it's checked.
+    mobile: {
+      heading: 'h3, [role="heading"][aria-level="3"]:not([data-news-cluster-id] *)',
+      displayed: 'cite, .ob9lvb',
+      button: { top: '12px', right: '12px' },
+      more: undefined,
+    },
   },
   {
     id: 'duckduckgo',
@@ -222,6 +234,11 @@ export const ENGINES: EngineDef[] = [
 
 export const ENGINE_MATCHES = ENGINES.flatMap((e) => e.matches);
 
-export function engineFor(hostname: string): EngineDef | undefined {
-  return ENGINES.find((e) => e.host.test(hostname));
+/** The engine for a site, with its phone layout's changes when `mobile` is set. */
+export function engineFor(hostname: string, mobile = false): EngineDef | undefined {
+  const engine = ENGINES.find((e) => e.host.test(hostname));
+  return engine && mobile && engine.mobile ? { ...engine, ...engine.mobile } : engine;
 }
+
+/** Whether a user agent is a phone's, the way engines decide which layout to send. */
+export const isMobileAgent = (userAgent: string): boolean => /\bMobi/.test(userAgent);

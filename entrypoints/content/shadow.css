@@ -159,6 +159,17 @@ button {
     opacity: 0.7;
   }
 }
+/* A finger needs a bigger target than a pointer. */
+@media (pointer: coarse) {
+  .weigh {
+    width: 32px;
+    height: 32px;
+  }
+  .weigh svg {
+    width: 17px;
+    height: 17px;
+  }
+}
 
 /* ------------------------------------------------------------ hidden line */
 :host(anubis-bar) {
@@ -171,9 +182,16 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
+  /* Clear of the ⇅ button in the result's corner, which a long line would reach on a phone. */
+  padding-right: 28px;
   font-size: 12.5px;
   line-height: 20px;
   color: var(--muted);
+}
+@media (pointer: coarse) {
+  .gone {
+    padding-right: 40px;
+  }
 }
 .gone svg {
   width: 14px;
@@ -197,6 +215,12 @@ button {
   margin: 0 0 16px;
   order: -100000;
   flex-basis: 100%;
+}
+/* Phone layouts run results edge to edge, each with its own inset. */
+@media (max-width: 600px) {
+  :host(anubis-summary) {
+    padding-inline: 12px;
+  }
 }
 .summary {
   display: flex;

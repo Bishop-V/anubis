@@ -1,6 +1,6 @@
 import { browser, defineBackground, storage } from '#imports';
-import type { Message } from '@/utils/messages';
-import { getSettings, migrateLegacy, settingsItem } from '@/utils/storage';
+import { sendToActiveTab, type Message } from '@/utils/messages';
+import { getSettings, migrateLegacy, settingsItem, updateSettings } from '@/utils/storage';
 import { refreshStale } from '@/utils/subscriptions';
 
 // The background script keeps subscribed lists fresh, shows the hidden-result
@@ -50,6 +50,13 @@ export default defineBackground(() => {
     await refresh();
   });
   browser.runtime.onStartup.addListener(() => void maybeRefresh());
+
+  // Keyboard shortcuts, declared as `commands` in wxt.config.ts. The page keeps
+  // its own Show hidden state, so that one goes to the tab as a message.
+  browser.commands?.onCommand.addListener((command) => {
+    if (command === 'toggle-enabled') void getSettings().then((s) => updateSettings({ enabled: !s.enabled }));
+    else if (command === 'toggle-hidden') void sendToActiveTab({ type: 'toggle-reveal' });
+  });
 
   // Replies go through sendResponse (and `return true` while one is pending):
   // Chrome ignores a promise returned from the listener.
