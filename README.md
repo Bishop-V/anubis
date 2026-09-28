@@ -20,22 +20,49 @@ It asks for the `storage` permission and runs on search result pages only. Lists
 
 ## Setup
 
-You need **Node.js 20 or newer**.
-
-- **NixOS:** run `nix develop` in this folder. It gives you Node and runs `npm install` the first time.
-- **Windows/macOS:** install Node LTS from nodejs.org.
+You need **Node.js 20 or newer** — install the LTS from [nodejs.org](https://nodejs.org) if you don't have it.
 
 ```sh
 npm install          # installs WXT and sets up TypeScript types
-npm run dev          # opens Firefox with the extension loaded
+npm run dev          # opens Firefox with the extension loaded, reloading on save
 npm run dev:chrome   # same, in Chrome
-npm test             # unit tests for the list format, matching and storage
-npm run compile      # type-check
 ```
 
-If the browser doesn't open automatically, run `npm run build` (or `npm run build:chrome`) and load `.output/firefox-mv2/manifest.json` from `about:debugging`, or `.output/chrome-mv3` from `chrome://extensions` with Developer mode on.
+Firefox is the default target; every `:chrome` variant overrides it.
 
-`npm run e2e` loads the Chrome build into Chromium against mock result pages and saves screenshots to `e2e/shots/`. Set `CHROMIUM_PATH` to a Chromium binary first.
+### Building and testing
+
+```sh
+npm run compile      # type-check; run it after every change
+npm test             # unit tests: list format, matching, personal list, storage
+npm run build        # production build into .output/firefox-mv2
+npm run build:chrome # production build into .output/chrome-mv3
+```
+
+`npm run e2e` loads the Chrome build into Chromium against mock result pages and saves screenshots to `e2e/shots/`. Set `CHROMIUM_PATH` to a Chromium binary first. `node e2e/run.mjs subscribe` also downloads a real list from GitHub; behind a TLS-intercepting proxy, point `PROXY_CA_CERT` at its CA.
+
+### Loading it by hand
+
+If the dev browser doesn't open on its own, build and load the extension yourself:
+
+- **Firefox:** `about:debugging` → This Firefox → Load Temporary Add-on → pick `.output/firefox-mv2/manifest.json`. Temporary add-ons are removed when Firefox closes.
+- **Chrome:** `chrome://extensions` with Developer mode on → Load unpacked → pick `.output/chrome-mv3`.
+
+### With Nix
+
+`flake.nix` pins the whole toolchain. `nix develop` in this folder gives you Node and runs `npm install` on first entry; run the commands above inside that shell rather than installing anything globally. For one-offs, `nix develop -c npm test`.
+
+### Before opening a pull request
+
+`npm run compile` and `npm test` should pass, both builds should succeed, and `npx web-ext lint -s .output/firefox-mv2` should be at zero warnings — CI treats warnings as errors. `.github/workflows/ci.yml` runs all of it on pushes to main and on pull requests.
+
+### Worth knowing
+
+- **Search pages can only be verified for real in a browser.** The unit tests and `npm run e2e` cover the logic against mock pages; neither proves a live engine still works.
+- **Engines break when they change their markup.** `utils/engines.ts` holds the definitions. When one stops working, diff it against [ublacklist/builtin](https://github.com/ublacklist/builtin) (`serpinfo/*.yml`), which tracks these layouts continuously.
+- **`utils/engines.ts` is imported at build time** to generate the manifest's `matches`, so it must stay free of browser APIs.
+- **The Firefox extension ID lives in `wxt.config.ts`** and is still the placeholder `anubis@example.com`. It needs a real one before any release, and after that it has to stay put: changing it makes an existing install look like a different extension and orphans its stored settings.
+- **Keep permissions minimal.** Only add one a feature actually needs; hosts for non-GitHub lists are requested at subscribe time, not up front.
 
 ## Documentation
 
