@@ -299,13 +299,15 @@ if (!only || only === 'cleanup') {
   await page.goto('https://www.google.com/search?q=anubis&ailabel=1');
   await page.waitForTimeout(800);
   console.log(
-    '== AI Overview with a plain label:',
+    '== harder cases (plain AI label, videos that look like results):',
     JSON.stringify(
       await page.evaluate(() => {
         const visible = (el) => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0;
         return {
           aiOverview: visible(document.querySelector('.module.ai')),
           aiModeTab: visible([...document.querySelectorAll('.tabs a')].find((a) => a.textContent === 'AI Mode')),
+          videoPanel: visible(document.querySelector('.module.videos')?.closest('.MjjYud')),
+          videoLabel: visible([...document.querySelectorAll('.module.videos span')].find((s) => s.textContent === 'Videos')),
           searchBox: visible(document.querySelector('.q')),
           results: document.querySelectorAll('[data-anubis-result]').length,
         };
@@ -546,7 +548,7 @@ if (only === 'docs') {
   }
   await opt.close();
   const pop = await ctx.newPage();
-  await pop.setViewportSize({ width: 364, height: 560 });
+  await pop.setViewportSize({ width: 364, height: 600 });
   await pop.goto(`chrome-extension://${extId}/popup.html`);
   await pop.waitForTimeout(400);
   await pop.screenshot({ path: `${DOCS_IMG}popup.png` });

@@ -6,7 +6,7 @@ import { engineFor } from '@/utils/engines';
 import { guide } from '@/utils/links';
 import { LEVELS } from '@/utils/matcher';
 import { h, icon } from '@/utils/dom';
-import { ICON_CLOSE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
+import { ICON_CLOSE, ICON_GEAR, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
 import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/messages';
 import { getSite, listSites, setSite, setSiteLevel, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet } from '@/utils/ruleset';
@@ -183,6 +183,7 @@ $<HTMLFormElement>('#add-form').addEventListener('submit', async (e) => {
 
 enabled.addEventListener('change', () => void updateSettings({ enabled: enabled.checked }));
 $<HTMLAnchorElement>('#help').href = guide();
+$('#settings').append(icon(ICON_GEAR));
 $('#settings').addEventListener('click', () => {
   void send({ type: 'open-options' });
   window.close();

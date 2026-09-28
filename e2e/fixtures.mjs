@@ -132,6 +132,13 @@ export function google(query, results, { dark = false, next = '', hostile = fals
       </div>${grouped && i === 0 ? sitelinks(url) : ''}</div>${close}</div>`;
     });
   if (grouped) items.splice(1, 2, `<div class="hlcw0c">${items[1]}${items[2]}</div>`);
+  if (aiLabel) {
+    // A video panel whose videos each have an <h3> title in a link, so they look
+    // like results, and whose "Videos" label has no heading level.
+    items.splice(2, 0, `
+      <div class="MjjYud"><div class="module videos"><div role="heading"><span>Videos</span></div>
+        <div class="vrow">${['Anubis explained', 'Tomb of Anubis', 'Jackal gods'].map((t) => `<div class="vitem"><a href="https://www.youtube.com/watch?v=${t.length}"><h3>${t}</h3></a><div>YouTube</div></div>`).join('')}</div></div></div>`);
+  }
   if (modules) {
     // Modelled on community filter lists and uBlacklist's notes; not copied from a live page.
     items.splice(2, 0, `
@@ -144,9 +151,10 @@ export function google(query, results, { dark = false, next = '', hostile = fals
       <div class="MjjYud"><div class="module paa"><div><h2 role="heading">People also ask</h2></div>
         ${['Who is Anubis?', 'Why is Anubis a jackal?', 'Is Anubis good or evil?'].map((q) => `<div class="related-question-pair"><div role="button">${q}</div></div>`).join('')}</div></div>`);
   }
-  // `aiLabel`: harder cases that still say "AI Overview". The label is a plain div
-  // beside an icon whose <title> adds text, the block holds a follow-up box named
-  // like the search box, and the AI Mode tab sits in an unlabelled row of links.
+  // `aiLabel`: harder cases. The "AI Overview" label is a plain div beside an icon
+  // whose <title> adds text, the block holds a follow-up box named like the search
+  // box, the AI Mode tab sits in an unlabelled row of links, and the video panel
+  // (above) holds videos that look like results.
   const aiOverview = aiLabel
     ? `<div class="module ai"><div><div class="nk9vdc"><svg width="16" height="16"><title>Sparkle</title><circle cx="8" cy="8" r="6"/></svg><div class="Fzsovc">AI Overview</div></div>
         <div>Anubis is the jackal-headed god of the dead in ancient Egyptian religion…</div>

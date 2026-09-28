@@ -130,11 +130,28 @@ export default defineContentScript({
         if (!live.has(el)) forget(el);
       }
 
+      // Clean-up: AI answers, video panels and the like. "Show hidden" brings them back too.
+      const clutter = findClutter(engine, results, rules.settings.cleanup);
+      const now = new Set(clutter.map((c) => c.block));
+      for (const el of removed) if (!now.has(el)) unremove(el);
+      removed = now;
+      for (const { block, kind, uncounted } of clutter) {
+        if (block.getAttribute('data-anubis-removed') !== kind) block.setAttribute('data-anubis-removed', kind);
+        block.toggleAttribute('data-anubis-reveal', reveal);
+        if (!uncounted) stats.removed[kind] = (stats.removed[kind] ?? 0) + 1;
+      }
+      // Results inside a removed panel (the videos in a video panel) went with it.
+      const inRemoved = (r: FoundResult) => clutter.some((c) => c.block.contains(r.container));
+
       const scores = new Map<HTMLElement, number>();
       for (const result of results) {
         const verdict = verdictFor(result);
         applyVerdict(result, verdict, theme);
         scores.set(result.container, verdict.hidden ? 0 : verdict.score);
+        if (inRemoved(result)) {
+          stats.total--;
+          continue;
+        }
         if (verdict.hidden) stats.hidden++;
         else if (verdict.level === 'pin') stats.pinned++;
         else if (verdict.level === 'raise') stats.raised++;
@@ -154,17 +171,6 @@ export default defineContentScript({
         const out = !!filter && !verdictFor(result).tags.includes(filter);
         result.container.toggleAttribute('data-anubis-filtered', out);
         for (const row of result.extras) row.toggleAttribute('data-anubis-filtered', out);
-      }
-
-      // Clean-up: AI answers, video panels and the like. "Show hidden" brings them back too.
-      const clutter = findClutter(engine, results, rules.settings.cleanup);
-      const now = new Set(clutter.map((c) => c.block));
-      for (const el of removed) if (!now.has(el)) unremove(el);
-      removed = now;
-      for (const { block, kind, uncounted } of clutter) {
-        if (block.getAttribute('data-anubis-removed') !== kind) block.setAttribute('data-anubis-removed', kind);
-        block.toggleAttribute('data-anubis-reveal', reveal);
-        if (!uncounted) stats.removed[kind] = (stats.removed[kind] ?? 0) + 1;
       }
 
       rerank(results, scores, rules.settings.rerank && !engine.table);

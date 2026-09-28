@@ -56,14 +56,6 @@ button {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
-/* Secondary actions: readable, but quieter than the ones that change the page. */
-.text-btn.quiet {
-  color: var(--muted);
-  font-weight: 500;
-}
-.text-btn.quiet:hover {
-  color: var(--ink);
-}
 .text-btn:disabled {
   color: var(--muted);
   cursor: progress;
@@ -480,7 +472,7 @@ select.domain option {
 }
 .foot {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
   margin-top: 14px;

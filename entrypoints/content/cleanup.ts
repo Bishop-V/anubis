@@ -27,8 +27,7 @@ const NOT_A_BLOCK = '[data-anubis-result], anubis-summary, header, nav, [role="n
  */
 export function findClutter(engine: EngineDef, results: FoundResult[], wanted: Cleanup): Clutter[] {
   if (!results.length || !Object.values(wanted).some(Boolean)) return [];
-  const lists = new Set<Element>();
-  for (const r of results) if (r.container.parentElement) lists.add(r.container.parentElement);
+  const column = mainColumn(results);
   // The page's own search box: the first one in the page. A follow-up box inside an
   // AI answer comes later and doesn't protect the answer.
   const searchBox = document.querySelector('form[role="search"], textarea[name="q"], input[name="q"], input[type="search"]');
@@ -36,7 +35,7 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
   const found: Clutter[] = [];
   const seen = new Set<HTMLElement>();
   const add = (block: HTMLElement | undefined, kind: CleanupKind, uncounted = false) => {
-    if (!block || seen.has(block) || !safeToRemove(block, searchBox)) return;
+    if (!block || seen.has(block) || !safeToRemove(block, column, searchBox)) return;
     seen.add(block);
     found.push({ block, kind, uncounted });
   };
@@ -44,7 +43,7 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
   for (const heading of document.querySelectorAll<HTMLElement>(HEADINGS)) {
     if (heading.closest('[data-anubis-result], anubis-summary, header, nav, [role="navigation"], form')) continue;
     const kind = cleanupKindFor(heading.textContent ?? '');
-    if (kind && wanted[kind]) add(blockAround(heading, engine, lists, levelOf(heading)), kind);
+    if (kind && wanted[kind]) add(blockAround(heading, engine, column, levelOf(heading)), kind);
   }
 
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
@@ -58,13 +57,13 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
     if (!el || el.closest(NOT_A_BLOCK)) continue;
     // A label is the block's title: judge its level like a heading's. A marker sits
     // anywhere in the block, so only the column decides how far it reaches.
-    add(blockAround(el, engine, lists, label ? levelOf(el.closest<HTMLElement>(HEADINGS) ?? el) : undefined), kind);
+    add(blockAround(el, engine, column, label ? levelOf(el.closest<HTMLElement>(HEADINGS) ?? el) : undefined), kind);
   }
 
   for (const [kind, selector] of Object.entries(CLEANUP_SELECTORS[engine.id] ?? {}) as [CleanupKind, string][]) {
     if (!wanted[kind]) continue;
     for (const el of document.querySelectorAll<HTMLElement>(selector)) {
-      if (!el.closest('[data-anubis-result]')) add(blockAround(el, engine, lists) ?? el, kind);
+      if (!el.closest('[data-anubis-result]')) add(blockAround(el, engine, column) ?? el, kind);
     }
   }
 
@@ -81,25 +80,43 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
 }
 
 /**
- * The block in the results column holding `start`: climb until the parent is the
- * results list, the engine's results boundary, or an element inside that boundary
- * that also holds results. A heading that never reaches the column (a side panel)
- * isn't touched. Starting from a heading, the climb also stops below a parent with
- * another heading of the same or higher level: the block is one section of a
- * bigger panel ("Images" inside a knowledge panel), not the whole panel.
+ * The main list of results and the results in it. Other results (the videos in a
+ * video panel, which have titles like results) don't protect a block from removal.
  */
-function blockAround(start: HTMLElement, engine: EngineDef, lists: Set<Element>, level?: number): HTMLElement | undefined {
+interface Column {
+  list: Element | undefined;
+  results: HTMLElement[];
+}
+
+function mainColumn(results: FoundResult[]): Column {
+  const counts = new Map<Element, number>();
+  for (const r of results) {
+    const parent = r.container.parentElement;
+    if (parent) counts.set(parent, (counts.get(parent) ?? 0) + 1);
+  }
+  let list: Element | undefined;
+  for (const [parent, n] of counts) if (!list || n > counts.get(list)!) list = parent;
+  return { list, results: results.filter((r) => r.container.parentElement === list).map((r) => r.container) };
+}
+
+/**
+ * The block in the results column holding `start`: climb until the parent is the
+ * main results list, the engine's results boundary, or an element inside that
+ * boundary that also holds main results. A heading that never reaches the column
+ * (a side panel) isn't touched. Starting from a heading, the climb also stops below
+ * a parent with another heading of the same or higher level: the block is one
+ * section of a bigger panel ("Images" inside a knowledge panel), not the whole panel.
+ */
+function blockAround(start: HTMLElement, engine: EngineDef, column: Column, level?: number): HTMLElement | undefined {
   let block = start;
   // The section, once found; the climb goes on to check it's in the column.
   let section: HTMLElement | undefined;
   for (let depth = 0; depth < 30; depth++) {
     const parent = block.parentElement;
     if (!parent || parent === document.body || parent === document.documentElement) return undefined;
-    if (lists.has(parent)) return section ?? block;
-    if (engine.boundary) {
-      if (parent.matches(engine.boundary)) return section ?? block;
-      if (parent.closest(engine.boundary) && parent.querySelector('[data-anubis-result]')) return section ?? block;
-    }
+    if (parent === column.list) return section ?? block;
+    if (engine.boundary && parent.matches(engine.boundary)) return section ?? block;
+    if ((!engine.boundary || parent.closest(engine.boundary)) && column.results.some((r) => parent.contains(r))) return section ?? block;
     if (!section && level !== undefined && hasSiblingSection(parent, block, level)) section = block;
     block = parent;
   }
@@ -115,19 +132,24 @@ function levelOf(heading: HTMLElement): number {
 
 function hasSiblingSection(parent: HTMLElement, block: HTMLElement, level: number): boolean {
   for (const other of parent.querySelectorAll<HTMLElement>(HEADINGS)) {
-    if (block.contains(other) || other.closest('[data-anubis-result]')) continue;
+    // Titles of items in the panel (a video's title in its link) aren't sections.
+    if (block.contains(other) || other.closest('[data-anubis-result], a')) continue;
     if (getComputedStyle(other).display === 'none') continue;
     if (levelOf(other) <= level && (other.textContent ?? '').trim()) return true;
   }
   return false;
 }
 
-/** Never remove results, the page's search box, or Anubis's own summary. */
-function safeToRemove(block: HTMLElement, searchBox: Element | null): boolean {
+/**
+ * Never remove the main results, the page's search box, or Anubis's own summary.
+ * Results inside a panel (its videos) go with the panel.
+ */
+function safeToRemove(block: HTMLElement, column: Column, searchBox: Element | null): boolean {
   return (
     block !== document.body &&
-    !block.closest('[data-anubis-result]') &&
-    !block.querySelector('[data-anubis-result], anubis-summary') &&
+    !column.results.some((r) => r.contains(block) || block.contains(r)) &&
+    !(column.list && block.contains(column.list)) &&
+    !block.querySelector('anubis-summary') &&
     !(searchBox && block.contains(searchBox))
   );
 }
