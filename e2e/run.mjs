@@ -99,6 +99,7 @@ async function launch(settings = {}) {
     'https://www.google.com/search?q=anubis&hostile=1': google('anubis', ANUBIS_RESULTS, { hostile: true }),
     'https://www.google.com/search?q=anubis&grouped=1': google('anubis', ANUBIS_RESULTS, { grouped: true }),
     'https://www.google.com/search?q=anubis&modules=1': google('anubis', ANUBIS_RESULTS, { modules: true }),
+    'https://www.google.com/search?q=anubis&ailabel=1': google('anubis', ANUBIS_RESULTS, { aiLabel: true }),
     'https://www.google.com/search?q=anubis&udm=14': google('anubis', ANUBIS_RESULTS),
     'https://noai.duckduckgo.com/?q=javascript+promises': duckduckgo('javascript promises', JS_RESULTS),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
@@ -293,6 +294,25 @@ if (!only || only === 'cleanup') {
   await clickShadowButton('anubis-summary', 'Show hidden');
   await page.waitForTimeout(300);
   console.log('== after Show hidden:', JSON.stringify(await shown()));
+
+  // The AI Overview when its label isn't a heading, and the block holds a follow-up box.
+  await page.goto('https://www.google.com/search?q=anubis&ailabel=1');
+  await page.waitForTimeout(800);
+  console.log(
+    '== AI Overview with a plain label:',
+    JSON.stringify(
+      await page.evaluate(() => {
+        const visible = (el) => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0;
+        return {
+          aiOverview: visible(document.querySelector('.module.ai')),
+          aiModeTab: visible([...document.querySelectorAll('.tabs a')].find((a) => a.textContent === 'AI Mode')),
+          searchBox: visible(document.querySelector('.q')),
+          results: document.querySelectorAll('[data-anubis-result]').length,
+        };
+      }),
+    ),
+  );
+  console.log('   removed:', JSON.stringify((await statsNow())?.removed));
 
   // Forcing it: DuckDuckGo opens its no-AI version, Google its Web tab.
   await page.goto('https://duckduckgo.com/?q=javascript+promises');

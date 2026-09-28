@@ -1,4 +1,4 @@
-import { CLEANUP_SELECTORS, cleanupKindFor, type Cleanup, type CleanupKind } from '@/utils/cleanup';
+import { CLEANUP_SELECTORS, cleanupKindFor, cleanupMarkerFor, type Cleanup, type CleanupKind } from '@/utils/cleanup';
 import type { EngineDef } from '@/utils/engines';
 import type { FoundResult } from './results';
 
@@ -10,23 +10,35 @@ export interface Clutter {
 }
 
 const HEADINGS = 'h1, h2, h3, h4, h5, [role="heading"]';
+/** Where a label or marker text can't belong to a block that clean-up removes. */
+const NOT_A_BLOCK = '[data-anubis-result], anubis-summary, header, nav, [role="navigation"], form[role="search"], a, button, script, style, noscript, template, textarea, select, option';
 
 /**
- * Blocks in the results column to remove: found from their heading, or from an
- * engine-specific selector, then widened to the whole block in the column. Only
- * runs once results are on the page, since the column is found from them.
+ * Blocks in the results column to remove, found three ways and then widened to the
+ * whole block in the column:
+ *
+ * - a heading element whose text is a known label ("AI Overview", "Videos");
+ * - any short text that is a known label, since the label isn't always a heading
+ *   (Google's "AI Overview" may be a plain div beside an icon), or that starts
+ *   with a known marker ("AI responses may include mistakes");
+ * - an engine-specific selector.
+ *
+ * Only runs once results are on the page, since the column is found from them.
  */
 export function findClutter(engine: EngineDef, results: FoundResult[], wanted: Cleanup): Clutter[] {
   if (!results.length || !Object.values(wanted).some(Boolean)) return [];
   const lists = new Set<Element>();
   for (const r of results) if (r.container.parentElement) lists.add(r.container.parentElement);
+  // The page's own search box: the first one in the page. A follow-up box inside an
+  // AI answer comes later and doesn't protect the answer.
+  const searchBox = document.querySelector('form[role="search"], textarea[name="q"], input[name="q"], input[type="search"]');
 
-  const out: Clutter[] = [];
+  const found: Clutter[] = [];
   const seen = new Set<HTMLElement>();
   const add = (block: HTMLElement | undefined, kind: CleanupKind, uncounted = false) => {
-    if (!block || seen.has(block) || !safeToRemove(block)) return;
+    if (!block || seen.has(block) || !safeToRemove(block, searchBox)) return;
     seen.add(block);
-    out.push({ block, kind, uncounted });
+    found.push({ block, kind, uncounted });
   };
 
   for (const heading of document.querySelectorAll<HTMLElement>(HEADINGS)) {
@@ -34,19 +46,38 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
     const kind = cleanupKindFor(heading.textContent ?? '');
     if (kind && wanted[kind]) add(blockAround(heading, engine, lists, levelOf(heading)), kind);
   }
+
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const text = node.nodeValue ?? '';
+    if (text.length > 240 || !text.trim()) continue;
+    const label = cleanupKindFor(text);
+    const kind = label ?? cleanupMarkerFor(text);
+    if (!kind || !wanted[kind]) continue;
+    const el = node.parentElement;
+    if (!el || el.closest(NOT_A_BLOCK)) continue;
+    // A label is the block's title: judge its level like a heading's. A marker sits
+    // anywhere in the block, so only the column decides how far it reaches.
+    add(blockAround(el, engine, lists, label ? levelOf(el.closest<HTMLElement>(HEADINGS) ?? el) : undefined), kind);
+  }
+
   for (const [kind, selector] of Object.entries(CLEANUP_SELECTORS[engine.id] ?? {}) as [CleanupKind, string][]) {
     if (!wanted[kind]) continue;
     for (const el of document.querySelectorAll<HTMLElement>(selector)) {
       if (!el.closest('[data-anubis-result]')) add(blockAround(el, engine, lists) ?? el, kind);
     }
   }
+
   // Google's "AI Mode" tab, next to All, Images and News.
   if (wanted.ai && engine.id === 'google') {
-    for (const link of document.querySelectorAll<HTMLElement>('[role="navigation"] a, [role="list"] a, [role="tablist"] a')) {
-      if (/^AI Mode$/i.test((link.textContent ?? '').trim())) add(link.closest<HTMLElement>('[role="listitem"]') ?? link, 'ai', true);
+    for (const link of document.querySelectorAll<HTMLElement>('a, [role="link"], [role="tab"]')) {
+      if (link.closest('[data-anubis-result]') || !/^AI Mode$/i.test((link.textContent ?? '').trim())) continue;
+      add(link.closest<HTMLElement>('[role="listitem"]') ?? link, 'ai', true);
     }
   }
-  return out;
+
+  // One block can be found several ways; keep the outermost.
+  return found.filter((c) => !found.some((other) => other !== c && other.block.contains(c.block)));
 }
 
 /**
@@ -91,12 +122,13 @@ function hasSiblingSection(parent: HTMLElement, block: HTMLElement, level: numbe
   return false;
 }
 
-/** Never remove results, the search box, or Anubis's own summary. */
-function safeToRemove(block: HTMLElement): boolean {
+/** Never remove results, the page's search box, or Anubis's own summary. */
+function safeToRemove(block: HTMLElement, searchBox: Element | null): boolean {
   return (
+    block !== document.body &&
     !block.closest('[data-anubis-result]') &&
-    !block.querySelector('[data-anubis-result], anubis-summary, form[role="search"], input[name="q"], textarea[name="q"], input[type="search"]') &&
-    block !== document.body
+    !block.querySelector('[data-anubis-result], anubis-summary') &&
+    !(searchBox && block.contains(searchBox))
   );
 }
 

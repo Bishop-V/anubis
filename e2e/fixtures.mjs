@@ -108,7 +108,7 @@ export function duckduckgo(query, results, dark = false, more = []) {
 // Anubis's elements; `grouped`, results nested the way Google does for a first
 // result with sitelinks and for a group of results from one site; `modules`, the
 // blocks that aren't results (AI Overview, videos, "People also ask", a side panel).
-export function google(query, results, { dark = false, next = '', hostile = false, grouped = false, modules = false } = {}) {
+export function google(query, results, { dark = false, next = '', hostile = false, grouped = false, modules = false, aiLabel = false } = {}) {
   const sitelinks = (url) =>
     `<div class="sitelinks">${['History', 'Symbols', 'Worship', 'Family', 'Names', 'Legacy']
       .map((s) => `<div class="usJj9c"><h3><a href="${url}#${s}">${s}</a></h3><div>About ${s.toLowerCase()}.</div></div>`)
@@ -144,10 +144,18 @@ export function google(query, results, { dark = false, next = '', hostile = fals
       <div class="MjjYud"><div class="module paa"><div><h2 role="heading">People also ask</h2></div>
         ${['Who is Anubis?', 'Why is Anubis a jackal?', 'Is Anubis good or evil?'].map((q) => `<div class="related-question-pair"><div role="button">${q}</div></div>`).join('')}</div></div>`);
   }
-  const aiOverview = modules
-    ? `<div class="M8OgIe module ai"><div><h1 class="aio">AI Overview</h1><div>Anubis is the jackal-headed god of the dead in ancient Egyptian religion…</div>
+  // `aiLabel`: harder cases that still say "AI Overview". The label is a plain div
+  // beside an icon whose <title> adds text, the block holds a follow-up box named
+  // like the search box, and the AI Mode tab sits in an unlabelled row of links.
+  const aiOverview = aiLabel
+    ? `<div class="module ai"><div><div class="nk9vdc"><svg width="16" height="16"><title>Sparkle</title><circle cx="8" cy="8" r="6"/></svg><div class="Fzsovc">AI Overview</div></div>
+        <div>Anubis is the jackal-headed god of the dead in ancient Egyptian religion…</div>
+        <div class="followup"><textarea name="q" aria-label="Ask a follow up"></textarea></div>
+        <div class="disclaimer">AI responses may include mistakes. <a href="/learn">Learn more</a></div></div></div>`
+    : modules
+      ? `<div class="M8OgIe module ai"><div><h1 class="aio">AI Overview</h1><div>Anubis is the jackal-headed god of the dead in ancient Egyptian religion…</div>
         <button type="button">Dive deeper in AI Mode</button></div></div>`
-    : '';
+      : '';
   const sidePanel = modules
     ? `<div id="rhs"><h2>Anubis</h2><p>Egyptian deity</p><div><div role="heading" aria-level="2">Images</div><div class="thumbs">▢ ▢ ▢</div></div></div>`
     : '';
@@ -156,7 +164,8 @@ export function google(query, results, { dark = false, next = '', hostile = fals
     body{margin:0;font:14px/1.58 Arial,sans-serif;background:${dark ? '#1f1f1f' : '#fff'};color:${dark ? '#e3e3e3' : '#202124'}}
     .hdr{display:flex;align-items:center;gap:28px;padding:22px 28px 16px}
     .glogo{font:600 24px/1 "Product Sans",Arial;color:${dark ? '#fff' : '#4285f4'}}
-    .q{flex:0 1 690px;height:44px;border-radius:24px;box-shadow:0 1px 6px ${dark ? '#0008' : '#20212447'};padding:0 20px;display:flex;align-items:center;background:${dark ? '#303134' : '#fff'}}
+    .q{flex:0 1 690px;height:44px;margin:0;border-radius:24px;box-shadow:0 1px 6px ${dark ? '#0008' : '#20212447'};padding:0 20px;display:flex;align-items:center;background:${dark ? '#303134' : '#fff'}}
+    .q textarea{flex:1;height:22px;border:0;padding:0;resize:none;overflow:hidden;background:none;color:inherit;font:inherit;outline:none}
     .tabs{padding:0 0 10px 180px;color:${dark ? '#bdc1c6' : '#5f6368'};font-size:14px;display:flex;gap:22px;border-bottom:1px solid ${dark ? '#3c4043' : '#ebebeb'}}
     #search{padding:20px 0 60px 180px;max-width:652px}
     .MjjYud{margin-bottom:30px}
@@ -186,8 +195,8 @@ export function google(query, results, { dark = false, next = '', hostile = fals
     .MjjYud>:last-child:not(.hw1){display:none}
     #top-extra{position:absolute;left:-9999px}` : ''}
   </style></head><body>
-  <div class="hdr"><span class="glogo">Google</span><div class="q">${esc(query)}</div></div>
-  <div class="tabs" role="navigation"><b>All</b>${modules ? '<a href="/search?q=anubis&udm=50">AI Mode</a>' : ''}<span>Images</span><span>News</span><span>Videos</span></div>
+  <div class="hdr"><span class="glogo">Google</span><form class="q" role="search" action="/search"><textarea name="q" rows="1">${esc(query)}</textarea></form></div>
+  <div class="tabs" ${aiLabel ? '' : 'role="navigation"'}><b>All</b>${modules || aiLabel ? '<a href="/search?q=anubis&udm=50"><span>AI Mode</span></a>' : ''}<span>Images</span><span>News</span><span>Videos</span></div>
   ${hostile ? '<div id="top-extra"><a href="https://ads.example.net/offer"><h3>Sponsored offer</h3></a></div>' : ''}
   <div id="rcnt"><div id="center_col" role="main">${aiOverview}
   <div id="search"><div data-hveid="CAQQAA"><h1 style="display:none">Search Results</h1><div id="rso">${items.join('')}</div></div></div>
