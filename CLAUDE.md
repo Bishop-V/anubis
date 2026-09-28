@@ -16,15 +16,17 @@ This project values documented experimentation, so record what was tried and wha
 
 ## Commands
 
-- `npm run dev` / `npm run dev:firefox`: opens a browser with the extension loaded and reloads it on save
-- `npm run build` / `npm run build:firefox`: production build into `.output/`
+Firefox is the default target (`browser: 'firefox'` in `wxt.config.ts`). The `:chrome` variants override it.
+
+- `npm run dev` / `npm run dev:chrome`: opens a browser with the extension loaded and reloads it on save
+- `npm run build` / `npm run build:chrome`: production build into `.output/`
 - `npm run compile`: type-check. Run it after every change.
-- `npm run zip`: package for the store
+- `npm run zip` / `npm run zip:chrome`: package for the store
 
 ## Layout
 
 - `wxt.config.ts`: manifest settings (name, permissions, Firefox ID)
-- `entrypoints/content.ts`: runs on Google (.com, .ca) and DuckDuckGo result pages and hides blocked results. The per-engine selectors are in `findResults()`. They're fragile and need checking against the live page when something breaks.
+- `entrypoints/content.ts`: runs on Google (.com, .ca) and DuckDuckGo result pages, hides blocked results, and adds a hover "Block site" button to each result. The per-engine selectors are constants above `findResults()`. They're fragile: when blocking silently stops working, diff them against uBlacklist's ruleset at <https://github.com/ublacklist/builtin> (`serpinfo/google.yml`, `serpinfo/duckduckgo.yml`), which tracks these layouts continuously.
 - `entrypoints/popup/`: the toolbar popup for adding and removing blocked domains
 - `utils/blocklist.ts`: the storage item, domain normalization, and subdomain matching
 - `public/`: the logo (`anubis.svg`) and toolbar icons (`icon/{16,32,48,96,128}.png`). WXT detects these automatically.

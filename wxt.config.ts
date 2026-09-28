@@ -4,6 +4,8 @@ import { defineConfig } from 'wxt';
 // Icons in public/icon/{16,32,48,96,128}.png are picked up automatically.
 // Docs: https://wxt.dev/guide/essentials/config/manifest
 export default defineConfig({
+  // Default target for every command. Override per-run with `-b chrome`.
+  browser: 'firefox',
   manifest: ({ browser }) => ({
     name: 'Anubis',
     description: 'Judges your search results and hides the sites you don’t trust.',

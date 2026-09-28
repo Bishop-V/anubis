@@ -13,9 +13,8 @@
 
       perSystem = {pkgs, ...}: {
         devShells.default = pkgs.mkShell {
-          packages = with pkgs; [
-            nodejs_22
-            chromium # `npm run dev` opens this; `npm run dev:firefox` uses your system Firefox
+          packages = [
+            pkgs.nodejs_22 # browsers come from the system, not the shell
           ];
           shellHook = ''
             [ -d node_modules ] || npm install
