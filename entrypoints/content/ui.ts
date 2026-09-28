@@ -49,6 +49,7 @@ const chipsHosts = new WeakMap<HTMLElement, HTMLElement>();
 const weighHosts = new WeakMap<HTMLElement, HTMLElement>();
 const barHosts = new WeakMap<HTMLElement, HTMLElement>();
 const weighResult = new WeakMap<HTMLElement, FoundResult>();
+const positioned = new WeakSet<HTMLElement>();
 
 /**
  * Take Anubis off an element that is no longer a result, for instance after the
@@ -172,7 +173,11 @@ export function ensureWeighButton(
   host.style.right = right;
   if (host.parentElement !== container) container.append(host);
   // The button is absolutely positioned, so the result must be a positioning context.
-  if (getComputedStyle(container).position === 'static') container.style.position = 'relative';
+  // Checked once per result: reading computed style every pass forces a style recalc.
+  if (!positioned.has(container)) {
+    positioned.add(container);
+    if (getComputedStyle(container).position === 'static') container.style.position = 'relative';
+  }
 }
 
 export function weighButtonOf(container: HTMLElement): HTMLButtonElement | undefined {

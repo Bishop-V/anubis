@@ -1,4 +1,3 @@
-import { storage } from '#imports';
 import { parseList, type ListMeta, type TagDef } from './listformat';
 import { collectTags, compileList, type CompiledList, type TagPref } from './matcher';
 import {
@@ -10,9 +9,10 @@ import {
   watchPersonal,
   settingsItem,
   type Settings,
-  type Subscription,
 } from './storage';
-import { defaultSubscriptions, displayName, listText } from './subscriptions';
+import { displayName, getSubscriptions, listText } from './subscriptions';
+
+export { getSubscriptions, saveSubscriptions } from './subscriptions';
 
 export const PERSONAL_ID = 'personal';
 export const PERSONAL_NAME = 'Your list';
@@ -25,16 +25,6 @@ export interface RuleSet {
   lists: CompiledList[];
   meta: Record<string, ListMeta>;
   tags: Map<string, TagDef>;
-}
-
-/** Subscriptions as stored, or the defaults if the user never changed them. */
-export async function getSubscriptions(): Promise<Subscription[]> {
-  const stored = await storage.getItem<Subscription[]>('sync:subscriptions');
-  return stored ?? defaultSubscriptions();
-}
-
-export async function saveSubscriptions(subs: Subscription[]): Promise<void> {
-  await subscriptionsItem.setValue(subs);
 }
 
 export async function loadRuleSet(): Promise<RuleSet> {

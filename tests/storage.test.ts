@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { fakeBrowser } from 'wxt/testing/fake-browser';
 import { storage } from '#imports';
-import { listSites } from '@/utils/personal';
-import { DEFAULT_PERSONAL, loadPersonal, migrateLegacy, savePersonal, splitIntoChunks } from '@/utils/storage';
+import { listSites, setSiteLevel } from '@/utils/personal';
+import { DEFAULT_PERSONAL, editPersonal, loadPersonal, migrateLegacy, savePersonal, splitIntoChunks } from '@/utils/storage';
+import { getSubscriptions, saveSubscriptions } from '@/utils/subscriptions';
 
 beforeEach(() => fakeBrowser.reset());
 
@@ -33,5 +34,19 @@ describe('personal list storage', () => {
     await migrateLegacy();
     expect(listSites(await loadPersonal()).map((e) => e.site)).toEqual(['fandom.com', 'pinterest.com']);
     expect(await storage.getItem('sync:blockedSites')).toBeNull();
+  });
+});
+
+describe('edits and subscriptions', () => {
+  it('runs quick edits one after another without losing any', async () => {
+    await Promise.all(['a.com', 'b.com', 'c.com', 'd.com'].map((d) => editPersonal((t) => setSiteLevel(t, d, 'hide'))));
+    const sites = listSites(await loadPersonal()).map((e) => e.site);
+    expect(sites).toEqual(expect.arrayContaining(['a.com', 'b.com', 'c.com', 'd.com']));
+  });
+
+  it('treats missing subscriptions as the defaults, and an empty list as empty', async () => {
+    expect((await getSubscriptions()).map((s) => s.id)).toContain('builtin:official-docs');
+    await saveSubscriptions([]);
+    expect(await getSubscriptions()).toEqual([]);
   });
 });

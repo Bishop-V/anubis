@@ -151,6 +151,17 @@ function parseExpires(value: string): number | undefined {
   return m[2]?.toLowerCase().startsWith('h') ? n : n * 24;
 }
 
+/** The URL if it is http(s), else undefined. List metadata is untrusted. */
+export function safeWebUrl(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  try {
+    const url = new URL(value.trim());
+    return url.protocol === 'https:' || url.protocol === 'http:' ? url.toString() : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 function setMeta(meta: ListMeta, key: string, value: string) {
   switch (key) {
     case 'name':
@@ -163,10 +174,13 @@ function setMeta(meta: ListMeta, key: string, value: string) {
     case 'expires':
       meta.expiresHours = parseExpires(value);
       break;
-    case 'description':
-    case 'author':
     case 'homepage':
     case 'issues':
+      // These become links, so anything but a web address (javascript:, data:…) is dropped.
+      meta[key] = safeWebUrl(value);
+      break;
+    case 'description':
+    case 'author':
     case 'license':
     case 'version':
       meta[key] = value;

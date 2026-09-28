@@ -336,7 +336,7 @@ function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enable
       }
       continue;
     }
-    parent.setAttribute('data-anubis-rerank', '');
+    if (!parent.hasAttribute('data-anubis-rerank')) parent.setAttribute('data-anubis-rerank', '');
     const ranked = children
       .map((child, index) => ({
         child,
@@ -345,7 +345,9 @@ function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enable
       }))
       // On a tie the higher score wins, so boost=1 really moves a result past its neighbour.
       .sort((a, b) => a.key - b.key || (scores.get(b.child) ?? 0) - (scores.get(a.child) ?? 0) || a.index - b.index);
-    ranked.forEach(({ child }, order) => child.style.setProperty('order', String(order)));
+    ranked.forEach(({ child }, order) => {
+      if (child.style.order !== String(order)) child.style.setProperty('order', String(order));
+    });
   }
 }
 

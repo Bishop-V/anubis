@@ -152,3 +152,14 @@ describe('detectFormat', () => {
     expect(detectFormat(['a.com', 'b.org'])).toBe('domains');
   });
 });
+
+describe('untrusted metadata', () => {
+  it('keeps only web addresses for links', () => {
+    const list = parseList(`! homepage: javascript:alert(1)
+! issues: https://github.com/o/r/issues
+$site=a.com`);
+    expect(list.meta.homepage).toBeUndefined();
+    expect(list.meta.issues).toBe('https://github.com/o/r/issues');
+    expect(parseList('! issues: data:text/html,hi\n$site=a.com').meta.issues).toBeUndefined();
+  });
+});

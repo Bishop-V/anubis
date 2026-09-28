@@ -3,7 +3,8 @@ import discussions from '@/lists/discussions.anubis?raw';
 import officialDocs from '@/lists/official-docs.anubis?raw';
 import paywalls from '@/lists/paywalls.anubis?raw';
 import reference from '@/lists/reference.anubis?raw';
-import { parseList } from './listformat';
+import { storage } from '#imports';
+import { parseList, safeWebUrl } from './listformat';
 import {
   getSettings,
   listCacheItem,
@@ -27,6 +28,16 @@ export interface DirectoryEntry {
   /** Subscribed on first install. */
   default?: boolean;
   lens?: boolean;
+}
+
+/** Subscriptions as stored, or the defaults if the user never changed them. */
+export async function getSubscriptions(): Promise<Subscription[]> {
+  const stored = await storage.getItem<Subscription[]>('sync:subscriptions');
+  return stored ?? defaultSubscriptions();
+}
+
+export async function saveSubscriptions(subs: Subscription[]): Promise<void> {
+  await subscriptionsItem.setValue(subs);
 }
 
 /** The directory shipped with this build. A fresher copy is fetched from GitHub when possible. */
@@ -184,11 +195,7 @@ const RETRY_AFTER_ERROR_MS = 60 * 60 * 1000;
 
 /** Update every enabled list that is older than its interval. */
 export async function refreshStale(force = false): Promise<number> {
-  const [subs, cache, settings] = await Promise.all([
-    subscriptionsItem.getValue(),
-    listCacheItem.getValue(),
-    getSettings(),
-  ]);
+  const [subs, cache, settings] = await Promise.all([getSubscriptions(), listCacheItem.getValue(), getSettings()]);
   const now = Date.now();
   let updated = 0;
   for (const sub of subs) {
@@ -221,9 +228,10 @@ export async function fetchDirectory(): Promise<DirectoryEntry[]> {
  * propose an addition without an account on anything but the forge itself.
  */
 export function suggestionUrl(issues: string | undefined, title: string, body: string): string | undefined {
-  if (!issues) return undefined;
+  const safe = safeWebUrl(issues);
+  if (!safe) return undefined;
   try {
-    const u = new URL(issues);
+    const u = new URL(safe);
     const base = u.pathname.replace(/\/+$/, '').replace(/\/new$/, '');
     if (u.hostname === 'github.com' || u.hostname === 'codeberg.org') {
       const url = new URL(`${u.origin}${base}/new`);
@@ -237,7 +245,7 @@ export function suggestionUrl(issues: string | undefined, title: string, body: s
       url.searchParams.set('issue[description]', body);
       return url.toString();
     }
-    return issues;
+    return safe;
   } catch {
     return undefined;
   }

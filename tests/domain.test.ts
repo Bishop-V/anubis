@@ -56,4 +56,8 @@ describe('subscription URLs', () => {
     const gl = new URL(suggestionUrl('https://gitlab.com/g/r/-/issues', 'Add x', 'body')!);
     expect(gl.searchParams.get('issue[title]')).toBe('Add x');
   });
+
+  it('never builds a link from a non-web address', () => {
+    expect(suggestionUrl('javascript:alert(1)', 't', 'b')).toBeUndefined();
+  });
 });

@@ -177,11 +177,20 @@ export async function savePersonal(text: string): Promise<{ synced: boolean }> {
   }
 }
 
-/** Read-modify-write helper for the personal list. */
-export async function editPersonal(edit: (text: string) => string): Promise<string> {
-  const next = edit(await loadPersonal());
-  await savePersonal(next);
-  return next;
+let editQueue: Promise<unknown> = Promise.resolve();
+
+/**
+ * Read-modify-write helper for the personal list. Edits from this page run one
+ * after another, so two quick clicks can't overwrite each other.
+ */
+export function editPersonal(edit: (text: string) => string): Promise<string> {
+  const run = editQueue.then(async () => {
+    const next = edit(await loadPersonal());
+    await savePersonal(next);
+    return next;
+  });
+  editQueue = run.catch(() => undefined);
+  return run;
 }
 
 export async function personalIsLocal(): Promise<boolean> {
