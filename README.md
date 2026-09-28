@@ -97,3 +97,5 @@ Other influences:
 ## License
 
 Anubis is released under the [GNU Affero General Public License v3.0](LICENSE) or any later version. The bundled lists in [`lists/`](lists) are CC0.
+
+The extension includes third-party code under its own licenses (WXT's runtime and the Lucide settings icon); their notices are in [`public/THIRD_PARTY_NOTICES.txt`](public/THIRD_PARTY_NOTICES.txt), which ships inside every build. The Claude skills in [`.claude/skills/`](.claude/skills) keep their upstream licenses (Apache-2.0 for `frontend-design`, MIT for `ux-heuristics`) and aren't part of the extension.
