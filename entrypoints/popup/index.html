@@ -7,10 +7,10 @@
   <body>
     <header>
       <div class="brand">
-        <img src="/anubis.svg" alt="" width="34" height="34" />
+        <img src="/anubis.svg" alt="" width="30" height="30" />
         <div>
           <h1>Anubis</h1>
-          <p id="status">Weighing your searches</p>
+          <p id="status">On</p>
         </div>
       </div>
       <div class="header-tools">
@@ -22,32 +22,34 @@
       </div>
     </header>
 
-    <section id="page" class="card"></section>
+    <main>
+      <section id="page"></section>
 
-    <form id="add-form" class="card">
-      <label for="domain" class="label">Weigh a site</label>
-      <div class="row">
-        <input id="domain" type="text" placeholder="e.g. fandom.com" autocomplete="off" spellcheck="false" />
-        <select id="level" aria-label="Level">
-          <option value="hide">Hide</option>
-          <option value="lower">Lower</option>
-          <option value="raise">Raise</option>
-          <option value="pin">Pin</option>
-        </select>
-        <button class="btn primary" type="submit">Add</button>
-      </div>
-    </form>
+      <section>
+        <h2><label for="domain">Weigh a site</label></h2>
+        <form id="add-form" class="row">
+          <input id="domain" type="text" placeholder="fandom.com" autocomplete="off" spellcheck="false" />
+          <select id="level" aria-label="Weight">
+            <option value="hide">Hide</option>
+            <option value="lower">Lower</option>
+            <option value="raise">Raise</option>
+            <option value="pin">Pin</option>
+          </select>
+          <button class="btn primary" type="submit">Add</button>
+        </form>
+      </section>
 
-    <section class="card">
-      <div class="label">Your sites <span id="count" class="muted"></span></div>
-      <ul id="list"></ul>
-    </section>
+      <section>
+        <h2>Your sites <span id="count"></span></h2>
+        <ul id="list"></ul>
+      </section>
+    </main>
 
     <footer>
       <span id="lists-summary" class="muted"></span>
       <span class="spacer"></span>
-      <button id="settings" class="btn small" type="button">Settings</button>
-      <a class="source" href="https://github.com/Bishop-V/anubis" target="_blank" rel="noopener noreferrer">Source</a>
+      <button id="settings" class="text-btn" type="button">Settings</button>
+      <a href="https://github.com/Bishop-V/anubis" target="_blank" rel="noopener noreferrer">Source</a>
     </footer>
     <script type="module" src="./main.ts"></script>
   </body>

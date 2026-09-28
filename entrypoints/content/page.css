@@ -38,29 +38,25 @@ html[data-anubis-hide='dim'] [data-anubis-state~='hide'] > anubis-bar {
 
 /* Lowered: faded until hovered. */
 [data-anubis-state~='lower'] {
-  opacity: 0.6;
+  opacity: 0.58;
   transition: opacity 0.15s;
 }
 [data-anubis-state~='lower']:hover {
   opacity: 1;
 }
 
-/* Pinned: a gold frame drawn outside the box, so layout doesn't move. */
+/* Pinned: a thin gold frame drawn outside the box, so layout doesn't move. */
 [data-anubis-state~='pin'] {
-  border-radius: 14px;
-  background-color: rgb(212 166 55 / 0.07) !important;
-  box-shadow: 0 0 0 8px rgb(212 166 55 / 0.07);
-  outline: 1.5px solid rgb(212 166 55 / 0.75);
-  outline-offset: 8px;
+  border-radius: 10px;
+  outline: 1px solid rgb(212 166 55 / 0.55);
+  outline-offset: 7px;
 }
 
-/* Tag highlight (HOHSER-style): the tag's colour tints the result. */
+/* Tag highlight (HOHSER-style): a faint wash of the tag's colour. */
 [data-anubis-highlight] {
-  border-radius: 14px;
-  background-color: color-mix(in srgb, var(--anubis-hl) 9%, transparent) !important;
-  box-shadow: 0 0 0 8px color-mix(in srgb, var(--anubis-hl) 9%, transparent);
-  outline: 1px solid color-mix(in srgb, var(--anubis-hl) 45%, transparent);
-  outline-offset: 8px;
+  border-radius: 10px;
+  background-color: color-mix(in srgb, var(--anubis-hl) 7%, transparent) !important;
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--anubis-hl) 7%, transparent);
 }
 
 /* Reranking: results keep their place in the DOM (the page's scripts own it) and

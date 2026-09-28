@@ -1,23 +1,25 @@
 import '@/assets/theme.css';
 import './style.css';
 import { normalizeDomain } from '@/utils/domain';
-import { append, h, icon, plural } from '@/utils/dom';
-import { ICON_CLOSE, ICON_HIDE, ICON_SCALES, ICON_SHOW, LEVEL_CHIPS, LEVEL_ICONS } from '@/utils/icons';
+import { h, icon } from '@/utils/dom';
+import { ICON_CLOSE, LEVEL_CHIPS, LEVEL_ICONS } from '@/utils/icons';
 import { send, sendToActiveTab, type PageStats } from '@/utils/messages';
 import { listSites, setSite, setSiteLevel, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet } from '@/utils/ruleset';
 import { editPersonal, updateSettings } from '@/utils/storage';
+import { summarySentence } from '@/utils/summary';
 import { initTheme, themeSwitcher } from '@/utils/theme';
 
 // The toolbar popup: what Anubis did on this page, a quick way to weigh a site,
 // and the sites you've weighed most recently.
 
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
-const form = $<HTMLFormElement>('#add-form');
 const input = $<HTMLInputElement>('#domain');
 const levelSelect = $<HTMLSelectElement>('#level');
 const list = $<HTMLUListElement>('#list');
 const enabled = $<HTMLInputElement>('#enabled');
+
+const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
 async function renderAll() {
   const rules = await loadRuleSet();
@@ -40,20 +42,15 @@ async function renderAll() {
               h('span', { class: 'site', title: entry.site }, entry.site),
               h(
                 'span',
-                { class: 'chips' },
+                { class: 'notes' },
                 level !== 'normal'
-                  ? h('span', { class: `level-chip ${level}` }, icon(LEVEL_ICONS[level]), LEVEL_CHIPS[level])
+                  ? h('span', { class: `level-note ${level}` }, icon(LEVEL_ICONS[level]), LEVEL_CHIPS[level])
                   : entry.level === 'allow'
-                    ? h('span', { class: 'level-chip' }, 'Allowed')
+                    ? h('span', { class: 'level-note' }, 'Kept at normal')
                     : null,
-                entry.tags.slice(0, 2).map((id) => {
+                entry.tags.map((id) => {
                   const tag = rules.tags.get(id);
-                  return h(
-                    'span',
-                    { class: 'chip', style: `--c: ${tag?.color ?? 'var(--gold)'}` },
-                    h('i', { class: 'dot' }),
-                    tag?.label ?? id,
-                  );
+                  return h('span', { class: 'tag', style: `--c: ${tag?.color ?? 'var(--gold)'}` }, h('i', { class: 'gem' }), tag?.label ?? id);
                 }),
               ),
             ),
@@ -70,88 +67,63 @@ async function renderAll() {
             ),
           );
         })
-      : [h('li', { class: 'muted' }, 'Nothing weighed yet. Use the Anubis button on any search result.')]),
+      : [h('li', { class: 'muted' }, 'Nothing yet. Use the Anubis button on any search result, or add a site above.')]),
   );
 
   const subs = rules.lists.filter((l) => !l.personal);
-  $('#lists-summary').textContent = `${plural(subs.length, 'list')} · ${plural(rules.tags.size, 'tag')}`;
+  $('#lists-summary').textContent = `${plural(subs.length, 'list')}, ${plural(rules.tags.size, 'tag')}`;
 }
 
 function renderPage(stats: PageStats | undefined) {
   const page = $('#page');
   if (!stats) {
     page.replaceChildren(
-      h('div', { class: 'label' }, 'This page'),
-      h(
-        'p',
-        { class: 'page-empty' },
-        'Open a search on Google, DuckDuckGo, Bing, Brave and others to see Anubis at work.',
-      ),
+      h('h2', null, 'This page'),
+      h('p', { class: 'sentence muted' }, 'Search on Google, DuckDuckGo, Bing, Brave or another supported engine to see Anubis weigh the results.'),
     );
     return;
   }
-  const stat = (n: number, label: string) =>
-    h('div', { class: `stat${n ? ' hot' : ''}` }, h('b', null, n), h('span', null, label));
-  page.replaceChildren();
-  append(page, [
-    h(
-      'div',
-      { class: 'page-head' },
-      h('div', { class: 'label', style: 'margin:0' }, 'This page'),
-      h(
-        'span',
-        { class: 'muted', style: 'font-size:12px' },
-        `${stats.engine} · ${plural(stats.total, 'result')}${stats.pages > 1 ? ` · ${stats.pages} pages` : ''}`,
-      ),
-    ),
-    h(
-      'div',
-      { class: 'stats' },
-      stat(stats.hidden, 'hidden'),
-      stat(stats.pinned, 'pinned'),
-      stat(stats.raised, 'raised'),
-      stat(stats.lowered, 'lowered'),
-      stat(stats.tagged, 'tagged'),
-    ),
-    stats.canGoDeeper || stats.loading
-      ? h(
-          'button',
-          {
-            class: 'btn small',
-            type: 'button',
-            disabled: stats.loading,
-            style: 'margin-right:6px',
-            title: 'Load the next page of results and rerank them together',
-            on: {
-              click: async () => {
-                renderPage(await sendToActiveTab<PageStats>({ type: 'go-deeper' }));
-                setTimeout(async () => renderPage(await sendToActiveTab<PageStats>({ type: 'get-page-stats' })), 2500);
-              },
-            },
-          },
-          icon(ICON_SCALES),
-          stats.loading ? 'Weighing…' : 'Weigh deeper',
-        )
-      : null,
+  const refreshSoon = () =>
+    setTimeout(async () => renderPage(await sendToActiveTab<PageStats>({ type: 'get-page-stats' })), 2500);
+  const actions = [
     stats.hidden
       ? h(
           'button',
           {
-            class: 'btn small',
+            class: 'text-btn',
             type: 'button',
-            on: {
-              click: async () =>
-                renderPage(await sendToActiveTab<PageStats>({ type: 'set-reveal', on: !stats.revealed })),
-            },
+            on: { click: async () => renderPage(await sendToActiveTab<PageStats>({ type: 'set-reveal', on: !stats.revealed })) },
           },
-          icon(stats.revealed ? ICON_HIDE : ICON_SHOW),
-          stats.revealed ? 'Hide them again' : `Show ${plural(stats.hidden, 'hidden result')}`,
+          stats.revealed ? 'Hide them again' : 'Show hidden',
         )
       : null,
-  ]);
+    stats.canGoDeeper || stats.loading
+      ? h(
+          'button',
+          {
+            class: 'text-btn',
+            type: 'button',
+            disabled: stats.loading,
+            title: 'Bring the next page of results here and weigh them together',
+            on: {
+              click: async () => {
+                renderPage(await sendToActiveTab<PageStats>({ type: 'go-deeper' }));
+                refreshSoon();
+              },
+            },
+          },
+          stats.loading ? 'Weighing…' : 'Weigh deeper',
+        )
+      : null,
+  ].filter((b): b is HTMLButtonElement => b !== null);
+  page.replaceChildren(
+    h('h2', null, `This page on ${stats.engine}`),
+    h('p', { class: 'sentence' }, summarySentence(stats)),
+    ...(actions.length ? [h('div', { class: 'page-actions' }, actions)] : []),
+  );
 }
 
-form.addEventListener('submit', async (e) => {
+$<HTMLFormElement>('#add-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const domain = normalizeDomain(input.value);
   if (!domain) {

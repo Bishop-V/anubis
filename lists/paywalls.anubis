@@ -4,12 +4,12 @@
 ! homepage: https://github.com/Bishop-V/anubis/tree/main/lists
 ! issues: https://github.com/Bishop-V/anubis/issues
 ! license: CC0-1.0
-! avatar: #e0664f
+! avatar: #b5452e
 ! expires: 7 days
-! tag: paywall | Paywall | #e0664f | Most articles need a subscription.
+! tag: paywall | Paywall | #b5452e | Most articles need a subscription.
 
-! Label only: this list never changes the ranking. Pick "Lower" or "Hide" for the
-! tag in Anubis settings if you'd rather not see them.
+! Labels only: this list never changes the ranking. To lower or hide paywalled
+! sites, choose that for the Paywall tag in Anubis settings.
 $site=nytimes.com,tag=paywall
 $site=wsj.com,tag=paywall
 $site=ft.com,tag=paywall

@@ -1,6 +1,6 @@
 import { browser, defineContentScript } from '#imports';
 import { engineFor, ENGINE_MATCHES } from '@/utils/engines';
-import { slugifyTag } from '@/utils/listformat';
+import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { evaluate, type Verdict } from '@/utils/matcher';
 import { send, type Message, type PageStats } from '@/utils/messages';
 import { formatSiteLine, getSite, setSiteLevel, toggleSiteTag, upsertTagDef, type PersonalLevel } from '@/utils/personal';
@@ -13,6 +13,7 @@ import { findResults, OWN_TAGS, type FoundResult } from './results';
 import {
   applyTheme,
   closePopover,
+  detachResult,
   ensureWeighButton,
   openPopover,
   popoverAnchor,
@@ -94,6 +95,13 @@ export default defineContentScript({
         loading: deeper.busy,
       };
 
+      // Take Anubis off anything that stopped being a result, e.g. after the engine's
+      // own "hide this site" collapsed it or its scripts re-rendered it.
+      const live = new Set(results.map((r) => r.container));
+      for (const el of document.querySelectorAll<HTMLElement>('[data-anubis-result]')) {
+        if (!live.has(el)) forget(el);
+      }
+
       const scores = new Map<HTMLElement, number>();
       for (const result of results) {
         const verdict = verdictFor(result);
@@ -164,10 +172,9 @@ export default defineContentScript({
       renderHiddenBar(result, verdict, theme, rules.tags, verdict.hidden && !revealed && rules.settings.hideStyle === 'collapse' && !engine.table, {
         reveal: () => {
           container.setAttribute('data-anubis-reveal', '');
-          renderHiddenBar(result, verdict, theme, rules.tags, false, { reveal() {}, weigh() {} });
+          renderHiddenBar(result, verdict, theme, rules.tags, false, { reveal() {} });
           renderChips(result, verdict, ctx, true);
         },
-        weigh: (button) => openWeigh(button, result),
       });
     };
 
@@ -183,7 +190,7 @@ export default defineContentScript({
       const baseline = evaluate({ url: result.url, title: result.title, description: result.description }, rules.lists.filter((l) => !l.personal), rules.prefs);
       const trackers = rules.lists
         .filter((l) => !l.personal && rules.meta[l.id]?.issues)
-        .map((l) => ({ name: l.name, issues: rules.meta[l.id]!.issues! }));
+        .map((l) => ({ name: l.name, issues: rules.meta[l.id]!.issues!, tags: l.tags.map((t) => t.id) }));
       openPopover(
         anchor,
         {
@@ -192,18 +199,17 @@ export default defineContentScript({
           baseline,
           personalText: rules.personalText,
           tags: rules.tags,
-          prefs: rules.prefs,
           trackers,
           theme: pageTheme(rules.settings.theme),
         },
         {
           setLevel: (domain, level: PersonalLevel) => void editPersonal((t) => setSiteLevel(t, domain, level)),
           toggleTag: (domain, tag) => void editPersonal((t) => toggleSiteTag(t, domain, tag)),
-          createTag: (domain, label, color) => {
+          createTag: (domain, label) => {
             const id = slugifyTag(label);
             if (!id) return;
             void editPersonal((t) => {
-              const withTag = rules.tags.has(id) ? t : upsertTagDef(t, { id, label, color });
+              const withTag = rules.tags.has(id) ? t : upsertTagDef(t, { id, label, color: colorForTag(id) });
               return toggleSiteTag(withTag, domain, id, true);
             });
           },
@@ -232,15 +238,19 @@ export default defineContentScript({
 
     // ------------------------------------------------------------ reranking
 
+    const forget = (el: HTMLElement) => {
+      detachResult(el);
+      for (const attr of ['data-anubis-result', 'data-anubis-state', 'data-anubis-reveal', 'data-anubis-highlight', 'data-anubis-row']) {
+        el.removeAttribute(attr);
+      }
+      el.style.removeProperty('--anubis-hl');
+      el.style.removeProperty('order');
+    };
+
     const reset = () => {
       closePopover();
       removeAllUi();
-      for (const el of document.querySelectorAll<HTMLElement>('[data-anubis-result], [data-anubis-row]')) {
-        for (const attr of ['data-anubis-result', 'data-anubis-state', 'data-anubis-reveal', 'data-anubis-highlight', 'data-anubis-row']) {
-          el.removeAttribute(attr);
-        }
-        el.style.removeProperty('--anubis-hl');
-      }
+      document.querySelectorAll<HTMLElement>('[data-anubis-result], [data-anubis-row]').forEach(forget);
       rerank([], new Map(), false);
       lastResults = [];
       if (lastStats) void send({ type: 'stats', stats: { ...lastStats, total: 0, hidden: 0 } });

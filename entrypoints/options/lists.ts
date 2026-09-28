@@ -19,11 +19,18 @@ import {
 } from '@/utils/subscriptions';
 
 const FORMAT_LABEL: Record<ListFormat, string> = {
-  anubis: 'Anubis',
-  goggle: 'Goggle',
-  ublacklist: 'uBlacklist',
-  domains: 'Domains',
+  anubis: 'Anubis list',
+  goggle: 'Brave Goggle',
+  ublacklist: 'uBlacklist ruleset',
+  domains: 'domain list',
 };
+
+/** "Brave Goggle, lens" / "Anubis list, built in" */
+function kindOf(format: string | undefined, lens?: boolean, builtin?: boolean): string {
+  return [format ? (FORMAT_LABEL[format as ListFormat] ?? format) : null, lens ? 'lens' : null, builtin ? 'built in' : null]
+    .filter(Boolean)
+    .join(', ');
+}
 
 let directory: DirectoryEntry[] | undefined;
 let flash: { kind: 'ok' | 'error'; text: string } | undefined;
@@ -147,29 +154,41 @@ export async function renderLists(): Promise<HTMLElement> {
         ),
       ),
     ),
-    h('div', { class: 'panel' }, h('h3', null, 'Add a list'), h('p', { class: 'muted' }, 'Paste a link to the file. GitHub, gist and Brave Goggle links are converted to the raw file for you.'), form, notice),
-    cards.length ? cards : h('div', { class: 'empty' }, 'No lists yet. Pick some from Discover below.'),
-    discover.length ? h('div', { class: 'section-label' }, 'Discover') : null,
+    h(
+      'div',
+      { class: 'panel' },
+      h('h3', null, 'Add a list'),
+      h('p', { class: 'muted' }, 'Paste a link to the file. Links to a GitHub page, a gist or a Brave Goggle work too.'),
+      form,
+      notice,
+    ),
+    h(
+      'div',
+      { class: 'panel' },
+      h('h3', null, 'Your lists'),
+      cards.length ? cards : h('p', { class: 'empty' }, 'No lists yet. Pick some from the ones below.'),
+    ),
     discover.length
       ? h(
           'div',
-          { class: 'discover' },
+          { class: 'panel' },
+          h('h3', null, 'More lists'),
+          h('p', { class: 'muted' }, 'From the Anubis directory and the wider community.'),
           discover.map((d) => {
             const id = d.builtin ? builtinId(d) : subscriptionId(d.url);
             return h(
               'div',
-              { class: 'item' },
+              { class: 'discover-row' },
               h(
-                'h4',
-                null,
-                d.name,
-                d.format ? h('span', { class: 'badge' }, FORMAT_LABEL[d.format as ListFormat] ?? d.format) : null,
-                d.lens ? h('span', { class: 'badge lens', title: 'Hides results the list doesn’t mention' }, 'Lens') : null,
+                'div',
+                { class: 'body' },
+                h('b', null, d.name),
+                h('span', { class: 'kind', title: d.lens ? 'A lens hides results the list doesn’t mention' : undefined }, kindOf(d.format, d.lens)),
+                h('p', null, d.description),
               ),
-              h('p', null, d.description),
               h(
                 'button',
-                { class: 'btn small primary', type: 'button', disabled: busy.has(id), on: { click: () => void subscribe(d.url, d) } },
+                { class: 'text-btn', type: 'button', disabled: busy.has(id), on: { click: () => void subscribe(d.url, d) } },
                 busy.has(id) ? 'Subscribing…' : 'Subscribe',
               ),
             );
@@ -178,7 +197,7 @@ export async function renderLists(): Promise<HTMLElement> {
       : null,
     h(
       'p',
-      { class: 'muted', style: 'margin-top:22px;font-size:12.5px' },
+      { class: 'muted', style: 'margin-top:26px;font-size:13px' },
       'Made a list worth sharing? Add it to the directory with a pull request to ',
       h('a', { href: 'https://github.com/Bishop-V/anubis/blob/main/lists/directory.json', target: '_blank', rel: 'noopener noreferrer' }, 'lists/directory.json'),
       '.',
@@ -216,63 +235,65 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
   };
 
   const facts = [
-    parsed ? plural(parsed.rules.length, 'instruction') : 'Not downloaded yet',
+    parsed ? plural(parsed.rules.length, 'instruction') : 'not downloaded yet',
     parsed?.tags.length ? plural(parsed.tags.length, 'tag') : null,
     meta.author ? `by ${meta.author}` : null,
-    sub.builtin && !cached?.fetchedAt ? 'bundled copy' : `updated ${timeAgo(cached?.fetchedAt ?? 0)}`,
+    sub.builtin && !cached?.fetchedAt ? 'the copy bundled with Anubis' : `updated ${timeAgo(cached?.fetchedAt ?? 0)}`,
     meta.license ?? null,
   ].filter(Boolean) as string[];
+  const links = [
+    meta.homepage ? h('a', { href: meta.homepage, target: '_blank', rel: 'noopener noreferrer' }, 'homepage') : null,
+    meta.issues ? h('a', { href: meta.issues, target: '_blank', rel: 'noopener noreferrer' }, 'suggest changes') : null,
+  ].filter((a): a is HTMLAnchorElement => a !== null);
 
   return h(
     'div',
-    { class: `list-card${sub.enabled ? '' : ' off'}` },
-    h('div', { class: 'avatar', style: `--c: ${color}` }, name.slice(0, 1).toUpperCase()),
+    { class: `list-row${sub.enabled ? '' : ' off'}` },
+    h('i', { class: 'gem mark', style: `--c: ${color}` }),
     h(
       'div',
-      null,
+      { class: 'body' },
       h(
         'h4',
         null,
         name,
-        parsed ? h('span', { class: 'badge' }, FORMAT_LABEL[parsed.format]) : null,
-        parsed?.lens ? h('span', { class: 'badge lens', title: 'Hides results the list doesn’t mention' }, 'Lens') : null,
-        sub.builtin ? h('span', { class: 'badge' }, 'Built in') : null,
+        h(
+          'span',
+          { class: 'kind', title: parsed?.lens ? 'A lens hides results the list doesn’t mention' : undefined },
+          kindOf(parsed?.format, parsed?.lens, sub.builtin),
+        ),
       ),
       meta.description ? h('p', null, meta.description) : null,
       h(
         'div',
         { class: 'facts' },
-        facts.map((f) => h('span', null, f)),
-        meta.homepage ? h('a', { href: meta.homepage, target: '_blank', rel: 'noopener noreferrer' }, 'Homepage') : null,
-        meta.issues ? h('a', { href: meta.issues, target: '_blank', rel: 'noopener noreferrer' }, 'Suggest changes') : null,
+        `${facts.join(', ')}.`,
+        links.length ? ' ' : null,
+        links.flatMap((a, i) => (i ? [', ', a] : [a])),
       ),
       parsed?.tags.length
         ? h(
             'div',
-            { class: 'tag-row' },
-            parsed.tags.slice(0, 12).map((t) => h('span', { class: 'chip', style: `--c: ${t.color}`, title: t.description ?? t.id }, h('i', { class: 'dot' }), t.label)),
+            { class: 'tag-line' },
+            parsed.tags.slice(0, 12).map((t) => h('span', { class: 'tag', style: `--c: ${t.color}`, title: t.description ?? t.id }, h('i', { class: 'gem' }), t.label)),
           )
         : null,
       cached?.error
         ? sub.builtin && !cached.text
-          ? h('div', { class: 'muted', style: 'margin-top:8px;font-size:12px' }, `Using the copy bundled with Anubis (update failed: ${cached.error}).`)
-          : h('div', { class: 'err' }, `Last update failed: ${cached.error}`)
+          ? h('div', { class: 'facts', style: 'margin-top:6px' }, `Using the copy bundled with Anubis until it can update (${cached.error}).`)
+          : h('div', { class: 'err' }, `The last update failed: ${cached.error}.`)
         : null,
       parsed?.errors.length
-        ? h('div', { class: 'muted', style: 'margin-top:6px;font-size:12px' }, `${plural(parsed.errors.length, 'line')} skipped (unsupported or invalid).`)
+        ? h('div', { class: 'facts', style: 'margin-top:6px' }, `${plural(parsed.errors.length, 'line')} skipped: Anubis can’t read that syntax yet.`)
         : null,
     ),
     h(
       'div',
       { class: 'side' },
       h('label', { class: 'switch', title: sub.enabled ? 'On' : 'Off' }, toggle, h('span')),
-      h(
-        'div',
-        { class: 'buttons' },
-        h('button', { class: 'icon-btn', type: 'button', title: 'Update now', attrs: { 'aria-label': `Update ${name}` }, on: { click: update } }, icon(ICON_REFRESH)),
-        h('a', { class: 'icon-btn', href: sub.url, target: '_blank', rel: 'noopener noreferrer', title: 'View source', attrs: { 'aria-label': `View ${name} source` } }, icon(ICON_EXTERNAL)),
-        h('button', { class: 'icon-btn danger', type: 'button', title: 'Unsubscribe', attrs: { 'aria-label': `Unsubscribe from ${name}` }, on: { click: remove } }, icon(ICON_TRASH)),
-      ),
+      h('button', { class: 'icon-btn', type: 'button', title: 'Update now', attrs: { 'aria-label': `Update ${name}` }, on: { click: update } }, icon(ICON_REFRESH)),
+      h('a', { class: 'icon-btn', href: sub.url, target: '_blank', rel: 'noopener noreferrer', title: 'View the file', attrs: { 'aria-label': `View ${name}` } }, icon(ICON_EXTERNAL)),
+      h('button', { class: 'icon-btn danger', type: 'button', title: 'Unsubscribe', attrs: { 'aria-label': `Unsubscribe from ${name}` }, on: { click: remove } }, icon(ICON_TRASH)),
     ),
   );
 }

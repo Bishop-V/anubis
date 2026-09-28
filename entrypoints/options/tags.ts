@@ -35,7 +35,7 @@ export async function renderTags(): Promise<HTMLElement> {
       const pref = rules.prefs[tag.id] ?? {};
       const sources = rules.lists
         .filter((l) => !l.personal && l.tags.some((t) => t.id === tag.id))
-        .map((l) => `${l.name} (${plural(ruleCount(l, tag.id), 'site')})`);
+        .map((l) => `${l.name}, on ${plural(ruleCount(l, tag.id), 'site')}`);
       const personalCount = sites.filter((s) => s.tags.includes(tag.id)).length;
 
       const save = (patch: Partial<TagDef>) => {
@@ -56,60 +56,54 @@ export async function renderTags(): Promise<HTMLElement> {
       );
       action.addEventListener('change', () => void setTagPref(tag.id, { action: action.value === 'list' ? undefined : (action.value as TagAction) }));
 
-      const show = h('input', { type: 'checkbox', checked: !pref.muted, attrs: { 'aria-label': 'Show chip' } });
+      const show = h('input', { type: 'checkbox', checked: !pref.muted, attrs: { 'aria-label': `Show ${tag.label} under results` } });
       show.addEventListener('change', () => void setTagPref(tag.id, { muted: show.checked ? undefined : true }));
 
+      const uses = [mine ? `your tag${personalCount ? `, on ${plural(personalCount, 'site')}` : ''}` : null, ...sources.map((s) => `from ${s}`)].filter(Boolean);
       return h(
         'div',
-        { class: 'tag-card', style: `--c: ${tag.color}` },
-        h('header', null, color, label),
+        { class: 'tag-row', style: `--c: ${tag.color}` },
+        color,
+        label,
         h(
           'div',
-          { class: 'preview' },
-          h('span', { class: 'chip', style: `--c: ${tag.color}` }, h('i', { class: 'dot' }), tag.label),
-          h('span', { class: 'muted', style: 'font-size:12px' }, h('code', null, tag.id)),
+          { class: 'controls' },
+          action,
+          h('label', { class: 'show', title: 'Show this tag under results' }, h('span', { class: 'switch' }, show, h('span')), 'Shown'),
         ),
-        tag.description ? h('div', { class: 'meta' }, tag.description) : null,
+        mine
+          ? h(
+              'button',
+              {
+                class: 'icon-btn danger',
+                type: 'button',
+                title: `Delete “${tag.label}”`,
+                attrs: { 'aria-label': `Delete ${tag.label}` },
+                on: {
+                  click: () => {
+                    if (confirm(`Delete the tag “${tag.label}” and remove it from ${plural(personalCount, 'site')}?`)) {
+                      void editPersonal((t) => removeTag(t, tag.id));
+                    }
+                  },
+                },
+              },
+              icon(ICON_TRASH),
+            )
+          : h('span'),
         h(
           'div',
           { class: 'meta' },
-          [mine ? `Yours${personalCount ? ` · ${plural(personalCount, 'site')}` : ''}` : null, ...sources].filter(Boolean).join(' · ') ||
-            'Not used yet',
+          [tag.description, uses.length ? `${uses.join('; ').replace(/^./, (c) => c.toUpperCase())}.` : 'Not used yet.'].filter(Boolean).join(' '),
         ),
-        h('div', { class: 'row' }, h('span', null, 'When a result has it'), action),
-        h('div', { class: 'row' }, h('span', null, 'Show the chip'), h('label', { class: 'switch' }, show, h('span'))),
-        mine
-          ? h(
-              'div',
-              { class: 'row' },
-              h('span'),
-              h(
-                'button',
-                {
-                  class: 'btn small danger',
-                  type: 'button',
-                  on: {
-                    click: () => {
-                      if (confirm(`Delete the tag “${tag.label}” and remove it from ${plural(personalCount, 'site')}?`)) {
-                        void editPersonal((t) => removeTag(t, tag.id));
-                      }
-                    },
-                  },
-                },
-                icon(ICON_TRASH),
-                'Delete',
-              ),
-            )
-          : null,
       );
     });
 
   // Create a tag
   let pick = TAG_PALETTE[rules.tags.size % TAG_PALETTE.length] ?? '#d4a637';
-  const name = h('input', { type: 'text', placeholder: 'Tag name, e.g. AI slop', maxLength: 40, attrs: { 'aria-label': 'New tag name' } });
+  const name = h('input', { type: 'text', placeholder: 'Name, like “AI slop”', maxLength: 40, attrs: { 'aria-label': 'New tag name' } });
   const color = h('input', { type: 'color', value: pick, attrs: { 'aria-label': 'New tag colour' } });
   color.addEventListener('input', () => (pick = color.value));
-  const desc = h('input', { type: 'text', placeholder: 'What it means (optional)', maxLength: 120, attrs: { 'aria-label': 'Description' } });
+  const desc = h('input', { type: 'text', placeholder: 'What it means, optional', maxLength: 120, attrs: { 'aria-label': 'Description' } });
   const error = h('div', { class: 'notice error', hidden: true });
   const form = h('form', { class: 'inline-form' }, color, name, desc, h('button', { class: 'btn primary', type: 'submit' }, 'Create tag'));
   form.addEventListener('submit', async (e) => {
@@ -147,11 +141,16 @@ export async function renderTags(): Promise<HTMLElement> {
         h(
           'p',
           null,
-          'Lists label results; you decide what a label means. Tags from different lists with the same id are merged, so communities can share a vocabulary.',
+          'Lists label results. You decide what each label does: follow the list, only show it, highlight it, or raise, lower or hide what carries it. Lists that use the same tag name share it.',
         ),
       ),
     ),
-    h('div', { class: 'panel' }, h('h3', null, 'New tag'), h('p', { class: 'muted' }, 'Your tags live in your list, so they travel with it when you publish it.'), form, error),
-    cards.length ? h('div', { class: 'tag-grid' }, cards) : h('div', { class: 'empty' }, 'No tags yet. Subscribe to a list or create one above.'),
+    h('div', { class: 'panel' }, h('h3', null, 'New tag'), h('p', { class: 'muted' }, 'Your tags are saved in your list, so they go with it when you publish it.'), form, error),
+    h(
+      'div',
+      { class: 'panel' },
+      h('h3', null, 'All tags'),
+      cards.length ? h('div', { class: 'tag-rows' }, cards) : h('p', { class: 'empty' }, 'No tags yet. Subscribe to a list or create one above.'),
+    ),
   );
 }

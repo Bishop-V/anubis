@@ -142,16 +142,17 @@ export function matchList(list: CompiledList, t: Target): Rule[] {
   return out;
 }
 
-function describe(rule: Rule): string {
+/** A rule as a plain sentence fragment: "raises it by 5 and tags it “Great tutorial”". */
+function describe(rule: Rule, tagLabel: (id: string) => string): string {
   const parts: string[] = [];
-  if (rule.pin) parts.push('pin');
-  if (rule.allow) parts.push('allow');
-  if (rule.discard) parts.push('hide');
-  if (rule.boost > 0) parts.push(`raise +${rule.boost}`);
-  if (rule.boost < 0) parts.push(`lower ${rule.boost}`);
-  if (rule.tags.length) parts.push(`tag ${rule.tags.join(', ')}`);
-  const where = rule.site ?? rule.host ?? '';
-  return `${parts.join(' · ') || 'match'}${where ? ` (${where})` : ''}`;
+  if (rule.pin) parts.push('pins it');
+  if (rule.allow) parts.push('keeps it at normal');
+  if (rule.discard) parts.push('hides it');
+  if (rule.boost > 0) parts.push(`raises it by ${rule.boost}`);
+  if (rule.boost < 0) parts.push(`lowers it by ${-rule.boost}`);
+  if (rule.tags.length) parts.push(`tags it ${rule.tags.map((t) => `“${tagLabel(t)}”`).join(', ')}`);
+  if (!parts.length) return 'mentions it';
+  return parts.length < 2 ? parts[0]! : `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
 }
 
 type Effect = { discard: boolean; boost: number; highlight?: string; tag?: string };
@@ -226,11 +227,12 @@ export function evaluate(
     const matched = matchList(list, t);
     const reason = (text: string) =>
       verdict.reasons.push({ list: list.name, listId: list.id, personal: list.personal, text });
+    const label = (id: string) => list.tags.find((t) => t.id === id)?.label ?? id;
 
     if (!matched.length) {
       if (list.lens) {
         hide({ kind: 'lens', name: list.name });
-        reason('not in this lens');
+        reason('doesn’t include it, so it’s hidden');
       }
       continue;
     }
@@ -239,7 +241,7 @@ export function evaluate(
 
     if (list.personal) {
       verdict.personal = personalLevel(matched);
-      for (const rule of matched) reason(describe(rule));
+      for (const rule of matched) reason(describe(rule, label));
       // Personal tags still carry the user's tag choices.
       for (const rule of matched) {
         const eff = tagOverride(rule, prefs);
@@ -260,7 +262,7 @@ export function evaluate(
       if (eff.discard) listDiscard ??= eff.tag ? { kind: 'tag', name: eff.tag } : { kind: 'list', name: list.name };
       else if (eff.boost > 0) up = Math.max(up, eff.boost);
       else if (eff.boost < 0) down = Math.min(down, eff.boost);
-      reason(describe(rule));
+      reason(describe(rule, label));
     }
     if (listDiscard) hide(listDiscard);
     else score += up > 0 ? up : down;

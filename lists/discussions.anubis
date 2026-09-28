@@ -4,9 +4,9 @@
 ! homepage: https://github.com/Bishop-V/anubis/tree/main/lists
 ! issues: https://github.com/Bishop-V/anubis/issues
 ! license: CC0-1.0
-! avatar: #9b6bd6
+! avatar: #7a5aa6
 ! expires: 7 days
-! tag: forum | Discussion | #9b6bd6 | Forums, Q&A sites and discussion threads.
+! tag: forum | Discussion | #7a5aa6 | Forums, Q&A sites and discussion threads.
 
 $site=reddit.com,tag=forum
 $site=news.ycombinator.com,tag=forum

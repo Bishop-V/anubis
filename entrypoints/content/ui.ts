@@ -1,23 +1,12 @@
 import { domainChoices, siteOf } from '@/utils/domain';
-import { h, icon, plural } from '@/utils/dom';
+import { h, icon } from '@/utils/dom';
 import type { EngineDef } from '@/utils/engines';
-import {
-  ICON_ANUBIS,
-  ICON_CHECK,
-  ICON_CLOSE,
-  ICON_EXTERNAL,
-  ICON_GEAR,
-  ICON_HIDE,
-  ICON_SCALES,
-  ICON_SHOW,
-  LEVEL_CHIPS,
-  LEVEL_ICONS,
-  LEVEL_LABELS,
-} from '@/utils/icons';
-import { TAG_PALETTE, type TagDef } from '@/utils/listformat';
+import { ICON_ANUBIS, ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
+import type { TagDef } from '@/utils/listformat';
 import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
 import type { PageStats } from '@/utils/messages';
-import { formatSiteLine, getSite, type PersonalLevel } from '@/utils/personal';
+import { getSite, type PersonalLevel } from '@/utils/personal';
+import { summarySentence } from '@/utils/summary';
 import type { FoundResult } from './results';
 import shadowCss from './shadow.css?inline';
 
@@ -27,6 +16,10 @@ export type PageTheme = 'light' | 'dark';
 // root: the page's CSS can't restyle it and its scripts can't read tag names out of it.
 const roots = new WeakMap<HTMLElement, ShadowRoot>();
 const renderKeys = new WeakMap<HTMLElement, string>();
+// What each host currently shows. (`:scope` can't be used for this: inside a
+// shadow root it matches nothing, so old content would pile up.)
+const rendered = new WeakMap<HTMLElement, Node>();
+const HOST_TAGS = 'anubis-chips, anubis-weigh, anubis-bar, anubis-summary, anubis-popover';
 
 function makeHost(tag: string, theme: PageTheme): { host: HTMLElement; root: ShadowRoot } {
   const host = document.createElement(tag);
@@ -41,19 +34,40 @@ function makeHost(tag: string, theme: PageTheme): { host: HTMLElement; root: Sha
 function render(host: HTMLElement, key: string, build: () => Node): void {
   if (renderKeys.get(host) === key) return;
   renderKeys.set(host, key);
-  const root = roots.get(host)!;
-  root.querySelector(':scope > :not(style)')?.remove();
-  root.append(build());
+  const next = build();
+  const prev = rendered.get(host);
+  if (prev?.parentNode) prev.parentNode.replaceChild(next, prev);
+  else roots.get(host)!.append(next);
+  rendered.set(host, next);
 }
 
 export function applyTheme(theme: PageTheme): void {
-  for (const el of document.querySelectorAll<HTMLElement>('anubis-chips, anubis-weigh, anubis-bar, anubis-summary, anubis-popover')) {
-    el.dataset.theme = theme;
+  for (const el of document.querySelectorAll<HTMLElement>(HOST_TAGS)) el.dataset.theme = theme;
+}
+
+const chipsHosts = new WeakMap<HTMLElement, HTMLElement>();
+const weighHosts = new WeakMap<HTMLElement, HTMLElement>();
+const barHosts = new WeakMap<HTMLElement, HTMLElement>();
+const weighResult = new WeakMap<HTMLElement, FoundResult>();
+
+/**
+ * Take Anubis off an element that is no longer a result, for instance after the
+ * engine's own "hide this site" collapsed it or its scripts re-rendered it.
+ */
+export function detachResult(container: HTMLElement): void {
+  for (const map of [chipsHosts, weighHosts, barHosts]) {
+    map.get(container)?.remove();
+    map.delete(container);
   }
 }
 
+function stop(e: Event) {
+  e.preventDefault();
+  e.stopPropagation();
+}
+
 // ---------------------------------------------------------------------------
-// Chips under the title
+// Tags and verdict under the title
 
 export interface ChipContext {
   tags: Map<string, TagDef>;
@@ -61,16 +75,14 @@ export interface ChipContext {
   theme: PageTheme;
 }
 
-const chipsHosts = new WeakMap<HTMLElement, HTMLElement>();
-
 export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipContext, revealed: boolean): void {
   const { container, titleBlock } = result;
-  const verdictChip = verdict.level !== 'normal' && (verdict.level !== 'hide' || revealed) ? verdict.level : undefined;
+  const level = verdict.level !== 'normal' && (verdict.level !== 'hide' || revealed) ? verdict.level : undefined;
   const tags = verdict.tags.filter((id) => !ctx.prefs[id]?.muted && ctx.tags.has(id));
   const page = result.page;
 
   let host = chipsHosts.get(container);
-  if (!verdictChip && !tags.length && !page) {
+  if (!level && !tags.length && !page) {
     host?.remove();
     return;
   }
@@ -80,22 +92,19 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
   }
   // Keep it right after the title, even if the page re-rendered around it.
   if (host.previousElementSibling !== titleBlock) titleBlock.after(host);
-
-  const key = JSON.stringify([verdictChip, verdict.score, tags.map((id) => ctx.tags.get(id)), page, ctx.theme]);
   host.dataset.theme = ctx.theme;
+
+  const key = JSON.stringify([level, tags.map((id) => ctx.tags.get(id)), page]);
   render(host, key, () =>
     h(
       'div',
       { class: 'chips' },
-      verdictChip &&
+      level &&
         h(
           'span',
-          {
-            class: `chip verdict-${verdictChip}`,
-            title: verdict.reasons.map((r) => `${r.list}: ${r.text}`).join('\n'),
-          },
-          icon(LEVEL_ICONS[verdictChip]),
-          LEVEL_CHIPS[verdictChip],
+          { class: `verdict ${level}`, title: verdict.reasons.map((r) => `${r.list}: ${r.text}`).join('\n') },
+          icon(LEVEL_ICONS[level]),
+          LEVEL_CHIPS[level],
         ),
       tags.map((id) => {
         const tag = ctx.tags.get(id)!;
@@ -103,23 +112,21 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
         return h(
           'span',
           {
-            class: 'chip',
+            class: 'tag',
             style: `--c: ${tag.color}`,
-            title: `${tag.description ? `${tag.description}\n` : ''}Tagged by ${sources.join(', ')}`,
+            title: [tag.description, `From ${sources.join(', ')}`].filter(Boolean).join('\n'),
           },
-          h('i', { class: 'dot' }),
+          h('i', { class: 'gem' }),
           tag.label,
         );
       }),
-      page ? h('span', { class: 'chip page', title: `Brought in from results page ${page}` }, `Page ${page}`) : null,
+      page ? h('span', { class: 'page-note', title: 'Brought over by “Weigh deeper”' }, `from page ${page}`) : null,
     ),
   );
 }
 
 // ---------------------------------------------------------------------------
 // Weigh button
-
-const weighHosts = new WeakMap<HTMLElement, HTMLElement>();
 
 export function ensureWeighButton(
   result: FoundResult,
@@ -131,7 +138,6 @@ export function ensureWeighButton(
   let host = weighHosts.get(container);
   if (!host) {
     const made = makeHost('anubis-weigh', theme);
-    host = made.host;
     const button = h(
       'button',
       {
@@ -142,16 +148,17 @@ export function ensureWeighButton(
       },
       icon(ICON_ANUBIS),
     );
-    // Keep the click from reaching the result link underneath.
+    const owner = made.host;
     button.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      onOpen(button, current.get(host!)!);
+      // Keep the click from reaching the result link underneath.
+      stop(e);
+      onOpen(button, weighResult.get(owner)!);
     });
     made.root.append(button);
+    host = owner;
     weighHosts.set(container, host);
   }
-  current.set(host, result);
+  weighResult.set(host, result);
   host.dataset.theme = theme;
 
   if (engine.table) {
@@ -167,7 +174,6 @@ export function ensureWeighButton(
   // The button is absolutely positioned, so the result must be a positioning context.
   if (getComputedStyle(container).position === 'static') container.style.position = 'relative';
 }
-const current = new WeakMap<HTMLElement, FoundResult>();
 
 export function weighButtonOf(container: HTMLElement): HTMLButtonElement | undefined {
   const host = weighHosts.get(container);
@@ -175,17 +181,16 @@ export function weighButtonOf(container: HTMLElement): HTMLButtonElement | undef
 }
 
 // ---------------------------------------------------------------------------
-// Collapsed bar for hidden results
+// One quiet line in place of a hidden result
 
-const barHosts = new WeakMap<HTMLElement, HTMLElement>();
-
-/** "Your list", "tagged “AI slop”", "Copycats removal", "not in Tech blogs". */
+/** "by your list", "because it's tagged “AI slop”", "by Copycats removal"… */
 export function hiddenReason(verdict: Verdict, tags: Map<string, TagDef>): string {
   const by = verdict.hiddenBy;
   if (!by) return '';
-  if (by.kind === 'tag') return `tagged “${tags.get(by.name)?.label ?? by.name}”`;
-  if (by.kind === 'lens') return `not in ${by.name}`;
-  return by.name;
+  if (by.kind === 'personal') return 'by your list';
+  if (by.kind === 'tag') return `because it’s tagged “${tags.get(by.name)?.label ?? by.name}”`;
+  if (by.kind === 'lens') return `because ${by.name} doesn’t include it`;
+  return `by ${by.name}`;
 }
 
 export function renderHiddenBar(
@@ -194,7 +199,7 @@ export function renderHiddenBar(
   theme: PageTheme,
   tags: Map<string, TagDef>,
   show: boolean,
-  actions: { reveal: () => void; weigh: (button: HTMLElement) => void },
+  actions: { reveal: () => void },
 ): void {
   const { container } = result;
   let host = barHosts.get(container);
@@ -209,43 +214,34 @@ export function renderHiddenBar(
   if (container.firstElementChild !== host) container.prepend(host);
   host.dataset.theme = theme;
 
-  const by = hiddenReason(verdict, tags);
-  render(host, JSON.stringify([result.host, by, theme]), () => {
-    const weigh = h('button', { class: 'ghost', type: 'button', title: 'Weigh this site' }, icon(ICON_ANUBIS), 'Weigh');
-    weigh.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      actions.weigh(weigh);
-    });
-    return h(
+  const why = hiddenReason(verdict, tags);
+  const site = result.host.replace(/^www\./, '');
+  render(host, JSON.stringify([site, why]), () =>
+    h(
       'div',
-      { class: 'bar' },
+      { class: 'gone' },
       icon(ICON_HIDE),
-      h('span', { class: 'why', title: verdict.reasons.map((r) => `${r.list}: ${r.text}`).join('\n') }, 'Hidden: ', h('b', null, result.host.replace(/^www\./, '')), by ? ` · ${by}` : ''),
-      h('span', { class: 'spacer' }),
+      h('span', { class: 'why' }, h('b', null, site), ` hidden ${why}`),
       h(
         'button',
         {
-          class: 'ghost',
+          class: 'text-btn',
           type: 'button',
           on: {
             click: (e) => {
-              e.preventDefault();
-              e.stopPropagation();
+              stop(e);
               actions.reveal();
             },
           },
         },
-        icon(ICON_SHOW),
         'Show',
       ),
-      weigh,
-    );
-  });
+    ),
+  );
 }
 
 // ---------------------------------------------------------------------------
-// Summary above the results
+// The summary line above the results
 
 let summaryHost: HTMLElement | undefined;
 
@@ -265,60 +261,43 @@ export function renderSummary(
   if (summaryHost.nextElementSibling !== before) before.before(summaryHost);
   summaryHost.dataset.theme = theme;
 
-  render(summaryHost, JSON.stringify([stats, theme]), () => {
-    const stat = (n: number, label: string) => (n ? h('span', { class: 'stat' }, h('b', null, n), label) : null);
-    return h(
+  render(summaryHost, JSON.stringify(stats), () =>
+    h(
       'div',
       { class: 'summary' },
-      h('span', { class: 'logo' }, icon(ICON_ANUBIS)),
-      h(
-        'span',
-        null,
-        'Weighed ',
-        h('strong', null, plural(stats.total, 'result')),
-        stats.pages > 1 ? ` from ${stats.pages} pages` : '',
-      ),
-      stats.revealed ? stat(stats.hidden, 'hidden') : null,
-      stat(stats.pinned, 'pinned'),
-      stat(stats.raised, 'raised'),
-      stat(stats.lowered, 'lowered'),
-      stat(stats.tagged, 'tagged'),
-      h('span', { class: 'spacer' }),
+      h('span', { class: 'mark' }, icon(ICON_ANUBIS)),
+      h('span', { class: 'sentence' }, summarySentence(stats)),
+      stats.hidden
+        ? h(
+            'button',
+            { class: 'text-btn', type: 'button', on: { click: actions.toggleReveal } },
+            stats.revealed ? 'Hide them again' : 'Show hidden',
+          )
+        : null,
       stats.canGoDeeper || stats.loading
         ? h(
             'button',
             {
-              class: 'ghost',
+              class: 'text-btn',
               type: 'button',
               disabled: stats.loading,
-              title: 'Load the next page of results and rerank them together',
+              title: 'Bring the next page of results here and weigh them together',
               on: { click: actions.deeper },
             },
-            icon(ICON_SCALES),
             stats.loading ? 'Weighing…' : 'Weigh deeper',
-          )
-        : null,
-      stats.hidden
-        ? h(
-            'button',
-            { class: 'ghost', type: 'button', on: { click: actions.toggleReveal } },
-            icon(stats.revealed ? ICON_HIDE : ICON_SHOW),
-            stats.revealed ? 'Hide again' : `Show ${stats.hidden} hidden`,
           )
         : null,
       h(
         'button',
-        { class: 'icon-btn', type: 'button', title: 'Anubis settings', on: { click: actions.settings } },
+        { class: 'icon-btn', type: 'button', title: 'Anubis settings', attrs: { 'aria-label': 'Anubis settings' }, on: { click: actions.settings } },
         icon(ICON_GEAR),
       ),
-    );
-  });
+    ),
+  );
 }
 
 export function removeAllUi(): void {
-  document
-    .querySelectorAll('anubis-chips, anubis-weigh, anubis-bar, anubis-summary, anubis-popover')
-    .forEach((el) => el.remove());
+  document.querySelectorAll(HOST_TAGS).forEach((el) => el.remove());
   summaryHost = undefined;
 }
 
@@ -332,17 +311,16 @@ export interface PopoverData {
   baseline: Verdict;
   personalText: string;
   tags: Map<string, TagDef>;
-  prefs: Record<string, TagPref>;
-  /** Subscribed lists with an issue tracker, for "suggest" links. */
-  trackers: { name: string; issues: string }[];
+  /** Subscribed lists with an issue tracker, for "suggest" links, with the tag ids each defines. */
+  trackers: { name: string; issues: string; tags: string[] }[];
   theme: PageTheme;
 }
 
 export interface PopoverActions {
   setLevel(domain: string, level: PersonalLevel): void;
   toggleTag(domain: string, tag: string): void;
-  createTag(domain: string, label: string, color: string): void;
-  suggest(tracker: { name: string; issues: string }, domain: string): string | undefined;
+  createTag(domain: string, label: string): void;
+  suggest(tracker: { name: string; issues: string; tags: string[] }, domain: string): string | undefined;
   settings(): void;
 }
 
@@ -365,6 +343,7 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
   const keepDomain = same ? popover?.domain : undefined;
   if (popover && !same) closePopover();
 
+  const opening = !popover;
   if (!popover) {
     const { host } = makeHost('anubis-popover', data.theme);
     document.documentElement.append(host);
@@ -400,26 +379,73 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
   popover.host.dataset.theme = data.theme;
 
   const root = roots.get(popover.host)!;
-  const hadFocus = root.activeElement?.getAttribute('data-focus-key');
-  root.querySelector(':scope > .pop')?.remove();
-  root.append(buildPopover(data, actions, domain, (d) => {
+  const focusKey = root.activeElement?.getAttribute('data-focus-key');
+  const oldPop = rendered.get(popover.host) as HTMLElement | undefined;
+  const oldBalance = oldPop?.querySelector('svg.balance');
+  const { pop, level } = buildPopover(data, actions, domain, (d) => {
     if (popover) popover.domain = d;
     openPopover(anchor, data, actions);
-  }));
-  position(popover.host, anchor);
+  });
+  if (opening) pop.classList.add('opening');
+
+  // Keep the old balance so it swings to the new weight instead of jumping.
+  const balance = oldBalance ?? pop.querySelector('svg.balance')!;
+  if (oldBalance) pop.querySelector('svg.balance')?.replaceWith(oldBalance);
+  oldPop?.remove();
+  root.append(pop);
+  rendered.set(popover.host, pop);
+  // Position only on open: if the result moves when reranked, the menu stays put.
+  if (opening) position(popover.host, anchor);
+  if (opening) setBalance(balance, 'normal');
+  requestAnimationFrame(() => requestAnimationFrame(() => setBalance(balance, level)));
+
   const focusTarget =
-    (hadFocus && root.querySelector<HTMLElement>(`[data-focus-key="${hadFocus}"]`)) ||
-    root.querySelector<HTMLElement>('.level[aria-pressed="true"], .level');
+    (focusKey && root.querySelector<HTMLElement>(`[data-focus-key="${focusKey}"]`)) ||
+    root.querySelector<HTMLElement>('.level[aria-pressed="true"]') ||
+    root.querySelector<HTMLElement>('.level');
   focusTarget?.focus({ preventScroll: true });
 }
 
 function position(host: HTMLElement, anchor: HTMLElement): void {
   const rect = anchor.getBoundingClientRect();
-  const width = Math.min(336, window.innerWidth - 16);
+  const width = Math.min(312, window.innerWidth - 16);
   let left = rect.right - width + window.scrollX;
   left = Math.max(window.scrollX + 8, Math.min(left, window.scrollX + window.innerWidth - width - 8));
   host.style.left = `${left}px`;
-  host.style.top = `${rect.bottom + window.scrollY + 8}px`;
+  host.style.top = `${rect.bottom + window.scrollY + 6}px`;
+}
+
+// The balance tilts with the verdict: a hidden site sinks, a pinned one rises
+// against the feather. Angles in degrees; negative drops the site's (left) pan.
+const TILT: Record<Level, number> = { hide: -13, lower: -6, normal: 0, raise: 6, pin: 13 };
+const ARM = 52;
+
+function balanceSvg(): SVGSVGElement {
+  const t = document.createElement('template');
+  t.innerHTML = `<svg class="balance" viewBox="0 0 132 40" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M66 7v28M56 37h20"/>
+    <circle cx="66" cy="5" r="1.6" fill="currentColor" stroke="none"/>
+    <g class="beam" style="transform-origin: 66px 9px; transform-box: view-box"><path d="M14 9h104"/></g>
+    <g class="pan left">
+      <path d="M14 9 7 24M14 9l7 15"/><path d="M4 24h20a10 5 0 0 1-20 0z" fill="currentColor" fill-opacity=".14"/>
+      <path d="M14 21.5c-1.8-1.6-3.2-2.6-3.2-4a1.7 1.7 0 0 1 3.2-.8 1.7 1.7 0 0 1 3.2.8c0 1.4-1.4 2.4-3.2 4z" fill="currentColor" stroke="none"/>
+    </g>
+    <g class="pan right">
+      <path d="M118 9l-7 15M118 9l7 15"/><path d="M108 24h20a10 5 0 0 1-20 0z" fill="currentColor" fill-opacity=".14"/>
+      <path d="M115 22.5c1.5-3.5 3.5-5.8 6-7-.3 3.2-2.4 5.6-6 7zM116.4 20.6l2.4-.4"/>
+    </g>
+  </svg>`;
+  return t.content.firstElementChild as SVGSVGElement;
+}
+
+function setBalance(svg: Element, level: Level): void {
+  const deg = TILT[level];
+  const rad = (deg * Math.PI) / 180;
+  const dy = ARM * Math.sin(rad);
+  const dx = ARM * (1 - Math.cos(rad));
+  svg.querySelector<SVGGElement>('.beam')?.style.setProperty('transform', `rotate(${deg}deg)`);
+  svg.querySelector<SVGGElement>('.pan.left')?.style.setProperty('transform', `translate(${dx}px, ${-dy}px)`);
+  svg.querySelector<SVGGElement>('.pan.right')?.style.setProperty('transform', `translate(${-dx}px, ${dy}px)`);
 }
 
 function buildPopover(
@@ -427,121 +453,99 @@ function buildPopover(
   actions: PopoverActions,
   domain: string,
   switchDomain: (d: string) => void,
-): HTMLElement {
+): { pop: HTMLElement; level: Level } {
   const entry = getSite(data.personalText, domain);
   const personal = entry?.level;
   const pressed: Level | undefined = personal === 'allow' ? 'normal' : personal && personal !== 'normal' ? personal : undefined;
-  const inherited = data.baseline.level;
+  const fromLists = data.baseline.level;
+  const shown: Level = pressed ?? fromLists;
   const choices = domainChoices(data.result.host);
 
   const select = h(
     'select',
-    { class: 'domain', title: 'Apply to', attrs: { 'aria-label': 'Apply to' } },
+    {
+      class: 'domain',
+      title: choices.length > 1 ? 'Choose how much of the site this applies to' : undefined,
+      disabled: choices.length < 2,
+      attrs: { 'aria-label': 'Site to weigh' },
+    },
     choices.map((d) => h('option', { value: d, selected: d === domain }, d)),
   );
   select.addEventListener('change', () => switchDomain(select.value));
 
   const levels = h(
     'div',
-    { class: 'levels', attrs: { role: 'group', 'aria-label': 'Ranking' } },
+    { class: 'levels', attrs: { role: 'group', 'aria-label': 'Weight' } },
     LEVELS.map((level) =>
       h(
         'button',
         {
-          class: `level ${level}${!pressed && level === inherited && level !== 'normal' ? ' inherited' : ''}`,
+          class: `level ${level}${!pressed && level === fromLists && level !== 'normal' ? ' from-list' : ''}`,
           type: 'button',
           attrs: { 'aria-pressed': String(pressed === level), 'data-focus-key': `level-${level}` },
           on: {
             click: () => {
               if (level === 'normal') {
-                // "Normal" must beat the lists when they rank this site, so it becomes an explicit allow.
-                actions.setLevel(domain, inherited === 'normal' ? 'normal' : 'allow');
+                // "Normal" has to beat the lists when they rank this site, so it becomes an explicit allow.
+                actions.setLevel(domain, fromLists === 'normal' ? 'normal' : 'allow');
               } else actions.setLevel(domain, pressed === level ? 'normal' : level);
             },
           },
         },
-        icon(LEVEL_ICONS[level]),
         LEVEL_LABELS[level],
       ),
     ),
   );
 
   let hint: string;
-  if (pressed) {
-    hint = personal === 'allow' ? 'You set this site to Normal, overriding your lists.' : `Your choice for ${domain}.`;
-  } else if (inherited !== 'normal') {
+  if (personal === 'allow') hint = 'Normal, whatever your lists say.';
+  else if (pressed) hint = `Your weighing of ${domain}, on every search.`;
+  else if (fromLists !== 'normal') {
     const lists = [...new Set(data.baseline.reasons.map((r) => r.list))].join(', ');
-    hint = `${LEVEL_CHIPS[inherited]} by ${lists}. Pick a level to override it.`;
-  } else hint = 'Not weighed yet. Your choice applies to every search.';
+    hint = `${LEVEL_CHIPS[fromLists]} by ${lists}. Choose a weight to decide yourself.`;
+  } else hint = 'Choose a weight. It applies on every search.';
 
-  // Tags: personal ones toggle; ones from lists are shown as fixed.
-  const personalTags = new Set(entry?.tags ?? []);
-  const fromLists = new Set(data.verdict.tags.filter((id) => (data.verdict.tagSources[id] ?? []).some((s) => s !== 'Your list')));
+  // Tags you set toggle; tags from lists are shown but fixed.
+  const mine = new Set(entry?.tags ?? []);
+  const fromList = new Set(data.verdict.tags.filter((id) => (data.verdict.tagSources[id] ?? []).some((s) => s !== 'Your list')));
   const tagIds = [...data.tags.keys()].sort((a, b) => {
-    const rank = (id: string) => (personalTags.has(id) ? 0 : fromLists.has(id) ? 1 : 2);
+    const rank = (id: string) => (mine.has(id) ? 0 : fromList.has(id) ? 1 : 2);
     return rank(a) - rank(b) || data.tags.get(a)!.label.localeCompare(data.tags.get(b)!.label);
   });
-  const tagButtons = tagIds.map((id) => {
+  const tagItems = tagIds.map((id) => {
     const tag = data.tags.get(id)!;
-    const on = personalTags.has(id);
-    const locked = !on && fromLists.has(id);
-    if (locked) {
+    const on = mine.has(id);
+    if (!on && fromList.has(id)) {
       return h(
         'span',
-        {
-          class: 'chip locked',
-          style: `--c: ${tag.color}`,
-          title: `From ${(data.verdict.tagSources[id] ?? []).join(', ')}`,
-        },
-        h('i', { class: 'dot' }),
+        { class: 'fixed', style: `--c: ${tag.color}`, title: `From ${(data.verdict.tagSources[id] ?? []).join(', ')}` },
+        h('i', { class: 'gem' }),
         tag.label,
       );
     }
     return h(
       'button',
       {
-        class: 'chip',
         type: 'button',
-        style: `--c: ${tag.color}; --tagc: ${tag.color}`,
-        title: tag.description ?? (on ? `Remove “${tag.label}”` : `Tag ${domain} “${tag.label}”`),
+        style: `--c: ${tag.color}`,
+        title: tag.description ?? (on ? `Untag ${domain}` : `Tag ${domain} “${tag.label}”`),
         attrs: { 'aria-pressed': String(on), 'data-focus-key': `tag-${id}` },
         on: { click: () => actions.toggleTag(domain, id) },
       },
-      h('i', { class: 'dot' }),
+      h('i', { class: on ? 'gem' : 'gem hollow' }),
       tag.label,
-      on ? icon(ICON_CHECK) : null,
     );
   });
 
-  // New tag
-  let color = TAG_PALETTE[data.tags.size % TAG_PALETTE.length] ?? '#d4a637';
   const input = h('input', {
     type: 'text',
-    placeholder: 'New tag…',
+    placeholder: 'New tag',
     maxLength: 32,
     attrs: { 'aria-label': 'New tag name', 'data-focus-key': 'new-tag' },
   });
-  const swatches = h(
-    'div',
-    { class: 'swatches' },
-    TAG_PALETTE.slice(0, 5).map((c) => {
-      const b = h('button', {
-        class: 'swatch',
-        type: 'button',
-        style: `--sw: ${c}`,
-        title: c,
-        attrs: { 'aria-pressed': String(c === color), 'aria-label': `Colour ${c}` },
-      });
-      b.addEventListener('click', () => {
-        color = c;
-        swatches.querySelectorAll('.swatch').forEach((s) => s.setAttribute('aria-pressed', String(s === b)));
-      });
-      return b;
-    }),
-  );
   const create = () => {
     const label = input.value.trim();
-    if (label) actions.createTag(domain, label, color);
+    if (label) actions.createTag(domain, label);
   };
   input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
@@ -549,79 +553,78 @@ function buildPopover(
       create();
     }
   });
-  const newTag = h(
-    'div',
-    { class: 'new-tag' },
-    input,
-    swatches,
-    h('button', { class: 'add', type: 'button', title: 'Create tag', on: { click: create } }, 'Add'),
-  );
 
-  const reasons = data.verdict.reasons.slice(0, 6);
-  const suggestLinks = data.trackers
-    .slice(0, 4)
+  // Once you've weighed a site yourself, offer to propose it to up to two lists:
+  // those that already use one of your tags for it come first.
+  const ranked = entry
+    ? [...data.trackers].sort((a, b) => Number(b.tags.some((t) => mine.has(t))) - Number(a.tags.some((t) => mine.has(t))))
+    : [];
+  const suggestLinks = ranked
+    .slice(0, 2)
     .map((t) => {
       const href = actions.suggest(t, domain);
       return href
-        ? h(
-            'a',
-            { class: 'suggest', href, target: '_blank', rel: 'noopener noreferrer', title: `Propose ${domain} to ${t.name} on its issue tracker` },
-            t.name,
-            icon(ICON_EXTERNAL),
-          )
+        ? h('a', { href, target: '_blank', rel: 'noopener noreferrer', title: `Propose ${domain} to ${t.name} on its issue tracker` }, t.name)
         : null;
     })
-    .filter(Boolean);
+    .filter((a): a is HTMLAnchorElement => a !== null);
 
-  const close = h(
-    'button',
-    { class: 'icon-btn', type: 'button', title: 'Close', attrs: { 'aria-label': 'Close' }, on: { click: () => closePopover() } },
-    icon(ICON_CLOSE),
-  );
+  const reasons = data.verdict.reasons.slice(0, 6);
 
   const pop = h(
     'div',
     { class: 'pop', attrs: { role: 'dialog', 'aria-label': `Weigh ${domain}` } },
     h(
       'div',
-      { class: 'pop-head' },
-      h('span', { class: 'seal' }, icon(ICON_ANUBIS)),
-      h('div', { class: 'pop-title' }, h('small', null, 'Weigh this site'), select),
-      close,
+      { class: 'head' },
+      h('span', { class: 'cartouche' }, select),
+      h(
+        'button',
+        { class: 'icon-btn close', type: 'button', title: 'Close', attrs: { 'aria-label': 'Close' }, on: { click: () => closePopover() } },
+        icon(ICON_CLOSE),
+      ),
     ),
+    balanceSvg(),
+    levels,
+    h('p', { class: 'hint' }, hint),
     h(
       'div',
-      { class: 'pop-body' },
-      h('div', { class: 'section' }, levels, h('p', { class: 'hint' }, hint)),
+      { class: 'section' },
+      h('h3', null, 'Tags'),
+      tagItems.length ? h('div', { class: 'tags' }, tagItems) : null,
       h(
         'div',
-        { class: 'section' },
-        h('div', { class: 'label' }, 'Tags'),
-        tagButtons.length ? h('div', { class: 'tags' }, tagButtons) : h('p', { class: 'hint' }, 'No tags yet. Make one:'),
-        newTag,
+        { class: 'new-tag' },
+        input,
+        h('button', { class: 'text-btn', type: 'button', on: { click: create } }, 'Add tag'),
       ),
-      reasons.length || suggestLinks.length
-        ? h(
-            'div',
-            { class: 'section' },
-            h('div', { class: 'label' }, 'Why'),
-            reasons.length
-              ? h(
-                  'ul',
-                  { class: 'reasons' },
-                  reasons.map((r) => h('li', null, h('span', { class: 'src' }, r.list), h('span', { class: 'what' }, r.text))),
-                )
-              : null,
-            suggestLinks.length ? h('div', { class: 'links' }, h('span', { class: 'links-label' }, 'Suggest to'), suggestLinks) : null,
-          )
-        : null,
     ),
+    reasons.length || suggestLinks.length
+      ? h(
+          'div',
+          { class: 'section' },
+          h('h3', null, 'Why'),
+          reasons.length
+            ? h('ul', { class: 'reasons' }, reasons.map((r) => h('li', null, h('b', null, r.list), ` ${r.text}.`)))
+            : null,
+          suggestLinks.length
+            ? h(
+                'p',
+                { class: 'suggest' },
+                'Should a list include it? Suggest it to ',
+                suggestLinks.flatMap((a, i) => (i ? [' or ', a] : [a])),
+                '.',
+              )
+            : null,
+        )
+      : null,
     h(
       'div',
-      { class: 'pop-foot' },
-      h('span', null, entry ? h('code', null, formatSiteLine(entry.site, entry.level, entry.tags) ?? '') : 'Saved to your list'),
-      h('button', { type: 'button', on: { click: actions.settings } }, 'Settings'),
+      { class: 'foot' },
+      h('span', null, entry ? 'Saved in your list.' : ''),
+      h('button', { class: 'text-btn', type: 'button', on: { click: actions.settings } }, 'Settings'),
     ),
   );
-  return pop;
+  return { pop, level: shown };
 }
+

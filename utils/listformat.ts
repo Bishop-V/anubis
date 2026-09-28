@@ -87,16 +87,17 @@ const META_KEYS = new Set([
   'title',
 ]);
 
-// Tag colours for tags that don't pick one. Chosen to read on light and dark pages.
+// Tag colours for tags that don't pick one: the pigments of Egyptian painting,
+// muted enough to sit quietly on light and dark search pages.
 export const TAG_PALETTE = [
-  '#d4a637', // gold
-  '#e0664f', // terracotta
-  '#3fa37a', // malachite
-  '#4a86d8', // lapis
-  '#9b6bd6', // amethyst
-  '#d65a8f', // carnelian pink
-  '#2fa6b3', // turquoise
-  '#8a9a3b', // papyrus green
+  '#c8962e', // yellow ochre
+  '#b5452e', // red ochre
+  '#3a8a67', // malachite
+  '#2f5fae', // Egyptian blue
+  '#7a5aa6', // amethyst
+  '#2b9aa0', // turquoise
+  '#7f8f3a', // papyrus
+  '#8c6a4f', // umber
 ];
 
 export function colorForTag(id: string): string {

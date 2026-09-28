@@ -1,7 +1,6 @@
 import '@/assets/theme.css';
 import './style.css';
-import { h, icon } from '@/utils/dom';
-import { ICON_GLOBE, ICON_PALETTE, ICON_SCALES, ICON_SCROLL, ICON_SHARE, ICON_TAG } from '@/utils/icons';
+import { h } from '@/utils/dom';
 import { listSites } from '@/utils/personal';
 import { getSubscriptions, loadRuleSet, watchRuleSet } from '@/utils/ruleset';
 import { initTheme, themeSwitcher } from '@/utils/theme';
@@ -16,17 +15,16 @@ import { renderTags } from './tags';
 interface Section {
   id: string;
   label: string;
-  icon: string;
   render: () => Promise<HTMLElement>;
 }
 
 const SECTIONS: Section[] = [
-  { id: 'sites', label: 'Your sites', icon: ICON_SCALES, render: renderSites },
-  { id: 'tags', label: 'Tags', icon: ICON_TAG, render: renderTags },
-  { id: 'lists', label: 'Lists', icon: ICON_SCROLL, render: renderLists },
-  { id: 'appearance', label: 'Appearance', icon: ICON_PALETTE, render: renderAppearance },
-  { id: 'engines', label: 'Search engines', icon: ICON_GLOBE, render: renderEngines },
-  { id: 'share', label: 'Share & backup', icon: ICON_SHARE, render: renderShare },
+  { id: 'sites', label: 'Your sites', render: renderSites },
+  { id: 'tags', label: 'Tags', render: renderTags },
+  { id: 'lists', label: 'Lists', render: renderLists },
+  { id: 'appearance', label: 'Appearance', render: renderAppearance },
+  { id: 'engines', label: 'Search engines', render: renderEngines },
+  { id: 'share', label: 'Share and back up', render: renderShare },
 ];
 
 const nav = document.querySelector<HTMLElement>('#nav')!;
@@ -56,7 +54,6 @@ async function renderNav() {
       h(
         'a',
         { href: `#${s.id}`, attrs: { 'aria-current': s.id === active ? 'page' : undefined } },
-        icon(s.icon),
         s.label,
         counts[s.id] !== undefined ? h('span', { class: 'count' }, counts[s.id]) : null,
       ),

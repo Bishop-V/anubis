@@ -28,7 +28,7 @@ export async function renderSites(): Promise<HTMLElement> {
         h(
           'p',
           null,
-          'Sites you have weighed yourself. Your choices beat every list you subscribe to. Use the Anubis button on any search result, or add sites here.',
+          'Sites you’ve weighed yourself. Your choice beats every list you subscribe to. Weigh sites from the Anubis button on any search result, or add them here.',
         ),
       ),
       h(
@@ -47,7 +47,7 @@ export async function renderSites(): Promise<HTMLElement> {
             },
           },
           icon(ICON_EDIT),
-          editingText ? 'Back to table' : 'Edit as text',
+          editingText ? 'Back to the table' : 'Edit as text',
         ),
         h(
           'button',
@@ -61,7 +61,7 @@ export async function renderSites(): Promise<HTMLElement> {
       ? h(
           'div',
           { class: 'notice' },
-          'Your list is too big for browser sync, so it is saved on this device only. Export it to keep a copy.',
+          'Your list is too big for browser sync, so it’s saved on this device only. Export it to keep a copy.',
         )
       : null,
     editingText ? textEditor(rules) : table(rules, entries),
@@ -74,7 +74,7 @@ function addForm(): HTMLElement {
   const seg = levelSeg(level, (l) => {
     level = l;
     seg.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.level === l)));
-  });
+  }, false);
   const error = h('div', { class: 'notice error', hidden: true });
   const form = h(
     'form',
@@ -96,13 +96,13 @@ function addForm(): HTMLElement {
     input.blur();
     await editPersonal((t) => setSite(t, domain, level, []));
   });
-  return h('div', { class: 'panel' }, h('h3', null, 'Weigh a site'), h('p', { class: 'muted' }, 'Applies to the site and all its subdomains.'), form, error);
+  return h('div', { class: 'panel' }, h('h3', null, 'Weigh a site'), h('p', { class: 'muted' }, 'It applies to the site and all its subdomains.'), form, error);
 }
 
-function levelSeg(current: Level | undefined, onPick: (l: Level) => void, compact = false): HTMLElement {
+function levelSeg(current: Level | undefined, onPick: (l: Level) => void, compact = true): HTMLElement {
   return h(
     'div',
-    { class: 'seg levels', attrs: { role: 'group', 'aria-label': 'Ranking' } },
+    { class: compact ? 'levels' : 'levels labelled', attrs: { role: 'group', 'aria-label': 'Weight' } },
     LEVELS.map((l) =>
       h(
         'button',
@@ -143,8 +143,8 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
         const available = tagIds.filter((id) => !entry.tags.includes(id));
         const addTag = h(
           'select',
-          { class: 'add-tag', attrs: { 'aria-label': `Add a tag to ${entry.site}` }, style: 'height:24px;font-size:12px;padding:0 6px' },
-          h('option', { value: '' }, '+ tag'),
+          { class: 'add-tag', attrs: { 'aria-label': `Add a tag to ${entry.site}` } },
+          h('option', { value: '' }, 'Add tag'),
           available.map((id) => h('option', { value: id }, rules.tags.get(id)?.label ?? id)),
         );
         addTag.addEventListener('change', () => {
@@ -153,7 +153,7 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
         return h(
           'tr',
           null,
-          h('td', { class: 'site' }, entry.site, entry.level === 'allow' ? h('div', { class: 'muted', style: 'font-weight:400;font-size:12px' }, 'Allowed: lists can’t rank it') : null),
+          h('td', { class: 'site' }, entry.site, entry.level === 'allow' ? h('div', { class: 'muted', style: 'font-weight:400;font-size:12.5px' }, 'Kept at normal, whatever your lists say') : null),
           h('td', null, levelSeg(level, setLevel, true)),
           h(
             'td',
@@ -166,16 +166,14 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
                 return h(
                   'button',
                   {
-                    class: 'chip',
+                    class: 'tag',
                     type: 'button',
                     style: `--c: ${tag?.color ?? 'var(--gold)'}`,
-                    title: `Remove “${tag?.label ?? id}”`,
-                    attrs: { 'aria-pressed': 'true' },
+                    title: `Remove “${tag?.label ?? id}” from ${entry.site}`,
                     on: { click: () => void editPersonal((t) => setSite(t, entry.site, entry.level, entry.tags.filter((x) => x !== id))) },
                   },
-                  h('i', { class: 'dot' }),
+                  h('i', { class: 'gem' }),
                   tag?.label ?? id,
-                  icon(ICON_CLOSE),
                 );
               }),
               available.length ? addTag : null,
@@ -221,12 +219,12 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
             h(
               'table',
               { class: 'sites' },
-              h('thead', null, h('tr', null, h('th', null, 'Site'), h('th', null, 'Ranking'), h('th', null, 'Tags'), h('th'))),
+              h('thead', null, h('tr', null, h('th', null, 'Site'), h('th', null, 'Weight'), h('th', null, 'Tags'), h('th'))),
               body,
             ),
             entries.length > 500 ? h('p', { class: 'muted' }, 'Showing the first 500. Filter to find the rest.') : null,
           )
-        : h('div', { class: 'empty' }, 'Nothing weighed yet. Add a site above, or use the Anubis button on a search result.'),
+        : h('p', { class: 'empty' }, 'Nothing weighed yet. Add a site above, or use the Anubis button on a search result.'),
     ),
   );
 }
@@ -239,7 +237,7 @@ function textEditor(rules: RuleSet): HTMLElement {
     status.replaceChildren(
       parsed.errors.length
         ? h('ul', { class: 'errors' }, parsed.errors.slice(0, 20).map((e) => h('li', null, `Line ${e.line}: ${e.message}`)))
-        : h('p', { class: 'muted', style: 'font-size:12.5px' }, `${plural(parsed.rules.length, 'instruction')}, ${plural(parsed.tags.length, 'tag')}. No problems.`),
+        : h('p', { class: 'muted', style: 'font-size:12.5px' }, `${plural(parsed.rules.length, 'instruction')} and ${plural(parsed.tags.length, 'tag')}, all readable.`),
     );
   };
   area.addEventListener('input', check);
@@ -251,7 +249,7 @@ function textEditor(rules: RuleSet): HTMLElement {
     h(
       'p',
       { class: 'muted' },
-      'Your list in the Anubis list format (Brave Goggles syntax plus tags). This is exactly what you would publish. Lines the table can’t show are kept as they are.',
+      'Your list in the Anubis list format: Brave Goggles syntax plus tags. It’s exactly the file you would publish. Lines the table can’t show are kept as written.',
     ),
     area,
     status,
@@ -287,7 +285,7 @@ function textEditor(rules: RuleSet): HTMLElement {
         },
         'Cancel',
       ),
-      h('a', { class: 'btn ghost', href: 'https://github.com/Bishop-V/anubis/blob/main/docs/list-format.md', target: '_blank', rel: 'noopener noreferrer' }, 'Format reference'),
+      h('a', { class: 'text-btn', href: 'https://github.com/Bishop-V/anubis/blob/main/docs/list-format.md', target: '_blank', rel: 'noopener noreferrer' }, 'Format reference'),
     ),
   );
 }

@@ -4,9 +4,9 @@
 ! homepage: https://github.com/Bishop-V/anubis/tree/main/lists
 ! issues: https://github.com/Bishop-V/anubis/issues
 ! license: CC0-1.0
-! avatar: #4a86d8
+! avatar: #2f5fae
 ! expires: 7 days
-! tag: docs | Official docs | #4a86d8 | Documentation published by the project or vendor itself.
+! tag: docs | Official docs | #2f5fae | Documentation published by the project or vendor itself.
 
 ! Web platform
 $site=developer.mozilla.org,tag=docs,boost=1

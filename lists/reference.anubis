@@ -4,10 +4,10 @@
 ! homepage: https://github.com/Bishop-V/anubis/tree/main/lists
 ! issues: https://github.com/Bishop-V/anubis/issues
 ! license: CC0-1.0
-! avatar: #2fa6b3
+! avatar: #2b9aa0
 ! expires: 7 days
-! tag: reference | Reference | #2fa6b3 | Encyclopedias, dictionaries and archives.
-! tag: research | Research | #3fa37a | Papers, preprints and scholarly indexes.
+! tag: reference | Reference | #2b9aa0 | Encyclopedias, dictionaries and archives.
+! tag: research | Research | #3a8a67 | Papers, preprints and scholarly indexes.
 
 $site=wikipedia.org,tag=reference
 $site=wiktionary.org,tag=reference
