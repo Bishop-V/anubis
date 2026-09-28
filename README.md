@@ -55,6 +55,20 @@ If the dev browser doesn't open on its own, build and load the extension yoursel
 
 `flake.nix` pins the whole toolchain. `nix develop` in this folder gives you Node and runs `npm install` on first entry; run the commands above inside that shell rather than installing anything globally. For one-offs, `nix develop -c npm test`.
 
+### Building the store release
+
+These are the steps the release uses, and the ones for rebuilding the Firefox add-on from its source zip. Use **Node.js 22** and npm on Linux, macOS or Windows:
+
+```sh
+npm ci               # installs the exact versions in package-lock.json
+npm run zip          # .output/anubis-<version>-firefox.zip and -sources.zip
+npm run zip:chrome   # .output/anubis-<version>-chrome.zip, also used for Edge
+```
+
+The extension itself is in `.output/firefox-mv2/` (and `.output/chrome-mv3/`) after the zips are made.
+
+To publish a version, set `version` in `package.json`, merge it, then push a matching tag (`git tag v0.3.0 && git push origin v0.3.0`). `.github/workflows/release.yml` checks the tag against `package.json`, runs CI, builds the zips, creates a GitHub Release and, once approved in the `release` environment, submits to the Chrome Web Store, Firefox Add-ons and Edge Add-ons.
+
 ### Before opening a pull request
 
 `npm run compile` and `npm test` should pass, both builds should succeed, and `npx web-ext lint -s .output/firefox-mv2` should be at zero warnings — CI treats warnings as errors. `.github/workflows/ci.yml` runs all of it on pushes to main and on pull requests.

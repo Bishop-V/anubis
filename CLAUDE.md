@@ -30,6 +30,7 @@ Firefox is the default target (`browser: 'firefox'` in `wxt.config.ts`). The `:c
 - `npx web-ext lint -s .output/firefox-mv2`: the Mozilla add-on linter; keep it at zero warnings (CI treats warnings as errors)
 - `.github/workflows/ci.yml` runs compile, tests, both builds and the lint on pushes to main and on pull requests
 - `npm run zip` / `npm run zip:chrome`: package for the store
+- `.github/workflows/release.yml` releases on a `v*` tag that matches `package.json`'s version: CI, both zips, a GitHub Release, then `wxt submit` to Chrome, Firefox and Edge after approval in the `release` environment, which holds the store keys
 - `npm run docs:dev` / `npm run docs:build`: the documentation site (VitePress) from `docs/`. The build fails on a broken link. `.github/workflows/docs.yml` builds it on pull requests and publishes it to GitHub Pages from main. `node e2e/run.mjs docs` regenerates its screenshots in `docs/img/` from the mock pages; rerun it after changing anything they show.
 
 ## Checking on live pages
