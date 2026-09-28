@@ -57,6 +57,12 @@ Firefox is the default target (`browser: 'firefox'` in `wxt.config.ts`). The `:c
 - Ask for as few permissions as possible. Only add a permission the feature actually needs.
 - Verify changes by type-checking, `npm test`, building both browsers, and loading the extension. Search pages can only be checked for real in a browser; `npm run e2e` covers the logic against mocks.
 
+## Working agreements
+
+- Commit messages: the message text only — no trailers, no co-author or AI attribution. Keep them short and general unless detail is asked for.
+- Keep replies short. Explain browser-extension concepts (manifest keys, permissions, content versus background scripts, MV2 versus MV3) briefly the first time they come up.
+- Committed files stay neutral and project-scoped: no personal or identifying details.
+
 ## Roadmap ideas
 
 - Check the unverified engines and Weigh deeper selectors listed in `docs/experiments.md` against live pages
