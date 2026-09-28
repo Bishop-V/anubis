@@ -11,6 +11,12 @@ export interface PageStats {
   lowered: number;
   tagged: number;
   revealed: boolean;
+  /** Result pages on this page (1 unless "Weigh deeper" brought more in). */
+  pages: number;
+  /** "Weigh deeper" can load another page. */
+  canGoDeeper: boolean;
+  /** A deeper load is running. */
+  loading: boolean;
 }
 
 export type Message =
@@ -19,7 +25,8 @@ export type Message =
   | { type: 'refresh-all' }
   | { type: 'open-options'; tab?: string }
   | { type: 'get-page-stats' }
-  | { type: 'set-reveal'; on: boolean };
+  | { type: 'set-reveal'; on: boolean }
+  | { type: 'go-deeper' };
 
 export function send<T = unknown>(message: Message): Promise<T | undefined> {
   return browser.runtime.sendMessage(message).catch(() => undefined) as Promise<T | undefined>;

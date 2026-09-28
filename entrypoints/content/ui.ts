@@ -8,6 +8,7 @@ import {
   ICON_EXTERNAL,
   ICON_GEAR,
   ICON_HIDE,
+  ICON_SCALES,
   ICON_SHOW,
   LEVEL_CHIPS,
   LEVEL_ICONS,
@@ -66,9 +67,10 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
   const { container, titleBlock } = result;
   const verdictChip = verdict.level !== 'normal' && (verdict.level !== 'hide' || revealed) ? verdict.level : undefined;
   const tags = verdict.tags.filter((id) => !ctx.prefs[id]?.muted && ctx.tags.has(id));
+  const page = result.page;
 
   let host = chipsHosts.get(container);
-  if (!verdictChip && !tags.length) {
+  if (!verdictChip && !tags.length && !page) {
     host?.remove();
     return;
   }
@@ -79,7 +81,7 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
   // Keep it right after the title, even if the page re-rendered around it.
   if (host.previousElementSibling !== titleBlock) titleBlock.after(host);
 
-  const key = JSON.stringify([verdictChip, verdict.score, tags.map((id) => ctx.tags.get(id)), ctx.theme]);
+  const key = JSON.stringify([verdictChip, verdict.score, tags.map((id) => ctx.tags.get(id)), page, ctx.theme]);
   host.dataset.theme = ctx.theme;
   render(host, key, () =>
     h(
@@ -109,6 +111,7 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
           tag.label,
         );
       }),
+      page ? h('span', { class: 'chip page', title: `Brought in from results page ${page}` }, `Page ${page}`) : null,
     ),
   );
 }
@@ -250,9 +253,10 @@ export function renderSummary(
   before: HTMLElement | undefined,
   stats: PageStats,
   theme: PageTheme,
-  actions: { toggleReveal: () => void; settings: () => void },
+  actions: { toggleReveal: () => void; settings: () => void; deeper: () => void },
 ): void {
-  const worthShowing = stats.hidden || stats.pinned || stats.raised || stats.lowered || stats.tagged;
+  const worthShowing =
+    stats.hidden || stats.pinned || stats.raised || stats.lowered || stats.tagged || stats.canGoDeeper || stats.pages > 1;
   if (!before?.parentElement || !worthShowing) {
     summaryHost?.remove();
     return;
@@ -267,13 +271,33 @@ export function renderSummary(
       'div',
       { class: 'summary' },
       h('span', { class: 'logo' }, icon(ICON_ANUBIS)),
-      h('span', null, 'Weighed ', h('strong', null, plural(stats.total, 'result'))),
+      h(
+        'span',
+        null,
+        'Weighed ',
+        h('strong', null, plural(stats.total, 'result')),
+        stats.pages > 1 ? ` from ${stats.pages} pages` : '',
+      ),
       stats.revealed ? stat(stats.hidden, 'hidden') : null,
       stat(stats.pinned, 'pinned'),
       stat(stats.raised, 'raised'),
       stat(stats.lowered, 'lowered'),
       stat(stats.tagged, 'tagged'),
       h('span', { class: 'spacer' }),
+      stats.canGoDeeper || stats.loading
+        ? h(
+            'button',
+            {
+              class: 'ghost',
+              type: 'button',
+              disabled: stats.loading,
+              title: 'Load the next page of results and rerank them together',
+              on: { click: actions.deeper },
+            },
+            icon(ICON_SCALES),
+            stats.loading ? 'Weighing…' : 'Weigh deeper',
+          )
+        : null,
       stats.hidden
         ? h(
             'button',

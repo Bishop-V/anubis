@@ -2,7 +2,7 @@ import '@/assets/theme.css';
 import './style.css';
 import { normalizeDomain } from '@/utils/domain';
 import { append, h, icon, plural } from '@/utils/dom';
-import { ICON_CLOSE, ICON_HIDE, ICON_SHOW, LEVEL_CHIPS, LEVEL_ICONS } from '@/utils/icons';
+import { ICON_CLOSE, ICON_HIDE, ICON_SCALES, ICON_SHOW, LEVEL_CHIPS, LEVEL_ICONS } from '@/utils/icons';
 import { send, sendToActiveTab, type PageStats } from '@/utils/messages';
 import { listSites, setSite, setSiteLevel, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet } from '@/utils/ruleset';
@@ -98,7 +98,11 @@ function renderPage(stats: PageStats | undefined) {
       'div',
       { class: 'page-head' },
       h('div', { class: 'label', style: 'margin:0' }, 'This page'),
-      h('span', { class: 'muted', style: 'font-size:12px' }, `${stats.engine} · ${plural(stats.total, 'result')}`),
+      h(
+        'span',
+        { class: 'muted', style: 'font-size:12px' },
+        `${stats.engine} · ${plural(stats.total, 'result')}${stats.pages > 1 ? ` · ${stats.pages} pages` : ''}`,
+      ),
     ),
     h(
       'div',
@@ -109,6 +113,26 @@ function renderPage(stats: PageStats | undefined) {
       stat(stats.lowered, 'lowered'),
       stat(stats.tagged, 'tagged'),
     ),
+    stats.canGoDeeper || stats.loading
+      ? h(
+          'button',
+          {
+            class: 'btn small',
+            type: 'button',
+            disabled: stats.loading,
+            style: 'margin-right:6px',
+            title: 'Load the next page of results and rerank them together',
+            on: {
+              click: async () => {
+                renderPage(await sendToActiveTab<PageStats>({ type: 'go-deeper' }));
+                setTimeout(async () => renderPage(await sendToActiveTab<PageStats>({ type: 'get-page-stats' })), 2500);
+              },
+            },
+          },
+          icon(ICON_SCALES),
+          stats.loading ? 'Weighing…' : 'Weigh deeper',
+        )
+      : null,
     stats.hidden
       ? h(
           'button',

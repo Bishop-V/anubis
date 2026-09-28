@@ -14,18 +14,21 @@ export interface FoundResult {
   description: string;
   /** Other elements belonging to this result (DuckDuckGo Lite rows). */
   extras: HTMLElement[];
+  /** Results page this came from, when Anubis fetched more pages ("Weigh deeper"). */
+  page?: number;
 }
 
 /** Our own elements, which must never be mistaken for page content. */
 export const OWN_TAGS = new Set(['ANUBIS-CHIPS', 'ANUBIS-WEIGH', 'ANUBIS-BAR', 'ANUBIS-SUMMARY', 'ANUBIS-POPOVER']);
 
-export function findResults(engine: EngineDef): FoundResult[] {
-  return engine.heading ? findStructural(engine) : findBySelector(engine);
+/** Results in the live page, or in a fetched results page parsed with DOMParser. */
+export function findResults(engine: EngineDef, root: Document = document): FoundResult[] {
+  return engine.heading ? findStructural(engine, root) : findBySelector(engine, root);
 }
 
-function findBySelector(engine: EngineDef): FoundResult[] {
+function findBySelector(engine: EngineDef, root: Document): FoundResult[] {
   const out: FoundResult[] = [];
-  for (const container of document.querySelectorAll<HTMLElement>(engine.item!)) {
+  for (const container of root.querySelectorAll<HTMLElement>(engine.item!)) {
     const link = container.querySelector<HTMLAnchorElement>(engine.link ?? 'a[href]');
     if (!link || !/^https?:$/.test(link.protocol)) continue;
     const url = resolveUrl(link, container, engine);
@@ -47,15 +50,15 @@ function findBySelector(engine: EngineDef): FoundResult[] {
 // Structural detection, from the approach in the original content script: find
 // the title heading, take its link, then walk up to the smallest ancestor that
 // still holds only this one result.
-function findStructural(engine: EngineDef): FoundResult[] {
+function findStructural(engine: EngineDef, root: Document): FoundResult[] {
   const heading = engine.heading!;
   const out: FoundResult[] = [];
   const seen = new Set<HTMLElement>();
-  for (const title of document.querySelectorAll<HTMLElement>(heading)) {
+  for (const title of root.querySelectorAll<HTMLElement>(heading)) {
     if (title.closest('anubis-chips, anubis-bar, anubis-summary')) continue;
     const link = title.closest<HTMLAnchorElement>('a[href]') ?? title.querySelector<HTMLAnchorElement>('a[href]');
     if (!link || !/^https?:$/.test(link.protocol)) continue;
-    const container = resultContainer(link, heading, engine.boundary);
+    const container = resultContainer(link, heading, engine.boundary, root);
     if (seen.has(container)) continue;
     const url = resolveUrl(link, container, engine);
     if (!url) continue;
@@ -82,7 +85,8 @@ function build(
   const title = (titleEl.textContent ?? '').trim();
   // Good enough for $indescription: everything in the result that isn't the title.
   const description = (container.textContent ?? '').replace(title, '').trim().slice(0, 600);
-  return { container, link, titleBlock, url, host, title, description, extras };
+  const page = Number(container.getAttribute('data-anubis-page')) || undefined;
+  return { container, link, titleBlock, url, host, title, description, extras, page };
 }
 
 /** Chips go after the title: after the heading if the link is inside it, else after the link. */
@@ -96,11 +100,11 @@ function titleBlockFor(title: HTMLElement, link: HTMLAnchorElement, container: H
  * before an ancestor that would hold a second result, or at a boundary like
  * Google's #rso. Never returns an <a>: a <button> inside a link is invalid HTML.
  */
-function resultContainer(link: HTMLAnchorElement, heading: string, boundary?: string): HTMLElement {
+function resultContainer(link: HTMLAnchorElement, heading: string, boundary: string | undefined, root: Document): HTMLElement {
   let el: HTMLElement = link;
   for (let depth = 0; depth < 8; depth++) {
     const parent = el.parentElement;
-    if (!parent || parent === document.body || parent === document.documentElement) break;
+    if (!parent || parent === root.body || parent === root.documentElement) break;
     if (boundary && parent.matches(boundary)) break;
     if (el.tagName !== 'A' && parent.querySelectorAll(heading).length > 1) break;
     el = parent;
@@ -109,7 +113,7 @@ function resultContainer(link: HTMLAnchorElement, heading: string, boundary?: st
   if (el.tagName === 'A') {
     const existing = el.parentElement;
     if (existing?.hasAttribute('data-anubis-wrap')) return existing;
-    const wrapper = document.createElement('div');
+    const wrapper = root.createElement('div');
     wrapper.setAttribute('data-anubis-wrap', '');
     el.parentElement?.insertBefore(wrapper, el);
     wrapper.appendChild(el);

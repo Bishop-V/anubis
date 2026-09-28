@@ -31,6 +31,8 @@ export interface Settings {
   engines: Record<string, boolean>;
   /** Default hours between list updates, when a list doesn't say. */
   updateHours: number;
+  /** Extra result pages to load and rerank automatically (0 = only on request). */
+  deeper: number;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -42,6 +44,7 @@ export const DEFAULT_SETTINGS: Settings = {
   showSummary: true,
   engines: {},
   updateHours: 24,
+  deeper: 0,
 };
 
 export const settingsItem = storage.defineItem<Settings>('sync:settings', { fallback: DEFAULT_SETTINGS });

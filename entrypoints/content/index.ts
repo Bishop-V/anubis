@@ -7,6 +7,7 @@ import { formatSiteLine, getSite, setSiteLevel, toggleSiteTag, upsertTagDef, typ
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal } from '@/utils/storage';
 import { suggestionUrl } from '@/utils/subscriptions';
+import { freshState, weighDeeper } from './deeper';
 import './page.css';
 import { findResults, OWN_TAGS, type FoundResult } from './results';
 import {
@@ -44,6 +45,7 @@ export default defineContentScript({
     }
 
     let reveal = false;
+    let deeper = freshState(engine);
     let verdicts = new Map<string, Verdict>();
     let lastResults: FoundResult[] = [];
     let lastStats: PageStats | undefined;
@@ -72,7 +74,11 @@ export default defineContentScript({
       document.documentElement.dataset.anubisHide = rules.settings.hideStyle;
       applyTheme(theme);
 
+      // A new search (Google and DuckDuckGo change the URL without reloading).
+      if (deeper.url !== location.href && !deeper.busy) deeper = freshState(engine);
+
       const results = findResults(engine);
+      const more = engine.more;
       const stats: PageStats = {
         engine: engine.name,
         total: results.length,
@@ -82,6 +88,10 @@ export default defineContentScript({
         lowered: 0,
         tagged: 0,
         revealed: reveal,
+        pages: deeper.pages,
+        canGoDeeper:
+          !!more && !deeper.done && !deeper.busy && results.length > 0 && (more.kind !== 'click' || !!document.querySelector(more.button)),
+        loading: deeper.busy,
       };
 
       const scores = new Map<HTMLElement, number>();
@@ -105,8 +115,15 @@ export default defineContentScript({
             pass();
           },
           settings: () => void send({ type: 'open-options' }),
+          deeper: () => goDeeper(1),
         });
-      } else renderSummary(undefined, stats, theme, { toggleReveal() {}, settings() {} });
+      } else renderSummary(undefined, stats, theme, { toggleReveal() {}, settings() {}, deeper() {} });
+
+      // "Look deeper automatically": once per search.
+      if (rules.settings.deeper > 0 && stats.canGoDeeper && deeper.pages === 1 && !deeper.auto) {
+        deeper.auto = true;
+        goDeeper(rules.settings.deeper);
+      }
 
       lastResults = results;
       if (JSON.stringify(stats) !== JSON.stringify(lastStats)) {
@@ -119,8 +136,8 @@ export default defineContentScript({
       const { container } = result;
       const revealed = verdict.hidden && reveal;
       container.setAttribute('data-anubis-result', '');
-      const state = [verdict.level];
-      if (verdict.tags.length) state.push('tagged' as never);
+      const state: string[] = [verdict.level];
+      if (verdict.tags.length) state.push('tagged');
       container.setAttribute('data-anubis-state', state.join(' '));
       container.toggleAttribute('data-anubis-reveal', revealed);
       if (engine.table) container.setAttribute('data-anubis-row', '');
@@ -152,6 +169,10 @@ export default defineContentScript({
         },
         weigh: (button) => openWeigh(button, result),
       });
+    };
+
+    const goDeeper = (count: number) => {
+      void weighDeeper(engine, deeper, count, schedule);
     };
 
     // ------------------------------------------------------------ weigh menu
@@ -226,31 +247,6 @@ export default defineContentScript({
       lastStats = undefined;
     };
 
-    pass();
-    // One early pass may run before the results exist; the observer catches the rest.
-    document.addEventListener('DOMContentLoaded', () => schedule(), { once: true });
-
-    watchRuleSet(async () => {
-      rules = await loadRuleSet();
-      verdicts = new Map();
-      schedule();
-      // After the pass, so the menu sees fresh verdicts.
-      requestAnimationFrame(refreshOpenPopover);
-    });
-
-    // Keep lists fresh; the background decides whether anything is due.
-    void send({ type: 'refresh-stale' });
-
-    browser.runtime.onMessage.addListener((raw) => {
-      const message = raw as Message;
-      if (message.type === 'get-page-stats') return Promise.resolve(lastStats);
-      if (message.type === 'set-reveal') {
-        reveal = message.on;
-        pass();
-        return Promise.resolve(lastStats);
-      }
-    });
-
     // Re-run when the page adds results (infinite scroll, "More results", SPA
     // navigation). Batched to one pass per frame, and the observer is detached
     // while we write so our own elements don't trigger another pass.
@@ -277,6 +273,37 @@ export default defineContentScript({
         }
       });
     }
+
+    pass();
+    // One early pass may run before the results exist; the observer catches the rest.
+    document.addEventListener('DOMContentLoaded', () => schedule(), { once: true });
+
+    watchRuleSet(async () => {
+      rules = await loadRuleSet();
+      verdicts = new Map();
+      schedule();
+      // After the pass, so the menu sees fresh verdicts.
+      requestAnimationFrame(refreshOpenPopover);
+    });
+
+    // Keep lists fresh; the background decides whether anything is due.
+    void send({ type: 'refresh-stale' });
+
+    browser.runtime.onMessage.addListener((raw) => {
+      const message = raw as Message;
+      if (message.type === 'get-page-stats') return Promise.resolve(lastStats);
+      if (message.type === 'set-reveal') {
+        reveal = message.on;
+        pass();
+        return Promise.resolve(lastStats);
+      }
+      if (message.type === 'go-deeper') {
+        goDeeper(1);
+        pass();
+        return Promise.resolve(lastStats);
+      }
+    });
+
     observe();
   },
 });

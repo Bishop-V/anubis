@@ -93,6 +93,17 @@ export async function renderAppearance(): Promise<HTMLElement> {
         (hideStyle) => void updateSettings({ hideStyle }),
       ),
       toggleRow('Rerank results', 'Move raised and pinned results up and lowered ones down, like a Brave Goggle.', 'rerank', settings),
+      segRow<string>(
+        'Look deeper automatically',
+        'Load the next result pages onto the first one and rerank them together, so a site you pinned on page 3 rises to the top. Uses the same engine and query; “Weigh deeper” on the page does it on request.',
+        [
+          { value: '0', label: 'Off' },
+          { value: '1', label: '+1 page' },
+          { value: '2', label: '+2 pages' },
+        ],
+        String(settings.deeper),
+        (v) => void updateSettings({ deeper: Number(v) }),
+      ),
       toggleRow('Tag chips', 'Show tags and verdicts under each result title.', 'showChips', settings),
       toggleRow('Summary bar', 'Show “Anubis weighed N results” above the results.', 'showSummary', settings),
       toggleRow('Anubis is on', 'Turn this off to leave search pages alone without uninstalling.', 'enabled', settings),

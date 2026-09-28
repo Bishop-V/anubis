@@ -40,7 +40,19 @@ export interface EngineDef {
   table?: boolean;
   /** Where the weigh button sits in the top-right corner of each result. */
   button?: { top: string; right: string };
+  /** How "Weigh deeper" gets more results onto the page. */
+  more?: MoreResults;
 }
+
+/**
+ * - `click`: press the engine's own "More results" button; the page loads them itself.
+ * - `link`: fetch the page the "Next" link points to and bring its results over.
+ * - `param`: same, building the next page's URL from a page-number parameter.
+ */
+export type MoreResults =
+  | { kind: 'click'; button: string }
+  | { kind: 'link'; next: string }
+  | { kind: 'param'; name: string; first: number; step: number };
 
 const GOOGLE_TLDS = `ad ae al am as at az ba be bf bg bi bj bs bt by ca cat cd cf cg ch ci cl cm cn co.ao co.bw co.ck
 co.cr co.id co.il co.in co.jp co.ke co.kr co.ls co.ma co.mz co.nz co.th co.tz co.ug co.uk co.uz co.ve co.vi co.za co.zm
@@ -68,6 +80,7 @@ export const ENGINES: EngineDef[] = [
     boundary: '#search, #rso, #botstuff, main, [role="main"]',
     displayed: 'cite',
     button: { top: '2px', right: '2px' },
+    more: { kind: 'link', next: 'a#pnnext' },
   },
   {
     id: 'duckduckgo',
@@ -84,6 +97,7 @@ export const ENGINES: EngineDef[] = [
     boundary: 'ol, main, [data-testid="web-vertical"]',
     // Clear of DuckDuckGo's own result menu in the corner.
     button: { top: '6px', right: '36px' },
+    more: { kind: 'click', button: '#more-results, button[data-testid="more-results"]' },
   },
   {
     id: 'duckduckgo-html',
@@ -121,6 +135,7 @@ export const ENGINES: EngineDef[] = [
     title: 'h2',
     displayed: '.b_attribution cite, cite',
     button: { top: '4px', right: '4px' },
+    more: { kind: 'link', next: 'a.sb_pagN, a[title="Next page"]' },
   },
   {
     id: 'brave',
@@ -132,6 +147,8 @@ export const ENGINES: EngineDef[] = [
     link: 'a',
     title: '.title',
     button: { top: '4px', right: '4px' },
+    // Brave numbers pages from 0 in `offset`.
+    more: { kind: 'param', name: 'offset', first: 0, step: 1 },
   },
   {
     id: 'startpage',
@@ -154,6 +171,7 @@ export const ENGINES: EngineDef[] = [
     link: 'a.result__link',
     title: 'h2',
     button: { top: '4px', right: '20px' },
+    more: { kind: 'param', name: 'p', first: 0, step: 1 },
   },
   {
     id: 'kagi',
@@ -177,6 +195,7 @@ export const ENGINES: EngineDef[] = [
     boundary: '#web, ol, main',
     displayed: '.compTitle span, cite',
     button: { top: '2px', right: '2px' },
+    more: { kind: 'link', next: 'a.next' },
   },
   {
     id: 'yandex',
