@@ -3,24 +3,51 @@
   <head>
     <meta charset="UTF-8" />
     <title>Anubis</title>
-    <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
     <header>
-      <img src="/anubis.svg" alt="" width="36" height="36" />
-      <div>
-        <h1>Anubis</h1>
+      <div class="brand">
+        <img src="/anubis.svg" alt="" width="34" height="34" />
+        <div>
+          <h1>Anubis</h1>
+          <p id="status">Weighing your searches</p>
+        </div>
+      </div>
+      <div class="header-tools">
+        <span id="theme"></span>
+        <label class="switch" title="Turn Anubis on or off">
+          <input id="enabled" type="checkbox" aria-label="Anubis on" />
+          <span></span>
+        </label>
       </div>
     </header>
-    <form id="add-form">
-      <input id="domain" placeholder="e.g. fandom.com" autocomplete="off" />
-      <button type="submit">Block</button>
+
+    <section id="page" class="card"></section>
+
+    <form id="add-form" class="card">
+      <label for="domain" class="label">Weigh a site</label>
+      <div class="row">
+        <input id="domain" type="text" placeholder="e.g. fandom.com" autocomplete="off" spellcheck="false" />
+        <select id="level" aria-label="Level">
+          <option value="hide">Hide</option>
+          <option value="lower">Lower</option>
+          <option value="raise">Raise</option>
+          <option value="pin">Pin</option>
+        </select>
+        <button class="btn primary" type="submit">Add</button>
+      </div>
     </form>
-    <ul id="list"></ul>
+
+    <section class="card">
+      <div class="label">Your sites <span id="count" class="muted"></span></div>
+      <ul id="list"></ul>
+    </section>
+
     <footer>
-      <a href="https://github.com/Bishop-V/anubis" target="_blank" rel="noopener noreferrer">
-        Source on GitHub
-      </a>
+      <span id="lists-summary" class="muted"></span>
+      <span class="spacer"></span>
+      <button id="settings" class="btn small" type="button">Settings</button>
+      <a class="source" href="https://github.com/Bishop-V/anubis" target="_blank" rel="noopener noreferrer">Source</a>
     </footer>
     <script type="module" src="./main.ts"></script>
   </body>

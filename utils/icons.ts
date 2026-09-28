@@ -35,6 +35,13 @@ export const ICON_SCALES = svg(
 export const ICON_REFRESH = svg('<path d="M13 3.5v3h-3"/><path d="M12.6 6.5A5 5 0 103 9.5"/>');
 export const ICON_TRASH = svg('<path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5"/>');
 
+export const ICON_SCROLL = svg('<path d="M4 3h8.5v9.5a1.5 1.5 0 01-1.5 1.5H4.5"/><path d="M4 3a1.5 1.5 0 00-1.5 1.5V6H4M4 3v9.5A1.5 1.5 0 005.5 14"/><path d="M6.5 6h3.5M6.5 8.5h3.5M6.5 11h2"/>');
+export const ICON_PALETTE = svg('<path d="M8 2a6 6 0 100 12c1 0 1.4-.7 1.1-1.5-.4-1 .2-1.8 1.2-1.8H12a2 2 0 002-2C14 4.6 11.3 2 8 2z"/><circle cx="5" cy="7.5" r=".9" fill="currentColor"/><circle cx="7.5" cy="5" r=".9" fill="currentColor"/><circle cx="10.5" cy="5.8" r=".9" fill="currentColor"/>');
+export const ICON_GLOBE = svg('<circle cx="8" cy="8" r="6"/><path d="M2 8h12M8 2c1.8 1.7 2.6 3.7 2.6 6S9.8 12.3 8 14c-1.8-1.7-2.6-3.7-2.6-6S6.2 3.7 8 2z"/>');
+export const ICON_SHARE = svg('<path d="M8 10V2.5M5 5.5l3-3 3 3"/><path d="M3.5 9v4h9V9"/>');
+export const ICON_DOWNLOAD = svg('<path d="M8 2.5V10M5 7l3 3 3-3"/><path d="M3.5 10.5V13h9v-2.5"/>');
+export const ICON_EDIT = svg('<path d="M10.5 2.8l2.7 2.7-7.4 7.4H3.1v-2.7z"/>');
+
 export const LEVEL_ICONS = {
   hide: ICON_HIDE,
   lower: ICON_LOWER,
