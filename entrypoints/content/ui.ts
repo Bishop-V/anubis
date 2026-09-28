@@ -421,8 +421,7 @@ const TILT: Record<Level, number> = { hide: -13, lower: -6, normal: 0, raise: 6,
 const ARM = 52;
 
 function balanceSvg(): SVGSVGElement {
-  const t = document.createElement('template');
-  t.innerHTML = `<svg class="balance" viewBox="0 0 132 40" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+  return icon(`<svg xmlns="http://www.w3.org/2000/svg" class="balance" viewBox="0 0 132 40" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
     <path d="M66 7v28M56 37h20"/>
     <circle cx="66" cy="5" r="1.6" fill="currentColor" stroke="none"/>
     <g class="beam" style="transform-origin: 66px 9px; transform-box: view-box"><path d="M14 9h104"/></g>
@@ -434,8 +433,7 @@ function balanceSvg(): SVGSVGElement {
       <path d="M118 9l-7 15M118 9l7 15"/><path d="M108 24h20a10 5 0 0 1-20 0z" fill="currentColor" fill-opacity=".14"/>
       <path d="M115 22.5c1.5-3.5 3.5-5.8 6-7-.3 3.2-2.4 5.6-6 7zM116.4 20.6l2.4-.4"/>
     </g>
-  </svg>`;
-  return t.content.firstElementChild as SVGSVGElement;
+  </svg>`) as SVGSVGElement;
 }
 
 function setBalance(svg: Element, level: Level): void {

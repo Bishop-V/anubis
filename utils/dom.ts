@@ -46,11 +46,19 @@ export function append(parent: Node, children: (Child | Child[])[]): void {
   }
 }
 
-/** Turn one of the constant SVG strings in utils/icons.ts into an element. */
+const parsed = new Map<string, Element>();
+
+/**
+ * Turn one of the constant SVG strings in utils/icons.ts into an element. Parsed as
+ * XML rather than through innerHTML, and cached, so each icon is parsed once.
+ */
 export function icon(svg: string): Element {
-  const t = document.createElement('template');
-  t.innerHTML = svg;
-  return t.content.firstElementChild!;
+  let el = parsed.get(svg);
+  if (!el) {
+    el = new DOMParser().parseFromString(svg, 'image/svg+xml').documentElement;
+    parsed.set(svg, el);
+  }
+  return document.importNode(el, true);
 }
 
 export function plural(n: number, one: string, many = `${one}s`): string {
