@@ -53,6 +53,10 @@ Press the Anubis icon in the toolbar while you're on any website. Under **This s
 
 The switch in the toolbar popup turns Anubis off without uninstalling it. Its icon turns grey, and search pages are left as they are.
 
+## Help
+
+**Help** in the toolbar popup opens this guide. In **Settings**, each section links to its page here, and **User guide** at the bottom of the sidebar opens the start.
+
 ## Next
 
 - [Ranking sites](./ranking.md): what Lower, Raise and Pin do.

@@ -3,6 +3,7 @@ import './style.css';
 import { browser } from '#imports';
 import { domainChoices, normalizeDomain, siteOf } from '@/utils/domain';
 import { engineFor } from '@/utils/engines';
+import { guide } from '@/utils/links';
 import { LEVELS } from '@/utils/matcher';
 import { h, icon } from '@/utils/dom';
 import { ICON_CLOSE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
@@ -181,6 +182,7 @@ $<HTMLFormElement>('#add-form').addEventListener('submit', async (e) => {
 });
 
 enabled.addEventListener('change', () => void updateSettings({ enabled: enabled.checked }));
+$<HTMLAnchorElement>('#help').href = guide();
 $('#settings').addEventListener('click', () => {
   void send({ type: 'open-options' });
   window.close();

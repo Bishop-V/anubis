@@ -13,7 +13,7 @@
 
 import { chromium } from 'playwright-core';
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -507,6 +507,16 @@ if (only === 'docs') {
   await clip('cleanup-summary', ['anubis-summary']);
   await setSettings({ cleanup: { ai: false, videos: false, questions: false, news: false, images: false, related: false } });
 
+  // Downloads fail inside the test browser, which would put "Failed to fetch" under
+  // every list. Store the bundled lists as if just downloaded, as a user sees them.
+  const bundled = Object.fromEntries(
+    ['official-docs', 'discussions', 'reference', 'paywalls'].map((id) => [id, readFileSync(fileURLToPath(new URL(`../lists/${id}.anubis`, import.meta.url)), 'utf8')]),
+  );
+  await sw.evaluate(async (bundled) => {
+    const listCache = {};
+    for (const [id, text] of Object.entries(bundled)) listCache[`builtin:${id}`] = { text, fetchedAt: Date.now() };
+    await chrome.storage.local.set({ listCache });
+  }, bundled);
   const opt = await ctx.newPage();
   await opt.setViewportSize({ width: 1100, height: 760 });
   for (const section of ['sites', 'tags', 'lists', 'cleanup']) {

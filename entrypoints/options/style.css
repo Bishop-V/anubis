@@ -71,6 +71,27 @@ nav .foot a {
 nav .foot a::before {
   display: none;
 }
+nav .foot .links {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+nav .foot .links a,
+.help-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+nav .foot .links svg,
+.help-link svg {
+  width: 11px;
+  height: 11px;
+  opacity: 0.7;
+}
+.help-link {
+  color: var(--gold-ink);
+  white-space: nowrap;
+}
 
 /* ------------------------------------------------------------------- main */
 main {

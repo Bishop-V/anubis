@@ -1,4 +1,5 @@
 import { defineConfig } from 'wxt';
+import { DOCS_URL } from './utils/links';
 
 // WXT generates manifest.json from this config + the files in entrypoints/.
 // Icons in public/icon/{16,32,48,96,128}.png are picked up automatically.
@@ -9,6 +10,8 @@ export default defineConfig({
   manifest: ({ browser, manifestVersion }) => ({
     name: 'Anubis',
     description: 'Weighs your search results: tag, rerank and hide sites, with lists anyone can publish.',
+    // The user guide: the browser links to it from the extension's details page.
+    homepage_url: DOCS_URL,
     // "storage" saves your list, settings and downloaded lists. "activeTab" lets the
     // popup read the address of the tab you're on, only when you open it, so you can
     // weigh that site; it shows no install warning.

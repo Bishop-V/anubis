@@ -59,9 +59,10 @@ Everything on search pages was built against the mocks in `e2e/fixtures.mjs`: th
 - `utils/listformat.ts`: the list parser; `utils/matcher.ts`: compiling lists and weighing a result; `utils/personal.ts`: line-level edits to the personal list
 - `utils/storage.ts`, `utils/ruleset.ts`, `utils/subscriptions.ts`: storage items, loading everything into one rule set, downloading lists
 - `utils/importers.ts`: bringing sites over from uBlacklist rules, HOHSER exports, Goggles and domain lists
+- `utils/links.ts`: the user guide and repository addresses the extension links to
 - `utils/cleanup.ts`: the clean-up kinds, the headings that identify each one (with translations) and per-engine selectors
 - `lists/`: the bundled lists and `directory.json` (the "More lists" directory). `docs/list-format.md` is the format reference.
-- `docs/`: the documentation site. `guide/` holds the user guide, `lists.md` renders `lists/directory.json`, and `.vitepress/` holds the config and brand theme. The extension links to `docs/list-format.md` on GitHub, so don't move that file. Write for people who use the extension, in the same plain words as its interface, and update the guide when a feature changes.
+- `docs/`: the documentation site. `guide/` holds the user guide, `lists.md` renders `lists/directory.json`, and `.vitepress/` holds the config and brand theme. The extension links to the published site through `utils/links.ts` (the manifest's `homepage_url`, the popup's Help link, a guide link on each settings section). Earlier builds link to `docs/list-format.md` on GitHub, so don't move that file, and keep page paths stable or the links from settings break. Write for people who use the extension, in the same plain words as its interface, and update the guide when a feature changes.
 - `public/`: the logo (`anubis.svg`) and toolbar icons (`icon/{16,32,48,96,128}.png`). WXT detects these automatically.
 
 ## Conventions

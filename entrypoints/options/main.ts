@@ -1,6 +1,8 @@
 import '@/assets/theme.css';
 import './style.css';
-import { h } from '@/utils/dom';
+import { h, icon } from '@/utils/dom';
+import { ICON_EXTERNAL } from '@/utils/icons';
+import { guide, REPO_URL } from '@/utils/links';
 import { listSites } from '@/utils/personal';
 import { getSubscriptions, loadRuleSet, watchRuleSet } from '@/utils/ruleset';
 import { initTheme, themeSwitcher } from '@/utils/theme';
@@ -17,17 +19,23 @@ interface Section {
   id: string;
   label: string;
   render: () => Promise<HTMLElement>;
+  /** The user guide's page for this section, linked after its description. */
+  help?: [path: string, label: string];
 }
 
 const SECTIONS: Section[] = [
-  { id: 'sites', label: 'Your sites', render: renderSites },
-  { id: 'tags', label: 'Tags', render: renderTags },
-  { id: 'lists', label: 'Lists', render: renderLists },
-  { id: 'cleanup', label: 'Clean up', render: renderCleanup },
-  { id: 'appearance', label: 'Appearance', render: renderAppearance },
-  { id: 'engines', label: 'Search engines', render: renderEngines },
-  { id: 'share', label: 'Share and back up', render: renderShare },
+  { id: 'sites', label: 'Your sites', render: renderSites, help: ['guide/ranking', 'How ranking works'] },
+  { id: 'tags', label: 'Tags', render: renderTags, help: ['guide/tags', 'How tags work'] },
+  { id: 'lists', label: 'Lists', render: renderLists, help: ['guide/lists', 'How lists work'] },
+  { id: 'cleanup', label: 'Clean up', render: renderCleanup, help: ['guide/clean-up', 'How clean-up works'] },
+  { id: 'appearance', label: 'Appearance', render: renderAppearance, help: ['guide/ranking#hidden-results', 'About hidden results'] },
+  { id: 'engines', label: 'Search engines', render: renderEngines, help: ['guide/search-engines', 'Which engines work'] },
+  { id: 'share', label: 'Share and back up', render: renderShare, help: ['guide/import-and-backup', 'Moving from other tools'] },
 ];
+
+function external(href: string, text: string, className?: string): HTMLElement {
+  return h('a', { class: className, href, target: '_blank', rel: 'noopener noreferrer' }, text, icon(ICON_EXTERNAL));
+}
 
 const nav = document.querySelector<HTMLElement>('#nav')!;
 const main = document.querySelector<HTMLElement>('#main')!;
@@ -64,7 +72,7 @@ async function renderNav() {
       'div',
       { class: 'foot' },
       themeSwitcher(rules.settings.theme),
-      h('div', null, h('a', { href: 'https://github.com/Bishop-V/anubis', target: '_blank', rel: 'noopener noreferrer' }, 'Source on GitHub')),
+      h('div', { class: 'links' }, external(guide(), 'User guide'), external(REPO_URL, 'Source on GitHub')),
     ),
   );
 }
@@ -76,6 +84,7 @@ async function renderMain() {
   const scroll = window.scrollY;
   const el = await section.render();
   if (ticket !== rendering) return;
+  if (section.help) el.querySelector('.page-title p')?.append(' ', external(guide(section.help[0]), section.help[1], 'help-link'));
   main.replaceChildren(el);
   document.title = `${section.label} · Anubis`;
   window.scrollTo(0, scroll);

@@ -18,6 +18,7 @@ import {
   type Subscription,
 } from '@/utils/storage';
 import { importIntoPersonal } from '@/utils/importers';
+import { guide } from '@/utils/links';
 import { themeSwitcher } from '@/utils/theme';
 import { flash, flashed, rerender } from './flash';
 import { download } from './sites';
@@ -260,7 +261,7 @@ export async function renderShare(): Promise<HTMLElement> {
         'div',
         { class: 'toolbar', style: 'margin-top:12px' },
         h('button', { class: 'btn primary', type: 'button', on: { click: () => download('my-anubis-list.anubis', rules.personalText) } }, icon(ICON_DOWNLOAD), 'Download my list'),
-        h('a', { class: 'btn', href: 'https://github.com/Bishop-V/anubis/blob/main/docs/list-format.md', target: '_blank', rel: 'noopener noreferrer' }, 'List format'),
+        h('a', { class: 'btn', href: guide('list-format'), target: '_blank', rel: 'noopener noreferrer' }, 'List format'),
       ),
     ),
     h(

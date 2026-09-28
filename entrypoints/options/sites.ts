@@ -1,6 +1,7 @@
 import { normalizeDomain } from '@/utils/domain';
 import { h, icon, plural } from '@/utils/dom';
 import { ICON_CLOSE, ICON_DOWNLOAD, ICON_EDIT, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
+import { guide } from '@/utils/links';
 import { parseList } from '@/utils/listformat';
 import { LEVELS, type Level } from '@/utils/matcher';
 import { listSites, setSite, type SiteEntry } from '@/utils/personal';
@@ -285,7 +286,7 @@ function textEditor(rules: RuleSet): HTMLElement {
         },
         'Cancel',
       ),
-      h('a', { class: 'text-btn', href: 'https://github.com/Bishop-V/anubis/blob/main/docs/list-format.md', target: '_blank', rel: 'noopener noreferrer' }, 'Format reference'),
+      h('a', { class: 'text-btn', href: guide('list-format'), target: '_blank', rel: 'noopener noreferrer' }, 'Format reference'),
     ),
   );
 }

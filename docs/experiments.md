@@ -136,4 +136,5 @@ Called "Weigh deeper" until the wording review below.
 
 - `nix` wasn't available in the development sandbox; Node 22 (the flake's version) was used directly.
 - Vitest 4 hit an npm arborist crash during install (`Cannot read properties of null (reading 'edgesOut')`); Vitest 5 installed cleanly.
+- List downloads fail inside the e2e browser in the development sandbox, and Playwright's request routing doesn't reach fetches made by the extension's service worker, so serving the lists locally didn't help either. The `docs` screenshot part stores the bundled lists as the downloaded copies first, so the Lists screenshot shows what a user sees rather than "Failed to fetch".
 - `chrome.tabs.query({ url })` returns nothing without host permissions, even for pages the content script runs on. The e2e harness messages every tab instead; the extension itself never needed it.

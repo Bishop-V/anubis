@@ -3,6 +3,8 @@ Browser extension for filtering search results, and much more.
 
 In Egyptian myth, Anubis weighed each heart against a feather. This extension weighs search results: it tags them, raises the ones you trust, lowers or hides the ones you don't, and lets you subscribe to lists other people publish, the way Brave Goggles do, but on the search engine you already use.
 
+**[Read the user guide →](https://bishop-v.github.io/anubis/)**
+
 ## What it does
 
 - **Rank any site from the results.** Hover a result and press its ⇅ button to hide, lower, keep, raise or pin that site, and to tag it. Your choices apply on every search and beat every list.
