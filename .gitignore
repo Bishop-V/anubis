@@ -6,3 +6,6 @@ web-ext.config.ts
 *.log
 .claude/settings.local.json*
 CLAUDE.local.md
+
+# e2e screenshots
+e2e/shots

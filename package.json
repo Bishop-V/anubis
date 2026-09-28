@@ -1,8 +1,8 @@
 {
   "name": "anubis",
-  "description": "Anubis: judge your search results and hide the sites you don't trust",
+  "description": "Anubis: weigh your search results with tags, reranking and lists anyone can publish",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "wxt",
@@ -13,9 +13,11 @@
     "zip:chrome": "wxt zip -b chrome",
     "compile": "tsc --noEmit",
     "postinstall": "wxt prepare",
-    "test": "vitest run"
+    "test": "vitest run",
+    "e2e": "wxt build -b chrome && node e2e/run.mjs"
   },
   "devDependencies": {
+    "playwright-core": "^1.56.1",
     "typescript": "^5.9.0",
     "vitest": "^5.0.2",
     "web-ext": "^10.7.0",
