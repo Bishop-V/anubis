@@ -85,6 +85,17 @@ describe('evaluate', () => {
     expect(weigh('https://a.com/', [l])).toMatchObject({ level: 'raise', score: 10 });
   });
 
+  it('says why a result is hidden', () => {
+    const me = list('Your list', '$site=a.com,discard\n! tag: meh | Meh\n$site=b.com,tag=meh', true);
+    const sub = list('Copycats', '$discard,site=c.com');
+    const lens = list('Tech blogs', '$discard\n$boost=1,site=d.com');
+    expect(weigh('https://a.com/', [me, sub]).hiddenBy).toEqual({ kind: 'personal', name: 'Your list' });
+    expect(weigh('https://b.com/', [me, sub], { meh: { action: 'hide' } }).hiddenBy).toEqual({ kind: 'tag', name: 'meh' });
+    expect(weigh('https://c.com/', [me, sub]).hiddenBy).toEqual({ kind: 'list', name: 'Copycats' });
+    expect(weigh('https://e.com/', [me, lens]).hiddenBy).toEqual({ kind: 'lens', name: 'Tech blogs' });
+    expect(weigh('https://d.com/', [me, lens]).hiddenBy).toBeUndefined();
+  });
+
   it('survives unparseable URLs', () => {
     expect(weigh('not a url', [list('l', '$discard,site=a.com')]).level).toBe('normal');
   });

@@ -542,8 +542,28 @@ button.chip[aria-pressed='false'] .dot {
 .links {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  align-items: center;
+  gap: 4px 10px;
   margin-top: 8px;
+  font-size: 12px;
+}
+.links-label {
+  color: var(--muted);
+}
+a.suggest {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--gold-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+a.suggest:hover {
+  text-decoration: underline;
+}
+a.suggest svg {
+  width: 11px;
+  height: 11px;
 }
 a.ghost {
   text-decoration: none;

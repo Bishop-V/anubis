@@ -176,10 +176,20 @@ export function weighButtonOf(container: HTMLElement): HTMLButtonElement | undef
 
 const barHosts = new WeakMap<HTMLElement, HTMLElement>();
 
+/** "Your list", "tagged “AI slop”", "Copycats removal", "not in Tech blogs". */
+export function hiddenReason(verdict: Verdict, tags: Map<string, TagDef>): string {
+  const by = verdict.hiddenBy;
+  if (!by) return '';
+  if (by.kind === 'tag') return `tagged “${tags.get(by.name)?.label ?? by.name}”`;
+  if (by.kind === 'lens') return `not in ${by.name}`;
+  return by.name;
+}
+
 export function renderHiddenBar(
   result: FoundResult,
   verdict: Verdict,
   theme: PageTheme,
+  tags: Map<string, TagDef>,
   show: boolean,
   actions: { reveal: () => void; weigh: (button: HTMLElement) => void },
 ): void {
@@ -196,7 +206,7 @@ export function renderHiddenBar(
   if (container.firstElementChild !== host) container.prepend(host);
   host.dataset.theme = theme;
 
-  const by = [...new Set(verdict.reasons.map((r) => r.list))].join(', ');
+  const by = hiddenReason(verdict, tags);
   render(host, JSON.stringify([result.host, by, theme]), () => {
     const weigh = h('button', { class: 'ghost', type: 'button', title: 'Weigh this site' }, icon(ICON_ANUBIS), 'Weigh');
     weigh.addEventListener('click', (e) => {
@@ -257,8 +267,8 @@ export function renderSummary(
       'div',
       { class: 'summary' },
       h('span', { class: 'logo' }, icon(ICON_ANUBIS)),
-      h('span', null, 'Anubis weighed ', h('strong', null, plural(stats.total, 'result'))),
-      stat(stats.hidden, 'hidden'),
+      h('span', null, 'Weighed ', h('strong', null, plural(stats.total, 'result'))),
+      stats.revealed ? stat(stats.hidden, 'hidden') : null,
       stat(stats.pinned, 'pinned'),
       stat(stats.raised, 'raised'),
       stat(stats.lowered, 'lowered'),
@@ -269,7 +279,7 @@ export function renderSummary(
             'button',
             { class: 'ghost', type: 'button', on: { click: actions.toggleReveal } },
             icon(stats.revealed ? ICON_HIDE : ICON_SHOW),
-            stats.revealed ? 'Hide again' : 'Show hidden',
+            stats.revealed ? 'Hide again' : `Show ${stats.hidden} hidden`,
           )
         : null,
       h(
@@ -525,15 +535,15 @@ function buildPopover(
 
   const reasons = data.verdict.reasons.slice(0, 6);
   const suggestLinks = data.trackers
-    .slice(0, 3)
+    .slice(0, 4)
     .map((t) => {
       const href = actions.suggest(t, domain);
       return href
         ? h(
             'a',
-            { class: 'ghost', href, target: '_blank', rel: 'noopener noreferrer', title: `Propose ${domain} to ${t.name} on its issue tracker` },
+            { class: 'suggest', href, target: '_blank', rel: 'noopener noreferrer', title: `Propose ${domain} to ${t.name} on its issue tracker` },
+            t.name,
             icon(ICON_EXTERNAL),
-            `Suggest to ${t.name}`,
           )
         : null;
     })
@@ -578,7 +588,7 @@ function buildPopover(
                   reasons.map((r) => h('li', null, h('span', { class: 'src' }, r.list), h('span', { class: 'what' }, r.text))),
                 )
               : null,
-            suggestLinks.length ? h('div', { class: 'links' }, suggestLinks) : null,
+            suggestLinks.length ? h('div', { class: 'links' }, h('span', { class: 'links-label' }, 'Suggest to'), suggestLinks) : null,
           )
         : null,
     ),

@@ -94,6 +94,8 @@ export interface Verdict {
   highlight?: string;
   /** The personal list's explicit level for this result, if any. */
   personal?: Level | 'allow';
+  /** Why a hidden result is hidden: your list, a tag you chose to hide, a list, or a lens. */
+  hiddenBy?: { kind: 'personal' | 'tag' | 'list' | 'lens'; name: string };
   reasons: Reason[];
 }
 
@@ -152,7 +154,7 @@ function describe(rule: Rule): string {
   return `${parts.join(' · ') || 'match'}${where ? ` (${where})` : ''}`;
 }
 
-type Effect = { discard: boolean; boost: number; highlight?: string };
+type Effect = { discard: boolean; boost: number; highlight?: string; tag?: string };
 
 const TAG_ACTION_RANK: Record<TagAction, number> = { list: 0, label: 1, highlight: 2, raise: 3, lower: 4, hide: 5 };
 
@@ -179,7 +181,7 @@ function tagOverride(rule: Rule, prefs: Record<string, TagPref>): Effect | undef
     case 'lower':
       return { discard: false, boost: -PERSONAL_STRENGTH };
     case 'hide':
-      return { discard: true, boost: 0 };
+      return { discard: true, boost: 0, tag };
   }
 }
 
@@ -215,6 +217,10 @@ export function evaluate(
   let discard = false;
   let score = 0;
   let highlight: string | undefined;
+  const hide = (by: NonNullable<Verdict['hiddenBy']>) => {
+    discard = true;
+    verdict.hiddenBy ??= by;
+  };
 
   for (const list of lists) {
     const matched = matchList(list, t);
@@ -223,7 +229,7 @@ export function evaluate(
 
     if (!matched.length) {
       if (list.lens) {
-        discard = true;
+        hide({ kind: 'lens', name: list.name });
         reason('not in this lens');
       }
       continue;
@@ -237,7 +243,7 @@ export function evaluate(
       // Personal tags still carry the user's tag choices.
       for (const rule of matched) {
         const eff = tagOverride(rule, prefs);
-        if (eff?.discard) discard = true;
+        if (eff?.discard) hide({ kind: 'tag', name: eff.tag ?? '' });
         if (eff) score += eff.boost;
         if (eff?.highlight) highlight ??= eff.highlight;
       }
@@ -245,51 +251,42 @@ export function evaluate(
     }
 
     // Goggles precedence inside one list: discard > boost > downrank.
-    let listDiscard = false;
+    let listDiscard: NonNullable<Verdict['hiddenBy']> | undefined;
     let up = 0;
     let down = 0;
     for (const rule of matched) {
       const eff = tagOverride(rule, prefs) ?? { discard: rule.discard, boost: rule.pin ? MAX_LIST_BOOST : rule.boost };
       if (eff.highlight) highlight ??= eff.highlight;
-      if (eff.discard) listDiscard = true;
+      if (eff.discard) listDiscard ??= eff.tag ? { kind: 'tag', name: eff.tag } : { kind: 'list', name: list.name };
       else if (eff.boost > 0) up = Math.max(up, eff.boost);
       else if (eff.boost < 0) down = Math.min(down, eff.boost);
       reason(describe(rule));
     }
-    if (listDiscard) discard = true;
+    if (listDiscard) hide(listDiscard);
     else score += up > 0 ? up : down;
   }
 
   verdict.highlight = highlight;
 
-  switch (verdict.personal) {
-    case 'hide':
-      verdict.hidden = true;
-      verdict.level = 'hide';
-      verdict.score = 0;
-      return verdict;
-    case 'pin':
-      verdict.level = 'pin';
-      verdict.score = PIN_SCORE;
-      return verdict;
-    case 'allow':
-      verdict.score = 0;
-      verdict.level = 'normal';
-      return verdict;
-    case 'raise':
-      verdict.score = PERSONAL_STRENGTH;
-      verdict.level = 'raise';
-      return verdict;
-    case 'lower':
-      verdict.score = -PERSONAL_STRENGTH;
-      verdict.level = 'lower';
-      return verdict;
+  // An explicit personal level decides everything except the tags shown.
+  if (verdict.personal) {
+    const p = verdict.personal;
+    verdict.hidden = p === 'hide';
+    verdict.hiddenBy = p === 'hide' ? { kind: 'personal', name: personalName(lists) } : undefined;
+    verdict.level = p === 'allow' ? 'normal' : p;
+    verdict.score = p === 'pin' ? PIN_SCORE : p === 'raise' ? PERSONAL_STRENGTH : p === 'lower' ? -PERSONAL_STRENGTH : 0;
+    return verdict;
   }
 
   verdict.hidden = discard;
+  if (!discard) verdict.hiddenBy = undefined;
   verdict.score = discard ? 0 : score;
   verdict.level = discard ? 'hide' : score > 0 ? 'raise' : score < 0 ? 'lower' : 'normal';
   return verdict;
+}
+
+function personalName(lists: CompiledList[]): string {
+  return lists.find((l) => l.personal)?.name ?? 'Your list';
 }
 
 /** Every tag known to the given lists, first definition wins, with user overrides applied. */

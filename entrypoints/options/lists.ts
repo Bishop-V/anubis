@@ -4,7 +4,7 @@ import { ICON_EXTERNAL, ICON_REFRESH, ICON_TRASH } from '@/utils/icons';
 import { colorForTag, parseList, type ListFormat, type ParsedList } from '@/utils/listformat';
 import { send } from '@/utils/messages';
 import { getSubscriptions, saveSubscriptions } from '@/utils/ruleset';
-import { listCacheItem, type Subscription } from '@/utils/storage';
+import { listCacheItem, type CachedList, type Subscription } from '@/utils/storage';
 import {
   builtinId,
   displayName,
@@ -186,7 +186,7 @@ export async function renderLists(): Promise<HTMLElement> {
   );
 }
 
-function listCard(sub: Subscription, text: string | undefined, cached: { fetchedAt: number; error?: string } | undefined): HTMLElement {
+function listCard(sub: Subscription, text: string | undefined, cached: CachedList | undefined): HTMLElement {
   const parsed: ParsedList | undefined = text ? parseList(text) : undefined;
   const meta = parsed?.meta ?? {};
   const name = displayName(sub, meta);
@@ -253,7 +253,11 @@ function listCard(sub: Subscription, text: string | undefined, cached: { fetched
             parsed.tags.slice(0, 12).map((t) => h('span', { class: 'chip', style: `--c: ${t.color}`, title: t.description ?? t.id }, h('i', { class: 'dot' }), t.label)),
           )
         : null,
-      cached?.error ? h('div', { class: 'err' }, `Last update failed: ${cached.error}`) : null,
+      cached?.error
+        ? sub.builtin && !cached.text
+          ? h('div', { class: 'muted', style: 'margin-top:8px;font-size:12px' }, `Using the copy bundled with Anubis (update failed: ${cached.error}).`)
+          : h('div', { class: 'err' }, `Last update failed: ${cached.error}`)
+        : null,
       parsed?.errors.length
         ? h('div', { class: 'muted', style: 'margin-top:6px;font-size:12px' }, `${plural(parsed.errors.length, 'line')} skipped (unsupported or invalid).`)
         : null,

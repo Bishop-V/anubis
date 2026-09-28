@@ -144,10 +144,10 @@ export default defineContentScript({
       else renderChips(result, { ...verdict, level: 'normal', tags: [] }, ctx, false);
 
       ensureWeighButton(result, engine, theme, openWeigh);
-      renderHiddenBar(result, verdict, theme, verdict.hidden && !revealed && rules.settings.hideStyle === 'collapse' && !engine.table, {
+      renderHiddenBar(result, verdict, theme, rules.tags, verdict.hidden && !revealed && rules.settings.hideStyle === 'collapse' && !engine.table, {
         reveal: () => {
           container.setAttribute('data-anubis-reveal', '');
-          renderHiddenBar(result, verdict, theme, false, { reveal() {}, weigh() {} });
+          renderHiddenBar(result, verdict, theme, rules.tags, false, { reveal() {}, weigh() {} });
           renderChips(result, verdict, ctx, true);
         },
         weigh: (button) => openWeigh(button, result),
@@ -306,7 +306,8 @@ function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enable
         index,
         key: child.tagName === 'ANUBIS-SUMMARY' ? -Infinity : index - (scores.get(child) ?? 0),
       }))
-      .sort((a, b) => a.key - b.key || a.index - b.index);
+      // On a tie the higher score wins, so boost=1 really moves a result past its neighbour.
+      .sort((a, b) => a.key - b.key || (scores.get(b.child) ?? 0) - (scores.get(a.child) ?? 0) || a.index - b.index);
     ranked.forEach(({ child }, order) => child.style.setProperty('order', String(order)));
   }
 }

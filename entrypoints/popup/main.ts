@@ -19,7 +19,6 @@ const levelSelect = $<HTMLSelectElement>('#level');
 const list = $<HTMLUListElement>('#list');
 const enabled = $<HTMLInputElement>('#enabled');
 
-
 async function renderAll() {
   const rules = await loadRuleSet();
   enabled.checked = rules.settings.enabled;
@@ -35,19 +34,28 @@ async function renderAll() {
           return h(
             'li',
             null,
-            h('span', { class: 'site', title: entry.site }, entry.site),
             h(
-              'span',
-              { class: 'chips' },
-              level !== 'normal'
-                ? h('span', { class: `level-chip ${level}` }, icon(LEVEL_ICONS[level]), LEVEL_CHIPS[level])
-                : entry.level === 'allow'
-                  ? h('span', { class: 'level-chip' }, 'Allowed')
-                  : null,
-              entry.tags.slice(0, 2).map((id) => {
-                const tag = rules.tags.get(id);
-                return h('span', { class: 'chip', style: `--c: ${tag?.color ?? 'var(--gold)'}` }, h('i', { class: 'dot' }), tag?.label ?? id);
-              }),
+              'div',
+              { class: 'info' },
+              h('span', { class: 'site', title: entry.site }, entry.site),
+              h(
+                'span',
+                { class: 'chips' },
+                level !== 'normal'
+                  ? h('span', { class: `level-chip ${level}` }, icon(LEVEL_ICONS[level]), LEVEL_CHIPS[level])
+                  : entry.level === 'allow'
+                    ? h('span', { class: 'level-chip' }, 'Allowed')
+                    : null,
+                entry.tags.slice(0, 2).map((id) => {
+                  const tag = rules.tags.get(id);
+                  return h(
+                    'span',
+                    { class: 'chip', style: `--c: ${tag?.color ?? 'var(--gold)'}` },
+                    h('i', { class: 'dot' }),
+                    tag?.label ?? id,
+                  );
+                }),
+              ),
             ),
             h(
               'button',
@@ -74,15 +82,18 @@ function renderPage(stats: PageStats | undefined) {
   if (!stats) {
     page.replaceChildren(
       h('div', { class: 'label' }, 'This page'),
-      h('p', { class: 'page-empty' }, 'Open a search on Google, DuckDuckGo, Bing, Brave and others to see Anubis at work.'),
+      h(
+        'p',
+        { class: 'page-empty' },
+        'Open a search on Google, DuckDuckGo, Bing, Brave and others to see Anubis at work.',
+      ),
     );
     return;
   }
-  const stat = (n: number, label: string) => h('div', { class: `stat${n ? ' hot' : ''}` }, h('b', null, n), h('span', null, label));
+  const stat = (n: number, label: string) =>
+    h('div', { class: `stat${n ? ' hot' : ''}` }, h('b', null, n), h('span', null, label));
   page.replaceChildren();
-  append(
-    page,
-    [
+  append(page, [
     h(
       'div',
       { class: 'page-head' },
@@ -105,15 +116,15 @@ function renderPage(stats: PageStats | undefined) {
             class: 'btn small',
             type: 'button',
             on: {
-              click: async () => renderPage(await sendToActiveTab<PageStats>({ type: 'set-reveal', on: !stats.revealed })),
+              click: async () =>
+                renderPage(await sendToActiveTab<PageStats>({ type: 'set-reveal', on: !stats.revealed })),
             },
           },
           icon(stats.revealed ? ICON_HIDE : ICON_SHOW),
           stats.revealed ? 'Hide them again' : `Show ${plural(stats.hidden, 'hidden result')}`,
         )
       : null,
-    ],
-  );
+  ]);
 }
 
 form.addEventListener('submit', async (e) => {

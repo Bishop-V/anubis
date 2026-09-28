@@ -114,8 +114,17 @@ li {
 li:first-child {
   border-top: 0;
 }
-li .site {
+li .info {
   flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+li .chips:empty {
+  display: none;
+}
+li .site {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
