@@ -26,10 +26,20 @@ Firefox is the default target (`browser: 'firefox'` in `wxt.config.ts`). The `:c
 - `npm run build` / `npm run build:chrome`: production build into `.output/`
 - `npm run compile`: type-check. Run it after every change.
 - `npm test`: Vitest unit tests in `tests/` (list format, matcher, personal list edits, storage, bundled lists)
-- `npm run e2e`: builds for Chrome and runs `e2e/run.mjs` against mock search pages, saving screenshots to `e2e/shots/`. Needs `CHROMIUM_PATH`. `node e2e/run.mjs subscribe` downloads a real list from GitHub; behind a TLS-intercepting proxy set `PROXY_CA_CERT` to its CA.
+- `npm run e2e`: builds for Chrome and runs `e2e/run.mjs` against mock search pages, saving screenshots to `e2e/shots/`. Needs `CHROMIUM_PATH` pointing at a Chromium binary; Playwright's downloaded browsers don't run on NixOS, so use the system one (`CHROMIUM_PATH=$(which chromium)`). `node e2e/run.mjs <part>` runs one part: `pages`, `hostile`, `grouped`, `popover`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `options`. `subscribe` downloads a real list from GitHub; behind a TLS-intercepting proxy set `PROXY_CA_CERT` to its CA.
 - `npx web-ext lint -s .output/firefox-mv2`: the Mozilla add-on linter; keep it at zero warnings (CI treats warnings as errors)
 - `.github/workflows/ci.yml` runs compile, tests, both builds and the lint on pushes to main and on pull requests
 - `npm run zip` / `npm run zip:chrome`: package for the store
+
+## Checking on live pages
+
+Everything on search pages was built against the mocks in `e2e/fixtures.mjs`: the sandbox it was developed in couldn't reach any search engine. With a real browser, checking live pages is the most useful work.
+
+- Load the extension: `npm run dev` opens Firefox with it and reloads on save. A build loads from `about:debugging` → This Firefox → Load Temporary Add-on → `.output/firefox-mv2/manifest.json` (removed when Firefox closes), or from `chrome://extensions` with Developer mode on → Load unpacked → `.output/chrome-mv3`.
+- What to check: the "Still unverified" section of `docs/experiments.md` and its newest Google notes, which list open questions about the real markup. Record what was confirmed there, with the date. A browser tool that can read a live results page answers the markup questions even without the extension loaded.
+- What Anubis decided: each result it found carries `data-anubis-result` and `data-anubis-state` (its level, plus `tagged`); a reranked list carries `data-anubis-rerank` and its results a CSS `order`. Anubis's elements are `anubis-chips`, `anubis-weigh`, `anubis-bar`, `anubis-summary` and `anubis-popover`, each with a closed shadow root (DevTools still shows its contents).
+- Logs: the content script logs to the tab's console; the background script has its own (`about:debugging` → Inspect, or the service worker link on `chrome://extensions`).
+- Turning a live bug into a test: copy the live DOM (DevTools → `<html>` → Copy → Outer HTML), find the structure that breaks, and model it as a variant of that engine's mock in `e2e/fixtures.mjs` (Google's `hostile` and `grouped` are examples), with a check in `e2e/run.mjs`. Confirm the check fails on the previous build before fixing. Don't commit captured pages: they carry the signed-in account and location, and the repo is public.
 
 ## Layout
 
@@ -56,6 +66,18 @@ Firefox is the default target (`browser: 'firefox'` in `wxt.config.ts`). The `:c
 - Design follows `.claude/skills/frontend-design`: on search pages stay quiet (the page's font, muted text, no fills); the weigh menu's cartouche and balance are the one flourish. Sentence case, no ALL-CAPS labels, no "·"-joined meta strings.
 - Ask for as few permissions as possible. Only add a permission the feature actually needs.
 - Verify changes by type-checking, `npm test`, building both browsers, and loading the extension. Search pages can only be checked for real in a browser; `npm run e2e` covers the logic against mocks.
+
+## Pitfalls
+
+Lessons from earlier bugs and design decisions; `docs/experiments.md` has the details.
+
+- Never move the engine's result nodes: its scripts own them. Reranking sets CSS `order` in a flex column.
+- Page CSS can still reach a shadow host and hide or flip it. Create hosts with `makeHost` in `ui.ts`, which pins their styles inline with `!important`.
+- `:scope` matches nothing inside a shadow root. Keep references to rendered nodes instead of querying for them.
+- Anubis's own elements are recognised by tag name (`OWN_TAGS` in `results.ts`), so the mutation observer and the result finder ignore them. Add any new custom element there.
+- In Firefox, `permissions.request()` has to run before any `await` in a click handler, or it loses the user gesture and fails.
+- No `innerHTML`: `web-ext lint` flags it. Build DOM with `h()`, parse constant SVG with `DOMParser`. Pass `data-*` to `h()` through `attrs`; `dataset` is read-only.
+- Engines change markup without notice. Prefer structural fixes (headings, links, nesting) over class names.
 
 ## Working agreements
 
