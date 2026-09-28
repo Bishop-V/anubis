@@ -9,3 +9,7 @@ CLAUDE.local.md
 
 # e2e screenshots
 e2e/shots
+
+# Docs site build
+docs/.vitepress/dist
+docs/.vitepress/cache

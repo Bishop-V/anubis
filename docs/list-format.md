@@ -125,4 +125,4 @@ Anubis detects the format of each file, so existing lists work without changes.
 2. Put it in a public repository or gist. Any file extension works; `.anubis` helps people recognise it.
 3. Share the link. GitHub page links, gist links and `search.brave.com/goggles?goggles_id=…` links are all converted to the raw file automatically.
 4. Set `! issues:` so people can suggest additions from the menu on each result.
-5. To have it listed in **Settings → Lists** for everyone, add an entry to [`lists/directory.json`](../lists/directory.json) in a pull request.
+5. To have it listed in **Settings → Lists** for everyone, add an entry to [`lists/directory.json`](https://github.com/Bishop-V/anubis/blob/main/lists/directory.json) in a pull request.

@@ -4,7 +4,7 @@ What was tried while building the tagging and lists release, what failed, and wh
 
 ## Still unverified against live pages
 
-The development sandbox could not reach any search engine, so everything on search pages was tested against mock pages (see [`e2e/`](../e2e)) shaped like each engine's markup as described by uBlacklist's maintained [SERPINFO definitions](https://github.com/ublacklist/builtin/tree/main/serpinfo), checked on 2026-09-28. Before a release, load the extension and check each engine by hand:
+The development sandbox could not reach any search engine, so everything on search pages was tested against mock pages (see [`e2e/`](https://github.com/Bishop-V/anubis/tree/main/e2e)) shaped like each engine's markup as described by uBlacklist's maintained [SERPINFO definitions](https://github.com/ublacklist/builtin/tree/main/serpinfo), checked on 2026-09-28. Before a release, load the extension and check each engine by hand:
 
 | Engine | How results are found | Confidence |
 | --- | --- | --- |
@@ -22,6 +22,17 @@ Clean-up is also unverified live. To check:
 - Google: that "AI Overview", "Videos", "People also ask", "Top stories" and "Related searches" are still headings (`h1`–`h4` or `role="heading"`) at the top of their blocks, and that the blocks sit in `#rso`, `#botstuff` or the `role="main"` column. That the AI Mode tab is a link with that exact text in a `role="navigation"` or `role="list"` element. That choosing All from the Web tab lands on a `/search` URL without `udm`, so Anubis leaves it alone.
 - DuckDuckGo: that `noai.duckduckgo.com` keeps your DuckDuckGo settings (theme, region). They are cookies, and a cookie set only for `duckduckgo.com` wouldn't reach the subdomain.
 - Bing and Brave: what their AI answers' headings actually say. The selectors `[data-attrid="AIOverview"]` (Google), `.related-question-pair` (Google) and `#summarizer` (Brave) come from community filter lists.
+
+## Documentation site
+
+Modelled on [uBlacklist's documentation](https://ublacklist.github.io/docs/introduction): an introduction, getting started with screenshots, then one page per feature, publishing, and a directory of lists.
+
+- **Tried:** VitePress 1.6.4, the current stable release. It pulls in Vite 5 and an esbuild with published advisories for their development servers (`npm audit`: two moderate, one high). **Shipped:** VitePress 2.0.0-alpha.20, which uses the same Vite 8 as the extension and audits clean. It only builds the documentation, so a pre-release costs little; move to 2.0 stable when it's out.
+- **Not used:** Hugo, which uBlacklist's site uses. It would need a second toolchain alongside Node and the Nix flake.
+- **Screenshots** come from the e2e mock pages (`node e2e/run.mjs docs`), so they can be regenerated after interface changes instead of retaken by hand. They show test pages, not the real engines, and the captions say so.
+- **Images** live in `docs/img/` and pages link to them relatively, so the Markdown reads correctly on GitHub as well as on the site. Links to repository files outside `docs/` are full GitHub links, since the site can't serve them.
+- The lists directory page renders `lists/directory.json` at build time, so it can't drift from what the extension offers.
+- Publishing uses GitHub Pages from a workflow. Pages has to be switched to "GitHub Actions" in the repository settings once; until then the deploy step fails.
 
 ## Wording, icons and the motif
 

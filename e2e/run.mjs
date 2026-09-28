@@ -5,6 +5,7 @@
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, off, cleanup, popover, ddg-hide,
 //                               filter, deeper, import, subscribe, options
+//   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/
 //
 // Needs a Chromium build (branded Chrome no longer loads unpacked extensions from
 // the command line). Point CHROMIUM_PATH at it, e.g. CHROMIUM_PATH=$(which chromium).
@@ -67,6 +68,8 @@ async function launch(settings = {}) {
     headless: true,
     args: [`--disable-extensions-except=${EXT}`, `--load-extension=${EXT}`, ...proxyTrustArgs()],
     viewport: { width: 1180, height: 1000 },
+    // Sharper screenshots for the documentation site.
+    deviceScaleFactor: only === 'docs' ? 2 : 1,
     // Behind a proxy (as in CI sandboxes), real list downloads need it too.
     ...(process.env.HTTPS_PROXY && { proxy: { server: process.env.HTTPS_PROXY } }),
   });
@@ -451,6 +454,74 @@ if (!only || only === 'options') {
     await opt.close();
   }
   console.log('\n== options + popup screenshots done');
+}
+
+// Not part of a normal run: regenerates the screenshots in docs/img/ from
+// the mock pages, so the documentation shows the current interface.
+if (only === 'docs') {
+  const DOCS_IMG = fileURLToPath(new URL('../docs/img/', import.meta.url));
+  mkdirSync(DOCS_IMG, { recursive: true });
+  const sw = ctx.serviceWorkers()[0];
+  const setSettings = (patch) =>
+    sw.evaluate(async (patch) => {
+      const { settings } = await chrome.storage.sync.get('settings');
+      await chrome.storage.sync.set({ settings: { ...settings, ...patch } });
+    }, patch);
+  // Screenshot the smallest rectangle around these elements, with some room.
+  const clip = async (name, selectors, pad = 14) => {
+    const box = await page.evaluate(
+      ({ selectors, pad }) => {
+        const rects = selectors.flatMap((s) => [...document.querySelectorAll(s)].slice(0, 1)).map((el) => el.getBoundingClientRect());
+        const x = Math.min(...rects.map((r) => r.left)) - pad;
+        const y = Math.min(...rects.map((r) => r.top)) - pad;
+        const right = Math.max(...rects.map((r) => r.right)) + pad;
+        const bottom = Math.max(...rects.map((r) => r.bottom)) + pad;
+        return { x: Math.max(0, x + scrollX), y: Math.max(0, y + scrollY), width: right - x, height: bottom - y };
+      },
+      { selectors, pad },
+    );
+    await page.screenshot({ path: `${DOCS_IMG}${name}.png`, clip: box, fullPage: true });
+  };
+
+  await page.goto('https://www.google.com/search?q=anubis');
+  await page.waitForTimeout(700);
+  await clip('summary', ['anubis-summary', '#rso > .MjjYud:nth-of-type(2)']);
+  const wiki = page.locator('[data-anubis-result]', { hasText: 'Anubis - Wikipedia' });
+  await wiki.hover();
+  await page.waitForTimeout(200);
+  await clip('result', ['[data-anubis-result]:has(a[href*="wikipedia"])']);
+  await clip('hidden', ['[data-anubis-result]:has(anubis-bar)'], 10);
+
+  await page.goto('https://duckduckgo.com/?q=javascript+promises');
+  await page.waitForTimeout(700);
+  const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
+  await target.hover();
+  await target.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+  await page.waitForTimeout(300);
+  await clip('menu', ['anubis-popover', '[data-anubis-result]:has(a[href*="javascript.info"])'], 12);
+  await page.keyboard.press('Escape');
+
+  await setSettings({ cleanup: { ai: true, videos: true, questions: true, news: true, images: true, related: true } });
+  await page.goto('https://www.google.com/search?q=anubis&modules=1');
+  await page.waitForTimeout(800);
+  await clip('cleanup-summary', ['anubis-summary']);
+  await setSettings({ cleanup: { ai: false, videos: false, questions: false, news: false, images: false, related: false } });
+
+  const opt = await ctx.newPage();
+  await opt.setViewportSize({ width: 1100, height: 760 });
+  for (const section of ['sites', 'tags', 'lists', 'cleanup']) {
+    await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
+    await opt.waitForTimeout(500);
+    await opt.screenshot({ path: `${DOCS_IMG}options-${section}.png` });
+  }
+  await opt.close();
+  const pop = await ctx.newPage();
+  await pop.setViewportSize({ width: 364, height: 560 });
+  await pop.goto(`chrome-extension://${extId}/popup.html`);
+  await pop.waitForTimeout(400);
+  await pop.screenshot({ path: `${DOCS_IMG}popup.png` });
+  await pop.close();
+  console.log('\n== documentation screenshots saved to docs/img/');
 }
 
 await ctx.close();

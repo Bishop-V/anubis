@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "description": "Lists Anubis offers under Settings → Lists → Discover. Add yours with a pull request.",
+  "description": "Lists Anubis offers under Settings → Lists → More lists. Add yours with a pull request.",
   "lists": [
     {
       "id": "official-docs",

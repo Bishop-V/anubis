@@ -30,6 +30,7 @@ Firefox is the default target (`browser: 'firefox'` in `wxt.config.ts`). The `:c
 - `npx web-ext lint -s .output/firefox-mv2`: the Mozilla add-on linter; keep it at zero warnings (CI treats warnings as errors)
 - `.github/workflows/ci.yml` runs compile, tests, both builds and the lint on pushes to main and on pull requests
 - `npm run zip` / `npm run zip:chrome`: package for the store
+- `npm run docs:dev` / `npm run docs:build`: the documentation site (VitePress) from `docs/`. The build fails on a broken link. `.github/workflows/docs.yml` builds it on pull requests and publishes it to GitHub Pages from main. `node e2e/run.mjs docs` regenerates its screenshots in `docs/img/` from the mock pages; rerun it after changing anything they show.
 
 ## Checking on live pages
 
@@ -60,6 +61,7 @@ Everything on search pages was built against the mocks in `e2e/fixtures.mjs`: th
 - `utils/importers.ts`: bringing sites over from uBlacklist rules, HOHSER exports, Goggles and domain lists
 - `utils/cleanup.ts`: the clean-up kinds, the headings that identify each one (with translations) and per-engine selectors
 - `lists/`: the bundled lists and `directory.json` (the "More lists" directory). `docs/list-format.md` is the format reference.
+- `docs/`: the documentation site. `guide/` holds the user guide, `lists.md` renders `lists/directory.json`, and `.vitepress/` holds the config and brand theme. The extension links to `docs/list-format.md` on GitHub, so don't move that file. Write for people who use the extension, in the same plain words as its interface, and update the guide when a feature changes.
 - `public/`: the logo (`anubis.svg`) and toolbar icons (`icon/{16,32,48,96,128}.png`). WXT detects these automatically.
 
 ## Conventions

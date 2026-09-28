@@ -251,7 +251,7 @@ export async function renderShare(): Promise<HTMLElement> {
         h(
           'li',
           null,
-          'Want it in Discover for everyone? Open a pull request adding it to ',
+          'Want it under More lists for everyone? Open a pull request adding it to ',
           h('a', { href: 'https://github.com/Bishop-V/anubis/blob/main/lists/directory.json', target: '_blank', rel: 'noopener noreferrer' }, 'lists/directory.json'),
           '.',
         ),

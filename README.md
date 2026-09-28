@@ -67,6 +67,8 @@ If the dev browser doesn't open on its own, build and load the extension yoursel
 
 ## Documentation
 
+The user guide is at **[bishop-v.github.io/anubis](https://bishop-v.github.io/anubis/)**, built from [`docs/`](docs) (start with [the introduction](docs/guide/introduction.md)). `npm run docs:dev` previews it locally.
+
 - [The list format](docs/list-format.md): how to write and publish a list.
 - [Lists](lists/README.md): the lists that ship with Anubis and how to contribute one.
 - [Experiments and decisions](docs/experiments.md): what was tried, what failed, and what still needs checking on live pages.
