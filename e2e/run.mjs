@@ -92,6 +92,7 @@ async function launch(settings = {}) {
     'https://search.brave.com/search?q=anubis': brave('anubis', ANUBIS_RESULTS),
     'https://www.google.com/search?q=anubis&deep=1': google('anubis', ANUBIS_RESULTS, false, '/search?q=anubis&start=10'),
     'https://www.google.com/search?q=anubis&start=10': google('anubis', ANUBIS_PAGE2),
+    'https://www.google.com/search?q=anubis&hostile=1': google('anubis', ANUBIS_RESULTS, false, '', true),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
   };
   await ctx.route(/^https:\/\/(duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com)\//, (route) => {
@@ -133,6 +134,36 @@ if (!only || only === 'pages') {
   await shoot('https://www.google.com/search?q=anubis&dark=1', 'google-dark');
   await shoot('https://www.bing.com/search?q=javascript+promises', 'bing');
   await shoot('https://search.brave.com/search?q=anubis', 'brave');
+}
+
+if (!only || only === 'hostile') {
+  await page.goto('https://www.google.com/search?q=anubis&hostile=1');
+  await page.waitForTimeout(700);
+  const check = await page.evaluate(() => {
+    const upright = (el) => {
+      let m = new DOMMatrix();
+      for (let a = el; a; a = a.parentElement) {
+        const t = getComputedStyle(a).transform;
+        if (t && t !== 'none') m = new DOMMatrix(t).multiply(m);
+      }
+      return m.a > 0 && m.d > 0 && Math.abs(m.b) < 0.01;
+    };
+    const results = [...document.querySelectorAll('[data-anubis-result]')];
+    const summary = document.querySelector('anubis-summary');
+    const firstInList = document.querySelector('#rso .MjjYud');
+    return {
+      results: results.length,
+      containersAreResults: results.every((r) => r.classList.contains('MjjYud')),
+      weighVisible: results.filter((r) => {
+        const w = r.querySelector(':scope > anubis-weigh');
+        return w && getComputedStyle(w).display !== 'none' && w.getBoundingClientRect().width > 0;
+      }).length,
+      chipsUpright: [...document.querySelectorAll('anubis-chips')].map(upright),
+      summaryBeforeFirstResult: !!summary && summary.nextElementSibling === firstInList,
+    };
+  });
+  console.log('\n== hostile google:', JSON.stringify(check));
+  await page.screenshot({ path: `${SHOTS}google-hostile.png`, fullPage: true });
 }
 
 if (!only || only === 'popover') {

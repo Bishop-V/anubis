@@ -21,13 +21,113 @@ const renderKeys = new WeakMap<HTMLElement, string>();
 const rendered = new WeakMap<HTMLElement, Node>();
 const HOST_TAGS = 'anubis-chips, anubis-weigh, anubis-bar, anubis-summary, anubis-popover';
 
-function makeHost(tag: string, theme: PageTheme): { host: HTMLElement; root: ShadowRoot } {
+// The shadow root protects what's inside a host, but the host element itself is
+// part of the page and the page's CSS can still reach it (Google's stylesheets
+// match on structure, like `… > :last-child`). These inline !important values
+// win over any page rule, so a host can't be hidden, faded, moved or flipped.
+const GUARDS: [string, string][] = [
+  ['visibility', 'visible'],
+  ['opacity', '1'],
+  ['transform', 'none'],
+  ['rotate', 'none'],
+  ['scale', 'none'],
+  ['translate', 'none'],
+  ['filter', 'none'],
+  ['clip-path', 'none'],
+  ['mask', 'none'],
+  ['writing-mode', 'horizontal-tb'],
+  ['direction', 'ltr'],
+  ['float', 'none'],
+  ['content-visibility', 'visible'],
+  ['pointer-events', 'auto'],
+];
+
+function guard(host: HTMLElement, display: string): void {
+  for (const [prop, value] of GUARDS) host.style.setProperty(prop, value, 'important');
+  host.style.setProperty('display', display, 'important');
+}
+
+function makeHost(tag: string, theme: PageTheme, display = 'block'): { host: HTMLElement; root: ShadowRoot } {
   const host = document.createElement(tag);
   const root = host.attachShadow({ mode: 'closed' });
   root.append(h('style', null, shadowCss));
   host.dataset.theme = theme;
+  guard(host, display);
   roots.set(host, root);
   return { host, root };
+}
+
+// ---------------------------------------------------------------------------
+// Keeping text upright
+//
+// If an ancestor is mirrored or rotated (some layouts flip a wrapper with a
+// transform and flip their own children back), a host inside it would be drawn
+// upside down. Add up the ancestors' transforms and, if the result isn't upright,
+// give the host the inverse. Checked when a host lands somewhere new.
+
+const uprightParent = new WeakMap<HTMLElement, Element | null>();
+
+function linearTransform(el: Element): DOMMatrix {
+  const cs = getComputedStyle(el);
+  let m = new DOMMatrix();
+  const rotate = /^(-?[\d.]+)deg$/.exec(cs.rotate?.trim() ?? '');
+  if (rotate) m = m.rotate(Number(rotate[1]));
+  if (cs.scale && cs.scale !== 'none') {
+    const [sx = 1, sy = sx] = cs.scale.split(/\s+/).map(Number);
+    m = m.scale(sx, sy);
+  }
+  if (cs.transform && cs.transform !== 'none') {
+    try {
+      const t = new DOMMatrix(cs.transform);
+      m = m.multiply(new DOMMatrix([t.a, t.b, t.c, t.d, 0, 0]));
+    } catch {
+      // An unparseable 3D transform: leave it.
+    }
+  }
+  return m;
+}
+
+const transformedCache = new WeakMap<Element, boolean>();
+
+function isTransformed(el: Element): boolean {
+  let known = transformedCache.get(el);
+  if (known === undefined) {
+    const cs = getComputedStyle(el);
+    known = (cs.transform !== 'none' && cs.transform !== '') || (cs.rotate ?? 'none') !== 'none' || (cs.scale ?? 'none') !== 'none';
+    transformedCache.set(el, known);
+  }
+  return known;
+}
+
+/**
+ * Inside a flipped wrapper, anything added after the title is drawn above it. So
+ * step out to just after the outermost transformed wrapper within the result.
+ */
+function outsideTransforms(block: HTMLElement, container: HTMLElement): HTMLElement {
+  let anchor = block;
+  for (let el = block.parentElement; el && el !== container; el = el.parentElement) {
+    if (isTransformed(el)) anchor = el;
+  }
+  return anchor;
+}
+
+export function keepUpright(host: HTMLElement): void {
+  const parent = host.parentElement;
+  if (uprightParent.get(host) === parent) return;
+  uprightParent.set(host, parent);
+  let net = new DOMMatrix();
+  for (let el: Element | null = parent; el; el = el.parentElement) net = linearTransform(el).multiply(net);
+  const det = net.a * net.d - net.b * net.c;
+  const tilted = det < 0 || Math.abs(Math.atan2(net.b, net.a)) > 0.02;
+  if (!tilted || det === 0) {
+    host.style.setProperty('transform', 'none', 'important');
+    return;
+  }
+  // Undo only the flip or rotation, not any scaling.
+  const s = Math.sqrt(Math.abs(det));
+  const inv = new DOMMatrix([net.a / s, net.b / s, net.c / s, net.d / s, 0, 0]).inverse();
+  host.style.setProperty('transform', `matrix(${inv.a}, ${inv.b}, ${inv.c}, ${inv.d}, 0, 0)`, 'important');
+  host.style.setProperty('transform-origin', 'center', 'important');
 }
 
 /** Replace a host's content unless it's already showing the same thing. */
@@ -92,7 +192,9 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
     chipsHosts.set(container, host);
   }
   // Keep it right after the title, even if the page re-rendered around it.
-  if (host.previousElementSibling !== titleBlock) titleBlock.after(host);
+  const anchor = outsideTransforms(titleBlock, container);
+  if (host.previousElementSibling !== anchor) anchor.after(host);
+  keepUpright(host);
   host.dataset.theme = ctx.theme;
 
   const key = JSON.stringify([level, tags.map((id) => ctx.tags.get(id)), page]);
@@ -138,7 +240,7 @@ export function ensureWeighButton(
   const { container } = result;
   let host = weighHosts.get(container);
   if (!host) {
-    const made = makeHost('anubis-weigh', theme);
+    const made = makeHost('anubis-weigh', theme, engine.table ? 'inline-block' : 'block');
     const button = h(
       'button',
       {
@@ -164,14 +266,23 @@ export function ensureWeighButton(
 
   if (engine.table) {
     // Table rows can't position children; sit inline after the title instead.
-    host.style.cssText = 'position:relative;display:inline-block;vertical-align:middle;margin-left:6px;--anubis-weigh-opacity:.8';
+    host.style.setProperty('position', 'relative', 'important');
+    host.style.setProperty('vertical-align', 'middle', 'important');
+    host.style.setProperty('margin-left', '6px', 'important');
+    host.style.setProperty('--anubis-weigh-opacity', '.8');
     if (host.previousElementSibling !== result.link) result.link.after(host);
+    keepUpright(host);
     return;
   }
   const { top, right } = engine.button ?? { top: '2px', right: '2px' };
-  host.style.top = top;
-  host.style.right = right;
+  host.style.setProperty('position', 'absolute', 'important');
+  host.style.setProperty('top', top, 'important');
+  host.style.setProperty('right', right, 'important');
+  host.style.setProperty('left', 'auto', 'important');
+  host.style.setProperty('bottom', 'auto', 'important');
+  host.style.setProperty('z-index', '5', 'important');
   if (host.parentElement !== container) container.append(host);
+  keepUpright(host);
   // The button is absolutely positioned, so the result must be a positioning context.
   // Checked once per result: reading computed style every pass forces a style recalc.
   if (!positioned.has(container)) {
@@ -217,6 +328,7 @@ export function renderHiddenBar(
     barHosts.set(container, host);
   }
   if (container.firstElementChild !== host) container.prepend(host);
+  keepUpright(host);
   host.dataset.theme = theme;
 
   const why = hiddenReason(verdict, tags);
@@ -264,6 +376,7 @@ export function renderSummary(
   }
   summaryHost ??= makeHost('anubis-summary', theme).host;
   if (summaryHost.nextElementSibling !== before) before.before(summaryHost);
+  keepUpright(summaryHost);
   summaryHost.dataset.theme = theme;
 
   render(summaryHost, JSON.stringify(stats), () =>

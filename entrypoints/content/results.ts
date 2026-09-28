@@ -89,10 +89,27 @@ function build(
   return { container, link, titleBlock, url, host, title, description, extras, page };
 }
 
-/** Chips go after the title: after the heading if the link is inside it, else after the link. */
+/**
+ * Chips go after the title: after the heading if the link is inside it, else after
+ * the link. Then climb out of wrappers that hold nothing but the title, so the chips
+ * sit beside the whole title block rather than inside the engine's own link
+ * wrappers, which may be styled (or even flipped with transforms) in ways that
+ * don't suit extra content.
+ */
 function titleBlockFor(title: HTMLElement, link: HTMLAnchorElement, container: HTMLElement): HTMLElement {
-  const block = title.contains(link) ? title : link.contains(title) ? link : title;
-  return container.contains(block) && block !== container ? block : link;
+  let block: HTMLElement = title.contains(link) ? title : link.contains(title) ? link : title;
+  if (!container.contains(block) || block === container) block = link;
+  for (let parent = block.parentElement; parent && parent !== container && ownChildCount(parent) === 1; parent = parent.parentElement) {
+    block = parent;
+  }
+  return block;
+}
+
+/** Element children that aren't Anubis's own. */
+function ownChildCount(el: Element): number {
+  let n = 0;
+  for (const child of el.children) if (!OWN_TAGS.has(child.tagName)) n++;
+  return n;
 }
 
 /**
@@ -102,7 +119,9 @@ function titleBlockFor(title: HTMLElement, link: HTMLAnchorElement, container: H
  */
 function resultContainer(link: HTMLAnchorElement, heading: string, boundary: string | undefined, root: Document): HTMLElement {
   let el: HTMLElement = link;
-  for (let depth = 0; depth < 8; depth++) {
+  // Google nests a result about eight elements deep, so the limit is generous: the
+  // real stops are the boundary and a parent holding a second result.
+  for (let depth = 0; depth < 30; depth++) {
     const parent = el.parentElement;
     if (!parent || parent === root.body || parent === root.documentElement) break;
     if (boundary && parent.matches(boundary)) break;

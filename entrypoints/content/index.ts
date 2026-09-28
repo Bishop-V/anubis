@@ -137,7 +137,7 @@ export default defineContentScript({
       rerank(results, scores, rules.settings.rerank && !engine.table);
 
       if (rules.settings.showSummary && !engine.table) {
-        renderSummary(results[0]?.container, stats, theme, {
+        renderSummary(summaryAnchor(results), stats, theme, {
           toggleReveal: () => {
             reveal = !reveal;
             pass();
@@ -378,6 +378,22 @@ function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enable
       if (child.style.order !== String(order)) child.style.setProperty('order', String(order));
     });
   }
+}
+
+/**
+ * Where the summary goes: before the first result of the list that holds most of
+ * the results. The first heading in the page source can belong to something else
+ * (a side panel, a carousel, a block the engine shows further down).
+ */
+function summaryAnchor(results: FoundResult[]): HTMLElement | undefined {
+  const counts = new Map<HTMLElement, number>();
+  for (const r of results) {
+    const parent = r.container.parentElement;
+    if (parent) counts.set(parent, (counts.get(parent) ?? 0) + 1);
+  }
+  let main: HTMLElement | undefined;
+  for (const [parent, n] of counts) if (!main || n > counts.get(main)!) main = parent;
+  return results.find((r) => r.container.parentElement === main)?.container ?? results[0]?.container;
 }
 
 /** Light or dark, from the setting or, on "auto", from the page's own background. */

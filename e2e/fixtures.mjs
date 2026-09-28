@@ -100,22 +100,28 @@ export function duckduckgo(query, results, dark = false, more = []) {
 }
 
 // ---------------------------------------------------------------- Google
-export function google(query, results, dark = false, next = '') {
+// `hostile` adds the kinds of markup and CSS that broke Anubis on real Google in
+// Firefox: deeper nesting, a title wrapper flipped with a transform (with the
+// page's own children flipped back), a rule hiding stray last children, and an
+// unrelated heading earlier in the page source than the results.
+export function google(query, results, dark = false, next = '', hostile = false) {
   const items = results
     .map(([url, title, snippet], i) => {
       const host = hostOf(url);
       const crumbs = `https://${new URL(url).hostname} › ${new URL(url).pathname.split('/').filter(Boolean).slice(0, 2).join(' › ')}`;
       // Mix of link styles: direct, /url?q=, and opaque /goto (needs the <cite> fallback).
       const href = i === 1 ? `/url?q=${encodeURIComponent(url)}&sa=U` : i === 3 ? `/goto?url=CAESopaqueblob${i}` : url;
+      const open = hostile ? '<div class="hw1"><div class="hw2"><div class="hw3">' : '';
+      const close = hostile ? '</div></div></div>' : '';
       return `
-      <div class="MjjYud"><div class="g Ww4FFb vt6azd tF2Cxc asEBEc"><div class="N54PNb BToiNc">
-        <div class="kb0PBd A9Y9g jGGQ5e" data-snf="x5WNvb"><div class="yuRUbf"><div><span jscontroller="msmzHf">
+      <div class="MjjYud">${open}<div class="g Ww4FFb vt6azd tF2Cxc asEBEc"><div class="N54PNb BToiNc">
+        <div class="kb0PBd A9Y9g jGGQ5e" data-snf="x5WNvb"><div class="yuRUbf"><div class="flipwrap"><span jscontroller="msmzHf">
           <a jsname="UWckNb" href="${href}"><br><h3 class="LC20lb MBeuO DKV0Md">${esc(title)}</h3>
             <div class="notranslate TbwUpd NJjxre iUh30 ojE3Fb"><span class="H9lube"><div class="eqA2re NjwKYd Vwoesf"><div class="favicon"></div></div></span>
             <div><span class="VuuXrf">${esc(host.split('.')[0])}</span><div class="byrV5b"><cite class="qLRx3b tjvcx GvPZzd cHaqb" role="text">${esc(crumbs)}</cite></div></div></div>
-          </a></span></div></div></div>
+          </a><span class="aux"></span></span><div class="B6fmyf">⋮</div></div></div></div>
         <div class="kb0PBd A9Y9g" data-sncf="1"><div class="VwiC3b yXK7lf p4wth r025kc hJNv6b Hdw6tb" style="-webkit-line-clamp:2"><span>${esc(snippet)}</span></div></div>
-      </div></div></div>`;
+      </div></div>${close}</div>`;
     })
     .join('');
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${esc(query)} - Google Search</title>
@@ -137,9 +143,17 @@ export function google(query, results, dark = false, next = '') {
     .VuuXrf{display:block;font-size:14px;color:${dark ? '#dadce0' : '#202124'}}
     cite{font-style:normal;font-size:12px;color:${dark ? '#bdc1c6' : '#4d5156'}}
     .VwiC3b{color:${dark ? '#bdc1c6' : '#4d5156'};margin-top:4px}
+    .B6fmyf{display:none}
+    ${hostile ? `
+    .aux{display:none}
+    .flipwrap>span{transform:scaleY(-1)}
+    .flipwrap>span>a{transform:scaleY(-1)}
+    .MjjYud>:last-child:not(.hw1){display:none}
+    #top-extra{position:absolute;left:-9999px}` : ''}
   </style></head><body>
   <div class="hdr"><span class="glogo">Google</span><div class="q">${esc(query)}</div></div>
   <div class="tabs"><b>All</b><span>Images</span><span>News</span><span>Videos</span></div>
+  ${hostile ? '<div id="top-extra"><a href="https://ads.example.net/offer"><h3>Sponsored offer</h3></a></div>' : ''}
   <div id="search"><div data-hveid="CAQQAA"><h1 style="display:none">Search Results</h1><div id="rso">${items}</div></div></div>
   ${next ? `<table class="AaVjTc" style="margin-left:180px"><tr><td><a id="pnnext" href="${next}">Next</a></td></tr></table>` : ''}
   </body></html>`;
