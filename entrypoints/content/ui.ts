@@ -1,10 +1,10 @@
 import { domainChoices, siteOf } from '@/utils/domain';
 import { h, icon } from '@/utils/dom';
 import type { EngineDef } from '@/utils/engines';
-import { ICON_ANUBIS, ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
+import { ICON_ANUBIS, ICON_CLOSE, ICON_HIDE, ICON_RANK, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
 import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
-import type { PageStats } from '@/utils/messages';
+import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, type PersonalLevel } from '@/utils/personal';
 import { summarySentence } from '@/utils/summary';
 import type { FoundResult } from './results';
@@ -223,7 +223,7 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
           tag.label,
         );
       }),
-      page ? h('span', { class: 'page-note', title: 'Brought over by “Weigh deeper”' }, `from page ${page}`) : null,
+      page ? h('span', { class: 'page-note', title: 'Added by “Load more results”' }, `from page ${page}`) : null,
     ),
   );
 }
@@ -246,10 +246,10 @@ export function ensureWeighButton(
       {
         class: 'weigh',
         type: 'button',
-        title: 'Weigh this site',
-        attrs: { 'aria-label': 'Weigh this site with Anubis', 'aria-haspopup': 'dialog', 'aria-expanded': 'false' },
+        title: 'Hide, rank or tag this site',
+        attrs: { 'aria-label': 'Hide, rank or tag this site', 'aria-haspopup': 'dialog', 'aria-expanded': 'false' },
       },
-      icon(ICON_ANUBIS),
+      icon(ICON_RANK),
     );
     const owner = made.host;
     button.addEventListener('click', (e) => {
@@ -369,7 +369,7 @@ export function renderSummary(
   actions: { toggleReveal: () => void; settings: () => void; deeper: () => void; filter: (tag?: string) => void },
 ): void {
   const worthShowing =
-    stats.hidden || stats.pinned || stats.raised || stats.lowered || stats.tagged || stats.canGoDeeper || stats.pages > 1;
+    hiddenCount(stats) || stats.pinned || stats.raised || stats.lowered || stats.tagged || stats.canGoDeeper || stats.pages > 1;
   if (!before?.parentElement || !worthShowing) {
     summaryHost?.remove();
     return;
@@ -388,7 +388,7 @@ export function renderSummary(
       stats.filter
         ? h('button', { class: 'text-btn', type: 'button', on: { click: () => actions.filter(undefined) } }, 'Show all')
         : null,
-      stats.hidden && !stats.filter
+      hiddenCount(stats) && !stats.filter
         ? h(
             'button',
             { class: 'text-btn', type: 'button', on: { click: actions.toggleReveal } },
@@ -402,17 +402,13 @@ export function renderSummary(
               class: 'text-btn',
               type: 'button',
               disabled: stats.loading,
-              title: 'Bring the next page of results here and weigh them together',
+              title: 'Add the next page of results here and rank them together',
               on: { click: actions.deeper },
             },
-            stats.loading ? 'Weighing…' : 'Weigh deeper',
+            stats.loading ? 'Loading…' : 'Load more results',
           )
         : null,
-      h(
-        'button',
-        { class: 'icon-btn', type: 'button', title: 'Anubis settings', attrs: { 'aria-label': 'Anubis settings' }, on: { click: actions.settings } },
-        icon(ICON_GEAR),
-      ),
+      h('button', { class: 'text-btn quiet', type: 'button', title: 'Open Anubis settings', on: { click: actions.settings } }, 'Settings'),
       // The tags on this page, as a legend you can click to show only that tag.
       stats.tags.length
         ? h(
@@ -608,7 +604,7 @@ function buildPopover(
       class: 'domain',
       title: choices.length > 1 ? 'Choose how much of the site this applies to' : undefined,
       disabled: choices.length < 2,
-      attrs: { 'aria-label': 'Site to weigh' },
+      attrs: { 'aria-label': 'Site' },
     },
     choices.map((d) => h('option', { value: d, selected: d === domain }, d)),
   );
@@ -616,7 +612,7 @@ function buildPopover(
 
   const levels = h(
     'div',
-    { class: 'levels', attrs: { role: 'group', 'aria-label': 'Weight' } },
+    { class: 'levels', attrs: { role: 'group', 'aria-label': 'Ranking' } },
     LEVELS.map((level) =>
       h(
         'button',
@@ -640,11 +636,11 @@ function buildPopover(
 
   let hint: string;
   if (personal === 'allow') hint = 'Normal, whatever your lists say.';
-  else if (pressed) hint = `Your weighing of ${domain}, on every search.`;
+  else if (pressed) hint = `Your choice for ${domain}, on every search.`;
   else if (fromLists !== 'normal') {
     const lists = [...new Set(data.baseline.reasons.map((r) => r.list))].join(', ');
-    hint = `${LEVEL_CHIPS[fromLists]} by ${lists}. Choose a weight to decide yourself.`;
-  } else hint = 'Choose a weight. It applies on every search.';
+    hint = `${LEVEL_CHIPS[fromLists]} by ${lists}. Choose one to decide yourself.`;
+  } else hint = 'Your choice applies on every search.';
 
   // Tags you set toggle; tags from lists are shown but fixed.
   const mine = new Set(entry?.tags ?? []);
@@ -714,7 +710,7 @@ function buildPopover(
 
   const pop = h(
     'div',
-    { class: 'pop', attrs: { role: 'dialog', 'aria-label': `Weigh ${domain}` } },
+    { class: 'pop', attrs: { role: 'dialog', 'aria-label': `Hide, rank or tag ${domain}` } },
     h(
       'div',
       { class: 'head' },

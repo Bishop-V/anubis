@@ -4,6 +4,7 @@ import { h } from '@/utils/dom';
 import { listSites } from '@/utils/personal';
 import { getSubscriptions, loadRuleSet, watchRuleSet } from '@/utils/ruleset';
 import { initTheme, themeSwitcher } from '@/utils/theme';
+import { renderCleanup } from './cleanup';
 import { renderAppearance, renderEngines, renderShare } from './general';
 import { renderLists } from './lists';
 import { renderSites } from './sites';
@@ -22,6 +23,7 @@ const SECTIONS: Section[] = [
   { id: 'sites', label: 'Your sites', render: renderSites },
   { id: 'tags', label: 'Tags', render: renderTags },
   { id: 'lists', label: 'Lists', render: renderLists },
+  { id: 'cleanup', label: 'Clean up', render: renderCleanup },
   { id: 'appearance', label: 'Appearance', render: renderAppearance },
   { id: 'engines', label: 'Search engines', render: renderEngines },
   { id: 'share', label: 'Share and back up', render: renderShare },
@@ -48,7 +50,7 @@ async function renderNav() {
       'div',
       { class: 'brand' },
       h('img', { src: '/anubis.svg', alt: '', width: 36, height: 36 }),
-      h('div', null, h('h1', null, 'Anubis'), h('p', null, 'Weigh your search results')),
+      h('div', null, h('h1', null, 'Anubis'), h('p', null, 'Hide, rank and tag search results')),
     ),
     ...SECTIONS.map((s) =>
       h(

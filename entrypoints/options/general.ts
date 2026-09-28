@@ -98,8 +98,8 @@ export async function renderAppearance(): Promise<HTMLElement> {
       ),
       toggleRow('Rerank results', 'Move raised and pinned results up and lowered ones down, like a Brave Goggle.', 'rerank', settings),
       segRow<string>(
-        'Look deeper automatically',
-        'Load the next result pages onto the first one and rerank them together, so a site you pinned on page 3 rises to the top. Uses the same engine and query; “Weigh deeper” on the page does it on request.',
+        'Load more results automatically',
+        'Add the next pages of results to the first one and rank them together, so a site you pinned on page 3 rises to the top. “Load more results” above the results does the same when you ask.',
         [
           { value: '0', label: 'Off' },
           { value: '1', label: '+1 page' },
@@ -109,7 +109,7 @@ export async function renderAppearance(): Promise<HTMLElement> {
         (v) => void updateSettings({ deeper: Number(v) }),
       ),
       toggleRow('Tag chips', 'Show tags and verdicts under each result title.', 'showChips', settings),
-      toggleRow('Summary bar', 'Show “Anubis weighed N results” above the results.', 'showSummary', settings),
+      toggleRow('Summary', 'Show a one-line summary of what Anubis changed above the results.', 'showSummary', settings),
       toggleRow('Anubis is on', 'Turn this off to leave search pages alone without uninstalling.', 'enabled', settings),
     ),
   );
@@ -122,7 +122,7 @@ export async function renderEngines(): Promise<HTMLElement> {
     null,
     title(
       'Search engines',
-      'Anubis weighs web results on these engines. Results are found by page structure where possible, so small redesigns don’t break it.',
+      'Anubis works on web results from these engines. Results are found by page structure where possible, so small redesigns don’t break it.',
     ),
     h(
       'div',
@@ -246,7 +246,7 @@ export async function renderShare(): Promise<HTMLElement> {
         { class: 'steps' },
         h('li', null, 'Download your list below. Set its ', h('code', null, '! name:'), ', ', h('code', null, '! description:'), ' and ', h('code', null, '! author:'), ' lines at the top.'),
         h('li', null, 'Create a public GitHub repository (or a gist) and add the file, e.g. ', h('code', null, 'lists/my-list.anubis'), '.'),
-        h('li', null, 'Add ', h('code', null, '! issues: https://github.com/you/repo/issues'), ' so the weigh menu can offer “Suggest to your list”.'),
+        h('li', null, 'Add ', h('code', null, '! issues: https://github.com/you/repo/issues'), ' so the menu on each result can offer “Suggest to your list”.'),
         h('li', null, 'Share the file’s link. People paste it into Lists → Add a list.'),
         h(
           'li',

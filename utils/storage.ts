@@ -1,4 +1,5 @@
 import { storage } from '#imports';
+import { NO_CLEANUP, type Cleanup } from './cleanup';
 import type { TagPref } from './matcher';
 import { fromBlockedSites, PERSONAL_HEADER } from './personal';
 
@@ -25,7 +26,7 @@ export interface Settings {
   rerank: boolean;
   /** Show tag and verdict chips under result titles. */
   showChips: boolean;
-  /** Show the "Anubis weighed…" summary above the results. */
+  /** Show the one-line summary of what Anubis changed above the results. */
   showSummary: boolean;
   /** Per-engine switches; engines missing here are on. */
   engines: Record<string, boolean>;
@@ -33,6 +34,10 @@ export interface Settings {
   updateHours: number;
   /** Extra result pages to load and rerank automatically (0 = only on request). */
   deeper: number;
+  /** Parts of result pages to remove: AI answers, video panels and so on. */
+  cleanup: Cleanup;
+  /** Always open Google's Web tab (`udm=14`), which has no AI Overview or panels. */
+  googleWebTab: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -45,12 +50,16 @@ export const DEFAULT_SETTINGS: Settings = {
   engines: {},
   updateHours: 24,
   deeper: 0,
+  cleanup: NO_CLEANUP,
+  googleWebTab: false,
 };
 
 export const settingsItem = storage.defineItem<Settings>('sync:settings', { fallback: DEFAULT_SETTINGS });
 
 export async function getSettings(): Promise<Settings> {
-  return { ...DEFAULT_SETTINGS, ...(await settingsItem.getValue()) };
+  const stored = await settingsItem.getValue();
+  // Merge one level down too, so a clean-up kind added later starts off.
+  return { ...DEFAULT_SETTINGS, ...stored, cleanup: { ...NO_CLEANUP, ...stored?.cleanup } };
 }
 
 export async function updateSettings(patch: Partial<Settings>): Promise<Settings> {

@@ -12,6 +12,16 @@
 html[data-anubis-hide='collapse'] [data-anubis-state~='hide']:not([data-anubis-reveal]) > :not(anubis-bar) {
   display: none !important;
 }
+/* Clean-up: AI answers, video panels and the like are gone until "Show hidden". */
+[data-anubis-removed]:not([data-anubis-reveal]) {
+  display: none !important;
+}
+/* Shown again: marked, so it's clear they're normally removed. */
+[data-anubis-removed][data-anubis-reveal] {
+  outline: 1px dashed color-mix(in srgb, currentColor 30%, transparent);
+  outline-offset: 6px;
+}
+
 /* Hidden, "remove" style, and table layouts in every style. */
 html[data-anubis-hide='remove'] [data-anubis-state~='hide']:not([data-anubis-reveal]),
 [data-anubis-state~='hide'][data-anubis-row]:not([data-anubis-reveal]) {

@@ -5,13 +5,14 @@ In Egyptian myth, Anubis weighed each heart against a feather. This extension we
 
 ## What it does
 
-- **Weigh any site from the results.** Hover a result and press the Anubis button to hide, lower, keep, raise or pin that site, and to tag it. Your choices apply on every search and beat every list.
+- **Rank any site from the results.** Hover a result and press its ⇅ button to hide, lower, keep, raise or pin that site, and to tag it. Your choices apply on every search and beat every list.
 - **Tags.** Results carry small labels ("Official docs", "Discussion", "Paywall"…) from your own tags and from lists you subscribe to. For each tag you decide what it does: just show it, highlight results, or raise, lower or hide them.
-- **Reranking.** Boosts, downranks and pins reorder the results on the page. **Weigh deeper** brings the next pages of results onto the first one and reranks them together, so a pinned site on page 3 rises to the top.
-- **Lists anyone can publish.** A list is a text file on GitHub, GitLab, Codeberg or a gist; there is no server. Anubis reads its own list format, Brave Goggles, uBlacklist rulesets and plain domain lists, so existing community lists work unchanged. The weigh menu can open a pre-filled issue to suggest a site to a list.
-- **Your list is a list too.** Everything you weigh is stored in the same format, so you can download it and publish it for others.
+- **Reranking.** Boosts, downranks and pins reorder the results on the page. **Load more results** brings the next pages of results onto the first one and reranks them together, so a pinned site on page 3 rises to the top.
+- **Lists anyone can publish.** A list is a text file on GitHub, GitLab, Codeberg or a gist; there is no server. Anubis reads its own list format, Brave Goggles, uBlacklist rulesets and plain domain lists, so existing community lists work unchanged. The menu on each result can open a pre-filled issue to suggest a site to a list.
+- **Your list is a list too.** Every site you rank is stored in the same format, so you can download it and publish it for others.
 - **Bring your old lists.** Paste uBlacklist rules, a HOHSER export or a Goggle into Settings → Share and back up to move your sites over.
 - **Filter by tag.** The summary above the results lists the tags on the page; click one to see only those results.
+- **Clean up pages.** Remove AI answers (Google's AI Overview, Bing's Copilot, Brave's AI answers, and DuckDuckGo's Search Assist and Duck.ai by opening its no-AI version), video panels, "People also ask", top stories, image rows and related searches, on every search. Google can also always open its plain Web tab. "Show hidden" brings removed parts back on that page.
 - **Quiet on the page.** Hidden results collapse to one line you can open; the summary above the results is one sentence. Light and dark themes follow the search engine or your choice.
 
 Works on Google (every country domain), DuckDuckGo (including the HTML and Lite versions), Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex and Mojeek.
@@ -78,7 +79,7 @@ uBlacklist was also the reference for how search engines are matched. It no long
 
 Anubis takes a different approach because of that. Rather than tracking class names, it finds results *structurally*: locate the title heading, take the link around it, then walk up to the smallest ancestor still holding a single result. That survives a layout change without an update, at the cost of being less precise than a curated ruleset. The uBlacklist rulesets remain the reference to check against when something does break, and they supply the selectors for engines whose titles aren't headings (Brave, Kagi, Startpage…).
 
-**[Brave Search Goggles](https://github.com/brave/goggles-quickstart)** are the model for lists: plain text files hosted on GitHub or GitLab that anyone can publish, with instructions to boost, downrank or discard results. The Anubis list format is the Goggles syntax plus tags, and any public Goggle can be subscribed to as-is. Goggles rerank inside Brave's own index; Anubis reranks what your engine returns, which is why Weigh deeper exists.
+**[Brave Search Goggles](https://github.com/brave/goggles-quickstart)** are the model for lists: plain text files hosted on GitHub or GitLab that anyone can publish, with instructions to boost, downrank or discard results. The Anubis list format is the Goggles syntax plus tags, and any public Goggle can be subscribed to as-is. Goggles rerank inside Brave's own index; Anubis reranks what your engine returns, which is why Load more results exists.
 
 **[Kagi](https://help.kagi.com/kagi/features/website-info-personalized-results.html)** personalised results gave the five weights (block, lower, normal, raise, pin) chosen from a menu on each result.
 
@@ -87,4 +88,4 @@ Anubis takes a different approach because of that. Rather than tracking class na
 Other influences:
 
 - **[Firefox's `web-ext`](https://github.com/mozilla/web-ext)** does the development loading, via [WXT](https://wxt.dev), which builds Chrome MV3 and Firefox MV2 from one codebase.
-- The name and framing come from the Egyptian myth in which Anubis weighs a heart against a feather: sites that fail the weighing are hidden. The weigh menu shows the site's name in a cartouche over a small balance.
+- The name and framing come from the Egyptian myth in which Anubis weighs a heart against a feather: sites that fail the weighing are hidden. The menu on each result shows the site's name in a cartouche over a small balance. The motif stays in the look; buttons say plainly what they do.

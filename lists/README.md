@@ -16,7 +16,7 @@ The format is described in [docs/list-format.md](../docs/list-format.md).
 
 ## Contributing
 
-- **Add a site to a list:** open a pull request that adds a line, or use "Suggest it to…" in the weigh menu on a search result, which opens a pre-filled issue.
+- **Add a site to a list:** open a pull request that adds a line, or use "Suggest it to…" in the menu on a search result, which opens a pre-filled issue.
 - **Add a list to the directory:** host your list anywhere public and add an entry to `directory.json`:
 
   ```json

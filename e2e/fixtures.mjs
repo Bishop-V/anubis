@@ -104,9 +104,11 @@ export function duckduckgo(query, results, dark = false, more = []) {
 // Firefox: deeper nesting, a title wrapper flipped with a transform (with the
 // page's own children flipped back), a rule hiding stray last children, and an
 // unrelated heading earlier in the page source than the results.
-// `grouped` nests results the way Google does for a first result with sitelinks and
-// for a group of results from one site: one level deeper than the rest of the list.
-export function google(query, results, dark = false, next = '', hostile = false, grouped = false) {
+// Options: `dark`; `next`, a next-page link; `hostile`, page CSS that fights
+// Anubis's elements; `grouped`, results nested the way Google does for a first
+// result with sitelinks and for a group of results from one site; `modules`, the
+// blocks that aren't results (AI Overview, videos, "People also ask", a side panel).
+export function google(query, results, { dark = false, next = '', hostile = false, grouped = false, modules = false } = {}) {
   const sitelinks = (url) =>
     `<div class="sitelinks">${['History', 'Symbols', 'Worship', 'Family', 'Names', 'Legacy']
       .map((s) => `<div class="usJj9c"><h3><a href="${url}#${s}">${s}</a></h3><div>About ${s.toLowerCase()}.</div></div>`)
@@ -130,6 +132,25 @@ export function google(query, results, dark = false, next = '', hostile = false,
       </div>${grouped && i === 0 ? sitelinks(url) : ''}</div>${close}</div>`;
     });
   if (grouped) items.splice(1, 2, `<div class="hlcw0c">${items[1]}${items[2]}</div>`);
+  if (modules) {
+    // Modelled on community filter lists and uBlacklist's notes; not copied from a live page.
+    items.splice(2, 0, `
+      <div class="MjjYud"><div class="module videos"><div role="heading" aria-level="2">Videos</div>
+        <div class="vrow">${['Anubis explained', 'Tomb of Anubis', 'Jackal gods'].map((t) => `<a href="https://www.youtube.com/watch?v=${t.length}"><div role="heading" aria-level="3">${t}</div><span>YouTube</span></a>`).join('')}</div></div></div>`);
+    items.splice(6, 0, `
+      <div class="MjjYud"><div class="module kp"><h2>Anubis in art</h2><p>Statues, amulets and papyri.</p>
+        <div class="kp-images"><div role="heading" aria-level="2">Images</div><div class="thumbs">▢ ▢ ▢</div></div></div></div>`);
+    items.splice(4, 0, `
+      <div class="MjjYud"><div class="module paa"><div><h2 role="heading">People also ask</h2></div>
+        ${['Who is Anubis?', 'Why is Anubis a jackal?', 'Is Anubis good or evil?'].map((q) => `<div class="related-question-pair"><div role="button">${q}</div></div>`).join('')}</div></div>`);
+  }
+  const aiOverview = modules
+    ? `<div class="M8OgIe module ai"><div><h1 class="aio">AI Overview</h1><div>Anubis is the jackal-headed god of the dead in ancient Egyptian religion…</div>
+        <button type="button">Dive deeper in AI Mode</button></div></div>`
+    : '';
+  const sidePanel = modules
+    ? `<div id="rhs"><h2>Anubis</h2><p>Egyptian deity</p><div><div role="heading" aria-level="2">Images</div><div class="thumbs">▢ ▢ ▢</div></div></div>`
+    : '';
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${esc(query)} - Google Search</title>
   <style>
     body{margin:0;font:14px/1.58 Arial,sans-serif;background:${dark ? '#1f1f1f' : '#fff'};color:${dark ? '#e3e3e3' : '#202124'}}
@@ -150,6 +171,12 @@ export function google(query, results, dark = false, next = '', hostile = false,
     cite{font-style:normal;font-size:12px;color:${dark ? '#bdc1c6' : '#4d5156'}}
     .VwiC3b{color:${dark ? '#bdc1c6' : '#4d5156'};margin-top:4px}
     .B6fmyf{display:none}
+    #rcnt{display:flex;gap:40px}
+    #rhs{width:300px;margin-top:20px;padding:16px;border:1px solid ${dark ? '#3c4043' : '#dadce0'};border-radius:8px;align-self:flex-start}
+    .module{margin:0 0 30px;padding:14px 16px;border-radius:12px;background:${dark ? '#303134' : '#f1f3f4'}}
+    .module [role=heading][aria-level="2"],.module h1,.module h2{font-size:18px;margin:0 0 8px}
+    .vrow{display:flex;gap:12px}.vrow a{flex:1;color:inherit;text-decoration:none}
+    .ai{margin:20px 0 10px 180px;max-width:620px}
     .sitelinks{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px;margin:8px 0 0 20px}
     .sitelinks h3{font-size:16px}
     ${hostile ? `
@@ -160,9 +187,11 @@ export function google(query, results, dark = false, next = '', hostile = false,
     #top-extra{position:absolute;left:-9999px}` : ''}
   </style></head><body>
   <div class="hdr"><span class="glogo">Google</span><div class="q">${esc(query)}</div></div>
-  <div class="tabs"><b>All</b><span>Images</span><span>News</span><span>Videos</span></div>
+  <div class="tabs" role="navigation"><b>All</b>${modules ? '<a href="/search?q=anubis&udm=50">AI Mode</a>' : ''}<span>Images</span><span>News</span><span>Videos</span></div>
   ${hostile ? '<div id="top-extra"><a href="https://ads.example.net/offer"><h3>Sponsored offer</h3></a></div>' : ''}
+  <div id="rcnt"><div id="center_col" role="main">${aiOverview}
   <div id="search"><div data-hveid="CAQQAA"><h1 style="display:none">Search Results</h1><div id="rso">${items.join('')}</div></div></div>
+  </div>${sidePanel}</div>
   ${next ? `<table class="AaVjTc" style="margin-left:180px"><tr><td><a id="pnnext" href="${next}">Next</a></td></tr></table>` : ''}
   </body></html>`;
 }

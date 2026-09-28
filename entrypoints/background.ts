@@ -1,11 +1,12 @@
 import { browser, defineBackground, storage } from '#imports';
 import type { Message } from '@/utils/messages';
-import { migrateLegacy } from '@/utils/storage';
+import { getSettings, migrateLegacy, settingsItem } from '@/utils/storage';
 import { refreshStale } from '@/utils/subscriptions';
 
-// The background script keeps subscribed lists fresh and shows the hidden-result
-// count on the toolbar icon. Updates run when the browser starts and when a
-// search page asks, at most every 30 minutes, so no "alarms" permission is needed.
+// The background script keeps subscribed lists fresh, shows the hidden-result
+// count on the toolbar icon and greys the icon out while Anubis is off. Updates run
+// when the browser starts and when a search page asks, at most every 30 minutes,
+// so no "alarms" permission is needed.
 
 const LAST_CHECK = 'local:lastUpdateCheck' as const;
 const CHECK_EVERY_MS = 30 * 60 * 1000;
@@ -13,6 +14,16 @@ const CHECK_EVERY_MS = 30 * 60 * 1000;
 export default defineBackground(() => {
   // MV3 has `action`; Firefox MV2 has `browserAction`.
   const action = browser.action ?? browser.browserAction;
+
+  // Grey icon while off. Set on every start of the background script, since the
+  // browser doesn't keep a changed icon across restarts.
+  const showEnabled = (enabled: boolean) => {
+    const dir = enabled ? 'icon' : 'icon-off';
+    void action.setIcon({ path: { 16: `/${dir}/16.png`, 32: `/${dir}/32.png`, 48: `/${dir}/48.png` } });
+    void action.setTitle({ title: enabled ? 'Anubis' : 'Anubis is off' });
+  };
+  void getSettings().then((s) => showEnabled(s.enabled));
+  settingsItem.watch((s) => showEnabled(s?.enabled !== false));
 
   let running: Promise<number> | undefined;
   const refresh = (force = false) => {
@@ -40,7 +51,9 @@ export default defineBackground(() => {
   });
   browser.runtime.onStartup.addListener(() => void maybeRefresh());
 
-  browser.runtime.onMessage.addListener((raw, sender) => {
+  // Replies go through sendResponse (and `return true` while one is pending):
+  // Chrome ignores a promise returned from the listener.
+  browser.runtime.onMessage.addListener((raw, sender, sendResponse) => {
     const message = raw as Message;
     switch (message.type) {
       case 'stats': {
@@ -60,12 +73,12 @@ export default defineBackground(() => {
         void maybeRefresh();
         return;
       case 'refresh-all':
-        return refresh(true);
+        void refresh(true).then(sendResponse);
+        return true;
       case 'open-options':
-        if (message.tab) {
-          return browser.tabs.create({ url: `${browser.runtime.getURL('/options.html')}#${message.tab}` });
-        }
-        return browser.runtime.openOptionsPage();
+        if (message.tab) void browser.tabs.create({ url: `${browser.runtime.getURL('/options.html')}#${message.tab}` });
+        else void browser.runtime.openOptionsPage();
+        return;
     }
   });
 });

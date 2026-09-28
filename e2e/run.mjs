@@ -3,7 +3,7 @@
 // prints what Anubis decided for each result and saves screenshots to e2e/shots/.
 //
 //   npm run e2e                 build, then run everything
-//   node e2e/run.mjs pages      one part: pages, hostile, grouped, popover, ddg-hide,
+//   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, off, cleanup, popover, ddg-hide,
 //                               filter, deeper, import, subscribe, options
 //
 // Needs a Chromium build (branded Chrome no longer loads unpacked extensions from
@@ -88,16 +88,19 @@ async function launch(settings = {}) {
     'https://duckduckgo.com/?q=javascript+promises': duckduckgo('javascript promises', JS_RESULTS),
     'https://duckduckgo.com/?q=javascript+promises&dark=1': duckduckgo('javascript promises', JS_RESULTS, true),
     'https://www.google.com/search?q=anubis': google('anubis', ANUBIS_RESULTS),
-    'https://www.google.com/search?q=anubis&dark=1': google('anubis', ANUBIS_RESULTS, true),
+    'https://www.google.com/search?q=anubis&dark=1': google('anubis', ANUBIS_RESULTS, { dark: true }),
     'https://www.bing.com/search?q=javascript+promises': bing('javascript promises', JS_RESULTS),
     'https://search.brave.com/search?q=anubis': brave('anubis', ANUBIS_RESULTS),
-    'https://www.google.com/search?q=anubis&deep=1': google('anubis', ANUBIS_RESULTS, false, '/search?q=anubis&start=10'),
+    'https://www.google.com/search?q=anubis&deep=1': google('anubis', ANUBIS_RESULTS, { next: '/search?q=anubis&start=10' }),
     'https://www.google.com/search?q=anubis&start=10': google('anubis', ANUBIS_PAGE2),
-    'https://www.google.com/search?q=anubis&hostile=1': google('anubis', ANUBIS_RESULTS, false, '', true),
-    'https://www.google.com/search?q=anubis&grouped=1': google('anubis', ANUBIS_RESULTS, false, '', false, true),
+    'https://www.google.com/search?q=anubis&hostile=1': google('anubis', ANUBIS_RESULTS, { hostile: true }),
+    'https://www.google.com/search?q=anubis&grouped=1': google('anubis', ANUBIS_RESULTS, { grouped: true }),
+    'https://www.google.com/search?q=anubis&modules=1': google('anubis', ANUBIS_RESULTS, { modules: true }),
+    'https://www.google.com/search?q=anubis&udm=14': google('anubis', ANUBIS_RESULTS),
+    'https://noai.duckduckgo.com/?q=javascript+promises': duckduckgo('javascript promises', JS_RESULTS),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
   };
-  await ctx.route(/^https:\/\/(duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com)\//, (route) => {
+  await ctx.route(/^https:\/\/((noai\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com)\//, (route) => {
     const body = pages[route.request().url()];
     return body ? route.fulfill({ contentType: 'text/html; charset=utf-8', body }) : route.fulfill({ status: 204, body: '' });
   });
@@ -121,6 +124,33 @@ const { ctx, extId } = await launch();
 const page = await ctx.newPage();
 page.on('console', (m) => m.type() === 'error' && console.log('  console error:', m.text()));
 page.on('pageerror', (e) => console.log('  page error:', e.message));
+
+// Anubis's UI is in closed shadow roots, which page scripts and locators can't
+// enter. The DevTools protocol can: find the button by its text and click it.
+async function clickShadowButton(hostSelector, text, index = 0) {
+  const cdp = await page.context().newCDPSession(page);
+  const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+  const { nodeIds } = await cdp.send('DOM.querySelectorAll', { nodeId: root.nodeId, selector: hostSelector });
+  const find = (node, id) => {
+    if (node.nodeId === id) return node;
+    for (const child of [...(node.children ?? []), ...(node.shadowRoots ?? [])]) {
+      const hit = find(child, id);
+      if (hit) return hit;
+    }
+  };
+  const textOf = (node) => (node.nodeType === 3 ? node.nodeValue : (node.children ?? []).map(textOf).join(''));
+  const buttons = (node) => [
+    ...(node.nodeName === 'BUTTON' && textOf(node).trim() === text ? [node] : []),
+    ...[...(node.children ?? []), ...(node.shadowRoots ?? [])].flatMap(buttons),
+  ];
+  const host = nodeIds[index] && find(root, nodeIds[index]);
+  const button = host && buttons(host)[0];
+  if (!button) throw new Error(`No "${text}" button in ${hostSelector}`);
+  const { model } = await cdp.send('DOM.getBoxModel', { nodeId: button.nodeId });
+  const [x1, y1, , , x3, y3] = model.content;
+  await page.mouse.click((x1 + x3) / 2, (y1 + y3) / 2);
+  await cdp.detach();
+}
 
 async function shoot(url, name, opts = {}) {
   await page.goto(url);
@@ -187,6 +217,89 @@ if (!only || only === 'grouped') {
   });
   console.log('\n== grouped google:', JSON.stringify(check));
   await page.screenshot({ path: `${SHOTS}google-grouped.png`, fullPage: true });
+}
+
+if (!only || only === 'reveal') {
+  // Showing one hidden result has to survive the page changing afterwards: engines
+  // rewrite parts of the page on hover, which runs another pass.
+  await page.goto('https://www.google.com/search?q=anubis');
+  await page.waitForSelector('anubis-bar');
+  await page.waitForTimeout(300);
+  const hidden = page.locator('[data-anubis-result]', { hasText: 'Mythology Wiki' });
+  await clickShadowButton('anubis-bar', 'Show');
+  await page.waitForTimeout(200);
+  const afterClick = await hidden.evaluate((el) => el.hasAttribute('data-anubis-reveal'));
+  await page.evaluate(() => document.body.append(document.createElement('div')));
+  await page.mouse.move(300, 300);
+  await page.mouse.move(320, 340);
+  await page.waitForTimeout(300);
+  const afterChange = await hidden.evaluate((el) => el.hasAttribute('data-anubis-reveal'));
+  console.log('\n== reveal one result:', JSON.stringify({ afterClick, afterChange }));
+}
+
+if (!only || only === 'off') {
+  // Turning Anubis off greys out the toolbar icon and says so in its tooltip.
+  const [sw] = ctx.serviceWorkers();
+  const title = (on) =>
+    sw.evaluate(async (on) => {
+      const { settings } = await chrome.storage.sync.get('settings');
+      await chrome.storage.sync.set({ settings: { ...settings, enabled: on } });
+      await new Promise((r) => setTimeout(r, 200));
+      return chrome.action.getTitle({});
+    }, on);
+  console.log('\n== toolbar title:', JSON.stringify({ off: await title(false), on: await title(true) }));
+}
+
+if (!only || only === 'cleanup') {
+  // Clean-up: AI Overview, videos and "People also ask" go; the side panel stays.
+  const sw = ctx.serviceWorkers()[0];
+  const setSettings = (patch) =>
+    sw.evaluate(async (patch) => {
+      const { settings } = await chrome.storage.sync.get('settings');
+      await chrome.storage.sync.set({ settings: { ...settings, ...patch } });
+    }, patch);
+  const statsNow = () =>
+    sw.evaluate(async () => {
+      for (const tab of await chrome.tabs.query({})) {
+        const stats = await chrome.tabs.sendMessage(tab.id, { type: 'get-page-stats' }).catch(() => undefined);
+        if (stats) return stats;
+      }
+    });
+  const all = { ai: true, videos: true, questions: true, news: true, images: true, related: true };
+  await setSettings({ cleanup: all });
+  await page.goto('https://www.google.com/search?q=anubis&modules=1');
+  await page.waitForTimeout(800);
+  const shown = () =>
+    page.evaluate(() => {
+      const visible = (el) => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0;
+      return {
+        aiOverview: visible(document.querySelector('.module.ai')),
+        videos: visible(document.querySelector('.module.videos')?.closest('.MjjYud')),
+        peopleAlsoAsk: visible(document.querySelector('.module.paa')?.closest('.MjjYud')),
+        aiModeTab: visible([...document.querySelectorAll('.tabs a')].find((a) => a.textContent === 'AI Mode')),
+        sidePanel: visible(document.querySelector('#rhs')),
+        sidePanelImages: visible(document.querySelector('#rhs .thumbs')),
+        panelInColumn: visible(document.querySelector('.module.kp')),
+        panelInColumnImages: visible(document.querySelector('.module.kp .kp-images')),
+        results: document.querySelectorAll('[data-anubis-result]').length,
+      };
+    });
+  console.log('\n== clean-up on:', JSON.stringify(await shown()));
+  console.log('   removed:', JSON.stringify((await statsNow())?.removed));
+  await page.screenshot({ path: `${SHOTS}google-cleanup.png`, fullPage: true });
+  await clickShadowButton('anubis-summary', 'Show hidden');
+  await page.waitForTimeout(300);
+  console.log('== after Show hidden:', JSON.stringify(await shown()));
+
+  // Forcing it: DuckDuckGo opens its no-AI version, Google its Web tab.
+  await page.goto('https://duckduckgo.com/?q=javascript+promises');
+  await page.waitForURL(/noai\.duckduckgo\.com/, { timeout: 3000 }).catch(() => {});
+  console.log('== DuckDuckGo with AI answers off:', page.url());
+  await setSettings({ cleanup: { ...all, ai: false } , googleWebTab: true });
+  await page.goto('https://www.google.com/search?q=anubis');
+  await page.waitForURL(/udm=14/, { timeout: 3000 }).catch(() => {});
+  console.log('== Google with the Web tab on:', page.url());
+  await setSettings({ cleanup: { ai: false, videos: false, questions: false, news: false, images: false, related: false }, googleWebTab: false });
 }
 
 if (!only || only === 'popover') {
@@ -324,7 +437,7 @@ if (!only || only === 'options') {
     await opt.goto(`chrome-extension://${extId}/options.html#appearance`);
     await opt.waitForTimeout(300);
     await opt.getByRole('button', { name: theme === 'dark' ? 'Dark theme' : 'Light theme' }).first().click();
-    for (const section of ['sites', 'tags', 'lists', 'appearance', 'share']) {
+    for (const section of ['sites', 'tags', 'lists', 'cleanup', 'appearance', 'share']) {
       await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
       await opt.waitForTimeout(500);
       await opt.screenshot({ path: `${SHOTS}options-${section}-${theme}.png`, fullPage: true });

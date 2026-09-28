@@ -26,7 +26,7 @@ Firefox is the default target (`browser: 'firefox'` in `wxt.config.ts`). The `:c
 - `npm run build` / `npm run build:chrome`: production build into `.output/`
 - `npm run compile`: type-check. Run it after every change.
 - `npm test`: Vitest unit tests in `tests/` (list format, matcher, personal list edits, storage, bundled lists)
-- `npm run e2e`: builds for Chrome and runs `e2e/run.mjs` against mock search pages, saving screenshots to `e2e/shots/`. Needs `CHROMIUM_PATH` pointing at a Chromium binary; Playwright's downloaded browsers don't run on NixOS, so use the system one (`CHROMIUM_PATH=$(which chromium)`). `node e2e/run.mjs <part>` runs one part: `pages`, `hostile`, `grouped`, `popover`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `options`. `subscribe` downloads a real list from GitHub; behind a TLS-intercepting proxy set `PROXY_CA_CERT` to its CA.
+- `npm run e2e`: builds for Chrome and runs `e2e/run.mjs` against mock search pages, saving screenshots to `e2e/shots/`. Needs `CHROMIUM_PATH` pointing at a Chromium binary; Playwright's downloaded browsers don't run on NixOS, so use the system one (`CHROMIUM_PATH=$(which chromium)`). `node e2e/run.mjs <part>` runs one part: `pages`, `hostile`, `grouped`, `reveal`, `off`, `cleanup`, `popover`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `options`. `subscribe` downloads a real list from GitHub; behind a TLS-intercepting proxy set `PROXY_CA_CERT` to its CA.
 - `npx web-ext lint -s .output/firefox-mv2`: the Mozilla add-on linter; keep it at zero warnings (CI treats warnings as errors)
 - `.github/workflows/ci.yml` runs compile, tests, both builds and the lint on pushes to main and on pull requests
 - `npm run zip` / `npm run zip:chrome`: package for the store
@@ -47,23 +47,27 @@ Everything on search pages was built against the mocks in `e2e/fixtures.mjs`: th
 - `entrypoints/content/`: runs on result pages of every engine in `utils/engines.ts`
   - `index.ts`: the pass loop (find results, weigh, render, rerank), the mutation observer, messages
   - `results.ts`: finding results, structurally (title heading → link → smallest single-result ancestor) or by selector, and resolving redirect links to the real URL
-  - `ui.ts` + `shadow.css`: tags under titles, the weigh button and menu, hidden-result lines, the summary; all in closed shadow roots
-  - `deeper.ts`: "Weigh deeper", bringing later result pages onto the current one
+  - `ui.ts` + `shadow.css`: tags under titles, the ⇅ button on each result and its menu, hidden-result lines, the summary; all in closed shadow roots
+  - `deeper.ts`: "Load more results", bringing later result pages onto the current one
+  - `cleanup.ts`: finding the blocks that clean-up removes (AI answers, video panels…), and its redirects (DuckDuckGo's no-AI version, Google's Web tab)
   - `page.css`: page-level treatments keyed off `data-anubis-*` attributes (hidden, lowered, pinned, highlight, rerank)
-- `entrypoints/background.ts`: list updates (on startup and when a search page asks, at most every 30 minutes) and the toolbar badge
-- `entrypoints/popup/`: what Anubis did on this page, quick weigh, recent sites
-- `entrypoints/options/`: settings sections (your sites, tags, lists, appearance, engines, share and back up)
+- `entrypoints/background.ts`: list updates (on startup and when a search page asks, at most every 30 minutes), the toolbar badge, and the grey icon while Anubis is off (`public/icon-off/`)
+- `entrypoints/popup/`: what Anubis did on this page, adding a site, recent sites
+- `entrypoints/options/`: settings sections (your sites, tags, lists, clean up, appearance, engines, share and back up)
 - `utils/engines.ts`: engine definitions. Also imported at build time for the manifest's matches, so keep it free of browser APIs. When an engine breaks, diff against uBlacklist's ruleset at <https://github.com/ublacklist/builtin> (`serpinfo/*.yml`), which tracks these layouts continuously.
 - `utils/listformat.ts`: the list parser; `utils/matcher.ts`: compiling lists and weighing a result; `utils/personal.ts`: line-level edits to the personal list
 - `utils/storage.ts`, `utils/ruleset.ts`, `utils/subscriptions.ts`: storage items, loading everything into one rule set, downloading lists
 - `utils/importers.ts`: bringing sites over from uBlacklist rules, HOHSER exports, Goggles and domain lists
+- `utils/cleanup.ts`: the clean-up kinds, the headings that identify each one (with translations) and per-engine selectors
 - `lists/`: the bundled lists and `directory.json` (the "More lists" directory). `docs/list-format.md` is the format reference.
 - `public/`: the logo (`anubis.svg`) and toolbar icons (`icon/{16,32,48,96,128}.png`). WXT detects these automatically.
 
 ## Conventions
 
 - Keep the brand colours: background `#1b1a16`, gold `#d4a637`.
-- Design follows `.claude/skills/frontend-design`: on search pages stay quiet (the page's font, muted text, no fills); the weigh menu's cartouche and balance are the one flourish. Sentence case, no ALL-CAPS labels, no "·"-joined meta strings.
+- Design follows `.claude/skills/frontend-design`: on search pages stay quiet (the page's font, muted text, no fills); the result menu's cartouche and balance are the one flourish. Sentence case, no ALL-CAPS labels, no "·"-joined meta strings.
+- Wording and interaction follow `.claude/skills/ux-heuristics` (Krug and Nielsen). Labels say what happens in plain words ("Load more results", "Settings", "Hide, rank or tag this site"); the Anubis motif stays in the logo, the summary's mark and the menu's balance, never in the name of a function. One word per concept: a site's *ranking* is Hide, Lower, Normal, Raise or Pin. Prefer a text button to an icon whose meaning has to be guessed, and give every icon-only button a label.
+- Nothing is hidden or removed without a trace: the summary says what Anubis did, and "Show hidden" undoes it for the page.
 - Ask for as few permissions as possible. Only add a permission the feature actually needs.
 - Verify changes by type-checking, `npm test`, building both browsers, and loading the extension. Search pages can only be checked for real in a browser; `npm run e2e` covers the logic against mocks.
 
@@ -76,6 +80,8 @@ Lessons from earlier bugs and design decisions; `docs/experiments.md` has the de
 - `:scope` matches nothing inside a shadow root. Keep references to rendered nodes instead of querying for them.
 - Anubis's own elements are recognised by tag name (`OWN_TAGS` in `results.ts`), so the mutation observer and the result finder ignore them. Add any new custom element there.
 - In Firefox, `permissions.request()` has to run before any `await` in a click handler, or it loses the user gesture and fails.
+- `runtime.onMessage` listeners reply with `sendResponse` (plus `return true` when the reply is async). Chrome ignores a returned promise; Firefox accepts it, so a promise-only reply works in one browser and silently fails in the other.
+- State a click sets on the page (a revealed result, a filter) belongs in the content script's variables, not only in DOM attributes: the next pass rewrites the attributes from that state, and engines trigger passes on hover.
 - No `innerHTML`: `web-ext lint` flags it. Build DOM with `h()`, parse constant SVG with `DOMParser`. Pass `data-*` to `h()` through `attrs`; `dataset` is read-only.
 - Engines change markup without notice. Prefer structural fixes (headings, links, nesting) over class names.
 
@@ -87,6 +93,6 @@ Lessons from earlier bugs and design decisions; `docs/experiments.md` has the de
 
 ## Roadmap ideas
 
-- Check the unverified engines and Weigh deeper selectors listed in `docs/experiments.md` against live pages
+- Check the unverified engines, Load more results selectors and clean-up headings listed in `docs/experiments.md` against live pages
 - Image, video and news results (uBlacklist's SERPINFO has the selectors)
 - Fetch engine definitions from the repo, like uBlacklist's SERPINFO, so a selector fix doesn't need a store release

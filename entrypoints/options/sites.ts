@@ -28,7 +28,7 @@ export async function renderSites(): Promise<HTMLElement> {
         h(
           'p',
           null,
-          'Sites you’ve weighed yourself. Your choice beats every list you subscribe to. Weigh sites from the Anubis button on any search result, or add them here.',
+          'Sites you’ve ranked or hidden yourself. Your choice beats every list you subscribe to. Use the button on any search result, or add sites here.',
         ),
       ),
       h(
@@ -96,13 +96,13 @@ function addForm(): HTMLElement {
     input.blur();
     await editPersonal((t) => setSite(t, domain, level, []));
   });
-  return h('div', { class: 'panel' }, h('h3', null, 'Weigh a site'), h('p', { class: 'muted' }, 'It applies to the site and all its subdomains.'), form, error);
+  return h('div', { class: 'panel' }, h('h3', null, 'Add a site'), h('p', { class: 'muted' }, 'It applies to the site and all its subdomains.'), form, error);
 }
 
 function levelSeg(current: Level | undefined, onPick: (l: Level) => void, compact = true): HTMLElement {
   return h(
     'div',
-    { class: compact ? 'levels' : 'levels labelled', attrs: { role: 'group', 'aria-label': 'Weight' } },
+    { class: compact ? 'levels' : 'levels labelled', attrs: { role: 'group', 'aria-label': 'Ranking' } },
     LEVELS.map((l) =>
       h(
         'button',
@@ -219,12 +219,12 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
             h(
               'table',
               { class: 'sites' },
-              h('thead', null, h('tr', null, h('th', null, 'Site'), h('th', null, 'Weight'), h('th', null, 'Tags'), h('th'))),
+              h('thead', null, h('tr', null, h('th', null, 'Site'), h('th', null, 'Ranking'), h('th', null, 'Tags'), h('th'))),
               body,
             ),
             entries.length > 500 ? h('p', { class: 'muted' }, 'Showing the first 500. Filter to find the rest.') : null,
           )
-        : h('p', { class: 'empty' }, 'Nothing weighed yet. Add a site above, or use the Anubis button on a search result.'),
+        : h('p', { class: 'empty' }, 'No sites yet. Add one above, or use the button on a search result.'),
     ),
   );
 }

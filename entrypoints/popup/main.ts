@@ -6,15 +6,15 @@ import { engineFor } from '@/utils/engines';
 import { LEVELS } from '@/utils/matcher';
 import { h, icon } from '@/utils/dom';
 import { ICON_CLOSE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
-import { send, sendToActiveTab, type PageStats } from '@/utils/messages';
+import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/messages';
 import { getSite, listSites, setSite, setSiteLevel, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet } from '@/utils/ruleset';
 import { editPersonal, updateSettings } from '@/utils/storage';
 import { summarySentence } from '@/utils/summary';
 import { initTheme, themeSwitcher } from '@/utils/theme';
 
-// The toolbar popup: what Anubis did on this page, a quick way to weigh a site,
-// and the sites you've weighed most recently.
+// The toolbar popup: what Anubis did on this page, a quick way to rank or hide a
+// site, and the sites you've ranked most recently.
 
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
 const input = $<HTMLInputElement>('#domain');
@@ -28,7 +28,7 @@ async function renderAll() {
   const rules = await loadRuleSet();
   enabled.checked = rules.settings.enabled;
   document.body.classList.toggle('paused', !rules.settings.enabled);
-  $('#status').textContent = rules.settings.enabled ? 'Weighing your searches' : 'Paused';
+  $('#status').textContent = rules.settings.enabled ? 'On for your searches' : 'Off. Search pages are left as they are.';
 
   const sites = listSites(rules.personalText).reverse();
   $('#count').textContent = sites.length ? String(sites.length) : '';
@@ -78,7 +78,7 @@ async function renderAll() {
   await renderHere(rules.personalText);
 }
 
-/** The site in the current tab, when it isn't a search page: weigh it for future searches. */
+/** The site in the current tab, when it isn't a search page: rank it for future searches. */
 async function renderHere(personalText: string) {
   const here = $('#here');
   const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
@@ -87,7 +87,7 @@ async function renderHere(personalText: string) {
     const url = new URL(tab?.url ?? '');
     if (/^https?:$/.test(url.protocol) && !engineFor(url.hostname)) host = url.hostname;
   } catch {
-    // No URL (a browser page, or no access): nothing to weigh.
+    // No URL (a browser page, or no access): nothing to rank.
   }
   const domain = host ? (domainChoices(host).find((d) => getSite(personalText, d)) ?? siteOf(host)) : '';
   if (!domain || !normalizeDomain(domain)) {
@@ -102,7 +102,7 @@ async function renderHere(personalText: string) {
     h('p', { class: 'sentence here-site' }, domain),
     h(
       'div',
-      { class: 'seg here-levels', attrs: { role: 'group', 'aria-label': `Weight for ${domain}` } },
+      { class: 'seg here-levels', attrs: { role: 'group', 'aria-label': `Ranking for ${domain}` } },
       LEVELS.map((level) =>
         h(
           'button',
@@ -124,14 +124,14 @@ function renderPage(stats: PageStats | undefined) {
   if (!stats) {
     page.replaceChildren(
       h('h2', null, 'This page'),
-      h('p', { class: 'sentence muted' }, 'Search on Google, DuckDuckGo, Bing, Brave or another supported engine to see Anubis weigh the results.'),
+      h('p', { class: 'sentence muted' }, 'Search on Google, DuckDuckGo, Bing, Brave or another supported engine to see what Anubis changes.'),
     );
     return;
   }
   const refreshSoon = () =>
     setTimeout(async () => renderPage(await sendToActiveTab<PageStats>({ type: 'get-page-stats' })), 2500);
   const actions = [
-    stats.hidden
+    hiddenCount(stats)
       ? h(
           'button',
           {
@@ -149,7 +149,7 @@ function renderPage(stats: PageStats | undefined) {
             class: 'text-btn',
             type: 'button',
             disabled: stats.loading,
-            title: 'Bring the next page of results here and weigh them together',
+            title: 'Add the next page of results to the page and rank them together',
             on: {
               click: async () => {
                 renderPage(await sendToActiveTab<PageStats>({ type: 'go-deeper' }));
@@ -157,7 +157,7 @@ function renderPage(stats: PageStats | undefined) {
               },
             },
           },
-          stats.loading ? 'Weighing…' : 'Weigh deeper',
+          stats.loading ? 'Loading…' : 'Load more results',
         )
       : null,
   ].filter((b): b is HTMLButtonElement => b !== null);
@@ -192,7 +192,7 @@ async function main() {
   renderPage(await sendToActiveTab<PageStats>({ type: 'get-page-stats' }));
   watchRuleSet(async () => {
     await renderAll();
-    // The page re-weighs itself after a change; ask again a moment later.
+    // The page updates itself after a change; ask again a moment later.
     setTimeout(async () => renderPage(await sendToActiveTab<PageStats>({ type: 'get-page-stats' })), 150);
   });
 }

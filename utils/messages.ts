@@ -1,4 +1,5 @@
 import { browser } from '#imports';
+import type { CleanupKind } from './cleanup';
 
 // Messages between the content script, popup, options page and background.
 
@@ -11,9 +12,9 @@ export interface PageStats {
   lowered: number;
   tagged: number;
   revealed: boolean;
-  /** Result pages on this page (1 unless "Weigh deeper" brought more in). */
+  /** Result pages on this page (1 unless "Load more results" brought more in). */
   pages: number;
-  /** "Weigh deeper" can load another page. */
+  /** "Load more results" can load another page. */
   canGoDeeper: boolean;
   /** A deeper load is running. */
   loading: boolean;
@@ -21,6 +22,13 @@ export interface PageStats {
   tags: { id: string; label: string; color: string; count: number }[];
   /** Only results with this tag are shown. */
   filter?: string;
+  /** Blocks removed by clean-up (AI answers, video panels…), by kind. */
+  removed: Partial<Record<CleanupKind, number>>;
+}
+
+/** Hidden results plus removed blocks: what "Show hidden" brings back. */
+export function hiddenCount(stats: PageStats): number {
+  return stats.hidden + Object.values(stats.removed ?? {}).reduce((a, b) => a + (b ?? 0), 0);
 }
 
 export type Message =

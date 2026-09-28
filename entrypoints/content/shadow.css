@@ -56,6 +56,14 @@ button {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+/* Secondary actions: readable, but quieter than the ones that change the page. */
+.text-btn.quiet {
+  color: var(--muted);
+  font-weight: 500;
+}
+.text-btn.quiet:hover {
+  color: var(--ink);
+}
 .text-btn:disabled {
   color: var(--muted);
   cursor: progress;

@@ -8,14 +8,50 @@ The development sandbox could not reach any search engine, so everything on sear
 
 | Engine | How results are found | Confidence |
 | --- | --- | --- |
-| Google | Structural (h3), `<cite>` fallback for `/goto` links | Structural approach verified live on `main` before this work; `#pnnext` for Weigh deeper is long-standing |
-| DuckDuckGo | Structural (h2) | Verified live on `main`; the `#more-results` button selector for Weigh deeper is a guess |
+| Google | Structural (h3), `<cite>` fallback for `/goto` links | Structural approach verified live on `main` before this work; `#pnnext` for Load more results is long-standing |
+| DuckDuckGo | Structural (h2) | Verified live on `main`; the `#more-results` button selector for Load more results is a guess |
 | DuckDuckGo HTML / Lite | Selectors from uBlacklist | Unverified |
-| Bing | Selectors from uBlacklist, `/ck/a` redirects decoded | Unverified; `a.sb_pagN` for Weigh deeper is a guess |
+| Bing | Selectors from uBlacklist, `/ck/a` redirects decoded | Unverified; `a.sb_pagN` for Load more results is a guess |
 | Brave, Startpage, Ecosia, Kagi, Yandex | Selectors from uBlacklist | Unverified; Brave's `offset` and Ecosia's `p` parameters are guesses |
 | Yahoo, Mojeek | Structural, not covered by uBlacklist | Guesses, including Yahoo's `/RU=` redirect decoding |
 
 DuckDuckGo's own "hide this site" was simulated in the mocks (the result collapses into a notice); Anubis removes its UI from the collapsed result. The real feature's markup is unknown.
+
+Clean-up is also unverified live. To check:
+
+- Google: that "AI Overview", "Videos", "People also ask", "Top stories" and "Related searches" are still headings (`h1`–`h4` or `role="heading"`) at the top of their blocks, and that the blocks sit in `#rso`, `#botstuff` or the `role="main"` column. That the AI Mode tab is a link with that exact text in a `role="navigation"` or `role="list"` element. That choosing All from the Web tab lands on a `/search` URL without `udm`, so Anubis leaves it alone.
+- DuckDuckGo: that `noai.duckduckgo.com` keeps your DuckDuckGo settings (theme, region). They are cookies, and a cookie set only for `duckduckgo.com` wouldn't reach the subdomain.
+- Bing and Brave: what their AI answers' headings actually say. The selectors `[data-attrid="AIOverview"]` (Google), `.related-question-pair` (Google) and `#summarizer` (Brave) come from community filter lists.
+
+## Wording, icons and the motif
+
+Feedback from use: "weigh" was too ambiguous for the functions people rely on ("Weigh deeper", "Weigh a site", "Weigh this site"), the settings button's icon read as a sun, and the Anubis logo on every result said who made the button, not what it does. The motif (the balance in the menu, the cartouche) was liked; it was the words and icons that got in the way.
+
+- **Inspiration:** Scott Jenson's talk "Are we really going to use the same Desktop UX forever?" (KDE Akademy 2026) treats UX as layers (style, structure, strategy, technology) and argues for tools shaped around the task in front of you rather than around the software. Here the style layer (the Egyptian theme) had leaked into the structure layer (the names of functions). The `ux-heuristics` skill (Krug's *Don't Make Me Think*, Nielsen's heuristics) was installed in `.claude/skills/` for the review. It flags this exact pattern: clever names lose to clear names, and icons without labels make people guess ("mystery meat navigation").
+- **Changed:** "Weigh deeper" is now "Load more results" (and "Loading…"), and "Look deeper automatically" is "Load more results automatically". "Weigh a site" is "Add a site". The per-site choice is called its *ranking* everywhere (Hide, Lower, Normal, Raise, Pin). The button on each result shows up and down arrows with the label "Hide, rank or tag this site". The summary's gear is now a text button, "Settings". The fallback summary "Anubis weighed 9 results" is now "Anubis left all 9 results as they were".
+- **Kept:** the balance and cartouche in the menu, the logo as the summary's mark (it says the line comes from Anubis), and the myth in the README.
+- **Considered:** a "⋯" button for the result menu. Rejected because Google and DuckDuckGo already put their own "⋮" menu on each result, and two lookalike menus would be confusing.
+- Also considered: Vercel's `web-design-guidelines` skill. Not installed, because it downloads its rules from the network on every run.
+
+## Clean up pages
+
+Asked for: a global option to force-remove AI answers (Gemini's AI Overview, Duck.ai) and other clutter such as video panels.
+
+- **Tried first, rejected:** class-name selectors from community uBlock filter lists (for example `.M8OgIe`, `.hdzaWe` and `[data-mcpr]` for Google's AI Overview). They are the usual approach, but the lists warn that Google rotates these names, the problem the README describes for results.
+- **Shipped:** blocks are found from their visible heading ("AI Overview", "Videos", "People also ask"…, matched whole and ignoring case, with common translations in `utils/cleanup.ts`), then widened to the block in the results column. The column is the results' own list, the engine's boundary (`#rso`, `role="main"`…), or an element inside that boundary which also holds results. A heading that never reaches the column, like "Images" in Google's side panel, is left alone, and a block that contains a result or the search box is never removed. When the heading's block sits next to another heading of the same or higher level, only that section goes: "Images" inside a panel in the column removes the image row, not the panel. A first version of that rule stopped before checking the column and removed the side panel's image row too; the `cleanup` e2e part covers both. A few selectors from filter lists back the headings up where a heading isn't enough.
+- **Forcing it:** removing an element after the engine renders it can always be outrun by a redesign, so the switches that stop AI answers at the source are used too. "AI answers" sends DuckDuckGo searches to `noai.duckduckgo.com`, DuckDuckGo's own no-AI version, which has no Search Assist or Duck.ai. For Google, "Always open the Web tab" adds `udm=14`, Google's own filter for plain web links (the Web tab under More). It's a separate switch because it also drops everything else that isn't a link. Choosing All from the Web tab is remembered for that search in the tab's `sessionStorage`, so it isn't bounced straight back.
+- **Not used:** a `noai=1` URL parameter for DuckDuckGo, mentioned by one blog but not in DuckDuckGo's documented parameters (`duckduckgo-help-pages/_docs/settings/params.md`). Brave's `summary=0` parameter, which Brave community threads report no longer works. A `declarativeNetRequest` rule that rewrites Google URLs before the page loads: it's faster, but it needs a new permission, and the redirect from the content script is quick enough.
+- **Visible and undoable:** the summary names what was removed ("…and removed an AI answer and a video panel"), and "Show hidden" brings removed blocks back on that page, marked with a dashed outline. The AI Mode tab is removed but not counted, since it isn't content.
+
+## Toolbar icon when off
+
+- Turning Anubis off now swaps the toolbar icon for a grey copy (`public/icon-off/`) and sets its tooltip to "Anubis is off". The grey icons were made once from the colour ones with a canvas in Chromium: luminance, flattened, 75% opacity, so they read as "off" on light and dark toolbars. The icon is set every time the background script starts, because the browser forgets a changed icon on restart.
+
+## Bugs found while testing
+
+- **Show on one hidden result reverted when the mouse moved.** The button set `data-anubis-reveal` on the result directly. Engines rewrite parts of the page on hover, that runs another pass, and the pass reset the attribute from the page-wide "Show hidden" state. Results shown one at a time are now remembered by URL until the next search. The e2e `reveal` part clicks Show, changes the page and moves the mouse; it failed on the previous build.
+- **The popup got no numbers from the page in Chrome.** The content script replied to messages by returning a promise, which Firefox accepts and Chrome ignores, so the popup's "This page" section never filled in Chrome. Both scripts now reply with `sendResponse`. Found because the e2e harness asked the page for its stats and got `undefined`.
+- **Testing closed shadow roots.** Page scripts and Playwright locators can't reach into closed shadow roots, so e2e clicks buttons there through the DevTools protocol (`DOM.getDocument` with `pierce: true`, then the button's box).
 
 ## Google in Firefox: flipped tags, missing buttons, misplaced summary
 
@@ -39,7 +75,9 @@ Reported from real use: on Google in Firefox the "Reference" tag and "Hidden" re
 - **Shipped:** the results' parent becomes a flex column and each result gets a CSS `order`. Nothing moves in the DOM. Caveats: vertical margins no longer collapse between results (slightly larger gaps on some layouts), and keyboard navigation (DuckDuckGo's j/k) follows DOM order, not visual order.
 - **Bug found:** ties between a boosted result and its neighbour went to the original order, so `boost=1` never moved anything. Ties now go to the higher score.
 
-## Weigh deeper (more than one page of results)
+## Load more results (more than one page of results)
+
+Called "Weigh deeper" until the wording review below.
 
 - Engines only send one page, so an extension can only rerank what is on screen. Weigh deeper brings the next pages onto the current one: DuckDuckGo gets its own "More results" button pressed; Google, Bing and Yahoo have their next-page link fetched; Brave and Ecosia get their page parameter incremented. Fetched pages are parsed with `DOMParser` and run through the same result finder as the live page, so no per-engine import code was needed.
 - Off by default and never automatic unless chosen, with 700 ms between page requests, because extra requests to an engine can trigger rate limits or CAPTCHAs. Requests only go to the engine's own origin.

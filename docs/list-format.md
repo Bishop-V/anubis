@@ -4,7 +4,7 @@ An Anubis list is a plain text file. It uses the [Brave Goggles](https://github.
 
 Lists live wherever text files can: a GitHub or GitLab repository, a gist, Codeberg. There is no Anubis server. People subscribe by pasting the file's link into **Settings → Lists**, and propose changes the way they would to any repository: an issue or a pull request.
 
-Your own list, the one the weigh button edits, is stored in this format too, so publishing it is a matter of downloading it and putting it online.
+Your own list, the one the button on each result edits, is stored in this format too, so publishing it is a matter of downloading it and putting it online.
 
 ## A small example
 
@@ -30,11 +30,11 @@ Lines starting with `!` are comments. A comment of the form `! key: value` is me
 
 | Key | Meaning |
 | --- | --- |
-| `name` | The list's name, shown in settings and in the weigh menu. |
+| `name` | The list's name, shown in settings and in the menu on each result. |
 | `description` | One or two sentences on what the list is for. |
 | `author` | Who maintains it. |
 | `homepage` | Where to read more. |
-| `issues` | An issue tracker. When set, the weigh menu offers "Suggest it to *this list*", which opens a pre-filled issue. GitHub, GitLab and Codeberg trackers are supported. |
+| `issues` | An issue tracker. When set, the menu on each result offers "Suggest it to *this list*", which opens a pre-filled issue. GitHub, GitLab and Codeberg trackers are supported. |
 | `license` | The license of the list's contents. CC0-1.0 is a good default for lists meant to be shared. |
 | `avatar` | A hex colour for the list. |
 | `expires` | How often Anubis should check for updates, as `N hours` or `N days`. The default is a day. |
@@ -109,7 +109,7 @@ For each result, strongest first:
 2. **Your tag choices.** If you chose "Hide" for a tag, results carrying it are hidden, whichever list tagged them.
 3. **Subscribed lists.** Within one list, Goggles precedence applies: `discard` beats `boost`, which beats `downrank`. Across lists, boosts and downranks add up, and any list's `discard` hides the result.
 
-Reranking moves results within the page you're on (and within extra pages brought in with **Weigh deeper**): each boost point moves a result up one place.
+Reranking moves results within the page you're on (and within extra pages brought in with **Load more results**): each boost point moves a result up one place.
 
 ## Other formats Anubis reads
 
@@ -124,5 +124,5 @@ Anubis detects the format of each file, so existing lists work without changes.
 1. Write the file, or download your own from **Settings → Share and back up**.
 2. Put it in a public repository or gist. Any file extension works; `.anubis` helps people recognise it.
 3. Share the link. GitHub page links, gist links and `search.brave.com/goggles?goggles_id=…` links are all converted to the raw file automatically.
-4. Set `! issues:` so people can suggest additions from the weigh menu.
+4. Set `! issues:` so people can suggest additions from the menu on each result.
 5. To have it listed in **Settings → Lists** for everyone, add an entry to [`lists/directory.json`](../lists/directory.json) in a pull request.

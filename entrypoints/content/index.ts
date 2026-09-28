@@ -7,6 +7,7 @@ import { formatSiteLine, getSite, setSiteLevel, toggleSiteTag, upsertTagDef, typ
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal } from '@/utils/storage';
 import { suggestionUrl } from '@/utils/subscriptions';
+import { findClutter, redirectFor, watchAllTab } from './cleanup';
 import { freshState, weighDeeper } from './deeper';
 import './page.css';
 import { findResults, OWN_TAGS, type FoundResult } from './results';
@@ -45,7 +46,25 @@ export default defineContentScript({
       return;
     }
 
+    // Clean-up that works by sending the page elsewhere: DuckDuckGo's no-AI version,
+    // Google's Web tab. Checked again on each pass, as both engines can change the
+    // search without reloading.
+    const redirected = () => {
+      if (!rules.settings.enabled || rules.settings.engines[engine.id] === false) return false;
+      const to = redirectFor(engine, new URL(location.href), rules.settings.cleanup, rules.settings.googleWebTab);
+      if (!to || to === location.href) return false;
+      location.replace(to);
+      return true;
+    };
+    if (redirected()) return;
+    if (engine.id === 'google') watchAllTab();
+
     let reveal = false;
+    // Blocks removed by clean-up in the last pass.
+    let removed = new Set<HTMLElement>();
+    // Hidden results shown one at a time with their own Show button, by URL. Kept
+    // across passes (engines rewrite the page on hover) until the next search.
+    let shown = new Set<string>();
     let filter: string | undefined;
     let deeper = freshState(engine);
     let verdicts = new Map<string, Verdict>();
@@ -71,6 +90,7 @@ export default defineContentScript({
         if (lastResults.length || document.querySelector('[data-anubis-result]')) reset();
         return;
       }
+      if (redirected()) return;
 
       const theme = pageTheme(rules.settings.theme);
       document.documentElement.dataset.anubisHide = rules.settings.hideStyle;
@@ -80,6 +100,7 @@ export default defineContentScript({
       if (deeper.url !== location.href && !deeper.busy) {
         deeper = freshState(engine);
         filter = undefined;
+        shown = new Set();
       }
 
       const results = findResults(engine);
@@ -98,6 +119,7 @@ export default defineContentScript({
           !!more && !deeper.done && !deeper.busy && results.length > 0 && (more.kind !== 'click' || !!document.querySelector(more.button)),
         loading: deeper.busy,
         tags: [],
+        removed: {},
       };
       const tagCounts = new Map<string, number>();
 
@@ -134,12 +156,24 @@ export default defineContentScript({
         for (const row of result.extras) row.toggleAttribute('data-anubis-filtered', out);
       }
 
+      // Clean-up: AI answers, video panels and the like. "Show hidden" brings them back too.
+      const clutter = findClutter(engine, results, rules.settings.cleanup);
+      const now = new Set(clutter.map((c) => c.block));
+      for (const el of removed) if (!now.has(el)) unremove(el);
+      removed = now;
+      for (const { block, kind, uncounted } of clutter) {
+        if (block.getAttribute('data-anubis-removed') !== kind) block.setAttribute('data-anubis-removed', kind);
+        block.toggleAttribute('data-anubis-reveal', reveal);
+        if (!uncounted) stats.removed[kind] = (stats.removed[kind] ?? 0) + 1;
+      }
+
       rerank(results, scores, rules.settings.rerank && !engine.table);
 
       if (rules.settings.showSummary && !engine.table) {
         renderSummary(summaryAnchor(results, engine.boundary), stats, theme, {
           toggleReveal: () => {
             reveal = !reveal;
+            if (!reveal) shown.clear();
             pass();
           },
           settings: () => void send({ type: 'open-options' }),
@@ -166,7 +200,7 @@ export default defineContentScript({
 
     const applyVerdict = (result: FoundResult, verdict: Verdict, theme: PageTheme) => {
       const { container } = result;
-      const revealed = verdict.hidden && reveal;
+      const revealed = verdict.hidden && (reveal || shown.has(result.url));
       container.setAttribute('data-anubis-result', '');
       const state: string[] = [verdict.level];
       if (verdict.tags.length) state.push('tagged');
@@ -195,9 +229,8 @@ export default defineContentScript({
       ensureWeighButton(result, engine, theme, openWeigh);
       renderHiddenBar(result, verdict, theme, rules.tags, verdict.hidden && !revealed && rules.settings.hideStyle === 'collapse' && !engine.table, {
         reveal: () => {
-          container.setAttribute('data-anubis-reveal', '');
-          renderHiddenBar(result, verdict, theme, rules.tags, false, { reveal() {} });
-          renderChips(result, verdict, ctx, true);
+          shown.add(result.url);
+          pass();
         },
       });
     };
@@ -243,7 +276,7 @@ export default defineContentScript({
             return suggestionUrl(
               tracker.issues,
               `Suggest ${domain}`,
-              `Suggested instruction for **${tracker.name}**:\n\n\`\`\`\n${line}\n\`\`\`\n\nExample result: ${result.url.split('?')[0]}\n\n_Sent from the Anubis weigh menu._`,
+              `Suggested instruction for **${tracker.name}**:\n\n\`\`\`\n${line}\n\`\`\`\n\nExample result: ${result.url.split('?')[0]}\n\n_Sent from Anubis._`,
             );
           },
           settings: () => void send({ type: 'open-options' }),
@@ -271,9 +304,16 @@ export default defineContentScript({
       el.style.removeProperty('order');
     };
 
+    const unremove = (el: HTMLElement) => {
+      el.removeAttribute('data-anubis-removed');
+      el.removeAttribute('data-anubis-reveal');
+    };
+
     const reset = () => {
       closePopover();
       removeAllUi();
+      removed.forEach(unremove);
+      removed = new Set();
       document.querySelectorAll<HTMLElement>('[data-anubis-result], [data-anubis-row]').forEach(forget);
       rerank([], new Map(), false);
       lastResults = [];
@@ -323,24 +363,30 @@ export default defineContentScript({
     // Keep lists fresh; the background decides whether anything is due.
     void send({ type: 'refresh-stale' });
 
-    browser.runtime.onMessage.addListener((raw) => {
+    // Replies go through sendResponse: Chrome ignores a promise returned from the
+    // listener, which left the popup without this page's numbers.
+    browser.runtime.onMessage.addListener((raw, _sender, sendResponse) => {
       const message = raw as Message;
-      if (message.type === 'get-page-stats') return Promise.resolve(lastStats);
-      if (message.type === 'set-reveal') {
-        reveal = message.on;
-        pass();
-        return Promise.resolve(lastStats);
+      switch (message.type) {
+        case 'get-page-stats':
+          break;
+        case 'set-reveal':
+          reveal = message.on;
+          if (!reveal) shown.clear();
+          pass();
+          break;
+        case 'set-filter':
+          filter = message.tag;
+          pass();
+          break;
+        case 'go-deeper':
+          goDeeper(1);
+          pass();
+          break;
+        default:
+          return;
       }
-      if (message.type === 'set-filter') {
-        filter = message.tag;
-        pass();
-        return Promise.resolve(lastStats);
-      }
-      if (message.type === 'go-deeper') {
-        goDeeper(1);
-        pass();
-        return Promise.resolve(lastStats);
-      }
+      sendResponse(lastStats);
     });
 
     observe();
