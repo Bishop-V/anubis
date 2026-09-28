@@ -47,6 +47,8 @@ DuckDuckGo's own "hide this site" was simulated in the mocks (the result collaps
 
 ## Subscriptions and permissions
 
+- Verified end to end: pressing Subscribe on "Stack Overflow copies" in the settings downloaded the real file from `raw.githubusercontent.com` inside the extension, with no host permission. (In the development sandbox Chromium had to be told to trust the network proxy's CA; `e2e/run.mjs` does that by public key when `PROXY_CA_CERT` is set, rather than turning certificate checks off.)
+
 - `raw.githubusercontent.com` and `gist.githubusercontent.com` send `Access-Control-Allow-Origin: *`, so lists there download with no host permission at all. Other hosts ask for permission to that one host when you subscribe (`optional_host_permissions` on Chrome, `optional_permissions` on Firefox MV2, which WXT doesn't convert automatically).
 - Updates run when the browser starts and when a search page loads, at most every 30 minutes, instead of using the `alarms` permission.
 - Real lists parsed while testing: Brave's Hacker News Goggle (6,238 rules in 14 ms), Tech blogs, Rust, Copycats and No Pinterest Goggles; laylavish's AI blocklist in uBlacklist format (1,673 rules; one line skipped for a TLD wildcard, which isn't a valid match pattern); arosh's Stack Overflow and GitHub copy lists. A README fetched by mistake parses to zero rules and is rejected.
@@ -55,6 +57,11 @@ DuckDuckGo's own "hide this site" was simulated in the mocks (the result collaps
 
 - **First pass (rejected by the project owner as loud and "a bit like Discord"):** filled pill badges with coloured dots, gradient gold buttons and segmented controls, ALL-CAPS section labels, rounded cards everywhere, a bordered summary with stat counters.
 - **Second pass**, following Anthropic's `frontend-design` skill (now in `.claude/skills/`): on search pages Anubis uses the page's own font and muted text; tags are a small diamond and a name; the summary is one sentence; hidden results are one line. The one flourish is the weigh menu: the site's name in a cartouche (the oval that encloses names in hieroglyphs) over a small balance that tilts with the chosen weight. Settings use rows and hairlines; the light theme is a cool stone grey instead of cream; tag colours are muted Egyptian pigments.
+
+## Importing from other tools
+
+- **Shipped:** Settings → Share and back up → Import sites takes uBlacklist rules, a HOHSER JSON export, a Goggle or a plain domain list and merges whole-site entries into your list. HOHSER's `FULL_HIDE` becomes Hide, `PARTIAL_HIDE` becomes Lower, and its three highlight colours become `highlight-1..3` tags set to highlight. Rules that need URL patterns or regular expressions can't be expressed as whole-site entries, so they're counted and left out, with a pointer to subscribe to the original list instead.
+- **Bug found:** the confirmation vanished. Saving triggers a debounced re-render of the section, which ran after the message had already been shown once. Messages now stay for a few seconds across re-renders (`entrypoints/options/flash.ts`); the Lists section had the same problem.
 
 ## Tooling
 

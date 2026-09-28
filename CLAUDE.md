@@ -26,7 +26,7 @@ Firefox is the default target (`browser: 'firefox'` in `wxt.config.ts`). The `:c
 - `npm run build` / `npm run build:chrome`: production build into `.output/`
 - `npm run compile`: type-check. Run it after every change.
 - `npm test`: Vitest unit tests in `tests/` (list format, matcher, personal list edits, storage, bundled lists)
-- `npm run e2e`: builds for Chrome and runs `e2e/run.mjs` against mock search pages, saving screenshots to `e2e/shots/`. Needs `CHROMIUM_PATH`.
+- `npm run e2e`: builds for Chrome and runs `e2e/run.mjs` against mock search pages, saving screenshots to `e2e/shots/`. Needs `CHROMIUM_PATH`. `node e2e/run.mjs subscribe` downloads a real list from GitHub; behind a TLS-intercepting proxy set `PROXY_CA_CERT` to its CA.
 - `npx web-ext lint -s .output/firefox-mv2`: the Mozilla add-on linter; keep it at zero warnings
 - `npm run zip` / `npm run zip:chrome`: package for the store
 
@@ -45,6 +45,7 @@ Firefox is the default target (`browser: 'firefox'` in `wxt.config.ts`). The `:c
 - `utils/engines.ts`: engine definitions. Also imported at build time for the manifest's matches, so keep it free of browser APIs. When an engine breaks, diff against uBlacklist's ruleset at <https://github.com/ublacklist/builtin> (`serpinfo/*.yml`), which tracks these layouts continuously.
 - `utils/listformat.ts`: the list parser; `utils/matcher.ts`: compiling lists and weighing a result; `utils/personal.ts`: line-level edits to the personal list
 - `utils/storage.ts`, `utils/ruleset.ts`, `utils/subscriptions.ts`: storage items, loading everything into one rule set, downloading lists
+- `utils/importers.ts`: bringing sites over from uBlacklist rules, HOHSER exports, Goggles and domain lists
 - `lists/`: the bundled lists and `directory.json` (the "More lists" directory). `docs/list-format.md` is the format reference.
 - `public/`: the logo (`anubis.svg`) and toolbar icons (`icon/{16,32,48,96,128}.png`). WXT detects these automatically.
 
@@ -60,4 +61,3 @@ Firefox is the default target (`browser: 'firefox'` in `wxt.config.ts`). The `:c
 - Check the unverified engines and Weigh deeper selectors listed in `docs/experiments.md` against live pages
 - Image, video and news results (uBlacklist's SERPINFO has the selectors)
 - Fetch engine definitions from the repo, like uBlacklist's SERPINFO, so a selector fix doesn't need a store release
-- Import from uBlacklist and HOHSER backups

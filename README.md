@@ -10,6 +10,7 @@ In Egyptian myth, Anubis weighed each heart against a feather. This extension we
 - **Reranking.** Boosts, downranks and pins reorder the results on the page. **Weigh deeper** brings the next pages of results onto the first one and reranks them together, so a pinned site on page 3 rises to the top.
 - **Lists anyone can publish.** A list is a text file on GitHub, GitLab, Codeberg or a gist; there is no server. Anubis reads its own list format, Brave Goggles, uBlacklist rulesets and plain domain lists, so existing community lists work unchanged. The weigh menu can open a pre-filled issue to suggest a site to a list.
 - **Your list is a list too.** Everything you weigh is stored in the same format, so you can download it and publish it for others.
+- **Bring your old lists.** Paste uBlacklist rules, a HOHSER export or a Goggle into Settings → Share and back up to move your sites over.
 - **Quiet on the page.** Hidden results collapse to one line you can open; the summary above the results is one sentence. Light and dark themes follow the search engine or your choice.
 
 Works on Google (every country domain), DuckDuckGo (including the HTML and Lite versions), Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex and Mojeek.

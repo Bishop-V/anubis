@@ -3,6 +3,7 @@ import { h, icon, plural, timeAgo } from '@/utils/dom';
 import { ICON_EXTERNAL, ICON_REFRESH, ICON_TRASH } from '@/utils/icons';
 import { colorForTag, parseList, type ListFormat, type ParsedList } from '@/utils/listformat';
 import { send } from '@/utils/messages';
+import { flash, flashed, rerender } from './flash';
 import { getSubscriptions, saveSubscriptions } from '@/utils/ruleset';
 import { listCacheItem, type CachedList, type Subscription } from '@/utils/storage';
 import {
@@ -33,12 +34,8 @@ function kindOf(format: string | undefined, lens?: boolean, builtin?: boolean): 
 }
 
 let directory: DirectoryEntry[] | undefined;
-let flash: { kind: 'ok' | 'error'; text: string } | undefined;
 const busy = new Set<string>();
 
-const rerender = (): void => {
-  window.dispatchEvent(new HashChangeEvent('hashchange'));
-};
 
 /**
  * Subscribe to a URL. Must be called straight from a click: Firefox only allows
@@ -48,14 +45,14 @@ const rerender = (): void => {
 async function subscribe(input: string, entry?: DirectoryEntry): Promise<void> {
   const url = toRawUrl(input);
   if (!/^https:\/\//.test(url)) {
-    flash = { kind: 'error', text: 'Lists must be served over https.' };
+    flash('lists', 'error', 'Lists must be served over https.');
     return rerender();
   }
   const origin = originPermissionFor(url);
   if (origin) {
     const granted = await browser.permissions.request({ origins: [origin] }).catch(() => false);
     if (!granted) {
-      flash = { kind: 'error', text: `Anubis needs permission to read ${new URL(url).hostname} to download this list.` };
+      flash('lists', 'error', `Anubis needs permission to read ${new URL(url).hostname} to download this list.`);
       return rerender();
     }
   }
@@ -73,7 +70,7 @@ async function subscribe(input: string, entry?: DirectoryEntry): Promise<void> {
     await listCacheItem.setValue({ ...cache, [existing?.id ?? id]: { text, fetchedAt: Date.now() } });
     await saveSubscriptions(next);
     const parsed = parseList(text);
-    flash = { kind: 'ok', text: `Subscribed to ${displayName({ url, name: entry?.name }, parsed.meta)}: ${plural(parsed.rules.length, 'instruction')}, ${plural(parsed.tags.length, 'tag')}.` };
+    flash('lists', 'ok', `Subscribed to ${displayName({ url, name: entry?.name }, parsed.meta)}: ${plural(parsed.rules.length, 'instruction')}, ${plural(parsed.tags.length, 'tag')}.`);
   } catch (error) {
     // Built-in lists still work from their bundled copy when the download fails.
     if (entry?.builtin) {
@@ -81,9 +78,9 @@ async function subscribe(input: string, entry?: DirectoryEntry): Promise<void> {
       if (!subs.some((s) => s.id === id)) {
         await saveSubscriptions([...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: true, name: entry.name }]);
       }
-      flash = { kind: 'ok', text: `Subscribed to ${entry.name} (using the copy bundled with Anubis until it can update).` };
+      flash('lists', 'ok', `Subscribed to ${entry.name} (using the copy bundled with Anubis until it can update).`);
     } else {
-      flash = { kind: 'error', text: `Couldn’t subscribe: ${error instanceof Error ? error.message : String(error)}` };
+      flash('lists', 'error', `Couldn’t subscribe: ${error instanceof Error ? error.message : String(error)}`);
     }
   } finally {
     busy.delete(id);
@@ -106,8 +103,7 @@ export async function renderLists(): Promise<HTMLElement> {
     if (urlInput.value.trim()) void subscribe(urlInput.value.trim());
   });
 
-  const notice = flash ? h('div', { class: `notice ${flash.kind}` }, flash.text) : null;
-  flash = undefined;
+  const notice = flashed('lists');
 
   const cards = subs.map((sub) => listCard(sub, listText(sub, cache), cache[sub.id]));
   const subscribedUrls = new Set(subs.map((s) => s.url));
@@ -144,7 +140,7 @@ export async function renderLists(): Promise<HTMLElement> {
                 b.disabled = true;
                 b.lastChild!.textContent = 'Updating…';
                 await send({ type: 'refresh-all' });
-                flash = { kind: 'ok', text: 'All lists checked for updates.' };
+                flash('lists', 'ok', 'All lists checked for updates.');
                 rerender();
               },
             },
@@ -221,7 +217,8 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
     const b = e.currentTarget as HTMLButtonElement;
     b.disabled = true;
     const entry = await refreshList(sub);
-    flash = entry.error ? { kind: 'error', text: `${name}: ${entry.error}` } : { kind: 'ok', text: `${name} is up to date.` };
+    if (entry.error) flash('lists', 'error', `${name}: ${entry.error}`);
+    else flash('lists', 'ok', `${name} is up to date.`);
     rerender();
   };
 

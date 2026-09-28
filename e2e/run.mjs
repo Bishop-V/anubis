@@ -10,6 +10,7 @@
 // The mock pages are modelled on each engine's markup; they are not the real thing.
 
 import { chromium } from 'playwright-core';
+import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -48,12 +49,25 @@ $site=worldhistory.org,boost=5
 $site=metmuseum.org,pin
 `;
 
+// Behind a TLS-intercepting proxy, point PROXY_CA_CERT at its CA certificate so
+// Chromium trusts that one CA (by public key), like adding it to the trust store.
+function proxyTrustArgs() {
+  const ca = process.env.PROXY_CA_CERT;
+  if (!ca) return [];
+  const pub = execFileSync('openssl', ['x509', '-in', ca, '-pubkey', '-noout']);
+  const der = execFileSync('openssl', ['pkey', '-pubin', '-outform', 'der'], { input: pub });
+  const spki = execFileSync('openssl', ['dgst', '-sha256', '-binary'], { input: der }).toString('base64');
+  return [`--ignore-certificate-errors-spki-list=${spki}`];
+}
+
 async function launch(settings = {}) {
   const ctx = await chromium.launchPersistentContext(mkdtempSync(join(tmpdir(), 'anubis-')), {
     executablePath,
     headless: true,
-    args: [`--disable-extensions-except=${EXT}`, `--load-extension=${EXT}`],
+    args: [`--disable-extensions-except=${EXT}`, `--load-extension=${EXT}`, ...proxyTrustArgs()],
     viewport: { width: 1180, height: 1000 },
+    // Behind a proxy (as in CI sandboxes), real list downloads need it too.
+    ...(process.env.HTTPS_PROXY && { proxy: { server: process.env.HTTPS_PROXY } }),
   });
   let [sw] = ctx.serviceWorkers();
   if (!sw) sw = await ctx.waitForEvent('serviceworker');
@@ -193,6 +207,39 @@ if (!only || only === 'deeper') {
     const { settings } = await chrome.storage.sync.get('settings');
     await chrome.storage.sync.set({ settings: { ...settings, deeper: 0 } });
   });
+}
+
+if (!only || only === 'import') {
+  const opt = await ctx.newPage();
+  opt.on('console', (m) => m.type() === 'error' && console.log('  options console error:', m.text()));
+  opt.on('pageerror', (e) => console.log('  options page error:', e.message));
+  await opt.goto(`chrome-extension://${extId}/options.html#share`);
+  await opt.waitForTimeout(300);
+  await opt.getByLabel('Sites to import').fill(
+    JSON.stringify([
+      { domainName: 'www.quora.com', display: 'PARTIAL_HIDE' },
+      { domainName: 'news.ycombinator.com', display: 'HIGHLIGHT', color: 'COLOR_3' },
+    ]),
+  );
+  await opt.getByRole('button', { name: 'Import', exact: true }).click();
+  await opt.waitForTimeout(500);
+  await opt.screenshot({ path: `${SHOTS}options-import.png`, fullPage: true });
+  console.log('\n== import:', await opt.locator('.notice').first().textContent({ timeout: 3000 }).catch(() => 'no notice'));
+  await opt.screenshot({ path: `${SHOTS}options-import.png`, fullPage: true });
+  await opt.close();
+}
+
+if (only === 'subscribe') {
+  // Downloads a real list from GitHub, so it needs network access; not part of the default run.
+  const opt = await ctx.newPage();
+  opt.on('pageerror', (e) => console.log('  options page error:', e.message));
+  await opt.goto(`chrome-extension://${extId}/options.html#lists`);
+  await opt.waitForTimeout(500);
+  await opt.locator('.discover-row', { hasText: 'Stack Overflow copies' }).getByRole('button', { name: 'Subscribe' }).click();
+  await opt.waitForTimeout(6000);
+  console.log('\n== subscribe:', await opt.locator('.notice').first().textContent({ timeout: 3000 }).catch(() => 'no notice'));
+  await opt.screenshot({ path: `${SHOTS}options-subscribed.png`, fullPage: true });
+  await opt.close();
 }
 
 if (!only || only === 'options') {

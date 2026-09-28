@@ -5,8 +5,10 @@ import { ICON_DOWNLOAD, ICON_SHARE } from '@/utils/icons';
 import type { TagPref } from '@/utils/matcher';
 import { getSubscriptions, loadRuleSet, saveSubscriptions } from '@/utils/ruleset';
 import {
+  editPersonal,
   getSettings,
   savePersonal,
+  setTagPref,
   settingsItem,
   tagPrefsItem,
   updateSettings,
@@ -15,7 +17,9 @@ import {
   type Settings,
   type Subscription,
 } from '@/utils/storage';
+import { importIntoPersonal } from '@/utils/importers';
 import { themeSwitcher } from '@/utils/theme';
+import { flash, flashed, rerender } from './flash';
 import { download } from './sites';
 
 function title(heading: string, text: string) {
@@ -150,7 +154,7 @@ interface Backup {
 
 export async function renderShare(): Promise<HTMLElement> {
   const rules = await loadRuleSet();
-  const status = h('div');
+  const status = h('div', null, flashed('backup'));
 
   const exportAll = async () => {
     const backup: Backup = {
@@ -175,25 +179,63 @@ export async function renderShare(): Promise<HTMLElement> {
       if (data.tagPrefs) await tagPrefsItem.setValue(data.tagPrefs);
       if (Array.isArray(data.subscriptions)) await saveSubscriptions(data.subscriptions);
       if (typeof data.personal === 'string') await savePersonal(data.personal);
-      status.replaceChildren(h('div', { class: 'notice ok' }, 'Backup restored.'));
+      flash('backup', 'ok', 'Backup restored.');
     } catch (error) {
-      status.replaceChildren(h('div', { class: 'notice error' }, `Couldn’t restore: ${error instanceof Error ? error.message : String(error)}`));
+      flash('backup', 'error', `Couldn’t restore: ${error instanceof Error ? error.message : String(error)}`);
     }
     file.value = '';
+    rerender();
   });
+
+  // Import from uBlacklist, HOHSER, a Goggle or a domain list
+  const importArea = h('textarea', {
+    class: 'code',
+    rows: 6,
+    spellcheck: false,
+    placeholder: 'Paste uBlacklist rules, a HOHSER export, a Goggle or one domain per line',
+    style: 'min-height:0',
+    attrs: { 'aria-label': 'Sites to import' },
+  });
+  const importFile = h('input', { type: 'file', accept: '.txt,.json,.goggle,.anubis,text/plain,application/json', hidden: true });
+  importFile.addEventListener('change', async () => {
+    const f = importFile.files?.[0];
+    if (f) importArea.value = await f.text();
+    importFile.value = '';
+  });
+  const importStatus = h('div', null, flashed('import'));
+  const runImport = async () => {
+    if (!importArea.value.trim()) return;
+    let summary = '';
+    let highlight: string[] = [];
+    await editPersonal((t) => {
+      const r = importIntoPersonal(t, importArea.value);
+      highlight = r.highlightTags;
+      const names = { hohser: 'HOHSER export', ublacklist: 'uBlacklist rules', goggle: 'Goggle', anubis: 'Anubis list', domains: 'domain list' };
+      summary =
+        `Read as a ${names[r.source]}: ${r.added} site${r.added === 1 ? '' : 's'} added, ${r.updated} updated.` +
+        (r.skipped
+          ? ` ${r.skipped} rule${r.skipped === 1 ? '' : 's'} with URL patterns or unsupported syntax left out; subscribe to the original list to keep them.`
+          : '');
+      return r.text;
+    });
+    for (const id of highlight) await setTagPref(id, { action: 'highlight' });
+    flash('import', 'ok', summary);
+    rerender();
+  };
 
   const reset = async () => {
     if (!confirm('Reset all Anubis settings, tags and subscriptions? Your list is kept.')) return;
     await settingsItem.setValue(DEFAULT_SETTINGS);
     await tagPrefsItem.setValue({});
     await storage.removeItem('sync:subscriptions');
-    status.replaceChildren(h('div', { class: 'notice ok' }, 'Settings reset.'));
+    flash('backup', 'ok', 'Settings reset.');
+    rerender();
   };
 
   return h(
     'div',
     null,
-    title('Share & backup', 'Your list is a plain text file. Publish it and anyone can subscribe; keep a backup of everything else.'),
+    title('Share and back up', 'Your list is a plain text file. Publish it and anyone can subscribe; keep a backup of everything else.'),
     h(
       'div',
       { class: 'panel' },
@@ -220,6 +262,25 @@ export async function renderShare(): Promise<HTMLElement> {
         h('button', { class: 'btn primary', type: 'button', on: { click: () => download('my-anubis-list.anubis', rules.personalText) } }, icon(ICON_DOWNLOAD), 'Download my list'),
         h('a', { class: 'btn', href: 'https://github.com/Bishop-V/anubis/blob/main/docs/list-format.md', target: '_blank', rel: 'noopener noreferrer' }, 'List format'),
       ),
+    ),
+    h(
+      'div',
+      { class: 'panel' },
+      h('h3', null, 'Import sites'),
+      h(
+        'p',
+        { class: 'muted' },
+        'Coming from uBlacklist or HOHSER? Paste your rules or export here and the sites join your list. Hidden stays hidden, HOHSER’s partial hide becomes Lower, and highlight colours become tags that highlight.',
+      ),
+      importArea,
+      h(
+        'div',
+        { class: 'toolbar', style: 'margin-top:10px' },
+        h('button', { class: 'btn primary', type: 'button', on: { click: () => void runImport() } }, 'Import'),
+        h('button', { class: 'text-btn', type: 'button', on: { click: () => importFile.click() } }, 'Choose a file'),
+        importFile,
+      ),
+      importStatus,
     ),
     h(
       'div',
