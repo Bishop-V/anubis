@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "description": "Lists Anubis offers under Settings → Lists → Discover. Add yours with a pull request.",
+  "lists": [
+    {
+      "id": "official-docs",
+      "name": "Official docs",
+      "description": "Tags first-party documentation and nudges it up.",
+      "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/official-docs.anubis",
+      "format": "anubis",
+      "builtin": true,
+      "default": true
+    },
+    {
+      "id": "discussions",
+      "name": "Discussions",
+      "description": "Tags forums, Q&A sites and issue threads.",
+      "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/discussions.anubis",
+      "format": "anubis",
+      "builtin": true,
+      "default": true
+    },
+    {
+      "id": "reference",
+      "name": "Reference",
+      "description": "Tags encyclopedias, archives and research papers.",
+      "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/reference.anubis",
+      "format": "anubis",
+      "builtin": true,
+      "default": true
+    },
+    {
+      "id": "paywalls",
+      "name": "Paywalls",
+      "description": "Labels sites that usually paywall their articles.",
+      "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/paywalls.anubis",
+      "format": "anubis",
+      "builtin": true,
+      "default": true
+    },
+    {
+      "id": "huge-ai-blocklist",
+      "name": "Huge AI Blocklist",
+      "description": "Hides AI-generated image and content farms. Community-maintained by laylavish.",
+      "url": "https://raw.githubusercontent.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist/main/list_uBlacklist.txt",
+      "homepage": "https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist",
+      "format": "ublacklist"
+    },
+    {
+      "id": "stackoverflow-copies",
+      "name": "Stack Overflow copies",
+      "description": "Hides sites that scrape and machine-translate Stack Overflow.",
+      "url": "https://raw.githubusercontent.com/arosh/ublacklist-stackoverflow-translation/master/uBlacklist.txt",
+      "homepage": "https://github.com/arosh/ublacklist-stackoverflow-translation",
+      "format": "ublacklist"
+    },
+    {
+      "id": "github-copies",
+      "name": "GitHub copies",
+      "description": "Hides sites that mirror GitHub repositories and issues.",
+      "url": "https://raw.githubusercontent.com/arosh/ublacklist-github-translation/master/uBlacklist.txt",
+      "homepage": "https://github.com/arosh/ublacklist-github-translation",
+      "format": "ublacklist"
+    },
+    {
+      "id": "brave-copycats",
+      "name": "Copycats removal",
+      "description": "Brave's Goggle that discards copycat content like translated Stack Overflow threads.",
+      "url": "https://raw.githubusercontent.com/brave/goggles-quickstart/main/goggles/copycats_removal.goggle",
+      "homepage": "https://github.com/brave/goggles-quickstart",
+      "format": "goggle"
+    },
+    {
+      "id": "brave-no-pinterest",
+      "name": "No Pinterest",
+      "description": "Brave's Goggle that discards Pinterest pages.",
+      "url": "https://raw.githubusercontent.com/brave/goggles-quickstart/main/goggles/no_pinterest.goggle",
+      "homepage": "https://github.com/brave/goggles-quickstart",
+      "format": "goggle"
+    },
+    {
+      "id": "brave-tech-blogs",
+      "name": "Tech blogs (lens)",
+      "description": "Brave's Goggle boosting ~1,400 tech blogs. It is a lens: results not on the list are hidden.",
+      "url": "https://raw.githubusercontent.com/brave/goggles-quickstart/main/goggles/tech_blogs.goggle",
+      "homepage": "https://github.com/brave/goggles-quickstart",
+      "format": "goggle",
+      "lens": true
+    },
+    {
+      "id": "brave-hacker-news",
+      "name": "Hacker News (lens)",
+      "description": "Brave's Goggle boosting sites popular on Hacker News. It is a lens: results not on the list are hidden.",
+      "url": "https://raw.githubusercontent.com/brave/goggles-quickstart/main/goggles/hacker_news.goggle",
+      "homepage": "https://github.com/brave/goggles-quickstart",
+      "format": "goggle",
+      "lens": true
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+! name: Paywalls
+! description: Labels news and magazine sites that usually put articles behind a paywall or a metered limit.
+! author: Anubis contributors
+! homepage: https://github.com/Bishop-V/anubis/tree/main/lists
+! issues: https://github.com/Bishop-V/anubis/issues
+! license: CC0-1.0
+! avatar: #e0664f
+! expires: 7 days
+! tag: paywall | Paywall | #e0664f | Most articles need a subscription.
+
+! Label only: this list never changes the ranking. Pick "Lower" or "Hide" for the
+! tag in Anubis settings if you'd rather not see them.
+$site=nytimes.com,tag=paywall
+$site=wsj.com,tag=paywall
+$site=ft.com,tag=paywall
+$site=economist.com,tag=paywall
+$site=bloomberg.com,tag=paywall
+$site=washingtonpost.com,tag=paywall
+$site=theatlantic.com,tag=paywall
+$site=newyorker.com,tag=paywall
+$site=wired.com,tag=paywall
+$site=businessinsider.com,tag=paywall
+$site=barrons.com,tag=paywall
+$site=hbr.org,tag=paywall
+$site=theinformation.com,tag=paywall
+$site=latimes.com,tag=paywall
+$site=bostonglobe.com,tag=paywall
+$site=telegraph.co.uk,tag=paywall
+$site=thetimes.com,tag=paywall
+$site=thetimes.co.uk,tag=paywall
+$site=lemonde.fr,tag=paywall
+$site=spiegel.de,tag=paywall
+$site=haaretz.com,tag=paywall
+$site=theathletic.com,tag=paywall
+$site=seekingalpha.com,tag=paywall

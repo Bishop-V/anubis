@@ -1,0 +1,35 @@
+! name: Reference
+! description: Tags encyclopedias, archives, papers and public-domain libraries.
+! author: Anubis contributors
+! homepage: https://github.com/Bishop-V/anubis/tree/main/lists
+! issues: https://github.com/Bishop-V/anubis/issues
+! license: CC0-1.0
+! avatar: #2fa6b3
+! expires: 7 days
+! tag: reference | Reference | #2fa6b3 | Encyclopedias, dictionaries and archives.
+! tag: research | Research | #3fa37a | Papers, preprints and scholarly indexes.
+
+$site=wikipedia.org,tag=reference
+$site=wiktionary.org,tag=reference
+$site=wikisource.org,tag=reference
+$site=wikidata.org,tag=reference
+$site=britannica.com,tag=reference
+$site=plato.stanford.edu,tag=reference
+$site=archive.org,tag=reference
+$site=gutenberg.org,tag=reference
+$site=openlibrary.org,tag=reference
+$site=merriam-webster.com,tag=reference
+$site=etymonline.com,tag=reference
+
+$site=arxiv.org,tag=research
+$site=doi.org,tag=research
+$site=pubmed.ncbi.nlm.nih.gov,tag=research
+$site=pmc.ncbi.nlm.nih.gov,tag=research
+$site=scholar.archive.org,tag=research
+$site=semanticscholar.org,tag=research
+$site=openreview.net,tag=research
+$site=biorxiv.org,tag=research
+$site=medrxiv.org,tag=research
+$site=aclanthology.org,tag=research
+$site=dl.acm.org,tag=research
+$site=ieeexplore.ieee.org,tag=research

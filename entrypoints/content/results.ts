@@ -1,0 +1,168 @@
+import { decodeBingRedirect, displayedDomainToUrl, siteOf } from '@/utils/domain';
+import type { EngineDef } from '@/utils/engines';
+
+export interface FoundResult {
+  /** The element representing the whole result. Reranking moves it; hiding hides it. */
+  container: HTMLElement;
+  link: HTMLAnchorElement;
+  /** Where tag chips go: right after this element. */
+  titleBlock: HTMLElement;
+  /** The real destination, or `https://<displayed domain>/` when only that is known. */
+  url: string;
+  host: string;
+  title: string;
+  description: string;
+  /** Other elements belonging to this result (DuckDuckGo Lite rows). */
+  extras: HTMLElement[];
+}
+
+/** Our own elements, which must never be mistaken for page content. */
+export const OWN_TAGS = new Set(['ANUBIS-CHIPS', 'ANUBIS-WEIGH', 'ANUBIS-BAR', 'ANUBIS-SUMMARY', 'ANUBIS-POPOVER']);
+
+export function findResults(engine: EngineDef): FoundResult[] {
+  return engine.heading ? findStructural(engine) : findBySelector(engine);
+}
+
+function findBySelector(engine: EngineDef): FoundResult[] {
+  const out: FoundResult[] = [];
+  for (const container of document.querySelectorAll<HTMLElement>(engine.item!)) {
+    const link = container.querySelector<HTMLAnchorElement>(engine.link ?? 'a[href]');
+    if (!link || !/^https?:$/.test(link.protocol)) continue;
+    const url = resolveUrl(link, container, engine);
+    if (!url) continue;
+    const titleEl = (engine.title && container.querySelector<HTMLElement>(engine.title)) || link;
+    const extras: HTMLElement[] = [];
+    let row = container.nextElementSibling;
+    for (let i = 0; i < (engine.extraRows ?? 0) && row instanceof HTMLElement; i++) {
+      // Stop at the next result's first row.
+      if (row.matches(engine.item!)) break;
+      extras.push(row);
+      row = row.nextElementSibling;
+    }
+    out.push(build(container, link, titleBlockFor(titleEl, link, container), url, titleEl, extras));
+  }
+  return out;
+}
+
+// Structural detection, from the approach in the original content script: find
+// the title heading, take its link, then walk up to the smallest ancestor that
+// still holds only this one result.
+function findStructural(engine: EngineDef): FoundResult[] {
+  const heading = engine.heading!;
+  const out: FoundResult[] = [];
+  const seen = new Set<HTMLElement>();
+  for (const title of document.querySelectorAll<HTMLElement>(heading)) {
+    if (title.closest('anubis-chips, anubis-bar, anubis-summary')) continue;
+    const link = title.closest<HTMLAnchorElement>('a[href]') ?? title.querySelector<HTMLAnchorElement>('a[href]');
+    if (!link || !/^https?:$/.test(link.protocol)) continue;
+    const container = resultContainer(link, heading, engine.boundary);
+    if (seen.has(container)) continue;
+    const url = resolveUrl(link, container, engine);
+    if (!url) continue;
+    seen.add(container);
+    out.push(build(container, link, titleBlockFor(title, link, container), url, title, []));
+  }
+  return out;
+}
+
+function build(
+  container: HTMLElement,
+  link: HTMLAnchorElement,
+  titleBlock: HTMLElement,
+  url: string,
+  titleEl: HTMLElement,
+  extras: HTMLElement[],
+): FoundResult {
+  let host = '';
+  try {
+    host = new URL(url).hostname.toLowerCase();
+  } catch {
+    // resolveUrl only returns parseable URLs
+  }
+  const title = (titleEl.textContent ?? '').trim();
+  // Good enough for $indescription: everything in the result that isn't the title.
+  const description = (container.textContent ?? '').replace(title, '').trim().slice(0, 600);
+  return { container, link, titleBlock, url, host, title, description, extras };
+}
+
+/** Chips go after the title: after the heading if the link is inside it, else after the link. */
+function titleBlockFor(title: HTMLElement, link: HTMLAnchorElement, container: HTMLElement): HTMLElement {
+  const block = title.contains(link) ? title : link.contains(title) ? link : title;
+  return container.contains(block) && block !== container ? block : link;
+}
+
+/**
+ * Walk up from the link to the element that represents the whole result. Stops
+ * before an ancestor that would hold a second result, or at a boundary like
+ * Google's #rso. Never returns an <a>: a <button> inside a link is invalid HTML.
+ */
+function resultContainer(link: HTMLAnchorElement, heading: string, boundary?: string): HTMLElement {
+  let el: HTMLElement = link;
+  for (let depth = 0; depth < 8; depth++) {
+    const parent = el.parentElement;
+    if (!parent || parent === document.body || parent === document.documentElement) break;
+    if (boundary && parent.matches(boundary)) break;
+    if (el.tagName !== 'A' && parent.querySelectorAll(heading).length > 1) break;
+    el = parent;
+  }
+  // Some layouts put the link straight in the results list; give it a wrapper.
+  if (el.tagName === 'A') {
+    const existing = el.parentElement;
+    if (existing?.hasAttribute('data-anubis-wrap')) return existing;
+    const wrapper = document.createElement('div');
+    wrapper.setAttribute('data-anubis-wrap', '');
+    el.parentElement?.insertBefore(wrapper, el);
+    wrapper.appendChild(el);
+    return wrapper;
+  }
+  return el;
+}
+
+/**
+ * Which page does this result really point at? Engines wrap links in redirects:
+ * Google's /goto?url=<opaque>, Bing's /ck/a?u=a1<base64>, Yahoo's /RU=<url>/,
+ * DuckDuckGo HTML's /l/?uddg=<url>. Decode what can be decoded; otherwise fall back
+ * to the domain the engine displays (uBlacklist does the same).
+ */
+export function resolveUrl(link: HTMLAnchorElement, container: HTMLElement, engine: EngineDef): string | null {
+  const href = link.href;
+  const bing = decodeBingRedirect(href);
+  if (bing) return bing;
+
+  const ru = /\/RU=([^/]+)\//.exec(link.pathname);
+  if (ru) {
+    try {
+      const decoded = decodeURIComponent(ru[1]!);
+      if (/^https?:\/\//.test(decoded)) return decoded;
+    } catch {
+      // fall through
+    }
+  }
+
+  if (siteOf(link.hostname) !== siteOf(location.hostname)) return href;
+
+  const params = new URLSearchParams(link.search);
+  for (const key of ['uddg', 'url', 'q', 'u', 'imgurl']) {
+    const value = params.get(key);
+    if (value && /^https?:\/\//i.test(value)) return value;
+  }
+
+  return displayedUrl(container, engine);
+}
+
+/** Read the displayed domain ("example.com › docs › page") from the result. */
+function displayedUrl(container: HTMLElement, engine: EngineDef): string | null {
+  const selector = engine.displayed ?? 'cite';
+  let scope: HTMLElement | null = container;
+  for (let depth = 0; depth < 3 && scope; depth++) {
+    for (const el of scope.querySelectorAll<HTMLElement>(selector)) {
+      const text = (el.textContent ?? '').replace(/​/g, '').replace(/^https?:\/\//i, '');
+      const url = displayedDomainToUrl(text.split(/[/?#]/)[0]);
+      if (url) return url;
+    }
+    const parent: HTMLElement | null = scope.parentElement;
+    if (!parent || (engine.heading && parent.querySelectorAll(engine.heading).length > 1)) break;
+    scope = parent;
+  }
+  return null;
+}

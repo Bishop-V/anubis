@@ -6,14 +6,23 @@ import { defineConfig } from 'wxt';
 export default defineConfig({
   // Default target for every command. Override per-run with `-b chrome`.
   browser: 'firefox',
-  manifest: ({ browser }) => ({
+  manifest: ({ browser, manifestVersion }) => ({
     name: 'Anubis',
-    description: 'Judges your search results and hides the sites you don’t trust.',
-    // "storage" lets us save the user's block list.
+    description: 'Weighs your search results: tag, rerank and hide sites, with lists anyone can publish.',
+    // "storage" saves your list, settings and downloaded lists.
     permissions: ['storage'],
+    // Lists on raw.githubusercontent.com and gists download without any extra
+    // permission (they allow cross-origin reads). Lists hosted anywhere else ask
+    // for access to that one host, at the moment you subscribe.
+    ...(manifestVersion === 3
+      ? { optional_host_permissions: ['https://*/*'] }
+      : { optional_permissions: ['https://*/*'] }),
     // Firefox needs an add-on ID for storage.sync. Change before publishing.
+    // Anubis sends nothing anywhere, which Firefox asks new add-ons to declare.
     ...(browser === 'firefox' && {
-      browser_specific_settings: { gecko: { id: 'anubis@example.com' } },
+      browser_specific_settings: {
+        gecko: { id: 'anubis@example.com', data_collection_permissions: { required: ['none'] } },
+      },
     }),
   }),
 });

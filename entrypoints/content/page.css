@@ -1,0 +1,74 @@
+/* Page-level treatments for weighed results. Injected by the manifest, so it is in
+   place before the first result paints. Everything keys off data-anubis-* attributes
+   the content script sets; nothing here changes layout unless a verdict asks for it. */
+
+/* Weigh button: faint until the result is hovered or focused. */
+[data-anubis-result]:hover > anubis-weigh,
+[data-anubis-result]:focus-within > anubis-weigh {
+  --anubis-weigh-opacity: 0.92;
+}
+
+/* Hidden, "collapse" style: only the slim bar stays. */
+html[data-anubis-hide='collapse'] [data-anubis-state~='hide']:not([data-anubis-reveal]) > :not(anubis-bar) {
+  display: none !important;
+}
+/* Hidden, "remove" style, and table layouts in every style. */
+html[data-anubis-hide='remove'] [data-anubis-state~='hide']:not([data-anubis-reveal]),
+[data-anubis-state~='hide'][data-anubis-row]:not([data-anubis-reveal]) {
+  display: none !important;
+}
+/* Hidden, "dim" style, and revealed hidden results in every style. */
+html[data-anubis-hide='dim'] [data-anubis-state~='hide'],
+[data-anubis-state~='hide'][data-anubis-reveal] {
+  opacity: 0.38 !important;
+  filter: grayscale(0.85);
+  transition:
+    opacity 0.15s,
+    filter 0.15s;
+}
+html[data-anubis-hide='dim'] [data-anubis-state~='hide']:hover,
+[data-anubis-state~='hide'][data-anubis-reveal]:hover {
+  opacity: 0.9 !important;
+  filter: none;
+}
+[data-anubis-state~='hide'][data-anubis-reveal] > anubis-bar,
+html[data-anubis-hide='dim'] [data-anubis-state~='hide'] > anubis-bar {
+  display: none !important;
+}
+
+/* Lowered: faded until hovered. */
+[data-anubis-state~='lower'] {
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+[data-anubis-state~='lower']:hover {
+  opacity: 1;
+}
+
+/* Pinned: a gold frame drawn outside the box, so layout doesn't move. */
+[data-anubis-state~='pin'] {
+  border-radius: 14px;
+  background-color: rgb(212 166 55 / 0.07) !important;
+  box-shadow: 0 0 0 8px rgb(212 166 55 / 0.07);
+  outline: 1.5px solid rgb(212 166 55 / 0.75);
+  outline-offset: 8px;
+}
+
+/* Tag highlight (HOHSER-style): the tag's colour tints the result. */
+[data-anubis-highlight] {
+  border-radius: 14px;
+  background-color: color-mix(in srgb, var(--anubis-hl) 9%, transparent) !important;
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--anubis-hl) 9%, transparent);
+  outline: 1px solid color-mix(in srgb, var(--anubis-hl) 45%, transparent);
+  outline-offset: 8px;
+}
+
+/* Reranking: results keep their place in the DOM (the page's scripts own it) and
+   move visually with CSS `order` instead. */
+[data-anubis-rerank] {
+  display: flex !important;
+  flex-direction: column !important;
+}
+[data-anubis-rerank] > * {
+  flex: none;
+}
