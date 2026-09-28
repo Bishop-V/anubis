@@ -180,6 +180,27 @@ if (!only || only === 'ddg-hide') {
   await report(page, 'ddg-after-own-hide');
 }
 
+if (!only || only === 'filter') {
+  await page.goto('https://duckduckgo.com/?q=javascript+promises');
+  await page.waitForTimeout(600);
+  await page.screenshot({ path: `${SHOTS}ddg-tags-legend.png`, fullPage: false });
+  const sw = ctx.serviceWorkers()[0];
+  const message = (m) =>
+    sw.evaluate(async (m) => {
+      for (const tab of await chrome.tabs.query({})) await chrome.tabs.sendMessage(tab.id, m).catch(() => {});
+    }, m);
+  await message({ type: 'set-filter', tag: 'forum' });
+  await page.waitForTimeout(400);
+  const visible = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-anubis-result]')]
+      .filter((el) => getComputedStyle(el).display !== 'none')
+      .map((el) => (el.querySelector('h2')?.textContent ?? '').trim().slice(0, 40)),
+  );
+  console.log('\n== filter (Discussion only):', JSON.stringify(visible));
+  await page.screenshot({ path: `${SHOTS}ddg-filtered.png`, fullPage: false });
+  await message({ type: 'set-filter' });
+}
+
 if (!only || only === 'deeper') {
   // Google: "Weigh deeper" by message (the path the popup uses).
   await page.goto('https://www.google.com/search?q=anubis&deep=1');

@@ -59,6 +59,11 @@ html[data-anubis-hide='dim'] [data-anubis-state~='hide'] > anubis-bar {
   box-shadow: 0 0 0 7px color-mix(in srgb, var(--anubis-hl) 7%, transparent);
 }
 
+/* Filtering by a tag from the summary: results without it step aside. */
+[data-anubis-filtered] {
+  display: none !important;
+}
+
 /* Reranking: results keep their place in the DOM (the page's scripts own it) and
    move visually with CSS `order` instead. */
 [data-anubis-rerank] {

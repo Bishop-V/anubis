@@ -6,6 +6,11 @@ function andList(parts: string[]): string {
 
 /** "Anubis pinned 1, raised 2 and hid 2 of 9 results." Shared by the page and the popup. */
 export function summarySentence(stats: PageStats): string {
+  if (stats.filter) {
+    const tag = stats.tags.find((t) => t.id === stats.filter);
+    const n = tag?.count ?? 0;
+    return `Showing only “${tag?.label ?? stats.filter}”: ${n} of ${stats.total} result${stats.total === 1 ? '' : 's'}.`;
+  }
   const parts: string[] = [];
   if (stats.pinned) parts.push(`pinned ${stats.pinned}`);
   if (stats.raised) parts.push(`raised ${stats.raised}`);

@@ -46,6 +46,7 @@ export default defineContentScript({
     }
 
     let reveal = false;
+    let filter: string | undefined;
     let deeper = freshState(engine);
     let verdicts = new Map<string, Verdict>();
     let lastResults: FoundResult[] = [];
@@ -76,7 +77,10 @@ export default defineContentScript({
       applyTheme(theme);
 
       // A new search (Google and DuckDuckGo change the URL without reloading).
-      if (deeper.url !== location.href && !deeper.busy) deeper = freshState(engine);
+      if (deeper.url !== location.href && !deeper.busy) {
+        deeper = freshState(engine);
+        filter = undefined;
+      }
 
       const results = findResults(engine);
       const more = engine.more;
@@ -93,7 +97,9 @@ export default defineContentScript({
         canGoDeeper:
           !!more && !deeper.done && !deeper.busy && results.length > 0 && (more.kind !== 'click' || !!document.querySelector(more.button)),
         loading: deeper.busy,
+        tags: [],
       };
+      const tagCounts = new Map<string, number>();
 
       // Take Anubis off anything that stopped being a result, e.g. after the engine's
       // own "hide this site" collapsed it or its scripts re-rendered it.
@@ -112,6 +118,20 @@ export default defineContentScript({
         else if (verdict.level === 'raise') stats.raised++;
         else if (verdict.level === 'lower') stats.lowered++;
         if (verdict.tags.length) stats.tagged++;
+        if (!verdict.hidden) {
+          for (const id of verdict.tags) if (!rules.prefs[id]?.muted) tagCounts.set(id, (tagCounts.get(id) ?? 0) + 1);
+        }
+      }
+      stats.tags = [...tagCounts]
+        .map(([id, count]) => ({ id, count, label: rules.tags.get(id)?.label ?? id, color: rules.tags.get(id)?.color ?? '#c8962e' }))
+        .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+      // A filter whose tag left the page (a new search, a list turned off) lapses.
+      if (filter && !tagCounts.has(filter)) filter = undefined;
+      stats.filter = filter;
+      for (const result of results) {
+        const out = !!filter && !verdictFor(result).tags.includes(filter);
+        result.container.toggleAttribute('data-anubis-filtered', out);
+        for (const row of result.extras) row.toggleAttribute('data-anubis-filtered', out);
       }
 
       rerank(results, scores, rules.settings.rerank && !engine.table);
@@ -124,8 +144,12 @@ export default defineContentScript({
           },
           settings: () => void send({ type: 'open-options' }),
           deeper: () => goDeeper(1),
+          filter: (tag) => {
+            filter = tag;
+            pass();
+          },
         });
-      } else renderSummary(undefined, stats, theme, { toggleReveal() {}, settings() {}, deeper() {} });
+      } else renderSummary(undefined, stats, theme, { toggleReveal() {}, settings() {}, deeper() {}, filter() {} });
 
       // "Look deeper automatically": once per search.
       if (rules.settings.deeper > 0 && stats.canGoDeeper && deeper.pages === 1 && !deeper.auto) {
@@ -240,7 +264,7 @@ export default defineContentScript({
 
     const forget = (el: HTMLElement) => {
       detachResult(el);
-      for (const attr of ['data-anubis-result', 'data-anubis-state', 'data-anubis-reveal', 'data-anubis-highlight', 'data-anubis-row']) {
+      for (const attr of ['data-anubis-result', 'data-anubis-state', 'data-anubis-reveal', 'data-anubis-highlight', 'data-anubis-row', 'data-anubis-filtered']) {
         el.removeAttribute(attr);
       }
       el.style.removeProperty('--anubis-hl');
@@ -304,6 +328,11 @@ export default defineContentScript({
       if (message.type === 'get-page-stats') return Promise.resolve(lastStats);
       if (message.type === 'set-reveal') {
         reveal = message.on;
+        pass();
+        return Promise.resolve(lastStats);
+      }
+      if (message.type === 'set-filter') {
+        filter = message.tag;
         pass();
         return Promise.resolve(lastStats);
       }

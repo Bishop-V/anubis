@@ -58,6 +58,10 @@ DuckDuckGo's own "hide this site" was simulated in the mocks (the result collaps
 - **First pass (rejected by the project owner as loud and "a bit like Discord"):** filled pill badges with coloured dots, gradient gold buttons and segmented controls, ALL-CAPS section labels, rounded cards everywhere, a bordered summary with stat counters.
 - **Second pass**, following Anthropic's `frontend-design` skill (now in `.claude/skills/`): on search pages Anubis uses the page's own font and muted text; tags are a small diamond and a name; the summary is one sentence; hidden results are one line. The one flourish is the weigh menu: the site's name in a cartouche (the oval that encloses names in hieroglyphs) over a small balance that tilts with the chosen weight. Settings use rows and hairlines; the light theme is a cool stone grey instead of cream; tag colours are muted Egyptian pigments.
 
+## Filtering by tag
+
+- **Shipped:** the summary lists the tags on the page's visible results with their counts, a legend you can click to show only one tag ("Showing only “Discussion”: 2 of 9 results"). It's the lightest version of Kagi's lenses: nothing is fetched, and a new search clears it. Filtered-out results get `data-anubis-filtered` and `display: none`, so they keep their place for when the filter is lifted.
+
 ## Importing from other tools
 
 - **Shipped:** Settings → Share and back up → Import sites takes uBlacklist rules, a HOHSER JSON export, a Goggle or a plain domain list and merges whole-site entries into your list. HOHSER's `FULL_HIDE` becomes Hide, `PARTIAL_HIDE` becomes Lower, and its three highlight colours become `highlight-1..3` tags set to highlight. Rules that need URL patterns or regular expressions can't be expressed as whole-site entries, so they're counted and left out, with a pointer to subscribe to the original list instead.

@@ -254,7 +254,7 @@ export function renderSummary(
   before: HTMLElement | undefined,
   stats: PageStats,
   theme: PageTheme,
-  actions: { toggleReveal: () => void; settings: () => void; deeper: () => void },
+  actions: { toggleReveal: () => void; settings: () => void; deeper: () => void; filter: (tag?: string) => void },
 ): void {
   const worthShowing =
     stats.hidden || stats.pinned || stats.raised || stats.lowered || stats.tagged || stats.canGoDeeper || stats.pages > 1;
@@ -272,7 +272,10 @@ export function renderSummary(
       { class: 'summary' },
       h('span', { class: 'mark' }, icon(ICON_ANUBIS)),
       h('span', { class: 'sentence' }, summarySentence(stats)),
-      stats.hidden
+      stats.filter
+        ? h('button', { class: 'text-btn', type: 'button', on: { click: () => actions.filter(undefined) } }, 'Show all')
+        : null,
+      stats.hidden && !stats.filter
         ? h(
             'button',
             { class: 'text-btn', type: 'button', on: { click: actions.toggleReveal } },
@@ -297,6 +300,28 @@ export function renderSummary(
         { class: 'icon-btn', type: 'button', title: 'Anubis settings', attrs: { 'aria-label': 'Anubis settings' }, on: { click: actions.settings } },
         icon(ICON_GEAR),
       ),
+      // The tags on this page, as a legend you can click to show only that tag.
+      stats.tags.length
+        ? h(
+            'div',
+            { class: 'filters', attrs: { role: 'group', 'aria-label': 'Show only results tagged' } },
+            stats.tags.map((t) =>
+              h(
+                'button',
+                {
+                  type: 'button',
+                  style: `--c: ${t.color}`,
+                  title: stats.filter === t.id ? 'Show all results' : `Show only results tagged “${t.label}”`,
+                  attrs: { 'aria-pressed': String(stats.filter === t.id) },
+                  on: { click: () => actions.filter(stats.filter === t.id ? undefined : t.id) },
+                },
+                h('i', { class: 'gem' }),
+                t.label,
+                h('span', { class: 'count' }, t.count),
+              ),
+            ),
+          )
+        : null,
     ),
   );
 }

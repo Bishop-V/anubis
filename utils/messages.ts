@@ -17,6 +17,10 @@ export interface PageStats {
   canGoDeeper: boolean;
   /** A deeper load is running. */
   loading: boolean;
+  /** Tags on the page's visible results, most common first. */
+  tags: { id: string; label: string; color: string; count: number }[];
+  /** Only results with this tag are shown. */
+  filter?: string;
 }
 
 export type Message =
@@ -26,7 +30,8 @@ export type Message =
   | { type: 'open-options'; tab?: string }
   | { type: 'get-page-stats' }
   | { type: 'set-reveal'; on: boolean }
-  | { type: 'go-deeper' };
+  | { type: 'go-deeper' }
+  | { type: 'set-filter'; tag?: string };
 
 export function send<T = unknown>(message: Message): Promise<T | undefined> {
   return browser.runtime.sendMessage(message).catch(() => undefined) as Promise<T | undefined>;
