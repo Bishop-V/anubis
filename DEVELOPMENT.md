@@ -37,6 +37,7 @@ npm run docs:dev       # the wiki, with live reload
 npm run docs:build     # the wiki; fails on a broken link
 npm run zip            # store packages (see "Releasing")
 npm run zip:chrome
+npm run release:prep -- 0.3.0 # set the version, run every check above, make the Firefox zips
 ```
 
 Firefox is the default target; every `:chrome` variant overrides it. If the dev browser doesn't open on its own, build and load the extension by hand, as [Getting started](docs/guide/getting-started.md#install) describes.
@@ -277,7 +278,7 @@ npm run zip:chrome   # .output/anubis-<version>-chrome.zip, also used for Edge
 
 The extension itself is in `.output/firefox-mv2/` (and `.output/chrome-mv3/`) after the zips are made.
 
-To publish a version, set `version` in `package.json`, merge it, then push a matching tag (`git tag v0.3.0 && git push origin v0.3.0`). `.github/workflows/release.yml` checks the tag against `package.json`, runs CI, builds the zips, creates a GitHub Release and, once approved in the `release` environment, submits to the Chrome Web Store, Firefox Add-ons, and Edge Add-ons. [`store/README.md`](store/README.md) has the checklist before each release, the listings, and the privacy answers.
+To publish a version, run `npm run release:prep -- 0.3.0` (or `patch`, `minor`, or `major`; `scripts/release-prep.mjs`). It sets `version` in `package.json` and `package-lock.json`, then runs the type-check, unit tests, Firefox build and zips, the add-on linter, and the end-to-end checks, stopping at the first failure. Merge the change, then push a matching tag (`git tag v0.3.0 && git push origin v0.3.0`). `.github/workflows/release.yml` checks the tag against `package.json`, runs CI, builds the zips, and creates a GitHub Release. Once approved in the `release` environment, it submits to each of the Chrome Web Store, Firefox Add-ons, and Edge Add-ons whose keys are set there. A store with no keys is skipped, so Firefox can ship before the others; a store with only some of its keys fails the release. [`store/README.md`](store/README.md) has the checklist before each release, the listings, and the privacy answers.
 
 ## Pitfalls
 

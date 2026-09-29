@@ -20,14 +20,12 @@ Setting it up: create a Google Cloud project, turn on the Chrome Web Store API, 
 
 ## Before each release
 
-1. Bump `version` in `package.json` (WXT copies it into the manifest). Both stores reject a version they've already seen.
-2. `npm run compile`, `npm test`, both builds, `npx web-ext lint -s .output/firefox-mv2`, and `npm run e2e`.
-3. Load the build and check the engines listed under "Still unverified" in [`docs/experiments.md`](../docs/experiments.md).
-4. `npm run zip:chrome` for Chrome. `npm run zip` for Firefox, which also makes `anubis-<version>-sources.zip` for AMO's reviewers.
-5. The privacy policy link below has to load: GitHub Pages must be publishing the docs site.
-6. Merge, then push a matching tag (`git tag v<version> && git push origin v<version>`). [`release.yml`](../.github/workflows/release.yml) builds the zips, creates the GitHub Release and, once approved, submits to Chrome, Firefox, and Edge.
+1. `npm run release:prep -- <version>` (or `patch`, `minor`, or `major`). It sets `version` in `package.json` and `package-lock.json` (WXT copies it into the manifest), then runs the type-check, unit tests, `npm run zip`, `npx web-ext lint`, and `npm run e2e`, stopping at the first failure. Both stores reject a version they've already seen. Run it without a version to repeat the checks. `npm run zip` makes the Firefox zip and `anubis-<version>-sources.zip` for AMO's reviewers; run `npm run zip:chrome` too when Chrome is ready.
+2. Load the build and check the engines listed under "Still unverified" in [`docs/experiments.md`](../docs/experiments.md).
+3. The privacy policy link below has to load: GitHub Pages must be publishing the docs site.
+4. Merge, then push a matching tag (`git tag v<version> && git push origin v<version>`). [`release.yml`](../.github/workflows/release.yml) builds the zips, creates the GitHub Release and, once approved, submits to each store whose keys are in the `release` environment.
 
-The release workflow rejects tags whose commit is not already on `main`, as well as tags that do not match `package.json`. Before the first submission, create the store listings manually, verify their permanent IDs and privacy answers, confirm the docs site is publishing on GitHub Pages, and configure the protected `release` environment with the store credentials. As of 2026-09-29, that environment was not configured. Do not test publishing against production store credentials from a pull request.
+The release workflow rejects tags whose commit is not already on `main`, as well as tags that do not match `package.json`. It submits only to stores whose keys are all set in the `release` environment and skips the rest, so Firefox ships first: add `FIREFOX_JWT_ISSUER` and `FIREFOX_JWT_SECRET` (AMO → Tools → Manage API Keys) and leave the Chrome and Edge keys out until those listings exist. A store with only some of its keys set fails the release rather than being skipped. Before the first submission, create the store listings manually, verify their permanent IDs and privacy answers, confirm the docs site is publishing on GitHub Pages, and configure the protected `release` environment with the store credentials. As of 2026-09-29, that environment was not configured. Do not test publishing against production store credentials from a pull request.
 
 ## Chrome Web Store
 
