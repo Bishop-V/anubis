@@ -1,7 +1,7 @@
 import { browser, defineBackground, storage } from '#imports';
 import { t } from '@/utils/i18n';
 import { readSubscribeLink, subscribeQuery } from '@/utils/links';
-import { sendToActiveTab, type Message } from '@/utils/messages';
+import { hiddenCount, sendToActiveTab, type Message } from '@/utils/messages';
 import {
   getSettings,
   migrateLegacy,
@@ -28,6 +28,12 @@ const CHECK_EVERY_MS = 30 * 60 * 1000;
 export default defineBackground(() => {
   // MV3 has `action`; Firefox MV2 has `browserAction`.
   const action = browser.action ?? browser.browserAction;
+
+  // Badges belong to a document, not to the tab indefinitely. Clear the old
+  // count as soon as navigation starts; the next search page will report anew.
+  browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
+    if (changeInfo.status === 'loading') void action.setBadgeText({ tabId, text: '' });
+  });
 
   // Grey icon while off. Set on every start of the background script, since the
   // browser doesn't keep a changed icon across restarts.
@@ -117,7 +123,7 @@ export default defineBackground(() => {
       case 'stats': {
         const tabId = sender.tab?.id;
         if (tabId === undefined) return;
-        const n = message.stats.hidden;
+        const n = hiddenCount(message.stats);
         void action.setBadgeText({ tabId, text: n ? String(n) : '' });
         void action.setBadgeBackgroundColor({ tabId, color: '#d4a637' });
         // Firefox only: dark text reads better on gold.

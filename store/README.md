@@ -69,7 +69,7 @@ The release workflow rejects tags whose commit is not already on `main`, as well
 
 > All JavaScript ships in the package. Subscribed lists are plain-text data (site names and patterns) that Anubis parses; nothing in them is run.
 
-**Data usage:** leave every category unticked. Anubis reads search results and the current tab's address only inside the browser and sends none of it to the developer or anyone else; settings sync through the browser's own account sync, which Anubis doesn't operate. The one exception is optional and chosen by the user: syncing between browsers through a WebDAV server they connect themselves sends their list and settings to that server, and nowhere else. Check at submission whether the store counts that as collection; if so, tick "Web history" for it. If a reviewer disagrees, the cautious fallback is ticking "Web history" and "Website content" with the same explanation, which the certifications below still cover.
+**Data usage (decision required before submission):** Anubis reads search results and the current tab's address only inside the browser and sends none of it to the developer; settings sync through the browser's own account sync, which Anubis doesn't operate. The optional, user-chosen WebDAV sync sends ranked sites, settings, tag choices, and subscriptions to the server the user connects, and nowhere else. Decide against the store's current policy whether that user-directed transfer counts as collection; declare the applicable categories and explain that the user chooses the server if required. Do not submit until this classification is resolved.
 
 **Certifications:** tick all three (no selling or transferring data, no use unrelated to the single purpose, no use for credit decisions).
 
@@ -96,7 +96,7 @@ Public, all regions.
 
 > Built with WXT (Vite and TypeScript). To reproduce the uploaded package:
 >
-> 1. Node.js 22 with npm 10, on Linux or macOS.
+> 1. Node.js 22.12 or newer with npm 10, on Linux or macOS.
 > 2. `npm ci`
 > 3. `npm run build`
 >
@@ -119,7 +119,7 @@ Lists anyone can publish. Subscribe to lists hosted on GitHub, GitLab, Codeberg,
 
 Load more results. Bring the next pages of results onto the first one and rank them together, so a site you pinned on page 3 rises to the top.
 
-Clean up pages. Remove AI answers, video panels, "People also ask", top stories, image rows, and related searches.
+Clean up pages. Remove AI answers, video panels, "People also ask", top stories, image rows, and related searches. Bing's AI answer and video panel aren't recognized yet.
 
 Nothing disappears without a trace. A one-line summary says what Anubis changed, and "Show hidden" brings it back. Keyboard shortcuts turn Anubis on or off (Alt+Shift+O) and show hidden results (Alt+Shift+H).
 

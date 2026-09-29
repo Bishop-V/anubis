@@ -2,6 +2,13 @@
 
 What was tried while building the tagging and lists release, what failed, and what is still unverified. Newest notes go at the top of each section.
 
+## Final runtime and listing review (2026-09-29)
+
+- **Found:** the toolbar badge counted hidden results but not clean-up removals, and its last count could remain after a tab left search. "Update now" also proceeded when a list's host permission was denied. Storage changes could trigger rejected list reloads without a handler in the content script and popup.
+- **Fixed:** derive the badge from the shared hidden-count helper, clear it when navigation starts, stop list updates with a localized permission message when access is denied, and log reload errors while keeping the last working rules and popup state.
+- **Checked:** the asserted Chromium checks now cover a badge that includes removed panels and clearing it on navigation; compile, unit tests, docs build, and those browser checks pass.
+- **Listing copy:** clarified that Bing's AI answer and video panel are not recognized yet, and aligned the WebDAV inventory with the privacy guide. The Chrome Web Store data-category decision remains a submission blocker because the classification of user-directed WebDAV transfers must be checked against the current store policy.
+
 ## Patterns from Dark Reader (2026-09-29)
 
 - **Reviewed:** Dark Reader's [dynamic style-position watcher](https://github.com/darkreader/darkreader/blob/2e02c0e902eefcaa1891feb4e78f5ab3d983d28d/src/inject/dynamic-theme/watch/style-position.ts#L67-L97) batches and deduplicates DOM work; its [content-script lifecycle](https://github.com/darkreader/darkreader/blob/2e02c0e902eefcaa1891feb4e78f5ab3d983d28d/src/inject/index.ts#L196-L251) accounts for page freeze and resume. The useful lesson is to bound repeated work and make lifecycle transitions explicit, not to transplant its stylesheet-specific machinery.
@@ -10,6 +17,18 @@ What was tried while building the tagging and lists release, what failed, and wh
 - **Deferred:** Dark Reader and [uBlock Origin Lite's CSS handler](https://github.com/gorhill/uBlock/blob/01092d95dbc7d91599a5ad017d5b98aba1118659/platform/mv3/extension/js/scripting/css-generic.js#L39-L80) show ways to deduplicate and bound mutation work. Incremental per-result passes could reduce work on busy pages, but Anubis also recalculates cleanup, grouping, filtering, reranking, summary placement, and page statistics. Retain the full pass until profiling and a complete invalidation model justify changing it; do not transplant stylesheet-specific or miss-count heuristics.
 - **Compared with Vimium's Firefox build:** its [unit-test helper](https://github.com/philc/vimium/blob/5aa29614bf1dce05e0d316f8c38722e17f9b38c3/tests/unit_tests/test_helper.js#L1-L30) and [browser DOM tests](https://github.com/philc/vimium/blob/5aa29614bf1dce05e0d316f8c38722e17f9b38c3/tests/dom_tests/dom_utils_test.js#L1-L84) support the same split Anubis uses: fast rule tests, then fixture-backed browser checks. Vimium's [build checks](https://github.com/philc/vimium/blob/5aa29614bf1dce05e0d316f8c38722e17f9b38c3/make.js#L36-L80) also reinforce checking generated browser artifacts; Anubis already checks the built Firefox minimum in CI. Keep permissions narrow rather than borrowing Vimium's broader host access, which serves a different feature set.
 - These projects point to small, testable patterns, not a reason to replace Anubis's plain TypeScript/WXT structure. Browser fixtures still complement, rather than replace, live engine checks.
+
+## Full end-to-end run stability (2026-09-29)
+
+- **Found:** the full Chromium run could reach the second extension context before its service worker exposed `chrome.storage`; the seed then failed with `ReferenceError: chrome is not defined`. Running the WebDAV part alone passed, which initially hid the startup race.
+- **Fixed:** the shared harness waits up to five seconds for the extension storage API before seeding a context, then fails with a specific readiness error if it never appears.
+- **Confirmed:** reran `npm run e2e` with the Nix-provided Chromium; all fixture parts completed, including Subscribe, storage sync, and WebDAV.
+
+## Declared Node.js minimum (2026-09-29)
+
+- **Found:** `package.json` and setup docs allowed Node 20, but the locked WXT release requires Node 22 and Vitest requires Node 22.12 or later. The lockfile and store rebuild instructions already used Node 22, leaving the advertised minimum inconsistent with the actual toolchain.
+- **Fixed:** raised the package engine and all setup/rebuild instructions to Node 22.12 or later, then synchronized the lockfile. CI and the Nix shell already use Node 22.
+- **Checked:** the installed tool metadata confirms the WXT and Vitest engine requirements; the repository's compile, test, and build commands run on the pinned Node 22 toolchain.
 
 ## Keeping platform and engine maintenance current (2026-09-29)
 
@@ -44,7 +63,7 @@ The development sandbox could not reach any search engine, so everything on sear
 
 **Later live check (2026-09-29):** with Anubis loaded in a clean headless Chromium profile, Bing returned usable results and Anubis marked 10 results and rendered its summary. Google returned a CAPTCHA; DuckDuckGo showed its protection/landing page, its HTML and Lite pages returned 403, Brave returned 429 with a CAPTCHA, Startpage returned an access-denied page, Ecosia returned 403, Yahoo navigation failed, Kagi returned a page with no recognized results, Yandex asked whether the visitor was a robot, and Mojeek returned 403. A mobile-user-agent Google request also returned a CAPTCHA. A second Bing query returned usable results but did not show the AI-answer or video panels under investigation. These blocks and missing panels are not confirmations of the corresponding live layouts.
 
-The full mock-page e2e run succeeded after retrying with Nix-provided Chromium. The first attempt used branded Chrome, which timed out waiting for the extension worker; the first Chromium attempt evaluated the worker before its extension API was available. No change to the runner was needed: a clean retry loaded the extension and completed all parts. The e2e suite exercises the reported Brave/Bing/Google panel mocks, but it does not replace the live checks above.
+The full mock-page e2e run succeeded with Nix-provided Chromium. The first attempt used branded Chrome, which timed out waiting for the extension worker; the first Chromium attempt evaluated the worker before its extension API was available. The shared harness now waits for storage readiness before seeding, and the rerun completed all parts. The e2e suite exercises the reported Brave/Bing/Google panel mocks, but it does not replace the live checks above.
 
 | Engine | How results are found | Confidence |
 | --- | --- | --- |

@@ -16,7 +16,7 @@ Thanks for helping. Everything happens on GitHub: issues for reports and ideas, 
 
 On Linux, run `nix develop` for the pinned toolchain. It installs the project dependencies the first time you enter the shell.
 
-If you aren't using Nix, install Node.js 20 or newer and run `npm install` in the repository. Then run these commands inside the Nix shell or with your Node installation:
+If you aren't using Nix, install Node.js 22.12 or newer and run `npm install` in the repository. Then run these commands inside the Nix shell or with your Node installation:
 
 ```sh
 npm run dev          # opens Firefox with the extension loaded, reloading on save

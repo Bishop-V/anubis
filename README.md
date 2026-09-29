@@ -33,7 +33,7 @@ nix develop
 
 The first time you enter the shell, it installs the project dependencies.
 
-If you aren't using Nix, install **Node.js 20 or newer** from [nodejs.org](https://nodejs.org), then run `npm install` in the repository. Run the commands below inside the Nix shell or with your Node installation:
+If you aren't using Nix, install **Node.js 22.12 or newer** from [nodejs.org](https://nodejs.org), then run `npm install` in the repository. Run the commands below inside the Nix shell or with your Node installation:
 
 ```sh
 npm run dev          # opens Firefox with the extension loaded, reloading on save
@@ -62,7 +62,7 @@ If the dev browser doesn't open on its own, build and load the extension yoursel
 
 ### Building the store release
 
-These are the steps the release uses, and the ones for rebuilding the Firefox add-on from its source zip. Use the Nix shell on Linux, or **Node.js 22** on other platforms:
+These are the steps the release uses, and the ones for rebuilding the Firefox add-on from its source zip. Use the Nix shell on Linux, or **Node.js 22.12 or newer** on other platforms:
 
 ```sh
 npm ci               # installs the exact versions in package-lock.json

@@ -339,10 +339,17 @@ async function main() {
   }
   await renderAll();
   renderPage(await sendToActiveTab<PageStats>({ type: 'get-page-stats' }));
-  watchRuleSet(async () => {
-    await renderAll();
-    // The page updates itself after a change; ask again a moment later.
-    setTimeout(async () => renderPage(await sendToActiveTab<PageStats>({ type: 'get-page-stats' })), 150);
+  watchRuleSet(() => {
+    void (async () => {
+      try {
+        await renderAll();
+        // The page updates itself after a change; ask again a moment later.
+        await new Promise<void>((resolve) => setTimeout(resolve, 150));
+        renderPage(await sendToActiveTab<PageStats>({ type: 'get-page-stats' }));
+      } catch (error) {
+        console.warn('[anubis] could not reload popup', error);
+      }
+    })();
   });
 }
 

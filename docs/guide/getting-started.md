@@ -2,7 +2,7 @@
 
 ## Install
 
-Anubis isn't in the Firefox or Chrome stores yet. To try it, build it from the source code. You need [Node.js](https://nodejs.org) 20 or newer.
+Anubis isn't in the Firefox or Chrome stores yet. To try it, build it from the source code. You need [Node.js](https://nodejs.org) 22.12 or newer.
 
 ```sh
 git clone https://github.com/Bishop-V/anubis.git

@@ -171,6 +171,7 @@
   "webdavIntro": { "message": "Firefox and Chrome don't sync with each other. To share between them, connect the same WebDAV storage in each: Koofr and InfiniCLOUD have free plans, and Nextcloud works too. Anubis keeps one file there, anubis-sync.json, and combines the changes from each browser." },
   "webdavAddress": { "message": "Address" },
   "webdavAddressHint": { "message": "The service's WebDAV address, starting with https://" },
+  "listPermissionDenied": { "message": "Anubis needs permission to read $1 to update this list.", "description": "$1 is the list host name, e.g. example.org." },
   "webdavUser": { "message": "User name" },
   "webdavPassword": { "message": "Password" },
   "webdavPasswordHint": { "message": "Most services give you a separate password for apps. Use that one." },

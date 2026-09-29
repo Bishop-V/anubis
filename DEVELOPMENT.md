@@ -21,7 +21,7 @@ Two import aliases come from WXT: `#imports` (`browser`, `storage`, `defineConte
 
 On Linux, enter `nix develop` first; it provides Node 22 and installs dependencies on first entry.
 
-Outside Nix, use Node 20 or newer and run `npm install` once before these commands.
+Outside Nix, use Node 22.12 or newer and run `npm install` once before these commands.
 
 ```sh
 npm run dev            # Firefox with the extension loaded, reloading on save

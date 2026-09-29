@@ -464,14 +464,18 @@ export default defineContentScript({
       refreshOpenPopover();
     });
 
-    watchRuleSet(async () => {
-      rules = await loadRuleSet();
-      verdicts = new Map();
-      // Changed elsewhere since (settings, another tab): there's nothing to undo here.
-      if (change && !changeHolds(change, rules.personalText)) change = undefined;
-      schedule();
-      // After the pass, so the menu sees fresh verdicts.
-      requestAnimationFrame(refreshOpenPopover);
+    watchRuleSet(() => {
+      void loadRuleSet()
+        .then((nextRules) => {
+          rules = nextRules;
+          verdicts = new Map();
+          // Changed elsewhere since (settings, another tab): there's nothing to undo here.
+          if (change && !changeHolds(change, rules.personalText)) change = undefined;
+          schedule();
+          // After the pass, so the menu sees fresh verdicts.
+          requestAnimationFrame(refreshOpenPopover);
+        })
+        .catch((error: unknown) => console.warn('[anubis] could not reload lists', error));
     });
 
     // Keep lists fresh; the background decides whether anything is due.

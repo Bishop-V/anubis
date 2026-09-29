@@ -81,6 +81,18 @@ async function launch(settings = {}, ext = EXT) {
   if (!sw) sw = await ctx.waitForEvent('serviceworker');
   const extId = new URL(sw.url()).host;
   await sw.evaluate(
+    () =>
+      new Promise((resolve, reject) => {
+        const deadline = Date.now() + 5000;
+        const wait = () => {
+          if (typeof chrome !== 'undefined' && chrome.storage) return resolve();
+          if (Date.now() >= deadline) return reject(new Error('Extension storage API did not become ready'));
+          setTimeout(wait, 25);
+        };
+        wait();
+      }),
+  );
+  await sw.evaluate(
     async ({ personal, settings }) => {
       await chrome.storage.sync.set({
         'personal.0': personal,
@@ -518,6 +530,16 @@ if (!only || only === 'cleanup' || checks) {
         if (stats) return stats;
       }
     });
+  const activeBadge = () =>
+    sw.evaluate(async () => {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      return tab ? chrome.action.getBadgeText({ tabId: tab.id }) : '';
+    });
+  const activeStats = () =>
+    sw.evaluate(async () => {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      return tab ? chrome.tabs.sendMessage(tab.id, { type: 'get-page-stats' }).catch(() => undefined) : undefined;
+    });
   const all = { ai: true, videos: true, questions: true, news: true, images: true, related: true };
   await setSettings({ cleanup: all });
   await page.goto('https://www.google.com/search?q=anubis&modules=1');
@@ -704,6 +726,24 @@ if (!only || only === 'cleanup' || checks) {
   await page.waitForURL(/udm=14/, { timeout: 3000 }).catch(() => {});
   console.log('== Google with the Web tab on:', page.url());
   await setSettings({ cleanup: { ai: false, videos: false, questions: false, discussions: false, news: false, images: false, related: false }, googleWebTab: false });
+
+  // The toolbar badge counts removed panels too, then clears when this tab leaves search.
+  await setSettings({ cleanup: all });
+  await page.goto('https://www.google.com/search?q=anubis&modules=1');
+  await page.waitForTimeout(800);
+  const badgeStats = await activeStats();
+  const removedCount = Object.values(badgeStats?.removed ?? {}).reduce((sum, count) => sum + (count ?? 0), 0);
+  const expectedBadge = String((badgeStats?.hidden ?? 0) + removedCount);
+  if (checks) {
+    assertChecks('toolbar badge counts hidden and removed items', {
+      includesRemovedPanels: expectedBadge !== '0' && (await activeBadge()) === expectedBadge,
+    });
+  }
+  await page.route('https://example.org/**', (route) => route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>Outside search</title>' }));
+  await page.goto('https://example.org/');
+  await page.waitForTimeout(200);
+  if (checks) assertChecks('toolbar badge clears away from search', { clearsOnNavigation: (await activeBadge()) === '' });
+  await setSettings({ cleanup: { ai: false, videos: false, questions: false, discussions: false, news: false, images: false, related: false } });
 }
 
 if (!only || only === 'runs') {
