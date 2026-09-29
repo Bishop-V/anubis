@@ -36,7 +36,7 @@ Keep each pull request to one topic. The project's conventions, briefly:
 - **Update the guide** in `docs/guide/` when behaviour changes. Keep page paths as they are: the extension links to them.
 - **Keep committed files neutral.** No captured search pages, and nothing personal: names, emails, locations or machine details.
 
-[`CLAUDE.md`](CLAUDE.md) has the fuller notes on the layout of the code and the mistakes that have already been made once.
+[`DEVELOPMENT.md`](DEVELOPMENT.md) explains how the code fits together, has step-by-step recipes for the usual changes (an engine, a clean-up panel, a setting, interface text) and lists the mistakes that have already been made once.
 
 ## Checks
 
@@ -49,7 +49,7 @@ npm run build && npm run build:chrome   # both browsers
 npx web-ext lint -s .output/firefox-mv2 # must show zero warnings
 ```
 
-If you changed `docs/`, also run `npm run docs:build`, which fails on a broken link. If you changed anything on search pages and have Chromium, run `npm run e2e` with `CHROMIUM_PATH` set; it needs no network.
+If you changed `docs/`, also run `npm run docs:build`, which fails on a broken link. If you changed something the guide's screenshots show, redraw them with `node e2e/run.mjs docs` (it makes light and dark versions) and commit only the ones your change affects. If you changed anything on search pages and have Chromium, run `npm run e2e` with `CHROMIUM_PATH` set; it needs no network.
 
 ## Pull requests and merging
 

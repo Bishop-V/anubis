@@ -563,7 +563,7 @@ if (!only || only === 'filter') {
 }
 
 if (!only || only === 'deeper') {
-  // Google: "Weigh deeper" by message (the path the popup uses).
+  // Google: "Load more results" by message (the path the popup uses).
   await page.goto('https://www.google.com/search?q=anubis&deep=1');
   await page.waitForTimeout(600);
   const sw = ctx.serviceWorkers()[0];

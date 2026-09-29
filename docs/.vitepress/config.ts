@@ -1,12 +1,12 @@
 import { existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { defineConfig, type MarkdownEnv } from 'vitepress';
+import { REPO_URL as repo } from '../../utils/links';
 
 // The documentation site, built from the Markdown in docs/ with VitePress and
 // published to GitHub Pages by .github/workflows/docs.yml. The pages read fine on
 // GitHub too, so keep links relative between pages.
 
-const repo = 'https://github.com/Bishop-V/anubis';
 // GitHub Pages serves a project site under /<repo>/. DOCS_BASE overrides it, for a
 // custom domain ("/") or a fork.
 const base = process.env.DOCS_BASE ?? '/anubis/';
@@ -72,6 +72,7 @@ export default defineConfig({
           { text: 'Troubleshooting', link: '/guide/troubleshooting' },
           { text: 'Experiments and decisions', link: '/experiments' },
           { text: 'Contributing', link: `${repo}/blob/main/CONTRIBUTING.md` },
+          { text: 'Developing Anubis', link: `${repo}/blob/main/DEVELOPMENT.md` },
         ],
       },
     ],

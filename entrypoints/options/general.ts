@@ -22,21 +22,11 @@ import { importIntoPersonal } from '@/utils/importers';
 import { guide, REPO_URL } from '@/utils/links';
 import { themeSwitcher } from '@/utils/theme';
 import { flash, flashed, rerender } from './flash';
+import { pageTitle, switchRow } from './parts';
 import { download } from './sites';
 
-function title(heading: string, text: string) {
-  return h('div', { class: 'page-title' }, h('div', null, h('h2', null, heading), h('p', null, text)));
-}
-
 function toggleRow(label: string, hint: string, key: keyof Settings, settings: Settings): HTMLElement {
-  const input = h('input', { type: 'checkbox', checked: Boolean(settings[key]), attrs: { 'aria-label': label } });
-  input.addEventListener('change', () => void updateSettings({ [key]: input.checked }));
-  return h(
-    'div',
-    { class: 'setting' },
-    h('div', null, h('b', null, label), h('span', { class: 'muted' }, hint)),
-    h('label', { class: 'switch' }, input, h('span')),
-  );
+  return switchRow(label, hint, Boolean(settings[key]), (on) => void updateSettings({ [key]: on }));
 }
 
 function segRow<T extends string>(
@@ -72,7 +62,7 @@ export async function renderAppearance(): Promise<HTMLElement> {
   return h(
     'div',
     null,
-    title('Appearance', 'How Anubis looks here and on search pages.'),
+    pageTitle('Appearance', 'How Anubis looks here and on search pages.'),
     h(
       'div',
       { class: 'panel' },
@@ -122,7 +112,7 @@ export async function renderEngines(): Promise<HTMLElement> {
   return h(
     'div',
     null,
-    title(
+    pageTitle(
       'Search engines',
       'Anubis works on web results from these engines. Results are found by page structure where possible, so small redesigns don’t break it.',
     ),
@@ -237,7 +227,7 @@ export async function renderShare(): Promise<HTMLElement> {
   return h(
     'div',
     null,
-    title('Share and back up', 'Your list is a plain text file. Publish it and anyone can subscribe; keep a backup of everything else.'),
+    pageTitle('Share and back up', 'Your list is a plain text file. Publish it and anyone can subscribe; keep a backup of everything else.'),
     h(
       'div',
       { class: 'panel' },

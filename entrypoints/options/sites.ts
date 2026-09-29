@@ -2,12 +2,13 @@ import { normalizeDomain } from '@/utils/domain';
 import { h, icon, plural } from '@/utils/dom';
 import { ICON_CLOSE, ICON_DOWNLOAD, ICON_EDIT, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
 import { guide } from '@/utils/links';
-import { parseList } from '@/utils/listformat';
+import { colorForTag, parseList } from '@/utils/listformat';
 import { LEVELS, type Level } from '@/utils/matcher';
 import { listSites, setSite, type SiteEntry } from '@/utils/personal';
 import { loadRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal, personalIsLocal, savePersonal } from '@/utils/storage';
 import { rerender } from './flash';
+import { pageTitle } from './parts';
 
 let editingText = false;
 let filter = '';
@@ -20,50 +21,36 @@ export async function renderSites(): Promise<HTMLElement> {
   return h(
     'div',
     null,
-    h(
-      'div',
-      { class: 'page-title' },
+    pageTitle(
+      'Your sites',
+      'Sites you’ve ranked or hidden yourself. Your choice beats every list you subscribe to. Use the button on any search result, or add sites here.',
       h(
-        'div',
-        null,
-        h('h2', null, 'Your sites'),
-        h(
-          'p',
-          null,
-          'Sites you’ve ranked or hidden yourself. Your choice beats every list you subscribe to. Use the button on any search result, or add sites here.',
-        ),
-      ),
-      h(
-        'div',
-        { class: 'toolbar' },
-        h(
-          'button',
-          {
-            class: 'btn',
-            type: 'button',
-            on: {
-              click: () => {
-                editingText = !editingText;
-                rerender();
-              },
+        'button',
+        {
+          class: 'btn',
+          type: 'button',
+          on: {
+            click: () => {
+              editingText = !editingText;
+              rerender();
             },
           },
-          icon(ICON_EDIT),
-          editingText ? 'Back to the table' : 'Edit as text',
-        ),
-        h(
-          'button',
-          { class: 'btn', type: 'button', on: { click: () => download('my-anubis-list.anubis', rules.personalText) } },
-          icon(ICON_DOWNLOAD),
-          'Export',
-        ),
+        },
+        icon(ICON_EDIT),
+        editingText ? 'Back to the table' : 'Edit as text',
+      ),
+      h(
+        'button',
+        { class: 'btn', type: 'button', on: { click: () => download('my-anubis-list.anubis', rules.personalText) } },
+        icon(ICON_DOWNLOAD),
+        'Download my list',
       ),
     ),
     local
       ? h(
           'div',
           { class: 'notice' },
-          'Your list is too big for browser sync, so it’s saved on this device only. Export it to keep a copy.',
+          'Your list is too big for browser sync, so it’s saved on this device only. Download it to keep a copy.',
         )
       : null,
     editingText ? textEditor(rules) : table(rules, entries),
@@ -170,7 +157,7 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
                   {
                     class: 'tag',
                     type: 'button',
-                    style: `--c: ${tag?.color ?? 'var(--gold)'}`,
+                    style: `--c: ${tag?.color ?? colorForTag(id)}`,
                     title: `Remove “${tag?.label ?? id}” from ${entry.site}`,
                     on: { click: () => void editPersonal((t) => setSite(t, entry.site, entry.level, entry.tags.filter((x) => x !== id))) },
                   },

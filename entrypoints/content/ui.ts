@@ -417,13 +417,13 @@ export function renderSummary(
       h('span', { class: 'mark' }, icon(ICON_ANUBIS)),
       h('span', { class: 'sentence' }, summarySentence(stats)),
       stats.filter
-        ? h('button', { class: 'text-btn', type: 'button', on: { click: () => actions.filter(undefined) } }, 'Show all')
+        ? h('button', { class: 'text-btn', type: 'button', on: { click: () => actions.filter(undefined) } }, t('summaryShowAll'))
         : null,
       hiddenCount(stats) && !stats.filter
         ? h(
             'button',
             { class: 'text-btn', type: 'button', on: { click: actions.toggleReveal } },
-            stats.revealed ? 'Hide them again' : 'Show hidden',
+            stats.revealed ? t('hideAgain') : t('showHidden'),
           )
         : null,
       stats.canGoDeeper || stats.loading
@@ -433,41 +433,43 @@ export function renderSummary(
               class: 'text-btn',
               type: 'button',
               disabled: stats.loading,
-              title: 'Add the next page of results here and rank them together',
+              title: t('loadMoreTitle'),
               on: { click: actions.deeper },
             },
-            stats.loading ? 'Loading…' : 'Load more results',
+            stats.loading ? t('loading') : t('loadMore'),
           )
         : null,
-      h(
-        'button',
-        { class: 'icon-btn', type: 'button', title: 'Anubis settings', attrs: { 'aria-label': 'Anubis settings' }, on: { click: actions.settings } },
-        icon(ICON_GEAR),
-      ),
+      settingsButton(actions.settings),
       // The tags on this page, as a legend you can click to show only that tag.
       stats.tags.length
         ? h(
             'div',
-            { class: 'filters', attrs: { role: 'group', 'aria-label': 'Show only results tagged' } },
-            stats.tags.map((t) =>
+            { class: 'filters', attrs: { role: 'group', 'aria-label': t('summaryFilterLabel') } },
+            stats.tags.map((tag) =>
               h(
                 'button',
                 {
                   type: 'button',
-                  style: `--c: ${t.color}`,
-                  title: stats.filter === t.id ? 'Show all results' : `Show only results tagged “${t.label}”`,
-                  attrs: { 'aria-pressed': String(stats.filter === t.id) },
-                  on: { click: () => actions.filter(stats.filter === t.id ? undefined : t.id) },
+                  style: `--c: ${tag.color}`,
+                  title: stats.filter === tag.id ? t('summaryFilterOff') : t('summaryFilterOn', tag.label),
+                  attrs: { 'aria-pressed': String(stats.filter === tag.id) },
+                  on: { click: () => actions.filter(stats.filter === tag.id ? undefined : tag.id) },
                 },
                 h('i', { class: 'gem' }),
-                t.label,
-                h('span', { class: 'count' }, t.count),
+                tag.label,
+                h('span', { class: 'count' }, tag.count),
               ),
             ),
           )
         : null,
     ),
   );
+}
+
+/** The cog that opens settings, in the summary and the result menu. */
+function settingsButton(open: () => void): HTMLButtonElement {
+  const label = t('anubisSettings');
+  return h('button', { class: 'icon-btn', type: 'button', title: label, attrs: { 'aria-label': label }, on: { click: open } }, icon(ICON_GEAR));
 }
 
 export function removeAllUi(): void {
@@ -795,11 +797,7 @@ function buildPopover(
       'div',
       { class: 'foot' },
       h('span', null, entry ? 'Saved in your list.' : ''),
-      h(
-        'button',
-        { class: 'icon-btn', type: 'button', title: 'Anubis settings', attrs: { 'aria-label': 'Anubis settings' }, on: { click: actions.settings } },
-        icon(ICON_GEAR),
-      ),
+      settingsButton(actions.settings),
     ),
   );
   return { pop, level: shown };

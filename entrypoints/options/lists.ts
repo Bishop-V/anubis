@@ -6,6 +6,7 @@ import { readSubscribeLink, REPO_URL, type SubscribeLink } from '@/utils/links';
 import { colorForTag, parseList, type ListFormat, type ParsedList } from '@/utils/listformat';
 import { send } from '@/utils/messages';
 import { flash, flashed, rerender } from './flash';
+import { pageTitle } from './parts';
 import { editListCache, listCacheItem, type CachedList, type Subscription } from '@/utils/storage';
 import {
   builtinId,
@@ -140,41 +141,27 @@ export async function renderLists(): Promise<HTMLElement> {
   return h(
     'div',
     null,
-    h(
-      'div',
-      { class: 'page-title' },
+    pageTitle(
+      'Lists',
+      'Subscribe to lists that tag, rerank or hide sites. Any text file on GitHub, GitLab, Codeberg or a gist works: Anubis lists, Brave Goggles, uBlacklist rulesets and plain domain lists.',
       h(
-        'div',
-        null,
-        h('h2', null, 'Lists'),
-        h(
-          'p',
-          null,
-          'Subscribe to lists that tag, rerank or hide sites. Any text file on GitHub, GitLab, Codeberg or a gist works: Anubis lists, Brave Goggles, uBlacklist rulesets and plain domain lists.',
-        ),
-      ),
-      h(
-        'div',
-        { class: 'toolbar' },
-        h(
-          'button',
-          {
-            class: 'btn',
-            type: 'button',
-            on: {
-              click: async (e) => {
-                const b = e.currentTarget as HTMLButtonElement;
-                b.disabled = true;
-                b.lastChild!.textContent = 'Updating…';
-                await send({ type: 'refresh-all' });
-                flash('lists', 'ok', 'All lists checked for updates.');
-                rerender();
-              },
+        'button',
+        {
+          class: 'btn',
+          type: 'button',
+          on: {
+            click: async (e) => {
+              const b = e.currentTarget as HTMLButtonElement;
+              b.disabled = true;
+              b.lastChild!.textContent = 'Updating…';
+              await send({ type: 'refresh-all' });
+              flash('lists', 'ok', 'All lists checked for updates.');
+              rerender();
             },
           },
-          icon(ICON_REFRESH),
-          'Update all',
-        ),
+        },
+        icon(ICON_REFRESH),
+        'Update all',
       ),
     ),
     offer ? offerPanel(offer, notice) : null,

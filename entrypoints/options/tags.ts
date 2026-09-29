@@ -1,10 +1,11 @@
 import { h, icon, plural } from '@/utils/dom';
 import { ICON_TRASH, LEVEL_LABELS } from '@/utils/icons';
-import { normalizeColor, slugifyTag, TAG_PALETTE, type TagDef } from '@/utils/listformat';
+import { colorForTag, normalizeColor, slugifyTag, TAG_PALETTE, type TagDef } from '@/utils/listformat';
 import type { CompiledList, TagAction } from '@/utils/matcher';
 import { listSites, listTagDefs, removeTag, upsertTagDef } from '@/utils/personal';
 import { loadRuleSet } from '@/utils/ruleset';
 import { editPersonal, setTagPref } from '@/utils/storage';
+import { pageTitle } from './parts';
 
 const ACTIONS: { value: TagAction; label: string }[] = [
   { value: 'list', label: 'Follow the lists' },
@@ -99,7 +100,7 @@ export async function renderTags(): Promise<HTMLElement> {
     });
 
   // Create a tag
-  let pick = TAG_PALETTE[rules.tags.size % TAG_PALETTE.length] ?? '#d4a637';
+  let pick = TAG_PALETTE[rules.tags.size % TAG_PALETTE.length]!;
   const name = h('input', { type: 'text', placeholder: 'Name, like “AI slop”', maxLength: 40, attrs: { 'aria-label': 'New tag name' } });
   const color = h('input', { type: 'color', value: pick, attrs: { 'aria-label': 'New tag colour' } });
   color.addEventListener('input', () => (pick = color.value));
@@ -125,25 +126,15 @@ export async function renderTags(): Promise<HTMLElement> {
     name.value = '';
     desc.value = '';
     (document.activeElement as HTMLElement | null)?.blur();
-    await editPersonal((t) => upsertTagDef(t, { id, label, color: normalizeColor(pick) ?? '#d4a637', description }));
+    await editPersonal((t) => upsertTagDef(t, { id, label, color: normalizeColor(pick) ?? colorForTag(id), description }));
   });
 
   return h(
     'div',
     null,
-    h(
-      'div',
-      { class: 'page-title' },
-      h(
-        'div',
-        null,
-        h('h2', null, 'Tags'),
-        h(
-          'p',
-          null,
-          'Lists label results. You decide what each label does: follow the list, only show it, highlight it, or raise, lower or hide what carries it. Lists that use the same tag name share it.',
-        ),
-      ),
+    pageTitle(
+      'Tags',
+      'Lists label results. You decide what each label does: follow the list, only show it, highlight it, or raise, lower or hide what carries it. Lists that use the same tag name share it.',
     ),
     h('div', { class: 'panel' }, h('h3', null, 'New tag'), h('p', { class: 'muted' }, 'Your tags are saved in your list, so they go with it when you publish it.'), form, error),
     h(

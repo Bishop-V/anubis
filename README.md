@@ -10,7 +10,7 @@ In Egyptian myth, Anubis weighed each heart against a feather. This extension we
 - **Rank any site from the results.** Hover a result and press its ⇅ button to hide, lower, raise or pin that site, and to tag it. Your choices apply on every search and beat every list.
 - **Tags.** Results carry small labels ("Official docs", "Discussion", "Paywall"…) from your own tags and from lists you subscribe to. For each tag you decide what it does: just show it, highlight results, or raise, lower or hide them.
 - **Reranking.** Raised, lowered and pinned sites move up or down the page. **Load more results** brings the next pages of results onto the first one and reranks them together, so a pinned site on page 3 rises to the top.
-- **Lists anyone can publish.** A list is a text file on GitHub, GitLab, Codeberg or a gist; there is no server. Anubis reads its own list format, Brave Goggles, uBlacklist rulesets and plain domain lists, so existing community lists work unchanged. Subscribe links (on the [lists directory](https://bishop-v.github.io/anubis/lists), or any list's own page) open Anubis with the list filled in. The menu on each result can open a pre-filled issue to suggest a site to a list.
+- **Lists anyone can publish.** A list is a text file on GitHub, GitLab, Codeberg or a gist; there is no server. Anubis reads its own list format, Brave Goggles, uBlacklist rulesets and plain domain lists, so existing community lists work unchanged. Subscribe links (on the [lists directory](https://bishop-v.github.io/anubis/lists), or any list's own page) open Anubis with the list filled in. The menu on each result can open a pre-filled issue on a list's tracker, to report a site the list got wrong or suggest one it's missing.
 - **Your list is a list too.** Every site you rank is stored in the same format, so you can download it and publish it for others.
 - **Bring your old lists.** Paste uBlacklist rules, a HOHSER export or a Goggle into Settings → Share and back up to move your sites over.
 - **Filter by tag.** The summary above the results lists the tags on the page; click one to see only those results.
@@ -86,6 +86,7 @@ To publish a version, set `version` in `package.json`, merge it, then push a mat
 
 The user guide is at **[bishop-v.github.io/anubis](https://bishop-v.github.io/anubis/)**, built from [`docs/`](docs) (start with [the introduction](docs/guide/introduction.md)). `npm run docs:dev` previews it locally.
 
+- [Developing Anubis](DEVELOPMENT.md): how the extension is put together, how a build is made, and how to add an engine, a setting or interface text.
 - [The list format](docs/list-format.md): how to write and publish a list.
 - [Lists](lists/README.md): the lists that ship with Anubis and how to contribute one.
 - [Experiments and decisions](docs/experiments.md): what was tried, what failed, and what still needs checking on live pages.

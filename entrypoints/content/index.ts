@@ -163,7 +163,7 @@ export default defineContentScript({
       }
       renderHiddenRuns(results, theme);
       stats.tags = [...tagCounts]
-        .map(([id, count]) => ({ id, count, label: rules.tags.get(id)?.label ?? id, color: rules.tags.get(id)?.color ?? '#c8962e' }))
+        .map(([id, count]) => ({ id, count, label: rules.tags.get(id)?.label ?? id, color: rules.tags.get(id)?.color ?? colorForTag(id) }))
         .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
       // A filter whose tag left the page (a new search, a list turned off) lapses.
       if (filter && !tagCounts.has(filter)) filter = undefined;
