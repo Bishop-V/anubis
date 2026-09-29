@@ -260,7 +260,7 @@ export async function renderShare(): Promise<HTMLElement> {
         { class: 'toolbar' },
         h('button', { class: 'btn', type: 'button', on: { click: () => void exportAll() } }, icon(ICON_DOWNLOAD), 'Export backup'),
         h('button', { class: 'btn', type: 'button', on: { click: () => file.click() } }, icon(ICON_UPLOAD), 'Restore backup'),
-        h('button', { class: 'btn ghost danger', type: 'button', on: { click: () => void reset() } }, 'Reset settings'),
+        h('button', { class: 'btn danger', type: 'button', on: { click: () => void reset() } }, 'Reset settings'),
         file,
       ),
       status,

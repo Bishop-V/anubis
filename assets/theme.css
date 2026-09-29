@@ -61,6 +61,7 @@ svg {
 :focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 2px;
+  border-radius: 3px;
 }
 [hidden] {
   display: none !important;
@@ -118,6 +119,12 @@ svg {
   height: 26px;
   padding: 0 9px;
   font-size: 12.5px;
+}
+.btn.danger {
+  color: var(--danger);
+}
+.btn.danger:hover {
+  border-color: var(--danger);
 }
 .btn svg {
   width: 14px;
