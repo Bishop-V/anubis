@@ -160,9 +160,16 @@ export function google(query, results, { dark = false, next = '', hostile = fals
       const gcard = (t, i) =>
         `<div class="${i === 0 ? 'vcard first' : 'vcard'}" jsaction="click:open"><span class="thumb">▶</span><div><div role="heading">${t}</div><div>YouTube · Channel ${i}</div></div></div>`;
       const glist = `<div class="vlist">${['What is a fandom?', 'Stop using Fandom', 'What exactly is Fandom?'].map(gcard).join('')}</div>`;
-      items.splice(1, 0, `<div class="ULSxyf"><div class="MjjYud"><div class="A6K0A" data-rpos="1"><div class="vtSz8d vpanel">
+      // An images panel above the first result, as reported: span[role=heading]
+      // inside div.Lv2Cle, in the same ULSxyf/MjjYud/A6K0A[data-rpos] wrapping.
+      const shots = ['Comic Con 2016', 'Fandoms: Where to start', 'Fandoms and culture'].map((t, i) => `<a class="icard" href="https://example.com/${i}"><img alt="" width="120" height="80" style="background:#8884"><div>${t}</div><div>Source ${i}</div></a>`).join('');
+      items.unshift(`<div class="ULSxyf"><div class="MjjYud"><div class="A6K0A" data-rpos="0"><div class="Lv2Cle ipanel" data-count="6"><div class="x7cRLb"><div class="fIuY1b"><div class="adDDi"><span class="mgAbYb" role="heading">Images</span></div></div></div>
+        <div class="igrid">${shots}</div><div class="imore"><button type="button">Show more images</button></div></div></div></div></div>`);
+      items.splice(2, 0, `<div class="ULSxyf"><div class="MjjYud"><div class="A6K0A" data-rpos="1"><div class="vtSz8d vpanel">
         <div class="UjLRDc vhead"><div class="PJI6ge"><span class="mgAbYb" role="heading"><span>Videos</span></span></div><div class="vmenu">⋮</div></div>
         ${glist}${all}</div></div></div></div>`);
+      // The first result has a thumbnail in its top-right corner, as Google shows.
+      items[1] = items[1].replace('<div class="g ', '<div style="position:relative"><img class="rthumb" alt="" width="92" height="92" style="position:absolute;top:0;right:0;background:#8884;border-radius:8px"></div><div class="g ');
       items.splice(0, items.length, `<div>${items.join('')}</div>`);
     } else if (videos === 'split') items.splice(1, 0, `<div class="MjjYud vpanel">${head}</div>`, `<div class="MjjYud vpanel">${list}</div>`, `<div class="MjjYud vpanel">${all}</div>`);
     else items.splice(1, 0, `<div class="MjjYud"><div class="module vpanel">${head}${list}${all}</div></div>`);

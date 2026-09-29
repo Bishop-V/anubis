@@ -379,6 +379,16 @@ if (!only || only === 'cleanup') {
         header: visible(document.querySelector('.vpanel .vhead')),
         videos: visible(document.querySelector('.vpanel .vlist')),
         viewAll: visible(document.querySelector('.vpanel .vall')),
+        imagesPanel: document.querySelector('.ipanel') ? visible(document.querySelector('.ipanel')) : undefined,
+        summaryOnTop: document.querySelector('#rso')?.firstElementChild?.tagName === 'ANUBIS-SUMMARY',
+        buttonClearOfThumbnail: (() => {
+          const img = document.querySelector('.rthumb');
+          const host = img?.closest('[data-anubis-result]')?.querySelector(':scope > anubis-weigh');
+          if (!img || !host) return undefined;
+          const a = img.getBoundingClientRect();
+          const b = host.getBoundingClientRect();
+          return b.width > 0 && (b.right <= a.left || b.left >= a.right || b.bottom <= a.top || b.top >= a.bottom);
+        })(),
         results: [...document.querySelectorAll('[data-anubis-result]')].filter(visible).length,
       };
     });

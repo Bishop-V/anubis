@@ -277,7 +277,7 @@ export function ensureWeighButton(
   const { top, right } = engine.button ?? { top: '2px', right: '2px' };
   host.style.setProperty('position', 'absolute', 'important');
   host.style.setProperty('top', top, 'important');
-  host.style.setProperty('right', right, 'important');
+  host.style.setProperty('right', clearOfPictures(container, right), 'important');
   host.style.setProperty('left', 'auto', 'important');
   host.style.setProperty('bottom', 'auto', 'important');
   host.style.setProperty('z-index', '5', 'important');
@@ -289,6 +289,23 @@ export function ensureWeighButton(
     positioned.add(container);
     if (getComputedStyle(container).position === 'static') container.style.position = 'relative';
   }
+}
+
+/**
+ * How far from the right edge the button sits. Some results show a thumbnail in
+ * their top-right corner (Google does beside many results); the button moves to
+ * its left instead of covering it. Favicons are too small to count.
+ */
+function clearOfPictures(container: HTMLElement, right: string): string {
+  const box = container.getBoundingClientRect();
+  if (!box.width) return right;
+  let edge = box.right;
+  for (const pic of container.querySelectorAll<HTMLElement>('img, video, canvas, [role="img"]')) {
+    const r = pic.getBoundingClientRect();
+    if (r.width < 40 || r.height < 40 || r.right < box.right - 80 || r.top > box.top + 60) continue;
+    edge = Math.min(edge, r.left);
+  }
+  return edge === box.right ? right : `${Math.round(box.right - edge + 6)}px`;
 }
 
 export function weighButtonOf(container: HTMLElement): HTMLButtonElement | undefined {

@@ -40,6 +40,9 @@ Clean-up on Google, confirmed from a live results page on 2026-09-29 (the troubl
 - AI Mode appears twice: a tab (`div[role=listitem]` in `div[role=list]` in `[role=navigation]`) and a `button[role=link]` beside the search box in `form#tsf[role=search]`. Both are removed with AI answers (the button alone, never the form).
 - Tabs named "Videos" and "Short videos" are links in that navigation row and are rightly left alone.
 
+- A second search showed the AI Overview outside the results column altogether: `#rcnt > div.bzXtMb.M8OgIe > …`, above `#center_col`. Only the selector from community filter lists (`.M8OgIe`) caught it, since its label never reaches the column. The images panel is `span.mgAbYb[role=heading]` inside `div.Lv2Cle[data-count]`, in the usual `div.ULSxyf > div.MjjYud > div.A6K0A[data-rpos]`.
+- The summary went above the first result, so a panel before it (the images panel) pushed it down. It's now the first thing in the results area (`#rso` on Google), above panels. Some results carry a thumbnail in their top-right corner, where the ⇅ button sat on top of it; the button now moves left of any picture there. Both are in the `videos=google` mock; the previous build fails them.
+
 Still to check for clean-up:
 
 - Google: that "AI Overview", "Videos", "People also ask", "Top stories" and "Related searches" are still headings (`h1`–`h4` or `role="heading"`) at the top of their blocks, and that the blocks sit in `#rso`, `#botstuff` or the `role="main"` column. That the AI Mode tab is a link with that exact text in a `role="navigation"` or `role="list"` element. That choosing All from the Web tab lands on a `/search` URL without `udm`, so Anubis leaves it alone.
