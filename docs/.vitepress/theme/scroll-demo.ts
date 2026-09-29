@@ -16,6 +16,7 @@ type Result = {
   snippet: string;
   tag?: Tag;
   hidden?: boolean;
+  pinned?: boolean;
   raised?: boolean;
   lowered?: boolean;
 };
@@ -27,7 +28,7 @@ const PAYWALL: Tag = { name: 'Paywall', color: '#b5452e' };
 
 const ITEMS: Item[] = [
   { id: 'ai', heading: 'AI overview', lines: ['Anubis is the jackal-headed god of the dead in ancient Egyptian religion, linked with mummification and the protection of tombs.'] },
-  { id: 'wiki', site: 'Wikipedia', url: 'en.wikipedia.org › wiki › Anubis', icon: ['#ffffff', '#000000', 'W'], title: 'Anubis - Wikipedia', snippet: 'Anubis is the god of funerary rites, protector of graves, and guide to the underworld.', tag: REFERENCE },
+  { id: 'wiki', site: 'Wikipedia', url: 'en.wikipedia.org › wiki › Anubis', icon: ['#ffffff', '#000000', 'W'], title: 'Anubis - Wikipedia', snippet: 'Anubis is the god of funerary rites, protector of graves, and guide to the underworld.', tag: REFERENCE, pinned: true },
   { id: 'fandom', site: 'Fandom', url: 'mythology.fandom.com › wiki › Anubis', icon: ['#fa005a', '#ffffff', 'F'], title: 'Anubis | Mythology Wiki | Fandom', snippet: 'Anubis is the Egyptian god of mummification and the afterlife.', hidden: true },
   { id: 'videos', heading: 'Videos', lines: ['Anubis explained', 'Tomb of Anubis'] },
   { id: 'brit', site: 'Britannica', url: 'www.britannica.com › topic › Anubis', icon: ['#0f4c81', '#ffffff', 'B'], title: 'Anubis | Egyptian God, Mythology, & Facts', snippet: 'Anubis, also called Anpu, ancient Egyptian god of the dead, represented by a jackal.', tag: REFERENCE },
@@ -36,8 +37,9 @@ const ITEMS: Item[] = [
   { id: 'whe', site: 'World History Encyclopedia', url: 'www.worldhistory.org › Anubis', icon: ['#8b1c1c', '#ffffff', 'W'], title: 'Anubis - World History Encyclopedia', snippet: 'Anubis is the Egyptian god of mummification and the afterlife.', tag: REFERENCE, raised: true },
 ];
 
-// After the ranking step: raised first, lowered last, hidden sites keep their place.
-const RANKED = ['whe', 'wiki', 'fandom', 'brit', 'nyt'];
+// After the ranking step: pinned first, then raised, lowered last; hidden sites keep
+// their place.
+const RANKED = ['wiki', 'whe', 'fandom', 'brit', 'nyt'];
 
 const REMOVED = 'an AI answer, a video panel, and a question list';
 const SUMMARY = [
@@ -45,17 +47,39 @@ const SUMMARY = [
   '',
   `Anubis removed ${REMOVED}.`,
   `Anubis hid 1 of 5 results. It also removed ${REMOVED}.`,
-  `Anubis raised 1, lowered 1, and hid 1 of 5 results. It also removed ${REMOVED}.`,
-  `Anubis raised 1, lowered 1, and hid 1 of 5 results. It also removed ${REMOVED}.`,
+  `Anubis pinned 1, raised 1, lowered 1, and hid 1 of 5 results. It also removed ${REMOVED}.`,
+  `Anubis pinned 1, raised 1, lowered 1, and hid 1 of 5 results. It also removed ${REMOVED}.`,
 ];
 
 const STEPS: { title: string; text: string }[] = [
-  { title: 'A search, as it comes', text: 'An AI answer, a video panel, and a list of questions push the results you came for down the page.' },
-  { title: 'Clean up the page', text: 'Anubis removes AI answers, video panels, and “People also ask” on every search. You choose which.' },
-  { title: 'Hide a site for good', text: 'Hide a site once, from the button beside any result, and it stays hidden on every search. A line keeps its place, so you can still show it.' },
-  { title: 'Raise and lower the rest', text: 'Sites you trust move up. Sites you’d rather skip sink to the bottom and fade.' },
-  { title: 'Tag what’s left', text: 'Lists label each result, as Reference or Paywall for example, and the summary says what Anubis did. Show hidden puts everything back for the page.' },
+  { title: 'The usual search', text: 'An AI answer, some videos, and “People also ask”, all before the first real link.' },
+  { title: 'Clutter out', text: 'Anubis strips AI answers, video panels, and question lists. You pick which.' },
+  { title: 'Done with a site?', text: 'Hide it from the scales beside any result. It stays hidden on every search, folded to one line in case you want it back.' },
+  { title: 'Your sites first', text: 'Pin or raise the sites you trust. Lower the ones you put up with. The scales tip to show where each one stands.' },
+  { title: 'Know before you click', text: 'Tags from lists mark reference sites, paywalls, and more. The summary says what changed, and Show hidden undoes it.' },
 ];
+
+// The button on each result, as utils/icons.ts draws it (copied, since that module
+// needs the extension's APIs): the balance tipped to the ranking, the pin, or the
+// crossed-out eye.
+type Level = 'hide' | 'lower' | 'normal' | 'raise' | 'pin';
+const svg = (body: string) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
+const balance = (left: number, right: number) =>
+  svg(
+    `<path d="M8 3.2v9.6M5.5 13.2h5"/><path d="M2.6 ${left}L13.4 ${right}"/>` +
+      `<path d="M2.6 ${left}L1.2 ${left + 3.6}M2.6 ${left}L4 ${left + 3.6}M13.4 ${right}L12 ${right + 3.6}M13.4 ${right}l1.4 3.6"/>` +
+      `<path d="M1 ${left + 3.6}h3.2a1.6 1.6 0 0 1-3.2 0zM11.8 ${right + 3.6}H15a1.6 1.6 0 0 1-3.2 0z"/>`,
+  );
+const WEIGH: Record<Level, string> = {
+  hide: svg('<path d="M2 8s2.2-4.5 6-4.5c1.3 0 2.4.5 3.3 1.1M14 8s-2.2 4.5-6 4.5c-1.3 0-2.4-.5-3.3-1.1"/><path d="M2.5 13.5l11-11"/>'),
+  lower: balance(6.4, 3.6),
+  normal: balance(5, 5),
+  raise: balance(3.6, 6.4),
+  pin: svg('<path d="M9.8 2.2l4 4-1.6.5-2.6 2.6.3 3.1-1.2 1.2L5.4 10.3 2.2 13.8M5.4 10.3L2.3 7.2l1.2-1.2 3.1.3 2.6-2.6z"/>'),
+};
+// A new key on each ranking, so the icon swaps in with a small tip.
+const weigh = (level: Level) => h('span', { key: level, class: ['demo-weigh', level], innerHTML: WEIGH[level] });
 
 const isBlock = (item: Item): item is Block => 'heading' in item;
 
@@ -68,17 +92,21 @@ const tag = (t: Tag, n?: number) =>
 
 function renderResult(r: Result, step: number): VNode {
   const hidden = !!r.hidden && step >= 3;
+  const pinned = !!r.pinned && step >= 4;
   const raised = !!r.raised && step >= 4;
   const tagged = !!r.tag && step >= 5;
-  return h('div', { class: ['demo-result', { lowered: r.lowered && step >= 4 }] }, [
+  const level: Level = step < 4 ? 'normal' : r.pinned ? 'pin' : r.raised ? 'raise' : r.lowered ? 'lower' : 'normal';
+  return h('div', { class: ['demo-result', { lowered: r.lowered && step >= 4, pinned }] }, [
     fold(!hidden, 'full', [
       h('div', { class: 'site' }, [
         h('span', { class: 'favicon', style: { background: r.icon[0], color: r.icon[1] } }, r.icon[2]),
         h('span', { class: 'site-name' }, r.site),
         h('span', { class: 'url' }, r.url),
+        weigh(level),
       ]),
       h('div', { class: 'title' }, r.title),
-      fold(raised || tagged, 'chips', [
+      fold(pinned || raised || tagged, 'chips', [
+        r.pinned ? h('span', { class: ['chip', 'demo-raised', { on: pinned }] }, 'Pinned') : null,
         r.raised ? h('span', { class: ['chip', 'demo-raised', { on: raised }] }, 'Raised') : null,
         r.tag ? h('span', { class: ['chip', { on: tagged }] }, [tag(r.tag)]) : null,
       ]),
@@ -88,6 +116,7 @@ function renderResult(r: Result, step: number): VNode {
       h('span', { class: 'hidden-site' }, r.url.split(' ')[0]!.replace(/^www\./, '')),
       ' hidden by your list ',
       h('span', { class: 'demo-link' }, 'Show'),
+      weigh('hide'),
     ]),
   ]);
 }
@@ -194,6 +223,7 @@ export default defineComponent({
             h('li', { class: ['demo-step', { active: step.value === i + 1 }], 'aria-current': step.value === i + 1 ? 'step' : undefined }, [
               h('h2', s.title),
               h('p', s.text),
+              i === 0 ? h('p', { class: 'demo-cue' }, [h('span', { class: 'arrow', 'aria-hidden': 'true' }, '↓'), ' Scroll, and watch Anubis tidy it up']) : null,
             ]),
           ),
         ),
