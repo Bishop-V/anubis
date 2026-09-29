@@ -6,7 +6,7 @@ import type { CompiledList, TagAction } from '@/utils/matcher';
 import { listSites, listTagDefs, removeTag, toggleSiteTag, upsertTagDef, type SiteEntry } from '@/utils/personal';
 import { loadRuleSet } from '@/utils/ruleset';
 import { editPersonal, setTagPref } from '@/utils/storage';
-import { pageTitle } from './parts';
+import { helpLink, pageTitle } from './parts';
 
 const ACTIONS: { value: TagAction; label: string }[] = [
   { value: 'list', label: 'Follow the lists' },
@@ -324,7 +324,20 @@ export async function renderTags(): Promise<HTMLElement> {
       'Tags',
       'Lists label results. You decide what each label does: follow the list, only show it, highlight it, or raise, lower, or hide what carries it. Lists that use the same tag name share it.',
     ),
-    h('div', { class: 'panel' }, h('h3', null, 'New tag'), h('p', { class: 'muted' }, 'Your tags are saved in your list, so they go with it when you publish it.'), form, error),
+    h(
+      'div',
+      { class: 'panel' },
+      h('h3', null, 'New tag'),
+      h(
+        'p',
+        { class: 'muted' },
+        'Your tags are saved in your list, so they go with it when you publish it.',
+        ' ',
+        helpLink('guide/tags#tag-sites-yourself', 'Adding sites to a tag'),
+      ),
+      form,
+      error,
+    ),
     h(
       'div',
       { class: 'panel' },

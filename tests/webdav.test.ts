@@ -3,7 +3,7 @@ import { fakeBrowser } from 'wxt/testing/fake-browser';
 import { collectData, toBackup } from '@/utils/backup';
 import { listSites, setSite, setSiteLevel } from '@/utils/personal';
 import { editPersonal, loadPersonal, updateSettings } from '@/utils/storage';
-import { accountItem, changeEncryptionPassphrase, connect, statusItem, syncChanges, syncFileUrl, syncWithServer } from '@/utils/webdav';
+import { accountItem, changeEncryptionPassphrase, connect, disconnect, statusItem, syncChanges, syncFileUrl, syncWithServer } from '@/utils/webdav';
 import { decryptSyncData, encryptSyncData, isEncryptedSyncFile } from '@/utils/webdav-crypto';
 
 // Two browsers (each with its own storage, as Firefox and Chrome have) syncing
@@ -20,6 +20,11 @@ class FakeDav {
   /** Runs before the next PUT is handled: another browser saving in between. */
   beforePut?: () => void;
   putStatus?: number;
+  /** Saves the next PUT, then loses the answer: the connection drops on the way back. */
+  dropPutAnswer = false;
+  /** Fails every request after the next PUT, as if the network went away. */
+  offlineAfterPut = false;
+  private offline = false;
   private version = 0;
 
   save(url: string, body: string) {
@@ -30,6 +35,7 @@ class FakeDav {
     const url = String(input);
     const headers = init.headers as Record<string, string>;
     this.requests.push(`${init.method} ${url}`);
+    if (this.offline) throw new TypeError('Failed to fetch');
     if (headers.Authorization !== `Basic ${btoa('me:app-password')}`) return new Response(null, { status: 401 });
     if (init.method === 'GET') {
       const file = this.files.get(url);
@@ -44,6 +50,11 @@ class FakeDav {
     if (headers['If-None-Match'] === '*' && file) return new Response(null, { status: 412 });
     if (!url.startsWith(`${FOLDER}/`)) return new Response(null, { status: 409 });
     this.save(url, String(init.body));
+    if (this.offlineAfterPut) this.offline = true;
+    if (this.dropPutAnswer || this.offline) {
+      this.dropPutAnswer = false;
+      throw new TypeError('Failed to fetch');
+    }
     return new Response(null, { status: 201 });
   };
 }
@@ -250,6 +261,36 @@ describe('syncing through a WebDAV server', () => {
     expect((await changeEncryptionPassphrase('a different new passphrase'))).toMatchObject({ error: 'server', status: 500 });
     expect(server.files.get(FILE)!.body).toBe(original);
     expect((await accountItem.getValue())?.encryptionPassphrase).toBe(ENCRYPTED_ACCOUNT.encryptionPassphrase);
+  });
+
+  it('saves the new passphrase when the server took the file but its answer was lost', async () => {
+    await connect(ENCRYPTED_ACCOUNT);
+    await syncWithServer();
+    server.dropPutAnswer = true;
+
+    expect((await changeEncryptionPassphrase('a different new passphrase'))?.error).toBeUndefined();
+    await decryptSyncData(server.files.get(FILE)!.body, 'a different new passphrase');
+    expect((await accountItem.getValue())?.encryptionPassphrase).toBe('a different new passphrase');
+    expect((await syncWithServer())?.error).toBeUndefined();
+  });
+
+  it('says the outcome is unknown when the server cannot be reached to check the new passphrase', async () => {
+    await connect(ENCRYPTED_ACCOUNT);
+    await syncWithServer();
+    server.offlineAfterPut = true;
+
+    expect((await changeEncryptionPassphrase('a different new passphrase'))?.error).toBe('unconfirmed');
+    expect((await statusItem.getValue())?.error).toBe('unconfirmed');
+  });
+
+  it('does not reconnect a server that was disconnected while the passphrase changed', async () => {
+    await connect(ENCRYPTED_ACCOUNT);
+    await syncWithServer();
+    server.beforePut = () => void disconnect();
+
+    await changeEncryptionPassphrase('a different new passphrase');
+    expect(await accountItem.getValue()).toBeNull();
+    expect(await statusItem.getValue()).toBeNull();
   });
 
   it('gives a fresh browser everything from the server, without bringing back what the first removed', async () => {

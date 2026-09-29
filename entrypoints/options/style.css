@@ -76,8 +76,7 @@ nav .foot .links {
   flex-direction: column;
   gap: 6px;
 }
-nav .foot .links a,
-.help-link {
+nav .foot .links a {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -88,9 +87,14 @@ nav .foot .links svg,
   height: 11px;
   opacity: 0.7;
 }
+/* Wraps like the sentence it follows, so it fits the narrowest screens. */
 .help-link {
   color: var(--gold-ink);
-  white-space: nowrap;
+}
+.help-link svg {
+  display: inline;
+  margin-left: 4px;
+  vertical-align: -1px;
 }
 
 /* ------------------------------------------------------------------- main */
