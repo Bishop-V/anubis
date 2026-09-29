@@ -419,9 +419,9 @@ export default defineContentScript({
     // Re-run when the page adds results (infinite scroll, "More results", SPA
     // navigation). Batched to one pass per frame, and the observer is detached
     // while we write so our own elements don't trigger another pass.
-    let queued = false;
+    let queuedFrame: number | undefined;
     const observer = new MutationObserver((mutations) => {
-      if (queued) return;
+      if (queuedFrame !== undefined) return;
       const relevant = mutations.some((m) =>
         [...m.addedNodes, ...m.removedNodes].some((n) => !(n instanceof HTMLElement && OWN_TAGS.has(n.tagName))),
       );
@@ -430,10 +430,9 @@ export default defineContentScript({
     });
     const observe = () => observer.observe(document.documentElement, { childList: true, subtree: true });
     function schedule() {
-      if (queued) return;
-      queued = true;
-      requestAnimationFrame(() => {
-        queued = false;
+      if (queuedFrame !== undefined) return;
+      queuedFrame = requestAnimationFrame(() => {
+        queuedFrame = undefined;
         observer.disconnect();
         try {
           pass();
@@ -442,6 +441,19 @@ export default defineContentScript({
         }
       });
     }
+
+    window.addEventListener('pagehide', () => {
+      observer.disconnect();
+      if (queuedFrame !== undefined) {
+        cancelAnimationFrame(queuedFrame);
+        queuedFrame = undefined;
+      }
+    });
+    window.addEventListener('pageshow', (event) => {
+      if (!event.persisted) return;
+      observe();
+      schedule();
+    });
 
     pass();
     // One early pass may run before the results exist; the observer catches the rest.

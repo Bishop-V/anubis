@@ -5,7 +5,7 @@
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
 //                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options,
-//                               responsive, welcome, sync, webdav, checks (hostile, grouped, reveal, mobile assertions)
+//                               responsive, welcome, sync, webdav, checks (hostile, grouped, reveal, lifecycle, mobile assertions)
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slides
 //                               in docs/public/
 //
@@ -373,6 +373,38 @@ if (!only || only === 'reveal' || checks) {
   const afterChange = await hidden.evaluate((el) => el.hasAttribute('data-anubis-reveal'));
   console.log('\n== reveal one result:', JSON.stringify({ afterClick, afterChange }));
   assertChecks('reveal hidden result', { revealsAfterClick: afterClick, staysRevealedAfterPageChange: afterChange });
+}
+
+if (!only || checks) {
+  await page.goto('https://www.google.com/search?q=anubis');
+  await page.waitForSelector('anubis-summary');
+  const lifecycleResult = 'https://lifecycle-example.test/';
+  await page.evaluate((href) => {
+    window.dispatchEvent(new PageTransitionEvent('pagehide', { persisted: true }));
+    const row = document.createElement('div');
+    row.className = 'MjjYud';
+    const content = document.createElement('div');
+    const link = document.createElement('a');
+    link.href = href;
+    const title = document.createElement('h3');
+    title.textContent = 'Lifecycle restoration test';
+    link.append(title);
+    const address = document.createElement('cite');
+    address.textContent = 'lifecycle-example.test';
+    content.append(link, address);
+    row.append(content);
+    document.querySelector('#rso').append(row);
+  }, lifecycleResult);
+  await page.waitForTimeout(100);
+  const beforeRestore = await page.locator(`a[href="${lifecycleResult}"]`).evaluate((link) => !!link.closest('[data-anubis-result]'));
+  await page.evaluate(() => window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true })));
+  await page.waitForFunction((href) => {
+    const link = [...document.querySelectorAll('a[href]')].find((a) => a.href === href);
+    return link?.closest('[data-anubis-result]');
+  }, lifecycleResult);
+  const restored = await page.locator(`a[href="${lifecycleResult}"]`).evaluate((link) => !!link.closest('[data-anubis-result]'));
+  console.log('\n== back-forward cache resume:', JSON.stringify({ beforeRestore, restored }));
+  assertChecks('resume after back-forward cache', { pausesWhileHidden: !beforeRestore, processesChangesOnRestore: restored });
 }
 
 if (!only || only === 'shortcuts') {

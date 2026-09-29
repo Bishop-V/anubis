@@ -2,6 +2,13 @@
 
 What was tried while building the tagging and lists release, what failed, and what is still unverified. Newest notes go at the top of each section.
 
+## Patterns from Dark Reader (2026-09-29)
+
+- **Reviewed:** Dark Reader's [dynamic style-position watcher](https://github.com/darkreader/darkreader/blob/2e02c0e902eefcaa1891feb4e78f5ab3d983d28d/src/inject/dynamic-theme/watch/style-position.ts#L67-L97) batches and deduplicates DOM work; its [content-script lifecycle](https://github.com/darkreader/darkreader/blob/2e02c0e902eefcaa1891feb4e78f5ab3d983d28d/src/inject/index.ts#L196-L251) accounts for page freeze and resume. The useful lesson is to bound repeated work and make lifecycle transitions explicit, not to transplant its stylesheet-specific machinery.
+- **Adapted:** Anubis already batches mutations to one pass per frame. It now disconnects the observer and cancels any queued frame on `pagehide`, then observes and schedules a fresh pass on persisted `pageshow`, so a restored page catches up with changes made while frozen. The `checks` e2e part simulates that lifecycle and asserts both the pause and rescan.
+- **Deferred:** Incremental per-result passes could reduce work on busy pages, but a pass also recalculates cleanup, grouping, filtering, reranking, summary placement, and page statistics. Changing that boundary without profiling risks stale cross-result state; retain the full pass until measurements and a complete invalidation model justify it.
+- **Already aligned:** list matching and ranking have focused unit tests; engine DOM variants and page state have mock-page e2e checks. Those layers complement each other, while live engine markup still needs manual confirmation.
+
 ## Keeping platform and engine maintenance current (2026-09-29)
 
 - **Firefox minimum:** AMO lint warned that Firefox for Android 140 predates support for the built-in data-collection manifest key. Raised `gecko.strict_min_version` to 142, the first Android version with that key; deliberately did not add `gecko_android`, which would advertise untested phone support. The generated Firefox manifest now declares 142.0 and `web-ext lint` reports zero warnings.
