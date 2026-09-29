@@ -124,7 +124,8 @@ export const ENGINES: EngineDef[] = [
       '*://noai.duckduckgo.com/*',
     ],
     host: /^(safe\.|start\.|noai\.)?duckduckgo\.com$/,
-    isResultsPage: (url) => hasQuery(url, 'q'),
+    // Not the Images, Videos, News, Maps, or Shopping tabs (`iax`), which have no web results.
+    isResultsPage: (url) => hasQuery(url, 'q') && !url.searchParams.has('iax'),
     // Web results are in the web-vertical list (uBlacklist's rules); the side
     // panel's heading links to a site too, and isn't a result.
     heading: '[data-testid="web-vertical"] li > article h2',

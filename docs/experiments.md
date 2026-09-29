@@ -143,6 +143,7 @@ Reported with screenshots from everyday use. This environment's network policy b
 - **Outlines of shown-again panels (2026-09-29):** with Show hidden on live Brave, the dashed outlines around removed panels sat 6px outside them, so neighbouring panels' outlines overlapped and stood off from Brave's rounded cards. The outline now sits 1px inside the block's edge, following its corners.
 - **DuckDuckGo's side panel as a result (2026-09-29):** on a live page, the knowledge panel beside the results (a site's infobox) got a ⚖ button and tags: its heading is an `h2` with a link, like a result's. Results are now only headings in `[data-testid="web-vertical"] li > article`, the same place uBlacklist's rules look. The `wide=1` mock's side panel has such a heading, and the checks assert it isn't a result.
 - **DuckDuckGo's button colour (2026-09-29):** beside the ⋯ menu, the ⚖ button now takes that button's colour and full opacity at rest, so the pair match in light and dark; it still turns gold on hover.
+- **DuckDuckGo's Videos tab (2026-09-29):** on a live Videos tab, the summary squeezed into a column beside the grid and video cards got ⚖ buttons. Anubis now leaves pages with an `iax` parameter (the Images, Videos, News, Maps, and Shopping tabs) alone.
 
 ## Reporting mistakes to lists
 
