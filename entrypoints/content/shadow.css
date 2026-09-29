@@ -148,7 +148,7 @@ button {
   padding: 0;
   border: 0;
   border-radius: var(--anubis-weigh-radius, 50%);
-  color: var(--muted);
+  color: var(--anubis-weigh-color, var(--muted));
   background: transparent;
   opacity: var(--anubis-weigh-opacity, 0.35);
   transition:

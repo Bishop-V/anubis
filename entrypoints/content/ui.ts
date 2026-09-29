@@ -477,11 +477,11 @@ function resultMenuOf(container: HTMLElement): HTMLElement | undefined {
 }
 
 /** What the weigh button takes from the engine's menu button to look like its neighbour. */
-const MENU_LOOK = ['--anubis-weigh-size', '--anubis-weigh-radius'];
+const MENU_LOOK = ['--anubis-weigh-size', '--anubis-weigh-radius', '--anubis-weigh-color', '--anubis-weigh-opacity'];
 
 /**
- * Just left of the engine's menu button and centred on it, at its size and shape,
- * so the two read as a pair of options. The colours stay Anubis's own.
+ * Just left of the engine's menu button and centred on it, at its size, shape, and
+ * colour, so the two read as a pair of options.
  */
 function placeBesideMenu(host: HTMLElement, container: HTMLElement, menu: HTMLElement): void {
   const box = container.getBoundingClientRect();
@@ -495,6 +495,13 @@ function placeBesideMenu(host: HTMLElement, container: HTMLElement, menu: HTMLEl
   host.style.setProperty('right', `${Math.round(right)}px`, 'important');
   host.style.setProperty('--anubis-weigh-size', `${size}px`);
   host.style.setProperty('--anubis-weigh-radius', parseFloat(ms.borderTopLeftRadius) ? ms.borderTopLeftRadius : '50%');
+  // At rest, in the menu button's own colour (its icon's fill, or its text colour),
+  // so the pair match in light and dark; hovering still turns it gold.
+  const icon = menu.querySelector('path, svg');
+  const fill = icon ? getComputedStyle(icon).fill : '';
+  const color = /^rgba?\(/.test(fill) && !/,\s*0\)$/.test(fill) ? fill : ms.color;
+  host.style.setProperty('--anubis-weigh-color', color);
+  host.style.setProperty('--anubis-weigh-opacity', '1');
 }
 
 export function weighButtonOf(container: HTMLElement): HTMLButtonElement | undefined {
