@@ -27,6 +27,19 @@ export function freshState(engine: EngineDef): DeeperState {
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+/**
+ * Whether there's a next page to load yet. The content script starts while the page is
+ * still arriving, and an engine's own button or Next link comes last, below the
+ * results: until it's there, loading would find nothing and give up for this search.
+ */
+export function nextPageReady(engine: EngineDef, state: DeeperState): boolean {
+  const more = engine.more;
+  if (!more || state.done || state.busy) return false;
+  if (more.kind === 'click') return !!document.querySelector(more.button);
+  if (more.kind === 'link') return !!state.next || !!document.querySelector(more.next);
+  return true;
+}
+
 /** Load `count` more pages. Calls `changed` as progress is made so the page can re-weigh. */
 export async function weighDeeper(engine: EngineDef, state: DeeperState, count: number, changed: () => void): Promise<void> {
   const more = engine.more;

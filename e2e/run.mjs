@@ -113,6 +113,7 @@ async function launch(settings = {}, ext = EXT) {
     'https://search.brave.com/search?q=anubis': brave('anubis', ANUBIS_RESULTS),
     'https://www.google.com/search?q=anubis&deep=1': google('anubis', ANUBIS_RESULTS, { next: '/search?q=anubis&start=10' }),
     'https://www.google.com/search?q=anubis&start=10': google('anubis', ANUBIS_PAGE2),
+    'https://www.google.com/search?q=anubis&deep=late': google('anubis', ANUBIS_RESULTS, { next: '/search?q=anubis&start=10', latePager: true }),
     'https://www.google.com/search?q=anubis&hostile=1': google('anubis', ANUBIS_RESULTS, { hostile: true }),
     'https://www.google.com/search?q=anubis&grouped=1': google('anubis', ANUBIS_RESULTS, { grouped: true }),
     'https://www.google.com/search?q=anubis&modules=1': google('anubis', ANUBIS_RESULTS, { modules: true }),
@@ -1335,11 +1336,18 @@ if (!only || only === 'filter') {
   await message({ type: 'set-filter' });
 }
 
-if (!only || only === 'deeper') {
+if (!only || only === 'deeper' || checks) {
+  const sw = ctx.serviceWorkers()[0];
+  const loadedPages = () => page.evaluate(() => new Set([...document.querySelectorAll('[data-anubis-page]')].map((el) => el.dataset.anubisPage)).size);
+  const setDeeper = (deeper) =>
+    sw.evaluate(async (deeper) => {
+      const { settings } = await chrome.storage.sync.get('settings');
+      await chrome.storage.sync.set({ settings: { ...settings, deeper } });
+    }, deeper);
+
   // Google: "Load more results" by message (the path the popup uses).
   await page.goto('https://www.google.com/search?q=anubis&deep=1');
   await page.waitForTimeout(600);
-  const sw = ctx.serviceWorkers()[0];
   await sw.evaluate(async () => {
     for (const tab of await chrome.tabs.query({})) {
       await chrome.tabs.sendMessage(tab.id, { type: 'go-deeper' }).catch(() => {});
@@ -1347,21 +1355,35 @@ if (!only || only === 'deeper') {
   });
   await page.waitForTimeout(1500);
   await report(page, 'google-deeper');
+  const googleByHand = await loadedPages();
   await page.screenshot({ path: `${SHOTS}google-deeper.png`, fullPage: true });
 
+  // Google, automatic: the Next link arrives after the results, as on the live page,
+  // where the first pass runs while the page is still streaming in.
+  await setDeeper(2);
+  await page.goto('https://www.google.com/search?q=anubis&deep=late');
+  await page.waitForTimeout(3000);
+  await report(page, 'google-deeper-auto');
+  const googleAuto = await loadedPages();
+
   // DuckDuckGo: automatic, by pressing the page's own "More results" button.
-  await sw.evaluate(async () => {
-    const { settings } = await chrome.storage.sync.get('settings');
-    await chrome.storage.sync.set({ settings: { ...settings, deeper: 1 } });
-  });
+  await setDeeper(1);
   await page.goto('https://duckduckgo.com/?q=javascript+promises&more=1');
   await page.waitForTimeout(2500);
   await report(page, 'ddg-deeper-auto');
+  const ddgAuto = await page.evaluate(() => document.querySelectorAll('[data-anubis-result]').length);
   await page.screenshot({ path: `${SHOTS}ddg-deeper.png`, fullPage: true });
-  await sw.evaluate(async () => {
-    const { settings } = await chrome.storage.sync.get('settings');
-    await chrome.storage.sync.set({ settings: { ...settings, deeper: 0 } });
-  });
+  await setDeeper(0);
+
+  console.log('\n== load more results:', JSON.stringify({ googleByHand, googleAuto, ddgAuto }));
+  if (checks) {
+    assertChecks('load more results', {
+      googleByHand: googleByHand === 1,
+      googleAutomaticWithLatePager: googleAuto === 1,
+      // The mock starts with 9 results and its More results button adds 3.
+      duckDuckGoAutomatic: ddgAuto > 9,
+    });
+  }
 }
 
 if (!only || only === 'import') {

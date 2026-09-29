@@ -21,7 +21,7 @@ import { colorSchemeItem, editPersonal, MAX_DEEPER, type Theme } from '@/utils/s
 import { reportUrl, suggestionUrl } from '@/utils/subscriptions';
 import { changeSentence } from '@/utils/summary';
 import { findClutter, mainColumn, redirectFor, watchAllTab, type Clutter } from './cleanup';
-import { freshState, weighDeeper } from './deeper';
+import { freshState, nextPageReady, weighDeeper } from './deeper';
 import './page.css';
 import { findResults, OWN_TAGS, type FoundResult } from './results';
 import {
@@ -131,7 +131,6 @@ export default defineContentScript({
       }
 
       const results = findResults(engine);
-      const more = engine.more;
       const stats: PageStats = {
         engine: engine.name,
         total: results.length,
@@ -142,8 +141,7 @@ export default defineContentScript({
         tagged: 0,
         revealed: reveal,
         pages: deeper.pages,
-        canGoDeeper:
-          !!more && !deeper.done && !deeper.busy && results.length > 0 && (more.kind !== 'click' || !!document.querySelector(more.button)),
+        canGoDeeper: results.length > 0 && nextPageReady(engine, deeper),
         loading: deeper.busy,
         tags: [],
         removed: {},

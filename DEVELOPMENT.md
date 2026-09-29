@@ -294,6 +294,7 @@ Mistakes that have been made once already. `docs/experiments.md` has the details
 - **Keep page state in the content script's variables**, not only in attributes: the next pass rewrites attributes, and engines trigger passes on hover.
 - **No `innerHTML`.** The add-on linter flags it. Build with `h()`, parse constant SVG with `DOMParser`, and pass `data-*` attributes to `h()` through `attrs`.
 - **Engines change their markup without notice.** Prefer structure (headings, links, nesting) to class names.
+- **The page is still arriving when the first pass runs.** The content script starts at `document_start` and engines stream their pages, so what sits below the results (a Next link, a More results button) may not be there yet. Don't treat its absence as final; wait for a later pass.
 - **Links to the wiki's subscribe page carry `target="_self"`**, or VitePress's router follows them without loading the page, and the subscribe content script never runs.
 - **Keep `utils/engines.ts` and `utils/links.ts` free of browser APIs.** The build and the docs site import them.
 - **Don't change the Firefox add-on ID** in `wxt.config.ts`: it's the add-on's permanent identity, and a new one orphans everyone's stored settings.
