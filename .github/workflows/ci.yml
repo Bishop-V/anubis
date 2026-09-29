@@ -10,6 +10,8 @@ on:
   pull_request:
   # release.yml runs these same checks before it builds a release.
   workflow_call:
+  # engines.yml starts this on the pull requests it opens, which don't start it themselves.
+  workflow_dispatch:
 
 permissions:
   contents: read
