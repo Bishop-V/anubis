@@ -29,10 +29,8 @@ Work that's planned but not started, or started and not finished. Each item says
 
 ## Performance
 
-Fine as it is (content script 92 KB). Two cheap wins, and one to measure:
+Fine as it is (content script 92 KB). One to measure:
 
-- Any change, even one click in the result menu, re-parses every subscribed list in every open search tab (`watchRuleSet` in `utils/ruleset.ts`). Re-parse only what changed.
-- `refreshStale` in `utils/subscriptions.ts` parses each list just to read `! expires:`. Store it in the cache when the list is downloaded.
 - With any clean-up switch on, `findClutter` (`entrypoints/content/cleanup.ts`) walks every text node on the page, on every pass. Measure it on a live Google page before changing anything; if it matters, skip the results' subtrees, which clean-up never removes.
 
 ## Firefox for Android

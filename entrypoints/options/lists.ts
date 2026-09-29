@@ -12,6 +12,7 @@ import {
   builtinId,
   displayName,
   downloadList,
+  freshCopy,
   editSubscriptions,
   fetchDirectory,
   getSubscriptions,
@@ -79,17 +80,17 @@ async function subscribe(input: string, entry?: DirectoryEntry, name = entry?.na
   busy.add(id);
   rerender();
   try {
-    const text = await downloadList(url);
+    const download = await downloadList(url);
     const same = (s: Subscription) => s.id === id || s.url === url;
     // The copy first, so the list has its text as soon as it's subscribed.
     const existing = (await getSubscriptions()).find(same);
-    await editListCache((cache) => ({ ...cache, [existing?.id ?? id]: { text, fetchedAt: Date.now() } }));
+    await editListCache((cache) => ({ ...cache, [existing?.id ?? id]: freshCopy(download) }));
     await editSubscriptions((subs) =>
       subs.some(same)
         ? subs.map((s) => (same(s) ? { ...s, enabled: true } : s))
         : [...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: entry?.builtin || undefined, name }],
     );
-    const parsed = parseList(text);
+    const { parsed } = download;
     flash('lists', 'ok', `Subscribed to ${displayName({ url, name }, parsed.meta)}: ${plural(parsed.rules.length, 'instruction')}, ${plural(parsed.tags.length, 'tag')}.`);
     if (offer && offered(offer).url === url) dropOffer();
   } catch (error) {
