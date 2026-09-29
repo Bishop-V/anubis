@@ -743,40 +743,48 @@ if (only === 'docs') {
     await page.screenshot({ path: `${DOCS_IMG}${name}.png`, clip: box, fullPage: true });
   };
 
-  await page.goto('https://www.google.com/search?q=anubis');
-  await page.waitForTimeout(700);
-  await clip('summary', ['anubis-summary', '#rso > .MjjYud:nth-of-type(2)']);
-  const wiki = page.locator('[data-anubis-result]', { hasText: 'Anubis - Wikipedia' });
-  await wiki.hover();
-  await page.waitForTimeout(200);
-  await clip('result', ['[data-anubis-result]:has(a[href*="wikipedia"])']);
-  await clip('hidden', ['[data-anubis-result]:has(anubis-bar)'], 10);
+  // Every picture comes in light and dark: the mock page in its dark mode, or the
+  // extension page with the OS in dark mode. The dark one's name ends in -dark, and
+  // the site shows the one that matches its mode (docs/.vitepress/config.ts).
+  const SCHEMES = [
+    ['light', '', ''],
+    ['dark', '-dark', '&dark=1'],
+  ];
+  for (const [, suffix, query] of SCHEMES) {
+    await page.goto(`https://www.google.com/search?q=anubis${query}`);
+    await page.waitForTimeout(700);
+    await clip(`summary${suffix}`, ['anubis-summary', '#rso > .MjjYud:nth-of-type(2)']);
+    const wiki = page.locator('[data-anubis-result]', { hasText: 'Anubis - Wikipedia' });
+    await wiki.hover();
+    await page.waitForTimeout(200);
+    await clip(`result${suffix}`, ['[data-anubis-result]:has(a[href*="wikipedia"])']);
+    await clip(`hidden${suffix}`, ['[data-anubis-result]:has(anubis-bar)'], 10);
 
-  await page.goto('https://duckduckgo.com/?q=javascript+promises');
-  await page.waitForTimeout(700);
-  const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
-  await target.hover();
-  await target.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
-  await page.waitForTimeout(300);
-  await clip('menu', ['anubis-popover', '[data-anubis-result]:has(a[href*="javascript.info"])'], 12);
-  await page.keyboard.press('Escape');
+    await page.goto(`https://duckduckgo.com/?q=javascript+promises${query}`);
+    await page.waitForTimeout(700);
+    const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
+    await target.hover();
+    await target.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+    await page.waitForTimeout(300);
+    await clip(`menu${suffix}`, ['anubis-popover', '[data-anubis-result]:has(a[href*="javascript.info"])'], 12);
+    await page.keyboard.press('Escape');
+  }
 
   await setSettings({ cleanup: { ai: true, videos: true, questions: true, news: true, images: true, related: true } });
-  await page.goto('https://www.google.com/search?q=anubis&modules=1');
-  await page.waitForTimeout(800);
-  await clip('cleanup-summary', ['anubis-summary']);
+  for (const [, suffix, query] of SCHEMES) {
+    await page.goto(`https://www.google.com/search?q=anubis&modules=1${query}`);
+    await page.waitForTimeout(800);
+    await clip(`cleanup-summary${suffix}`, ['anubis-summary']);
+  }
 
   // The homepage's before and after: the same search with Anubis off, then on with
   // clean-up, cut to the same box (the logo, the search box and the results column).
-  // Each in light and dark mode. A wider window keeps the side panel clear of the box.
+  // A wider window keeps the side panel clear of the box.
   const beforeAfter = async (name) => {
-    for (const [url, file] of [
-      ['https://www.google.com/search?q=anubis&modules=1', name],
-      ['https://www.google.com/search?q=anubis&modules=1&dark=1', `${name}-dark`],
-    ]) {
-      await page.goto(url);
+    for (const [, suffix, query] of SCHEMES) {
+      await page.goto(`https://www.google.com/search?q=anubis&modules=1${query}`);
       await page.waitForTimeout(800);
-      await page.screenshot({ path: `${DOCS_IMG}${file}.png`, clip: { x: 0, y: 0, width: 868, height: 920 } });
+      await page.screenshot({ path: `${DOCS_IMG}${name}${suffix}.png`, clip: { x: 0, y: 0, width: 868, height: 920 } });
     }
   };
   await page.setViewportSize({ width: 1280, height: 1000 });
@@ -831,18 +839,22 @@ if (only === 'docs') {
     await chrome.storage.local.set({ listCache });
   }, bundled);
   const opt = await ctx.newPage();
+  const pop = await ctx.newPage();
   await opt.setViewportSize({ width: 1100, height: 760 });
-  for (const section of ['sites', 'tags', 'lists', 'cleanup']) {
-    await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
-    await opt.waitForTimeout(500);
-    await opt.screenshot({ path: `${DOCS_IMG}options-${section}.png` });
+  await pop.setViewportSize({ width: 364, height: 600 });
+  for (const [colorScheme, suffix] of SCHEMES) {
+    await opt.emulateMedia({ colorScheme });
+    for (const section of ['sites', 'tags', 'lists', 'cleanup']) {
+      await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
+      await opt.waitForTimeout(500);
+      await opt.screenshot({ path: `${DOCS_IMG}options-${section}${suffix}.png` });
+    }
+    await pop.emulateMedia({ colorScheme });
+    await pop.goto(`chrome-extension://${extId}/popup.html`);
+    await pop.waitForTimeout(400);
+    await pop.screenshot({ path: `${DOCS_IMG}popup${suffix}.png` });
   }
   await opt.close();
-  const pop = await ctx.newPage();
-  await pop.setViewportSize({ width: 364, height: 600 });
-  await pop.goto(`chrome-extension://${extId}/popup.html`);
-  await pop.waitForTimeout(400);
-  await pop.screenshot({ path: `${DOCS_IMG}popup.png` });
   await pop.close();
   console.log('\n== documentation screenshots saved to docs/img/');
 }
