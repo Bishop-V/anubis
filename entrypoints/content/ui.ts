@@ -481,6 +481,7 @@ export function renderSummary(
   const before = tryFirst || !place.fallback ? place.before : place.fallback;
   if (summaryHost.nextElementSibling !== before) before.before(summaryHost);
   keepUpright(summaryHost);
+  matchGridColumn(summaryHost, place.area);
   summaryHost.dataset.theme = theme;
 
   render(summaryHost, JSON.stringify([stats, change]), () =>
@@ -553,6 +554,7 @@ export function renderSummary(
     if (document.readyState === 'complete') misplaced.add(place.before);
     place.fallback!.before(summaryHost);
     keepUpright(summaryHost);
+    matchGridColumn(summaryHost, place.area);
     summaryArea = place.area && !place.area.contains(summaryHost) ? place.area : undefined;
     alignSummary();
   }
@@ -588,6 +590,22 @@ function alignSummary(): void {
   host.style.setProperty('box-sizing', 'border-box', 'important');
   if (left) host.style.setProperty('padding-left', `${left}px`, 'important');
   if (right) host.style.setProperty('padding-right', `${right}px`, 'important');
+}
+
+/**
+ * In a grid, take the columns of the grid item holding the results. Google lays
+ * out #rcnt as a grid with the AI Overview across every column and the results in
+ * `2 / span 12`; placed before the AI Overview without columns of its own, the
+ * summary landed in the narrow first column.
+ */
+function matchGridColumn(host: HTMLElement, area: HTMLElement | undefined): void {
+  const parent = host.parentElement;
+  let column: HTMLElement | null = area && parent && getComputedStyle(parent).display.includes('grid') ? area : null;
+  while (column && column.parentElement !== parent) column = column.parentElement;
+  const want = column ? `${getComputedStyle(column).gridColumnStart} / ${getComputedStyle(column).gridColumnEnd}` : '';
+  if (host.style.getPropertyValue('grid-column') === want) return;
+  if (want) host.style.setProperty('grid-column', want, 'important');
+  else host.style.removeProperty('grid-column');
 }
 
 /** Above the results area and across it, and above `next` when that's showing. */

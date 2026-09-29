@@ -272,6 +272,8 @@ export function google(query, results, { dark = false, next = '', hostile = fals
         <button type="button">Dive deeper in AI Mode</button></div></div>`
       : '';
   // Above the results column, spanning the row like the live page's AI Overview.
+  // Seen live (2026-09-29): #rcnt is a grid, the AI Overview spans every column
+  // (grid-column 1 / -1) and #center_col sits at 2 / span 12.
   const aiRow = aiAbove
     ? `<div class="bzXtMb M8OgIe aiabove"><div class="YzCcne"><div class="nk9vdc"><div class="Fzsovc" role="heading">AI Overview</div></div>
         <div class="aitext">Anubis is the jackal-headed god of the dead in ancient Egyptian religion, linked with mummification and the protection of tombs.</div>
@@ -330,8 +332,9 @@ export function google(query, results, { dark = false, next = '', hostile = fals
     .B6fmyf{display:none}
     #rcnt{display:flex;gap:40px}
     #rhs{width:300px;margin-top:20px;padding:16px;border:1px solid ${c.rule};border-radius:8px;align-self:flex-start}
-    ${aiAbove ? `#rcnt{flex-wrap:wrap;row-gap:0}
-    .aiabove{flex:0 0 100%;box-sizing:border-box;padding:24px 0 22px 180px;border-bottom:1px solid ${c.line}}
+    ${aiAbove ? `#rcnt{display:grid;grid-template-columns:180px repeat(12,56px) minmax(0,1fr);gap:0}
+    #center_col{grid-column:2 / span 12}#center_col #search,#center_col #botstuff{padding-left:0}
+    .aiabove{grid-column:1 / -1;box-sizing:border-box;padding:24px 0 22px 180px;border-bottom:1px solid ${c.line}}
     .aiabove .YzCcne{max-width:652px}.aiabove .Fzsovc{font-size:16px;margin-bottom:10px}.aiabove .aitext{font-size:16px;line-height:26px}
     .aiabove .disclaimer{margin-top:8px;font-size:12px;color:${c.muted}}` : ''}
     .forum-meta{font-size:12px;line-height:18px;color:${c.muted}}.answers{color:${c.link}}
