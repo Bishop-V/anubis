@@ -227,6 +227,7 @@ Called "Weigh deeper" until the wording review below.
 - Engines only send one page, so an extension can only rerank what is on screen. Weigh deeper brings the next pages onto the current one: DuckDuckGo gets its own "More results" button pressed; Google, Bing, and Yahoo have their next-page link fetched; Brave and Ecosia get their page parameter incremented. Fetched pages are parsed with `DOMParser` and run through the same result finder as the live page, so no per-engine import code was needed.
 - Off by default and never automatic unless chosen, with 700 ms between page requests, because extra requests to an engine can trigger rate limits or CAPTCHAs. Requests only go to the engine's own origin.
 - **Bug found:** the automatic mode ran during the first pass, before the mutation observer's state existed (a temporal dead zone error in the minified build). The observer is now set up before the first pass.
+- **The automatic setting (2026-09-29)** was a row of three underlined words, Off, +1 page, and +2 pages, which read poorly as a choice and stopped at two. It is now a dropdown from Off to "5 more pages", six pages in all (`MAX_DEEPER`). A stepper was considered, but a dropdown is the control settings already use for picking one value from a short list.
 
 ## Shadow DOM UI
 
