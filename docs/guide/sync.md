@@ -49,7 +49,11 @@ Other services and your own server work too, if they offer WebDAV over `https://
 
 **Settings → Sync** then shows when Anubis last synced, or what went wrong. **Sync now** syncs straight away.
 
-With encryption on, Anubis derives an AES-256-GCM key from your passphrase using PBKDF2-SHA-256, then encrypts the sync file before sending it over HTTPS. The server operator can see that you connected and can delete or replace the file, but cannot read its contents. Encryption does not prevent the server from withholding or replaying an older encrypted copy. If you forget the passphrase, the server copy cannot be recovered; your data in each browser remains available. Choose the passphrase carefully and keep a separate backup.
+### Why this encryption
+
+Anubis uses **AES-256-GCM**, a widely supported authenticated-encryption mode built into browsers' Web Crypto API. AES encrypts the sync file; GCM also checks that ciphertext has not been altered, and uses a fresh random nonce for each write. The 256-bit key is derived from your passphrase with **PBKDF2-SHA-256** and a random salt, so Anubis does not send or store a separate key file. Using the browser's built-in cryptography avoids shipping a third-party crypto library.
+
+This protects the file's contents, not the fact that you connect to the server. The server operator can still see connection metadata and can delete or replace the file; encryption does not prevent withholding or replaying an older encrypted copy. If you forget the passphrase, the server copy cannot be recovered; your data in each browser remains available. Choose a long, unique passphrase and keep a separate backup.
 
 Anubis keeps the passphrase in that browser's local extension storage to sync automatically. It is not protected from someone who can access your browser profile or run code as you. WebDAV credentials are also saved locally and sent to the server to sign in.
 
