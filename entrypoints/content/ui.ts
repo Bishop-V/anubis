@@ -679,50 +679,57 @@ export function renderSummary(
       'div',
       { class: `summary${compact ? ' compact' : ''}${summaryDetails ? ' open' : ''}` },
       h('span', { class: 'mark' }, icon(ICON_ANUBIS)),
-      short ? h('span', { class: 'sentence short' }, short) : null,
-      h('span', { class: short ? 'sentence long' : 'sentence' }, summarySentence(stats)),
-      stats.filter
-        ? h('button', { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'show-all' }, on: { click: () => actions.filter(undefined) } }, t('summaryShowAll'))
-        : null,
-      hiddenCount(stats) && !stats.filter
-        ? h(
-            'button',
-            { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'reveal' }, on: { click: actions.toggleReveal } },
-            stats.revealed ? t('hideAgain') : t('showHidden'),
-          )
-        : null,
-      stats.canGoDeeper || stats.loading
-        ? h(
-            'button',
-            {
-              class: 'text-btn deeper',
-              type: 'button',
-              disabled: stats.loading,
-              title: t('loadMoreTitle'),
-              attrs: { 'data-focus-key': 'deeper' },
-              on: { click: actions.deeper },
-            },
-            stats.loading ? t('loading') : t('loadMore'),
-          )
-        : null,
-      settingsButton(actions.settings, 'settings'),
-      compact
-        ? h(
-            'button',
-            {
-              class: 'text-btn details',
-              type: 'button',
-              attrs: { 'aria-expanded': String(summaryDetails), 'data-focus-key': 'details' },
-              on: {
-                click: () => {
-                  summaryDetails = !summaryDetails;
-                  render(host, JSON.stringify([stats, change, summaryDetails]), build);
+      // The sentence and its buttons: on phones they run on as one paragraph, so the
+      // buttons follow the words and wrap with them; wider, the line steps aside
+      // (display: contents) and each is laid out on its own.
+      h(
+        'span',
+        { class: 'line' },
+        short ? h('span', { class: 'sentence short' }, short) : null,
+        h('span', { class: short ? 'sentence long' : 'sentence' }, summarySentence(stats)),
+        stats.filter
+          ? h('button', { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'show-all' }, on: { click: () => actions.filter(undefined) } }, t('summaryShowAll'))
+          : null,
+        hiddenCount(stats) && !stats.filter
+          ? h(
+              'button',
+              { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'reveal' }, on: { click: actions.toggleReveal } },
+              stats.revealed ? t('hideAgain') : t('showHidden'),
+            )
+          : null,
+        stats.canGoDeeper || stats.loading
+          ? h(
+              'button',
+              {
+                class: 'text-btn deeper',
+                type: 'button',
+                disabled: stats.loading,
+                title: t('loadMoreTitle'),
+                attrs: { 'data-focus-key': 'deeper' },
+                on: { click: actions.deeper },
+              },
+              stats.loading ? t('loading') : t('loadMore'),
+            )
+          : null,
+        settingsButton(actions.settings, 'settings'),
+        compact
+          ? h(
+              'button',
+              {
+                class: 'text-btn details',
+                type: 'button',
+                attrs: { 'aria-expanded': String(summaryDetails), 'data-focus-key': 'details' },
+                on: {
+                  click: () => {
+                    summaryDetails = !summaryDetails;
+                    render(host, JSON.stringify([stats, change, summaryDetails]), build);
+                  },
                 },
               },
-            },
-            summaryDetails ? t('summaryFewerDetails') : t('summaryDetails'),
-          )
-        : null,
+              summaryDetails ? t('summaryFewerDetails') : t('summaryDetails'),
+            )
+          : null,
+      ),
       change
         ? h(
             'div',

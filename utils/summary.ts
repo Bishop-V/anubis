@@ -31,17 +31,18 @@ export function summarySentence(stats: PageStats): string {
 /**
  * The summary in a few words, for phones, where the full sentence runs to several
  * lines: "Anubis changed 4 of 9 results and cleaned up the page." Details shows the
- * full sentence. Undefined when the full sentence is short already (only one tag's
- * results shown, or nothing changed).
+ * full sentence. Undefined when the full sentence is no longer ("Anubis hid 1 of 9
+ * results.", only one tag's results shown, or nothing changed): it's said in full.
  */
 export function shortSummary(stats: PageStats): string | undefined {
   if (stats.filter) return undefined;
   const { total, pages } = stats;
   const changed = stats.pinned + stats.raised + stats.lowered + stats.hidden;
   const removed = !!describeRemoved(stats.removed ?? {});
-  if (!changed) return removed ? t('summaryShortRemoved') : undefined;
+  if (!changed && !removed) return undefined;
   const of = pages > 1 ? tn('summaryResultsPages', total, pages) : tn('summaryResults', total);
-  return t(removed ? 'summaryShortActedRemoved' : 'summaryShortActed', changed, of);
+  const short = !changed ? t('summaryShortRemoved') : t(removed ? 'summaryShortActedRemoved' : 'summaryShortActed', changed, of);
+  return short.length < summarySentence(stats).length ? short : undefined;
 }
 
 /**

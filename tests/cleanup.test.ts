@@ -88,9 +88,11 @@ describe('summary with clean-up', () => {
     expect(shortSummary(stats({ pinned: 1, raised: 1, lowered: 1, hidden: 1 }))).toBe('Anubis changed 4 of 9 results.');
     expect(shortSummary(stats({ hidden: 2, removed: { ai: 1, videos: 1 } }))).toBe('Anubis changed 2 of 9 results and cleaned up the page.');
     expect(shortSummary(stats({ removed: { questions: 1 } }))).toBe('Anubis cleaned up the page.');
-    expect(shortSummary(stats({ total: 20, pages: 2, raised: 1 }))).toBe('Anubis changed 1 of 20 results from 2 pages.');
+    expect(shortSummary(stats({ total: 20, pages: 2, raised: 1, hidden: 1 }))).toBe('Anubis changed 2 of 20 results from 2 pages.');
     // Short already: the full sentence stands.
     expect(shortSummary(stats({}))).toBeUndefined();
+    expect(shortSummary(stats({ hidden: 1 }))).toBeUndefined();
+    expect(shortSummary(stats({ total: 20, pages: 2, raised: 1 }))).toBeUndefined();
     expect(shortSummary(stats({ hidden: 1, filter: 'ref', tags: [{ id: 'ref', label: 'Reference', color: '#2b9aa0', count: 2 }] }))).toBeUndefined();
   });
 
