@@ -1,6 +1,7 @@
 import { browser, storage } from '#imports';
-import { applyData, collectData, freshInstall, mergeData, readBackup, toBackup, type SyncData } from './backup';
+import { applyData, collectData, freshInstall, mergeData, toBackup, type SyncData } from './backup';
 import { deepEqual } from './merge';
+import { decryptSyncData, EncryptedFileError, encryptSyncData, isEncryptedSyncFile } from './webdav-crypto';
 
 // Syncing through a WebDAV server, to share between browsers: browser sync only
 // reaches the same browser on other computers. Off unless the user connects a
@@ -13,9 +14,13 @@ export interface WebdavAccount {
   url: string;
   user: string;
   password: string;
+  /** A sync-file key saved only in this browser; never sent to the server. */
+  encryptionPassphrase?: string;
+  /** Set after the connected file has been encrypted successfully. */
+  encryptionReady?: boolean;
 }
 
-export type SyncErrorCode = 'auth' | 'forbidden' | 'folder' | 'permission' | 'network' | 'file' | 'server' | 'failed';
+export type SyncErrorCode = 'auth' | 'forbidden' | 'folder' | 'permission' | 'network' | 'file' | 'encrypted' | 'passphrase' | 'unencrypted' | 'changed' | 'server' | 'failed';
 
 export interface SyncStatus {
   /** When the last sync finished. */
@@ -33,6 +38,21 @@ export const statusItem = storage.defineItem<SyncStatus | null>('local:webdavSta
 const baseItem = storage.defineItem<SyncData | null>('local:webdavBase', { fallback: null });
 
 export const SYNC_FILE = 'anubis-sync.json';
+
+function sameAccount(a: WebdavAccount | null, b: WebdavAccount): boolean {
+  return Boolean(a && a.url === b.url && a.user === b.user && a.password === b.password && a.encryptionPassphrase === b.encryptionPassphrase);
+}
+
+let operationTail: Promise<void> = Promise.resolve();
+
+function serialize<T>(operation: () => Promise<T>): Promise<T> {
+  const next = operationTail.then(operation, operation);
+  operationTail = next.then(
+    () => undefined,
+    () => undefined,
+  );
+  return next;
+}
 
 /** The sync file's address: the address itself if it names a .json file, otherwise `anubis-sync.json` in that folder. */
 export function syncFileUrl(address: string): string {
@@ -117,11 +137,17 @@ async function syncOnce(account: WebdavAccount): Promise<void> {
     const last = attempt === TRIES;
     const got = await request(account, 'GET', url);
     let remote: SyncData | undefined;
+    let encryptedRemote = false;
     if (got.status !== 404) {
       if (!got.ok) throw httpError(got.status);
+      const text = await got.text();
       try {
-        remote = readBackup(await got.text());
-      } catch {
+        encryptedRemote = isEncryptedSyncFile(text);
+        if (account.encryptionPassphrase && account.encryptionReady && !encryptedRemote) throw new SyncError('unencrypted');
+        remote = await decryptSyncData(text, account.encryptionPassphrase);
+      } catch (error) {
+        if (error instanceof SyncError) throw error;
+        if (error instanceof EncryptedFileError && (error.reason === 'encrypted' || error.reason === 'passphrase')) throw new SyncError(error.reason);
         throw new SyncError('file');
       }
     }
@@ -136,18 +162,23 @@ async function syncOnce(account: WebdavAccount): Promise<void> {
       if (!last && !deepEqual(await collectData(), local)) continue;
       await applyData(merged, local);
     }
-    if (!remote || !deepEqual(merged, remote)) {
+    if (!remote || !deepEqual(merged, remote) || (account.encryptionPassphrase && !encryptedRemote)) {
       const headers: Record<string, string> = { 'Content-Type': 'application/json' };
       // Only replace the copy just read. If another browser saved in between, the
       // server refuses (412) and this merges again. A weak ETag (W/) never matches.
       if (!last && remote && etag && !etag.startsWith('W/')) headers['If-Match'] = etag;
       if (!last && !remote) headers['If-None-Match'] = '*';
-      const put = await request(account, 'PUT', url, headers, JSON.stringify(toBackup(merged), null, 2));
+      const body = account.encryptionPassphrase ? await encryptSyncData(merged, account.encryptionPassphrase) : JSON.stringify(toBackup(merged), null, 2);
+      const put = await request(account, 'PUT', url, headers, body);
       if (put.status === 412 && !last) continue;
+      if (put.status === 412) throw new SyncError('changed');
       if (!put.ok) throw httpError(put.status);
     }
     // Unless another server was connected meanwhile, whose first sync starts afresh.
-    if (deepEqual(await accountItem.getValue(), account)) await baseItem.setValue(merged);
+    if (deepEqual(await accountItem.getValue(), account)) {
+      await baseItem.setValue(merged);
+      if (account.encryptionPassphrase && !account.encryptionReady) await accountItem.setValue({ ...account, encryptionReady: true });
+    }
     return;
   }
 }
@@ -167,7 +198,7 @@ export function syncWithServer(): Promise<SyncStatus | null> {
     });
     return queued;
   }
-  running = (async () => {
+  running = serialize(async () => {
     const account = await accountItem.getValue();
     if (!account) return null;
     let status: SyncStatus;
@@ -179,12 +210,57 @@ export function syncWithServer(): Promise<SyncStatus | null> {
       status = error instanceof SyncError ? { at: Date.now(), error: error.code, status: error.status } : { at: Date.now(), error: 'failed' };
     }
     // Disconnected meanwhile: leave nothing behind.
-    if (deepEqual(await accountItem.getValue(), account)) await statusItem.setValue(status);
+    if (sameAccount(await accountItem.getValue(), account)) await statusItem.setValue(status);
     return status;
-  })().finally(() => {
+  }).finally(() => {
     running = undefined;
   });
   return running;
+}
+
+/**
+ * Re-encrypt the shared file under a new passphrase. The current file must be
+ * readable here and support a strong ETag so concurrent writes cannot be lost.
+ */
+export function changeEncryptionPassphrase(nextPassphrase: string): Promise<SyncStatus | null> {
+  return serialize(async () => {
+    const account = await accountItem.getValue();
+    if (!account?.encryptionPassphrase) return null;
+    let status: SyncStatus;
+    try {
+      if (nextPassphrase.length < 12) throw new SyncError('failed');
+      const url = syncFileUrl(account.url);
+      const needed = permissionsFor(account.url, await supportsDataConsent());
+      if (!(await browser.permissions.contains(needed as PermissionRequest))) throw new SyncError('permission');
+      const got = await request(account, 'GET', url);
+      if (got.status === 404) throw new SyncError('file');
+      if (!got.ok) throw httpError(got.status);
+      const etag = got.headers.get('ETag');
+      if (!etag || etag.startsWith('W/')) throw new SyncError('changed');
+      const text = await got.text();
+      if (!isEncryptedSyncFile(text)) throw new SyncError('unencrypted');
+      const data = await decryptSyncData(text, account.encryptionPassphrase);
+      const body = await encryptSyncData(data, nextPassphrase);
+      if (!sameAccount(await accountItem.getValue(), account)) throw new SyncError('changed');
+      const put = await request(account, 'PUT', url, { 'Content-Type': 'application/json', 'If-Match': etag }, body);
+      if (put.status === 412) throw new SyncError('changed');
+      if (!put.ok) throw httpError(put.status);
+      const updated = { ...account, encryptionPassphrase: nextPassphrase, encryptionReady: true };
+      await accountItem.setValue(updated);
+      status = { at: Date.now() };
+    } catch (error) {
+      console.warn('[anubis] changing the sync encryption passphrase failed', error);
+      status =
+        error instanceof SyncError
+          ? { at: Date.now(), error: error.code, status: error.status }
+          : error instanceof EncryptedFileError
+            ? { at: Date.now(), error: error.reason === 'passphrase' ? 'passphrase' : error.reason === 'encrypted' ? 'encrypted' : 'file' }
+            : { at: Date.now(), error: 'failed' };
+    }
+    const current = await accountItem.getValue();
+    if (sameAccount(current, account) || current?.encryptionPassphrase === nextPassphrase) await statusItem.setValue(status);
+    return status;
+  });
 }
 
 /** Sync if something changed here since the last sync. */

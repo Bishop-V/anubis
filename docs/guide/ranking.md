@@ -6,7 +6,7 @@ Every site has a *ranking*, which you choose from the ⚖ button on any of its r
 
 ![A result with its tags and the ⚖ button](../img/result.png)
 
-The button's balance tips with the site's ranking: down on the left for a lowered site, up for a raised one, and level for the rest. A pinned site's button shows a pin, and a hidden site's (once you show it) a crossed-out eye.
+The button's balance tips with the site's ranking: down on the left for a lowered site, up for a raised one, and level for the rest. A pinned site's button shows a gold pin instead of a redundant label; a hidden site's (once you show it) shows a crossed-out eye. The result has no separate "Pinned" or "Hidden" label because the selector already shows its ranking. "Raised" and "Lowered" labels remain beside the tags.
 
 | Ranking | What happens to the site's results |
 | --- | --- |
