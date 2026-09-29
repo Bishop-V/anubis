@@ -1193,6 +1193,13 @@ if (!only || only === 'popover') {
   if (!explanation.includes('Matched rule, line ')) throw new Error('The result menu does not show the matching list rule');
   const reportLink = (await shadowLinks('anubis-popover')).find((a) => a.href.includes('/issues/new'));
   const issue = reportLink && new URL(reportLink.href);
+  // The rule is broken into its options for display (shadowText puts a space between
+  // them); its text must still read exactly as in the list.
+  const reportedRule = /```\n(.*)\n```/.exec(issue?.searchParams.get('body') ?? '')?.[1];
+  const squash = (s) => s.replace(/\s+/g, '');
+  if (!reportedRule || !squash(explanation).includes(squash(reportedRule))) {
+    throw new Error(`The result menu does not show the rule as written: ${reportedRule}`);
+  }
   console.log('\n== report a wrong result:', JSON.stringify({
     link: reportLink?.text,
     tracker: issue && issue.origin + issue.pathname,

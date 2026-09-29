@@ -12,6 +12,16 @@ header {
 body.paused main {
   opacity: 0.5;
 }
+/* The status line opens with a diamond: gold while Anubis is on, hollow when it's off. */
+#status {
+  --c: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+#status .gem.hollow {
+  --c: var(--muted);
+}
 
 section {
   padding: 12px 0;
@@ -77,9 +87,18 @@ h2 .text-btn {
   align-items: center;
   min-width: 0;
   max-width: 100%;
-  padding: 3px 16px 4px;
+  padding: 5px 19px 6px;
   border: 1.5px solid var(--gold);
   border-radius: 999px;
+}
+.cartouche::after {
+  content: '';
+  position: absolute;
+  inset: 2.5px;
+  border: 0.75px solid var(--gold);
+  border-radius: 999px;
+  opacity: 0.55;
+  pointer-events: none;
 }
 .cartouche .name {
   overflow: hidden;
@@ -124,7 +143,31 @@ h2 .text-btn {
   }
 }
 .levels {
-  gap: 12px;
+  gap: 6px;
+}
+/* Each ranking's icon over its name: muted at rest, the ranking's colour once chosen. */
+.levels button {
+  flex-direction: column;
+  gap: 3px;
+  min-width: 48px;
+  padding: 2px 2px 4px;
+}
+.levels .level-icon {
+  color: var(--muted);
+}
+.levels button:hover .level-icon,
+.levels button.from-list .level-icon {
+  color: inherit;
+}
+.levels button[aria-pressed='true'] .level-icon {
+  color: var(--text);
+}
+.levels button.raise[aria-pressed='true'] .level-icon,
+.levels button.pin[aria-pressed='true'] .level-icon {
+  color: var(--gold-ink);
+}
+.levels button.hide[aria-pressed='true'] .level-icon {
+  color: var(--danger);
 }
 .levels button.from-list:not([aria-pressed='true']) {
   color: var(--gold-ink);
@@ -192,6 +235,30 @@ li .site {
   text-overflow: ellipsis;
   white-space: nowrap;
   font-weight: 500;
+}
+li .tag {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+/* Nothing in your list yet: the balance, level and empty, over the sentence. */
+li.empty {
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 8px 6px;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+li.empty svg {
+  width: 96px;
+  height: 30px;
+  margin: 0;
+  color: var(--muted);
+}
+li.empty p {
+  margin: 0;
+  max-width: 30ch;
+  text-wrap: balance;
 }
 li .level-note {
   font-size: 12.5px;

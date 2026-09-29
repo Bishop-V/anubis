@@ -94,7 +94,7 @@ One palette, defined twice: `assets/theme.css` for extension pages and `entrypoi
 
 | Surface | Layout |
 | --- | --- |
-| Popup | 340px wide. Header (logo, status, on/off), then sections under hairlines with a muted label, then a footer. What shows depends on the tab: on a search page, what Anubis did there and its tags to show only; on any other site, that site in the cartouche over the balance, with the rankings and tags; elsewhere, Add a site. The last few of your sites always follow. |
+| Popup | 340px wide. Header (logo, the status after a diamond that's gold while Anubis is on and hollow while it's off, on/off), then sections under hairlines with a muted label, then a footer. What shows depends on the tab: on a search page, what Anubis did there and its tags to show only; on any other site, that site in the cartouche over the balance, with the rankings and tags; elsewhere, Add a site. The last few of your sites always follow. |
 | Settings | Two columns in 1040px: a 210px navigation column and sections up to 760px. One row per thing you can change. Below 760px, one column with the navigation across the top. |
 | Welcome page | The same idea in 1040px: section titles in a 220px column, what to do beside them, lists two across. Below 900px, one column. |
 | Search pages | The summary sits above the results, lined up with them. Tags go under each title. The result menu opens under its ⚖ button, 312px wide. |
@@ -103,7 +103,7 @@ Every page works at phone width (390px) without scrolling sideways. Settings are
 
 <img src="docs/img/popup.png" alt="The popup on wikipedia.org: the site in the cartouche over the balance, the five rankings, tags, and your sites" width="340">
 
-The popup on a site that isn't a search page: header, the site in the cartouche over the balance and rankings, tags as a choice of diamonds, your last few sites with their ranking in words, and a footer of small print and text buttons. No section is boxed; hairlines divide them.
+The popup on a site that isn't a search page: header, the site in the cartouche over the balance and rankings, tags as a choice of diamonds, your last few sites with their ranking in words (or their tag, when a site has only a tag), and a footer of small print and text buttons. No section is boxed; hairlines divide them.
 
 ## Controls
 
@@ -120,8 +120,9 @@ All shared controls are in `assets/theme.css`; the search-page versions in `shad
 | Input | `input` | 30px, `--raised`, 1px `--line-strong` border, 6px radius, 13px; the border turns gold on focus | Placeholders in `--muted` give an example ("fandom.com"), not an instruction |
 | Select | `select` | The same box as an input, with the one caret: a small `--muted` chevron drawn in CSS, 10px from the right edge | Never the browser's own arrow |
 | Switch | `.switch` | 30×17px pill, gold when on | Settings that take effect at once; no Save button |
-| Choice row | `.seg`, `.levels` | Plain words in `--muted`; the chosen one `--text`, 600, with a 2px underline in gold (`--danger` for Hide, the tag's colour for a tag filter) | Choosing one of a few: the rankings, Appearance's options |
+| Choice row | `.seg`, `.levels` | Plain words in `--muted`; the chosen one `--text`, 600, with a 2px underline in gold (`--danger` for Hide, the tag's colour for a tag filter). The rankings put each one's icon over its word: `--muted` at rest, and once chosen `--gold-ink` for Raise and Pin, `--danger` for Hide | Choosing one of a few: the rankings, Appearance's options |
 | Tag | `.tag` + `.gem` | A 6px diamond in the tag's colour, then its name; hollow for a tag you could add | Tags everywhere. Never pills or chips with fills. |
+| Site name | `siteName()` + `.suffix` | The name in the row's colour, the ending it shares with other sites (`.org`, `.co.uk`) in `--muted` at 400 | A site as a row's subject: the popup's and Settings' Your sites |
 | Ranking note | `.level-note`, `.verdict` | Pin and Raise in `--gold-ink`, Hide in `--danger`, Lower and Normal in `--muted`; pinned and hidden results use their selector icon instead of a redundant chip, while Raised and Lowered chips remain | Naming a site's ranking |
 
 ```ts
@@ -172,15 +173,16 @@ One line above the results, in the page's font at 13px, `--muted` for the senten
 
 The one place with character. In order:
 
-1. **The cartouche**: the site's name, 16px serif, in a 1.5px gold oval. Where the rule can cover more or less of the site (`en.wikipedia.org` or `wikipedia.org`), a caret follows the name and the native select lies unseen over the whole oval, so the oval is exactly as wide as the name and it stays centred. There's no bar at the end of the oval: at this size it read as a text cursor.
+1. **The cartouche**: the site's name, 16px serif, in a 1.5px gold oval, doubled by a 0.75px gold hairline 2.5px inside it at just over half strength, as carved cartouches are drawn. Where the rule can cover more or less of the site (`en.wikipedia.org` or `wikipedia.org`), a caret follows the name and the native select lies unseen over the whole oval, so the oval is exactly as wide as the name and it stays centred. There's no bar at the end of the oval: at this size it read as a text cursor.
 2. **The balance**: the site's pan on the left, the feather's on the right, tilting to the chosen ranking. It swings when the ranking changes, and holds still with reduced motion.
-3. **Rankings**: Hide, Lower, Normal, Raise, Pin as a choice row, with a hint underneath that says whose choice it is ("Your choice for javascript.info, on every search.").
-4. **Tags**, **Why** (the rules that matched, and links to report or suggest changes to a list) and a footer, each under a hairline with a 12.5px label.
+3. **Rankings**: Hide, Lower, Normal, Raise, Pin as a choice row, each word under its icon, with a hint underneath that says whose choice it is ("Your choice for javascript.info, on every search.").
+4. **Tags**, **Why** (the rules that matched, and links to report or suggest changes to a list) and a footer, each under a hairline with a 12.5px label. Under Why, each rule follows "Matched rule, line 10" in the code face at 12.5px. It breaks only after a comma, with a hanging indent: option names in `--muted`, what they match in `--text`, and an option that raises (`boost`, `pin`) in `--gold-ink` or hides (`discard`) in `--danger`, both at 600. `ruleParts()` in `utils/ruletext.ts` splits it.
 
 ## Icons
 
 - Inline SVG from `utils/icons.ts`: a 16×16 grid, 1.6px stroke, round caps and joins, `currentColor`. Shown at 13–15px. Decorative, so `aria-hidden`.
-- Each ranking has one icon, used everywhere: an eye struck through (Hide), a chevron down (Lower), a feather (Normal), a chevron up (Raise), a pin (Pin).
+- Each ranking has one icon, used everywhere: an eye struck through (Hide), a chevron down (Lower), a feather (Normal), a chevron up (Raise), a pin (Pin). In the popup and the result menu it sits over the ranking's name.
+- The balance is drawn in three more places. In the popup it's in `--muted`, level and with empty pans, above Your sites while that list is empty: the only illustration. On the welcome page it sits in gold under the lead (see Motion).
 - The Anubis head is the brand mark: the logo tile on extension pages and in the toolbar, the bare head as the summary's mark on search pages. It's never a button's icon.
 - The button on each result shows the result menu's balance in small, tipped to the site's ranking: level for Normal, the site's (left) pan down for Lower, and up for Raise. A hidden site shows the ranking's crossed-out eye and a pinned one its pin. It's drawn in `--muted` like any icon at rest; the tilt, not a colour, shows the ranking, and its label says it too ("Hide, rank, or tag fandom.com (lowered)").
 - An icon without words only where the meaning is universal (the cog, ×, and the balance on a result, which names the menu it opens in its tooltip). Everything else gets a word, with or without an icon.
@@ -188,7 +190,8 @@ The one place with character. In order:
 ## Motion
 
 - Motion answers an action: the menu opens with a 120ms fade and 3px drop, the balance swings, switches slide.
-- Nothing moves on its own. Movement (the menu's drop, the balance, switches) stops under `prefers-reduced-motion`.
+- Nothing moves on its own, with one exception: the welcome page's balance, seen once, swings and settles level as the page opens, and a click on either side presses that pan down to swing again. It's decoration, hidden from screen readers.
+- Movement (the menu's drop, the balance, switches, the welcome page's balance) stops under `prefers-reduced-motion`.
 
 ## Writing
 

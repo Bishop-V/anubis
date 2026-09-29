@@ -6,7 +6,7 @@ import { domainChoices, normalizeDomain, siteOf } from '@/utils/domain';
 import { engineFor } from '@/utils/engines';
 import { guide } from '@/utils/links';
 import { LEVELS, TAG_CHOICES, evaluate, type Level } from '@/utils/matcher';
-import { h, icon } from '@/utils/dom';
+import { h, icon, siteName } from '@/utils/dom';
 import { ICON_GEAR, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
 import { localizePage, t, tn, type MessageKey } from '@/utils/i18n';
 import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/messages';
@@ -60,7 +60,10 @@ async function renderAll() {
   const rules = await loadRuleSet();
   enabled.checked = rules.settings.enabled;
   document.body.classList.toggle('paused', !rules.settings.enabled);
-  $('#status').textContent = rules.settings.enabled ? t('popupOn') : t('popupOff');
+  $('#status').replaceChildren(
+    h('i', { class: rules.settings.enabled ? 'gem' : 'gem hollow', attrs: { 'aria-hidden': 'true' } }),
+    rules.settings.enabled ? t('popupOn') : t('popupOff'),
+  );
 
   const sites = listSites(rules.personalText).reverse();
   const seeAll = $<HTMLButtonElement>('#see-all');
@@ -70,20 +73,23 @@ async function renderAll() {
     ...(sites.length
       ? sites.slice(0, RECENT).map((entry) => {
           const level = entry.level === 'allow' ? 'normal' : entry.level;
+          const onlyTag = entry.tags.length === 1 ? rules.tags.get(entry.tags[0]!) : undefined;
           return h(
             'li',
             null,
-            h('span', { class: 'site', title: entry.site }, entry.site),
+            h('span', { class: 'site', title: entry.site }, siteName(entry.site)),
             level !== 'normal'
               ? h('span', { class: `level-note ${level}` }, icon(LEVEL_ICONS[level]), LEVEL_CHIPS[level])
               : entry.level === 'allow'
                 ? h('span', { class: 'level-note' }, t('popupKeptNormal'))
-                : entry.tags.length
-                  ? h('span', { class: 'level-note' }, tn('popupTagCount', entry.tags.length))
-                  : null,
+                : onlyTag
+                  ? h('span', { class: 'tag', style: `--c: ${onlyTag.color}` }, h('i', { class: 'gem' }), onlyTag.label)
+                  : entry.tags.length
+                    ? h('span', { class: 'level-note' }, tn('popupTagCount', entry.tags.length))
+                    : null,
           );
         })
-      : [h('li', { class: 'muted' }, t('popupNoSites'))]),
+      : [h('li', { class: 'empty' }, balanceSvg({ empty: true }), h('p', null, t('popupNoSites')))]),
   );
 
   const subs = rules.lists.filter((l) => !l.personal);
@@ -153,6 +159,7 @@ function renderHere(rules: RuleSet) {
             },
           },
         },
+        h('span', { class: 'level-icon' }, icon(LEVEL_ICONS[level])),
         LEVEL_LABELS[level],
       ),
     ),

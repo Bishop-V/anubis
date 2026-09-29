@@ -2,6 +2,13 @@
 
 What was tried while building the tagging and lists release, what failed, and what is still unverified. Newest notes go at the top of each section.
 
+## Finishing touches (2026-09-29)
+
+- **Asked for:** the project owner wanted the extension to look better, with small, tasteful additions rather than anything loud. Ten were mocked up beside the current build, in both schemes. The mockups aren't in the repository.
+- **Shipped:** a diamond before the popup's status, gold while Anubis is on and hollow while it's off. A second, fainter hairline inside the cartouche, as carved cartouches are drawn, in the popup and the result menu. Each ranking's icon over its name, muted until it's chosen. In Your sites (the popup and Settings), the ending a site shares with others (`.org`, `.co.uk`) is muted, and a site with only a tag shows that tag instead of "1 tag". The popup's empty Your sites list shows the balance, level and empty, in grey. The matched rule under Why is split into its options (`utils/ruletext.ts`) and breaks only after a comma; before, it wrapped mid-word ("tuto" / "rial"). The welcome page's balance swings and settles level as the page opens, and a click on either side presses that pan down to swing again (the owner asked for it to react to something). It holds still with reduced motion.
+- **Rejected:** a faint gold glow behind the balance, with a ground line under its foot ("too much"). A grain on extension pages' backgrounds, to make the light scheme look like honed stone ("not needed"). Counts in the summary's sentence set in the text colour at 500, to be read at a glance ("no").
+- **Checked:** unit tests for `splitSuffix` and `ruleParts`, including that the parts join back into the exact rule; the `popover` e2e part checks that the menu shows the rule as written. The `checks`, `responsive`, `welcome`, `a11y`, `mobile`, and `options` parts pass. The regenerated popup, menu, and Your sites screenshots were rendered in a container whose fonts differ from the other screenshots'; regenerate them with `node e2e/run.mjs docs` on the usual machine to match.
+
 ## Passphrase changes that race or lose their answer (2026-09-29)
 
 - **Found:** a review of the passphrase change turned up three gaps. It ran in the Settings page, so the lock that keeps syncs from overlapping (which only works within one script) didn't hold back the background script's syncs; a sync's last attempt writes without `If-Match` and could put back a file under the old passphrase. When the server saved the new file but the answer was lost, the old passphrase stayed saved and the next sync failed. And a server disconnected during the change was connected again when it finished.

@@ -8,6 +8,7 @@ import { LEVELS, TAG_CHOICES, type Level, type TagPref, type Verdict } from '@/u
 import { t, tList, tn } from '@/utils/i18n';
 import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, PERSONAL_NAME, type PersonalLevel } from '@/utils/personal';
+import { ruleParts } from '@/utils/ruletext';
 import type { Palette } from '@/utils/storage';
 import { summarySentence } from '@/utils/summary';
 import { OWN_TAGS, type FoundResult } from './results';
@@ -992,6 +993,20 @@ function position(host: HTMLElement, anchor: HTMLElement): void {
   host.style.top = `${rect.bottom + window.scrollY + 6}px`;
 }
 
+/** A list's rule, breaking only after a comma, with each option's name muted and its effect in its ranking's colour. */
+function ruleCode(raw: string): HTMLElement {
+  return h(
+    'code',
+    { class: 'rule' },
+    ruleParts(raw).map((part, i) => [
+      i ? ',' : null,
+      i ? h('wbr') : null,
+      part.key ? h('span', { class: 'key' }, part.key) : null,
+      h('span', { class: part.effect ? `value ${part.effect}` : 'value' }, part.value),
+    ]).flat(),
+  );
+}
+
 function buildPopover(
   data: PopoverData,
   actions: PopoverActions,
@@ -1039,6 +1054,7 @@ function buildPopover(
             },
           },
         },
+        h('span', { class: 'level-icon' }, icon(LEVEL_ICONS[level])),
         LEVEL_LABELS[level],
       ),
     ),
@@ -1169,7 +1185,8 @@ function buildPopover(
                     null,
                     h('b', null, r.list),
                     ` ${r.text}.`,
-                    r.rule ? h('small', null, t('menuMatchedRule', r.rule.line, r.rule.raw)) : null,
+                    r.rule ? h('small', null, t('menuMatchedRule', r.rule.line)) : null,
+                    r.rule ? ruleCode(r.rule.raw) : null,
                   ),
                 ),
               )
