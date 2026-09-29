@@ -4,13 +4,14 @@
 //
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
-//                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options, welcome,
-//                               sync, webdav
+//                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options,
+//                               responsive, welcome, sync, webdav
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slides
 //                               in docs/public/
 //
-// Needs a Chromium build (branded Chrome no longer loads unpacked extensions from
-// the command line). Point CHROMIUM_PATH at it, e.g. CHROMIUM_PATH=$(which chromium).
+// Needs Chromium (branded Chrome no longer loads unpacked extensions from the
+// command line). Playwright's installed build is used by default; on NixOS, point
+// CHROMIUM_PATH at the system binary.
 // The mock pages are modelled on each engine's markup; they are not the real thing.
 
 import { chromium } from 'playwright-core';
@@ -24,14 +25,14 @@ import { ANUBIS_PAGE2, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, brave, duckduc
 const EXT = fileURLToPath(new URL('../.output/chrome-mv3', import.meta.url));
 const SHOTS = fileURLToPath(new URL('./shots/', import.meta.url));
 const only = process.argv[2];
-const executablePath = process.env.CHROMIUM_PATH;
+const executablePath = process.env.CHROMIUM_PATH || chromium.executablePath();
 
 if (!existsSync(join(EXT, 'manifest.json'))) {
   console.error('No Chrome build found. Run `npm run build:chrome` first (or `npm run e2e`).');
   process.exit(1);
 }
-if (!executablePath) {
-  console.error('Set CHROMIUM_PATH to a Chromium binary, e.g. CHROMIUM_PATH=$(which chromium) npm run e2e');
+if (!existsSync(executablePath)) {
+  console.error('Chromium is missing. Run `npx playwright-core install chromium` or set CHROMIUM_PATH to a system binary.');
   process.exit(1);
 }
 mkdirSync(SHOTS, { recursive: true });
@@ -1000,6 +1001,35 @@ if (!only || only === 'options') {
     await opt.close();
   }
   console.log('\n== options + popup screenshots done');
+}
+
+if (!only || only === 'responsive') {
+  const opt = await ctx.newPage();
+  for (const width of [320, 360, 390]) {
+    await opt.setViewportSize({ width, height: 900 });
+    for (const section of ['sites', 'tags', 'lists', 'cleanup', 'appearance', 'engines', 'sync', 'share']) {
+      await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
+      await opt.locator('main h2').waitFor();
+      const layout = await opt.evaluate(() => ({
+        document: document.documentElement.scrollWidth,
+        viewport: window.innerWidth,
+      }));
+      if (layout.document > layout.viewport) {
+        throw new Error(`Settings → ${section} overflows at ${width}px (${layout.document}px wide)`);
+      }
+      if (section === 'sites' && width < 390) {
+        const scrolls = await opt.locator('.sites-scroll').evaluate((el) => el.scrollWidth > el.clientWidth);
+        if (!scrolls) throw new Error(`Your sites table should scroll inside its wrapper at ${width}px`);
+      }
+      if (section === 'sites' && width === 390) {
+        const overflows = await opt.locator('.sites-scroll').evaluate((el) => el.scrollWidth > el.clientWidth);
+        if (overflows) throw new Error('Your sites table should fit at 390px');
+      }
+    }
+    console.log(`  Settings sections fit at ${width}px`);
+  }
+  await opt.close();
+  console.log('\n== responsive Settings checks passed');
 }
 
 if (!only || only === 'welcome') {

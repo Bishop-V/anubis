@@ -29,6 +29,7 @@ The [README](README.md#setup) has the rest, including loading a build by hand.
 
 Keep each pull request to one topic. The project's conventions, briefly:
 
+- **Protect working behavior.** Read [`AGENTS.md`](AGENTS.md) before editing; reproduce bugs and add a regression check before changing behavior. Treat stored formats, extension identity, permissions, and guide URLs as compatibility contracts.
 - **Interface.** The popup, settings, welcome page, and in-page UI are plain DOM built with `h()` from `utils/dom.ts`. Text from lists always goes in as text nodes, never markup, and nothing uses `innerHTML`. Interface text goes in `public/_locales/en/messages.json` and is used through `t()`, `tn()` (counts) and `localizePage()` (static HTML) from `utils/i18n.ts`.
 - **Look.** [`STYLEGUIDE.md`](STYLEGUIDE.md) has the palette, type sizes, controls, and layouts. Use what's there rather than a new colour, size, or radius.
 - **Access.** [`ACCESSIBILITY.md`](ACCESSIBILITY.md) has what to keep in mind for screen readers and the keyboard, on Anubis's own pages and on search pages.
@@ -53,7 +54,9 @@ npm run build && npm run build:chrome   # both browsers
 npx web-ext lint -s .output/firefox-mv2 # must show zero warnings
 ```
 
-If you changed `docs/`, also run `npm run docs:build`, which fails on a broken link. If you changed something the wiki's screenshots show, redraw them with `node e2e/run.mjs docs` (it makes light and dark versions) and commit only the ones your change affects. If you changed anything on search pages and have Chromium, run `npm run e2e` with `CHROMIUM_PATH` set; it needs no network.
+If you changed `docs/`, also run `npm run docs:build`, which fails on a broken link. If you changed something the wiki's screenshots show, redraw them with `node e2e/run.mjs docs` (it makes light and dark versions) and commit only the ones your change affects. If you changed anything on search pages and have Chromium, run `npm run e2e`; it needs no network. The CI job runs the network-free `responsive` part on every pull request.
+
+For interface changes, run `node e2e/run.mjs responsive` to check every Settings section at 320px, 360px, and 390px. Read [`docs/platform-watch.md`](docs/platform-watch.md) before changing browser APIs, manifests, publishing, or storage assumptions.
 
 ## Pull requests and merging
 

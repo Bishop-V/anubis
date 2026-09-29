@@ -31,7 +31,8 @@ npm test               # unit tests
 npm run build          # .output/firefox-mv2/
 npm run build:chrome   # .output/chrome-mv3/
 npx web-ext lint -s .output/firefox-mv2
-npm run e2e            # Chrome build, then every end-to-end check (needs CHROMIUM_PATH)
+npm run e2e            # Chrome build, then every end-to-end check (needs Chromium)
+node e2e/run.mjs responsive # Settings layout at 320px, 360px, and 390px
 npm run docs:dev       # the wiki, with live reload
 npm run docs:build     # the wiki; fails on a broken link
 npm run zip            # store packages (see "Releasing")
@@ -60,6 +61,8 @@ Things that differ between the two builds:
 - `import.meta.env.FIREFOX` is `true` in the Firefox build, for the rare browser-specific branch (the welcome page's pinning steps).
 
 `utils/engines.ts` is imported by `wxt.config.ts` at build time to write the content script's `matches`, so it must never touch a browser API. `utils/links.ts` is imported by the config and by the docs site, for the same reason.
+
+Before changing existing behavior, check [`AGENTS.md`](AGENTS.md) for compatibility contracts and reproduce the old behavior with a regression test. Before changing browser APIs, permissions, manifest targets, or release steps, check [`docs/platform-watch.md`](docs/platform-watch.md) and verify the current vendor requirements.
 
 Two builds of the same commit are identical file for file. Firefox's reviewers rebuild the extension from `anubis-<version>-sources.zip`, which leaves out `docs/`, `e2e/`, `store/` and `.claude/` (`zip.excludeSources` in `wxt.config.ts`).
 
@@ -229,7 +232,7 @@ Not everything is converted yet: `ROADMAP.md` lists what's left. Wording follows
 | `engines.test.ts` | Picking an engine's phone layout |
 | `i18n.test.ts` | Message keys, plural forms, and placeholders, the undo line's wording |
 
-**End-to-end checks** (`npm run e2e`, or `node e2e/run.mjs <part>` after `npm run build:chrome`) load the Chrome build into Chromium. `CHROMIUM_PATH` has to point at a Chromium binary: branded Chrome no longer loads unpacked extensions from the command line. The harness answers the real engines' addresses with the mock pages in `e2e/fixtures.mjs` (Google, DuckDuckGo, Bing, Brave, and Google's phone layout), seeds storage with a test personal list and settings, prints what Anubis decided, and saves screenshots to `e2e/shots/`. Each part is a block in `e2e/run.mjs`: `pages`, `hostile`, `grouped`, `reveal`, `runs`, `shortcuts`, `mobile`, `off`, `palette`, `cleanup`, `pins`, `popover`, `a11y`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `subscribe-link`, `options`, `welcome`, `sync`, and `webdav`. `webdav` connects a mock WebDAV server in Settings; a script can't answer the browser's permission prompt, so it runs a copy of the build whose manifest already allows the mock's host, and Playwright only reaches the background script's requests with `PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1`, which the part sets.
+**End-to-end checks** (`npm run e2e`, or `node e2e/run.mjs <part>` after `npm run build:chrome`) load the Chrome build into Chromium. Install Playwright's Chromium with `npx playwright-core install chromium`; on NixOS, set `CHROMIUM_PATH` to the system Chromium because Playwright's downloaded browser doesn't run there. Branded Chrome no longer loads unpacked extensions from the command line. The harness answers the real engines' addresses with the mock pages in `e2e/fixtures.mjs` (Google, DuckDuckGo, Bing, Brave, and Google's phone layout), seeds storage with a test personal list and settings, prints what Anubis decided, and saves screenshots to `e2e/shots/`. Each part is a block in `e2e/run.mjs`: `pages`, `hostile`, `grouped`, `reveal`, `runs`, `shortcuts`, `mobile`, `off`, `palette`, `cleanup`, `pins`, `popover`, `a11y`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `subscribe-link`, `options`, `responsive`, `welcome`, `sync`, and `webdav`. `responsive` checks every Settings section at 320px, 360px, and 390px, and confines narrow-screen scrolling to the Your sites table; CI runs this network-free check on every pull request. `webdav` connects a mock WebDAV server in Settings; a script can't answer the browser's permission prompt, so it runs a copy of the build whose manifest already allows the mock's host, and Playwright only reaches the background script's requests with `PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1`, which the part sets.
 
 Parts print their findings rather than failing on them (turning them into assertions is on the roadmap), so read the output: a check that should say `false` and says `true` is a failure. Mock pages are models of the engines' markup, not copies of it; when an engine breaks, model the markup that broke as a variant of its mock (Google's `hostile` and `grouped` are examples) and never commit a page saved from a live search.
 

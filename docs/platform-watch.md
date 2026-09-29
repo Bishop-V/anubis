@@ -1,0 +1,27 @@
+# Browser and store platform watch
+
+Checked on **2026-09-29** against the linked vendor documentation. This is a dated watch list, not a promise that a browser will keep an API unchanged. Recheck it before the first store submission and before releases that touch manifests, permissions, messaging, background work, or storage.
+
+| Platform | Status and effect on Anubis | What to do |
+| --- | --- | --- |
+| Chrome Manifest V2 | **Retired from the Chrome Web Store on 2026-08-31.** Existing installs on Chrome 138 or earlier may continue running, but cannot receive updates or be reinstalled. | Keep Chrome on the MV3 build and Firefox on the MV2 build. The release workflow checks both builds and add-on packages. |
+| Chrome `browser.*` namespace | Chrome 148 adds the `browser` namespace alongside `chrome`; Google says neither namespace is being removed. Promise-returning `runtime.onMessage` listeners are added at the same time. | No migration is needed: WXT's `@wxt-dev/browser` selects native `browser` when it exists and falls back to `chrome`; Anubis uses the older `sendResponse` plus `return true` pattern, which remains supported. Check the built Chrome extension on stable 148 before adopting newer-only APIs or raising its minimum version. |
+| Chrome Web Store publishing | The current publishing API is V2 and supports Google Cloud service accounts. The release workflow sets `CHROME_API_VERSION=v2` and keeps credentials in the protected `release` environment. The publishing notes record **2026-10-15** as the end of API v1.1 refresh-token support; Google's current overview now labels V1 as archived. | Recheck the publisher dashboard and [current API guide](https://developer.chrome.com/docs/webstore/using-api) before the first automated submission and before 2026-10-15. Keep manual dashboard submission available until the first API submission succeeds. |
+| Firefox data-transmission consent | AMO's current policy requires add-ons to declare data practices. For Firefox 140+ using built-in consent, the manifest declaration must be accurate. If the add-on supports Firefox 139 or earlier, or does not use built-in consent, AMO requires an unmissable in-extension consent and control immediately after install and when transmission begins or changes in an update. | The manifest declares no required data and optional `browsingActivity`; WebDAV requests that optional permission when the user connects. Before AMO submission, verify the minimum supported Firefox version and confirm the connection flow satisfies the applicable policy. Do not broaden the declaration without reviewing what actually leaves the browser. |
+| Firefox Manifest V2 | No Firefox MV2 retirement date was found in Mozilla's current documentation on this check. This is not a guarantee of indefinite support. | Keep the MV2 target under review; test the current release Firefox and AMO linter. A future MV3 migration needs a concrete Firefox requirement, not parity for its own sake. |
+| Chrome service-worker lifetime | MV3 workers can stop after inactivity, long-running work, or a slow fetch. Chrome documents 30 seconds idle, five minutes for one event/API request, and 30 seconds waiting for a `fetch()` response. These are current limits, not a newly announced deadline. | Persist important state in storage, make work safe to repeat after restart, and avoid keeping the worker alive just to preserve timers. Revisit if background work starts approaching these limits. |
+| Browser sync storage | Chrome documents roughly 100 KB total and 8 KB per item for `storage.sync`; no upcoming quota change was found. | Keep chunks below the per-item limit and verify total usage. `tests/storage.test.ts` protects chunking, compression, old-format reads, and fallback behavior. |
+
+## Sources
+
+- [Chrome MV2 deprecation timeline](https://developer.chrome.com/docs/extensions/develop/migrate/mv2-deprecation-timeline)
+- [Chrome's `browser` namespace](https://developer.chrome.com/docs/extensions/develop/concepts/browser-namespace)
+- [Chrome Web Store API](https://developer.chrome.com/docs/webstore/api) and [publishing guide](https://developer.chrome.com/docs/webstore/using-api)
+- [Chrome extension service-worker lifecycle](https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/lifecycle)
+- [Chrome Storage API quotas](https://developer.chrome.com/docs/extensions/reference/api/storage)
+- [AMO add-on policies, section 6.2](https://extensionworkshop.com/documentation/publish/add-on-policies/) and [Firefox built-in data consent](https://extensionworkshop.com/documentation/develop/firefox-builtin-data-consent/)
+- [Firefox Manifest V3 migration guide](https://extensionworkshop.com/documentation/develop/manifest-v3-migration-guide/)
+
+## Design study
+
+[The weighing study](https://github.com/Bishop-V/anubis/blob/main/store/concepts/weighing-study.svg) is an exploratory illustration, not an approved logo or store asset. It uses Anubis's existing palette and the weighing motif without changing the shipped identity.

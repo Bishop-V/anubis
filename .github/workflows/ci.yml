@@ -30,4 +30,8 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npm run build:chrome
+      - name: Install Chromium for responsive layout checks
+        run: npx playwright-core install --with-deps chromium
+      - name: Check Settings at phone widths
+        run: node e2e/run.mjs responsive
       - run: npx web-ext lint --source-dir .output/firefox-mv2 --warnings-as-errors

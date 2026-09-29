@@ -2,11 +2,11 @@
 
 What the Chrome Web Store and Firefox Add-ons (AMO) ask for, with the answers ready to paste. Neither listing exists yet. Do the first upload to each store by hand in its dashboard; the APIs update listings that already exist.
 
-## Chrome's publishing API changes on 15 October 2026
+## Chrome Web Store publishing API
 
-Chrome Web Store API v1.1, and the OAuth refresh tokens it uses, stop working on **15 October 2026**. Anything that publishes from a script or CI has to use API v2, which signs in with a Google Cloud **service account** instead.
+The Chrome Web Store API V2 is current and supports Google Cloud **service accounts**. The older V1.1 API and its refresh tokens are scheduled to stop working on **15 October 2026**; the current [API overview](https://developer.chrome.com/docs/webstore/api) now marks V1 as archived. Recheck the publisher dashboard and current Google documentation before the first automated submission and before that date.
 
-`wxt submit` (the publishing tool that comes with WXT, `publish-browser-extension` 6.1.1 in WXT 0.21) speaks v2 but **still defaults to v1.1**. When publishing is automated, set:
+`wxt submit` (the publishing tool that comes with WXT, `publish-browser-extension` 6.1.1 in WXT 0.21) supports v2 but **still defaults to v1.1**. The release workflow sets `CHROME_API_VERSION=v2`; keep it explicit:
 
 ```sh
 CHROME_API_VERSION=v2
@@ -26,6 +26,8 @@ Setting it up: create a Google Cloud project, turn on the Chrome Web Store API, 
 4. `npm run zip:chrome` for Chrome. `npm run zip` for Firefox, which also makes `anubis-<version>-sources.zip` for AMO's reviewers.
 5. The privacy policy link below has to load: GitHub Pages must be publishing the docs site.
 6. Merge, then push a matching tag (`git tag v<version> && git push origin v<version>`). [`release.yml`](../.github/workflows/release.yml) builds the zips, creates the GitHub Release and, once approved, submits to Chrome, Firefox, and Edge.
+
+The release workflow rejects tags whose commit is not already on `main`, as well as tags that do not match `package.json`. Before the first submission, create the store listings manually, verify their permanent IDs and privacy answers, enable GitHub Pages, and configure the protected `release` environment with the store credentials. Do not test publishing against production store credentials from a pull request.
 
 ## Chrome Web Store
 
@@ -86,7 +88,8 @@ Public, all regions.
 - **License:** GNU Affero General Public License v3.0 (the project is AGPL-3.0 or later; the lists in `lists/` are CC0).
 - **Homepage and support site:** as for Chrome.
 - **Privacy policy:** `https://bishop-v.github.io/anubis/guide/privacy`. The manifest declares no required data collection (`required: ['none']`), which Firefox shows on the listing and at install, and one optional category, `browsingActivity`, which Settings requests only when the user connects a WebDAV server to sync between browsers (their list is a set of sites). AMO requires the declaration of every add-on from 2026.
-- **Manifest version:** stays on MV2 for Firefox. Mozilla has no plans to drop it, and MV3 in Firefox changes how host permissions are granted for no gain here.
+- **Consent policy check:** before submission, verify the supported Firefox minimum against [AMO's current consent policy](https://extensionworkshop.com/documentation/publish/add-on-policies/). For Firefox 140+ using built-in consent, the manifest declaration must be accurate. If the add-on supports Firefox 139 or earlier, or does not use built-in consent, AMO requires an unmissable in-extension consent and control immediately after installation and when data transmission starts or changes in an update. Anubis requests optional `browsingActivity` as part of the user's WebDAV Connect action; confirm that this flow and the supported minimum meet the current policy.
+- **Manifest version:** stays on MV2 for Firefox. No MV2 retirement date was found in Mozilla's current documentation; check [`docs/platform-watch.md`](../docs/platform-watch.md) again before each release. MV3 in Firefox changes how host permissions are granted, so migrate only for a concrete Firefox requirement.
 - **Source code:** yes, the build bundles and minifies. Upload `.output/anubis-<version>-sources.zip`.
 
 **Notes to reviewer**

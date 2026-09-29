@@ -51,7 +51,7 @@ npm run build        # production build into .output/firefox-mv2
 npm run build:chrome # production build into .output/chrome-mv3
 ```
 
-`npm run e2e` loads the Chrome build into Chromium against mock result pages and saves screenshots to `e2e/shots/`. Set `CHROMIUM_PATH` to a Chromium binary first. `node e2e/run.mjs subscribe` also downloads a real list from GitHub; behind a TLS-intercepting proxy, point `PROXY_CA_CERT` at its CA.
+`npm run e2e` loads the Chrome build into Chromium against mock result pages and saves screenshots to `e2e/shots/`. Install Playwright's Chromium with `npx playwright-core install chromium`, or set `CHROMIUM_PATH` to a system binary (on NixOS, use the system Chromium). `node e2e/run.mjs responsive` checks all Settings sections at 320px, 360px, and 390px; CI runs this check on every pull request. `node e2e/run.mjs subscribe` also downloads a real list from GitHub; behind a TLS-intercepting proxy, point `PROXY_CA_CERT` at its CA.
 
 ### Loading it by hand
 
@@ -91,6 +91,7 @@ To publish a version, set `version` in `package.json`, merge it, then push a mat
 The wiki is at **[bishop-v.github.io/anubis](https://bishop-v.github.io/anubis/)**, built from [`docs/`](docs) (start with [the introduction](docs/guide/introduction.md)). `npm run docs:dev` previews it locally.
 
 - [Developing Anubis](DEVELOPMENT.md): how the extension is put together, how a build is made, and how to add an engine, a setting, or interface text.
+- [Agent instructions](AGENTS.md): compatibility contracts, regression checks, and safe working practices.
 - [Accessibility](ACCESSIBILITY.md): keeping Anubis usable with a screen reader and from the keyboard, and where it falls short today.
 - [The list format](docs/list-format.md): how to write and publish a list.
 - [Lists](lists/README.md): the lists that ship with Anubis and how to contribute one.
@@ -98,6 +99,7 @@ The wiki is at **[bishop-v.github.io/anubis](https://bishop-v.github.io/anubis/)
 - [Roadmap](ROADMAP.md): planned work.
 - [Security](SECURITY.md): how to report a vulnerability privately, and what counts as one.
 - [Publishing](store/README.md): store listings, privacy answers, and release steps.
+- [Browser and store platform watch](docs/platform-watch.md): current browser deadlines, API changes, and what to recheck before releases.
 
 ## Inspirations
 
