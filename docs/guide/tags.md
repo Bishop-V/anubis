@@ -6,7 +6,7 @@ Tags are small labels under a result's title: "Official docs", "Discussion", "Pa
 
 ## Tag a site yourself
 
-Open the ⇅ menu on a result. Under **Tags**, press a tag to add it to the site, or press it again to remove it. To make a new tag, type its name in **New tag** and press **Add tag**.
+Open the ⚖ menu on a result. Under **Tags**, press a tag to add it to the site, or press it again to remove it. To make a new tag, type its name in **New tag** and press **Add tag**.
 
 Tags from lists appear in the menu too, but only the list can remove them.
 
@@ -35,7 +35,7 @@ Press **Edit** beside a tag to open it. There you can:
 - tag more sites: type one, or several separated by spaces or commas, and press **Add site**. This works for any tag, including tags from lists;
 - see the first sites each of your lists gives the tag.
 
-The ⇅ button on a search result tags that result's site the same way.
+The ⚖ button on a search result tags that result's site the same way.
 
 ![Settings, Tags](../img/options-tags.png)
 
@@ -50,7 +50,7 @@ When a result carries several tags you've set to **Raise** or **Lower**, Anubis 
 | Two Raise and one Lower | Five places up, as if it had one Raise |
 | One Raise and one Lower | Where the search engine put it |
 
-A tag counts once, however many of your lists give it. A tag set to **Hide** still hides the result, whatever the others say. **Why** in the result's ⇅ menu shows each tag's part and where the result ends up ("raise it by 5 each for “Official docs” and “Reference” and lower it by 5 for “Paywall”, so it moves 5 places up").
+A tag counts once, however many of your lists give it. A tag set to **Hide** still hides the result, whatever the others say. **Why** in the result's ⚖ menu shows each tag's part and where the result ends up ("raise it by 5 each for “Official docs” and “Reference” and lower it by 5 for “Paywall”, so it moves 5 places up").
 
 A ranking you gave a site yourself beats any tag. If you raised a site, a tag set to Hide won't hide it.
 

@@ -18,7 +18,7 @@ The screenshots below come from the user guide (`docs/img/`, regenerated with `n
 
 ![A search page with Anubis: the summary above the results, tags under titles, a hidden result folded into one line](docs/img/after.png)
 
-Everything Anubis adds here is in the page's font and colours except gold for what you can press: the summary's sentence and buttons, the tags under each title, the folded line for a hidden site, and the faint ⇅ button on each result.
+Everything Anubis adds here is in the page's font and colours except gold for what you can press: the summary's sentence and buttons, the tags under each title, the folded line for a hidden site, and the faint ⚖ button on each result.
 
 ## Colour
 
@@ -96,7 +96,7 @@ One palette, defined twice: `assets/theme.css` for extension pages and `entrypoi
 | Popup | 340px wide. Header (logo, status, on/off), then sections under hairlines with a muted label, then a footer. What shows depends on the tab: on a search page, what Anubis did there and its tags to show only; on any other site, that site in the cartouche over the balance, with the rankings and tags; elsewhere, Add a site. The last few of your sites always follow. |
 | Settings | Two columns in 1040px: a 210px navigation column and sections up to 760px. One row per thing you can change. Below 760px, one column with the navigation across the top. |
 | Welcome page | The same idea in 1040px: section titles in a 220px column, what to do beside them, lists two across. Below 900px, one column. |
-| Search pages | The summary sits above the results, lined up with them. Tags go under each title. The result menu opens under its ⇅ button, 312px wide. |
+| Search pages | The summary sits above the results, lined up with them. Tags go under each title. The result menu opens under its ⚖ button, 312px wide. |
 
 Every page works at phone width (390px) without scrolling sideways; the `welcome` and `mobile` e2e parts check this.
 
@@ -144,7 +144,7 @@ h('span', { class: 'tag', style: `--c: ${tag.color}` }, h('i', { class: 'gem' })
 
 ## States
 
-- **Hover**: text goes from `--muted` to `--text`, or an outline turns gold. No background fills on hover, except the ⇅ button's faint gold wash on search pages.
+- **Hover**: text goes from `--muted` to `--text`, or an outline turns gold. No background fills on hover, except the ⚖ button's faint gold wash on search pages.
 - **Focus**: a 2px `--gold` outline, 2px offset, on `:focus-visible` only. Where a native control sits unseen over a styled one (the cartouche's select), the visible element shows the ring (`:has(select:focus-visible)`).
 - **Chosen**: the 2px underline above. Don't use fills, checkmarks or bold alone.
 - **Disabled or busy**: `opacity: 0.6` and `cursor: progress` on buttons, `--muted` text on text buttons. Say what's happening ("Loading…").
@@ -181,7 +181,8 @@ The one place with character. In order:
 - Inline SVG from `utils/icons.ts`: a 16×16 grid, 1.6px stroke, round caps and joins, `currentColor`. Shown at 13–15px. Decorative, so `aria-hidden`.
 - Each ranking has one icon, used everywhere: an eye struck through (Hide), a chevron down (Lower), a feather (Normal), a chevron up (Raise), a pin (Pin).
 - The Anubis head is the brand mark: the logo tile on extension pages and in the toolbar, the bare head as the summary's mark on search pages. It's never a button's icon.
-- An icon without words only where the meaning is universal (the cog, ×, ⇅ on a result). Everything else gets a word, with or without an icon.
+- The button on each result shows the result menu's balance in small, tipped to the site's ranking: level for Normal, the site's (left) pan down for Lower and up for Raise. A hidden site shows the ranking's crossed-out eye and a pinned one its pin. It's drawn in `--muted` like any icon at rest; the tilt, not a colour, shows the ranking, and its label says it too ("Hide, rank or tag fandom.com (lowered)").
+- An icon without words only where the meaning is universal (the cog, ×, the balance on a result, which names the menu it opens in its tooltip). Everything else gets a word, with or without an icon.
 
 ## Motion
 
@@ -213,7 +214,7 @@ The one place with character. In order:
 ## Contrast and size
 
 - Text in `--text` and `--muted` meets WCAG AA on its background in both schemes; gold text uses `--gold-ink` for the same reason.
-- Icon buttons are at least 24px, and 32px where the pointer is coarse (the ⇅ button on phones).
+- Icon buttons are at least 24px, and 32px where the pointer is coarse (the ⚖ button on phones).
 - Everything else about the keyboard, focus and screen readers is in [`ACCESSIBILITY.md`](ACCESSIBILITY.md).
 
 ## Before you merge a change to the interface

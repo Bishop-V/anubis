@@ -52,7 +52,7 @@ Everything on search pages was built against the mocks in `e2e/fixtures.mjs`: th
 - `entrypoints/content/`: runs on result pages of every engine in `utils/engines.ts`
   - `index.ts`: the pass loop (find results, weigh, render, rerank), the mutation observer, messages
   - `results.ts`: finding results, structurally (title heading → link → smallest single-result ancestor) or by selector, and resolving redirect links to the real URL
-  - `ui.ts` + `shadow.css`: tags under titles, the ⇅ button on each result and its menu, hidden-result lines, the summary; all in closed shadow roots
+  - `ui.ts` + `shadow.css`: tags under titles, the ⚖ button on each result and its menu, hidden-result lines, the summary; all in closed shadow roots
   - `deeper.ts`: "Load more results", bringing later result pages onto the current one
   - `cleanup.ts`: finding the blocks that clean-up removes (AI answers, video panels…), and its redirect to Google's Web tab
   - `page.css`: page-level treatments keyed off `data-anubis-*` attributes (hidden, lowered, pinned, highlight, rerank)
