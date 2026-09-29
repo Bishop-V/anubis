@@ -305,14 +305,15 @@ body .VPContent .VPHome {
   line-height: 38px;
 }
 
-/* The drawn page: a search box, the summary Anubis adds, then results and panels. */
+/* The drawn page: a search box and tabs, the summary Anubis adds, then results and
+   the panels between them. Any search engine's, not one in particular. */
 .demo-page .searchbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   max-width: 420px;
   height: 36px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   padding: 0 14px;
   border: 1px solid var(--vp-c-divider);
   border-radius: 999px;
@@ -322,6 +323,23 @@ body .VPContent .VPHome {
   height: 10px;
   border: 2px solid var(--vp-c-text-2);
   border-radius: 50%;
+}
+.demo-page .tabs {
+  display: flex;
+  gap: 18px;
+  font-size: 12.5px;
+  line-height: 16px;
+  color: var(--vp-c-text-2);
+}
+.demo-page .tabs span {
+  padding-bottom: 7px;
+}
+.demo-page .tabs .current {
+  color: var(--vp-c-text-1);
+  box-shadow: inset 0 -2px currentColor;
+}
+.demo-summary > .fold-inner {
+  padding-top: 10px;
 }
 .demo-summary p {
   display: flex;
@@ -456,8 +474,7 @@ body .VPContent .VPHome {
 .demo-verdict.raise {
   color: var(--vp-c-brand-1);
 }
-.demo-verdict .chip-icon,
-.hidden-line .gone-icon {
+.demo-verdict .chip-icon {
   display: flex;
 }
 .demo-verdict svg {
@@ -466,37 +483,6 @@ body .VPContent .VPHome {
 }
 .demo-result.lowered {
   opacity: var(--demo-lowered);
-}
-/* The hidden line, as the extension's .gone: one line, the site and its reason cut
-   short with an ellipsis where they don't fit, so Show stays on the line. */
-.hidden-line .fold-inner {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-top: 14px;
-  font-size: 12.5px;
-  color: var(--vp-c-text-2);
-}
-.hidden-line .gone-icon {
-  flex: none;
-  opacity: 0.8;
-}
-.hidden-line .gone-icon svg {
-  width: 14px;
-  height: 14px;
-}
-.hidden-line .why {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.hidden-line b {
-  font-weight: 600;
-  color: var(--vp-c-text-1);
-}
-.hidden-line .demo-link {
-  flex: none;
 }
 /* The button on each result, as the extension's .weigh: muted, its balance tipping
    with the ranking, and gold only for a pinned site. */
@@ -525,21 +511,117 @@ body .VPContent .VPHome {
   margin-bottom: 6px;
   font-size: 16px;
 }
-.demo-block .videos {
+/* The panels: rows that run off the page's edge, as a carousel's do, and lists. */
+.demo-block .sources {
   display: flex;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.demo-block .source {
+  padding: 0 9px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 999px;
+  font-size: 11.5px;
+  line-height: 20px;
+  color: var(--vp-c-text-2);
+}
+.demo-block .cards,
+.demo-block .videos,
+.demo-block .tiles {
+  display: flex;
+  gap: 10px;
+  overflow: hidden;
+}
+.demo-block .card {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  width: 156px;
+  overflow: hidden;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 16px;
+}
+.demo-block .card-image {
+  height: 54px;
+  background: #b99a64;
+}
+.demo-block .card:nth-child(2) .card-image {
+  background: #8c6a4f;
+}
+.demo-block .card:nth-child(3) .card-image {
+  background: #6f7a68;
+}
+.demo-block .card-source {
+  padding: 6px 8px 0;
+  font-size: 11.5px;
+  color: var(--vp-c-text-2);
+}
+.demo-block .card-title {
+  padding: 2px 8px 8px;
 }
 .demo-block .video {
   display: flex;
+  flex: none;
   flex-direction: column;
   gap: 4px;
+  width: 120px;
   font-size: 12px;
 }
 .demo-block .thumb {
-  width: 112px;
-  height: 62px;
+  position: relative;
+  height: 66px;
   border-radius: 6px;
   background: linear-gradient(160deg, #c8962e, #8c6a4f);
+}
+.demo-block .video:nth-child(2) .thumb {
+  background: linear-gradient(160deg, #7d8a74, #4f5a4c);
+}
+.demo-block .video:nth-child(3) .thumb {
+  background: linear-gradient(160deg, #a77b5a, #5e4636);
+}
+.demo-block .length {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  padding: 0 4px;
+  border-radius: 3px;
+  background: rgb(0 0 0 / 0.7);
+  color: #ffffff;
+  font-size: 10.5px;
+  line-height: 15px;
+}
+.demo-block .thread {
+  display: flex;
+  flex-direction: column;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+.demo-block .forum {
+  font-size: 11.5px;
+  line-height: 16px;
+  color: var(--vp-c-text-2);
+}
+.demo-block .thread-title {
+  color: var(--demo-link);
+}
+.demo-block .tile {
+  flex: none;
+  width: 84px;
+  height: 64px;
+  border-radius: 6px;
+  background: #a8875a;
+}
+.demo-block .tile:nth-child(2n) {
+  background: #7b6a55;
+}
+.demo-block .tile:nth-child(3n) {
+  background: #c2a878;
+}
+.demo-block .tile:nth-child(5) {
+  background: #5f6b5a;
 }
 /* Phones show the titles without their snippets, so the whole page fits. */
 @media (max-width: 639px) {
