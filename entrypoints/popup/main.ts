@@ -122,6 +122,7 @@ async function renderHere(personalText: string) {
           'button',
           {
             type: 'button',
+            class: level,
             title: t(RANK_TITLES[level], domain),
             attrs: { 'aria-pressed': String(current === level) },
             on: { click: () => void editPersonal((t) => setSiteLevel(t, domain, level === current ? 'normal' : level)) },

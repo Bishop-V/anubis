@@ -771,17 +771,20 @@ function buildPopover(
   const shown: Level = pressed ?? fromLists;
   const choices = domainChoices(data.result.host);
 
-  const select = h(
-    'select',
-    {
-      class: 'domain',
-      title: choices.length > 1 ? 'Choose how much of the site this applies to' : undefined,
-      disabled: choices.length < 2,
-      attrs: { 'aria-label': 'Site' },
-    },
-    choices.map((d) => h('option', { value: d, selected: d === domain }, d)),
-  );
-  select.addEventListener('change', () => switchDomain(select.value));
+  // The cartouche shows the chosen site as text, with the native select laid over it
+  // unseen: a select is as wide as its longest option, which put the name off centre.
+  let cartouche: HTMLElement;
+  if (choices.length > 1) {
+    const select = h(
+      'select',
+      { title: 'Choose how much of the site this applies to', attrs: { 'aria-label': 'Site', 'data-focus-key': 'site' } },
+      choices.map((d) => h('option', { value: d, selected: d === domain }, d)),
+    );
+    select.addEventListener('change', () => switchDomain(select.value));
+    cartouche = h('span', { class: 'cartouche choosable' }, h('span', { class: 'name', attrs: { 'aria-hidden': 'true' } }, domain), select);
+  } else {
+    cartouche = h('span', { class: 'cartouche' }, h('span', { class: 'name' }, domain));
+  }
 
   const levels = h(
     'div',
@@ -895,7 +898,7 @@ function buildPopover(
     h(
       'div',
       { class: 'head' },
-      h('span', { class: 'cartouche' }, select),
+      cartouche,
       h(
         'button',
         { class: 'icon-btn close', type: 'button', title: 'Close', attrs: { 'aria-label': 'Close' }, on: { click: () => closePopover() } },
