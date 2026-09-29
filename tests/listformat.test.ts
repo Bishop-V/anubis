@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { compileGogglePattern, detectFormat, nestedRepeat, parseList, parseTagDef } from '@/utils/listformat';
 
 describe('Goggles instructions', () => {
-  it('reads site, actions and strengths', () => {
+  it('reads site, actions, and strengths', () => {
     const list = parseList(`! name: Test
 $boost=3,site=example.com
 $downrank,site=w3schools.com
@@ -105,7 +105,7 @@ $site=example.com,tag=docs,tag=reference`);
 });
 
 describe('uBlacklist rulesets', () => {
-  it('reads match patterns, regexes, unblock and highlight rules', () => {
+  it('reads match patterns, regexes, unblock, and highlight rules', () => {
     const list = parseList(`---
 name: My ruleset
 ---

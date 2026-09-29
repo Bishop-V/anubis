@@ -42,7 +42,7 @@ export interface Rule {
   site?: string;
   /** Matches exactly this host (uBlacklist `*://example.com/*`). */
   host?: string;
-  /** Tested against the target (URL, title or description). */
+  /** Tested against the target (URL, title, or description). */
   pattern?: RegExp;
   /** Tested against the URL's path + query (uBlacklist match pattern paths). */
   pathPattern?: RegExp;
@@ -432,7 +432,7 @@ export function nestedRepeat(source: string): boolean {
       afterRepeatingGroup = inner;
       continue;
     } else {
-      // A quantifier: *, + and {n,} or {n,m} repeat; ? and {n} don't.
+      // A quantifier: *, +, and {n,} or {n,m} repeat; ? and {n} don't.
       const range = ch === '{' ? /^\{(\d+)(,(\d*))?\}/.exec(source.slice(i)) : null;
       const repeats = ch === '*' || ch === '+' || (!!range && range[2] !== undefined && (range[3] === '' || Number(range[3]) > Number(range[1])));
       if (repeats && afterRepeatingGroup) return true;

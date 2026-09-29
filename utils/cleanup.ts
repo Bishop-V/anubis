@@ -128,9 +128,9 @@ export const CLEANUP_SELECTORS: Record<string, Partial<Record<CleanupKind, strin
 };
 
 /**
- * Tabs, links and buttons that open an engine's AI chat: Google's AI Mode,
+ * Tabs, links, and buttons that open an engine's AI chat: Google's AI Mode,
  * DuckDuckGo's Duck.ai. They go with AI answers but aren't counted, since they
- * aren't content. Found by their whole text, title or label, or by selectors
+ * aren't content. Found by their whole text, title, or label, or by selectors
  * from EasyList's AI list where there may be no label.
  */
 export const AI_ENTRY_POINTS: Record<string, { labels: RegExp; selector?: string }> = {

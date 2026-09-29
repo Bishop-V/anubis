@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: Anubis
-  text: Hide, rank and tag search results
+  text: Hide, rank, and tag search results
   tagline: On the search engine you already use, with lists anyone can publish.
   image:
     src: /anubis.svg
@@ -18,7 +18,7 @@ hero:
 
 features:
   - title: Rank any site from the results
-    details: Hide, lower, raise or pin a site with the button on any result. Your choice holds on every search.
+    details: Hide, lower, raise, or pin a site with the button on any result. Your choice holds on every search.
     link: /guide/ranking
   - title: Tags you can act on
     details: Results carry labels like “Official docs” or “Paywall”. Decide what each tag does, from just a label to hiding every result that has it.
@@ -27,6 +27,6 @@ features:
     details: A list is a text file in a Git repository. Brave Goggles and uBlacklist rulesets work unchanged.
     link: /guide/lists
   - title: Clean up pages
-    details: Remove AI answers, video panels and “People also ask” on every search.
+    details: Remove AI answers, video panels, and “People also ask” on every search.
     link: /guide/clean-up
 ---

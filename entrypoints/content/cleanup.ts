@@ -49,7 +49,7 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
   };
   // A panel's header row can be a block of its own, with the videos and "View all"
   // as the next blocks. When the block is little more than its label, take the
-  // blocks after it too, up to a result, the search box or another section.
+  // blocks after it too, up to a result, the search box, or another section.
   const addLabelled = (block: HTMLElement | undefined, kind: CleanupKind) => {
     add(block, kind);
     if (!block || !seen.has(block) || (block.textContent ?? '').trim().length > 40) return;

@@ -28,7 +28,7 @@ export async function renderCleanup(): Promise<HTMLElement> {
       h('h3', null, 'On Google'),
       switchRow(
         'Always open the Web tab',
-        'Sends every Google search to its Web tab: plain links, with no AI Overview, videos or other panels, even ones Anubis doesn’t recognise. To leave it for one search, choose All above the results.',
+        'Sends every Google search to its Web tab: plain links, with no AI Overview, videos, or other panels, even ones Anubis doesn’t recognise. To leave it for one search, choose All above the results.',
         settings.googleWebTab,
         (googleWebTab) => void updateSettings({ googleWebTab }),
       ),

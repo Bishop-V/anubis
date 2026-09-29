@@ -9,7 +9,7 @@ export default defineConfig({
   browser: 'firefox',
   // Firefox's add-on reviewers get a zip of the source to rebuild from. Leave out
   // what the build doesn't use: the documentation site (mostly screenshots), the
-  // end-to-end harness, the store listing assets and the Claude skills.
+  // end-to-end harness, the store listing assets, and the Claude skills.
   zip: {
     excludeSources: ['docs/**', 'e2e/**', 'store/**', '.claude/**'],
   },
@@ -18,9 +18,9 @@ export default defineConfig({
     // Text in the manifest comes from public/_locales/<language>/messages.json.
     default_locale: 'en',
     description: '__MSG_extDescription__',
-    // The user guide: the browser links to it from the extension's details page.
+    // The wiki: the browser links to it from the extension's details page.
     homepage_url: DOCS_URL,
-    // "storage" saves your list, settings and downloaded lists. "activeTab" lets the
+    // "storage" saves your list, settings, and downloaded lists. "activeTab" lets the
     // popup read the address of the tab you're on, only when you open it, so you can
     // weigh that site; it shows no install warning.
     permissions: ['storage', 'activeTab'],

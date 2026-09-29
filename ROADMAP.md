@@ -4,13 +4,13 @@ Work that's planned but not started, or started and not finished. Each item says
 
 ## Before the first store release
 
-- **Check live pages.** Everything on search pages was built against mocks. Work through "Still unverified" in `docs/experiments.md`. Done on 2026-09-29 for DuckDuckGo (all three versions), Bing, Brave, Startpage, Ecosia and Yahoo. Left: Kagi, Yandex and Mojeek (they showed automated Chromium a human check), Load more results on Bing, Ecosia and Yahoo in an everyday browser, Google's phone layout, and DuckDuckGo's AI answer and Duck.ai buttons, which are now removed on the page (their selectors come from EasyList's AI list). From the reports of 2026-09-29 ("Reported from live pages" in `docs/experiments.md`): that Brave's Videos, Discussions and Related queries panels and Bing's "People also search for" box are removed, and that Google's `/goto` results shown by name ("Reddit · …", "LinkedIn · …") get their ⚖ button.
+- **Check live pages.** Everything on search pages was built against mocks. Work through "Still unverified" in `docs/experiments.md`. Done on 2026-09-29 for DuckDuckGo (all three versions), Bing, Brave, Startpage, Ecosia, and Yahoo. Left: Kagi, Yandex, and Mojeek (they showed automated Chromium a human check), Load more results on Bing, Ecosia, and Yahoo in an everyday browser, Google's phone layout, and DuckDuckGo's AI answer and Duck.ai buttons, which are now removed on the page (their selectors come from EasyList's AI list). From the reports of 2026-09-29 ("Reported from live pages" in `docs/experiments.md`): that Brave's Videos, Discussions, and Related queries panels and Bing's "People also search for" box are removed, and that Google's `/goto` results shown by name ("Reddit · …", "LinkedIn · …") get their ⚖ button.
 - **Fix what the live check found** (details in `docs/experiments.md`, 2026-09-29). For each, model the live markup in `e2e/fixtures.mjs` and confirm the check fails before fixing:
-  - *Load more results stops without saying why.* On Bing, Ecosia and Yahoo the fetched page came back as a bot check, and Bing's (status 200) reads as a last page with no results. In `fetchNext` (`entrypoints/content/deeper.ts`), recognise a page with no results, or a challenge, and set an error the summary shows ("Bing asked to confirm you're not a robot. Open the next page instead.").
+  - *Load more results stops without saying why.* On Bing, Ecosia, and Yahoo the fetched page came back as a bot check, and Bing's (status 200) reads as a last page with no results. In `fetchNext` (`entrypoints/content/deeper.ts`), recognise a page with no results, or a challenge, and set an error the summary shows ("Bing asked to confirm you're not a robot. Open the next page instead.").
   - *Bing's AI answer stays.* It's `li.b_ans.b_top` with `.cht_container`, labelled only by `aria-label="AI Overview"`. Read `aria-label` as a label, or add `.cht_container` to Bing in `CLEANUP_SELECTORS` (`utils/cleanup.ts`).
   - *Bing's video panel stays.* Its heading is "Videos of <search>": add `Videos of ` to the videos kind's `prefixes`.
   - *Brave's AI selector is out of date.* The block is `#llm-snippet`, not `#summarizer`. It's removed anyway through its disclaimer, so this is only a backup; update the selector.
-- **Try syncing between browsers** with a real WebDAV service (Koofr, InfiniCLOUD and Nextcloud at least) in Firefox and Chrome: connect both, change a site in each, and check Firefox's consent prompt on Connect. Record what each service needed in `docs/guide/sync.md`.
+- **Try syncing between browsers** with a real WebDAV service (Koofr, InfiniCLOUD, and Nextcloud at least) in Firefox and Chrome: connect both, change a site in each, and check Firefox's consent prompt on Connect. Record what each service needed in `docs/guide/sync.md`.
 - **Try sync between two computers**, in Firefox and in Chrome: change a site's ranking on one and wait for it on the other. Also check that a change from a Firefox search page's result menu is saved compressed (`encoding: 'deflate'` in `sync:personal`, visible in `about:debugging` → Inspect → Storage): `CompressionStream` in Firefox content scripts is unverified (`docs/experiments.md`, Storage).
 - **Take real screenshots** for the listings, following the shot list in `store/README.md`.
 - **Turn on GitHub Pages** (Settings → Pages → Source: GitHub Actions), so the privacy policy link in the listings loads and subscribe links have a page to land on. Then try a subscribe link in Firefox, where it hasn't been run yet.
@@ -49,12 +49,12 @@ Started: interface text is moving into `public/_locales/<language>/messages.json
 
 - **The in-page UI** (`entrypoints/content/ui.ts`): the rest of the result menu, hidden lines' reasons, and chips.
 - **Settings** (`entrypoints/options/`), list errors shown there (`utils/listformat.ts`).
-- **Then invite translators:** a hosted Weblate or Crowdin project (both are free for open-source projects and read this format), a "Help translate" page in the guide, and translated store listings.
+- **Then invite translators:** a hosted Weblate or Crowdin project (both are free for open-source projects and read this format), a "Help translate" page in the wiki, and translated store listings.
 
 ## Features
 
 - **Engine definitions fetched from the repo,** like uBlacklist's SERPINFO, so a selector fix doesn't need a store release. Chrome forbids downloading code, so they have to be data: `isResultsPage` is a function today and would need a declarative form.
-- **Image, video and news results.** uBlacklist's SERPINFO has the selectors.
+- **Image, video, and news results.** uBlacklist's SERPINFO has the selectors.
 
 ## Not planned
 

@@ -30,6 +30,6 @@ export default function BeforeAfter() {
         true,
       ),
     ]),
-    h('figcaption', 'The same search, without and with Anubis: it removed the AI answer and panels, hid a site you don’t want and tagged the rest. Shown on a test page.'),
+    h('figcaption', 'The same search, without and with Anubis: it removed the AI answer and panels, hid a site you don’t want, and tagged the rest. Shown on a test page.'),
   ]);
 }

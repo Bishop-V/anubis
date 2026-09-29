@@ -11,7 +11,7 @@ Results from later pages are marked "from page 2" and so on under their titles.
 ## How it works
 
 - **DuckDuckGo:** Anubis presses DuckDuckGo's own "More results" button.
-- **Google, Bing and Yahoo:** Anubis follows the page's "Next" link in the background and adds the results to the current page.
+- **Google, Bing, and Yahoo:** Anubis follows the page's "Next" link in the background and adds the results to the current page.
 - **Brave Search and Ecosia:** Anubis asks for the next page the same way the page's own links do.
 
-Requests only go to the search engine you're on, and pages are loaded one at a time with a short pause between them. Startpage, Kagi, Yandex, Mojeek and the DuckDuckGo HTML and Lite versions don't support it yet.
+Requests only go to the search engine you're on, and pages are loaded one at a time with a short pause between them. Startpage, Kagi, Yandex, Mojeek, and the DuckDuckGo HTML and Lite versions don't support it yet.

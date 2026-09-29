@@ -412,7 +412,7 @@ if (!only || only === 'off') {
 }
 
 if (!only || only === 'cleanup') {
-  // Clean-up: AI Overview, videos and "People also ask" go; the side panel stays.
+  // Clean-up: AI Overview, videos, and "People also ask" go; the side panel stays.
   const sw = ctx.serviceWorkers()[0];
   const setSettings = (patch) =>
     sw.evaluate(async (patch) => {
@@ -750,7 +750,7 @@ const focused = async () => {
 if (!only || only === 'a11y') {
   await page.goto('https://duckduckgo.com/?q=javascript+promises');
   await page.waitForTimeout(600);
-  const buttons = (await axTree()).filter((n) => n.role === 'button' && n.name.startsWith('Hide, rank or tag'));
+  const buttons = (await axTree()).filter((n) => n.role === 'button' && n.name.startsWith('Hide, rank, or tag'));
   console.log('\n== ⚖ buttons:', JSON.stringify({ count: buttons.length, distinct: new Set(buttons.map((b) => b.name)).size, first: buttons[0]?.name }));
 
   const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
@@ -897,7 +897,7 @@ if (only === 'subscribe') {
 if (!only || only === 'subscribe-link') {
   // Subscribe on the lists directory: the subscribe page it leads to opens settings
   // with the list filled in, the directory's tab goes back, and nothing is added
-  // until Subscribe. The directory, the subscribe page and the list are mocks.
+  // until Subscribe. The directory, the subscribe page, and the list are mocks.
   const LIST = 'https://raw.githubusercontent.com/example/lists/main/e2e.anubis';
   const link = `https://bishop-v.github.io/anubis/subscribe?url=${encodeURIComponent(LIST)}&name=E2E+list`;
   await ctx.route(/^https:\/\/bishop-v\.github\.io\//, (route) =>
@@ -1177,7 +1177,7 @@ if (only === 'docs') {
   }
 
   // The homepage's before and after: the same search with Anubis off, then on with
-  // clean-up, cut to the same box (the logo, the search box and the results column).
+  // clean-up, cut to the same box (the logo, the search box, and the results column).
   // A wider window keeps the side panel clear of the box.
   const beforeAfter = async (name) => {
     for (const [, suffix, query] of SCHEMES) {
@@ -1216,7 +1216,7 @@ if (only === 'docs') {
         <div style="position:absolute;left:44px;right:48px;top:30px;display:flex;align-items:center;gap:12px">
           ${jackal}
           <span style="color:${c.name};font-size:34px;line-height:1">Anubis</span>
-          <span style="margin-left:14px;padding-left:18px;border-left:1px solid ${c.rule};font-size:19px;line-height:30px">Hide, rank and tag search results</span>
+          <span style="margin-left:14px;padding-left:18px;border-left:1px solid ${c.rule};font-size:19px;line-height:30px">Hide, rank, and tag search results</span>
           <span style="margin-left:auto;font-size:12px;color:${c.note}">Shown on a test page</span>
         </div>
         <div style="position:absolute;left:48px;right:48px;top:112px;display:grid;grid-template-columns:1fr 1fr;gap:32px">
