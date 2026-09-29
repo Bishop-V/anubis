@@ -26,7 +26,7 @@ export default function BeforeAfter() {
       shot(
         'With Anubis',
         [after, afterDark],
-        'The same search with Anubis: a line saying it raised 1 and hid 2 of 7 results and removed the AI answer and panels, then results tagged Reference or Paywall, with the Fandom wiki shown as hidden by your list.',
+        'The same search with Anubis: a line saying it raised 1 and hid 2 of 7 results and also removed the AI answer and panels, then results tagged Reference or Paywall, with the Fandom wiki shown as hidden by your list.',
         true,
       ),
     ]),

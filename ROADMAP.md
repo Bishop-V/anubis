@@ -21,10 +21,6 @@ Work that's planned but not started, or started and not finished. Each item says
 
 ## Security
 
-- **The 5 MB limit is checked after the download.** `fetchText` in `utils/subscriptions.ts` reads the whole body first. Check `Content-Length`, or stop reading at the limit.
-- **`ci.yml` has no `permissions:` block.** Add `contents: read`, as `docs.yml` has.
-- **Dependabot** for npm and GitHub Actions: weekly, grouped, with a 7-day cooldown (the default is 3). Pin actions to commit SHAs and let Dependabot move them.
-- **Install without scripts** in CI and releases: `npm ci --ignore-scripts`, then `npx wxt prepare`. npm worms spread through install scripts. Compile, tests, both builds and the docs build all work this way.
 - **Turn on private vulnerability reporting** (Settings → Code security → Private vulnerability reporting). [`SECURITY.md`](SECURITY.md) sends reports there, and its form doesn't exist until it's on.
 
 ## Testing
@@ -51,10 +47,9 @@ Started: Anubis picks an engine's phone layout by user agent (`mobile` in `utils
 
 ## Translation
 
-Started: interface text is moving into `public/_locales/<language>/messages.json` (the browsers' own format), used through `t()`, `tn()` for counts, and `localizePage()` for static HTML (`utils/i18n.ts`). Done: the manifest's description and shortcut names, the ranking names, the welcome page, the toolbar popup except its summary sentence, and on search pages the summary's buttons and the result menu's report and suggestion lines. `tests/i18n.test.ts` checks keys and placeholders. Next:
+Started: interface text is moving into `public/_locales/<language>/messages.json` (the browsers' own format), used through `t()`, `tn()` for counts, and `localizePage()` for static HTML (`utils/i18n.ts`). Done: the manifest's description and shortcut names, the ranking names, the welcome page, the toolbar popup, and on search pages the summary (its sentence and buttons) and the result menu's report and suggestion lines. `tests/i18n.test.ts` checks keys and placeholders. Next:
 
 - **The in-page UI** (`entrypoints/content/ui.ts`): the rest of the result menu, hidden lines and their reasons, and chips.
-- **The summary sentence** (`utils/summary.ts`, `describeRemoved` in `utils/cleanup.ts`). It builds sentences from parts ("pinned 1, raised 2 and hid 2 of 9 results"), which doesn't translate. Give each shape its own message, and join lists with `Intl.ListFormat` instead of `andList` (`utils/dom.ts`). Its tests in `tests/cleanup.test.ts` need the English messages, as `tests/i18n.test.ts` sets up.
 - **Settings** (`entrypoints/options/`), list errors shown there (`utils/listformat.ts`), and the toolbar tooltip ("Anubis is off").
 - **Then invite translators:** a hosted Weblate or Crowdin project (both are free for open-source projects and read this format), a "Help translate" page in the guide, and translated store listings.
 

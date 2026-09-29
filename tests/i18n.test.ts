@@ -1,9 +1,9 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { beforeAll, describe, expect, it } from 'vitest';
-import { fakeBrowser } from 'wxt/testing/fake-browser';
+import { describe, expect, it } from 'vitest';
 import { t, tList, tn } from '@/utils/i18n';
 import type { SiteChange } from '@/utils/personal';
 import { changeSentence } from '@/utils/summary';
+import { useEnglish } from './english';
 
 // Translations live in public/_locales/<language>/messages.json; English is the source.
 type Messages = Record<string, { message: string; description?: string }>;
@@ -50,11 +50,7 @@ describe('messages', () => {
 });
 
 describe('t and tn', () => {
-  beforeAll(() => {
-    // The fake browser has no i18n: answer from the English messages.
-    fakeBrowser.i18n.getMessage = ((key: string, subs?: string[]) =>
-      en[key]?.message.replace(/\$(\d)/g, (_, n: string) => subs?.[Number(n) - 1] ?? '') ?? '') as typeof fakeBrowser.i18n.getMessage;
-  });
+  useEnglish();
 
   it('fills in placeholders', () => {
     expect(t('popupForget', 'fandom.com')).toBe('Forget fandom.com');
