@@ -47,12 +47,11 @@ export default defineContentScript({
       return;
     }
 
-    // Clean-up that works by sending the page elsewhere: DuckDuckGo's no-AI version,
-    // Google's Web tab. Checked again on each pass, as both engines can change the
-    // search without reloading.
+    // Clean-up that works by sending the page elsewhere: Google's Web tab. Checked
+    // again on each pass, as Google can change the search without reloading.
     const redirected = () => {
       if (!rules.settings.enabled || rules.settings.engines[engine.id] === false) return false;
-      const to = redirectFor(engine, new URL(location.href), rules.settings.cleanup, rules.settings.googleWebTab);
+      const to = redirectFor(engine, new URL(location.href), rules.settings.googleWebTab);
       if (!to || to === location.href) return false;
       location.replace(to);
       return true;

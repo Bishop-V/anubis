@@ -53,7 +53,7 @@ Everything on search pages was built against the mocks in `e2e/fixtures.mjs`: th
   - `results.ts`: finding results, structurally (title heading → link → smallest single-result ancestor) or by selector, and resolving redirect links to the real URL
   - `ui.ts` + `shadow.css`: tags under titles, the ⇅ button on each result and its menu, hidden-result lines, the summary; all in closed shadow roots
   - `deeper.ts`: "Load more results", bringing later result pages onto the current one
-  - `cleanup.ts`: finding the blocks that clean-up removes (AI answers, video panels…), and its redirects (DuckDuckGo's no-AI version, Google's Web tab)
+  - `cleanup.ts`: finding the blocks that clean-up removes (AI answers, video panels…), and its redirect to Google's Web tab
   - `page.css`: page-level treatments keyed off `data-anubis-*` attributes (hidden, lowered, pinned, highlight, rerank)
 - `entrypoints/subscribe.content.ts`: runs only on the guide's subscribe page (`…/anubis/subscribe?url=…&name=…`, where subscribe links lead) and asks the background to open Settings → Lists with that list filled in. Settings asks before subscribing: anyone can make a link.
 - `entrypoints/background.ts`: list updates (on startup and when a search page asks, at most every 30 minutes), the toolbar badge, the grey icon while Anubis is off (`public/icon-off/`), and opening the welcome page on first install

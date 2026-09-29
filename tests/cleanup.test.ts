@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { redirectFor } from '@/entrypoints/content/cleanup';
-import { cleanupKindFor, cleanupMarkerFor, describeRemoved, NO_CLEANUP } from '@/utils/cleanup';
+import { AI_ENTRY_POINTS, cleanupKindFor, cleanupMarkerFor, describeRemoved, NO_CLEANUP } from '@/utils/cleanup';
 import { ENGINES } from '@/utils/engines';
 import type { PageStats } from '@/utils/messages';
 import { getSettings, settingsItem } from '@/utils/storage';
@@ -58,31 +58,26 @@ describe('summary with clean-up', () => {
 });
 
 describe('clean-up redirects', () => {
-  it('sends DuckDuckGo searches to its no-AI version when AI answers are removed', () => {
-    const url = new URL('https://duckduckgo.com/?q=anubis&ia=web');
-    expect(redirectFor(engine('duckduckgo'), url, { ...NO_CLEANUP, ai: true }, false)).toBe('https://noai.duckduckgo.com/?q=anubis&ia=web');
-    expect(redirectFor(engine('duckduckgo'), url, NO_CLEANUP, false)).toBeUndefined();
-    expect(redirectFor(engine('duckduckgo'), new URL('https://noai.duckduckgo.com/?q=anubis'), { ...NO_CLEANUP, ai: true }, false)).toBeUndefined();
+  it('leaves DuckDuckGo where it is, with its settings: AI answers are removed on the page', () => {
+    for (const url of ['https://duckduckgo.com/?q=anubis&ia=web', 'https://safe.duckduckgo.com/?q=anubis', 'https://start.duckduckgo.com/?q=anubis']) {
+      expect(redirectFor(engine('duckduckgo'), new URL(url), true)).toBeUndefined();
+    }
   });
 
-  it('opens the no-AI version from DuckDuckGo’s other addresses, keeping safe.’s strict safe search', () => {
-    const ai = { ...NO_CLEANUP, ai: true };
-    const ddg = engine('duckduckgo');
-    expect(redirectFor(ddg, new URL('https://start.duckduckgo.com/?q=anubis'), ai, false)).toBe('https://noai.duckduckgo.com/?q=anubis');
-    expect(redirectFor(ddg, new URL('https://safe.duckduckgo.com/?q=anubis'), ai, false)).toBe('https://noai.duckduckgo.com/?q=anubis&kp=1');
-    expect(redirectFor(ddg, new URL('https://safe.duckduckgo.com/?q=anubis&kp=-1'), ai, false)).toBe('https://noai.duckduckgo.com/?q=anubis&kp=-1');
-    // The home page isn't a search.
-    expect(redirectFor(ddg, new URL('https://safe.duckduckgo.com/'), ai, false)).toBeUndefined();
+  it('knows the AI chat tabs and buttons by name', () => {
+    expect(AI_ENTRY_POINTS.google!.labels.test('AI Mode')).toBe(true);
+    for (const name of ['Duck.ai', 'Ask Duck.ai', 'Search Assist']) expect(AI_ENTRY_POINTS.duckduckgo!.labels.test(name), name).toBe(true);
+    for (const name of ['Duck.ai settings', 'DuckDuckGo', 'All']) expect(AI_ENTRY_POINTS.duckduckgo!.labels.test(name), name).toBe(false);
   });
 
   it('opens Google’s Web tab only from the All tab', () => {
     const google = engine('google');
-    expect(redirectFor(google, new URL('https://www.google.com/search?q=anubis'), NO_CLEANUP, true)).toBe(
+    expect(redirectFor(google, new URL('https://www.google.com/search?q=anubis'), true)).toBe(
       'https://www.google.com/search?q=anubis&udm=14',
     );
-    expect(redirectFor(google, new URL('https://www.google.com/search?q=anubis&udm=2'), NO_CLEANUP, true)).toBeUndefined();
-    expect(redirectFor(google, new URL('https://www.google.com/search?q=anubis&tbm=nws'), NO_CLEANUP, true)).toBeUndefined();
-    expect(redirectFor(google, new URL('https://www.google.com/search?q=anubis'), NO_CLEANUP, false)).toBeUndefined();
+    expect(redirectFor(google, new URL('https://www.google.com/search?q=anubis&udm=2'), true)).toBeUndefined();
+    expect(redirectFor(google, new URL('https://www.google.com/search?q=anubis&tbm=nws'), true)).toBeUndefined();
+    expect(redirectFor(google, new URL('https://www.google.com/search?q=anubis'), false)).toBeUndefined();
   });
 });
 
