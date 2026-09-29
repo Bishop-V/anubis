@@ -121,7 +121,7 @@ Anubis detects the format of each file, so existing lists work without changes.
 
 ## Publishing a list
 
-1. Write the file, or download your own from **Settings → Share and back up**.
+1. Write the file, or download your own from **Settings → Backup**.
 2. Put it in a public repository or gist. Any file extension works; `.anubis` helps people recognise it.
 3. Share the link. GitHub page links, gist links and `search.brave.com/goggles?goggles_id=…` links are all converted to the raw file automatically.
 4. Set `! issues:` so people can suggest additions from the menu on each result.

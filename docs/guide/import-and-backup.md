@@ -2,7 +2,7 @@
 
 ## Import sites
 
-Coming from uBlacklist, HOHSER or a Brave Goggle? Open **Settings → Share and back up → Import sites**, paste your rules (or press **Choose a file**) and press **Import**. The sites join your own list.
+Coming from uBlacklist, HOHSER or a Brave Goggle? Open **Settings → Backup → Import sites**, paste your rules (or press **Choose a file**) and press **Import**. The sites join your own list.
 
 | From | What you get |
 | --- | --- |
