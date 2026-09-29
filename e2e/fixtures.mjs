@@ -146,8 +146,9 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
 // forum's name ("Reddit · r/AskHistorians") and "20+ comments · 2 years ago" where
 // the address would be, so there's no <cite> to read the site from. `aiAbove`: the
 // AI Overview above the results column (#rcnt > div.M8OgIe, seen on a live page),
-// spanning the row; `aiAbove: 'grid'` lays #rcnt out as a grid instead, where an
-// element added before the Overview lands in a cell beside the results. `related`: "People also search for" and the page navigation in
+// spanning the row; `aiAbove: 'grid'` lays #rcnt out as a grid instead, as a live
+// page did (the Overview `grid-column: 1 / -1`, #center_col `2 / span 12`), where
+// an element added before the Overview lands in a narrow cell of its own. `related`: "People also search for" and the page navigation in
 // one block at the bottom, in #botstuff. Not copied from a live page.
 export function google(query, results, { dark = false, next = '', hostile = false, grouped = false, modules = false, aiLabel = false, videos = '', inner = false, forum = false, aiAbove = false, related = false } = {}) {
   const sitelinks = (url) =>
@@ -331,8 +332,8 @@ export function google(query, results, { dark = false, next = '', hostile = fals
     .B6fmyf{display:none}
     #rcnt{display:flex;gap:40px}
     #rhs{width:300px;margin-top:20px;padding:16px;border:1px solid ${c.rule};border-radius:8px;align-self:flex-start}
-    ${aiAbove === 'grid' ? `#rcnt{display:grid;grid-template-columns:180px 652px 1fr;grid-template-areas:"ai ai ai" ". main side";column-gap:0}
-    .aiabove{grid-area:ai}#center_col{grid-area:main}#rhs{grid-area:side;margin-left:40px}` : ''}
+    ${aiAbove === 'grid' ? `#rcnt{display:grid;grid-template-columns:180px repeat(12,54px) 1fr;column-gap:0}
+    .aiabove{grid-column:1 / -1}#center_col{grid-column:2 / span 12}#rhs{grid-column:14;margin-left:40px}` : ''}
     ${aiAbove ? `#rcnt{flex-wrap:wrap;row-gap:0}
     .aiabove{flex:0 0 100%;box-sizing:border-box;padding:24px 0 22px 180px;border-bottom:1px solid ${c.line}}
     .aiabove .YzCcne{max-width:652px}.aiabove .Fzsovc{font-size:16px;margin-bottom:10px}.aiabove .aitext{font-size:16px;line-height:26px}
