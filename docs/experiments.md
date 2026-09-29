@@ -2,6 +2,15 @@
 
 What was tried while building the tagging and lists release, what failed, and what is still unverified. Newest notes go at the top of each section.
 
+## WebDAV passphrase changes and recovery (2026-09-29)
+
+- **Built:** Settings can change an established encryption passphrase. Anubis reads and decrypts the current encrypted file, encrypts the same data with the new passphrase, and replaces it only with a strong `If-Match` ETag. A missing/weak ETag, concurrent edit, wrong current key, or failed write leaves the saved passphrase unchanged. Other browsers must get the new passphrase before their next sync.
+- **Rejected:** running a normal merge sync before rotating the key. That could write changes using the old passphrase before a later rotation failure; the rotation now changes only the encryption on the exact server copy it read.
+- **Test correction:** the encrypted envelope is format 2, but its decrypted backup payload remains format 1. The first browser assertion checked the payload as though it were the envelope; it now checks both layers separately.
+- **Recovery:** added a specific concurrent-change status with a retry instruction. Existing status messages already explain how to recover from denied permission, login, folder, network, unreadable-file, wrong-key, and plaintext-downgrade errors; the sync guide now explains updating other browsers after rotation.
+- **Ranking explanations:** the result menu already identified each list and its action, so no second explanation system was needed. It now also shows the exact matched list rule and line number; the matcher already retained both for report links.
+- **Checked:** unit tests cover successful rotation, wrong current passphrase, a concurrent ETag change, server rejection, and matcher reasons. The browser check now requires a matched rule in the result menu. The Settings and result-menu documentation screenshots are regenerated from the mocks.
+
 ## Store privacy disclosure (2026-09-29)
 
 - **Checked:** Google's [User Data FAQ](https://developer.chrome.com/docs/webstore/program-policies/user-data-faq) says local processing is handling user data and needs disclosure. Its FTP/IRC example says data exchanged with a server chosen by the user is not collected for the developer, and Limited Use does not apply to that transfer. Anubis's optional WebDAV connection follows that model: the user supplies the server, Anubis has no sync endpoint, and the sync file goes only to that server. The exception is about this transfer; it does not erase the separate local processing of search results and the current tab's address.

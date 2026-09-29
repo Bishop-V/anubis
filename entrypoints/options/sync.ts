@@ -5,6 +5,7 @@ import { send } from '@/utils/messages';
 import { personalIsLocal, SYNC_QUOTA_BYTES, syncBytesInUse } from '@/utils/storage';
 import {
   accountItem,
+  changeEncryptionPassphrase,
   connect,
   disconnect,
   hasDataConsent,
@@ -38,6 +39,7 @@ const ERRORS: Record<SyncErrorCode, MessageKey> = {
   encrypted: 'webdavErrorNeedsPassphrase',
   passphrase: 'webdavErrorWrongPassphrase',
   unencrypted: 'webdavErrorUnencrypted',
+  changed: 'webdavErrorChanged',
 };
 
 const host = (account: WebdavAccount) => new URL(account.url).hostname;
@@ -185,6 +187,40 @@ function encryptionSetup(account: WebdavAccount, requestDataConsent: boolean, up
   return form;
 }
 
+function changePassphrasePanel(): HTMLElement {
+  const input = h('input', { id: 'webdav-new-passphrase', type: 'password', autocomplete: 'new-password' });
+  const confirmation = h('input', { id: 'webdav-new-passphrase-confirm', type: 'password', autocomplete: 'new-password' });
+  const form = h(
+    'form',
+    { class: 'fields' },
+    h('h3', null, t('webdavChangePassphrase')),
+    h('p', { class: 'muted' }, t('webdavChangePassphraseHint')),
+    h('label', { attrs: { for: 'webdav-new-passphrase' } }, t('webdavEncryptionPassphrase')),
+    input,
+    h('label', { attrs: { for: 'webdav-new-passphrase-confirm' } }, t('webdavConfirmPassphrase')),
+    confirmation,
+    h('button', { class: 'btn', type: 'submit', disabled: syncing }, t('webdavChangePassphrase')),
+  );
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (syncing) return;
+    if (input.value.length < 12) {
+      flash('sync', 'error', t('webdavEncryptionShort'));
+      return rerender();
+    }
+    if (input.value !== confirmation.value) {
+      flash('sync', 'error', t('webdavPassphraseMismatch'));
+      return rerender();
+    }
+    syncing = true;
+    rerender();
+    await changeEncryptionPassphrase(input.value);
+    syncing = false;
+    rerender();
+  });
+  return form;
+}
+
 function connectedPanel(account: WebdavAccount, status: SyncStatus | null, dataConsent: boolean, requestDataConsent: boolean): HTMLElement {
   const failed = status?.error && t(ERRORS[status.error], status.error === 'server' ? String(status.status ?? '') : host(account));
   const leave = async () => {
@@ -207,6 +243,9 @@ function connectedPanel(account: WebdavAccount, status: SyncStatus | null, dataC
     !account.encryptionPassphrase || status?.error === 'passphrase' || status?.error === 'encrypted'
       ? encryptionSetup(account, requestDataConsent, Boolean(account.encryptionPassphrase))
       : null,
+    account.encryptionPassphrase && account.encryptionReady && status?.error !== 'passphrase' && status?.error !== 'encrypted'
+      ? changePassphrasePanel()
+      : null,
     syncing
       ? h('div', { class: 'notice' }, t('webdavSyncing'))
       : failed
@@ -218,7 +257,7 @@ function connectedPanel(account: WebdavAccount, status: SyncStatus | null, dataC
       'div',
       { class: 'toolbar', style: 'margin-top:12px' },
       h('button', { class: 'btn primary', type: 'button', disabled: syncing, on: { click: () => syncNow(account, requestDataConsent) } }, t('webdavSyncNow')),
-      h('button', { class: 'btn', type: 'button', on: { click: () => void leave() } }, t('webdavDisconnect')),
+      h('button', { class: 'btn', type: 'button', disabled: syncing, on: { click: () => void leave() } }, t('webdavDisconnect')),
     ),
     flashed('sync'),
   );

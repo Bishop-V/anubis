@@ -542,6 +542,12 @@ button {
   font-weight: 600;
   color: var(--text);
 }
+.reasons small {
+  display: block;
+  margin: 3px 0 1px;
+  font: 12px/1.4 ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  overflow-wrap: anywhere;
+}
 .foot {
   display: flex;
   align-items: center;

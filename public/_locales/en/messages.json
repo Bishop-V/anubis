@@ -128,6 +128,7 @@
   "menuSuggest": { "message": "Should a list include it? Suggest it to $1.", "description": "In the menu on a result, once you've ranked or tagged the site yourself. $1 is one or two list names, each a link that opens a pre-filled issue on that list's issue tracker, joined like “A or B”." },
   "menuSuggestTitle": { "message": "Propose $1 to $2 on its issue tracker", "description": "Tooltip of a list's name in menuSuggest. $1 is a site, $2 the list's name." },
   "menuReport": { "message": "Wrong? Report it to $1.", "description": "In the menu on a result, under the lines saying what each list does with it. $1 is those lists' names, each a link that opens a pre-filled issue on that list's issue tracker, joined like “A or B”." },
+  "menuMatchedRule": { "message": "Matched rule, line $1: $2", "description": "Shown below a list's explanation in the result menu. $1 is a line number; $2 is the exact rule from the list." },
   "menuReportTitle": { "message": "Tell $1 it’s wrong about this result, on its issue tracker", "description": "Tooltip of a list's name in menuReport. $1 is the list's name." },
 
   "offerTitle": { "message": "Subscribe to $1?", "description": "Settings → Lists, after a subscribe link opened it. $1 is the list's name." },
@@ -185,6 +186,8 @@
   "webdavCorrectPassphrase": { "message": "Enter the correct encryption passphrase" },
   "webdavCorrectPassphraseHint": { "message": "Use the same passphrase you set in the other browser. It is saved here only and never sent to the server." },
   "webdavSavePassphrase": { "message": "Save passphrase and sync" },
+  "webdavChangePassphrase": { "message": "Change encryption passphrase" },
+  "webdavChangePassphraseHint": { "message": "Anubis checks the current passphrase before changing the server file. Enter the new passphrase in every other browser before its next sync." },
   "webdavEncryptionShort": { "message": "Use an encryption passphrase of at least 12 characters." },
   "webdavPassphraseMismatch": { "message": "The passphrases don't match." },
   "webdavEncrypted": { "message": "The sync file is encrypted end to end. Its passphrase is saved in this browser only; the server cannot read the contents. Use the same passphrase in each browser. If you forget it, the server copy can't be recovered." },
@@ -211,6 +214,7 @@
   "webdavErrorNeedsPassphrase": { "message": "This sync file is encrypted. Enter its passphrase; nothing was changed." },
   "webdavErrorWrongPassphrase": { "message": "That passphrase couldn't decrypt the sync file. Check it; the server file was left unchanged." },
   "webdavErrorUnencrypted": { "message": "This connection was encrypted before, but the server now has a plain-text sync file. It was left unchanged. Check the server file before syncing again." },
+  "webdavErrorChanged": { "message": "The sync file changed during the passphrase change, or the server cannot protect it from concurrent edits. Nothing was overwritten. Sync again and retry." },
   "webdavErrorServer": { "message": "The server answered with an error (HTTP $1). Try again later.", "description": "$1 is an HTTP status code, e.g. 500." },
   "webdavErrorFailed": { "message": "Sync didn't finish. Try again." }
 }

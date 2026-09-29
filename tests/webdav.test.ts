@@ -3,8 +3,8 @@ import { fakeBrowser } from 'wxt/testing/fake-browser';
 import { collectData, toBackup } from '@/utils/backup';
 import { listSites, setSite, setSiteLevel } from '@/utils/personal';
 import { editPersonal, loadPersonal, updateSettings } from '@/utils/storage';
-import { accountItem, connect, statusItem, syncChanges, syncFileUrl, syncWithServer } from '@/utils/webdav';
-import { decryptSyncData, isEncryptedSyncFile } from '@/utils/webdav-crypto';
+import { accountItem, changeEncryptionPassphrase, connect, statusItem, syncChanges, syncFileUrl, syncWithServer } from '@/utils/webdav';
+import { decryptSyncData, encryptSyncData, isEncryptedSyncFile } from '@/utils/webdav-crypto';
 
 // Two browsers (each with its own storage, as Firefox and Chrome have) syncing
 // through one fake WebDAV server.
@@ -19,6 +19,7 @@ class FakeDav {
   requests: string[] = [];
   /** Runs before the next PUT is handled: another browser saving in between. */
   beforePut?: () => void;
+  putStatus?: number;
   private version = 0;
 
   save(url: string, body: string) {
@@ -37,6 +38,7 @@ class FakeDav {
     const hook = this.beforePut;
     this.beforePut = undefined;
     hook?.();
+    if (this.putStatus) return new Response(null, { status: this.putStatus });
     const file = this.files.get(url);
     if (headers['If-Match'] && headers['If-Match'] !== file?.etag) return new Response(null, { status: 412 });
     if (headers['If-None-Match'] === '*' && file) return new Response(null, { status: 412 });
@@ -201,6 +203,53 @@ describe('syncing through a WebDAV server', () => {
     expect((await syncWithServer())?.error).toBe('unencrypted');
     expect(server.files.get(FILE)!.body).toContain('"anubis":1');
     expect((await accountItem.getValue())?.encryptionReady).toBe(true);
+  });
+
+  it('changes the passphrase only after re-encrypting the shared file', async () => {
+    await editPersonal((text) => setSite(text, 'rotation.example', 'pin', []));
+    await connect(ENCRYPTED_ACCOUNT);
+    await syncWithServer();
+
+    expect((await changeEncryptionPassphrase('a different new passphrase'))?.error).toBeUndefined();
+    const body = server.files.get(FILE)!.body;
+    expect(isEncryptedSyncFile(body)).toBe(true);
+    expect((await decryptSyncData(body, 'a different new passphrase')).personal).toContain('rotation.example');
+    await expect(decryptSyncData(body, ENCRYPTED_ACCOUNT.encryptionPassphrase)).rejects.toThrow();
+    expect((await accountItem.getValue())?.encryptionPassphrase).toBe('a different new passphrase');
+  });
+
+  it('leaves the file and saved passphrase unchanged when the current passphrase is wrong', async () => {
+    await connect(ENCRYPTED_ACCOUNT);
+    await syncWithServer();
+    const original = server.files.get(FILE)!.body;
+    const wrong = { ...ENCRYPTED_ACCOUNT, encryptionPassphrase: 'wrong current passphrase' };
+    await accountItem.setValue(wrong);
+
+    expect((await changeEncryptionPassphrase('a different new passphrase'))?.error).toBe('passphrase');
+    expect(server.files.get(FILE)!.body).toBe(original);
+    expect(await accountItem.getValue()).toEqual(wrong);
+  });
+
+  it('does not overwrite a concurrent server edit while changing the passphrase', async () => {
+    await connect(ENCRYPTED_ACCOUNT);
+    await syncWithServer();
+    const concurrent = await encryptSyncData(await collectData(), ENCRYPTED_ACCOUNT.encryptionPassphrase);
+    server.beforePut = () => server.save(FILE, concurrent);
+
+    expect((await changeEncryptionPassphrase('a different new passphrase'))?.error).toBe('changed');
+    expect(server.files.get(FILE)!.body).toBe(concurrent);
+    expect((await accountItem.getValue())?.encryptionPassphrase).toBe(ENCRYPTED_ACCOUNT.encryptionPassphrase);
+  });
+
+  it('keeps the old passphrase when the server rejects the replacement file', async () => {
+    await connect(ENCRYPTED_ACCOUNT);
+    await syncWithServer();
+    const original = server.files.get(FILE)!.body;
+    server.putStatus = 500;
+
+    expect((await changeEncryptionPassphrase('a different new passphrase'))).toMatchObject({ error: 'server', status: 500 });
+    expect(server.files.get(FILE)!.body).toBe(original);
+    expect((await accountItem.getValue())?.encryptionPassphrase).toBe(ENCRYPTED_ACCOUNT.encryptionPassphrase);
   });
 
   it('gives a fresh browser everything from the server, without bringing back what the first removed', async () => {

@@ -1124,6 +1124,8 @@ if (!only || only === 'popover') {
   await mdn.hover();
   await mdn.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
   await page.waitForTimeout(300);
+  const explanation = await shadowText('anubis-popover');
+  if (!explanation.includes('Matched rule, line ')) throw new Error('The result menu does not show the matching list rule');
   const reportLink = (await shadowLinks('anubis-popover')).find((a) => a.href.includes('/issues/new'));
   const issue = reportLink && new URL(reportLink.href);
   console.log('\n== report a wrong result:', JSON.stringify({
@@ -1594,6 +1596,22 @@ if (!only || only === 'webdav') {
     const data = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: decode(envelope.iv) }, key, decode(envelope.ciphertext))));
     return data.settings.deeper;
   }, files.get(FILE).body);
+  await opt.goto(`chrome-extension://${davId}/options.html#sync`);
+  await opt.waitForTimeout(500);
+  const newPassphrase = 'a newly changed e2e passphrase';
+  await opt.locator('#webdav-new-passphrase').fill(newPassphrase);
+  await opt.locator('#webdav-new-passphrase-confirm').fill(newPassphrase);
+  await opt.getByRole('button', { name: 'Change encryption passphrase', exact: true }).click();
+  await opt.waitForTimeout(1500);
+  const rotated = await opt.evaluate(async ({ body, passphrase }) => {
+    const decode = (value) => Uint8Array.from(atob(value), (char) => char.charCodeAt(0));
+    const envelope = JSON.parse(body).encryption;
+    const material = await crypto.subtle.importKey('raw', new TextEncoder().encode(passphrase), 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt: decode(envelope.salt), iterations: 600000 }, material, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+    return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: decode(envelope.iv) }, key, decode(envelope.ciphertext))));
+  }, { body: files.get(FILE).body, passphrase: newPassphrase });
+  const rotationStatus = await opt.locator('.notice').last().textContent().catch(() => 'no status');
+  const encryptedAfterRotation = JSON.parse(files.get(FILE).body).anubis === 2;
   console.log('\n== webdav:', JSON.stringify({
     requests: requests.join(' '),
     'encrypted file created': created?.anubis === 2,
@@ -1601,7 +1619,12 @@ if (!only || only === 'webdav') {
     status,
     'site from the other browser shown': arrived > 0,
     'change here on the server': remoteDepth === 2,
+    'rotation status': rotationStatus,
+    'requests after rotation': requests.length,
+    'rotated data': { format: rotated?.anubis, deeper: rotated?.settings?.deeper },
+    'passphrase change re-encrypted the current file': encryptedAfterRotation && rotated?.anubis === 1 && rotated?.settings?.deeper === 2,
   }));
+  if (!encryptedAfterRotation || rotated?.anubis !== 1 || rotated?.settings?.deeper !== 2) throw new Error('WebDAV passphrase change did not preserve and re-encrypt the sync data');
   await dav.close();
 }
 

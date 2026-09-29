@@ -1150,7 +1150,19 @@ function buildPopover(
           { class: 'section' },
           h('h3', null, 'Why'),
           reasons.length
-            ? h('ul', { class: 'reasons' }, reasons.map((r) => h('li', null, h('b', null, r.list), ` ${r.text}.`)))
+            ? h(
+                'ul',
+                { class: 'reasons' },
+                reasons.map((r) =>
+                  h(
+                    'li',
+                    null,
+                    h('b', null, r.list),
+                    ` ${r.text}.`,
+                    r.rule ? h('small', null, t('menuMatchedRule', r.rule.line, r.rule.raw)) : null,
+                  ),
+                ),
+              )
             : null,
           reportLinks.length ? h('p', { class: 'forge' }, tList('menuReport', reportLinks, 'disjunction')) : null,
           suggestLinks.length ? h('p', { class: 'forge' }, tList('menuSuggest', suggestLinks, 'disjunction')) : null,

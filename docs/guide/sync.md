@@ -57,6 +57,12 @@ This protects the file's contents, not the fact that you connect to the server. 
 
 Anubis keeps the passphrase in that browser's local extension storage to sync automatically. It is not protected from someone who can access your browser profile or run code as you. WebDAV credentials are also saved locally and sent to the server to sign in.
 
+### Change the passphrase
+
+In **Settings → Sync**, use **Change encryption passphrase**. Enter and confirm a new passphrase of at least 12 characters. Anubis first checks that the current passphrase decrypts the server file, then replaces it only if the server confirms nobody changed it in between. If that check or write fails, Anubis keeps the current passphrase and does not overwrite the file. Sync first and retry if the file changed during the operation.
+
+After a successful change, enter the new passphrase in every other browser before it syncs. A browser still using the old passphrase cannot read or change the encrypted file; it will report the passphrase error and leave the file alone.
+
 New connections use encryption by default. To turn it off, uncheck the option when connecting; the server operator will then be able to read the file. Existing connections remain unencrypted until you enter and confirm a passphrase in Settings → Sync and choose **Save passphrase and sync**. An encrypted file requires the passphrase in every browser; Anubis will not overwrite it if a passphrase is missing or wrong. Plain backups exported from Settings are not encrypted by this feature.
 
 ### When it syncs
