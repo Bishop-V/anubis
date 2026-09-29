@@ -125,7 +125,9 @@ export const ENGINES: EngineDef[] = [
     ],
     host: /^(safe\.|start\.|noai\.)?duckduckgo\.com$/,
     isResultsPage: (url) => hasQuery(url, 'q'),
-    heading: 'h2',
+    // Web results are in the web-vertical list (uBlacklist's rules); the side
+    // panel's heading links to a site too, and isn't a result.
+    heading: '[data-testid="web-vertical"] li > article h2',
     boundary: 'ol, main, [data-testid="web-vertical"]',
     cleanupSelectors: { ai: '[data-testid="duckassist-answer-content"], [data-react-module-id="wikinlp"]' },
     // Beside DuckDuckGo's own ⋯ menu on each result, as a second option.
