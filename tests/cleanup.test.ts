@@ -5,6 +5,7 @@ import { ENGINES } from '@/utils/engines';
 import type { PageStats } from '@/utils/messages';
 import { getSettings, settingsItem } from '@/utils/storage';
 import { summarySentence } from '@/utils/summary';
+import { useEnglish } from './english';
 
 const engine = (id: string) => ENGINES.find((e) => e.id === id)!;
 
@@ -36,6 +37,7 @@ describe('clean-up headings', () => {
 });
 
 describe('summary with clean-up', () => {
+  useEnglish();
   const stats = (patch: Partial<PageStats>): PageStats => ({
     engine: 'Google',
     total: 9,
@@ -55,9 +57,25 @@ describe('summary with clean-up', () => {
 
   it('names what was removed', () => {
     expect(describeRemoved({ ai: 1, videos: 2 })).toBe('an AI answer and 2 video panels');
-    expect(summarySentence(stats({ hidden: 2, removed: { ai: 1 } }))).toBe('Anubis hid 2 of 9 results, and removed an AI answer.');
+    expect(describeRemoved({})).toBe('');
+    expect(summarySentence(stats({ hidden: 2, removed: { ai: 1 } }))).toBe('Anubis hid 2 of 9 results. It also removed an AI answer.');
+    expect(summarySentence(stats({ raised: 1, hidden: 2, removed: { ai: 1, videos: 1, questions: 1, images: 1 } }))).toBe(
+      'Anubis raised 1 and hid 2 of 9 results. It also removed an AI answer, a video panel, a question list and an image panel.',
+    );
     expect(summarySentence(stats({ removed: { questions: 1 } }))).toBe('Anubis removed a question list.');
+  });
+
+  it('counts results and pages', () => {
     expect(summarySentence(stats({}))).toBe('Anubis left all 9 results as they were.');
+    expect(summarySentence(stats({ total: 1 }))).toBe('Anubis left this result as it was.');
+    expect(summarySentence(stats({ total: 20, pages: 2 }))).toBe('Anubis left all 20 results from 2 pages as they were.');
+    expect(summarySentence(stats({ total: 20, pages: 2, pinned: 1, raised: 2, hidden: 3 }))).toBe('Anubis pinned 1, raised 2 and hid 3 of 20 results from 2 pages.');
+    expect(summarySentence(stats({ total: 1, lowered: 1 }))).toBe('Anubis lowered 1 of 1 result.');
+  });
+
+  it('says which tag it shows', () => {
+    const tags = [{ id: 'ref', label: 'Reference', count: 2 }] as PageStats['tags'];
+    expect(summarySentence(stats({ filter: 'ref', tags }))).toBe('Showing only “Reference”: 2 of 9 results.');
   });
 });
 

@@ -6,7 +6,7 @@
 // a few selectors where a heading isn't enough. Keep this file free of browser
 // APIs: the options page and the content script both use it.
 
-import { andList } from './dom';
+import { tJoin, tn, type PluralKey } from './i18n';
 
 export type CleanupKind = 'ai' | 'videos' | 'questions' | 'discussions' | 'news' | 'images' | 'related';
 
@@ -18,9 +18,6 @@ export interface CleanupDef {
   id: CleanupKind;
   label: string;
   hint: string;
-  /** For the summary: "removed an AI answer", "removed 2 video panels". */
-  one: string;
-  many: string;
   /** Heading texts, matched whole and ignoring case. English first, then common translations. */
   headings: string[];
   /** Heading texts that start with these, e.g. "Images for anubis". */
@@ -34,8 +31,6 @@ export const CLEANUP: CleanupDef[] = [
     id: 'ai',
     label: 'AI answers',
     hint: 'Google’s AI Overview and AI Mode tab, DuckDuckGo’s AI-assisted answers and Duck.ai, and Brave’s AI answers.',
-    one: 'an AI answer',
-    many: 'AI answers',
     headings: [
       'AI Overview',
       'AI Overviews',
@@ -61,16 +56,12 @@ export const CLEANUP: CleanupDef[] = [
     id: 'videos',
     label: 'Videos',
     hint: 'Video and short-video panels between the results.',
-    one: 'a video panel',
-    many: 'video panels',
     headings: ['Videos', 'Short videos', 'Vidéos', 'Vidéos courtes', 'Kurze Videos', 'Vídeos', 'Vídeos cortos', 'Video', 'Video brevi'],
   },
   {
     id: 'questions',
     label: 'People also ask',
     hint: 'Lists of other people’s questions with expandable answers.',
-    one: 'a question list',
-    many: 'question lists',
     headings: [
       'People also ask',
       'Related questions',
@@ -89,24 +80,18 @@ export const CLEANUP: CleanupDef[] = [
     id: 'discussions',
     label: 'Discussions',
     hint: 'Panels of forum threads between the results, like Google’s “Discussions and forums”. Forum results in the list stay.',
-    one: 'a discussions panel',
-    many: 'discussions panels',
     headings: ['Discussions and forums', 'Discussions'],
   },
   {
     id: 'news',
     label: 'Top stories',
     hint: 'News panels between the results.',
-    one: 'a news panel',
-    many: 'news panels',
     headings: ['Top stories', 'News', 'Latest news', 'À la une', 'Schlagzeilen', 'Noticias destacadas', 'Principais notícias', 'Notizie principali', 'Topverhalen'],
   },
   {
     id: 'images',
     label: 'Images',
     hint: 'Rows of images between the results. The Images tab still works.',
-    one: 'an image panel',
-    many: 'image panels',
     headings: ['Images', 'Bilder', 'Imágenes', 'Imagens', 'Immagini', 'Afbeeldingen'],
     prefixes: ['Images for ', 'Images de ', 'Bilder zu ', 'Imágenes de '],
   },
@@ -114,8 +99,6 @@ export const CLEANUP: CleanupDef[] = [
     id: 'related',
     label: 'Related searches',
     hint: 'Lists of other searches, usually at the bottom of the page.',
-    one: 'a list of related searches',
-    many: 'lists of related searches',
     headings: [
       'Related searches',
       'Related queries',
@@ -182,12 +165,19 @@ export function cleanupMarkerFor(text: string): CleanupKind | undefined {
   return MARKERS.find(([m]) => t.startsWith(m))?.[1];
 }
 
+/** For the summary: "an AI answer", "2 video panels". */
+const REMOVED = {
+  ai: 'summaryRemovedAi',
+  videos: 'summaryRemovedVideos',
+  questions: 'summaryRemovedQuestions',
+  discussions: 'summaryRemovedDiscussions',
+  news: 'summaryRemovedNews',
+  images: 'summaryRemovedImages',
+  related: 'summaryRemovedRelated',
+} as const satisfies Record<CleanupKind, PluralKey>;
+
 /** "an AI answer and 2 video panels", or '' when nothing was removed. */
 export function describeRemoved(removed: Partial<Record<CleanupKind, number>>): string {
-  return andList(
-    CLEANUP.filter((def) => removed[def.id]).map((def) => {
-      const n = removed[def.id]!;
-      return n === 1 ? def.one : `${n} ${def.many}`;
-    }),
-  );
+  const parts = CLEANUP.filter((def) => removed[def.id]).map((def) => tn(REMOVED[def.id], removed[def.id]!));
+  return parts.length ? tJoin(parts) : '';
 }

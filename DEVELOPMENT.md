@@ -177,7 +177,7 @@ Interface text belongs in `public/_locales/en/messages.json`, the browsers' own 
 
 - Name keys after where they appear: `popup…`, `welcome…`, `menu…`, `summary…`, `offer…`, and no prefix for text used in more than one place (`showHidden`, `anubisSettings`).
 - Give each message a `description` for translators: where it appears, and what each `$1`, `$2` stands for.
-- Use `t('key', …)` for text, `tn('key', count)` for counts (with `key_one` and `key_other` messages), and `tList('key', items)` for a sentence with a list of links in it. Static HTML takes `data-i18n`, `data-i18n-title`, `data-i18n-aria-label` or `data-i18n-placeholder`, filled in by `localizePage()`.
+- Use `t('key', …)` for text, `tn('key', count)` for counts (with `key_one` and `key_other` messages), `tJoin(items)` to join a list the way the language does ("a, b and c"), and `tList('key', items)` for a sentence with a list of links in it. Build a sentence from whole messages, one per shape, rather than from English fragments. In tests, `useEnglish()` from `tests/english.ts` makes `t()` answer in English. Static HTML takes `data-i18n`, `data-i18n-title`, `data-i18n-aria-label` or `data-i18n-placeholder`, filled in by `localizePage()`.
 - `tests/i18n.test.ts` checks that every key the HTML and manifest use exists, and that counts have both forms.
 
 Not everything is converted yet: `ROADMAP.md` lists what's left. Wording follows the interface's conventions: labels say what happens in plain words, and a site's ranking is always Hide, Lower, Normal, Raise or Pin.

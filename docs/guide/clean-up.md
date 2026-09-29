@@ -20,7 +20,7 @@ On Bing, the AI answer and the "Videos of…" panel aren't removed yet.
 
 ## What was removed
 
-The summary above the results, or above an AI answer when there is one, says what went: "…and removed an AI answer and a video panel." **Show hidden** brings removed panels back on that page, with a dashed outline so you can tell them apart.
+The summary above the results, or above an AI answer when there is one, says what went: "It also removed an AI answer and a video panel." **Show hidden** brings removed panels back on that page, with a dashed outline so you can tell them apart.
 
 ![The summary after cleaning up](../img/cleanup-summary.png)
 
