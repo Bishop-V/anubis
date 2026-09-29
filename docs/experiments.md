@@ -2,6 +2,13 @@
 
 What was tried while building the tagging and lists release, what failed, and what is still unverified. Newest notes go at the top of each section.
 
+## Finding Chromium for the end-to-end run (2026-09-29)
+
+- **Found:** `npm run release:prep` on NixOS stopped at the end-to-end step with "Chromium is missing". Playwright's downloaded Chromium doesn't run there, and the harness only looked at `CHROMIUM_PATH` and Playwright's own path.
+- **Changed:** `e2e/run.mjs` now tries `CHROMIUM_PATH`, then Playwright's build, then `chromium` or `chromium-browser` on PATH. Playwright's build still comes before PATH so CI keeps using it. The error names all three ways, including `nix shell nixpkgs#chromium`.
+- **Kept out:** adding Chromium to the Nix dev shell. `flake.nix` deliberately takes browsers from the system, and it would make every `nix develop` fetch Chromium.
+- **Checked:** with no Chromium anywhere the part stops with the new message; with only a `chromium` on PATH the `responsive` part passes.
+
 ## Passphrase changes that race or lose their answer (2026-09-29)
 
 - **Found:** a review of the passphrase change turned up three gaps. It ran in the Settings page, so the lock that keeps syncs from overlapping (which only works within one script) didn't hold back the background script's syncs; a sync's last attempt writes without `If-Match` and could put back a file under the old passphrase. When the server saved the new file but the answer was lost, the old passphrase stayed saved and the next sync failed. And a server disconnected during the change was connected again when it finished.

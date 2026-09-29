@@ -10,15 +10,15 @@
 //                               in docs/public/
 //
 // Needs Chromium (branded Chrome no longer loads unpacked extensions from the
-// command line). Playwright's installed build is used by default; on NixOS, point
-// CHROMIUM_PATH at the system binary.
+// command line). It uses CHROMIUM_PATH if set, then Playwright's installed build,
+// then a chromium on PATH (NixOS, where Playwright's build doesn't run).
 // The mock pages are modelled on each engine's markup; they are not the real thing.
 
 import { chromium } from 'playwright-core';
 import { execFileSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { delimiter, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ANUBIS_PAGE2, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, brave, duckduckgo, google, googleMobile } from './fixtures.mjs';
 
@@ -26,14 +26,28 @@ const EXT = fileURLToPath(new URL('../.output/chrome-mv3', import.meta.url));
 const SHOTS = fileURLToPath(new URL('./shots/', import.meta.url));
 const only = process.argv[2];
 const checks = only === 'checks';
-const executablePath = process.env.CHROMIUM_PATH || chromium.executablePath();
+
+function findChromium() {
+  if (process.env.CHROMIUM_PATH) return process.env.CHROMIUM_PATH;
+  const playwrights = chromium.executablePath();
+  if (existsSync(playwrights)) return playwrights;
+  for (const dir of (process.env.PATH ?? '').split(delimiter)) {
+    for (const name of ['chromium', 'chromium-browser']) {
+      if (dir && existsSync(join(dir, name))) return join(dir, name);
+    }
+  }
+  return playwrights;
+}
+const executablePath = findChromium();
 
 if (!existsSync(join(EXT, 'manifest.json'))) {
   console.error('No Chrome build found. Run `npm run build:chrome` first (or `npm run e2e`).');
   process.exit(1);
 }
 if (!existsSync(executablePath)) {
-  console.error('Chromium is missing. Run `npx playwright-core install chromium` or set CHROMIUM_PATH to a system binary.');
+  console.error(
+    'Chromium is missing. Install Playwright\'s (`npx playwright-core install chromium`), put a system `chromium` on PATH (on NixOS: `nix shell nixpkgs#chromium`), or set CHROMIUM_PATH to its binary.',
+  );
   process.exit(1);
 }
 mkdirSync(SHOTS, { recursive: true });
