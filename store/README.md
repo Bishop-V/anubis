@@ -27,7 +27,7 @@ Setting it up: create a Google Cloud project, turn on the Chrome Web Store API, 
 5. The privacy policy link below has to load: GitHub Pages must be publishing the docs site.
 6. Merge, then push a matching tag (`git tag v<version> && git push origin v<version>`). [`release.yml`](../.github/workflows/release.yml) builds the zips, creates the GitHub Release and, once approved, submits to Chrome, Firefox, and Edge.
 
-The release workflow rejects tags whose commit is not already on `main`, as well as tags that do not match `package.json`. Before the first submission, create the store listings manually, verify their permanent IDs and privacy answers, enable GitHub Pages, and configure the protected `release` environment with the store credentials. Do not test publishing against production store credentials from a pull request.
+The release workflow rejects tags whose commit is not already on `main`, as well as tags that do not match `package.json`. Before the first submission, create the store listings manually, verify their permanent IDs and privacy answers, confirm the docs site is publishing on GitHub Pages, and configure the protected `release` environment with the store credentials. Do not test publishing against production store credentials from a pull request.
 
 ## Chrome Web Store
 

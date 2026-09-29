@@ -14,7 +14,7 @@ Work that's planned but not started, or started and not finished. Each item says
 - **Try syncing between browsers** with a real WebDAV service (Koofr, InfiniCLOUD, and Nextcloud at least) in Firefox and Chrome: connect both, change a site in each, and check Firefox 142+'s consent prompt on Connect. Record what each service needed in `docs/guide/sync.md`.
 - **Try sync between two computers**, in Firefox and in Chrome: change a site's ranking on one and wait for it on the other. Also check that a change from a Firefox search page's result menu is saved compressed (`encoding: 'deflate'` in `sync:personal`, visible in `about:debugging` → Inspect → Storage): `CompressionStream` in Firefox content scripts is unverified (`docs/experiments.md`, Storage).
 - **Take real screenshots** for the listings, following the shot list in `store/README.md`.
-- **Turn on GitHub Pages** (Settings → Pages → Source: GitHub Actions), so the privacy policy link in the listings loads and subscribe links have a page to land on. Then try a subscribe link in Firefox, where it hasn't been run yet.
+- **Recheck GitHub Pages before submission.** The docs site and privacy-policy URL loaded on 2026-09-29; confirm Pages still publishes from GitHub Actions before the first listing upload. Then try a subscribe link in Firefox, where it hasn't been run yet.
 
 ## Releases
 
