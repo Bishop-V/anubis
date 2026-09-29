@@ -74,6 +74,14 @@
 .before-after .after img {
   border-color: var(--vp-c-brand-3);
 }
+/* Each picture comes in light and dark, following the site's mode. */
+.before-after .dark-only,
+.dark .before-after .light-only {
+  display: none;
+}
+.dark .before-after .dark-only {
+  display: block;
+}
 .before-after figcaption {
   max-width: 40rem;
   font-size: 13px;
@@ -94,5 +102,15 @@
   }
   .before-after .shots {
     gap: 32px;
+  }
+}
+/* Below 960px the hero with its logo is centred; so are these. */
+@media (max-width: 959px) {
+  .before-after .label,
+  .before-after figcaption {
+    text-align: center;
+  }
+  .before-after figcaption {
+    margin: 0 auto;
   }
 }
