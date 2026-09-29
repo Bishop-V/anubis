@@ -2,6 +2,12 @@
 
 What was tried while building the tagging and lists release, what failed, and what is still unverified. Newest notes go at the top of each section.
 
+## Finishing touches (2026-09-29)
+
+- **Asked for:** the project owner wanted the extension to look better, with small, tasteful additions rather than anything loud. Ten were mocked up beside the current build, in both schemes. The mockups aren't in the repository.
+- **Shipped:** a diamond before the popup's status, gold while Anubis is on and hollow while it's off. A second, fainter hairline inside the cartouche, as carved cartouches are drawn, in the popup and the result menu. Each ranking's icon over its name, muted until it's chosen. In Your sites (the popup and Settings), the ending a site shares with others (`.org`, `.co.uk`) is muted, and a site with only a tag shows that tag instead of "1 tag". The popup's empty Your sites list shows the balance, level and empty, in grey. The matched rule under Why is split into its options (`utils/ruletext.ts`) and breaks only after a comma; before, it wrapped mid-word ("tuto" / "rial"). The welcome page's balance swings and settles level as the page opens, and a click on either side presses that pan down to swing again (the owner asked for it to react to something). It holds still with reduced motion.
+- **Rejected:** a faint gold glow behind the balance, with a ground line under its foot ("too much"). A grain on extension pages' backgrounds, to make the light scheme look like honed stone ("not needed"). Counts in the summary's sentence set in the text colour at 500, to be read at a glance ("no").
+- **Checked:** unit tests for `splitSuffix` and `ruleParts`, including that the parts join back into the exact rule; the `popover` e2e part checks that the menu shows the rule as written. The `checks`, `responsive`, `welcome`, `a11y`, `mobile`, and `options` parts pass. The regenerated popup, menu, and Your sites screenshots were rendered in a container whose fonts differ from the other screenshots'; regenerate them with `node e2e/run.mjs docs` on the usual machine to match.
 ## Finding Chromium for the end-to-end run (2026-09-29)
 
 - **Found:** `npm run release:prep` on NixOS stopped at the end-to-end step with "Chromium is missing". Playwright's downloaded Chromium doesn't run there, and the harness only looked at `CHROMIUM_PATH` and Playwright's own path.
@@ -360,6 +366,8 @@ Reported from real use: on Google in Firefox the "Reference" tag and "Hidden" re
 ## Load more results (more than one page of results)
 
 Called "Weigh deeper" until the wording review below.
+
+- **The automatic setting loaded nothing on Google (2026-09-29):** reported from use. The button worked, but "5 more pages" never loaded any. The content script starts at `document_start` and Google streams its page, so the first pass found results before the pager (`a#pnnext`) at the foot of the page had arrived. The automatic load found no Next link, took that for the last page, and gave up for the search, which also took the button away. Pressing the button later worked because by then the page had finished. Anubis now waits for the Next link (or DuckDuckGo's button, as it already did) before it offers or starts loading (`nextPageReady` in `deeper.ts`). A Google mock whose pager arrives 600 ms after the page (`latePager`) loaded nothing before the fix. The `deeper` part now asserts its results and runs with `checks`, so CI covers it. Not yet confirmed on the live page, and not checked: whether Google rewriting its address after loading starts the automatic load a second time (it would fetch page 2 again, find only duplicates, and stop).
 
 - Engines only send one page, so an extension can only rerank what is on screen. Weigh deeper brings the next pages onto the current one: DuckDuckGo gets its own "More results" button pressed; Google, Bing, and Yahoo have their next-page link fetched; Brave and Ecosia get their page parameter incremented. Fetched pages are parsed with `DOMParser` and run through the same result finder as the live page, so no per-engine import code was needed.
 - Off by default and never automatic unless chosen, with 700 ms between page requests, because extra requests to an engine can trigger rate limits or CAPTCHAs. Requests only go to the engine's own origin.

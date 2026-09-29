@@ -1,5 +1,5 @@
 import { normalizeDomain } from '@/utils/domain';
-import { h, icon, plural } from '@/utils/dom';
+import { h, icon, plural, siteName } from '@/utils/dom';
 import { ICON_CLOSE, ICON_DOWNLOAD, ICON_EDIT, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
 import { guide } from '@/utils/links';
 import { colorForTag, parseList } from '@/utils/listformat';
@@ -149,7 +149,7 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
         return h(
           'tr',
           null,
-          h('td', { class: 'site' }, entry.site, entry.level === 'allow' ? h('div', { class: 'muted', style: 'font-weight:400;font-size:12.5px' }, 'Kept at normal, whatever your lists say') : null),
+          h('td', { class: 'site' }, siteName(entry.site), entry.level === 'allow' ? h('div', { class: 'muted', style: 'font-weight:400;font-size:12.5px' }, 'Kept at normal, whatever your lists say') : null),
           h('td', null, levelSeg(level, setLevel, true)),
           h(
             'td',

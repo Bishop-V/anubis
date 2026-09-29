@@ -389,6 +389,11 @@ button.tag:hover {
   color: var(--danger);
 }
 
+/* A site's name with the ending it shares with other sites (.org, .co.uk) muted, so the name stands out. */
+.suffix {
+  color: var(--muted);
+  font-weight: 400;
+}
 .muted {
   color: var(--muted);
 }

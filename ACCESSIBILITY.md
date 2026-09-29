@@ -21,7 +21,7 @@ Anubis works in two places, and they need different care:
 
 **Say what changed.** After an action whose result appears somewhere else on the page, put the message in an element with `role="status"` so it's announced without moving focus. Settings does this for its notices (`entrypoints/options/flash.ts`). Use `status` (polite), not `alert`: nothing Anubis says is urgent.
 
-**Icons are decoration unless they're the only content.** Icons from `utils/icons.ts` carry `aria-hidden="true"` and `focusable="false"`, and so does the menu's balance. A button whose only content is an icon gets an `aria-label` and a matching `title`.
+**Icons are decoration unless they're the only content.** Icons from `utils/icons.ts` carry `aria-hidden="true"` and `focusable="false"`, and so does every drawing of the balance. The welcome page's balance swings when clicked, but only as decoration, so it isn't a button and isn't in the tab order. A button whose only content is an icon gets an `aria-label` and a matching `title`.
 
 **State goes in attributes, not only in colour or shape.** Chosen options in a row of choices use `aria-pressed`, the rows use `role="group"` with a label, the settings navigation marks its page with `aria-current`, and the ⚖ button keeps `aria-expanded` in step with the menu. Follow the same patterns for new controls instead of inventing new ones.
 

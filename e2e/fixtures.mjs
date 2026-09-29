@@ -160,7 +160,7 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
 // page did (the Overview `grid-column: 1 / -1`, #center_col `2 / span 12`), where
 // an element added before the Overview lands in a narrow cell of its own. `related`: "People also search for" and the page navigation in
 // one block at the bottom, in #botstuff. Not copied from a live page.
-export function google(query, results, { dark = false, next = '', hostile = false, grouped = false, modules = false, aiLabel = false, videos = '', inner = false, forum = false, aiAbove = false, related = false } = {}) {
+export function google(query, results, { dark = false, next = '', hostile = false, grouped = false, modules = false, aiLabel = false, videos = '', inner = false, forum = false, aiAbove = false, related = false, latePager = false } = {}) {
   const sitelinks = (url) =>
     `<div class="sitelinks">${['History', 'Symbols', 'Worship', 'Family', 'Names', 'Legacy']
       .map((s) => `<div class="usJj9c"><h3><a href="${forum ? `/goto?url=CAESsitelink${s}` : `${url}#${s}`}">${s}</a></h3><div>About ${s.toLowerCase()}.</div></div>`)
@@ -396,9 +396,14 @@ export function google(query, results, { dark = false, next = '', hostile = fals
   <div id="rcnt">${aiRow}<div id="center_col" role="main">${aiOverview}
   <div id="search"><div data-hveid="CAQQAA"><h1 style="display:none">Search Results</h1><div id="rso">${items.join('')}</div></div></div>
   ${botstuff}</div>${sidePanel}</div>
-  ${related ? '' : pager}
+  ${related ? '' : latePager ? latePagerHtml(pager) : pager}
   </body></html>`;
 }
+
+// Google streams its page, so the pager at the foot arrives after the results.
+// `latePager` models that: the Next link is added a moment after the page loads.
+const latePagerHtml = (pager) =>
+  `<template id="late-pager">${pager}</template><script>setTimeout(() => document.body.append(document.getElementById('late-pager').content.cloneNode(true)), 600);</script>`;
 
 // Google's phone layout (Firefox for Android, Chrome on a phone). Modelled on
 // uBlacklist's "Web (mobile)" rules in serpinfo/google.yml, not on a live page:

@@ -418,7 +418,8 @@ button {
 
 /* The cartouche: a gold oval ring around a name, as in hieroglyphs. Here it holds
    the site being weighed. Where the rule can cover more or less of the site, the
-   native select lies unseen over the ring, and the ring shows its focus. */
+   native select lies unseen over the ring, and the ring shows its focus. The inner
+   hairline doubles the ring, as carved cartouches are drawn. */
 .cartouche {
   position: relative;
   display: inline-flex;
@@ -426,9 +427,18 @@ button {
   min-width: 0;
   max-width: 250px;
   margin-right: 8px;
-  padding: 3px 16px 4px;
+  padding: 5px 19px 6px;
   border: 1.5px solid var(--gold);
   border-radius: 999px;
+}
+.cartouche::after {
+  content: '';
+  position: absolute;
+  inset: 2.5px;
+  border: 0.75px solid var(--gold);
+  border-radius: 999px;
+  opacity: 0.55;
+  pointer-events: none;
 }
 .cartouche .name {
   overflow: hidden;
@@ -484,12 +494,28 @@ button {
   margin: 4px 12px 0;
 }
 .level {
-  padding: 7px 0 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 5px 0 6px;
   border: 0;
   border-bottom: 2px solid transparent;
   background: none;
   color: var(--muted);
   font-size: 12.5px;
+}
+/* Each ranking's icon over its name: muted at rest, the ranking's colour once chosen. */
+.level-icon svg {
+  width: 14px;
+  height: 14px;
+}
+.level.raise[aria-pressed='true'] .level-icon,
+.level.pin[aria-pressed='true'] .level-icon {
+  color: var(--gold-ink);
+}
+.level.hide[aria-pressed='true'] .level-icon {
+  color: var(--danger);
 }
 .level:hover {
   color: var(--text);
@@ -590,9 +616,30 @@ button {
 }
 .reasons small {
   display: block;
-  margin: 3px 0 1px;
-  font: 12px/1.4 ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  margin: 4px 0 0;
+  font-size: 12.5px;
+}
+/* The matched rule breaks after a comma (a <wbr>), and a long option wraps with a
+   hanging indent. Option names are muted; an option's effect takes its ranking's colour. */
+.rule {
+  display: block;
+  margin: 1px 0 2px;
+  padding-left: 2ch;
+  text-indent: -2ch;
+  font: 12.5px/1.5 ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  color: var(--muted);
   overflow-wrap: anywhere;
+}
+.rule .value {
+  color: var(--text);
+}
+.rule .raise {
+  color: var(--gold-ink);
+  font-weight: 600;
+}
+.rule .hide {
+  color: var(--danger);
+  font-weight: 600;
 }
 .foot {
   display: flex;

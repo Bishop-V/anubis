@@ -64,7 +64,7 @@ Everything on search pages was built against the mocks in `e2e/fixtures.mjs`: th
 - `entrypoints/welcome/`: the page that opens on first install: how to pin the toolbar button in this browser, searches to try, and the lists you start with
 - `entrypoints/options/`: settings sections (your sites, tags, lists, clean up, appearance, engines, sync, backup)
 - `utils/engines.ts`: engine definitions. Also imported at build time for the manifest's matches, so keep it free of browser APIs. When an engine breaks, diff against uBlacklist's ruleset at <https://github.com/ublacklist/builtin> (`serpinfo/*.yml`), which tracks these layouts continuously. An engine's `mobile` holds its phone layout's differences, chosen by user agent when the content script starts.
-- `utils/listformat.ts`: the list parser; `utils/matcher.ts`: compiling lists and weighing a result; `utils/personal.ts`: line-level edits to the personal list
+- `utils/listformat.ts`: the list parser; `utils/matcher.ts`: compiling lists and weighing a result; `utils/personal.ts`: line-level edits to the personal list; `utils/ruletext.ts`: splitting a matched rule into its options for the result menu
 - `utils/storage.ts`, `utils/ruleset.ts`, `utils/subscriptions.ts`: storage items, loading everything into one rule set, downloading lists
 - `utils/importers.ts`: bringing sites over from uBlacklist rules, HOHSER exports, Goggles, and domain lists
 - `utils/backup.ts`: everything that follows the user (settings, tag choices, subscriptions, the personal list), as a backup file and as the sync file; `utils/merge.ts`: three-way merges of it; `utils/webdav.ts`: the optional sync between browsers through a WebDAV server
@@ -103,6 +103,7 @@ Lessons from earlier bugs and design decisions; `docs/experiments.md` has the de
 - State a click sets on the page (a revealed result, a filter) belongs in the content script's variables, not only in DOM attributes: the next pass rewrites the attributes from that state, and engines trigger passes on hover.
 - No `innerHTML`: `web-ext lint` flags it. Build DOM with `h()`, parse constant SVG with `DOMParser`. Pass `data-*` to `h()` through `attrs`; `dataset` is read-only.
 - Engines change markup without notice. Prefer structural fixes (headings, links, nesting) over class names.
+- The content script starts at `document_start` and engines stream their pages, so the first pass can run before what sits below the results (a Next link, a More results button) has arrived. Don't treat its absence as final.
 - Playwright can't answer a permission prompt, and only routes the background script's requests with `PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1`. The `webdav` e2e part runs a copy of the build whose manifest already allows its mock server.
 - VitePress's router follows links within the docs site without loading a page, and content scripts only run on page loads. Links to the subscribe page carry `target="_self"`, which the router leaves alone.
 
