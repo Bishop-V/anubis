@@ -17,7 +17,7 @@ import {
   type WebdavAccount,
 } from '@/utils/webdav';
 import { flash, flashed, rerender } from './flash';
-import { pageTitle } from './parts';
+import { helpLink, pageTitle } from './parts';
 
 // Settings → Sync: browser sync, which Anubis only has to explain, and optionally
 // a WebDAV server for sharing between browsers.
@@ -58,7 +58,12 @@ async function browserSyncPanel(): Promise<HTMLElement> {
     'div',
     { class: 'panel' },
     h('h3', null, t('syncBrowserHeading')),
-    h('p', { class: 'muted' }, t(android ? 'syncFirefoxAndroid' : import.meta.env.FIREFOX ? 'syncFirefox' : 'syncChrome')),
+    h(
+      'p',
+      { class: 'muted' },
+      t(android ? 'syncFirefoxAndroid' : import.meta.env.FIREFOX ? 'syncFirefox' : 'syncChrome'),
+      android ? null : [' ', helpLink('guide/sync#browser-sync', t('syncBrowserHelp'))],
+    ),
     android ? null : local ? h('div', { class: 'notice' }, t('syncTooBig')) : h('p', { class: 'muted' }, t('syncUsage', kb(bytes), kb(SYNC_QUOTA_BYTES))),
   );
 }
@@ -151,7 +156,7 @@ function connectPanel(requestDataConsent: boolean): HTMLElement {
     'div',
     { class: 'panel' },
     h('h3', null, t('webdavHeading')),
-    h('p', { class: 'muted' }, t('webdavIntro')),
+    h('p', { class: 'muted' }, t('webdavIntro'), ' ', helpLink('guide/sync#get-an-address-and-a-password', t('webdavHelp'))),
     form,
     h('p', { class: 'muted' }, t('webdavPrivacy')),
     flashed('sync'),
@@ -194,7 +199,7 @@ function changePassphrasePanel(): HTMLElement {
     'form',
     { class: 'fields' },
     h('h3', null, t('webdavChangePassphrase')),
-    h('p', { class: 'muted' }, t('webdavChangePassphraseHint')),
+    h('p', { class: 'muted' }, t('webdavChangePassphraseHint'), ' ', helpLink('guide/sync#change-the-passphrase', t('webdavChangePassphraseHelp'))),
     h('label', { attrs: { for: 'webdav-new-passphrase' } }, t('webdavEncryptionPassphrase')),
     input,
     h('label', { attrs: { for: 'webdav-new-passphrase-confirm' } }, t('webdavConfirmPassphrase')),

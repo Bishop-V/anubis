@@ -180,7 +180,7 @@ Clean-up kinds live in `utils/cleanup.ts`:
 2. Add a row to the right settings section: `toggleRow` or `segRow` in `options/general.ts`, or `switchRow` from `options/parts.ts`.
 3. Read it where it's needed: `rules.settings` in the content script, `getSettings()` elsewhere.
 4. Changing a default for people who already use Anubis needs a one-time migration, run from the background script's `onInstalled` (see `migrateSettings`, which moved hidden results from Collapse to Remove).
-5. Describe it in the wiki page for that section. Settings links each section to its page (`help` in `SECTIONS`), so keep page paths as they are.
+5. Describe it in the wiki page for that section. Settings links each section to its page (`help` in `SECTIONS`), and panels or settings that a heading explains to that heading (`helpLink` in `parts.ts`), so keep page paths and headings as they are. `tests/help-links.test.ts` fails on a link that leads nowhere.
 
 Backups and the sync between browsers include every setting without further work.
 
@@ -235,6 +235,7 @@ Not everything is converted yet: `ROADMAP.md` lists what's left. Wording follows
 | `engines.test.ts` | Picking an engine's phone layout |
 | `i18n.test.ts` | Message keys, plural forms, and placeholders, the undo line's wording |
 | `readme.test.ts` | The README's features against the wiki's introduction, and its links |
+| `help-links.test.ts` | Settings' links into the wiki, to pages and headings that exist |
 
 **End-to-end checks** (`npm run e2e`, or `node e2e/run.mjs <part>` after `npm run build:chrome`) load the Chrome build into Chromium. Install Playwright's Chromium with `npx playwright-core install chromium`; on NixOS, set `CHROMIUM_PATH` to the system Chromium because Playwright's downloaded browser doesn't run there. Branded Chrome no longer loads unpacked extensions from the command line. The harness answers the real engines' addresses with the mock pages in `e2e/fixtures.mjs` (Google, DuckDuckGo, Bing, Brave, and Google's phone layout), seeds storage with a test personal list and settings, prints what Anubis decided, and saves screenshots to `e2e/shots/`. Each part is a block in `e2e/run.mjs`: `pages`, `hostile`, `grouped`, `reveal`, `runs`, `shortcuts`, `mobile`, `off`, `palette`, `cleanup`, `pins`, `popover`, `a11y`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `subscribe-link`, `options`, `responsive`, `welcome`, `sync`, `webdav`, and `checks`. `responsive` checks every Settings section at 320px, 360px, and 390px, and confines narrow-screen scrolling to the Your sites table. `checks` asserts hostile and grouped Google results, forum links, reveal state, back-forward-cache restoration, the phone layout, and AI/video cleanup on Google, DuckDuckGo, and Brave; CI runs it alongside `responsive` on every pull request. `webdav` connects a mock WebDAV server in Settings; a script can't answer the browser's permission prompt, so it runs a copy of the build whose manifest already allows the mock's host, and Playwright only reaches the background script's requests with `PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1`, which the part sets.
 
