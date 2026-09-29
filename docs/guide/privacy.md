@@ -9,12 +9,15 @@ Anubis has no server and collects nothing. Everything it knows about you stays i
 
 ## What Anubis connects to
 
-Only these, and only when you use the feature:
+Only these:
 
-- **The lists you subscribe to**, from wherever they're hosted, to check for new versions.
+- **The lists you subscribe to**, from wherever they're hosted, to check for new versions about once a day. This starts when you install Anubis, because it subscribes you to four lists of its own, hosted on GitHub. You can turn them off under **Settings → Lists**.
+- **The directory of lists** on GitHub, when you open **Settings → Lists**, so **More lists** shows the newest ones.
 - **The search engine you're on**, for [Load more results](./more-results.md), which loads its next page like the "Next" link would.
 - **`noai.duckduckgo.com`**, if [AI answers](./clean-up.md) are removed, because DuckDuckGo searches open there. On Google, the Web tab option adds `udm=14` to the search's address.
 - **Issue trackers**, when you choose "Suggest it to…". That opens a page in a new tab; nothing is sent unless you submit the issue yourself.
+
+Downloading a list works like any other download: the site hosting it sees your IP address and which file was asked for. Anubis sends nothing else with it: no cookies, no identifier, and nothing about your searches.
 
 ## Permissions
 
@@ -27,3 +30,7 @@ When you install Anubis, your browser asks for:
 Anubis may also ask, at the moment you subscribe, to **read from one website** that hosts a list. That's needed for lists hosted anywhere other than GitHub or a gist. You can take it back in your browser's extension settings.
 
 In Firefox, Anubis declares that it collects no data.
+
+## Questions
+
+This page is Anubis's privacy policy, and the Chrome Web Store and Firefox Add-ons listings link to it. If it changes, the change is in the [page's history on GitHub](https://github.com/Bishop-V/anubis/commits/main/docs/guide/privacy.md). Ask anything about it by [opening an issue](https://github.com/Bishop-V/anubis/issues).

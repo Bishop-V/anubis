@@ -10,13 +10,13 @@
         <img src="/anubis.svg" alt="" width="30" height="30" />
         <div>
           <h1>Anubis</h1>
-          <p id="status">On</p>
+          <p id="status"></p>
         </div>
       </div>
       <div class="header-tools">
         <span id="theme"></span>
-        <label class="switch" title="Turn Anubis on or off">
-          <input id="enabled" type="checkbox" aria-label="Anubis on" />
+        <label class="switch" data-i18n-title="commandToggleEnabled">
+          <input id="enabled" type="checkbox" data-i18n-aria-label="popupOnLabel" />
           <span></span>
         </label>
       </div>
@@ -27,21 +27,21 @@
       <section id="here" hidden></section>
 
       <section>
-        <h2><label for="domain">Add a site</label></h2>
+        <h2><label for="domain" data-i18n="popupAddSite">Add a site</label></h2>
         <form id="add-form" class="row">
           <input id="domain" type="text" placeholder="fandom.com" autocomplete="off" spellcheck="false" />
-          <select id="level" aria-label="Ranking">
-            <option value="hide">Hide</option>
-            <option value="lower">Lower</option>
-            <option value="raise">Raise</option>
-            <option value="pin">Pin</option>
+          <select id="level" data-i18n-aria-label="popupRanking">
+            <option value="hide" data-i18n="levelHide">Hide</option>
+            <option value="lower" data-i18n="levelLower">Lower</option>
+            <option value="raise" data-i18n="levelRaise">Raise</option>
+            <option value="pin" data-i18n="levelPin">Pin</option>
           </select>
-          <button class="btn primary" type="submit">Add</button>
+          <button class="btn primary" type="submit" data-i18n="popupAdd">Add</button>
         </form>
       </section>
 
       <section>
-        <h2>Your sites <span id="count"></span></h2>
+        <h2><span data-i18n="popupYourSites">Your sites</span> <span id="count"></span></h2>
         <ul id="list"></ul>
       </section>
     </main>
@@ -49,8 +49,8 @@
     <footer>
       <span id="lists-summary" class="muted"></span>
       <span class="spacer"></span>
-      <button id="settings" class="icon-btn" type="button" title="Anubis settings" aria-label="Anubis settings"></button>
-      <a id="help" href="https://bishop-v.github.io/anubis/" target="_blank" rel="noopener noreferrer" title="Open the user guide">Help</a>
+      <button id="settings" class="icon-btn" type="button" title="Anubis settings" aria-label="Anubis settings" data-i18n-title="popupSettings" data-i18n-aria-label="popupSettings"></button>
+      <a id="help" href="https://bishop-v.github.io/anubis/" target="_blank" rel="noopener noreferrer" data-i18n-title="helpTitle" data-i18n="help">Help</a>
     </footer>
     <script type="module" src="./main.ts"></script>
   </body>

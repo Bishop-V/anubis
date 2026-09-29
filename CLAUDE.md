@@ -11,6 +11,7 @@ This project values documented experimentation, so record what was tried and wha
 ## Stack
 
 - [WXT](https://wxt.dev) 0.21 with Vite and TypeScript. There's no UI framework; the popup, options page and in-page UI are plain DOM built with the `h()` helper in `utils/dom.ts`. Text from lists always goes in as text nodes, never markup.
+- Interface text goes in `public/_locales/en/messages.json` and is used through `t()`, `tn()` (counts) and `localizePage()` (static HTML) from `utils/i18n.ts`. The manifest, ranking names and popup are converted; `ROADMAP.md` lists the rest. Put new text there rather than in code.
 - It builds as Chrome MV3 and Firefox MV2 from one codebase.
 - Storage uses WXT's `storage` (`#imports`):
   - `sync:settings`, `sync:tagPrefs`, `sync:subscriptions` (absent means the default subscriptions)
@@ -26,10 +27,11 @@ Firefox is the default target (`browser: 'firefox'` in `wxt.config.ts`). The `:c
 - `npm run build` / `npm run build:chrome`: production build into `.output/`
 - `npm run compile`: type-check. Run it after every change.
 - `npm test`: Vitest unit tests in `tests/` (list format, matcher, personal list edits, storage, bundled lists)
-- `npm run e2e`: builds for Chrome and runs `e2e/run.mjs` against mock search pages, saving screenshots to `e2e/shots/`. Needs `CHROMIUM_PATH` pointing at a Chromium binary; Playwright's downloaded browsers don't run on NixOS, so use the system one (`CHROMIUM_PATH=$(which chromium)`). `node e2e/run.mjs <part>` runs one part: `pages`, `hostile`, `grouped`, `reveal`, `off`, `cleanup`, `popover`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `options`. `subscribe` downloads a real list from GitHub; behind a TLS-intercepting proxy set `PROXY_CA_CERT` to its CA.
+- `npm run e2e`: builds for Chrome and runs `e2e/run.mjs` against mock search pages, saving screenshots to `e2e/shots/`. Needs `CHROMIUM_PATH` pointing at a Chromium binary; Playwright's downloaded browsers don't run on NixOS, so use the system one (`CHROMIUM_PATH=$(which chromium)`). `node e2e/run.mjs <part>` runs one part: `pages`, `hostile`, `grouped`, `reveal`, `shortcuts`, `mobile`, `off`, `cleanup`, `popover`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `options`. `subscribe` downloads a real list from GitHub; behind a TLS-intercepting proxy set `PROXY_CA_CERT` to its CA.
 - `npx web-ext lint -s .output/firefox-mv2`: the Mozilla add-on linter; keep it at zero warnings (CI treats warnings as errors)
 - `.github/workflows/ci.yml` runs compile, tests, both builds and the lint on pushes to main and on pull requests
-- `npm run zip` / `npm run zip:chrome`: package for the store
+- `.github/workflows/engines.yml` runs weekly: when uBlacklist changes its rules for an engine Anubis supports, it opens an issue labelled `engines` (`.github/scripts/watch-engines.mjs`, which maps uBlacklist's files to engines; keep it in step with `utils/engines.ts`)
+- `npm run zip` / `npm run zip:chrome`: package for the store. `store/README.md` has the listings, privacy answers and release steps; `node store/render.mjs` redraws the store icon and promo tile.
 - `.github/workflows/release.yml` releases on a `v*` tag that matches `package.json`'s version: CI, both zips, a GitHub Release, then `wxt submit` to Chrome, Firefox and Edge after approval in the `release` environment, which holds the store keys
 - `npm run docs:dev` / `npm run docs:build`: the documentation site (VitePress) from `docs/`. The build fails on a broken link. `.github/workflows/docs.yml` builds it on pull requests and publishes it to GitHub Pages from main. `node e2e/run.mjs docs` regenerates its screenshots in `docs/img/` from the mock pages; rerun it after changing anything they show.
 
@@ -56,7 +58,7 @@ Everything on search pages was built against the mocks in `e2e/fixtures.mjs`: th
 - `entrypoints/background.ts`: list updates (on startup and when a search page asks, at most every 30 minutes), the toolbar badge, and the grey icon while Anubis is off (`public/icon-off/`)
 - `entrypoints/popup/`: what Anubis did on this page, adding a site, recent sites
 - `entrypoints/options/`: settings sections (your sites, tags, lists, clean up, appearance, engines, share and back up)
-- `utils/engines.ts`: engine definitions. Also imported at build time for the manifest's matches, so keep it free of browser APIs. When an engine breaks, diff against uBlacklist's ruleset at <https://github.com/ublacklist/builtin> (`serpinfo/*.yml`), which tracks these layouts continuously.
+- `utils/engines.ts`: engine definitions. Also imported at build time for the manifest's matches, so keep it free of browser APIs. When an engine breaks, diff against uBlacklist's ruleset at <https://github.com/ublacklist/builtin> (`serpinfo/*.yml`), which tracks these layouts continuously. An engine's `mobile` holds its phone layout's differences, chosen by user agent when the content script starts.
 - `utils/listformat.ts`: the list parser; `utils/matcher.ts`: compiling lists and weighing a result; `utils/personal.ts`: line-level edits to the personal list
 - `utils/storage.ts`, `utils/ruleset.ts`, `utils/subscriptions.ts`: storage items, loading everything into one rule set, downloading lists
 - `utils/importers.ts`: bringing sites over from uBlacklist rules, HOHSER exports, Goggles and domain lists
@@ -64,7 +66,8 @@ Everything on search pages was built against the mocks in `e2e/fixtures.mjs`: th
 - `utils/cleanup.ts`: the clean-up kinds, the headings that identify each one (with translations) and per-engine selectors
 - `lists/`: the bundled lists and `directory.json` (the "More lists" directory). `docs/list-format.md` is the format reference.
 - `docs/`: the documentation site. `guide/` holds the user guide, `lists.md` renders `lists/directory.json`, and `.vitepress/` holds the config and brand theme. The extension links to the published site through `utils/links.ts` (the manifest's `homepage_url`, the popup's Help link, a guide link on each settings section). Earlier builds link to `docs/list-format.md` on GitHub, so don't move that file, and keep page paths stable or the links from settings break. Write for people who use the extension, in the same plain words as its interface, and update the guide when a feature changes.
-- `public/`: the logo (`anubis.svg`) and toolbar icons (`icon/{16,32,48,96,128}.png`). WXT detects these automatically.
+- `public/`: the logo (`anubis.svg`), toolbar icons (`icon/{16,32,48,96,128}.png`) and interface text (`_locales/`). WXT detects these automatically.
+- `store/`: store listing text and images. `ROADMAP.md`: planned work.
 
 ## Conventions
 
@@ -95,8 +98,6 @@ Lessons from earlier bugs and design decisions; `docs/experiments.md` has the de
 - Keep replies short. Explain browser-extension concepts (manifest keys, permissions, content versus background scripts, MV2 versus MV3) briefly the first time they come up.
 - Committed files stay neutral and project-scoped: no personal or identifying details.
 
-## Roadmap ideas
+## Roadmap
 
-- Check the unverified engines, Load more results selectors and clean-up headings listed in `docs/experiments.md` against live pages
-- Image, video and news results (uBlacklist's SERPINFO has the selectors)
-- Fetch engine definitions from the repo, like uBlacklist's SERPINFO, so a selector fix doesn't need a store release
+Planned work lives in `ROADMAP.md`: releases, security fixes, e2e assertions, Firefox for Android, translation and features. Move an item into `docs/experiments.md` once it's tried.

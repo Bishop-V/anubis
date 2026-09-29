@@ -1,5 +1,5 @@
 import { browser, defineContentScript } from '#imports';
-import { engineFor, ENGINE_MATCHES } from '@/utils/engines';
+import { engineFor, ENGINE_MATCHES, isMobileAgent } from '@/utils/engines';
 import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { evaluate, type Verdict } from '@/utils/matcher';
 import { send, type Message, type PageStats } from '@/utils/messages';
@@ -34,7 +34,8 @@ export default defineContentScript({
   runAt: 'document_start',
 
   async main() {
-    const engine = engineFor(location.hostname);
+    // Phones get a different layout from some engines (Firefox for Android).
+    const engine = engineFor(location.hostname, isMobileAgent(navigator.userAgent));
     if (!engine) return;
 
     let rules: RuleSet;
@@ -377,7 +378,8 @@ export default defineContentScript({
         case 'get-page-stats':
           break;
         case 'set-reveal':
-          reveal = message.on;
+        case 'toggle-reveal':
+          reveal = message.type === 'set-reveal' ? message.on : !reveal;
           if (!reveal) shown.clear();
           pass();
           break;

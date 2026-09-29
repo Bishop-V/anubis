@@ -38,6 +38,7 @@ export type Message =
   | { type: 'open-options'; tab?: string }
   | { type: 'get-page-stats' }
   | { type: 'set-reveal'; on: boolean }
+  | { type: 'toggle-reveal' }
   | { type: 'go-deeper' }
   | { type: 'set-filter'; tag?: string };
 

@@ -7,6 +7,7 @@ import { guide } from '@/utils/links';
 import { LEVELS } from '@/utils/matcher';
 import { h, icon } from '@/utils/dom';
 import { ICON_CLOSE, ICON_GEAR, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
+import { localizePage, t, tn, type MessageKey } from '@/utils/i18n';
 import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/messages';
 import { getSite, listSites, setSite, setSiteLevel, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet } from '@/utils/ruleset';
@@ -23,13 +24,24 @@ const levelSelect = $<HTMLSelectElement>('#level');
 const list = $<HTMLUListElement>('#list');
 const enabled = $<HTMLInputElement>('#enabled');
 
-const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
+/** Keys set for the keyboard shortcuts (the manifest's `commands`), by name. */
+let shortcuts: Record<string, string> = {};
+const withKey = (text: string, command: string) => (shortcuts[command] ? t('withShortcut', text, shortcuts[command]) : text);
+
+/** The tooltip on each ranking button under This site. */
+const RANK_TITLES: Record<(typeof LEVELS)[number], MessageKey> = {
+  hide: 'popupRankHide',
+  lower: 'popupRankLower',
+  normal: 'popupRankNormal',
+  raise: 'popupRankRaise',
+  pin: 'popupRankPin',
+};
 
 async function renderAll() {
   const rules = await loadRuleSet();
   enabled.checked = rules.settings.enabled;
   document.body.classList.toggle('paused', !rules.settings.enabled);
-  $('#status').textContent = rules.settings.enabled ? 'On for your searches' : 'Off. Search pages are left as they are.';
+  $('#status').textContent = rules.settings.enabled ? t('popupOn') : t('popupOff');
 
   const sites = listSites(rules.personalText).reverse();
   $('#count').textContent = sites.length ? String(sites.length) : '';
@@ -50,7 +62,7 @@ async function renderAll() {
                 level !== 'normal'
                   ? h('span', { class: `level-note ${level}` }, icon(LEVEL_ICONS[level]), LEVEL_CHIPS[level])
                   : entry.level === 'allow'
-                    ? h('span', { class: 'level-note' }, 'Kept at normal')
+                    ? h('span', { class: 'level-note' }, t('popupKeptNormal'))
                     : null,
                 entry.tags.map((id) => {
                   const tag = rules.tags.get(id);
@@ -63,19 +75,19 @@ async function renderAll() {
               {
                 class: 'icon-btn danger',
                 type: 'button',
-                title: `Forget ${entry.site}`,
-                attrs: { 'aria-label': `Forget ${entry.site}` },
+                title: t('popupForget', entry.site),
+                attrs: { 'aria-label': t('popupForget', entry.site) },
                 on: { click: () => void editPersonal((t) => setSite(t, entry.site, 'normal', [])) },
               },
               icon(ICON_CLOSE),
             ),
           );
         })
-      : [h('li', { class: 'muted' }, 'Nothing yet. Use the Anubis button on any search result, or add a site above.')]),
+      : [h('li', { class: 'muted' }, t('popupNoSites'))]),
   );
 
   const subs = rules.lists.filter((l) => !l.personal);
-  $('#lists-summary').textContent = `${plural(subs.length, 'list')}, ${plural(rules.tags.size, 'tag')}`;
+  $('#lists-summary').textContent = t('popupListsAndTags', tn('popupListCount', subs.length), tn('popupTagCount', rules.tags.size));
   await renderHere(rules.personalText);
 }
 
@@ -99,17 +111,17 @@ async function renderHere(personalText: string) {
   const current = entry?.level === 'allow' ? 'normal' : (entry?.level ?? 'normal');
   here.hidden = false;
   here.replaceChildren(
-    h('h2', null, 'This site'),
+    h('h2', null, t('popupThisSite')),
     h('p', { class: 'sentence here-site' }, domain),
     h(
       'div',
-      { class: 'seg here-levels', attrs: { role: 'group', 'aria-label': `Ranking for ${domain}` } },
+      { class: 'seg here-levels', attrs: { role: 'group', 'aria-label': t('popupRankingFor', domain) } },
       LEVELS.map((level) =>
         h(
           'button',
           {
             type: 'button',
-            title: `${LEVEL_LABELS[level]} ${domain} in search results`,
+            title: t(RANK_TITLES[level], domain),
             attrs: { 'aria-pressed': String(current === level) },
             on: { click: () => void editPersonal((t) => setSiteLevel(t, domain, level === current ? 'normal' : level)) },
           },
@@ -124,8 +136,8 @@ function renderPage(stats: PageStats | undefined) {
   const page = $('#page');
   if (!stats) {
     page.replaceChildren(
-      h('h2', null, 'This page'),
-      h('p', { class: 'sentence muted' }, 'Search on Google, DuckDuckGo, Bing, Brave or another supported engine to see what Anubis changes.'),
+      h('h2', null, t('popupThisPage')),
+      h('p', { class: 'sentence muted' }, t('popupNotSearch')),
     );
     return;
   }
@@ -138,9 +150,10 @@ function renderPage(stats: PageStats | undefined) {
           {
             class: 'text-btn',
             type: 'button',
+            title: withKey(stats.revealed ? t('hideAgain') : t('showHidden'), 'toggle-hidden'),
             on: { click: async () => renderPage(await sendToActiveTab<PageStats>({ type: 'set-reveal', on: !stats.revealed })) },
           },
-          stats.revealed ? 'Hide them again' : 'Show hidden',
+          stats.revealed ? t('hideAgain') : t('showHidden'),
         )
       : null,
     stats.canGoDeeper || stats.loading
@@ -150,7 +163,7 @@ function renderPage(stats: PageStats | undefined) {
             class: 'text-btn',
             type: 'button',
             disabled: stats.loading,
-            title: 'Add the next page of results to the page and rank them together',
+            title: t('loadMoreTitle'),
             on: {
               click: async () => {
                 renderPage(await sendToActiveTab<PageStats>({ type: 'go-deeper' }));
@@ -158,12 +171,12 @@ function renderPage(stats: PageStats | undefined) {
               },
             },
           },
-          stats.loading ? 'Loading…' : 'Load more results',
+          stats.loading ? t('loading') : t('loadMore'),
         )
       : null,
   ].filter((b): b is HTMLButtonElement => b !== null);
   page.replaceChildren(
-    h('h2', null, `This page on ${stats.engine}`),
+    h('h2', null, t('popupThisPageOn', stats.engine)),
     h('p', { class: 'sentence' }, summarySentence(stats)),
     ...(actions.length ? [h('div', { class: 'page-actions' }, actions)] : []),
   );
@@ -190,6 +203,11 @@ $('#settings').addEventListener('click', () => {
 });
 
 async function main() {
+  localizePage();
+  // Firefox for Android has no keyboard shortcuts.
+  const commands = (await browser.commands?.getAll().catch(() => [])) ?? [];
+  shortcuts = Object.fromEntries(commands.filter((c) => c.name && c.shortcut).map((c) => [c.name!, c.shortcut!]));
+  $('.switch').title = withKey(t('commandToggleEnabled'), 'toggle-enabled');
   $('#theme').append(themeSwitcher(await initTheme(), true));
   await renderAll();
   renderPage(await sendToActiveTab<PageStats>({ type: 'get-page-stats' }));

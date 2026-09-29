@@ -108,7 +108,7 @@ export function duckduckgo(query, results, dark = false, more = []) {
 // Anubis's elements; `grouped`, results nested the way Google does for a first
 // result with sitelinks and for a group of results from one site; `modules`, the
 // blocks that aren't results (AI Overview, videos, "People also ask", a side panel).
-export function google(query, results, { dark = false, next = '', hostile = false, grouped = false, modules = false, aiLabel = false } = {}) {
+export function google(query, results, { dark = false, next = '', hostile = false, grouped = false, modules = false, aiLabel = false, videos = '' } = {}) {
   const sitelinks = (url) =>
     `<div class="sitelinks">${['History', 'Symbols', 'Worship', 'Family', 'Names', 'Legacy']
       .map((s) => `<div class="usJj9c"><h3><a href="${url}#${s}">${s}</a></h3><div>About ${s.toLowerCase()}.</div></div>`)
@@ -132,6 +132,29 @@ export function google(query, results, { dark = false, next = '', hostile = fals
       </div>${grouped && i === 0 ? sitelinks(url) : ''}</div>${close}</div>`;
     });
   if (grouped) items.splice(1, 2, `<div class="hlcw0c">${items[1]}${items[2]}</div>`);
+  // `videos`: a video panel laid out like Google's (a header row with a menu, a list
+  // of cards, "View all"), in two ways a panel can defeat clean-up. `titles`: each
+  // video's title is a heading outside its link, so it looks like a section of the
+  // panel. `groups`: titles are <h3> links, so the videos look like results, and the
+  // real results come in pairs, so the three videos are the biggest list. `split`:
+  // titles as in `titles`, with the panel's parts as separate blocks.
+  if (videos) {
+    const card = (t, i) =>
+      videos !== 'groups'
+        ? `<div class="vcard"><a class="thumb" href="https://www.youtube.com/watch?v=${i}">▶</a><div><div role="heading">${t}</div><div>YouTube · Channel ${i}</div></div></div>`
+        : `<div class="vcard"><a class="thumb" href="https://www.youtube.com/watch?v=${i}">▶</a><div><a href="https://www.youtube.com/watch?v=${i}"><h3>${t}</h3></a><div>YouTube · Channel ${i}</div></div></div>`;
+    if (videos === 'groups') {
+      const pairs = [];
+      for (let i = 0; i < items.length; i += 2) pairs.push(`<div class="pair">${items.slice(i, i + 2).join('')}</div>`);
+      items.splice(0, items.length, ...pairs);
+    }
+    const head = `<div class="vhead"><div role="heading" aria-level="2"><span>Videos</span></div><div class="vmenu">⋮</div></div>`;
+    const list = `<div class="vlist">${['What is a fandom?', 'Stop using Fandom', 'What exactly is Fandom?'].map(card).join('')}</div>`;
+    const all = `<div class="vall"><a href="/search?q=anubis&tbm=vid">View all</a></div>`;
+    // `split`: the header row, the videos and "View all" are separate blocks in the list.
+    if (videos === 'split') items.splice(1, 0, `<div class="MjjYud vpanel">${head}</div>`, `<div class="MjjYud vpanel">${list}</div>`, `<div class="MjjYud vpanel">${all}</div>`);
+    else items.splice(1, 0, `<div class="MjjYud"><div class="module vpanel">${head}${list}${all}</div></div>`);
+  }
   if (aiLabel) {
     // A video panel whose videos each have an <h3> title in a link, so they look
     // like results, and whose "Videos" label has no heading level.
@@ -210,6 +233,46 @@ export function google(query, results, { dark = false, next = '', hostile = fals
   <div id="search"><div data-hveid="CAQQAA"><h1 style="display:none">Search Results</h1><div id="rso">${items.join('')}</div></div></div>
   </div>${sidePanel}</div>
   ${next ? `<table class="AaVjTc" style="margin-left:180px"><tr><td><a id="pnnext" href="${next}">Next</a></td></tr></table>` : ''}
+  </body></html>`;
+}
+
+// Google's phone layout (Firefox for Android, Chrome on a phone). Modelled on
+// uBlacklist's "Web (mobile)" rules in serpinfo/google.yml, not on a live page:
+// titles are ARIA headings instead of h3, the address is in its own element
+// (.ob9lvb) rather than <cite>, and top stories cards have headings of their own.
+export function googleMobile(query, results) {
+  const card = (t, i) =>
+    `<div class="nc" data-news-cluster-id="${i}"><a href="https://news-example.com/${i}"><div role="heading" aria-level="3">${t}</div><span>News Example</span></a></div>`;
+  const stories = `
+      <div class="MjjYud"><div class="module news"><div role="heading" aria-level="2">Top stories</div>
+        <div class="nrow">${['Shrine to Anubis found', 'Jackal mummies in Saqqara'].map(card).join('')}</div></div></div>`;
+  const items = results.map(([url, title, snippet], i) => {
+    const u = new URL(url);
+    // One opaque /goto link, which needs the displayed address.
+    const href = i === 3 ? `/goto?url=CAESopaqueblob${i}` : url;
+    return `
+      <div class="MjjYud"><div class="vt6azd Ww4FFb"><div class="Z26q7c">
+        <a class="UBFage" href="${href}"><div class="v7jaNc" role="heading" aria-level="3">${esc(title)}</div>
+          <div class="site"><span class="favicon"></span><span class="ob9lvb">${esc(`${u.hostname} › ${u.pathname.split('/').filter(Boolean)[0] ?? ''}`)}</span></div></a>
+        </div><div class="snippet">${esc(snippet)}</div></div></div>`;
+  });
+  items.splice(2, 0, stories);
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>${esc(query)} - Google Search</title>
+  <style>
+    body{margin:0;font:16px/1.5 Arial,sans-serif;background:#fff;color:#202124}
+    .hdr{padding:12px 16px}.q{height:44px;border-radius:22px;box-shadow:0 1px 6px #20212447;padding:0 18px;display:flex;align-items:center}
+    #rso{padding:8px 0}
+    .MjjYud{margin:0 0 10px;padding:14px 16px;border-bottom:1px solid #ebebeb}
+    .UBFage{display:flex;flex-direction:column-reverse;text-decoration:none;color:#1a0dab}
+    [role=heading][aria-level="3"]{font-size:18px;line-height:1.3}
+    .site{display:flex;gap:8px;align-items:center;color:#202124;font-size:13px;margin-bottom:6px}
+    .favicon{width:22px;height:22px;border-radius:50%;background:#f1f3f4}
+    .snippet{color:#4d5156;font-size:14px;margin-top:6px}
+    .nrow{display:flex;gap:10px;overflow-x:auto}.nc{flex:0 0 220px}.nc a{color:inherit;text-decoration:none}
+  </style></head><body>
+  <div class="hdr"><div class="q">${esc(query)}</div></div>
+  <div id="main" role="main"><div id="rso">${items.join('')}</div></div>
   </body></html>`;
 }
 

@@ -65,7 +65,7 @@ export default defineConfig({
     editLink: { pattern: `${repo}/edit/main/docs/:path`, text: 'Edit this page on GitHub' },
     search: { provider: 'local' },
     outline: { level: [2, 3], label: 'On this page' },
-    footer: { message: 'Released under the GNU GPL v3.' },
+    footer: { message: 'Released under the GNU AGPL v3.' },
   },
   vite: {
     // The lists page reads lists/directory.json from outside docs/.
