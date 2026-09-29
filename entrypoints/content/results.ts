@@ -1,4 +1,4 @@
-import { decodeBingRedirect, displayedDomainToUrl, forumNameToUrl, siteOf } from '@/utils/domain';
+import { decodeBingRedirect, displayedDomainToUrl, siteNameToUrl, siteOf } from '@/utils/domain';
 import type { EngineDef } from '@/utils/engines';
 
 export interface FoundResult {
@@ -102,7 +102,10 @@ function isSitelink(heading: HTMLElement, within: HTMLElement, site: string, eng
   while (branch.parentElement && branch.parentElement !== within) branch = branch.parentElement;
   if (branch.querySelector(engine.displayed ?? 'cite')) return false;
   const url = resolveUrl(link, branch, engine);
-  return !!url && siteOfUrl(url) === site;
+  // An opaque redirect with no address near it (Google's /goto) can't be a result
+  // of its own, so it belongs to the result it sits under. Another search can't.
+  if (!url) return siteOf(link.hostname) === siteOf(location.hostname) && !/^\/search\b/.test(link.pathname);
+  return siteOfUrl(url) === site;
 }
 
 function siteOfUrl(url: string): string {
@@ -231,11 +234,11 @@ export function resolveUrl(link: HTMLAnchorElement, container: HTMLElement, engi
   }
 
   // An opaque redirect (Google's /goto): the address the engine shows, then a
-  // plain link to the same result, then a forum's name where the address would be.
+  // plain link to the same result, then a site's name where the address would be.
   // A link to another search is never a result.
   const shown = displayedUrl(container, engine);
   if (shown || /^\/search\b/.test(link.pathname)) return shown;
-  return otherLink(container) ?? forumUrl(container, engine);
+  return otherLink(container) ?? namedSite(link, engine);
 }
 
 /** A link in the result that goes straight to another site. */
@@ -247,15 +250,17 @@ function otherLink(container: HTMLElement): string | null {
 }
 
 /**
- * Google shows forum results with the forum's name ("Reddit · r/learnpython") and
- * a line like "20+ comments · 2 years ago" where the address would be.
+ * Google shows forums and social sites by name ("Reddit · r/learnpython", "LinkedIn
+ * · Fandom") with a line like "20+ comments" or "34.4K+ followers" where the address
+ * would be. The name is in the result's link, beside the title; the snippet isn't
+ * read, since it can name any site.
  */
-function forumUrl(container: HTMLElement, engine: EngineDef): string | null {
-  const walker = container.ownerDocument.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+function namedSite(link: HTMLAnchorElement, engine: EngineDef): string | null {
+  const walker = link.ownerDocument.createTreeWalker(link, NodeFilter.SHOW_TEXT);
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
     const text = node.nodeValue ?? '';
     if (text.length > 80 || node.parentElement?.closest(engine.heading ?? engine.title ?? 'h3')) continue;
-    const url = forumNameToUrl(text);
+    const url = siteNameToUrl(text);
     if (url) return url;
   }
   return null;

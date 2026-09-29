@@ -147,8 +147,11 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
 export function google(query, results, { dark = false, next = '', hostile = false, grouped = false, modules = false, aiLabel = false, videos = '', forum = false, aiAbove = false, related = false } = {}) {
   const sitelinks = (url) =>
     `<div class="sitelinks">${['History', 'Symbols', 'Worship', 'Family', 'Names', 'Legacy']
-      .map((s) => `<div class="usJj9c"><h3><a href="${url}#${s}">${s}</a></h3><div>About ${s.toLowerCase()}.</div></div>`)
+      .map((s) => `<div class="usJj9c"><h3><a href="${forum ? `/goto?url=CAESsitelink${s}` : `${url}#${s}`}">${s}</a></h3><div>About ${s.toLowerCase()}.</div></div>`)
       .join('')}</div>`;
+  // With `forum`, a social profile too: "LinkedIn · Anubis" and "34.4K+ followers"
+  // where the address would be.
+  if (forum) results = [...results, ['https://www.linkedin.com/company/anubis-example', 'Anubis Example | LinkedIn', 'Anubis Example builds tools for weighing search results.']];
   const items = results
     .map(([url, title, snippet], i) => {
       const [, name, icon] = siteOf(hostOf(url));
@@ -157,17 +160,18 @@ export function google(query, results, { dark = false, next = '', hostile = fals
       const href = forum ? `/goto?url=CAESopaqueblob${i}` : i === 1 ? `/url?q=${encodeURIComponent(url)}&sa=U` : i === 3 ? `/goto?url=CAESopaqueblob${i}` : url;
       const open = hostile ? '<div class="hw1"><div class="hw2"><div class="hw3">' : '';
       const close = hostile ? '</div></div></div>' : '';
-      if (forum && name === 'Reddit') {
+      if (forum && (name === 'Reddit' || hostOf(url) === 'linkedin.com')) {
+        const social = name !== 'Reddit';
         const sub = new URL(url).pathname.split('/')[2];
         return `
       <div class="MjjYud"><div class="g Ww4FFb vt6azd tF2Cxc asEBEc"><div class="N54PNb BToiNc">
         <div class="kb0PBd A9Y9g jGGQ5e" data-snf="x5WNvb"><div class="xe8e1b"><div class="flipwrap"><span jscontroller="msmzHf">
           <a jsname="UWckNb" href="${href}"><br><h3 class="LC20lb MBeuO DKV0Md">${esc(title)}</h3>
             <div class="notranslate TbwUpd NJjxre iUh30 ojE3Fb"><span class="H9lube"><div class="eqA2re NjwKYd Vwoesf"><div class="favicon">${siteIcon(icon)}</div></div></span>
-            <div><span class="VuuXrf">${esc(name)} · r/${esc(sub)}</span><div class="byrV5b"><span class="forum-meta">20+ comments · 2 years ago</span></div></div></div>
+            <div><span class="VuuXrf">${social ? 'LinkedIn · Anubis' : `${esc(name)} · r/${esc(sub)}`}</span><div class="byrV5b">${social ? '<cite class="forum-meta social">34.4K+ followers</cite>' : '<span class="forum-meta">20+ comments · 2 years ago</span>'}</div></div></div>
           </a><span class="aux"></span></span><div class="B6fmyf">⋮</div></div></div></div>
         <div class="kb0PBd A9Y9g" data-sncf="1"><div class="VwiC3b yXK7lf p4wth r025kc hJNv6b Hdw6tb" style="-webkit-line-clamp:2"><span>${esc(snippet)}</span></div></div>
-        <div class="kb0PBd A9Y9g"><a class="answers" href="/goto?url=CAESanswers${i}">20 answers</a> · Top answer: Jackals scavenged near tombs…</div>
+        ${social ? '' : `<div class="kb0PBd A9Y9g"><a class="answers" href="/goto?url=CAESanswers${i}">20 answers</a> · Top answer: Jackals scavenged near tombs…</div>`}
       </div></div></div>`;
       }
       return `
@@ -418,21 +422,23 @@ export function googleMobile(query, results) {
 }
 
 // ---------------------------------------------------------------- Bing
-// `inline`: the "People also search for" box Bing puts inside a result you went to
-// and came back from, with a close button. Not copied from a live page.
+// `inline`: Bing's "People also search for" box. On a live page (2026-09-29) it is
+// div#inline_rs.b_hide, hidden, in an li.b_ans of its own in #b_results, and it
+// shows with a close button under a result you went to and came back from. That
+// it moves into that result is inferred, not seen: here it moves after a moment.
 export function bing(query, results, { inline = false } = {}) {
   const b64 = (s) => Buffer.from(s).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const box = `
-        <div class="b_rrsr"><div class="rrhead"><h2>People also search for</h2><button type="button" aria-label="Close">×</button></div>
-          <ul>${['javascript promise all', 'javascript async await', 'promise then catch', 'javascript promise example'].map((q) => `<li><a href="/search?q=${encodeURIComponent(q)}">${q}</a></li>`).join('')}</ul></div>`;
+      <li class="b_ans" data-tag=""><div id="inline_rs" class="b_hide" data-priority=""><div class="rslist_head"><span class="rslist_title b_strong">People also search for</span><button type="button" aria-label="Close">×</button></div>
+          <ul>${['javascript promise all', 'javascript async await', 'promise then catch', 'javascript promise example'].map((q) => `<li><a href="/search?q=${encodeURIComponent(q)}">${q}</a></li>`).join('')}</ul></div></li>`;
   const items = results
     .map(([url, title, snippet], i) => `
       <li class="b_algo" data-tag="">
         <div class="b_tpcn"><a class="tilk" href="https://www.bing.com/ck/a?!&&p=abc&u=a1${b64(url)}&ntb=1"><div class="tpic"></div><div class="tptxt"><div class="tptt">${esc(hostOf(url))}</div><div class="tpmeta"><div class="b_attribution"><cite>${esc(url)}</cite></div></div></div></a></div>
         <h2><a href="https://www.bing.com/ck/a?!&&p=abc&u=a1${b64(url)}&ntb=1">${esc(title)}</a></h2>
-        <div class="b_caption"><p class="b_lineclamp2">${esc(snippet)}</p></div>${inline && i === 1 ? box : ''}
+        <div class="b_caption"><p class="b_lineclamp2">${esc(snippet)}</p></div>
       </li>`)
-    .join('');
+    .join('') + (inline ? box : '');
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(query)} - Search</title>
   <style>
     body{margin:0;font:14px/1.5 "Segoe UI",Arial,sans-serif;background:#fff;color:#444}
@@ -448,26 +454,30 @@ export function bing(query, results, { inline = false } = {}) {
     cite{font-style:normal;font-size:13px;color:#006d21}
     h2{margin:6px 0 4px;font-size:20px;font-weight:400}
     h2 a{color:#4007a2;text-decoration:none}
-    .b_rrsr{margin-top:14px;padding:14px 16px;border:1px solid #eee;border-radius:12px}.rrhead{display:flex;justify-content:space-between}
-    .b_rrsr h2{margin:0 0 10px;font-size:18px;font-weight:600}.b_rrsr button{border:0;background:none;font-size:18px}
-    .b_rrsr ul{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;padding:0;list-style:none}.b_rrsr li a{display:block;padding:8px 14px;border:1px solid #ddd;border-radius:20px;color:#111;text-decoration:none}
+    .b_hide{display:none}
+    #inline_rs{margin-top:14px;padding:14px 16px;border:1px solid #eee;border-radius:12px}.rslist_head{display:flex;justify-content:space-between;margin-bottom:10px}
+    .rslist_title{font-size:18px;font-weight:600;color:#111}#inline_rs button{border:0;background:none;font-size:18px}
+    #inline_rs ul{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;padding:0;list-style:none}#inline_rs li a{display:block;padding:8px 14px;border:1px solid #ddd;border-radius:20px;color:#111;text-decoration:none}
   </style></head><body>
   <div class="hdr"><span class="blogo">Bing</span><div class="q">${esc(query)}</div></div>
-  <div id="b_content"><ol id="b_results">${items}</ol></div></body></html>`;
+  <div id="b_content"><main><ol id="b_results">${items}</ol></main></div>
+  ${inline ? `<script>setTimeout(() => { const rs = document.getElementById('inline_rs'); document.querySelectorAll('#b_results > li.b_algo')[1].append(rs); rs.classList.remove('b_hide'); }, 500);</script>` : ''}</body></html>`;
 }
 
 // ---------------------------------------------------------------- Brave
 // `panels`: Brave's Videos, Discussions and Related queries panels between the
-// results. Not copied from a live page: the Videos title is a link to Brave's
-// Videos tab inside a <header>, the others are plain text beside an icon.
+// results, with the structure reported from a live page (2026-09-29): each is a
+// div.snippet in section#mixed-main with its title in a <header>, and the page's
+// tabs (one of them "Videos") are links in nav.tabs. The contents are made up.
 export function brave(query, results, { panels = false } = {}) {
   const icon = '<svg width="16" height="16" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="2" fill="none" stroke="currentColor"/></svg>';
+  const title = (t) => `${icon}<span class="desktop-heading-h4 t-secondary">${t}</span>`;
   const videos = `
-      <div class="panel cluster-videos"><header class="cluster-header"><a href="/videos?q=anubis">${icon}<span>Videos</span></a></header>
+      <div class="snippet panel cluster-videos" data-pos="3" data-type="videos" data-keynav><header class="mb-xl cluster-header">${title('Videos')}</header>
         <div class="vgrid">${['Anubis explained', 'Tomb of Anubis', 'Jackal gods', 'The weighing of the heart'].map((t, i) => `<a class="vcard" href="https://www.youtube.com/watch?v=${i}"><img alt="" width="120" height="68" style="background:#8884"><div class="vtitle">${t}</div><div>YouTube</div></a>`).join('')}</div>
         <button type="button" class="viewall">View all</button></div>`;
   const discussions = `
-      <div class="panel cluster-discussions"><div class="cluster-header">${icon}<span>Discussions</span></div><hr>
+      <div id="discussions" class="snippet panel cluster-discussions"><header class="cluster-header">${title('Discussions')}</header><hr>
         ${[
           ['https://www.reddit.com/r/AskHistorians/comments/1/', 'Why was Anubis a jackal?', 'r/AskHistorians'],
           ['https://history.stackexchange.com/questions/2/', 'Was Anubis worshipped outside Egypt?', 'history.stackexchange.com'],
@@ -476,8 +486,8 @@ export function brave(query, results, { panels = false } = {}) {
           .join('')}
         <button type="button" class="more">Show more</button></div>`;
   const relatedQueries = `
-      <div class="panel related-queries"><div class="cluster-header">${icon}<span>Related queries</span></div>
-        <div class="rgrid">${['anubis symbol', 'anubis and osiris', 'anubis powers', 'anubis weighing of the heart'].map((q) => `<a class="related-query" href="/search?q=${encodeURIComponent(q)}">${q}</a>`).join('')}</div></div>`;
+      <div id="related-queries" class="snippet panel related-queries"><div class="related-queries-wrapper"><header class="cluster-header">${title('Related queries')}</header>
+        <div class="rgrid">${['anubis symbol', 'anubis and osiris', 'anubis powers', 'anubis weighing of the heart'].map((q) => `<a class="related-query" href="/search?q=${encodeURIComponent(q)}">${q}</a>`).join('')}</div></div></div>`;
   const items = results
     .map(([url, title, snippet]) => `
       <div class="snippet svelte-1234" data-type="web" data-pos="0">
@@ -496,7 +506,9 @@ export function brave(query, results, { panels = false } = {}) {
     .hdr{display:flex;align-items:center;gap:20px;padding:18px 24px;background:#fff;border-bottom:1px solid #e2e4ea}
     .brlogo{width:30px;height:34px;border-radius:6px;background:linear-gradient(#ff6000,#fb542b)}
     .q{flex:0 1 620px;height:44px;border-radius:12px;border:1px solid #d0d3de;padding:0 18px;display:flex;align-items:center;background:#fff}
-    #results{padding:18px 0 60px 110px;max-width:680px}
+    .main-column{display:block;padding:18px 0 60px 110px;max-width:680px}
+    .q input{flex:1;border:0;font:inherit;background:none;outline:none}
+    #primary-tabs{display:flex;gap:18px;margin:0;padding:10px 0 0 110px;list-style:none}#primary-tabs a{color:#3b3e4f;text-decoration:none}
     .snippet{position:relative;margin:0 0 14px;padding:16px 18px;border-radius:12px;background:#fff}
     .snippet a{text-decoration:none;color:inherit}
     .site-wrapper{display:flex;gap:10px;align-items:center}
@@ -511,6 +523,7 @@ export function brave(query, results, { panels = false } = {}) {
     .related-query{padding:10px 14px;border:1px solid #d0d3de;border-radius:20px}
     .ditem{position:relative;padding:10px 0}.ditem a{color:#1b1c21;text-decoration:none}.dmeta{font-size:13px;color:#6b6f80}.ditem button{position:absolute;right:0;top:12px}
   </style></head><body>
-  <header class="hdr"><div class="brlogo"></div><div class="q">${esc(query)}</div><nav class="tabs"><a href="/search?q=anubis">All</a><a href="/images?q=anubis">Images</a><a href="/videos?q=anubis">Videos</a><a href="/news?q=anubis">News</a></nav></header>
-  <main id="results">${items.join('')}</main></body></html>`;
+  <div id="main"><header class="hdr"><div class="brlogo"></div><form class="q" role="search" action="/search"><input name="q" value="${esc(query)}"></form></header>
+  <div id="nav-tabs"><div class="nav-tabs-content"><nav class="tabs"><ul id="primary-tabs">${['All', 'Images', 'Videos', 'News'].map((t) => `<li class="tab-item"><a href="/${t === 'All' ? 'search' : t.toLowerCase()}?q=anubis"><span>${t}</span></a></li>`).join('')}</ul></nav></div></div>
+  <main id="search-page"><div class="serp-layout"><div class="serp-columns"><div class="serp-columns-main"><main class="main-column"><section id="mixed-main">${items.join('')}</section></main></div></div></div></main></div></body></html>`;
 }

@@ -71,20 +71,27 @@ export function displayedDomainToUrl(text: string | null | undefined): string | 
   return domain ? `https://${domain}/` : undefined;
 }
 
-// Forums whose results Google shows with the forum's name ("Reddit · r/learnpython")
-// and a line like "20+ comments · 2 years ago" instead of the address.
-const FORUM_NAMES = new Map<string, string>([
+// Sites Google shows by name ("Reddit · r/learnpython", "LinkedIn · Fandom") with a
+// line like "20+ comments" or "34.4K+ followers" where the address would be.
+const SITE_NAMES = new Map<string, string>([
   ['reddit', 'reddit.com'],
   ['quora', 'quora.com'],
   ['stack overflow', 'stackoverflow.com'],
   ['hacker news', 'news.ycombinator.com'],
   ['steam community', 'steamcommunity.com'],
   ['tripadvisor', 'tripadvisor.com'],
+  ['linkedin', 'linkedin.com'],
+  ['facebook', 'facebook.com'],
+  ['instagram', 'instagram.com'],
+  ['x', 'x.com'],
+  ['youtube', 'youtube.com'],
+  ['tiktok', 'tiktok.com'],
+  ['pinterest', 'pinterest.com'],
 ]);
 
-/** The site behind a forum's displayed name, "Reddit · r/learnpython" → https://reddit.com/. */
-export function forumNameToUrl(text: string | null | undefined): string | undefined {
+/** The site behind a displayed name, "Reddit · r/learnpython" → https://reddit.com/. */
+export function siteNameToUrl(text: string | null | undefined): string | undefined {
   const name = (text ?? '').split(/\s+·\s+/)[0]!.replace(/\s+/g, ' ').trim().toLowerCase();
-  const domain = FORUM_NAMES.get(name);
+  const domain = SITE_NAMES.get(name);
   return domain ? `https://${domain}/` : undefined;
 }

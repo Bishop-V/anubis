@@ -120,7 +120,7 @@ async function launch(settings = {}) {
     ]),
     'https://www.google.com/search?q=anubis&udm=14': google('anubis', ANUBIS_RESULTS),
     'https://www.google.com/search?q=anubis&mobile=1': googleMobile('anubis', ANUBIS_RESULTS),
-    'https://www.google.com/search?q=anubis&forum=1': google('anubis', ANUBIS_RESULTS, { forum: true, aiAbove: true, related: true, next: '/search?q=anubis&start=10' }),
+    'https://www.google.com/search?q=anubis&forum=1': google('anubis', ANUBIS_RESULTS, { forum: true, grouped: true, aiAbove: true, related: true, next: '/search?q=anubis&start=10' }),
     'https://www.bing.com/search?q=javascript+promises&inline=1': bing('javascript promises', JS_RESULTS, { inline: true }),
     'https://search.brave.com/search?q=anubis&panels=1': brave('anubis', ANUBIS_RESULTS, { panels: true }),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
@@ -286,17 +286,21 @@ if (!only || only === 'grouped') {
   console.log('\n== grouped google:', JSON.stringify(check));
   await page.screenshot({ path: `${SHOTS}google-grouped.png`, fullPage: true });
 
-  // Opaque /goto links everywhere, and a Reddit thread with no address shown: the
-  // forum's name stands in for it.
+  // Opaque /goto links everywhere, and a Reddit thread and a LinkedIn page with no
+  // address shown: the site's name stands in for it. The first result's sitelinks,
+  // also /goto with no address, stay part of it.
   await page.goto('https://www.google.com/search?q=anubis&forum=1');
   await page.waitForTimeout(700);
   console.log(
     '== google forum result:',
     JSON.stringify(
       await page.evaluate(() => {
-        const reddit = document.querySelector('.forum-meta')?.closest('.MjjYud');
+        const reddit = document.querySelector('.forum-meta:not(.social)')?.closest('.MjjYud');
+        const linkedin = document.querySelector('.forum-meta.social')?.closest('.MjjYud');
         return {
           results: document.querySelectorAll('[data-anubis-result]').length,
+          sitelinksInFirstResult: !!document.querySelector('.MjjYud[data-anubis-result] .sitelinks'),
+          linkedinFound: !!linkedin?.hasAttribute('data-anubis-result'),
           redditFound: !!reddit?.hasAttribute('data-anubis-result'),
           redditButton: !!reddit?.querySelector(':scope > anubis-weigh'),
           redditTagged: !!reddit?.querySelector('anubis-chips'),
@@ -511,8 +515,8 @@ if (!only || only === 'cleanup') {
   console.log('== Brave panels:', JSON.stringify(await visibleIn({ videos: '.cluster-videos', discussions: '.cluster-discussions', relatedQueries: '.related-queries', videosTab: '.tabs a[href^="/videos"]' })));
   console.log('   removed:', JSON.stringify((await statsNow())?.removed));
   await page.goto('https://www.bing.com/search?q=javascript+promises&inline=1');
-  await page.waitForTimeout(800);
-  console.log('== Bing box inside a result:', JSON.stringify(await visibleIn({ box: '.b_rrsr', title: 'li.b_algo:nth-child(2) h2', snippet: 'li.b_algo:nth-child(2) .b_caption' })));
+  await page.waitForTimeout(1200);
+  console.log('== Bing box inside a result:', JSON.stringify(await visibleIn({ box: '#inline_rs', title: 'li.b_algo:nth-child(2) h2', snippet: 'li.b_algo:nth-child(2) .b_caption' })));
   console.log('   removed:', JSON.stringify((await statsNow())?.removed));
   await page.goto('https://www.google.com/search?q=anubis&forum=1');
   await page.waitForTimeout(800);

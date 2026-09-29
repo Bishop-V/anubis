@@ -12,8 +12,6 @@ export interface Clutter {
 const HEADINGS = 'h1, h2, h3, h4, h5, [role="heading"]';
 /** Where a label or marker text can't belong to a block that clean-up removes. The page's header is checked separately. */
 const NOT_A_BLOCK = '[data-anubis-result], anubis-summary, nav, [role="navigation"], form[role="search"], a, button, script, style, noscript, template, textarea, select, option';
-/** Where a link can't be a panel's title: rows of tabs and the search form. */
-const NOT_A_TITLE = 'nav, [role="navigation"], [role="tablist"], [role="tab"], form, anubis-summary';
 /** What a tab or button to an AI chat can be, and the item in a row of them that holds one. */
 const CONTROL = 'a, button, [role="link"], [role="button"], [role="tab"], [role="option"], [role="menuitem"]';
 const ROW_ITEM = '[role="listitem"], [role="tab"], [role="option"], [role="menuitem"], li';
@@ -95,16 +93,7 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
       if (label) addInResult(el, result, kind);
       continue;
     }
-    if (el.closest(NOT_A_BLOCK)) {
-      // A panel's title can be a link to the engine's own page of that kind (its
-      // Videos tab). A row of tabs holds only such links; a panel holds links to
-      // other sites or pictures.
-      const title = label ? el.closest<HTMLElement>('a[href]') : null;
-      if (!title || textLength(title) > text.trim().length + 2 || title.closest(NOT_A_TITLE) || title.parentElement?.closest(NOT_A_BLOCK)) continue;
-      const block = labelledBlock(title, engine, column, levelOf(title.closest<HTMLElement>(HEADINGS) ?? title));
-      if (block && holdsContent(block, title)) add(block, kind);
-      continue;
-    }
+    if (el.closest(NOT_A_BLOCK)) continue;
     // A label is the block's title: judge its level like a heading's. A marker sits
     // anywhere in the block, so only the column decides how far it reaches.
     if (label) addLabelled(labelledBlock(el, engine, column, levelOf(el.closest<HTMLElement>(HEADINGS) ?? el)), kind);
@@ -296,19 +285,12 @@ function pagers(engine: EngineDef): Element[] {
 
 /**
  * The page's own header, where tabs named like panels ("Videos", "News") live. A
- * panel's header inside the results (or an article or section) doesn't count.
+ * panel's own header (Brave puts each panel's title in one) doesn't count.
  */
 function inPageHeader(el: Element): boolean {
   const header = el.closest('header');
   if (!header) return false;
   return !header.parentElement?.closest('main, [role="main"], article, section, aside, li') || !!header.querySelector('form, input, textarea, [role="search"]');
-}
-
-/** More in the block than its title link: links to other sites, or pictures. */
-function holdsContent(block: HTMLElement, title: HTMLElement): boolean {
-  if (block.querySelector('img, picture, video')) return true;
-  const here = location.hostname;
-  return [...block.querySelectorAll<HTMLAnchorElement>('a[href]')].some((a) => !title.contains(a) && /^https?:$/.test(a.protocol) && a.hostname !== here);
 }
 
 /**
