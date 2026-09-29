@@ -4,7 +4,7 @@ import type { PageStats } from './messages';
 import type { PersonalLevel, SiteChange } from './personal';
 
 /**
- * "Anubis pinned 1, raised 2 and hid 2 of 9 results. It also removed an AI
+ * "Anubis pinned 1, raised 2, and hid 2 of 9 results. It also removed an AI
  * answer." Shared by the page and the popup.
  */
 export function summarySentence(stats: PageStats): string {

@@ -26,9 +26,9 @@ The summary above the results, or above an AI answer when there is one, says wha
 
 ## How panels are found
 
-Anubis recognises a panel by its heading ("AI Overview", "Videos", "People also ask") rather than by the engine's internal names for it, which change often. It only removes panels between the results. The side panel on the right of Google's results is left alone, and so is anything containing a result, the search box or the links to later pages.
+Anubis recognises a panel by its heading ("AI Overview", "Videos", "People also ask") rather than by the engine's internal names for it, which change often. It only removes panels between the results. The side panel on the right of Google's results is left alone, and so is anything containing a result, the search box, or the links to later pages.
 
-Headings are recognised in English and some common translations (French, German, Spanish, Portuguese, Italian and Dutch). If a panel in your language isn't removed, [open an issue](https://github.com/Bishop-V/anubis/issues) with the heading's exact text.
+Headings are recognised in English and some common translations (French, German, Spanish, Portuguese, Italian, and Dutch). If a panel in your language isn't removed, [open an issue](https://github.com/Bishop-V/anubis/issues) with the heading's exact text.
 
 ## Stopping AI answers at the source
 

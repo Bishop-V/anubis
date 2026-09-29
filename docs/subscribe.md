@@ -38,7 +38,7 @@ This link subscribes you to **{{ list.name }}** in Anubis. The list is at:
 - **With Anubis installed**, the link opens Anubis's settings with the list filled in. Press **Subscribe** there to add it. If settings didn't open, <a :href="here" target="_self">open the link again</a>.
 - **Without Anubis**, [install it](./guide/getting-started.md), then open this link again. Or paste the address above into **Settings → Lists → Add a list**.
 
-A list can hide, rank and tag sites in your results. Only subscribe to lists you trust.
+A list can hide, rank, and tag sites in your results. Only subscribe to lists you trust.
 
 </div>
 

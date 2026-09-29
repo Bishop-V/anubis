@@ -1,19 +1,19 @@
 # Anubis style guide
 
-How Anubis looks and reads on every surface it has: the popup, settings, the welcome page, and the tags, summary and result menu it adds to search pages. Follow it for any change to the interface.
+How Anubis looks and reads on every surface it has: the popup, settings, the welcome page, and the tags, summary, and result menu it adds to search pages. Follow it for any change to the interface.
 
 - `CLAUDE.md` and `CONTRIBUTING.md` give the short version of these rules.
 - [`ACCESSIBILITY.md`](ACCESSIBILITY.md) covers the keyboard and screen readers. This guide only repeats what's visual (contrast, sizes, the focus ring).
 - `docs/experiments.md` records why things are the way they are, including what was tried and dropped.
 
-The screenshots below come from the user guide (`docs/img/`, regenerated with `node e2e/run.mjs docs`), so they show the current build.
+The screenshots below come from the wiki (`docs/img/`, regenerated with `node e2e/run.mjs docs`), so they show the current build.
 
 ## Principles
 
-1. **Quiet on someone else's page.** On a search page Anubis is a guest. It uses the page's own font, muted text, hairlines and no fills. It never moves, restyles or covers the engine's content.
-2. **One flourish.** The result menu's cartouche (the gold oval around the site's name) and balance are the only decoration. The popup shows the same pair for the site you're on, since it does the same job there. The Anubis motif stays in the logo, the summary's mark and the menu; it never names a function.
+1. **Quiet on someone else's page.** On a search page Anubis is a guest. It uses the page's own font, muted text, hairlines, and no fills. It never moves, restyles, or covers the engine's content.
+2. **One flourish.** The result menu's cartouche (the gold oval around the site's name) and balance are the only decoration. The popup shows the same pair for the site you're on, since it does the same job there. The Anubis motif stays in the logo, the summary's mark, and the menu; it never names a function.
 3. **Plain words over clever ones.** A label says what happens. The same word means the same thing everywhere.
-4. **Nothing without a trace.** What Anubis hid, removed or reranked is stated in the summary, and "Show hidden" undoes it for the page.
+4. **Nothing without a trace.** What Anubis hid, removed, or reranked is stated in the summary, and "Show hidden" undoes it for the page.
 5. **Gold is for what matters.** The primary action, focus, a choice that's been made, and the cartouche. Nothing else is gold.
 
 ![A search page with Anubis: the summary above the results, tags under titles, a hidden result folded into one line](docs/img/after.png)
@@ -29,11 +29,11 @@ One palette, defined twice: `assets/theme.css` for extension pages and `entrypoi
 | `--bg` | `#1b1a16` | `#f2f3f1` | Page background (extension pages only; on search pages the engine owns it) |
 | `--raised` | `#23211c` | `#fbfbfa` | Inputs, the result menu's card |
 | `--line` | `#35312a` | `#dadcd7` | Hairlines between sections and rows |
-| `--line-strong` | `#4a453c` | `#c3c6bf` | Borders of inputs, selects and buttons; a switch that's off |
+| `--line-strong` | `#4a453c` | `#c3c6bf` | Borders of inputs, selects, and buttons; a switch that's off |
 | `--text` | `#ece6da` | `#1f1e1a` | Body text |
 | `--muted` | `#a39b8c` | `#62615b` | Secondary text, section labels, unchosen options, icons at rest |
 | `--gold` | `#d4a637` | `#d4a637` | Fills and strokes: primary button, chosen underline, focus ring, cartouche, balance |
-| `--gold-ink` | `#e0b54e` | `#8d6716` | Gold text and icons, readable on the background: text buttons, links, Raise and Pin |
+| `--gold-ink` | `#e0b54e` | `#8d6716` | Gold text and icons, readable on the background: text buttons, links, Raise, and Pin |
 | `--on-gold` | `#1b1a16` | `#1b1a16` | Text on a gold fill |
 | `--danger` | `#e2735b` | `#b4492f` | Hide, errors, destructive actions |
 | `--ok` | `#7fb58f` | `#3a7a52` | Confirmations (settings only) |
@@ -78,14 +78,14 @@ One palette, defined twice: `assets/theme.css` for extension pages and `entrypoi
 | 13px | 400–600 | Controls, descriptions, the result menu, the summary | "Load more results" |
 | 12.5px | 400–600 | Small print: hints, counts, tags on results, list facts, section labels in the popup and menu | "4 lists, 7 tags" |
 
-- Weights are 400, 500 and 600. Bold (600) is for the chosen option, names, and primary and text buttons.
+- Weights are 400, 500, and 600. Bold (600) is for the chosen option, names, and primary and text buttons.
 - Sentence case everywhere. No ALL-CAPS labels, no letter-spaced eyebrows.
 - Counts use `font-variant-numeric: tabular-nums`.
 - Body text stops at about 62 characters (`max-width: 62ch`).
 
 ## Space and shape
 
-- Spacing comes in steps of 2px: 4, 6, 8, 10, 12, 14, 16, 18, 24 and so on. Items in a wrapping row of tags or links sit 14px apart; buttons in a row 8px.
+- Spacing comes in steps of 2px: 4, 6, 8, 10, 12, 14, 16, 18, 24, and so on. Items in a wrapping row of tags or links sit 14px apart; buttons in a row 8px.
 - Sections are divided by a 1px `--line` hairline and space, never boxed into cards. The result menu is the only card.
 - Corner radius: **6px** for controls (buttons, inputs, selects); **10px** for the result menu and the pinned result's frame; **999px** (a pill) for the cartouche and switches; **50%** for round icon buttons on search pages and colour swatches. The focus ring's corners are 3px where the element has none of its own. Nothing else is rounded, and the logo carries its own rounded tile, so don't round or frame it.
 - Shadows only on the result menu (`--shadow`), which floats over the page.
@@ -116,7 +116,7 @@ All shared controls are in `assets/theme.css`; the search-page versions in `shad
 | Primary button | `.btn.primary` | Gold fill, `--on-gold` text, 600 | The action the form exists for, at most one per form: "Add", "Subscribe", "Connect" |
 | Destructive button | `.btn.danger` | `--danger` text; the border turns `--danger` on hover | Actions that throw something away: "Reset settings" |
 | Text button | `.text-btn` | No box, `--gold-ink`, 600, underline on hover; `.danger` for removing | Actions inside a sentence or row: "Show hidden", "Undo", "Add tag", "See all 9" |
-| Icon button | `.icon-btn` | 28px (24px and round on search pages), `--muted`, gold on hover; `.danger` turns red on hover | Only icons everyone knows: the cog, ×, and a list's update, view and remove icons. Always with `aria-label` and `title`. |
+| Icon button | `.icon-btn` | 28px (24px and round on search pages), `--muted`, gold on hover; `.danger` turns red on hover | Only icons everyone knows: the cog, ×, and a list's update, view, and remove icons. Always with `aria-label` and `title`. |
 | Input | `input` | 30px, `--raised`, 1px `--line-strong` border, 6px radius, 13px; the border turns gold on focus | Placeholders in `--muted` give an example ("fandom.com"), not an instruction |
 | Select | `select` | The same box as an input, with the one caret: a small `--muted` chevron drawn in CSS, 10px from the right edge | Never the browser's own arrow |
 | Switch | `.switch` | 30×17px pill, gold when on | Settings that take effect at once; no Save button |
@@ -147,7 +147,7 @@ h('span', { class: 'tag', style: `--c: ${tag.color}` }, h('i', { class: 'gem' })
 
 - **Hover**: text goes from `--muted` to `--text`, or an outline turns gold. No background fills on hover, except the ⚖ button's faint gold wash on search pages.
 - **Focus**: a 2px `--gold` outline, 2px offset, on `:focus-visible` only. Where a native control sits unseen over a styled one (the cartouche's select), the visible element shows the ring (`:has(select:focus-visible)`).
-- **Chosen**: the 2px underline above. Don't use fills, checkmarks or bold alone.
+- **Chosen**: the 2px underline above. Don't use fills, checkmarks, or bold alone.
 - **Disabled or busy**: `opacity: 0.6` and `cursor: progress` on buttons, `--muted` text on text buttons. Say what's happening ("Loading…").
 - **Off**: when Anubis is off, the popup's content fades to half and the toolbar icon turns grey, with "Anubis is off" as its tooltip.
 - **Hidden and removed on search pages**: hidden results leave the page, fold into one muted line with a Show button, or fade, as Settings → Appearance says; the summary counts them. Removed panels that "Show hidden" brings back are marked with a faint dashed outline.
@@ -168,7 +168,7 @@ One line above the results, in the page's font at 13px, `--muted` for the senten
 
 ## The result menu
 
-![The result menu open on javascript.info: the cartouche, the balance tilted to Raise, the rankings, tags and why](docs/img/menu.png)
+![The result menu open on javascript.info: the cartouche, the balance tilted to Raise, the rankings, tags, and why](docs/img/menu.png)
 
 The one place with character. In order:
 
@@ -182,8 +182,8 @@ The one place with character. In order:
 - Inline SVG from `utils/icons.ts`: a 16×16 grid, 1.6px stroke, round caps and joins, `currentColor`. Shown at 13–15px. Decorative, so `aria-hidden`.
 - Each ranking has one icon, used everywhere: an eye struck through (Hide), a chevron down (Lower), a feather (Normal), a chevron up (Raise), a pin (Pin).
 - The Anubis head is the brand mark: the logo tile on extension pages and in the toolbar, the bare head as the summary's mark on search pages. It's never a button's icon.
-- The button on each result shows the result menu's balance in small, tipped to the site's ranking: level for Normal, the site's (left) pan down for Lower and up for Raise. A hidden site shows the ranking's crossed-out eye and a pinned one its pin. It's drawn in `--muted` like any icon at rest; the tilt, not a colour, shows the ranking, and its label says it too ("Hide, rank or tag fandom.com (lowered)").
-- An icon without words only where the meaning is universal (the cog, ×, the balance on a result, which names the menu it opens in its tooltip). Everything else gets a word, with or without an icon.
+- The button on each result shows the result menu's balance in small, tipped to the site's ranking: level for Normal, the site's (left) pan down for Lower, and up for Raise. A hidden site shows the ranking's crossed-out eye and a pinned one its pin. It's drawn in `--muted` like any icon at rest; the tilt, not a colour, shows the ranking, and its label says it too ("Hide, rank, or tag fandom.com (lowered)").
+- An icon without words only where the meaning is universal (the cog, ×, and the balance on a result, which names the menu it opens in its tooltip). Everything else gets a word, with or without an icon.
 
 ## Motion
 
@@ -193,18 +193,18 @@ The one place with character. In order:
 ## Writing
 
 - Sentence case, plain verbs, no filler.
-- One word per concept. A site's **ranking** is Hide, Lower, Normal, Raise or Pin. Lists **tag**, **raise**, **lower** and **hide**; clean-up **removes**. People **subscribe** to lists.
+- One word per concept. A site's **ranking** is Hide, Lower, Normal, Raise, or Pin. Lists **tag**, **raise**, **lower**, and **hide**; clean-up **removes**. People **subscribe** to lists.
 - An action keeps its name through the flow: "Pin" in the menu, "Pinned javascript.info." in the summary.
 - Whole sentences, one idea each. When a sentence needs a second "and", start a second sentence.
 - Errors say what happened and what to do, in the interface's voice. They don't apologise.
-- British spelling ("colour", "recognise"), and lists without a comma before the last "and": "a, b and c". `tJoin()` joins them that way.
+- British spelling ("colour", "recognise"), and the serial (Oxford) comma in lists of three or more: "a, b, and c", "Hide, rank, or tag". Two items take no comma: "a and b". `tJoin()` joins lists that way.
 - No "·"-joined meta strings, no "→" on links, no exclamation marks.
 - All interface text goes in `public/_locales/en/messages.json` and is used through `t()`, `tn()` (counts), `tJoin()` (lists) and `localizePage()`. A sentence is one message per shape, not English fragments glued together, so it can be translated.
 
 | Write | Not |
 | --- | --- |
 | Load more results | Weigh deeper |
-| Hide, rank or tag javascript.info | Weigh this site |
+| Hide, rank, or tag javascript.info | Weigh this site |
 | Anubis raised 1 and hid 2 of 7 results. It also removed an AI answer. | Anubis raised 1 and hid 2 of 7 results, and removed an AI answer. |
 | Hid fandom.com. | Site blocked successfully! |
 | Got a web page, not a list. Use the raw file URL. | Sorry, something went wrong. |
@@ -216,12 +216,12 @@ The one place with character. In order:
 
 - Text in `--text` and `--muted` meets WCAG AA on its background in both schemes; gold text uses `--gold-ink` for the same reason.
 - Icon buttons are at least 24px, and 32px where the pointer is coarse (the ⚖ button on phones).
-- Everything else about the keyboard, focus and screen readers is in [`ACCESSIBILITY.md`](ACCESSIBILITY.md).
+- Everything else about the keyboard, focus, and screen readers is in [`ACCESSIBILITY.md`](ACCESSIBILITY.md).
 
 ## Before you merge a change to the interface
 
-- Uses the tokens, sizes and controls above; no new colour, size or radius without adding it here first.
+- Uses the tokens, sizes, and controls above; no new colour, size, or radius without adding it here first.
 - Looks right in light and dark, at phone width, and (for search pages) on a light and a dark engine page: `npm run e2e` saves screenshots of each to `e2e/shots/`.
 - Works from the keyboard and makes sense to a screen reader (`ACCESSIBILITY.md`).
 - Wording follows the list above, and the text is in `messages.json`.
-- The guide's screenshots are regenerated (`node e2e/run.mjs docs`) if they show what changed.
+- The wiki's screenshots are regenerated (`node e2e/run.mjs docs`) if they show what changed.

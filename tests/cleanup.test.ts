@@ -60,7 +60,7 @@ describe('summary with clean-up', () => {
     expect(describeRemoved({})).toBe('');
     expect(summarySentence(stats({ hidden: 2, removed: { ai: 1 } }))).toBe('Anubis hid 2 of 9 results. It also removed an AI answer.');
     expect(summarySentence(stats({ raised: 1, hidden: 2, removed: { ai: 1, videos: 1, questions: 1, images: 1 } }))).toBe(
-      'Anubis raised 1 and hid 2 of 9 results. It also removed an AI answer, a video panel, a question list and an image panel.',
+      'Anubis raised 1 and hid 2 of 9 results. It also removed an AI answer, a video panel, a question list, and an image panel.',
     );
     expect(summarySentence(stats({ removed: { questions: 1 } }))).toBe('Anubis removed a question list.');
   });
@@ -69,7 +69,7 @@ describe('summary with clean-up', () => {
     expect(summarySentence(stats({}))).toBe('Anubis left all 9 results as they were.');
     expect(summarySentence(stats({ total: 1 }))).toBe('Anubis left this result as it was.');
     expect(summarySentence(stats({ total: 20, pages: 2 }))).toBe('Anubis left all 20 results from 2 pages as they were.');
-    expect(summarySentence(stats({ total: 20, pages: 2, pinned: 1, raised: 2, hidden: 3 }))).toBe('Anubis pinned 1, raised 2 and hid 3 of 20 results from 2 pages.');
+    expect(summarySentence(stats({ total: 20, pages: 2, pinned: 1, raised: 2, hidden: 3 }))).toBe('Anubis pinned 1, raised 2, and hid 3 of 20 results from 2 pages.');
     expect(summarySentence(stats({ total: 1, lowered: 1 }))).toBe('Anubis lowered 1 of 1 result.');
   });
 

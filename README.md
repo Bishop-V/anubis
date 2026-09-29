@@ -3,25 +3,25 @@ Browser extension for filtering search results, and much more.
 
 In Egyptian myth, Anubis weighed each heart against a feather. This extension weighs search results: it tags them, raises the ones you trust, lowers or hides the ones you don't, and lets you subscribe to lists other people publish, the way Brave Goggles do, but on the search engine you already use.
 
-**[Read the user guide →](https://bishop-v.github.io/anubis/)**
+**[Read the wiki →](https://bishop-v.github.io/anubis/)**
 
 ## What it does
 
-- **Rank any site from the results.** Hover a result and press its ⚖ button to hide, lower, raise or pin that site, and to tag it. Your choices apply on every search and beat every list.
-- **Tags.** Results carry small labels ("Official docs", "Discussion", "Paywall"…) from your own tags and from lists you subscribe to. For each tag you decide what it does: just show it, highlight results, or raise, lower or hide them.
-- **Reranking.** Raised, lowered and pinned sites move up or down the page. **Load more results** brings the next pages of results onto the first one and reranks them together, so a pinned site on page 3 rises to the top.
-- **Lists anyone can publish.** A list is a text file on GitHub, GitLab, Codeberg or a gist; there is no server. Anubis reads its own list format, Brave Goggles, uBlacklist rulesets and plain domain lists, so existing community lists work unchanged. Subscribe links (on the [lists directory](https://bishop-v.github.io/anubis/lists), or any list's own page) open Anubis with the list filled in. The menu on each result can open a pre-filled issue on a list's tracker, to report a site the list got wrong or suggest one it's missing.
+- **Rank any site from the results.** Hover a result and press its ⚖ button to hide, lower, raise, or pin that site, and to tag it. Your choices apply on every search and beat every list.
+- **Tags.** Results carry small labels ("Official docs", "Discussion", "Paywall"…) from your own tags and from lists you subscribe to. For each tag you decide what it does: just show it, highlight results, or raise, lower, or hide them.
+- **Reranking.** Raised, lowered, and pinned sites move up or down the page. **Load more results** brings the next pages of results onto the first one and reranks them together, so a pinned site on page 3 rises to the top.
+- **Lists anyone can publish.** A list is a text file on GitHub, GitLab, Codeberg, or a gist; there is no server. Anubis reads its own list format, Brave Goggles, uBlacklist rulesets, and plain domain lists, so existing community lists work unchanged. Subscribe links (on the [lists directory](https://bishop-v.github.io/anubis/lists), or any list's own page) open Anubis with the list filled in. The menu on each result can open a pre-filled issue on a list's tracker, to report a site the list got wrong or suggest one it's missing.
 - **Your list is a list too.** Every site you rank is stored in the same format, so you can download it and publish it for others.
 - **Sync.** Your list and settings follow you to your other computers through the browser's own sync. To share between Firefox and Chrome too, connect a WebDAV storage service (Koofr, InfiniCLOUD, Nextcloud…) in Settings → Sync; changes from each browser are combined.
-- **Bring your old lists.** Paste uBlacklist rules, a HOHSER export or a Goggle into Settings → Backup to move your sites over.
+- **Bring your old lists.** Paste uBlacklist rules, a HOHSER export, or a Goggle into Settings → Backup to move your sites over.
 - **Filter by tag.** The summary above the results lists the tags on the page; click one to see only those results.
-- **Clean up pages.** Remove AI answers (Google's AI Overview and AI Mode tab, DuckDuckGo's AI-assisted answers and Duck.ai buttons, and Brave's AI answers), video panels, "People also ask", top stories, image rows and related searches, on every search (Bing's AI answer and video panel aren't recognised yet). Google can also always open its plain Web tab. "Show hidden" brings removed parts back on that page.
+- **Clean up pages.** Remove AI answers (Google's AI Overview and AI Mode tab, DuckDuckGo's AI-assisted answers and Duck.ai buttons, and Brave's AI answers), video panels, "People also ask", top stories, image rows, and related searches, on every search (Bing's AI answer and video panel aren't recognised yet). Google can also always open its plain Web tab. "Show hidden" brings removed parts back on that page.
 - **Quiet on the page.** Hidden results leave the page (or collapse to one line, if you prefer); the summary above the results is one sentence. Light and dark themes follow your browser and the search engine, or your choice.
 - **Keyboard shortcuts.** Alt+Shift+O turns Anubis on or off, and Alt+Shift+H shows hidden results (Control instead of Alt on a Mac).
 
-Works on Google (every country domain), DuckDuckGo (including the HTML and Lite versions), Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex and Mojeek.
+Works on Google (every country domain), DuckDuckGo (including the HTML and Lite versions), Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex, and Mojeek.
 
-It asks for the `storage` and `activeTab` permissions (the second lets the toolbar popup read the address of the tab you're on, only when you open it) and runs on search result pages, plus the user guide's subscribe page so subscribe links work. Lists hosted on GitHub download without any extra permission; lists hosted elsewhere ask for access to that one host when you subscribe. Nothing is sent anywhere else.
+It asks for the `storage` and `activeTab` permissions (the second lets the toolbar popup read the address of the tab you're on, only when you open it) and runs on search result pages, plus the wiki's subscribe page so subscribe links work. Lists hosted on GitHub download without any extra permission; lists hosted elsewhere ask for access to that one host when you subscribe. Nothing is sent anywhere else.
 
 ## Setup
 
@@ -69,7 +69,7 @@ npm run zip:chrome   # .output/anubis-<version>-chrome.zip, also used for Edge
 
 The extension itself is in `.output/firefox-mv2/` (and `.output/chrome-mv3/`) after the zips are made.
 
-To publish a version, set `version` in `package.json`, merge it, then push a matching tag (`git tag v0.3.0 && git push origin v0.3.0`). `.github/workflows/release.yml` checks the tag against `package.json`, runs CI, builds the zips, creates a GitHub Release and, once approved in the `release` environment, submits to the Chrome Web Store, Firefox Add-ons and Edge Add-ons.
+To publish a version, set `version` in `package.json`, merge it, then push a matching tag (`git tag v0.3.0 && git push origin v0.3.0`). `.github/workflows/release.yml` checks the tag against `package.json`, runs CI, builds the zips, creates a GitHub Release and, once approved in the `release` environment, submits to the Chrome Web Store, Firefox Add-ons, and Edge Add-ons.
 
 ### Before opening a pull request
 
@@ -85,16 +85,16 @@ To publish a version, set `version` in `package.json`, merge it, then push a mat
 
 ## Documentation
 
-The user guide is at **[bishop-v.github.io/anubis](https://bishop-v.github.io/anubis/)**, built from [`docs/`](docs) (start with [the introduction](docs/guide/introduction.md)). `npm run docs:dev` previews it locally.
+The wiki is at **[bishop-v.github.io/anubis](https://bishop-v.github.io/anubis/)**, built from [`docs/`](docs) (start with [the introduction](docs/guide/introduction.md)). `npm run docs:dev` previews it locally.
 
-- [Developing Anubis](DEVELOPMENT.md): how the extension is put together, how a build is made, and how to add an engine, a setting or interface text.
+- [Developing Anubis](DEVELOPMENT.md): how the extension is put together, how a build is made, and how to add an engine, a setting, or interface text.
 - [Accessibility](ACCESSIBILITY.md): keeping Anubis usable with a screen reader and from the keyboard, and where it falls short today.
 - [The list format](docs/list-format.md): how to write and publish a list.
 - [Lists](lists/README.md): the lists that ship with Anubis and how to contribute one.
 - [Experiments and decisions](docs/experiments.md): what was tried, what failed, and what still needs checking on live pages.
 - [Roadmap](ROADMAP.md): planned work.
 - [Security](SECURITY.md): how to report a vulnerability privately, and what counts as one.
-- [Publishing](store/README.md): store listings, privacy answers and release steps.
+- [Publishing](store/README.md): store listings, privacy answers, and release steps.
 
 ## Inspirations
 
@@ -104,7 +104,7 @@ uBlacklist was also the reference for how search engines are matched. It no long
 
 Anubis takes a different approach because of that. Rather than tracking class names, it finds results *structurally*: locate the title heading, take the link around it, then walk up to the smallest ancestor still holding a single result. That survives a layout change without an update, at the cost of being less precise than a curated ruleset. The uBlacklist rulesets remain the reference to check against when something does break, and they supply the selectors for engines whose titles aren't headings (Brave, Kagi, Startpage…).
 
-**[Brave Search Goggles](https://github.com/brave/goggles-quickstart)** are the model for lists: plain text files hosted on GitHub or GitLab that anyone can publish, with instructions to boost, downrank or discard results. The Anubis list format is the Goggles syntax plus tags, and any public Goggle can be subscribed to as-is. Goggles rerank inside Brave's own index; Anubis reranks what your engine returns, which is why Load more results exists.
+**[Brave Search Goggles](https://github.com/brave/goggles-quickstart)** are the model for lists: plain text files hosted on GitHub or GitLab that anyone can publish, with instructions to boost, downrank, or discard results. The Anubis list format is the Goggles syntax plus tags, and any public Goggle can be subscribed to as-is. Goggles rerank inside Brave's own index; Anubis reranks what your engine returns, which is why Load more results exists.
 
 **[Kagi](https://help.kagi.com/kagi/features/website-info-personalized-results.html)** personalised results gave the five rankings (hide, lower, normal, raise, pin) chosen from a menu on each result.
 

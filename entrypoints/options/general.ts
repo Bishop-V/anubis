@@ -165,12 +165,12 @@ export async function renderShare(): Promise<HTMLElement> {
     rerender();
   });
 
-  // Import from uBlacklist, HOHSER, a Goggle or a domain list
+  // Import from uBlacklist, HOHSER, a Goggle, or a domain list
   const importArea = h('textarea', {
     class: 'code',
     rows: 6,
     spellcheck: false,
-    placeholder: 'Paste uBlacklist rules, a HOHSER export, a Goggle or one domain per line',
+    placeholder: 'Paste uBlacklist rules, a HOHSER export, a Goggle, or one domain per line',
     style: 'min-height:0',
     attrs: { 'aria-label': 'Sites to import' },
   });
@@ -202,7 +202,7 @@ export async function renderShare(): Promise<HTMLElement> {
   };
 
   const reset = async () => {
-    if (!confirm('Reset all Anubis settings, tags and subscriptions? Your list is kept.')) return;
+    if (!confirm('Reset all Anubis settings, tags, and subscriptions? Your list is kept.')) return;
     await settingsItem.setValue(DEFAULT_SETTINGS);
     await tagPrefsItem.setValue({});
     // Absent, not empty: the default subscriptions come back.
@@ -214,7 +214,7 @@ export async function renderShare(): Promise<HTMLElement> {
   return h(
     'div',
     null,
-    pageTitle('Back up, import and share', 'Keep a copy of everything, bring your sites over from another tool, or publish your list for others to subscribe to.'),
+    pageTitle('Back up, import, and share', 'Keep a copy of everything, bring your sites over from another tool, or publish your list for others to subscribe to.'),
     h(
       'div',
       { class: 'panel' },
@@ -223,7 +223,7 @@ export async function renderShare(): Promise<HTMLElement> {
       h(
         'ol',
         { class: 'steps' },
-        h('li', null, 'Download your list below. Set its ', h('code', null, '! name:'), ', ', h('code', null, '! description:'), ' and ', h('code', null, '! author:'), ' lines at the top.'),
+        h('li', null, 'Download your list below. Set its ', h('code', null, '! name:'), ', ', h('code', null, '! description:'), ', and ', h('code', null, '! author:'), ' lines at the top.'),
         h('li', null, 'Create a public GitHub repository (or a gist) and add the file, e.g. ', h('code', null, 'lists/my-list.anubis'), '.'),
         h('li', null, 'Add ', h('code', null, '! issues: https://github.com/you/repo/issues'), ' so people can suggest sites to your list from the menu on each result.'),
         h('li', null, 'Share the file’s link. People paste it into Lists → Add a list.'),
@@ -265,7 +265,7 @@ export async function renderShare(): Promise<HTMLElement> {
       'div',
       { class: 'panel' },
       h('h3', null, 'Backup'),
-      h('p', { class: 'muted' }, 'Everything in one file: settings, tag choices, subscriptions and your list.'),
+      h('p', { class: 'muted' }, 'Everything in one file: settings, tag choices, subscriptions, and your list.'),
       h(
         'div',
         { class: 'toolbar' },

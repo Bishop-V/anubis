@@ -1,6 +1,6 @@
 ---
 name: Suggest a site for a list
-about: Propose adding, retagging or removing a site in one of the lists in lists/
+about: Propose adding, retagging, or removing a site in one of the lists in lists/
 title: 'Suggest example.com'
 labels: list
 ---

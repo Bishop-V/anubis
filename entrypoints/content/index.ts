@@ -42,7 +42,7 @@ import {
 } from './ui';
 
 // Runs on search result pages. Each pass: find the results, weigh each one against
-// the personal list and subscriptions, then tag, hide, highlight and rerank them.
+// the personal list and subscriptions, then tag, hide, highlight, and rerank them.
 export default defineContentScript({
   matches: ENGINE_MATCHES,
   // Start early so results are weighed as they stream in, before they paint.
@@ -154,7 +154,7 @@ export default defineContentScript({
         if (!live.has(el)) forget(el);
       }
 
-      // Clean-up: AI answers, video panels and the like. "Show hidden" brings them back too.
+      // Clean-up: AI answers, video panels, and the like. "Show hidden" brings them back too.
       const clutter = findClutter(engine, results, rules.settings.cleanup);
       const now = new Set(clutter.map((c) => c.block));
       for (const el of removed) if (!now.has(el)) unremove(el);

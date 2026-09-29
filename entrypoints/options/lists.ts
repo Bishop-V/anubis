@@ -49,7 +49,7 @@ function dropOffer(): void {
   history.replaceState(null, '', location.pathname + location.hash);
 }
 
-/** What subscribing to the offered list means: its address, directory entry, id and name. */
+/** What subscribing to the offered list means: its address, directory entry, id, and name. */
 function offered(link: SubscribeLink) {
   const url = toRawUrl(link.url);
   const entry = directory?.find((d) => d.url === url);
@@ -144,7 +144,7 @@ export async function renderLists(): Promise<HTMLElement> {
     null,
     pageTitle(
       'Lists',
-      'Subscribe to lists that tag, rerank or hide sites. Any text file on GitHub, GitLab, Codeberg or a gist works: Anubis lists, Brave Goggles, uBlacklist rulesets and plain domain lists.',
+      'Subscribe to lists that tag, rerank, or hide sites. Any text file on GitHub, GitLab, Codeberg, or a gist works: Anubis lists, Brave Goggles, uBlacklist rulesets, and plain domain lists.',
       h(
         'button',
         {
@@ -170,7 +170,7 @@ export async function renderLists(): Promise<HTMLElement> {
       'div',
       { class: 'panel' },
       h('h3', null, 'Add a list'),
-      h('p', { class: 'muted' }, 'Paste a link to the file. Links to a GitHub page, a gist or a Brave Goggle work too.'),
+      h('p', { class: 'muted' }, 'Paste a link to the file. Links to a GitHub page, a gist, or a Brave Goggle work too.'),
       form,
       offer ? null : notice,
     ),

@@ -64,7 +64,7 @@ function lineKey(line: string, seen: Map<string, number>): string {
   if (id) return `tag:${id}`;
   const header = HEADER_LINE.exec(trimmed);
   if (header) return `header:${header[1]!.toLowerCase()}`;
-  // Comments, blank lines and hand-written rules: the line itself, counted, so two
+  // Comments, blank lines, and hand-written rules: the line itself, counted, so two
   // blank lines stay two.
   const n = seen.get(line) ?? 0;
   seen.set(line, n + 1);

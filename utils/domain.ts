@@ -1,4 +1,4 @@
-// Hostname helpers shared by the popup, options page and content script.
+// Hostname helpers shared by the popup, options page, and content script.
 
 /** Turn user input ("https://www.Fandom.com/wiki/x") into a bare domain ("fandom.com"). */
 export function normalizeDomain(input: string): string {

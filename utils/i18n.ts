@@ -26,11 +26,8 @@ export function t(key: MessageKey, ...subs: (string | number)[]): string {
 /** The language the messages are in, as a BCP 47 tag (pt-BR) for Intl. */
 const lang = () => t('langCode').replace('_', '-');
 
-/**
- * How lists are joined. The English text is written in British English, which
- * joins "a, b and c" without the comma before "and" that plain `en` adds.
- */
-const listFormat = (type: 'conjunction' | 'disjunction') => new Intl.ListFormat(lang() === 'en' ? 'en-GB' : lang(), { type });
+/** How lists are joined: in English "a, b, and c", with the serial comma. */
+const listFormat = (type: 'conjunction' | 'disjunction') => new Intl.ListFormat(lang(), { type });
 
 let pluralRules: Intl.PluralRules | undefined;
 
@@ -41,7 +38,7 @@ export function tn(key: PluralKey, count: number, ...subs: (string | number)[]):
   return getMessage(`${key}_${pluralRules.select(count)}`, args) || getMessage(`${key}_other`, args) || key;
 }
 
-/** Items joined the way the language joins a list: "a, b and c" in English. */
+/** Items joined the way the language joins a list: "a, b, and c" in English. */
 export function tJoin(items: string[], type: 'conjunction' | 'disjunction' = 'conjunction'): string {
   return listFormat(type).format(items);
 }

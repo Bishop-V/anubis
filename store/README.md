@@ -25,7 +25,7 @@ Setting it up: create a Google Cloud project, turn on the Chrome Web Store API, 
 3. Load the build and check the engines listed under "Still unverified" in [`docs/experiments.md`](../docs/experiments.md).
 4. `npm run zip:chrome` for Chrome. `npm run zip` for Firefox, which also makes `anubis-<version>-sources.zip` for AMO's reviewers.
 5. The privacy policy link below has to load: GitHub Pages must be publishing the docs site.
-6. Merge, then push a matching tag (`git tag v<version> && git push origin v<version>`). [`release.yml`](../.github/workflows/release.yml) builds the zips, creates the GitHub Release and, once approved, submits to Chrome, Firefox and Edge.
+6. Merge, then push a matching tag (`git tag v<version> && git push origin v<version>`). [`release.yml`](../.github/workflows/release.yml) builds the zips, creates the GitHub Release and, once approved, submits to Chrome, Firefox, and Edge.
 
 ## Chrome Web Store
 
@@ -45,21 +45,21 @@ Setting it up: create a Google Cloud project, turn on the Chrome Web Store API, 
 
 **Single purpose**
 
-> Anubis changes search engine results pages to match the user's preferences: it hides, reorders and labels results by site, and removes page sections the user chooses to hide (such as AI answers), using the user's own rankings and lists the user subscribes to.
+> Anubis changes search engine results pages to match the user's preferences: it hides, reorders, and labels results by site, and removes page sections the user chooses to hide (such as AI answers), using the user's own rankings and lists the user subscribes to.
 
 **storage**
 
-> Saves the user's ranked sites, tags, settings and list subscriptions in browser storage (sync storage, so they follow the user's browser account), and keeps downloaded copies of subscribed lists on the device. If the user connects a WebDAV server of their own to sync between browsers, its address and login are kept in local storage on that device only. Nothing is sent to the developer.
+> Saves the user's ranked sites, tags, settings, and list subscriptions in browser storage (sync storage, so they follow the user's browser account), and keeps downloaded copies of subscribed lists on the device. If the user connects a WebDAV server of their own to sync between browsers, its address and login are kept in local storage on that device only. Nothing is sent to the developer.
 
 **activeTab**
 
-> When the user opens the toolbar popup, Anubis reads the address of the current tab so the user can hide, rank or tag the site they are on. It is used only for that click, and Anubis has no other access to tabs.
+> When the user opens the toolbar popup, Anubis reads the address of the current tab so the user can hide, rank, or tag the site they are on. It is used only for that click, and Anubis has no other access to tabs.
 
 **Host permissions** (the content scripts' sites, and the optional `https://*/*`)
 
-> The main content script runs only on the results pages of the supported search engines (Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex and Mojeek) to hide, reorder and tag the results on the page. It matches every Google country domain and the whole Google site because Google moves from its home page to results without loading a new page.
+> The main content script runs only on the results pages of the supported search engines (Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex, and Mojeek) to hide, reorder, and tag the results on the page. It matches every Google country domain and the whole Google site because Google moves from its home page to results without loading a new page.
 >
-> A second, small content script runs on one page of Anubis's own user guide, `https://bishop-v.github.io/anubis/subscribe`, where subscribe links lead. It reads the list address from the link and opens Anubis's settings with that list filled in; the user presses Subscribe to add it. Neither script runs on any other site.
+> A second, small content script runs on one page of Anubis's own wiki, `https://bishop-v.github.io/anubis/subscribe`, where subscribe links lead. It reads the list address from the link and opens Anubis's settings with that list filled in; the user presses Subscribe to add it. Neither script runs on any other site.
 >
 > `https://*/*` is optional and never granted at install. When the user subscribes to a list hosted outside GitHub, Anubis asks for access to that one host (for example `https://example.org/*`) so it can download the list file. Lists on raw.githubusercontent.com and gist.githubusercontent.com need no permission. The same goes for a WebDAV server the user connects in Settings → Sync to sync between browsers: Anubis asks for that one host when they press Connect. The pattern is broad only because the host isn't known until the user types the address.
 
@@ -106,25 +106,25 @@ Public, all regions.
 Plain text, so it reads the same in both dashboards.
 
 ```text
-Anubis hides, ranks and tags search results, on the search engine you already use.
+Anubis hides, ranks, and tags search results, on the search engine you already use.
 
-Rank any site from the results. Press the ⚖ button on a result to hide, lower, raise or pin that site, or to tag it. Your choices apply to every search.
+Rank any site from the results. Press the ⚖ button on a result to hide, lower, raise, or pin that site, or to tag it. Your choices apply to every search.
 
-Tags. Results carry small labels such as "Official docs", "Discussion" or "Paywall", from your own tags and from lists you subscribe to. For each tag, choose whether it only shows, highlights results, or raises, lowers or hides them.
+Tags. Results carry small labels such as "Official docs", "Discussion", or "Paywall", from your own tags and from lists you subscribe to. For each tag, choose whether it only shows, highlights results, or raises, lowers, or hides them.
 
-Lists anyone can publish. Subscribe to lists hosted on GitHub, GitLab, Codeberg or a gist. Anubis reads its own list format, Brave Goggles, uBlacklist rulesets and plain lists of domains, so existing community lists work as they are.
+Lists anyone can publish. Subscribe to lists hosted on GitHub, GitLab, Codeberg, or a gist. Anubis reads its own list format, Brave Goggles, uBlacklist rulesets, and plain lists of domains, so existing community lists work as they are.
 
 Load more results. Bring the next pages of results onto the first one and rank them together, so a site you pinned on page 3 rises to the top.
 
-Clean up pages. Remove AI answers, video panels, "People also ask", top stories, image rows and related searches.
+Clean up pages. Remove AI answers, video panels, "People also ask", top stories, image rows, and related searches.
 
 Nothing disappears without a trace. A one-line summary says what Anubis changed, and "Show hidden" brings it back. Keyboard shortcuts turn Anubis on or off (Alt+Shift+O) and show hidden results (Alt+Shift+H).
 
-Works on Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex and Mojeek.
+Works on Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex, and Mojeek.
 
 No server, no account, nothing collected. Your list and settings stay in your browser, or go to a storage service of your own if you connect one to sync between browsers.
 
-User guide: https://bishop-v.github.io/anubis/
+Wiki: https://bishop-v.github.io/anubis/
 Source code (AGPL-3.0): https://github.com/Bishop-V/anubis
 ```
 
@@ -132,10 +132,10 @@ Source code (AGPL-3.0): https://github.com/Bishop-V/anubis
 
 From real search pages, not the e2e mocks: a listing has to show the product as people will see it. 1280×800 suits both stores (Chrome requires it or 640×400).
 
-Take them in a fresh browser profile that isn't signed in, so no account picture, history or location shows. In Chrome: DevTools → device toolbar → Responsive, 1280 × 800, device pixel ratio 1 → ⋮ → Capture screenshot. Save them in `store/screenshots/`. Don't save page HTML here; it carries the account and location.
+Take them in a fresh browser profile that isn't signed in, so no account picture, history, or location shows. In Chrome: DevTools → device toolbar → Responsive, 1280 × 800, device pixel ratio 1 → ⋮ → Capture screenshot. Save them in `store/screenshots/`. Don't save page HTML here; it carries the account and location.
 
 1. Google results for a programming question: tags under titles, a pinned documentation result at the top, and the summary counting a hidden result.
-2. The ⚖ menu open on a result: the site's name, the five rankings and its tags.
+2. The ⚖ menu open on a result: the site's name, the five rankings, and its tags.
 3. A results page after clean-up, with the summary saying an AI answer was removed.
 4. The toolbar popup over a results page.
 5. Settings → Lists, with the lists Anubis starts with and More lists.
