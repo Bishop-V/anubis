@@ -56,7 +56,7 @@
   "loadMore": { "message": "Load more results" },
   "loadMoreTitle": { "message": "Add the next page of results to the page and rank them together" },
   "loading": { "message": "Loading…" },
-  "settings": { "message": "Settings" },
+  "popupSettings": { "message": "Anubis settings", "description": "Label of the cog button in the toolbar popup." },
   "help": { "message": "Help" },
   "helpTitle": { "message": "Open the user guide" },
   "withShortcut": { "message": "$1 ($2)", "description": "A button's description followed by its keyboard shortcut, e.g. Show hidden (Alt+Shift+H)." }

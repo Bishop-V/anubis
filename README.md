@@ -96,3 +96,9 @@ Other influences:
 
 - **[Firefox's `web-ext`](https://github.com/mozilla/web-ext)** does the development loading, via [WXT](https://wxt.dev), which builds Chrome MV3 and Firefox MV2 from one codebase.
 - The name and framing come from the Egyptian myth in which Anubis weighs a heart against a feather: sites that fail the weighing are hidden. The menu on each result shows the site's name in a cartouche over a small balance. The motif stays in the look; buttons say plainly what they do.
+
+## License
+
+Anubis is released under the [GNU Affero General Public License v3.0](LICENSE) or any later version. The bundled lists in [`lists/`](lists) are CC0.
+
+The extension includes third-party code under its own licenses (WXT's runtime and the Lucide settings icon); their notices are in [`public/THIRD_PARTY_NOTICES.txt`](public/THIRD_PARTY_NOTICES.txt), which ships inside every build. The Claude skills in [`.claude/skills/`](.claude/skills) keep their upstream licenses (Apache-2.0 for `frontend-design`, MIT for `ux-heuristics`) and aren't part of the extension.

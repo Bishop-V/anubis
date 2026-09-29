@@ -65,7 +65,9 @@ function findStructural(engine: EngineDef, root: Document): FoundResult[] {
     if (seen.has(container)) continue;
     const url = resolveUrl(link, container, engine);
     if (!url) continue;
-    container = widenPastSitelinks(container, siteOfUrl(url), engine, root);
+    // Only a result that shows its address has sitelinks. Without that check, the
+    // first video in a video panel took in the others and the panel's heading.
+    if (container.querySelector(engine.displayed ?? 'cite')) container = widenPastSitelinks(container, siteOfUrl(url), engine, root);
     seen.add(container);
     previous = container;
     out.push(build(container, link, titleBlockFor(title, link, container), url, title, []));

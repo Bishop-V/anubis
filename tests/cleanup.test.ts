@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { redirectFor } from '@/entrypoints/content/cleanup';
-import { cleanupKindFor, describeRemoved, NO_CLEANUP } from '@/utils/cleanup';
+import { cleanupKindFor, cleanupMarkerFor, describeRemoved, NO_CLEANUP } from '@/utils/cleanup';
 import { ENGINES } from '@/utils/engines';
 import type { PageStats } from '@/utils/messages';
 import { getSettings, settingsItem } from '@/utils/storage';
@@ -17,6 +17,11 @@ describe('clean-up headings', () => {
     expect(cleanupKindFor('Short videos')).toBe('videos');
     expect(cleanupKindFor('Images for anubis')).toBe('images');
     expect(cleanupKindFor('Searches related to anubis')).toBe('related');
+  });
+
+  it('recognises text only an AI answer has', () => {
+    expect(cleanupMarkerFor('AI responses may include mistakes. ')).toBe('ai');
+    expect(cleanupMarkerFor('Why AI responses may include mistakes')).toBeUndefined();
   });
 
   it('leaves result titles and partial matches alone', () => {

@@ -19,6 +19,18 @@ export const ICON_FEATHER = svg('<path d="M13 3C7.5 3.5 4.5 7 4 13"/><path d="M1
 export const ICON_PIN = svg('<path d="M9.8 2.2l4 4-1.6.5-2.6 2.6.3 3.1-1.2 1.2L5.4 10.3 2.2 13.8M5.4 10.3L2.3 7.2l1.2-1.2 3.1.3 2.6-2.6z"/>');
 export const ICON_CLOSE = svg('<path d="M4 4l8 8M12 4l-8 8"/>');
 export const ICON_EXTERNAL = svg('<path d="M9 3h4v4M13 3L7.5 8.5M11.5 9.5V13H3V4.5h3.5"/>');
+/**
+ * Settings: a toothed cog, so it can't be read as a sun. Lucide's "settings" icon
+ * (lucide.dev), on its own 24-unit grid.
+ *
+ * Copyright (c) 2026 Lucide Icons and Contributors. ISC License: permission to use,
+ * copy, modify, and/or distribute this software for any purpose with or without fee
+ * is hereby granted, provided that the above copyright notice and this permission
+ * notice appear in all copies. The full notice, with its warranty disclaimer, is in
+ * public/THIRD_PARTY_NOTICES.txt, which ships with the extension.
+ */
+export const ICON_GEAR = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>`;
+
 /** The button on each result: move this site up or down (or out). */
 export const ICON_RANK = svg('<path d="M5 13V3M2.5 5.5L5 3l2.5 2.5M11 3v10M8.5 10.5L11 13l2.5-2.5"/>');
 export const ICON_SUN = svg(

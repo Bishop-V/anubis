@@ -80,7 +80,7 @@ Public, all regions.
 - **Description:** [the shared description](#description-both-stores).
 - **Category:** Search Tools.
 - **Platforms:** Firefox for desktop. Leave Firefox for Android unticked until the work in [`ROADMAP.md`](../ROADMAP.md) is checked on a phone.
-- **License:** GNU General Public License v3.0.
+- **License:** GNU Affero General Public License v3.0 (the project is AGPL-3.0 or later; the lists in `lists/` are CC0).
 - **Homepage and support site:** as for Chrome.
 - **Privacy policy:** not needed. The manifest declares no data collection (`data_collection_permissions: none`), which Firefox shows on the listing and at install, and which AMO requires of every add-on from 2026.
 - **Manifest version:** stays on MV2 for Firefox. Mozilla has no plans to drop it, and MV3 in Firefox changes how host permissions are granted for no gain here.
@@ -122,7 +122,7 @@ Works on Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo,
 No server, no account, nothing collected. Your list and settings stay in your browser.
 
 User guide: https://bishop-v.github.io/anubis/
-Source code (GPL-3.0): https://github.com/Bishop-V/anubis
+Source code (AGPL-3.0): https://github.com/Bishop-V/anubis
 ```
 
 ## Screenshots

@@ -108,7 +108,7 @@ export function duckduckgo(query, results, dark = false, more = []) {
 // Anubis's elements; `grouped`, results nested the way Google does for a first
 // result with sitelinks and for a group of results from one site; `modules`, the
 // blocks that aren't results (AI Overview, videos, "People also ask", a side panel).
-export function google(query, results, { dark = false, next = '', hostile = false, grouped = false, modules = false } = {}) {
+export function google(query, results, { dark = false, next = '', hostile = false, grouped = false, modules = false, aiLabel = false, videos = '' } = {}) {
   const sitelinks = (url) =>
     `<div class="sitelinks">${['History', 'Symbols', 'Worship', 'Family', 'Names', 'Legacy']
       .map((s) => `<div class="usJj9c"><h3><a href="${url}#${s}">${s}</a></h3><div>About ${s.toLowerCase()}.</div></div>`)
@@ -132,6 +132,36 @@ export function google(query, results, { dark = false, next = '', hostile = fals
       </div>${grouped && i === 0 ? sitelinks(url) : ''}</div>${close}</div>`;
     });
   if (grouped) items.splice(1, 2, `<div class="hlcw0c">${items[1]}${items[2]}</div>`);
+  // `videos`: a video panel laid out like Google's (a header row with a menu, a list
+  // of cards, "View all"), in two ways a panel can defeat clean-up. `titles`: each
+  // video's title is a heading outside its link, so it looks like a section of the
+  // panel. `groups`: titles are <h3> links, so the videos look like results, and the
+  // real results come in pairs, so the three videos are the biggest list. `split`:
+  // titles as in `titles`, with the panel's parts as separate blocks.
+  if (videos) {
+    const card = (t, i) =>
+      videos !== 'groups'
+        ? `<div class="vcard"><a class="thumb" href="https://www.youtube.com/watch?v=${i}">▶</a><div><div role="heading">${t}</div><div>YouTube · Channel ${i}</div></div></div>`
+        : `<div class="vcard"><a class="thumb" href="https://www.youtube.com/watch?v=${i}">▶</a><div><a href="https://www.youtube.com/watch?v=${i}"><h3>${t}</h3></a><div>YouTube · Channel ${i}</div></div></div>`;
+    if (videos === 'groups') {
+      const pairs = [];
+      for (let i = 0; i < items.length; i += 2) pairs.push(`<div class="pair">${items.slice(i, i + 2).join('')}</div>`);
+      items.splice(0, items.length, ...pairs);
+    }
+    const head = `<div class="vhead"><div role="heading" aria-level="2"><span>Videos</span></div><div class="vmenu">⋮</div></div>`;
+    const list = `<div class="vlist">${['What is a fandom?', 'Stop using Fandom', 'What exactly is Fandom?'].map(card).join('')}</div>`;
+    const all = `<div class="vall"><a href="/search?q=anubis&tbm=vid">View all</a></div>`;
+    // `split`: the header row, the videos and "View all" are separate blocks in the list.
+    if (videos === 'split') items.splice(1, 0, `<div class="MjjYud vpanel">${head}</div>`, `<div class="MjjYud vpanel">${list}</div>`, `<div class="MjjYud vpanel">${all}</div>`);
+    else items.splice(1, 0, `<div class="MjjYud"><div class="module vpanel">${head}${list}${all}</div></div>`);
+  }
+  if (aiLabel) {
+    // A video panel whose videos each have an <h3> title in a link, so they look
+    // like results, and whose "Videos" label has no heading level.
+    items.splice(2, 0, `
+      <div class="MjjYud"><div class="module videos"><div role="heading"><span>Videos</span></div>
+        <div class="vrow">${['Anubis explained', 'Tomb of Anubis', 'Jackal gods'].map((t) => `<div class="vitem"><a href="https://www.youtube.com/watch?v=${t.length}"><h3>${t}</h3></a><div>YouTube</div></div>`).join('')}</div></div></div>`);
+  }
   if (modules) {
     // Modelled on community filter lists and uBlacklist's notes; not copied from a live page.
     items.splice(2, 0, `
@@ -144,10 +174,19 @@ export function google(query, results, { dark = false, next = '', hostile = fals
       <div class="MjjYud"><div class="module paa"><div><h2 role="heading">People also ask</h2></div>
         ${['Who is Anubis?', 'Why is Anubis a jackal?', 'Is Anubis good or evil?'].map((q) => `<div class="related-question-pair"><div role="button">${q}</div></div>`).join('')}</div></div>`);
   }
-  const aiOverview = modules
-    ? `<div class="M8OgIe module ai"><div><h1 class="aio">AI Overview</h1><div>Anubis is the jackal-headed god of the dead in ancient Egyptian religion…</div>
+  // `aiLabel`: harder cases. The "AI Overview" label is a plain div beside an icon
+  // whose <title> adds text, the block holds a follow-up box named like the search
+  // box, the AI Mode tab sits in an unlabelled row of links, and the video panel
+  // (above) holds videos that look like results.
+  const aiOverview = aiLabel
+    ? `<div class="module ai"><div><div class="nk9vdc"><svg width="16" height="16"><title>Sparkle</title><circle cx="8" cy="8" r="6"/></svg><div class="Fzsovc">AI Overview</div></div>
+        <div>Anubis is the jackal-headed god of the dead in ancient Egyptian religion…</div>
+        <div class="followup"><textarea name="q" aria-label="Ask a follow up"></textarea></div>
+        <div class="disclaimer">AI responses may include mistakes. <a href="/learn">Learn more</a></div></div></div>`
+    : modules
+      ? `<div class="M8OgIe module ai"><div><h1 class="aio">AI Overview</h1><div>Anubis is the jackal-headed god of the dead in ancient Egyptian religion…</div>
         <button type="button">Dive deeper in AI Mode</button></div></div>`
-    : '';
+      : '';
   const sidePanel = modules
     ? `<div id="rhs"><h2>Anubis</h2><p>Egyptian deity</p><div><div role="heading" aria-level="2">Images</div><div class="thumbs">▢ ▢ ▢</div></div></div>`
     : '';
@@ -156,7 +195,8 @@ export function google(query, results, { dark = false, next = '', hostile = fals
     body{margin:0;font:14px/1.58 Arial,sans-serif;background:${dark ? '#1f1f1f' : '#fff'};color:${dark ? '#e3e3e3' : '#202124'}}
     .hdr{display:flex;align-items:center;gap:28px;padding:22px 28px 16px}
     .glogo{font:600 24px/1 "Product Sans",Arial;color:${dark ? '#fff' : '#4285f4'}}
-    .q{flex:0 1 690px;height:44px;border-radius:24px;box-shadow:0 1px 6px ${dark ? '#0008' : '#20212447'};padding:0 20px;display:flex;align-items:center;background:${dark ? '#303134' : '#fff'}}
+    .q{flex:0 1 690px;height:44px;margin:0;border-radius:24px;box-shadow:0 1px 6px ${dark ? '#0008' : '#20212447'};padding:0 20px;display:flex;align-items:center;background:${dark ? '#303134' : '#fff'}}
+    .q textarea{flex:1;height:22px;border:0;padding:0;resize:none;overflow:hidden;background:none;color:inherit;font:inherit;outline:none}
     .tabs{padding:0 0 10px 180px;color:${dark ? '#bdc1c6' : '#5f6368'};font-size:14px;display:flex;gap:22px;border-bottom:1px solid ${dark ? '#3c4043' : '#ebebeb'}}
     #search{padding:20px 0 60px 180px;max-width:652px}
     .MjjYud{margin-bottom:30px}
@@ -186,8 +226,8 @@ export function google(query, results, { dark = false, next = '', hostile = fals
     .MjjYud>:last-child:not(.hw1){display:none}
     #top-extra{position:absolute;left:-9999px}` : ''}
   </style></head><body>
-  <div class="hdr"><span class="glogo">Google</span><div class="q">${esc(query)}</div></div>
-  <div class="tabs" role="navigation"><b>All</b>${modules ? '<a href="/search?q=anubis&udm=50">AI Mode</a>' : ''}<span>Images</span><span>News</span><span>Videos</span></div>
+  <div class="hdr"><span class="glogo">Google</span><form class="q" role="search" action="/search"><textarea name="q" rows="1">${esc(query)}</textarea></form></div>
+  <div class="tabs" ${aiLabel ? '' : 'role="navigation"'}><b>All</b>${modules || aiLabel ? '<a href="/search?q=anubis&udm=50"><span>AI Mode</span></a>' : ''}<span>Images</span><span>News</span><span>Videos</span></div>
   ${hostile ? '<div id="top-extra"><a href="https://ads.example.net/offer"><h3>Sponsored offer</h3></a></div>' : ''}
   <div id="rcnt"><div id="center_col" role="main">${aiOverview}
   <div id="search"><div data-hveid="CAQQAA"><h1 style="display:none">Search Results</h1><div id="rso">${items.join('')}</div></div></div>

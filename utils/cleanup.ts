@@ -23,6 +23,8 @@ export interface CleanupDef {
   headings: string[];
   /** Heading texts that start with these, e.g. "Images for anubis". */
   prefixes?: string[];
+  /** Other text only this kind of block has, matched at its start, like an AI disclaimer. */
+  markers?: string[];
 }
 
 export const CLEANUP: CleanupDef[] = [
@@ -51,6 +53,7 @@ export const CLEANUP: CleanupDef[] = [
       'Panoramica creata con l’IA',
       'Overzicht met AI',
     ],
+    markers: ['AI responses may include mistakes', 'AI-generated answer', 'Generated with AI'],
   },
   {
     id: 'videos',
@@ -123,7 +126,7 @@ export const CLEANUP: CleanupDef[] = [
  * community filter lists and haven't been checked against live pages.
  */
 export const CLEANUP_SELECTORS: Record<string, Partial<Record<CleanupKind, string>>> = {
-  google: { ai: '[data-attrid="AIOverview"]', questions: '.related-question-pair' },
+  google: { ai: '[data-attrid="AIOverview"], .M8OgIe, .YzCcne', questions: '.related-question-pair' },
   brave: { ai: '#summarizer' },
 };
 
@@ -140,6 +143,15 @@ export function cleanupKindFor(text: string): CleanupKind | undefined {
   if (exact) return exact;
   for (const def of CLEANUP) if (def.prefixes?.some((p) => t.startsWith(normalize(p)))) return def.id;
   return undefined;
+}
+
+const MARKERS: [string, CleanupKind][] = CLEANUP.flatMap((def) => (def.markers ?? []).map((m): [string, CleanupKind] => [normalize(m), def.id]));
+
+/** Which kind of block a piece of text inside it gives away, like an AI disclaimer. */
+export function cleanupMarkerFor(text: string): CleanupKind | undefined {
+  const t = normalize(text);
+  if (!t || t.length > 200) return undefined;
+  return MARKERS.find(([m]) => t.startsWith(m))?.[1];
 }
 
 /** "an AI answer and 2 video panels", or '' when nothing was removed. */

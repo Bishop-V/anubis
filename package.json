@@ -2,6 +2,7 @@
   "name": "anubis",
   "description": "Anubis: weigh your search results with tags, reranking and lists anyone can publish",
   "private": true,
+  "license": "AGPL-3.0-or-later",
   "version": "0.2.0",
   "type": "module",
   "engines": {

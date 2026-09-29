@@ -21,6 +21,18 @@ Please don't attach a saved copy of the page. Search pages include your account 
 
 Chrome hides new extensions behind the puzzle-piece icon in the toolbar. Open it and pin Anubis.
 
+## AI answers or panels still show on Google
+
+Check that the switch in **Settings → Clean up** is on; they all start off. If it is and Google's AI Overview, video panel or another panel still shows (or only its heading goes), Google has probably changed how it's built. **Settings → Clean up → Always open the Web tab** removes all of them for certain in the meantime.
+
+To help fix it, open the browser's console on that results page (<kbd>F12</kbd>, then **Console**), paste this and press <kbd>Enter</kbd>:
+
+```js
+copy([...document.querySelectorAll('body *')].filter((el) => [...el.childNodes].some((n) => n.nodeType === 3 && /^\s*(AI Overview|AI Mode|Videos|Short videos|People also ask|Top stories)\s*$/i.test(n.nodeValue))).map((el) => { const chain = []; for (let a = el; a && a !== document.body; a = a.parentElement) chain.push(a.tagName.toLowerCase() + (a.id ? '#' + a.id : '') + (typeof a.className === 'string' && a.className.trim() ? '.' + a.className.trim().split(/\s+/).join('.') : '') + (a.getAttribute('role') ? `[role=${a.getAttribute('role')}]` : '') + [...a.attributes].filter((x) => x.name.startsWith('data-')).map((x) => `[${x.name}]`).join('')); return chain.join(' < '); }).join('\n\n'));
+```
+
+It copies the structure around those panels' headings: element names, classes and roles, no text from the page. Paste it into [a new issue](https://github.com/Bishop-V/anubis/issues).
+
 ## Google always opens the Web tab
 
 That's **Settings → Clean up → Always open the Web tab**. Choose **All** above the results to see the usual page for one search, or turn the switch off.

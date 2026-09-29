@@ -1,7 +1,7 @@
 import { domainChoices, siteOf } from '@/utils/domain';
 import { h, icon } from '@/utils/dom';
 import type { EngineDef } from '@/utils/engines';
-import { ICON_ANUBIS, ICON_CLOSE, ICON_HIDE, ICON_RANK, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
+import { ICON_ANUBIS, ICON_CLOSE, ICON_GEAR, ICON_HIDE, ICON_RANK, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
 import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
 import { hiddenCount, type PageStats } from '@/utils/messages';
@@ -408,7 +408,11 @@ export function renderSummary(
             stats.loading ? 'Loading…' : 'Load more results',
           )
         : null,
-      h('button', { class: 'text-btn quiet', type: 'button', title: 'Open Anubis settings', on: { click: actions.settings } }, 'Settings'),
+      h(
+        'button',
+        { class: 'icon-btn', type: 'button', title: 'Anubis settings', attrs: { 'aria-label': 'Anubis settings' }, on: { click: actions.settings } },
+        icon(ICON_GEAR),
+      ),
       // The tags on this page, as a legend you can click to show only that tag.
       stats.tags.length
         ? h(
@@ -759,7 +763,11 @@ function buildPopover(
       'div',
       { class: 'foot' },
       h('span', null, entry ? 'Saved in your list.' : ''),
-      h('button', { class: 'text-btn', type: 'button', on: { click: actions.settings } }, 'Settings'),
+      h(
+        'button',
+        { class: 'icon-btn', type: 'button', title: 'Anubis settings', attrs: { 'aria-label': 'Anubis settings' }, on: { click: actions.settings } },
+        icon(ICON_GEAR),
+      ),
     ),
   );
   return { pop, level: shown };
