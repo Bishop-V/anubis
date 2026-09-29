@@ -23,6 +23,9 @@ export type HideStyle = 'collapse' | 'remove' | 'dim';
 /** Colours on search pages: Anubis's gold and each tag's colour, or the page's own greys. */
 export type Palette = 'gold' | 'plain';
 
+/** The most extra pages Settings offers to load automatically: six pages in all. */
+export const MAX_DEEPER = 5;
+
 export interface Settings {
   /** Master switch: when false the content script leaves pages alone. */
   enabled: boolean;
@@ -42,7 +45,7 @@ export interface Settings {
   engines: Record<string, boolean>;
   /** Default hours between list updates, when a list doesn't say. */
   updateHours: number;
-  /** Extra result pages to load and rerank automatically (0 = only on request). */
+  /** Extra result pages to load and rerank automatically (0 = only on request), at most `MAX_DEEPER`. */
   deeper: number;
   /** Parts of result pages to remove: AI answers, video panels, and so on. */
   cleanup: Cleanup;

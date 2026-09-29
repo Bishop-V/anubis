@@ -15,6 +15,9 @@ import { renderSites } from './sites';
 import { renderSync, watchSync } from './sync';
 import { renderTags } from './tags';
 
+// The options page: a sidebar of sections, each rendered from storage and
+// re-rendered whenever storage changes (unless you're typing in it).
+
 interface Section {
   id: string;
   label: string;

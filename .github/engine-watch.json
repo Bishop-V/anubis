@@ -12,5 +12,6 @@
   "unwatched": {
     "Yahoo": "No matching SERPINFO definition for the supported Yahoo engine.",
     "Mojeek": "No SERPINFO definition upstream."
-  }
+  },
+  "ignoredHosts": {}
 }

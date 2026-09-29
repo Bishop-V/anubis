@@ -10,8 +10,12 @@ export function normalizeDomain(input: string): string {
     return '';
   }
   s = s.replace(/^www\./, '').replace(/\.$/, '');
-  // A domain needs at least one dot and only hostname characters.
-  return /^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(s) ? s : '';
+  return isDomain(s) ? s : '';
+}
+
+/** A domain needs at least one dot and only hostname characters. */
+export function isDomain(s: string): boolean {
+  return /^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(s);
 }
 
 /** Normalize an already-parsed hostname for consistent list matching and display. */

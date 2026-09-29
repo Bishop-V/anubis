@@ -15,6 +15,7 @@ Search pages carry a lot that isn't results: AI answers, video panels, "People a
 | **Top stories** | News panels between the results. |
 | **Image rows** | Rows of images between the results. The Images tab still works. |
 | **Related searches** | Lists of other searches, usually at the bottom of the page, and the "People also search for" box Bing and Google add under a result you went to and came back from. The links to later pages stay. |
+| **Other search engines** | Rows of buttons that repeat your search on another engine, like Brave's "Find elsewhere" with Google, Bing, and Mojeek. |
 
 All of them start off.
 

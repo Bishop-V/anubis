@@ -65,12 +65,15 @@ const siteIcon = (svg) =>
 // `ai`: DuckDuckGo's AI features, modelled on EasyList's AI filters (unchecked on a
 // live page): the answer as the list's first item, found by its data-testid with no
 // heading to go by, and Duck.ai as a tab and a button in the search box.
-export function duckduckgo(query, results, dark = false, more = [], { ai = false } = {}) {
+// `wide`: the results in a list that isn't an <ol>, inside a <main> that also holds
+// a side panel, so the results area is wider than the results, and each result's
+// whole address, long enough to run under the result's buttons.
+export function duckduckgo(query, results, dark = false, more = [], { ai = false, wide = false } = {}) {
   const item = ([url, title, snippet], i) => `
       <li data-layout="organic" class="wLL07_0Xnd1QZpzpfR4W">
         <article id="r1-${i}" data-testid="result" data-nrn="result" class="yQDlj3B5DI5YO8c8Ulio CpkrTDP54mqzpuCSn1Fa SKlplDuh9FjtDprgoMxk">
           <div class="OHr0VX9IuNcv6iakvT6A"><div class="favicon"></div>
-            <a href="${url}" rel="noopener" class="Rn_JXVtoPVAFyGkcaXyK"><span>${esc(hostOf(url))}</span></a>
+            <a href="${url}" rel="noopener" class="Rn_JXVtoPVAFyGkcaXyK"><span>${esc(wide ? url : hostOf(url))}</span></a>
           </div>
           <h2 class="LnpumSThxEWMIsDdAT17 CXMyPcQ6nDv47DKFeywM"><a href="${url}" rel="noopener" data-testid="result-title-a" class="eVNpHGjtxRBq_gLOfGDr LQNqh2U1kzYxREs65IJu"><span class="EKtkFWMYpwzMKOYr0GYm LQVY1Jpkk8nyJ6HBWKAk">${esc(title)}</span></a></h2>
           <div data-result="snippet" class="OgdwYG6KE2qthn9XQWFC"><div><span class="kY2IgmnCmOGjharHErah">${esc(snippet)}</span></div></div>
@@ -88,6 +91,10 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
     .tabs{padding:10px 28px 0 76px;color:${dark ? '#aaa' : '#666'};font-size:13px;display:flex;gap:20px;border-bottom:1px solid ${dark ? '#333' : '#eee'}}
     .tabs b{color:${dark ? '#fff' : '#111'};border-bottom:2px solid #de5833;padding-bottom:8px}
     main{padding:18px 28px 60px 76px;max-width:660px}
+    main.wide{position:relative;max-width:none}
+    main.wide li{list-style:none}
+    main.wide [data-testid=mainline]{max-width:620px}
+    main.wide [data-area=sidebar]{position:absolute;top:18px;left:760px;width:300px;padding:12px;border:1px solid ${dark ? '#333' : '#e5e5e5'};border-radius:10px}
     ol{list-style:none;margin:0;padding:0}
     li{margin:0 0 26px}
     article{position:relative}
@@ -105,11 +112,11 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
   </style></head><body>
   <div class="hdr"><div class="logo"></div><div class="q">${esc(query)}${ai ? '<button type="button" class="ask" title="Ask Duck.ai" data-ssg-id="ai-searchbox-chat-submit">✦</button>' : ''}</div></div>
   <div class="tabs"><b>All</b><span>Images</span><span>Videos</span><span>News</span><span>Maps</span>${ai ? `<a class="chat" href="/?q=${encodeURIComponent(query)}&ia=chat">Duck.ai</a>` : ''}</div>
-  <main><section data-testid="web-vertical"><ol class="react-results--main">${ai ? `
+  <main${wide ? ' class="wide"' : ''}><section ${wide ? 'data-testid="mainline"><div data-testid="web-vertical"' : 'data-testid="web-vertical"'}><${wide ? 'div' : 'ol'} class="react-results--main">${ai ? `
       <li class="assist"><div class="assist-box"><div data-testid="duckassist-answer-content"><p>A promise is an object representing the eventual completion or failure of an asynchronous operation, and its resulting value.</p></div>
-        <a href="/?q=${encodeURIComponent(query)}&ia=chat&duckai=1">Ask a follow-up</a></div></li>` : ''}${items}</ol>
+        <a href="/?q=${encodeURIComponent(query)}&ia=chat&duckai=1">Ask a follow-up</a></div></li>` : ''}${items}</${wide ? 'div' : 'ol'}>
   ${more.length ? '<button id="more-results" style="margin:10px 0;padding:8px 18px;border-radius:8px;border:1px solid #ccc;background:none;color:inherit">More results</button>' : ''}
-  </section></main>
+  ${wide ? '</div>' : ''}</section>${wide ? '<section data-area="sidebar"><h2><a href="https://en.wikipedia.org/wiki/JavaScript">JavaScript</a></h2><p>A programming language for the web.</p></section>' : ''}</main>
   <script>
     // DuckDuckGo's own "hide this site": the result's menu collapses it into a notice.
     document.addEventListener('click', (e) => {
@@ -146,7 +153,9 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
 // forum's name ("Reddit · r/AskHistorians") and "20+ comments · 2 years ago" where
 // the address would be, so there's no <cite> to read the site from. `aiAbove`: the
 // AI Overview above the results column (#rcnt > div.M8OgIe, seen on a live page),
-// spanning the row. `related`: "People also search for" and the page navigation in
+// spanning the row; `aiAbove: 'grid'` lays #rcnt out as a grid instead, as a live
+// page did (the Overview `grid-column: 1 / -1`, #center_col `2 / span 12`), where
+// an element added before the Overview lands in a narrow cell of its own. `related`: "People also search for" and the page navigation in
 // one block at the bottom, in #botstuff. Not copied from a live page.
 export function google(query, results, { dark = false, next = '', hostile = false, grouped = false, modules = false, aiLabel = false, videos = '', inner = false, forum = false, aiAbove = false, related = false } = {}) {
   const sitelinks = (url) =>
@@ -330,6 +339,8 @@ export function google(query, results, { dark = false, next = '', hostile = fals
     .B6fmyf{display:none}
     #rcnt{display:flex;gap:40px}
     #rhs{width:300px;margin-top:20px;padding:16px;border:1px solid ${c.rule};border-radius:8px;align-self:flex-start}
+    ${aiAbove === 'grid' ? `#rcnt{display:grid;grid-template-columns:180px repeat(12,54px) 1fr;column-gap:0}
+    .aiabove{grid-column:1 / -1}#center_col{grid-column:2 / span 12}#rhs{grid-column:14;margin-left:40px}` : ''}
     ${aiAbove ? `#rcnt{flex-wrap:wrap;row-gap:0}
     .aiabove{flex:0 0 100%;box-sizing:border-box;padding:24px 0 22px 180px;border-bottom:1px solid ${c.line}}
     .aiabove .YzCcne{max-width:652px}.aiabove .Fzsovc{font-size:16px;margin-bottom:10px}.aiabove .aitext{font-size:16px;line-height:26px}
@@ -493,9 +504,12 @@ export function brave(query, results, { panels = false } = {}) {
   const relatedQueries = `
       <div id="related-queries" class="snippet panel related-queries"><div class="related-queries-wrapper"><header class="cluster-header">${title('Related queries')}</header>
         <div class="rgrid">${['anubis symbol', 'anubis and osiris', 'anubis powers', 'anubis weighing of the heart'].map((q) => `<a class="related-query" href="/search?q=${encodeURIComponent(q)}">${q}</a>`).join('')}</div></div></div>`;
+  // Seen on a live page (2026-09): a row between the results; its markup is a guess.
+  const elsewhere = `
+      <div class="snippet find-elsewhere"><div class="fe-row"><span class="fe-label">${icon}<b>Find elsewhere</b></span>${['Google', 'Bing', 'Mojeek'].map((e) => `<a class="fe-btn" href="https://www.${e.toLowerCase()}.com/search?q=${encodeURIComponent(query)}">${e}</a>`).join('')}</div></div>`;
   const items = results
-    .map(([url, title, snippet]) => `
-      <div class="snippet svelte-1234" data-type="web" data-pos="0">
+    .map(([url, title, snippet], i) => `
+      <div class="snippet svelte-1234" data-type="web" data-pos="0">${panels && i === 0 ? '\n        <div class="thumb"><img alt="" width="112" height="112"></div>' : ''}
         <a href="${url}" class="svelte-1234 l1"><div class="site-wrapper"><div class="favicon"></div><div class="site-name-content"><div class="site-name">${esc(hostOf(url).split('.')[0])}</div><cite class="snippet-url"><span class="netloc">${esc(hostOf(url))}</span></cite></div></div>
         <div class="title search-snippet-title svelte-1234" title="${esc(title)}">${esc(title)}</div></a>
         <div class="generic-snippet"><div class="content desktop-default-regular t-primary line-clamp-dynamic">${esc(snippet)}</div></div>
@@ -503,6 +517,7 @@ export function brave(query, results, { panels = false } = {}) {
   if (panels) {
     items.splice(2, 0, videos);
     items.splice(5, 0, discussions);
+    items.splice(7, 0, elsewhere);
     items.push(relatedQueries);
   }
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(query)} - Brave Search</title>
@@ -525,6 +540,8 @@ export function brave(query, results, { panels = false } = {}) {
     .panel{margin:0 0 14px;padding:16px 18px;border-radius:12px;background:#fff}
     .cluster-header{display:flex;gap:8px;align-items:center;font-weight:600;color:#1b1c21}.cluster-header a{display:flex;gap:8px;align-items:center;color:inherit;text-decoration:none}
     .vgrid,.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.vcard,.related-query{color:inherit;text-decoration:none}
+    .thumb{float:right;margin:0 0 8px 16px}.thumb img{display:block;border-radius:10px;background:#c9ccd6}
+    .fe-row{display:flex;gap:10px;align-items:center}.fe-label{display:flex;gap:6px;align-items:center;margin-right:8px}.fe-btn{padding:8px 22px;border:1px solid #d0d3de;border-radius:20px}
     .related-query{padding:10px 14px;border:1px solid #d0d3de;border-radius:20px}
     .ditem{position:relative;padding:10px 0}.ditem a{color:#1b1c21;text-decoration:none}.dmeta{font-size:13px;color:#6b6f80}.ditem button{position:absolute;right:0;top:12px}
   </style></head><body>

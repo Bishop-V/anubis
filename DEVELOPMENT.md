@@ -151,7 +151,7 @@ The popup, settings, and welcome page are plain DOM, built with `h()` from `util
 ### Add or fix a search engine
 
 1. Add or edit its entry in `ENGINES` (`utils/engines.ts`). Prefer structural detection (`heading`, with a `boundary` the climb must not pass) when titles are headings; otherwise give `item`, `link` and `title` selectors, taking them from [uBlacklist's rules](https://github.com/ublacklist/builtin) (`serpinfo/*.yml`). `matches` becomes the manifest's content script matches. Add `more` if the engine can load another page of results, and `mobile` for its phone layout's differences.
-2. Add its display name to `.github/engine-watch.json` under the matching `serpinfo/*.yml` file, or document why there is no upstream file under `unwatched`. `tests/engine-watch.test.ts` checks that every engine is accounted for exactly once.
+2. Add its display name to `.github/engine-watch.json` under the matching `serpinfo/*.yml` file, or document why there is no upstream file under `unwatched`. `tests/engine-watch.test.ts` checks that every engine is accounted for exactly once. For a watched engine, run `node .github/scripts/sync-serpinfo.mjs <a clone of ublacklist/builtin>` to add its file to `upstream/serpinfo/`.
 3. Model the engine's page as a mock in `e2e/fixtures.mjs`, serve it from the `pages` map in `e2e/run.mjs` at the engine's real address, and add a check. For a fix, first confirm the check fails on the current build.
 4. Update the engine table in `docs/guide/search-engines.md`, the engine lists in the README, and `store/README.md`, and `docs/guide/more-results.md` if it loads more results.
 5. Load it on the live engine and record what you confirmed, with the date, in `docs/experiments.md`.
@@ -169,7 +169,7 @@ Clean-up kinds live in `utils/cleanup.ts`:
 
 ### Keep engine definitions in view
 
-The weekly workflow compares changes in mapped files from [uBlacklist's SERPINFO repository](https://github.com/ublacklist/builtin/tree/main/serpinfo) and opens an issue as an early warning. `.github/engine-watch.json` maps those files to supported engines; CI checks that mapping against `utils/engines.ts`. This is a review signal, not an automatic selector update: Anubis's structural detection, cleanup, and paging can differ from uBlacklist, so verify proposed changes against a mock and a live results page.
+`upstream/serpinfo/` holds a copy of the mapped files from [uBlacklist's SERPINFO repository](https://github.com/ublacklist/builtin/tree/main/serpinfo), with the commit they came from in `source.json`. Every Monday `.github/workflows/engines.yml` runs `.github/scripts/sync-serpinfo.mjs`: when a copy is out of date, it updates it on the `engines/serpinfo` branch and opens a pull request (or comments on the one already open), so the diff shows exactly what uBlacklist changed. `.github/engine-watch.json` maps those files to supported engines; CI checks that mapping against `utils/engines.ts`, and that each engine's `matches` covers every address uBlacklist matches for it. When uBlacklist adds an address, that sync pull request fails CI until the engine gains it (or `ignoredHosts` gives a reason not to). Pull requests opened with a workflow's own token don't start CI, so the workflow starts it on the branch itself; GitHub also has to allow workflows to open pull requests (Settings → Actions → General), and without that the workflow opens an issue instead. This is a review signal, not an automatic selector update: Anubis's structural detection, cleanup, and paging can differ from uBlacklist, so verify proposed changes against a mock and a live results page.
 
 ### Add a setting
 
@@ -206,7 +206,7 @@ Not everything is converted yet: `ROADMAP.md` lists what's left. Wording follows
 - Keep a reference to what you rendered instead of querying for it: `:scope` matches nothing inside a shadow root.
 - Styles for inside the shadow roots go in `shadow.css`; page-level treatments keyed off `data-anubis-*` attributes go in `page.css`.
 - On search pages, stay quiet: the page's own font, muted text, no fills. The result menu's cartouche and balance are the one flourish (`.claude/skills/frontend-design`).
-- Colours, sizes, and controls come from [`STYLEGUIDE.md`](STYLEGUIDE.md). The palette is defined in `assets/theme.css` for extension pages and again in `shadow.css` for search pages, under the same names; change both together.
+- Colours, sizes, and controls come from [`STYLEGUIDE.md`](STYLEGUIDE.md). The palette is defined in `assets/theme.css` for extension pages and again in `shadow.css` for search pages, under the same names; change both together. `tests/palette.test.ts` checks they match.
 
 ### Add a list to the extension
 
