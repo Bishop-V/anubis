@@ -17,7 +17,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ANUBIS_PAGE2, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, brave, duckduckgo, google } from './fixtures.mjs';
+import { ANUBIS_PAGE2, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, brave, duckduckgo, google, googleMobile } from './fixtures.mjs';
 
 const EXT = fileURLToPath(new URL('../.output/chrome-mv3', import.meta.url));
 const SHOTS = fileURLToPath(new URL('./shots/', import.meta.url));
@@ -104,6 +104,7 @@ async function launch(settings = {}) {
     'https://www.google.com/search?q=anubis&videos=groups': google('anubis', ANUBIS_RESULTS, { videos: 'groups' }),
     'https://www.google.com/search?q=anubis&videos=split': google('anubis', ANUBIS_RESULTS, { videos: 'split' }),
     'https://www.google.com/search?q=anubis&udm=14': google('anubis', ANUBIS_RESULTS),
+    'https://www.google.com/search?q=anubis&mobile=1': googleMobile('anubis', ANUBIS_RESULTS),
     'https://noai.duckduckgo.com/?q=javascript+promises': duckduckgo('javascript promises', JS_RESULTS),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
   };
@@ -119,7 +120,7 @@ async function report(page, label) {
     [...document.querySelectorAll('[data-anubis-result]')].map((el) => ({
       state: el.getAttribute('data-anubis-state'),
       order: el.style.order || el.parentElement?.style.order || '',
-      text: (el.querySelector('h2, h3, .title')?.textContent ?? '').trim().slice(0, 48),
+      text: (el.querySelector('h2, h3, .title, [role="heading"]')?.textContent ?? '').trim().slice(0, 48),
     })),
   );
   console.log(`\n== ${label}`);
@@ -242,6 +243,54 @@ if (!only || only === 'reveal') {
   await page.waitForTimeout(300);
   const afterChange = await hidden.evaluate((el) => el.hasAttribute('data-anubis-reveal'));
   console.log('\n== reveal one result:', JSON.stringify({ afterClick, afterChange }));
+}
+
+if (!only || only === 'shortcuts') {
+  // Keyboard shortcuts: both come with a key, and Show hidden toggles by message,
+  // the path the background script takes (a test can't press a browser shortcut).
+  const sw = ctx.serviceWorkers()[0];
+  const commands = await sw.evaluate(() => chrome.commands.getAll());
+  await page.goto('https://www.google.com/search?q=anubis');
+  await page.waitForSelector('anubis-bar');
+  const revealed = () => page.evaluate(() => document.querySelectorAll('[data-anubis-result][data-anubis-reveal]').length);
+  const toggle = async () => {
+    await sw.evaluate(async () => {
+      for (const tab of await chrome.tabs.query({})) await chrome.tabs.sendMessage(tab.id, { type: 'toggle-reveal' }).catch(() => {});
+    });
+    await page.waitForTimeout(300);
+    return revealed();
+  };
+  const before = await revealed();
+  const shown = await toggle();
+  const again = await toggle();
+  console.log('\n== shortcuts:', JSON.stringify({ keys: commands.map((c) => `${c.name} ${c.shortcut}`), before, shown, again }));
+}
+
+if (!only || only === 'mobile') {
+  // Google's phone layout, as Firefox for Android gets it: the browser has to say
+  // it's a phone before the page loads, since Anubis picks the layout at start.
+  const phone = await ctx.newPage();
+  const cdp = await ctx.newCDPSession(phone);
+  await cdp.send('Emulation.setUserAgentOverride', { userAgent: 'Mozilla/5.0 (Android 15; Mobile; rv:143.0) Gecko/143.0 Firefox/143.0' });
+  await phone.setViewportSize({ width: 412, height: 915 });
+  await phone.goto('https://www.google.com/search?q=anubis&mobile=1');
+  await phone.waitForTimeout(700);
+  const check = await phone.evaluate(() => {
+    const results = [...document.querySelectorAll('[data-anubis-result]')];
+    const nyt = results.find((r) => r.textContent.includes('New York Times'));
+    return {
+      results: results.length,
+      newsCardsAsResults: results.filter((r) => r.closest('[data-news-cluster-id]')).length,
+      weighButtons: results.filter((r) => r.querySelector(':scope > anubis-weigh')).length,
+      gotoLinkTagged: nyt?.getAttribute('data-anubis-state') ?? null,
+      summary: !!document.querySelector('anubis-summary'),
+      scrollsSideways: document.documentElement.scrollWidth > innerWidth,
+    };
+  });
+  await report(phone, 'google-mobile');
+  console.log('\n== google mobile:', JSON.stringify(check));
+  await phone.screenshot({ path: `${SHOTS}google-mobile.png`, fullPage: true });
+  await phone.close();
 }
 
 if (!only || only === 'off') {

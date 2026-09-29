@@ -1,5 +1,7 @@
+import { t } from './i18n';
+
 // Inline SVG icons, so no image files or extra requests are needed. All use
-// currentColor and a 16×16 grid.
+// currentColor and a 16×16 grid. The rankings' names live here too, beside their icons.
 
 const svg = (body: string, extra = '') =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" ${extra}>${body}</svg>`;
@@ -51,19 +53,20 @@ export const LEVEL_ICONS = {
   pin: ICON_PIN,
 } as const;
 
+/** The five rankings, in the user's language. */
 export const LEVEL_LABELS = {
-  hide: 'Hide',
-  lower: 'Lower',
-  normal: 'Normal',
-  raise: 'Raise',
-  pin: 'Pin',
-} as const;
+  hide: t('levelHide'),
+  lower: t('levelLower'),
+  normal: t('levelNormal'),
+  raise: t('levelRaise'),
+  pin: t('levelPin'),
+};
 
 /** Short past-tense labels for verdict chips. */
 export const LEVEL_CHIPS = {
-  hide: 'Hidden',
-  lower: 'Lowered',
+  hide: t('chipHidden'),
+  lower: t('chipLowered'),
   normal: '',
-  raise: 'Raised',
-  pin: 'Pinned',
-} as const;
+  raise: t('chipRaised'),
+  pin: t('chipPinned'),
+};

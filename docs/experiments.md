@@ -23,6 +23,41 @@ Clean-up is also unverified live. To check:
 - DuckDuckGo: that `noai.duckduckgo.com` keeps your DuckDuckGo settings (theme, region). They are cookies, and a cookie set only for `duckduckgo.com` wouldn't reach the subdomain.
 - Bing and Brave: what their AI answers' headings actually say. The selectors `[data-attrid="AIOverview"]` (Google), `.related-question-pair` (Google) and `#summarizer` (Brave) come from community filter lists.
 
+Google's phone layout (for Firefox for Android) is modelled on uBlacklist's "Web (mobile)" rules only. To check on a phone: that titles are `role="heading"` elements with `aria-level="3"` inside the result's link, that the address is in `.ob9lvb`, that top stories cards carry `data-news-cluster-id`, and how the phone layout loads more results.
+
+## Store listings
+
+- **Chrome's publishing API:** v1.1 and its refresh tokens stop working on 15 October 2026. `wxt submit` (publish-browser-extension 6.1.1 in WXT 0.21) can use v2 with a service account but still defaults to v1.1, so `CHROME_API_VERSION=v2` has to be set. Found by reading the installed package, not its documentation.
+- **Privacy page:** it said Anubis connects to list hosts "only when you use the feature", but the four built-in lists download from GitHub on install, and opening Settings → Lists fetches the directory. Both are now listed, since the page doubles as the stores' privacy policy.
+- **Store icon:** Chrome wants the logo at 96×96 inside 128×128 of transparent padding; the toolbar icon fills the square, so `store/icon-128.png` is rendered separately (`store/render.mjs`), as is the 440×280 promo tile.
+- **Screenshots:** not made from the e2e mocks. They look like the engines but aren't them, and a listing has to show the real thing.
+
+## Keyboard shortcuts
+
+- Two `commands`: Alt+Shift+O turns Anubis on or off, Alt+Shift+H shows hidden results and hides them again. They need no permission. On a Mac they use Control, because Option+Shift types characters (Ø, Ó) and would be taken from text fields.
+- Show hidden lives in the content script's state, so the background script sends the tab a `toggle-reveal` message rather than changing storage.
+- A test can't press a browser-level shortcut, so the e2e `shortcuts` part checks the keys are registered and sends the same message the background script does.
+- The popup's tooltips show the keys the browser actually assigned (`commands.getAll()`), since people can change them or another extension can claim them first.
+
+## Phone layouts (Firefox for Android)
+
+- **Found:** Google sends phones a different layout, where titles are `div role="heading" aria-level="3"` rather than `h3` (uBlacklist's "Web (mobile)" rules). Anubis found no results at all there: the new `mobile` e2e part, against a `googleMobile` mock, reported 0 results on the previous build and 7 now.
+- **Shipped:** an engine can carry `mobile` changes, chosen from the user agent (`Mobi`, as engines do; tablets get the computer layout) when the content script starts. Google's heading selector adds ARIA headings but leaves out top stories cards (`[data-news-cluster-id]`), which have the same headings. Load more results is off on Google phones until the phone layout's paging is known.
+- **Found in the phone screenshot:** a long hidden line ran its Show button under the ⇅ button, and the summary sat against the screen edge. Hidden lines now leave room for the button, the summary gets an inset below 600 px, and the ⇅ button is 32 px on touch screens.
+- **Tried:** emulating the phone with the DevTools protocol's device metrics. Full-page screenshots came out cropped and scrolled sideways; a plain 412 px viewport with a phone user agent is enough.
+- **Not yet:** `gecko_android` in the manifest. AMO offers an add-on on Android from the first version whose manifest has it, so it waits until a phone has been checked (`ROADMAP.md`).
+
+## Translation
+
+- **Tried:** WXT's `@wxt-dev/i18n` module. It's typed and reads YAML, but its README says its plural forms don't support languages with separate "few" or "many" forms (Arabic, Polish, Russian…), and it adds three dependencies.
+- **Shipped:** the browsers' own `_locales/<language>/messages.json` format, which translation tools read as they are, with a small helper (`utils/i18n.ts`). Keys are type-checked against the English file. Counts use `Intl.PluralRules` with keys like `popupListCount_one` and `popupListCount_other`, falling back to `_other`. A `langCode` message gives the language the text is actually in, for the page's `lang` attribute, since a missing translation falls back to English.
+- WXT types `getMessage` with one overload per key, which a key held in a variable can't satisfy, so the helper calls it through a looser signature.
+- The fake browser in unit tests has no `i18n`; `tests/i18n.test.ts` answers from the English file.
+
+## Engine watch
+
+- A weekly workflow opens an issue when uBlacklist changes its rules for an engine Anubis supports. The development sandbox can't reach GitHub's API, so the script reads upstream history with `git log` over a blobless clone and only files the issue through `gh`. Run against real history, it reported four Google changes in 45 days; commits already mentioned in an `engines` issue are skipped, so the ten-day window can overlap safely.
+
 ## Documentation site
 
 Modelled on [uBlacklist's documentation](https://ublacklist.github.io/docs/introduction): an introduction, getting started with screenshots, then one page per feature, publishing, and a directory of lists.

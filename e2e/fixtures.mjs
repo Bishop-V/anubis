@@ -236,6 +236,46 @@ export function google(query, results, { dark = false, next = '', hostile = fals
   </body></html>`;
 }
 
+// Google's phone layout (Firefox for Android, Chrome on a phone). Modelled on
+// uBlacklist's "Web (mobile)" rules in serpinfo/google.yml, not on a live page:
+// titles are ARIA headings instead of h3, the address is in its own element
+// (.ob9lvb) rather than <cite>, and top stories cards have headings of their own.
+export function googleMobile(query, results) {
+  const card = (t, i) =>
+    `<div class="nc" data-news-cluster-id="${i}"><a href="https://news-example.com/${i}"><div role="heading" aria-level="3">${t}</div><span>News Example</span></a></div>`;
+  const stories = `
+      <div class="MjjYud"><div class="module news"><div role="heading" aria-level="2">Top stories</div>
+        <div class="nrow">${['Shrine to Anubis found', 'Jackal mummies in Saqqara'].map(card).join('')}</div></div></div>`;
+  const items = results.map(([url, title, snippet], i) => {
+    const u = new URL(url);
+    // One opaque /goto link, which needs the displayed address.
+    const href = i === 3 ? `/goto?url=CAESopaqueblob${i}` : url;
+    return `
+      <div class="MjjYud"><div class="vt6azd Ww4FFb"><div class="Z26q7c">
+        <a class="UBFage" href="${href}"><div class="v7jaNc" role="heading" aria-level="3">${esc(title)}</div>
+          <div class="site"><span class="favicon"></span><span class="ob9lvb">${esc(`${u.hostname} › ${u.pathname.split('/').filter(Boolean)[0] ?? ''}`)}</span></div></a>
+        </div><div class="snippet">${esc(snippet)}</div></div></div>`;
+  });
+  items.splice(2, 0, stories);
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>${esc(query)} - Google Search</title>
+  <style>
+    body{margin:0;font:16px/1.5 Arial,sans-serif;background:#fff;color:#202124}
+    .hdr{padding:12px 16px}.q{height:44px;border-radius:22px;box-shadow:0 1px 6px #20212447;padding:0 18px;display:flex;align-items:center}
+    #rso{padding:8px 0}
+    .MjjYud{margin:0 0 10px;padding:14px 16px;border-bottom:1px solid #ebebeb}
+    .UBFage{display:flex;flex-direction:column-reverse;text-decoration:none;color:#1a0dab}
+    [role=heading][aria-level="3"]{font-size:18px;line-height:1.3}
+    .site{display:flex;gap:8px;align-items:center;color:#202124;font-size:13px;margin-bottom:6px}
+    .favicon{width:22px;height:22px;border-radius:50%;background:#f1f3f4}
+    .snippet{color:#4d5156;font-size:14px;margin-top:6px}
+    .nrow{display:flex;gap:10px;overflow-x:auto}.nc{flex:0 0 220px}.nc a{color:inherit;text-decoration:none}
+  </style></head><body>
+  <div class="hdr"><div class="q">${esc(query)}</div></div>
+  <div id="main" role="main"><div id="rso">${items.join('')}</div></div>
+  </body></html>`;
+}
+
 // ---------------------------------------------------------------- Bing
 export function bing(query, results) {
   const b64 = (s) => Buffer.from(s).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');

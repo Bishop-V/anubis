@@ -53,6 +53,13 @@ Press the Anubis icon in the toolbar while you're on any website. Under **This s
 
 The switch in the toolbar popup turns Anubis off without uninstalling it. Its icon turns grey, and search pages are left as they are.
 
+## Keyboard shortcuts
+
+- **Alt+Shift+O** turns Anubis on or off.
+- **Alt+Shift+H** shows the hidden results on the page, and hides them again.
+
+On a Mac, press Control instead of Alt. To change them, open `chrome://extensions/shortcuts` in Chrome, or in Firefox open `about:addons`, press the gear button and choose **Manage Extension Shortcuts**. If another extension already uses one of these keys, your browser leaves that shortcut empty until you choose a key for it.
+
 ## Help
 
 **Help** in the toolbar popup opens this guide. In **Settings**, each section links to its page here, and **User guide** at the bottom of the sidebar opens the start.

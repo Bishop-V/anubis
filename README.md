@@ -16,6 +16,7 @@ In Egyptian myth, Anubis weighed each heart against a feather. This extension we
 - **Filter by tag.** The summary above the results lists the tags on the page; click one to see only those results.
 - **Clean up pages.** Remove AI answers (Google's AI Overview, Bing's Copilot, Brave's AI answers, and DuckDuckGo's Search Assist and Duck.ai by opening its no-AI version), video panels, "People also ask", top stories, image rows and related searches, on every search. Google can also always open its plain Web tab. "Show hidden" brings removed parts back on that page.
 - **Quiet on the page.** Hidden results collapse to one line you can open; the summary above the results is one sentence. Light and dark themes follow the search engine or your choice.
+- **Keyboard shortcuts.** Alt+Shift+O turns Anubis on or off, and Alt+Shift+H shows hidden results (Control instead of Alt on a Mac).
 
 Works on Google (every country domain), DuckDuckGo (including the HTML and Lite versions), Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex and Mojeek.
 
@@ -74,6 +75,8 @@ The user guide is at **[bishop-v.github.io/anubis](https://bishop-v.github.io/an
 - [The list format](docs/list-format.md): how to write and publish a list.
 - [Lists](lists/README.md): the lists that ship with Anubis and how to contribute one.
 - [Experiments and decisions](docs/experiments.md): what was tried, what failed, and what still needs checking on live pages.
+- [Roadmap](ROADMAP.md): planned work.
+- [Publishing](store/README.md): store listings, privacy answers and release steps.
 
 ## Inspirations
 

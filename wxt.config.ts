@@ -9,7 +9,9 @@ export default defineConfig({
   browser: 'firefox',
   manifest: ({ browser, manifestVersion }) => ({
     name: 'Anubis',
-    description: 'Weighs your search results: tag, rerank and hide sites, with lists anyone can publish.',
+    // Text in the manifest comes from public/_locales/<language>/messages.json.
+    default_locale: 'en',
+    description: '__MSG_extDescription__',
     // The user guide: the browser links to it from the extension's details page.
     homepage_url: DOCS_URL,
     // "storage" saves your list, settings and downloaded lists. "activeTab" lets the
@@ -22,6 +24,19 @@ export default defineConfig({
     ...(manifestVersion === 3
       ? { optional_host_permissions: ['https://*/*'] }
       : { optional_permissions: ['https://*/*'] }),
+    // Keyboard shortcuts, handled in the background script. People change them in
+    // chrome://extensions/shortcuts or Firefox's Manage Extension Shortcuts. On a
+    // Mac, Option+Shift types letters (Ø, Ó), so the Mac keys use Control instead.
+    commands: {
+      'toggle-enabled': {
+        suggested_key: { default: 'Alt+Shift+O', mac: 'MacCtrl+Shift+O' },
+        description: '__MSG_commandToggleEnabled__',
+      },
+      'toggle-hidden': {
+        suggested_key: { default: 'Alt+Shift+H', mac: 'MacCtrl+Shift+H' },
+        description: '__MSG_commandToggleHidden__',
+      },
+    },
     // Firefox needs an add-on ID for storage.sync. It is the add-on's permanent
     // identity, so don't change it once anyone has installed: a new ID reads as a
     // different add-on and orphans the settings stored under the old one.
