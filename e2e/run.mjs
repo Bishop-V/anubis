@@ -770,7 +770,7 @@ if (!only || only === 'cleanup' || checks) {
   });
   console.log('== summary on a results area wider than the results:', JSON.stringify(wide));
 
-  // The ⚖ button never sits over a result's text.
+  // The ⚖ button sits beside a result's first row, never over its text.
   const covering = {};
   for (const url of [
     'https://duckduckgo.com/?q=javascript+promises&wide=1',
@@ -784,12 +784,23 @@ if (!only || only === 'cleanup' || checks) {
     covering[url] = await page.evaluate(() => {
       let buttons = 0;
       const over = [];
+      const above = [];
       for (const host of document.querySelectorAll('anubis-weigh')) {
         const b = host.getBoundingClientRect();
         if (!b.width) continue;
         buttons++;
         const walker = document.createTreeWalker(host.parentElement, NodeFilter.SHOW_TEXT);
         const range = document.createRange();
+        // Not up in the space above the result's first line (the topmost text; Google
+        // draws its heading below the address that follows it).
+        const first = document.createTreeWalker(host.parentElement, NodeFilter.SHOW_TEXT);
+        let topmost = Infinity;
+        for (let node = first.nextNode(); node; node = first.nextNode()) {
+          if (!node.textContent.trim()) continue;
+          range.selectNodeContents(node);
+          for (const r of range.getClientRects()) if (r.width) topmost = Math.min(topmost, r.top);
+        }
+        if (topmost < Infinity && (b.top + b.bottom) / 2 < topmost) above.push(host.parentElement.textContent.trim().slice(0, 40));
         for (let node = walker.nextNode(); node; node = walker.nextNode()) {
           if (!node.textContent.trim()) continue;
           range.selectNodeContents(node);
@@ -799,12 +810,12 @@ if (!only || only === 'cleanup' || checks) {
           }
         }
       }
-      return { buttons, over };
+      return { buttons, over, above };
     });
   }
   console.log('== buttons over text:', JSON.stringify(covering));
   if (checks) {
-    assertChecks('the ⚖ button never covers text', Object.fromEntries(Object.entries(covering).map(([url, c]) => [url, c.buttons > 0 && c.over.length === 0])));
+    assertChecks('the ⚖ button on the first row, never over text', Object.fromEntries(Object.entries(covering).map(([url, c]) => [url, c.buttons > 0 && c.over.length === 0 && c.above.length === 0])));
   }
   if (checks) {
     assertChecks('summary as wide as the results', {

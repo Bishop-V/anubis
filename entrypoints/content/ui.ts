@@ -325,7 +325,43 @@ export function ensureWeighButton(
     positioned.add(container);
     if (getComputedStyle(container).position === 'static') container.style.position = 'relative';
   }
+  if (!menu) lineUpWithHeader(host, container, result.titleBlock);
   if (coversText(host, container)) moveOffText(host, container, menu);
+}
+
+/**
+ * Centred on the result's first row: the lines above its title (the site's name
+ * and address, on most engines), or else the title's first line. A result often
+ * starts with some space, and the engine's `top` alone leaves the button in it.
+ */
+function lineUpWithHeader(host: HTMLElement, container: HTMLElement, titleBlock: HTMLElement): void {
+  // Google's title link also holds the site's name and address, above its heading.
+  const title = titleBlock.querySelector<HTMLElement>('h1, h2, h3, h4, [role="heading"]') ?? titleBlock;
+  const b = host.getBoundingClientRect();
+  const t = title.getBoundingClientRect();
+  if (!b.height || !t.height) return;
+  let top = Infinity;
+  let bottom = -Infinity;
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+  const range = document.createRange();
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    if (!node.textContent?.trim() || title.contains(node)) continue;
+    range.selectNodeContents(node);
+    for (const r of range.getClientRects()) {
+      if (!r.width || r.bottom > t.top + 1 || r.top < t.top - 60) continue;
+      top = Math.min(top, r.top);
+      bottom = Math.max(bottom, r.bottom);
+    }
+  }
+  if (top === Infinity) {
+    range.selectNodeContents(title);
+    const first = range.getClientRects()[0];
+    if (!first) return;
+    ({ top, bottom } = first);
+  }
+  const box = container.getBoundingClientRect();
+  const y = (top + bottom) / 2 - b.height / 2 - box.top - parseFloat(getComputedStyle(container).borderTopWidth);
+  host.style.setProperty('top', `${Math.round(y)}px`, 'important');
 }
 
 /** Whether the button sits over any of the result's text (a long address, a title). */
