@@ -504,6 +504,9 @@ export function brave(query, results, { panels = false } = {}) {
   const relatedQueries = `
       <div id="related-queries" class="snippet panel related-queries"><div class="related-queries-wrapper"><header class="cluster-header">${title('Related queries')}</header>
         <div class="rgrid">${['anubis symbol', 'anubis and osiris', 'anubis powers', 'anubis weighing of the heart'].map((q) => `<a class="related-query" href="/search?q=${encodeURIComponent(q)}">${q}</a>`).join('')}</div></div></div>`;
+  // Seen on a live page (2026-09): a row between the results; its markup is a guess.
+  const elsewhere = `
+      <div class="snippet find-elsewhere"><div class="fe-row"><span class="fe-label">${icon}<b>Find elsewhere</b></span>${['Google', 'Bing', 'Mojeek'].map((e) => `<a class="fe-btn" href="https://www.${e.toLowerCase()}.com/search?q=${encodeURIComponent(query)}">${e}</a>`).join('')}</div></div>`;
   const items = results
     .map(([url, title, snippet]) => `
       <div class="snippet svelte-1234" data-type="web" data-pos="0">
@@ -514,6 +517,7 @@ export function brave(query, results, { panels = false } = {}) {
   if (panels) {
     items.splice(2, 0, videos);
     items.splice(5, 0, discussions);
+    items.splice(7, 0, elsewhere);
     items.push(relatedQueries);
   }
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(query)} - Brave Search</title>
@@ -536,6 +540,7 @@ export function brave(query, results, { panels = false } = {}) {
     .panel{margin:0 0 14px;padding:16px 18px;border-radius:12px;background:#fff}
     .cluster-header{display:flex;gap:8px;align-items:center;font-weight:600;color:#1b1c21}.cluster-header a{display:flex;gap:8px;align-items:center;color:inherit;text-decoration:none}
     .vgrid,.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.vcard,.related-query{color:inherit;text-decoration:none}
+    .fe-row{display:flex;gap:10px;align-items:center}.fe-label{display:flex;gap:6px;align-items:center;margin-right:8px}.fe-btn{padding:8px 22px;border:1px solid #d0d3de;border-radius:20px}
     .related-query{padding:10px 14px;border:1px solid #d0d3de;border-radius:20px}
     .ditem{position:relative;padding:10px 0}.ditem a{color:#1b1c21;text-decoration:none}.dmeta{font-size:13px;color:#6b6f80}.ditem button{position:absolute;right:0;top:12px}
   </style></head><body>

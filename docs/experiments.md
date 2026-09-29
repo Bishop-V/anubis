@@ -138,6 +138,7 @@ Reported with screenshots from everyday use. This environment's network policy b
 - **Summary buttons on a wrapped sentence (2026-09-29):** when the summary's sentence wrapped, its buttons and the mark were centred on the whole block. They now line up with the first line.
 - **The ⚖ button above the result (2026-09-29):** on live Brave results, which start with padding, the button sat at the engine's fixed `top` in the space above the site's name. It now centres on the result's first row: the lines above the title (the site's name and address), or else the title's first line. Google's title link also holds the name and address, so the title there is its heading. The checks assert that no button's centre sits above a result's topmost text; the previous build fails that on the Brave mock.
 - **Summary over Brave's cards (2026-09-29):** Brave's results are cards with padding, so the summary's mark sat out past the results' text. The summary is now inset as far as the first visible result's title is from the results' edge, when that's 48px or less. The Brave mock's cards show it; the previous build fails the check.
+- **Brave's "Find elsewhere" (2026-09-29):** a row between Brave's results with buttons that repeat the search on Google, Bing, and Mojeek. It's now its own clean-up kind, **Other search engines**, found by its label like the others. The row's markup in the Brave mock is a guess from a screenshot; unverified on a live page.
 
 ## Reporting mistakes to lists
 

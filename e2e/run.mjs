@@ -545,7 +545,7 @@ if (!only || only === 'cleanup' || checks) {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       return tab ? chrome.tabs.sendMessage(tab.id, { type: 'get-page-stats' }).catch(() => undefined) : undefined;
     });
-  const all = { ai: true, videos: true, questions: true, news: true, images: true, related: true };
+  const all = { ai: true, videos: true, questions: true, news: true, images: true, related: true, elsewhere: true };
   await setSettings({ cleanup: all });
   await page.goto('https://www.google.com/search?q=anubis&modules=1');
   await page.waitForTimeout(800);
@@ -678,13 +678,14 @@ if (!only || only === 'cleanup' || checks) {
       const visible = (el) => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0;
       return Object.fromEntries(Object.entries(selectors).map(([k, sel]) => [k, visible(document.querySelector(sel))]).concat([['results', [...document.querySelectorAll('[data-anubis-result]')].filter(visible).length]]));
     }, selectors);
-  const braveCleanup = await visibleIn({ videos: '.cluster-videos', discussions: '.cluster-discussions', relatedQueries: '.related-queries', videosTab: '.tabs a[href^="/videos"]' });
+  const braveCleanup = await visibleIn({ videos: '.cluster-videos', discussions: '.cluster-discussions', relatedQueries: '.related-queries', elsewhere: '.find-elsewhere', videosTab: '.tabs a[href^="/videos"]' });
   console.log('== Brave panels:', JSON.stringify(braveCleanup));
   if (checks) {
     assertChecks('Brave cleanup selectors', {
       removesVideos: !braveCleanup.videos,
       removesDiscussions: !braveCleanup.discussions,
       removesRelatedQueries: !braveCleanup.relatedQueries,
+      removesFindElsewhere: !braveCleanup.elsewhere,
       keepsVideosTab: braveCleanup.videosTab,
     });
   }
