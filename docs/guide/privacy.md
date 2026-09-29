@@ -11,7 +11,7 @@ This use complies with the Chrome Web Store User Data Policy, including its Limi
 ## What's stored, and where
 
 - **Your list, settings, tag choices, and subscriptions** are kept in your browser's sync storage. If you're signed in to your browser (a Firefox or Google account) with sync on, the browser copies them to your other computers. Anubis never sees them. If your list grows too big for sync storage, it's kept on this computer only. See [Syncing between computers](./sync.md).
-- **A sync server's address, user name, and password**, if you connect one to sync between browsers, are saved in that browser only, never in browser sync. Anubis sends the credentials to that server to sign in; they are not part of the sync file.
+- **A sync server's address and login**, if you connect one to sync between browsers, are saved in that browser only, never in browser sync. Anubis sends the login to that server to sign in; it is not part of the sync file. If you enable end-to-end encryption, its passphrase is also saved in that browser only so automatic syncing can decrypt and encrypt the file.
 - **Downloaded lists** are kept only on this computer, and downloaded again elsewhere.
 
 ## What Anubis connects to
@@ -21,7 +21,7 @@ Only these:
 - **The lists you subscribe to**, from wherever they're hosted, to check for new versions once a day, or less often when a list says so (Anubis's own lists: once a week). This starts when you install Anubis, because it subscribes you to four lists of its own, hosted on GitHub. You can turn them off under **Settings → Lists**.
 - **The directory of lists** on GitHub, when you open **Settings → Lists**, so **More lists** shows the newest ones.
 - **The search engine you're on**, for [Load more results](./more-results.md), which loads its next page like the "Next" link would.
-- **The WebDAV server you connect for syncing between browsers**, if you do. Anubis sends your ranked sites, settings, tag choices, and subscriptions to the HTTPS address you provide, and nowhere else. The sync file is not encrypted by Anubis, so the server operator can read it. See [Between browsers](./sync.md#between-browsers).
+- **The WebDAV server you connect for syncing between browsers**, if you do. Anubis sends your ranked sites, settings, tag choices, and subscriptions to the HTTPS address you provide, and nowhere else. End-to-end encryption is on by default for new connections: when enabled, the server receives an encrypted file it cannot read. You can turn it off when connecting; existing unencrypted connections stay unencrypted until you enable it. Without encryption, the server operator can read the file. See [Between browsers](./sync.md#between-browsers).
 - **Issue trackers**, when you choose "Report it to…" or "Suggest it to…". That opens a page in a new tab, with the result's address (without anything after `?`, which can carry details of your visit) and the rule that matched; nothing is sent unless you submit the issue yourself.
 
 Downloading a list works like any other download: the site hosting it sees your IP address and which file was asked for. Anubis sends nothing else with it: no cookies, no identifier, and nothing about your searches.

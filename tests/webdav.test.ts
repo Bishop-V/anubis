@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fakeBrowser } from 'wxt/testing/fake-browser';
-import { collectData } from '@/utils/backup';
+import { collectData, toBackup } from '@/utils/backup';
 import { listSites, setSite, setSiteLevel } from '@/utils/personal';
 import { editPersonal, loadPersonal, updateSettings } from '@/utils/storage';
 import { accountItem, connect, statusItem, syncChanges, syncFileUrl, syncWithServer } from '@/utils/webdav';
+import { decryptSyncData, isEncryptedSyncFile } from '@/utils/webdav-crypto';
 
 // Two browsers (each with its own storage, as Firefox and Chrome have) syncing
 // through one fake WebDAV server.
@@ -11,6 +12,7 @@ import { accountItem, connect, statusItem, syncChanges, syncFileUrl, syncWithSer
 const FOLDER = 'https://dav.example/files/me';
 const FILE = `${FOLDER}/anubis-sync.json`;
 const ACCOUNT = { url: FOLDER, user: 'me', password: 'app-password' };
+const ENCRYPTED_ACCOUNT = { ...ACCOUNT, encryptionPassphrase: 'a long sync passphrase' };
 
 class FakeDav {
   files = new Map<string, { body: string; etag: string }>();
@@ -137,6 +139,70 @@ describe('syncing through a WebDAV server', () => {
     expect(sitesOf(data.personal)).toMatchObject({ 'a.com': 'pin' });
   });
 
+  it('encrypts the server copy so it contains no readable sync data', async () => {
+    await editPersonal((text) => setSite(text, 'private.example', 'pin', []));
+    await connect(ENCRYPTED_ACCOUNT);
+    await syncWithServer();
+
+    const body = server.files.get(FILE)!.body;
+    expect(isEncryptedSyncFile(body)).toBe(true);
+    expect(body).not.toContain('private.example');
+    expect(body).not.toContain('personal');
+    expect(body).not.toContain(ENCRYPTED_ACCOUNT.encryptionPassphrase);
+    expect((await decryptSyncData(body, ENCRYPTED_ACCOUNT.encryptionPassphrase)).personal).toContain('private.example');
+  });
+
+  it('shares encrypted data with another browser using the same passphrase', async () => {
+    await editPersonal((text) => setSite(text, 'encrypted.example', 'raise', []));
+    await connect(ENCRYPTED_ACCOUNT);
+    await syncWithServer();
+
+    await use('chrome');
+    await connect(ENCRYPTED_ACCOUNT);
+    await syncWithServer();
+
+    expect(sitesOf(await loadPersonal())).toMatchObject({ 'encrypted.example': 'raise' });
+  });
+
+  it('never replaces an encrypted file when the passphrase is missing or wrong', async () => {
+    await connect(ENCRYPTED_ACCOUNT);
+    await syncWithServer();
+    const encryptedFile = server.files.get(FILE)!.body;
+
+    await use('chrome');
+    await connect(ACCOUNT);
+    expect((await syncWithServer())?.error).toBe('encrypted');
+    expect(server.files.get(FILE)!.body).toBe(encryptedFile);
+
+    await connect({ ...ACCOUNT, encryptionPassphrase: 'a different wrong passphrase' });
+    expect((await syncWithServer())?.error).toBe('passphrase');
+    expect(server.files.get(FILE)!.body).toBe(encryptedFile);
+  });
+
+  it('upgrades a legacy plaintext file when encryption is enabled', async () => {
+    await editPersonal((text) => setSite(text, 'legacy.example', 'pin', []));
+    await connect(ACCOUNT);
+    await syncWithServer();
+    await accountItem.setValue(ENCRYPTED_ACCOUNT);
+    await syncWithServer();
+
+    const body = server.files.get(FILE)!.body;
+    expect(isEncryptedSyncFile(body)).toBe(true);
+    expect((await decryptSyncData(body, ENCRYPTED_ACCOUNT.encryptionPassphrase)).personal).toContain('legacy.example');
+  });
+
+  it('does not accept a plaintext downgrade after encryption is established', async () => {
+    await connect(ENCRYPTED_ACCOUNT);
+    await syncWithServer();
+    const encrypted = server.files.get(FILE)!.body;
+    const clearData = await decryptSyncData(encrypted, ENCRYPTED_ACCOUNT.encryptionPassphrase);
+    server.save(FILE, JSON.stringify(toBackup(clearData)));
+
+    expect((await syncWithServer())?.error).toBe('unencrypted');
+    expect(server.files.get(FILE)!.body).toContain('"anubis":1');
+    expect((await accountItem.getValue())?.encryptionReady).toBe(true);
+  });
+
   it('gives a fresh browser everything from the server, without bringing back what the first removed', async () => {
     await editPersonal((t) => setSiteLevel(setSite(t, 'a.com', 'pin', []), 'fandom.com', 'normal'));
     await updateSettings({ theme: 'dark' });
@@ -227,10 +293,12 @@ describe('syncing through a WebDAV server', () => {
     expect(server.requests.length).toBeGreaterThan(before);
   });
 
-  it('keeps the password out of browser sync', async () => {
-    await connect(ACCOUNT);
+  it('keeps the WebDAV login and encryption passphrase out of browser sync', async () => {
+    await connect(ENCRYPTED_ACCOUNT);
     await syncWithServer();
-    expect(JSON.stringify(await fakeBrowser.storage.sync.get(null))).not.toContain('app-password');
-    expect(await accountItem.getValue()).toEqual(ACCOUNT);
+    const syncStorage = JSON.stringify(await fakeBrowser.storage.sync.get(null));
+    expect(syncStorage).not.toContain('app-password');
+    expect(syncStorage).not.toContain(ENCRYPTED_ACCOUNT.encryptionPassphrase);
+    expect(await accountItem.getValue()).toMatchObject(ENCRYPTED_ACCOUNT);
   });
 });

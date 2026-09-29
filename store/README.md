@@ -51,7 +51,7 @@ The release workflow rejects tags whose commit is not already on `main`, as well
 
 **storage**
 
-> Saves the user's ranked sites, tags, settings, and list subscriptions in browser storage (sync storage, so they follow the user's browser account), and keeps downloaded copies of subscribed lists on the device. If the user connects a WebDAV server of their own to sync between browsers, its address and login are kept in local storage on that device only; the login is sent to that server to sign in. The sync file goes only to that server and is not encrypted by Anubis, so its operator can read it. Nothing is sent to the developer.
+> Saves the user's ranked sites, tags, settings, and list subscriptions in browser storage (sync storage, so they follow the user's browser account), and keeps downloaded copies of subscribed lists on the device. If the user connects a WebDAV server of their own to sync between browsers, its address and login are kept in local storage on that device only; the login is sent to that server to sign in. End-to-end encryption is on by default for new connections: the user-chosen passphrase is saved in local extension storage on each device and never sent to the server; Anubis derives an AES-256-GCM key and encrypts the sync file before upload. The server operator cannot read an encrypted file. Users can turn encryption off, and existing connections remain unencrypted until enabled; in that case the server operator can read the file. Nothing is sent to the developer.
 
 **activeTab**
 
@@ -69,7 +69,7 @@ The release workflow rejects tags whose commit is not already on `main`, as well
 
 > All JavaScript ships in the package. Subscribed lists are plain-text data (site names and patterns) that Anubis parses; nothing in them is run.
 
-**Data usage:** Chrome's [User Data FAQ](https://developer.chrome.com/docs/webstore/program-policies/user-data-faq) says local processing can still be handling user data, so Anubis discloses its local use of search results and the current tab's address in its privacy policy. The FAQ's FTP/IRC example says a protocol client communicating with a server chosen by the user does not thereby collect data for the developer; it also says Limited Use does not apply to data exchanged with that server. Anubis has no sync server of its own: WebDAV runs only after the user connects their server, and sends the sync file there. The server can read this file; Anubis does not encrypt it end to end. That exception concerns the user-directed server transfer; it does not change how Anubis locally uses browsing data.
+**Data usage:** Chrome's [User Data FAQ](https://developer.chrome.com/docs/webstore/program-policies/user-data-faq) says local processing can still be handling user data, so Anubis discloses its local use of search results and the current tab's address in its privacy policy. The FAQ's FTP/IRC example says a protocol client communicating with a server chosen by the user does not thereby collect data for the developer; it also says Limited Use does not apply to data exchanged with that server. Anubis has no sync server of its own: WebDAV runs only after the user connects their server, and sends the sync file there. New connections encrypt the file by default, but users can turn encryption off and existing connections require opting in; the privacy policy describes both cases. That exception concerns the user-directed server transfer; it does not change how Anubis locally uses browsing data.
 
 **Before submission:** Answer the Chrome dashboard's current questions based on what Anubis and its developer actually do. Do not report the user's WebDAV server as a developer-operated collection endpoint: it is user-configured and the FAQ's protocol-client example directly supports treating that transfer as user-directed. Separately disclose Anubis's local processing accurately, and check that the dashboard answers, listing, and privacy policy agree. Google's FAQ is policy guidance, not a guarantee of a particular review outcome.
 
@@ -127,7 +127,7 @@ Nothing disappears without a trace. A one-line summary says what Anubis changed,
 
 Works on Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex, and Mojeek.
 
-No Anubis server or account. Anubis does not send your searches or settings to the developer. If you connect your own WebDAV server, it sends your rankings, tags, settings, and lists there to sync between browsers.
+No Anubis server or account. Anubis does not send your searches or settings to the developer. If you connect your own WebDAV server, it sends your rankings, tags, settings, and lists there to sync between browsers; the sync file is encrypted by default for new connections, but you can turn encryption off.
 
 Wiki: https://bishop-v.github.io/anubis/
 Source code (AGPL-3.0): https://github.com/Bishop-V/anubis

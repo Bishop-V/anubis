@@ -1551,13 +1551,30 @@ if (!only || only === 'webdav') {
   await opt.getByLabel('Address').fill('https://dav.example/files/me');
   await opt.getByLabel('User name').fill('me');
   await opt.getByLabel('Password').fill('app-password');
+  if (!(await opt.getByLabel('Encrypt the sync file end to end (recommended)').isChecked())) throw new Error('End-to-end encryption is not enabled by default');
+  await opt.getByLabel('Encryption passphrase').fill('a long e2e sync passphrase');
+  await opt.getByLabel('Confirm passphrase').fill('a long e2e sync passphrase');
   await opt.getByRole('button', { name: 'Connect' }).click();
   await opt.waitForTimeout(1500);
   await opt.screenshot({ path: `${SHOTS}options-webdav.png`, fullPage: true });
   const created = JSON.parse(files.get(FILE)?.body ?? 'null');
   const status = await opt.locator('.notice').first().textContent({ timeout: 2000 }).catch(() => 'no status');
-  // Another browser adds a site; Sync now brings it here.
-  files.set(FILE, { body: JSON.stringify({ ...created, personal: `${created.personal}$site=from-firefox.example,discard\n` }), etag: `"${++version}"` });
+  // A second browser changes the encrypted payload; Sync now brings it here.
+  const fromFirefox = await opt.evaluate(async ({ body, passphrase }) => {
+    const decode = (value) => Uint8Array.from(atob(value), (char) => char.charCodeAt(0));
+    const encode = (value) => btoa(String.fromCharCode(...new Uint8Array(value)));
+    const old = JSON.parse(body).encryption;
+    const material = await crypto.subtle.importKey('raw', new TextEncoder().encode(passphrase), 'PBKDF2', false, ['deriveKey']);
+    const oldKey = await crypto.subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt: decode(old.salt), iterations: 600000 }, material, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+    const data = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: decode(old.iv) }, oldKey, decode(old.ciphertext))));
+    data.personal += '$site=from-firefox.example,discard\n';
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations: 600000 }, material, { name: 'AES-GCM', length: 256 }, false, ['encrypt']);
+    const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(JSON.stringify(data)));
+    return JSON.stringify({ anubis: 2, encryption: { algorithm: 'AES-GCM', kdf: 'PBKDF2-SHA-256', iterations: 600000, salt: encode(salt), iv: encode(iv), ciphertext: encode(ciphertext) } });
+  }, { body: files.get(FILE).body, passphrase: 'a long e2e sync passphrase' });
+  files.set(FILE, { body: fromFirefox, etag: `"${++version}"` });
   await opt.getByRole('button', { name: 'Sync now' }).click();
   await opt.waitForTimeout(1500);
   await opt.goto(`chrome-extension://${davId}/options.html#sites`);
@@ -1569,12 +1586,21 @@ if (!only || only === 'webdav') {
     await chrome.storage.sync.set({ settings: { ...settings, deeper: 2 } });
   });
   await opt.waitForTimeout(4500);
+  const remoteDepth = await opt.evaluate(async (body) => {
+    const decode = (value) => Uint8Array.from(atob(value), (char) => char.charCodeAt(0));
+    const envelope = JSON.parse(body).encryption;
+    const material = await crypto.subtle.importKey('raw', new TextEncoder().encode('a long e2e sync passphrase'), 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt: decode(envelope.salt), iterations: 600000 }, material, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+    const data = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: decode(envelope.iv) }, key, decode(envelope.ciphertext))));
+    return data.settings.deeper;
+  }, files.get(FILE).body);
   console.log('\n== webdav:', JSON.stringify({
     requests: requests.join(' '),
-    'file created': Boolean(created?.anubis),
+    'encrypted file created': created?.anubis === 2,
+    'server cannot read synced list': !files.get(FILE).body.includes('$site='),
     status,
     'site from the other browser shown': arrived > 0,
-    'change here on the server': JSON.parse(files.get(FILE).body).settings.deeper === 2,
+    'change here on the server': remoteDepth === 2,
   }));
   await dav.close();
 }
