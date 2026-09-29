@@ -302,6 +302,13 @@ textarea.code {
   font-size: 15px;
   font-weight: 600;
 }
+.tag-row .meta p {
+  margin: 0;
+}
+.tag-row .meta .effect {
+  color: var(--text);
+  font-size: 13px;
+}
 .tag-row .meta .text-btn {
   font-size: 12.5px;
 }

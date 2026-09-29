@@ -1,5 +1,5 @@
 import { normalizeDomain } from '@/utils/domain';
-import { h, icon, plural } from '@/utils/dom';
+import { andList, h, icon, plural } from '@/utils/dom';
 import { ICON_CLOSE, ICON_TRASH, LEVEL_LABELS } from '@/utils/icons';
 import { colorForTag, normalizeColor, slugifyTag, TAG_PALETTE, type TagDef } from '@/utils/listformat';
 import type { CompiledList, TagAction } from '@/utils/matcher';
@@ -32,6 +32,63 @@ function listSitesWith(list: CompiledList, tag: string): string[] {
     for (const [site, rules] of map) if (rules.some((r) => r.tags.includes(tag))) out.push(site);
   }
   return out.sort();
+}
+
+/** What a list's own rules with this tag do to rankings, by count. */
+function listEffects(list: CompiledList, tag: string): { raise: number; lower: number; hide: number } {
+  const out = { raise: 0, lower: 0, hide: 0 };
+  for (const rules of [...list.bySite.values(), ...list.byHost.values(), list.generic]) {
+    for (const r of rules) {
+      if (!r.tags.includes(tag)) continue;
+      if (r.discard) out.hide++;
+      else if (r.pin || r.boost > 0) out.raise++;
+      else if (r.boost < 0) out.lower++;
+    }
+  }
+  return out;
+}
+
+/**
+ * What the tag does, in one direct sentence: which sites carry it and what happens
+ * to them. "Labels 23 sites from Paywalls. Their ranking stays the same."
+ */
+function effectSentence(tag: TagDef, action: TagAction, lists: CompiledList[], personalCount: number): string {
+  const from = lists.filter((l) => !l.personal && l.tags.some((t) => t.id === tag.id));
+  const who = [
+    personalCount ? `${plural(personalCount, 'site')} of yours` : null,
+    ...from.map((l) => `${plural(ruleCount(l, tag.id), 'site')} from ${l.name}`),
+  ].filter((w): w is string => !!w);
+  if (!who.length) return 'No sites carry it yet.';
+  const carriers = `Marks ${andList(who)}.`;
+  switch (action) {
+    case 'label':
+      return `${carriers} Only a label: their ranking stays the same.`;
+    case 'highlight':
+      return `${carriers} Highlights them in the tag’s colour.`;
+    case 'raise':
+      return `${carriers} Raises them in your searches.`;
+    case 'lower':
+      return `${carriers} Lowers them in your searches.`;
+    case 'hide':
+      return `${carriers} Hides them from your searches.`;
+  }
+  // "Follow the lists": what the lists' own rules say.
+  const total = { raise: 0, lower: 0, hide: 0 };
+  for (const l of from) {
+    const e = listEffects(l, tag.id);
+    total.raise += e.raise;
+    total.lower += e.lower;
+    total.hide += e.hide;
+  }
+  // One list is named and takes the singular: "Official docs raises 51 of them."
+  const one = from.length === 1;
+  const moves = [
+    total.raise ? `${one ? 'raises' : 'raise'} ${total.raise}` : null,
+    total.lower ? `${one ? 'lowers' : 'lower'} ${total.lower}` : null,
+    total.hide ? `${one ? 'hides' : 'hide'} ${total.hide}` : null,
+  ].filter((m): m is string => !!m);
+  if (!moves.length) return `${carriers} Only a label: their ranking stays the same.`;
+  return `${carriers} ${one ? from[0]!.name : 'The lists'} ${andList(moves)} of them.`;
 }
 
 /** How many of a list's sites an open tag names before "and N more". */
@@ -151,9 +208,6 @@ export async function renderTags(): Promise<HTMLElement> {
     .map((tag) => {
       const mine = personalDefs.has(tag.id);
       const pref = rules.prefs[tag.id] ?? {};
-      const sources = rules.lists
-        .filter((l) => !l.personal && l.tags.some((t) => t.id === tag.id))
-        .map((l) => `${l.name}, on ${plural(ruleCount(l, tag.id), 'site')}`);
       const personalCount = sites.filter((s) => s.tags.includes(tag.id)).length;
 
       const save = (patch: Partial<TagDef>) => {
@@ -192,7 +246,6 @@ export async function renderTags(): Promise<HTMLElement> {
         if (!panel.hidden) panel.querySelector<HTMLInputElement>('form input')?.focus();
       });
 
-      const uses = [mine ? `your tag${personalCount ? `, on ${plural(personalCount, 'site')}` : ''}` : null, ...sources.map((s) => `from ${s}`)].filter(Boolean);
       const row = h(
         'div',
         { class: `tag-row${open.has(tag.id) ? ' open' : ''}`, style: `--c: ${tag.color}` },
@@ -226,9 +279,8 @@ export async function renderTags(): Promise<HTMLElement> {
         h(
           'div',
           { class: 'meta' },
-          [tag.description, uses.length ? `${uses.join('; ').replace(/^./, (c) => c.toUpperCase())}.` : 'Not used yet.'].filter(Boolean).join(' '),
-          ' ',
-          toggle,
+          h('p', { class: 'effect' }, effectSentence(tag, pref.action ?? 'list', rules.lists, personalCount), ' ', toggle),
+          tag.description ? h('p', null, tag.description) : null,
         ),
         panel,
       );
