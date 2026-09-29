@@ -31,8 +31,25 @@ export const ICON_EXTERNAL = svg('<path d="M9 3h4v4M13 3L7.5 8.5M11.5 9.5V13H3V4
  */
 export const ICON_GEAR = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>`;
 
-/** The button on each result: move this site up or down (or out). */
-export const ICON_RANK = svg('<path d="M5 13V3M2.5 5.5L5 3l2.5 2.5M11 3v10M8.5 10.5L11 13l2.5-2.5"/>');
+/**
+ * The button on each result, which opens the result menu: the menu's balance in small,
+ * tipped to the site's ranking (the site's pan on the left, as in the menu). A pinned
+ * site shows the pin and a hidden one the crossed-out eye instead.
+ */
+const BALANCE_POST = '<path d="M8 3.2v9.6M5.5 13.2h5"/>';
+const balance = (left: number, right: number) =>
+  svg(
+    `${BALANCE_POST}<path d="M2.6 ${left}L13.4 ${right}"/>` +
+      `<path d="M2.6 ${left}L1.2 ${left + 3.6}M2.6 ${left}L4 ${left + 3.6}M13.4 ${right}L12 ${right + 3.6}M13.4 ${right}l1.4 3.6"/>` +
+      `<path d="M1 ${left + 3.6}h3.2a1.6 1.6 0 0 1-3.2 0zM11.8 ${right + 3.6}H15a1.6 1.6 0 0 1-3.2 0z"/>`,
+  );
+export const WEIGH_ICONS = {
+  hide: ICON_HIDE,
+  lower: balance(6.4, 3.6),
+  normal: balance(5, 5),
+  raise: balance(3.6, 6.4),
+  pin: ICON_PIN,
+} as const;
 export const ICON_SUN = svg(
   '<circle cx="8" cy="8" r="2.8"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1"/>',
 );

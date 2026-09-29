@@ -13,7 +13,7 @@ Anubis works in two places, and they need different care:
 
 **Reading order is the page's order.** Reranking moves results with CSS `order` and never moves the nodes (see Pitfalls in `CLAUDE.md`). Screen readers and Tab follow the DOM, so they meet results in the engine's order, not the reranked one. This can't be fixed without moving nodes the engine owns; keep it in mind, and don't make anything depend on the visual order being the reading order.
 
-**Everything Anubis adds is read aloud, on every result.** The shadow roots keep the page's CSS out, not screen readers: the chips, the ⇅ button and the hidden-result line are read between each title and its snippet. Keep them short, and don't add text to a result that a sighted person wouldn't need either.
+**Everything Anubis adds is read aloud, on every result.** The shadow roots keep the page's CSS out, not screen readers: the chips, the ⚖ button and the hidden-result line are read between each title and its snippet. Keep them short, and don't add text to a result that a sighted person wouldn't need either.
 
 **A control has to make sense on its own.** Screen reader users often jump from button to button or pull up a list of them. A button repeated on every result should say which result it's for, and a text button's label should stand without the sentence around it.
 
@@ -23,7 +23,7 @@ Anubis works in two places, and they need different care:
 
 **Icons are decoration unless they're the only content.** Icons from `utils/icons.ts` carry `aria-hidden="true"` and `focusable="false"`, and so does the menu's balance. A button whose only content is an icon gets an `aria-label` and a matching `title`.
 
-**State goes in attributes, not only in colour or shape.** Chosen options in a row of choices use `aria-pressed`, the rows use `role="group"` with a label, the settings navigation marks its page with `aria-current`, and the ⇅ button keeps `aria-expanded` in step with the menu. Follow the same patterns for new controls instead of inventing new ones.
+**State goes in attributes, not only in colour or shape.** Chosen options in a row of choices use `aria-pressed`, the rows use `role="group"` with a label, the settings navigation marks its page with `aria-current`, and the ⚖ button keeps `aria-expanded` in step with the menu. Follow the same patterns for new controls instead of inventing new ones.
 
 **Leave the engine's own structure alone.** Clean-up removes content blocks (AI answers, video panels), never the page's navigation, search form or landmarks (`NOT_A_BLOCK` in `entrypoints/content/cleanup.ts`). Keep it that way when adding a clean-up kind or an engine.
 
@@ -31,11 +31,11 @@ Anubis works in two places, and they need different care:
 
 ## Keyboard
 
-**Everything the pointer can do, the keyboard can do.** Use real `<button>`, `<a href>`, `<input>` and `<select>` elements: they get Tab, Enter and Space for free. A `div` with a click handler gets none of that. Hover-only behaviour needs a focus equivalent: the ⇅ button brightens on `:focus-within` as well as `:hover`.
+**Everything the pointer can do, the keyboard can do.** Use real `<button>`, `<a href>`, `<input>` and `<select>` elements: they get Tab, Enter and Space for free. A `div` with a click handler gets none of that. Hover-only behaviour needs a focus equivalent: the ⚖ button brightens on `:focus-within` as well as `:hover`.
 
 **Focus is always visible.** The focus ring is the 2px gold outline on `:focus-visible` (`assets/theme.css`, `shadow.css`). Never remove an outline without replacing it, and where a native control sits invisibly over a styled one (the cartouche's site picker), draw the ring on what can be seen.
 
-**Focus goes somewhere sensible, and comes back.** When a control opens something, focus moves into it; when it closes, focus returns to what opened it. The result menu is the model: it opens with focus on the chosen ranking, Escape closes it and puts focus back on the ⇅ button, and Enter in the new tag field adds the tag.
+**Focus goes somewhere sensible, and comes back.** When a control opens something, focus moves into it; when it closes, focus returns to what opened it. The result menu is the model: it opens with focus on the chosen ranking, Escape closes it and puts focus back on the ⚖ button, and Enter in the new tag field adds the tag.
 
 **Re-rendering mustn't drop focus.** Replacing the focused element sends focus back to the top of the page, and a keyboard or screen reader user loses their place. The result menu and the summary survive their own re-renders by giving controls a `data-focus-key` and focusing the same key in the new content (`openPopover` and `render` in `entrypoints/content/ui.ts`); when that control is gone (Undo), focus goes to the first one. Do the same, or update the existing nodes, wherever a click re-renders the thing that was clicked.
 
