@@ -4,14 +4,14 @@ Anubis has no developer-operated server. It reads search results and the current
 
 ## How Anubis uses data
 
-Anubis uses information accessed through browser permissions only for its user-facing features: applying your rankings and tags to search results, showing the current site's settings in the popup, downloading subscribed lists, and syncing to a WebDAV server you connect. It does not send this information to the developer, use it for advertising, or let the developer read it. A sync file goes only to the WebDAV server you choose.
+Anubis uses information accessed through browser permissions only for its user-facing features: applying your rankings and tags to search results, showing the current site's settings in the popup, downloading subscribed lists, and syncing to a WebDAV server you connect. It does not send this information to the developer or use it for advertising. Anubis has no sync server of its own.
 
 This use complies with the Chrome Web Store User Data Policy, including its Limited Use requirements.
 
 ## What's stored, and where
 
 - **Your list, settings, tag choices, and subscriptions** are kept in your browser's sync storage. If you're signed in to your browser (a Firefox or Google account) with sync on, the browser copies them to your other computers. Anubis never sees them. If your list grows too big for sync storage, it's kept on this computer only. See [Syncing between computers](./sync.md).
-- **A sync server's address, user name, and password**, if you connect one to sync between browsers, are kept in that browser only, never in browser sync.
+- **A sync server's address, user name, and password**, if you connect one to sync between browsers, are saved in that browser only, never in browser sync. Anubis sends the credentials to that server to sign in; they are not part of the sync file.
 - **Downloaded lists** are kept only on this computer, and downloaded again elsewhere.
 
 ## What Anubis connects to
@@ -21,7 +21,7 @@ Only these:
 - **The lists you subscribe to**, from wherever they're hosted, to check for new versions once a day, or less often when a list says so (Anubis's own lists: once a week). This starts when you install Anubis, because it subscribes you to four lists of its own, hosted on GitHub. You can turn them off under **Settings → Lists**.
 - **The directory of lists** on GitHub, when you open **Settings → Lists**, so **More lists** shows the newest ones.
 - **The search engine you're on**, for [Load more results](./more-results.md), which loads its next page like the "Next" link would.
-- **The WebDAV server you connect for syncing between browsers**, if you do. Your ranked sites, settings, tag choices, and subscriptions go there, with the user name and password you gave, and nowhere else. See [Between browsers](./sync.md#between-browsers).
+- **The WebDAV server you connect for syncing between browsers**, if you do. Anubis sends your ranked sites, settings, tag choices, and subscriptions to the HTTPS address you provide, and nowhere else. The sync file is not encrypted by Anubis, so the server operator can read it. See [Between browsers](./sync.md#between-browsers).
 - **Issue trackers**, when you choose "Report it to…" or "Suggest it to…". That opens a page in a new tab, with the result's address (without anything after `?`, which can carry details of your visit) and the rule that matched; nothing is sent unless you submit the issue yourself.
 
 Downloading a list works like any other download: the site hosting it sees your IP address and which file was asked for. Anubis sends nothing else with it: no cookies, no identifier, and nothing about your searches.
@@ -39,7 +39,7 @@ Anubis runs on no other sites.
 
 Anubis may also ask, at the moment you subscribe, to **read from one website** that hosts a list. That's needed for lists hosted anywhere other than GitHub or a gist. It asks the same for a sync server, at the moment you connect one. You can take either back in your browser's extension settings.
 
-In supported Firefox versions, Anubis declares that it collects no data unless you connect a sync server. Firefox then asks whether Anubis may send your list to it: Firefox counts the sites in it as browsing activity. **Disconnect** takes that consent back.
+In supported Firefox versions, Anubis declares no required data collection and asks for optional browsing-activity consent only when you connect a sync server. Firefox then asks whether Anubis may send your list there. **Disconnect** takes that consent back.
 
 ## Questions
 

@@ -51,7 +51,7 @@ The release workflow rejects tags whose commit is not already on `main`, as well
 
 **storage**
 
-> Saves the user's ranked sites, tags, settings, and list subscriptions in browser storage (sync storage, so they follow the user's browser account), and keeps downloaded copies of subscribed lists on the device. If the user connects a WebDAV server of their own to sync between browsers, its address and login are kept in local storage on that device only. Nothing is sent to the developer.
+> Saves the user's ranked sites, tags, settings, and list subscriptions in browser storage (sync storage, so they follow the user's browser account), and keeps downloaded copies of subscribed lists on the device. If the user connects a WebDAV server of their own to sync between browsers, its address and login are kept in local storage on that device only; the login is sent to that server to sign in. The sync file goes only to that server and is not encrypted by Anubis, so its operator can read it. Nothing is sent to the developer.
 
 **activeTab**
 
@@ -69,9 +69,9 @@ The release workflow rejects tags whose commit is not already on `main`, as well
 
 > All JavaScript ships in the package. Subscribed lists are plain-text data (site names and patterns) that Anubis parses; nothing in them is run.
 
-**Data usage:** Chrome's [User Data FAQ](https://developer.chrome.com/docs/webstore/program-policies/user-data-faq) says handling includes local processing, and that products which handle user data need a privacy policy. It also describes an exception for data transmitted between a protocol client and a user-specified server. Anubis uses browser data locally for search filtering and sends a sync file only to the WebDAV server the user configures. The privacy policy now links directly from the site navigation and includes Chrome's required Limited Use statement.
+**Data usage:** Chrome's [User Data FAQ](https://developer.chrome.com/docs/webstore/program-policies/user-data-faq) says local processing can still be handling user data, so Anubis discloses its local use of search results and the current tab's address in its privacy policy. The FAQ's FTP/IRC example says a protocol client communicating with a server chosen by the user does not thereby collect data for the developer; it also says Limited Use does not apply to data exchanged with that server. Anubis has no sync server of its own: WebDAV runs only after the user connects their server, and sends the sync file there. The server can read this file; Anubis does not encrypt it end to end. That exception concerns the user-directed server transfer; it does not change how Anubis locally uses browsing data.
 
-**Still required before submission:** In the Chrome dashboard, declare each data type the current form considers handled and describe the corresponding user-facing purpose. Do not classify the user-chosen WebDAV transfer as exempt without confirming the exception applies to this extension; Google's FAQ does not decide Anubis's specific facts, and this README is not legal advice. Confirm the privacy answers match the dashboard's current questions.
+**Before submission:** Answer the Chrome dashboard's current questions based on what Anubis and its developer actually do. Do not report the user's WebDAV server as a developer-operated collection endpoint: it is user-configured and the FAQ's protocol-client example directly supports treating that transfer as user-directed. Separately disclose Anubis's local processing accurately, and check that the dashboard answers, listing, and privacy policy agree. Google's FAQ is policy guidance, not a guarantee of a particular review outcome.
 
 **Certifications:** tick all three (no selling or transferring data, no use unrelated to the single purpose, no use for credit decisions).
 

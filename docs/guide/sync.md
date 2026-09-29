@@ -48,6 +48,8 @@ Other services and your own server work too, if they offer WebDAV over `https://
 
 **Settings → Sync** then shows when Anubis last synced, or what went wrong. **Sync now** syncs straight away.
 
+The sync file is sent over HTTPS, but Anubis does not encrypt it end to end. The server operator can read your list and settings, so connect only to a service you trust.
+
 ### When it syncs
 
 - A few seconds after you change something
@@ -78,4 +80,4 @@ The first time a browser connects, it takes everything from the file. Sites and 
 
 Browser sync goes through your browser account, like your bookmarks. Anubis never sees it.
 
-When you connect a server, your list, settings, tag choices, and subscriptions go to that server and nowhere else. The user name and password are kept in that browser only, never in browser sync. See [Privacy and permissions](./privacy.md).
+When you connect a server, your list, settings, tag choices, and subscriptions go to that server and nowhere else. The server can read the sync file; Anubis does not encrypt it. Your user name and password are saved in that browser, sent to the server to sign in, and never put in browser sync or the sync file. See [Privacy and permissions](./privacy.md).

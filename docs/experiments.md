@@ -4,9 +4,12 @@ What was tried while building the tagging and lists release, what failed, and wh
 
 ## Store privacy disclosure (2026-09-29)
 
-- **Checked:** Google's current [User Data FAQ](https://developer.chrome.com/docs/webstore/program-policies/user-data-faq) says local processing is handling user data, requires a privacy policy and dashboard disclosure, and describes an exception for protocol clients connecting to user-specified servers. The FAQ does not decide whether Anubis's optional WebDAV feature qualifies, so confirm the dashboard categories and do not claim an exemption without checking the exact facts.
+- **Checked:** Google's [User Data FAQ](https://developer.chrome.com/docs/webstore/program-policies/user-data-faq) says local processing is handling user data and needs disclosure. Its FTP/IRC example says data exchanged with a server chosen by the user is not collected for the developer, and Limited Use does not apply to that transfer. Anubis's optional WebDAV connection follows that model: the user supplies the server, Anubis has no sync endpoint, and the sync file goes only to that server. The exception is about this transfer; it does not erase the separate local processing of search results and the current tab's address.
 - **Changed:** added the Limited Use statement to the privacy page, linked Privacy directly from site navigation, and replaced the store listing's absolute "nothing collected" wording with local processing and optional user-directed sync.
-- **Still blocked:** the release GitHub environment is not configured, store listings and real-page screenshots do not exist, and the Chrome dashboard's data categories must match the behavior and current policy. Firefox's consent prompt with a real WebDAV server also remains untested.
+- **Correction:** the earlier note treated whether WebDAV qualified for the user-specified-server exception as an unresolved submission blocker. The FAQ's own protocol-client example supports describing this user-directed transfer as not developer collection; the dashboard should still be completed truthfully for Anubis's local processing, without representing the user's server as developer-operated collection. This is a policy reading, not a guarantee of review outcome.
+- **Compared:** Floccus's [public privacy policy](https://floccus.org/privacy/) separates local data, the user-selected backend, and data received by its developers. Anubis now follows that structure and states that its sync file is not end-to-end encrypted, so the WebDAV server operator can read it. Its sync UI and help page disclose this before/when the user connects.
+- **Screenshot:** system Chrome 154 did not start the extension service worker under the runner. Switching to Nix-provided Chromium worked; regenerated the documentation screenshots and slides with `node e2e/run.mjs docs`.
+- **Still outstanding:** the release GitHub environment is not configured, store listings and real-page screenshots do not exist, and Firefox's consent prompt with a real WebDAV server remains untested.
 
 ## Result selector indicators (2026-09-29)
 
@@ -17,7 +20,7 @@ What was tried while building the tagging and lists release, what failed, and wh
 - **Found:** the toolbar badge counted hidden results but not clean-up removals, and its last count could remain after a tab left search. "Update now" also proceeded when a list's host permission was denied. Storage changes could trigger rejected list reloads without a handler in the content script and popup.
 - **Fixed:** derive the badge from the shared hidden-count helper, clear it when navigation starts, stop list updates with a localized permission message when access is denied, and log reload errors while keeping the last working rules and popup state.
 - **Checked:** the asserted Chromium checks now cover a badge that includes removed panels and clearing it on navigation; compile, unit tests, docs build, and those browser checks pass.
-- **Listing copy:** clarified that Bing's AI answer and video panel are not recognized yet, and aligned the WebDAV inventory with the privacy guide. The Chrome Web Store data-category decision remains a submission blocker because the classification of user-directed WebDAV transfers must be checked against the current store policy.
+- **Listing copy:** clarified that Bing's AI answer and video panel are not recognized yet, and aligned the WebDAV inventory with the privacy guide.
 
 ## Patterns from Dark Reader (2026-09-29)
 

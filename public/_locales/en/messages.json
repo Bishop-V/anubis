@@ -178,7 +178,7 @@
   "webdavPassword": { "message": "Password" },
   "webdavPasswordHint": { "message": "Most services give you a separate password for apps. Use that one." },
   "webdavConnect": { "message": "Connect" },
-  "webdavPrivacy": { "message": "Your list, settings, tag choices, and subscriptions go to this server and nowhere else. The password stays in this browser." },
+  "webdavPrivacy": { "message": "Your list, settings, tag choices, and subscriptions go only to this server. The server can read the sync file; Anubis doesn't encrypt it. Your login is saved here and sent only to this server." },
   "webdavBadAddress": { "message": "Enter the service's WebDAV address, starting with https://" },
   "webdavMissingLogin": { "message": "Enter the user name and password too." },
   "webdavDenied": { "message": "Anubis needs your permission to send your list to $1.", "description": "$1 is the server's host name, e.g. app.koofr.net." },
