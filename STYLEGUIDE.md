@@ -97,7 +97,7 @@ One palette, defined twice: `assets/theme.css` for extension pages and `entrypoi
 | Popup | 340px wide. Header (logo, status, on/off), then sections under hairlines with a muted label, then a footer. What shows depends on the tab: on a search page, what Anubis did there and its tags to show only; on any other site, that site in the cartouche over the balance, with the rankings and tags; elsewhere, Add a site. The last few of your sites always follow. |
 | Settings | Two columns in 1040px: a 210px navigation column and sections up to 760px. One row per thing you can change. Below 760px, one column with the navigation across the top. |
 | Welcome page | The same idea in 1040px: section titles in a 220px column, what to do beside them, lists two across. Below 900px, one column. |
-| Search pages | The summary sits above the results, lined up with them. Tags go under each title. The result menu opens under its ⚖ button, 312px wide. |
+| Search pages | The summary sits above the results, lined up with them; on phones it's one short line, with Details for the rest. Tags go under each title. The result menu opens under its ⚖ button, 312px wide. |
 
 Every page works at phone width (390px) without scrolling sideways. Settings are also checked at 320px and 360px: only the Your sites table may scroll inside its own wrapper below 390px. `node e2e/run.mjs responsive` checks all settings sections at 320px, 360px, and 390px; the `welcome` and `mobile` e2e parts cover their respective pages.
 
@@ -165,6 +165,8 @@ One line above the results, in the page's font at 13px, `--muted` for the senten
 3. **Buttons**: Show hidden (then "Hide them again"), Load more results, and the cog.
 4. **The last change**, when one was made from the result menu: "Pinned javascript.info." and Undo.
 5. **The tags on this page**, as a row of tags with counts; pressing one shows only its results.
+
+On phones (600px wide or less) the full sentence runs to several lines, so the summary says it in a few words (`shortSummary`): "Anubis changed 4 of 9 results and cleaned up the page.", then Show hidden and **Details**. Details shows the rest: the full sentence, Load more results, the cog, and the tags; it reads "Fewer details" while open. The last change and Undo always show. Where the full sentence is no longer than the short one ("Anubis hid 1 of 9 results.", only one tag's results shown, or nothing changed), it stands, and Details only appears for what else there is. On phones the mark hangs to the left and everything else lines up with the sentence: its buttons follow its words and wrap with them, so none is left alone on a line under the mark.
 
 ## The result menu
 

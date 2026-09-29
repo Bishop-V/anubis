@@ -50,32 +50,97 @@ html:not(.dark) .dark-only,
   color: var(--vp-c-text-2);
 }
 
-/* The homepage's demo (scroll-demo.ts), lined up with the heading above and the
-   features below: the same side padding and width. On wide screens the steps sit
-   on the left and the drawn results page stays beside them; on phones the page
-   stays at the top and the steps pass under it. */
+/* The homepage (home.ts): the heading opens the scroll-driven demo (scroll-demo.ts)
+   as its first step. On wide screens the heading and then the steps sit on the left,
+   and the drawn results page stays beside them from the first screen on; on phones
+   the heading comes first, then the page stays at the top and the steps pass under
+   it. Titles use the extension's serif, as its welcome page and settings do. */
 :root {
+  --home-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
   --demo-page: #ffffff;
   --demo-link: #2a4fa8;
-  --demo-lowered: 0.5;
+  --demo-lowered: 0.58;
 }
 .dark {
   --demo-page: #202124;
   --demo-link: #8ab4f8;
 }
+/* The closing section meets the footer; VitePress leaves room under the page. */
+body .VPContent .VPHome {
+  margin-bottom: 0;
+}
 .scroll-demo {
   display: grid;
   max-width: 1152px;
-  margin: 0 auto 4rem;
+  margin: 0 auto;
   padding: 0 24px;
   box-sizing: content-box;
 }
+.demo-intro {
+  padding: 40px 0 24px;
+}
+.home-title {
+  max-width: 13em;
+  margin: 0;
+  font-family: var(--home-serif);
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 44px;
+  letter-spacing: -0.01em;
+  color: var(--vp-c-text-1);
+}
+.home-lead {
+  max-width: 30em;
+  margin: 16px 0 0;
+  font-size: 17px;
+  line-height: 27px;
+  color: var(--vp-c-text-2);
+}
+.home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+.home-button {
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 20px;
+  box-sizing: border-box;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--vp-c-text-1);
+  transition: border-color 0.15s, background-color 0.15s;
+}
+.home-button:hover {
+  border-color: var(--vp-c-brand-3);
+}
+.home-button.brand {
+  border-color: var(--vp-button-brand-bg);
+  background: var(--vp-button-brand-bg);
+  color: var(--vp-button-brand-text);
+  font-weight: 600;
+}
+.home-button.brand:hover {
+  border-color: var(--vp-button-brand-hover-bg);
+  background: var(--vp-button-brand-hover-bg);
+}
+.home a:focus-visible {
+  outline: 2px solid var(--vp-c-brand-3);
+  outline-offset: 2px;
+}
 .demo-stage {
+  /* Below 960px VitePress's top bar scrolls away, so the page sticks to the very top,
+     edge to edge, and covers the line beside the steps as they pass under it. */
   position: sticky;
-  top: var(--vp-nav-height);
+  top: 0;
   z-index: 1;
   height: 62vh;
-  padding: 12px 0;
+  margin: 0 -24px;
+  padding: 12px 24px;
   background: var(--vp-c-bg);
 }
 .demo-page {
@@ -83,7 +148,7 @@ html:not(.dark) .dark-only,
   overflow: hidden;
   padding: 16px 18px;
   box-sizing: border-box;
-  border: 1px solid var(--vp-c-brand-3);
+  border: 1px solid var(--vp-c-divider);
   border-radius: 10px;
   background: var(--demo-page);
   color: var(--vp-c-text-1);
@@ -92,36 +157,72 @@ html:not(.dark) .dark-only,
   /* The page carries on below the frame: let it fade out, not stop. */
   mask-image: linear-gradient(to bottom, #000 80%, transparent);
 }
+/* A line beside the steps fills as you scroll, with a diamond (the tags' mark) at
+   each step that turns gold once the page shows it. */
+.demo-track {
+  position: relative;
+  padding-left: 32px;
+}
+.demo-rail {
+  position: absolute;
+  left: 3.5px;
+  width: 2px;
+  background: var(--vp-c-divider);
+}
+.demo-rail-fill {
+  display: block;
+  width: 100%;
+  background: var(--vp-c-brand-3);
+}
 .demo-steps {
   margin: 0;
   padding: 0;
   list-style: none;
 }
+/* On phones only the space under the page shows the steps, so each one is about
+   that tall: one step is always in view there. Wider, they sit beside the page. */
 .demo-step {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 60vh;
+  min-height: 38vh;
   max-width: 62ch;
   opacity: 0.45;
 }
 .demo-step:last-child {
-  min-height: 80vh;
+  min-height: 60vh;
 }
 .demo-step.active {
   opacity: 1;
 }
+.demo-marker {
+  position: absolute;
+  top: 9.5px;
+  left: -32px;
+  width: 9px;
+  height: 9px;
+  box-sizing: border-box;
+  transform: rotate(45deg);
+  border: 1.5px solid var(--vp-c-divider);
+  background: var(--vp-c-bg);
+}
+.demo-step.reached .demo-marker {
+  border-color: var(--vp-c-brand-3);
+  background: var(--vp-c-brand-3);
+}
 .demo-cue {
-  margin-top: 24px !important;
-  font-size: 14px !important;
+  margin: 32px 0 0;
+  font-size: 14px;
   font-weight: 500;
-  color: var(--vp-c-brand-1) !important;
+  color: var(--vp-c-brand-1);
 }
 .demo-cue .arrow {
   display: inline-block;
 }
 .demo-step h2 {
+  position: relative;
   margin: 0 0 8px;
+  font-family: var(--home-serif);
   font-size: 21px;
   font-weight: 500;
   line-height: 28px;
@@ -131,6 +232,71 @@ html:not(.dark) .dark-only,
   font-size: 16px;
   line-height: 26px;
   color: var(--vp-c-text-2);
+}
+
+/* After the demo: what else Anubis does, then a closing section. */
+.home-highlights {
+  display: grid;
+  gap: 32px;
+  max-width: 1152px;
+  margin: 0 auto;
+  padding: 40px 24px 64px;
+  box-sizing: content-box;
+}
+.home-highlight {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 24px;
+  border-top: 1px solid var(--vp-c-divider);
+}
+.home-highlight h2 {
+  margin: 0;
+  font-family: var(--home-serif);
+  font-size: 21px;
+  font-weight: 500;
+  line-height: 28px;
+}
+.home-highlight p,
+.home-closing p {
+  margin: 0;
+  max-width: 62ch;
+  font-size: 15px;
+  line-height: 24px;
+  color: var(--vp-c-text-2);
+}
+.home-highlight a,
+.home-closing a {
+  align-self: flex-start;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--vp-c-brand-1);
+}
+.home-highlight a:hover,
+.home-closing a:hover {
+  text-decoration: underline;
+}
+.home-closing {
+  padding: 48px 24px 64px;
+  background: var(--vp-c-bg-alt);
+}
+.home-closing-inner {
+  display: grid;
+  gap: 16px;
+  max-width: 1152px;
+  margin: 0 auto;
+}
+.home-closing-inner > div {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.home-closing h2 {
+  margin: 0;
+  font-family: var(--home-serif);
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 38px;
 }
 
 /* The drawn page: a search box, the summary Anubis adds, then results and panels. */
@@ -152,17 +318,37 @@ html:not(.dark) .dark-only,
   border-radius: 50%;
 }
 .demo-summary p {
+  display: flex;
+  gap: 8px;
   margin: 0;
   padding-bottom: 6px;
   color: var(--vp-c-text-2);
 }
+/* On phones the summary is one short line with Details, as the extension's is at
+   600px or less; the full sentence and the tags wait behind Details. */
+.demo-summary .short {
+  display: none;
+}
+/* With the space before it, about the extension's 12px between buttons. */
+.demo-summary .short .demo-link {
+  margin-left: 8px;
+}
+@media (max-width: 600px) {
+  .demo-summary .short {
+    display: inline;
+  }
+  .demo-summary .long,
+  .demo-summary .summary-tags {
+    display: none;
+  }
+}
+/* The Anubis head in gold, as the extension's summary starts. */
 .demo-summary .mark {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  margin-right: 8px;
-  transform: rotate(45deg);
-  background: var(--vp-c-brand-3);
+  display: flex;
+  flex: none;
+  align-items: center;
+  height: 20px;
+  color: var(--vp-c-brand-3);
 }
 .demo-link {
   font-weight: 600;
@@ -172,7 +358,7 @@ html:not(.dark) .dark-only,
 .chips .fold-inner {
   display: flex;
   flex-wrap: wrap;
-  gap: 0 14px;
+  gap: 2px 14px;
 }
 .summary-tags .fold-inner {
   padding-bottom: 8px;
@@ -251,22 +437,63 @@ html:not(.dark) .dark-only,
 .demo-result .chip.on {
   opacity: 1;
 }
-.demo-raised {
+/* Labels under a title, as the extension's .verdict: Raised in gold, Lowered muted,
+   each after its icon. A pinned site has none; its button shows the pin. */
+.demo-verdict {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12.5px;
-  font-weight: 600;
+  color: var(--vp-c-text-2);
+  white-space: nowrap;
+}
+.demo-verdict.raise {
   color: var(--vp-c-brand-1);
+}
+.demo-verdict .chip-icon,
+.hidden-line .gone-icon {
+  display: flex;
+}
+.demo-verdict svg {
+  width: 13px;
+  height: 13px;
 }
 .demo-result.lowered {
   opacity: var(--demo-lowered);
 }
+/* The hidden line, as the extension's .gone: one line, the site and its reason cut
+   short with an ellipsis where they don't fit, so Show stays on the line. */
 .hidden-line .fold-inner {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   padding-top: 14px;
+  font-size: 12.5px;
   color: var(--vp-c-text-2);
 }
-/* The button on each result: muted at Normal, gold once the site is ranked. */
+.hidden-line .gone-icon {
+  flex: none;
+  opacity: 0.8;
+}
+.hidden-line .gone-icon svg {
+  width: 14px;
+  height: 14px;
+}
+.hidden-line .why {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hidden-line b {
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+}
+.hidden-line .demo-link {
+  flex: none;
+}
+/* The button on each result, as the extension's .weigh: muted, its balance tipping
+   with the ranking, and gold only for a pinned site. */
 .demo-weigh {
   display: grid;
   place-items: center;
@@ -277,19 +504,16 @@ html:not(.dark) .dark-only,
   color: var(--vp-c-text-2);
   opacity: 0.6;
 }
-.demo-weigh:not(.normal) {
+.demo-weigh.pin {
   color: var(--vp-c-brand-1);
   opacity: 1;
 }
 .demo-result.pinned {
   margin: 8px -10px 0;
   padding: 0 10px 12px;
-  border: 1px solid var(--vp-c-brand-3);
+  /* The extension's frame: gold at 55%. */
+  border: 1px solid rgb(212 166 55 / 0.55);
   border-radius: 10px;
-}
-.hidden-site {
-  font-weight: 600;
-  color: var(--vp-c-text-1);
 }
 .demo-block .block-heading {
   margin-bottom: 6px;
@@ -391,34 +615,80 @@ html:not(.dark) .dark-only,
 }
 
 @media (min-width: 640px) {
-  .scroll-demo {
-    padding: 0 48px;
+  .scroll-demo,
+  .home-highlights {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+  .home-closing {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+  .home-highlights {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .demo-stage {
+    margin: 0 -48px;
+    padding: 12px 48px;
+  }
+  .home-title {
+    font-size: 48px;
+    line-height: 52px;
   }
 }
 @media (min-width: 960px) {
   .scroll-demo {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: 64px;
-    padding: 0 64px;
+    column-gap: 64px;
+    padding: 32px 64px 0;
+  }
+  .demo-intro {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: calc(100vh - var(--vp-nav-height) - 96px);
+    padding: 0 0 32px;
+  }
+  .home-title {
+    font-size: 56px;
+    line-height: 60px;
+  }
+  .home-lead {
+    font-size: 19px;
+    line-height: 30px;
   }
   .demo-stage {
     grid-column: 2;
-    grid-row: 1;
+    grid-row: 1 / span 2;
+    align-self: start;
     top: calc(var(--vp-nav-height) + 32px);
     height: min(640px, calc(100vh - var(--vp-nav-height) - 64px));
+    margin: 0;
     padding: 0;
   }
-  .demo-steps {
+  .demo-track {
     grid-column: 1;
-    grid-row: 1;
+    grid-row: 2;
   }
+  /* Short enough that the steps either side show, dimmed, around the current one. */
   .demo-step {
+    min-height: 60vh;
+  }
+  .demo-step:last-child {
     min-height: 80vh;
   }
-  .demo-step:first-child {
-    min-height: 60vh;
-    justify-content: flex-start;
-    padding-top: 48px;
+  .home-highlights {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: 64px 64px 80px;
+  }
+  .home-closing {
+    padding: 56px 64px 72px;
+  }
+  .home-closing-inner {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 64px;
   }
 }
 

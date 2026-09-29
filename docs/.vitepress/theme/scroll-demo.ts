@@ -1,10 +1,12 @@
 import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, ref, type VNode } from 'vue';
 
-// The homepage's demo, below its heading: one search on a drawn results page that
-// Anubis works through as you scroll. Each step on the left changes the page on the
-// right: clean-up removes the panels, a site is hidden, and the rest are ranked,
-// then tagged. The words match what the extension says (the summary, the hidden line,
-// the tags). Without JavaScript, or before it loads, the page shows the first step.
+// The homepage's demo: one search on a drawn results page that Anubis works through
+// as you scroll. The page's heading (the default slot, from home.ts) is the first
+// step, beside the page before Anubis. Each step after it changes the page:
+// clean-up removes the panels, a site is hidden, and the rest are ranked, then
+// tagged, while a line beside the steps fills as you go. The words match what the
+// extension says (the summary, the hidden line, the tags). Without JavaScript, or
+// before it loads, the page shows the first step.
 
 type Tag = { name: string; color: string };
 type Result = {
@@ -51,16 +53,46 @@ const SUMMARY = [
   `Anubis pinned 1, raised 1, lowered 1, and hid 1 of 5 results. It also removed ${REMOVED}.`,
 ];
 
+// The steps after the heading; the heading is step 1, the page before Anubis.
+// The same in a few words, as the extension says it on phones (shortSummary), with
+// Details for the rest.
+const SHORT = [
+  '',
+  '',
+  'Anubis cleaned up the page.',
+  'Anubis changed 1 of 5 results and cleaned up the page.',
+  'Anubis changed 4 of 5 results and cleaned up the page.',
+  'Anubis changed 4 of 5 results and cleaned up the page.',
+];
+
 const STEPS: { title: string; text: string }[] = [
-  { title: 'Before Anubis', text: 'Your results are in there somewhere, under an AI answer, videos, and a list of questions.' },
   { title: 'Clutter out', text: 'Anubis strips AI answers, video panels, and question lists. You pick which.' },
   { title: 'Done with a site?', text: 'Hide it from the scales beside any result. It stays hidden on every search, folded to one line in case you want it back.' },
   { title: 'Your sites first', text: 'Pin or raise the sites you trust. Lower the ones you put up with. The scales tip to show where each one stands.' },
   { title: 'Know before you click', text: 'Tags from lists mark reference sites, paywalls, and more. The summary says what changed, and Show hidden undoes it.' },
 ];
 
-// The button on each result, as utils/icons.ts draws it (copied, since that module
-// needs the extension's APIs): the balance tipped to the ranking, the pin, or the
+// Everything drawn here copies what the extension puts on a search page, so the demo
+// shows what people will see. Check it against the extension after changing any of
+// these, and update the demo with them:
+// - icons: utils/icons.ts (WEIGH_ICONS, LEVEL_ICONS, ICON_ANUBIS), copied because that
+//   module needs the extension's APIs;
+// - the summary's wording: utils/summary.ts and the summary… messages in
+//   public/_locales/en/messages.json; its mark and layout: .summary in
+//   entrypoints/content/shadow.css. On phones (600px or less) it's the short form
+//   (shortSummary) with Show hidden and Details, and the tags wait behind Details;
+// - the labels under a title: renderChips in ui.ts and .chips and .verdict in
+//   shadow.css (Raised in gold and Lowered muted, each with its icon; a pinned site
+//   has no label, since its button shows the pin);
+// - the button on each result: .weigh in shadow.css (muted, and gold only for a
+//   pinned site);
+// - the hidden line: renderHiddenBar in entrypoints/content/ui.ts and .gone in
+//   shadow.css: the crossed-out eye, then the site and its reason on one line, cut
+//   short with an ellipsis when it doesn't fit (as it often doesn't on a phone), then
+//   Show;
+// - lowered and pinned results: entrypoints/content/page.css (the fade, the frame).
+
+// The button on each result: the balance tipped to the ranking, the pin, or the
 // crossed-out eye.
 type Level = 'hide' | 'lower' | 'normal' | 'raise' | 'pin';
 const svg = (body: string) =>
@@ -79,6 +111,13 @@ const WEIGH: Record<Level, string> = {
   pin: svg('<path d="M9.8 2.2l4 4-1.6.5-2.6 2.6.3 3.1-1.2 1.2L5.4 10.3 2.2 13.8M5.4 10.3L2.3 7.2l1.2-1.2 3.1.3 2.6-2.6z"/>'),
 };
 // A new key on each ranking, so the icon swaps in with a small tip.
+// The labels' icons (LEVEL_ICONS) and the summary's mark (ICON_ANUBIS, its eye cut out
+// in the page's colour).
+const CHIP_ICONS = { raise: svg('<path d="M4 9.5l4-4 4 4"/>'), lower: svg('<path d="M4 6.5l4 4 4-4"/>') };
+const MARK =
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="26 14 82 108" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M39.5 19 L55 48 L101 63 Q105 66 100.5 70 L79 72.5 Q63 76 62 88 L62 97 L32 97 Z"/><path fill="currentColor" d="M31 105 L63 105 L65 118 L30 118 Z"/><ellipse cx="67" cy="58" rx="4.2" ry="2.7" transform="rotate(18 67 58)" fill="var(--demo-page)"/></svg>';
+const chip = (on: boolean, level: 'raise' | 'lower', text: string) =>
+  h('span', { class: ['chip', 'demo-verdict', level, { on }] }, [h('span', { class: 'chip-icon', innerHTML: CHIP_ICONS[level] }), text]);
 const weigh = (level: Level) => h('span', { key: level, class: ['demo-weigh', level], innerHTML: WEIGH[level] });
 
 const isBlock = (item: Item): item is Block => 'heading' in item;
@@ -94,6 +133,7 @@ function renderResult(r: Result, step: number): VNode {
   const hidden = !!r.hidden && step >= 3;
   const pinned = !!r.pinned && step >= 4;
   const raised = !!r.raised && step >= 4;
+  const lowered = !!r.lowered && step >= 4;
   const tagged = !!r.tag && step >= 5;
   const level: Level = step < 4 ? 'normal' : r.pinned ? 'pin' : r.raised ? 'raise' : r.lowered ? 'lower' : 'normal';
   return h('div', { class: ['demo-result', { lowered: r.lowered && step >= 4, pinned }] }, [
@@ -105,16 +145,16 @@ function renderResult(r: Result, step: number): VNode {
         weigh(level),
       ]),
       h('div', { class: 'title' }, r.title),
-      fold(pinned || raised || tagged, 'chips', [
-        r.pinned ? h('span', { class: ['chip', 'demo-raised', { on: pinned }] }, 'Pinned') : null,
-        r.raised ? h('span', { class: ['chip', 'demo-raised', { on: raised }] }, 'Raised') : null,
+      fold(raised || lowered || tagged, 'chips', [
+        r.raised ? chip(raised, 'raise', 'Raised') : null,
+        r.lowered ? chip(lowered, 'lower', 'Lowered') : null,
         r.tag ? h('span', { class: ['chip', { on: tagged }] }, [tag(r.tag)]) : null,
       ]),
       h('div', { class: 'snippet' }, r.snippet),
     ]),
     fold(hidden, 'hidden-line', [
-      h('span', { class: 'hidden-site' }, r.url.split(' ')[0]!.replace(/^www\./, '')),
-      ' hidden by your list ',
+      h('span', { class: 'gone-icon', innerHTML: WEIGH.hide }),
+      h('span', { class: 'why' }, [h('b', r.url.split(' ')[0]!.replace(/^www\./, '')), ' hidden by your list']),
       h('span', { class: 'demo-link' }, 'Show'),
       weigh('hide'),
     ]),
@@ -138,7 +178,17 @@ function renderPage(step: number): VNode {
   return h('div', { class: 'demo-page', 'aria-hidden': 'true' }, [
     h('div', { class: 'searchbar' }, [h('span', 'anubis'), h('span', { class: 'lens' })]),
     fold(step >= 2, 'demo-summary', [
-      h('p', [h('span', { class: 'mark' }), SUMMARY[step], ' ', h('span', { class: 'demo-link' }, 'Show hidden')]),
+      h('p', [
+        h('span', { class: 'mark', innerHTML: MARK }),
+        h('span', { class: 'long' }, [SUMMARY[step], ' ', h('span', { class: 'demo-link' }, 'Show hidden')]),
+        h('span', { class: 'short' }, [
+          SHORT[step],
+          ' ',
+          h('span', { class: 'demo-link' }, 'Show hidden'),
+          ' ',
+          h('span', { class: 'demo-link' }, 'Details'),
+        ]),
+      ]),
       fold(step >= 5, 'summary-tags', [tag(REFERENCE, 3), tag(PAYWALL, 1)]),
     ]),
     h(
@@ -155,9 +205,12 @@ function renderPage(step: number): VNode {
 
 export default defineComponent({
   name: 'ScrollDemo',
-  setup() {
+  setup(_, { slots }) {
     const step = ref(1);
     const root = ref<HTMLElement>();
+    const track = ref<HTMLElement>();
+    const rail = ref<HTMLElement>();
+    const fill = ref<HTMLElement>();
     let frame = 0;
 
     // Slide results to their new places when the order changes (first, last, invert,
@@ -187,15 +240,25 @@ export default defineComponent({
     };
 
     // The step is the last one whose heading has passed a line across the window:
-    // halfway down beside the page, lower on phones, where the page sits above.
+    // halfway down beside the page, lower on phones, where the page sits above. The
+    // line beside the steps runs from the first step's marker to the last one's and
+    // fills up to that same line, so it moves with the scroll, not only per step.
     const update = () => {
       frame = 0;
-      const steps = root.value?.querySelectorAll('.demo-step h2') ?? [];
+      const headings = [...(track.value?.querySelectorAll<HTMLElement>('.demo-step h2') ?? [])];
       const line = innerHeight * (matchMedia('(min-width: 960px)').matches ? 0.55 : 0.8);
       let current = 1;
-      steps.forEach((el, i) => {
-        if (el.getBoundingClientRect().top < line) current = i + 1;
+      headings.forEach((el, i) => {
+        if (el.getBoundingClientRect().top < line) current = i + 2;
       });
+      if (track.value && rail.value && fill.value && headings.length) {
+        const top = track.value.getBoundingClientRect().top;
+        const first = headings[0]!.getBoundingClientRect().top + 14;
+        const last = headings[headings.length - 1]!.getBoundingClientRect().top + 14;
+        rail.value.style.top = `${first - top}px`;
+        rail.value.style.height = `${last - first}px`;
+        fill.value.style.height = `${Math.min(Math.max(line - first, 0), last - first)}px`;
+      }
       void go(current);
     };
     const onScroll = () => {
@@ -214,19 +277,29 @@ export default defineComponent({
     });
 
     return () =>
-      h('section', { ref: root, class: 'scroll-demo', 'aria-label': 'What Anubis does to a search' }, [
+      h('div', { ref: root, class: 'scroll-demo' }, [
+        h('div', { class: ['demo-intro', { active: step.value === 1 }] }, [
+          slots.default?.(),
+          h('p', { class: 'demo-cue' }, [h('span', { class: 'arrow', 'aria-hidden': 'true' }, '↓'), ' Scroll, and watch Anubis tidy up this search']),
+        ]),
         h('div', { class: 'demo-stage' }, [renderPage(step.value)]),
-        h(
-          'ol',
-          { class: 'demo-steps' },
-          STEPS.map((s, i) =>
-            h('li', { class: ['demo-step', { active: step.value === i + 1 }], 'aria-current': step.value === i + 1 ? 'step' : undefined }, [
-              h('h2', s.title),
-              h('p', s.text),
-              i === 0 ? h('p', { class: 'demo-cue' }, [h('span', { class: 'arrow', 'aria-hidden': 'true' }, '↓'), ' Scroll, and watch Anubis tidy it up']) : null,
-            ]),
+        h('div', { ref: track, class: 'demo-track' }, [
+          h('div', { ref: rail, class: 'demo-rail', 'aria-hidden': 'true' }, [h('span', { ref: fill, class: 'demo-rail-fill' })]),
+          h(
+            'ol',
+            { class: 'demo-steps', 'aria-label': 'What Anubis does to a search' },
+            STEPS.map((s, i) =>
+              h(
+                'li',
+                {
+                  class: ['demo-step', { active: step.value === i + 2, reached: step.value >= i + 2 }],
+                  'aria-current': step.value === i + 2 ? 'step' : undefined,
+                },
+                [h('h2', [h('span', { class: 'demo-marker', 'aria-hidden': 'true' }), s.title]), h('p', s.text)],
+              ),
+            ),
           ),
-        ),
+        ]),
       ]);
   },
 });
