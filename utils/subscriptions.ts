@@ -250,3 +250,75 @@ export function suggestionUrl(issues: string | undefined, title: string, body: s
     return undefined;
   }
 }
+
+/** The issue tracker of the forge repository an address points into: a raw file, a page, the repository itself. */
+function repoIssues(address: string | undefined): string | undefined {
+  let u: URL;
+  try {
+    u = new URL(address ?? '');
+  } catch {
+    return undefined;
+  }
+  if (u.protocol !== 'https:') return undefined;
+  const parts = u.pathname.split('/').filter(Boolean);
+  switch (u.hostname) {
+    case 'github.com':
+    case 'raw.githubusercontent.com':
+      return parts.length >= 2 ? `https://github.com/${parts[0]}/${parts[1]}/issues` : undefined;
+    case 'codeberg.org':
+      return parts.length >= 2 ? `https://codeberg.org/${parts[0]}/${parts[1]}/issues` : undefined;
+    case 'gitlab.com': {
+      // GitLab projects can sit in nested groups; everything before `/-/` is the project.
+      const dash = parts.indexOf('-');
+      const project = dash >= 0 ? parts.slice(0, dash) : parts;
+      return project.length >= 2 ? `https://gitlab.com/${project.join('/')}/-/issues` : undefined;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Where a list takes reports of its mistakes: its `! issues:`, else the tracker of
+ * the repository its homepage or its own address is in. Most lists live in a Git
+ * repository, so this works for lists that never set `! issues:`.
+ */
+export function reportTracker(url: string, meta: { issues?: string; homepage?: string }): string | undefined {
+  return meta.issues ?? repoIssues(meta.homepage) ?? repoIssues(url);
+}
+
+/** "a", "a and b", "a, b and c" */
+function joinAnd(items: string[]): string {
+  return items.length < 2 ? (items[0] ?? '') : `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
+}
+
+/**
+ * A pre-filled issue telling a list it's wrong about a result: what the list does,
+ * the rules that matched and the result's address. The issue is written in English
+ * whatever the interface language, for the list's maintainers. The address loses
+ * its query and fragment, which can carry session details.
+ */
+export function reportUrl(
+  issues: string | undefined,
+  list: string,
+  resultUrl: string,
+  reasons: { text: string; rule?: { line: number; raw: string } }[],
+): string | undefined {
+  let url: URL;
+  try {
+    url = new URL(resultUrl);
+  } catch {
+    return undefined;
+  }
+  const site = url.hostname.replace(/^www\./, '');
+  const rules = reasons.flatMap((r) => (r.rule ? [r.rule] : []));
+  const lines = [`Result: ${url.origin}${url.pathname}`, '', `**${list}** ${joinAnd([...new Set(reasons.map((r) => r.text))])}, and I think that’s wrong.`];
+  if (rules.length) {
+    // A fence longer than any run of backticks in the rules, so none can close it.
+    const longest = Math.max(0, ...rules.map((r) => Math.max(0, ...(r.raw.match(/`+/g) ?? []).map((m) => m.length))));
+    const fence = '`'.repeat(Math.max(3, longest + 1));
+    const numbers = joinAnd(rules.map((r) => String(r.line)));
+    lines.push('', rules.length === 1 ? `Rule on line ${numbers}:` : `Rules on lines ${numbers}:`, fence, ...rules.map((r) => r.raw), fence);
+  }
+  lines.push('', 'What should change:', '', '', '_Sent from Anubis._');
+  return suggestionUrl(issues, `Wrong rule for ${site}`, lines.join('\n'));
+}

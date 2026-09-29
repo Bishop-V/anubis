@@ -63,6 +63,11 @@
   "hiddenMore_one": { "message": "and $1 more", "description": "After a site's name on the one line standing for several hidden results in a row, e.g. “fandom.com and 1 more hidden by your list”." },
   "hiddenMore_other": { "message": "and $1 more" },
 
+  "menuSuggest": { "message": "Should a list include it? Suggest it to $1.", "description": "In the menu on a result, once you've ranked or tagged the site yourself. $1 is one or two list names, each a link that opens a pre-filled issue on that list's issue tracker, joined like “A or B”." },
+  "menuSuggestTitle": { "message": "Propose $1 to $2 on its issue tracker", "description": "Tooltip of a list's name in menuSuggest. $1 is a site, $2 the list's name." },
+  "menuReport": { "message": "Wrong? Report it to $1.", "description": "In the menu on a result, under the lines saying what each list does with it. $1 is those lists' names, each a link that opens a pre-filled issue on that list's issue tracker, joined like “A or B”." },
+  "menuReportTitle": { "message": "Tell $1 it’s wrong about this result, on its issue tracker", "description": "Tooltip of a list's name in menuReport. $1 is the list's name." },
+
   "offerTitle": { "message": "Subscribe to $1?", "description": "Settings → Lists, after a subscribe link opened it. $1 is the list's name." },
   "offerTrust": { "message": "A list can hide, rank and tag sites in your results. Only subscribe to lists you trust." },
   "offerPermission": { "message": "Your browser will then ask to let Anubis read from $1, the site the list is on.", "description": "$1 is a website, e.g. example.org." },

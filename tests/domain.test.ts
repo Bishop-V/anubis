@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { decodeBingRedirect, displayedDomainToUrl, domainChoices, normalizeDomain, siteOf } from '@/utils/domain';
 import { existsSync } from 'node:fs';
 import { DOCS_URL, readSubscribeLink, SUBSCRIBE_PAGE, subscribeLink } from '@/utils/links';
-import { originPermissionFor, suggestionUrl, toRawUrl } from '@/utils/subscriptions';
+import { originPermissionFor, reportTracker, reportUrl, suggestionUrl, toRawUrl } from '@/utils/subscriptions';
 
 describe('domains', () => {
   it('normalizes what people type', () => {
@@ -61,6 +61,44 @@ describe('subscription URLs', () => {
 
   it('never builds a link from a non-web address', () => {
     expect(suggestionUrl('javascript:alert(1)', 't', 'b')).toBeUndefined();
+    expect(reportUrl('javascript:alert(1)', 'L', 'https://a.com/', [{ text: 'hides it' }])).toBeUndefined();
+  });
+
+  it('finds where a list takes reports', () => {
+    expect(reportTracker('https://raw.githubusercontent.com/o/r/main/list.txt', {})).toBe('https://github.com/o/r/issues');
+    expect(reportTracker('https://raw.githubusercontent.com/o/r/refs/heads/main/a/b.goggle', {})).toBe('https://github.com/o/r/issues');
+    expect(reportTracker('https://gitlab.com/g/sub/r/-/raw/main/list.txt', {})).toBe('https://gitlab.com/g/sub/r/-/issues');
+    expect(reportTracker('https://codeberg.org/o/r/raw/branch/main/list.txt', {})).toBe('https://codeberg.org/o/r/issues');
+    // The list's own say comes first, then its homepage.
+    expect(reportTracker('https://raw.githubusercontent.com/o/r/main/x', { issues: 'https://example.org/bugs' })).toBe('https://example.org/bugs');
+    expect(reportTracker('https://raw.githubusercontent.com/mirror/r/main/x', { homepage: 'https://github.com/o/r' })).toBe('https://github.com/o/r/issues');
+    expect(reportTracker('https://raw.githubusercontent.com/o/r/main/x', { homepage: 'https://example.org/' })).toBe('https://github.com/o/r/issues');
+    // Not in a repository: a gist, a plain web host, a user page.
+    expect(reportTracker('https://gist.githubusercontent.com/u/abc/raw', {})).toBeUndefined();
+    expect(reportTracker('https://example.org/list.txt', {})).toBeUndefined();
+    expect(reportTracker('https://example.org/list.txt', { homepage: 'https://github.com/u' })).toBeUndefined();
+  });
+
+  it('builds a report with the rules that matched', () => {
+    const url = new URL(
+      reportUrl('https://github.com/o/r/issues', 'AI list', 'https://www.example.com/a/b?session=secret#top', [
+        { text: 'hides it', rule: { line: 12, raw: '*://*.example.com/*' } },
+        { text: 'tags it “AI”', rule: { line: 40, raw: '/ex`ample/' } },
+      ])!,
+    );
+    expect(url.pathname).toBe('/o/r/issues/new');
+    expect(url.searchParams.get('title')).toBe('Wrong rule for example.com');
+    const body = url.searchParams.get('body')!;
+    expect(body).toContain('Result: https://www.example.com/a/b\n');
+    expect(body).not.toContain('secret');
+    expect(body).toContain('**AI list** hides it and tags it “AI”, and I think that’s wrong.');
+    expect(body).toContain('Rules on lines 12 and 40:\n```\n*://*.example.com/*\n/ex`ample/\n```');
+  });
+
+  it('reports a lens leaving a result out, which has no rule', () => {
+    const body = new URL(reportUrl('https://github.com/o/r/issues', 'Lens', 'https://a.com/', [{ text: 'doesn’t include it, so it’s hidden' }])!).searchParams.get('body')!;
+    expect(body).toContain('**Lens** doesn’t include it, so it’s hidden, and I think that’s wrong.');
+    expect(body).not.toContain('Rule');
   });
 });
 

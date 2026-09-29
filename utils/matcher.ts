@@ -79,6 +79,8 @@ export interface Reason {
   listId: string;
   personal: boolean;
   text: string;
+  /** The rule that matched, as written in the list. Absent when a lens leaves the result out. */
+  rule?: { line: number; raw: string };
 }
 
 export interface Verdict {
@@ -225,8 +227,14 @@ export function evaluate(
 
   for (const list of lists) {
     const matched = matchList(list, t);
-    const reason = (text: string) =>
-      verdict.reasons.push({ list: list.name, listId: list.id, personal: list.personal, text });
+    const reason = (text: string, rule?: Rule) =>
+      verdict.reasons.push({
+        list: list.name,
+        listId: list.id,
+        personal: list.personal,
+        text,
+        rule: rule && { line: rule.line, raw: rule.raw },
+      });
     const label = (id: string) => list.tags.find((t) => t.id === id)?.label ?? id;
 
     if (!matched.length) {
@@ -241,7 +249,7 @@ export function evaluate(
 
     if (list.personal) {
       verdict.personal = personalLevel(matched);
-      for (const rule of matched) reason(describe(rule, label));
+      for (const rule of matched) reason(describe(rule, label), rule);
       // Personal tags still carry the user's tag choices.
       for (const rule of matched) {
         const eff = tagOverride(rule, prefs);
@@ -262,7 +270,7 @@ export function evaluate(
       if (eff.discard) listDiscard ??= eff.tag ? { kind: 'tag', name: eff.tag } : { kind: 'list', name: list.name };
       else if (eff.boost > 0) up = Math.max(up, eff.boost);
       else if (eff.boost < 0) down = Math.min(down, eff.boost);
-      reason(describe(rule, label));
+      reason(describe(rule, label), rule);
     }
     if (listDiscard) hide(listDiscard);
     else score += up > 0 ? up : down;

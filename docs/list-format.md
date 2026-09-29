@@ -34,7 +34,7 @@ Lines starting with `!` are comments. A comment of the form `! key: value` is me
 | `description` | One or two sentences on what the list is for. |
 | `author` | Who maintains it. |
 | `homepage` | Where to read more. |
-| `issues` | An issue tracker. When set, the menu on each result offers "Suggest it to *this list*", which opens a pre-filled issue. GitHub, GitLab and Codeberg trackers are supported. |
+| `issues` | An issue tracker. When set, the menu on each result offers "Suggest it to *this list*", which opens a pre-filled issue, and reports of mistakes ("Wrong? Report it to *this list*") go there. Without it, reports go to the issue tracker of the repository in `homepage`, or else of the one the list is published from. GitHub, GitLab and Codeberg trackers are supported. |
 | `license` | The license of the list's contents. CC0-1.0 is a good default for lists meant to be shared. |
 | `avatar` | A hex colour for the list. |
 | `expires` | How often Anubis should check for updates, as `N hours` or `N days`. The default is a day. |

@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { fakeBrowser } from 'wxt/testing/fake-browser';
-import { t, tn } from '@/utils/i18n';
+import { t, tList, tn } from '@/utils/i18n';
 
 // Translations live in public/_locales/<language>/messages.json; English is the source.
 type Messages = Record<string, { message: string; description?: string }>;
@@ -62,5 +62,12 @@ describe('t and tn', () => {
     expect(tn('popupListCount', 1)).toBe('1 list');
     expect(tn('popupListCount', 0)).toBe('0 lists');
     expect(tn('popupTagCount', 12)).toBe('12 tags');
+  });
+
+  it('puts a list of items, which can be elements, in place of a placeholder', () => {
+    const a = { name: 'A' };
+    const b = { name: 'B' };
+    expect(tList('menuReport', [a], 'disjunction')).toEqual(['Wrong? Report it to ', a, '.']);
+    expect(tList('menuReport', [a, b], 'disjunction')).toEqual(['Wrong? Report it to ', a, ' or ', b, '.']);
   });
 });

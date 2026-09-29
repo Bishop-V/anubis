@@ -10,7 +10,7 @@ import {
   settingsItem,
   type Settings,
 } from './storage';
-import { displayName, getSubscriptions, listText } from './subscriptions';
+import { displayName, getSubscriptions, listText, reportTracker } from './subscriptions';
 
 export const PERSONAL_ID = 'personal';
 export const PERSONAL_NAME = 'Your list';
@@ -22,6 +22,8 @@ export interface RuleSet {
   /** Personal list first, then enabled subscriptions. */
   lists: CompiledList[];
   meta: Record<string, ListMeta>;
+  /** Where each subscribed list takes reports of its mistakes, when it has somewhere. */
+  trackers: Record<string, string>;
   tags: Map<string, TagDef>;
 }
 
@@ -37,6 +39,7 @@ export async function loadRuleSet(): Promise<RuleSet> {
   const personal = parseList(personalText);
   const lists: CompiledList[] = [compileList(PERSONAL_ID, personal, true, PERSONAL_NAME)];
   const meta: Record<string, ListMeta> = { [PERSONAL_ID]: personal.meta };
+  const trackers: Record<string, string> = {};
 
   for (const sub of subs) {
     if (!sub.enabled) continue;
@@ -45,9 +48,11 @@ export async function loadRuleSet(): Promise<RuleSet> {
     const parsed = parseList(text);
     lists.push(compileList(sub.id, parsed, false, displayName(sub, parsed.meta)));
     meta[sub.id] = parsed.meta;
+    const tracker = reportTracker(sub.url, parsed.meta);
+    if (tracker) trackers[sub.id] = tracker;
   }
 
-  return { settings, prefs, personalText, lists, meta, tags: collectTags(lists, prefs) };
+  return { settings, prefs, personalText, lists, meta, trackers, tags: collectTags(lists, prefs) };
 }
 
 /** Calls back (debounced) whenever anything that affects the rule set changes. */

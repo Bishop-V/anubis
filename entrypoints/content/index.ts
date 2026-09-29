@@ -6,7 +6,7 @@ import { send, type Message, type PageStats } from '@/utils/messages';
 import { formatSiteLine, getSite, setSiteLevel, toggleSiteTag, upsertTagDef, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal } from '@/utils/storage';
-import { suggestionUrl } from '@/utils/subscriptions';
+import { reportUrl, suggestionUrl } from '@/utils/subscriptions';
 import { findClutter, redirectFor, watchAllTab } from './cleanup';
 import { freshState, weighDeeper } from './deeper';
 import './page.css';
@@ -283,9 +283,16 @@ export default defineContentScript({
       if (popoverAnchor() === anchor && !anchor.isConnected) return closePopover();
       const verdict = verdictFor(result);
       const baseline = evaluate({ url: result.url, title: result.title, description: result.description }, rules.lists.filter((l) => !l.personal), rules.prefs);
+      // Suggestions go only to lists that ask for them with `! issues:`; reports go to
+      // any list with a tracker, which most have as Git repositories.
       const trackers = rules.lists
         .filter((l) => !l.personal && rules.meta[l.id]?.issues)
-        .map((l) => ({ name: l.name, issues: rules.meta[l.id]!.issues!, tags: l.tags.map((t) => t.id) }));
+        .map((l) => ({ id: l.id, name: l.name, issues: rules.meta[l.id]!.issues!, tags: l.tags.map((t) => t.id) }));
+      const reports = rules.lists.flatMap((l) => {
+        const reasons = verdict.reasons.filter((r) => r.listId === l.id);
+        const href = !l.personal && reasons.length ? reportUrl(rules.trackers[l.id], l.name, result.url, reasons) : undefined;
+        return href ? [{ id: l.id, name: l.name, href }] : [];
+      });
       openPopover(
         anchor,
         {
@@ -295,6 +302,7 @@ export default defineContentScript({
           personalText: rules.personalText,
           tags: rules.tags,
           trackers,
+          reports,
           theme: pageTheme(rules.settings.theme),
         },
         {

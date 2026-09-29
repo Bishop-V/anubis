@@ -15,7 +15,7 @@ Only these:
 - **The directory of lists** on GitHub, when you open **Settings → Lists**, so **More lists** shows the newest ones.
 - **The search engine you're on**, for [Load more results](./more-results.md), which loads its next page like the "Next" link would.
 - **`noai.duckduckgo.com`**, if [AI answers](./clean-up.md) are removed, because DuckDuckGo searches open there. On Google, the Web tab option adds `udm=14` to the search's address.
-- **Issue trackers**, when you choose "Suggest it to…". That opens a page in a new tab; nothing is sent unless you submit the issue yourself.
+- **Issue trackers**, when you choose "Report it to…" or "Suggest it to…". That opens a page in a new tab, with the result's address (without anything after `?`, which can carry details of your visit) and the rule that matched; nothing is sent unless you submit the issue yourself.
 
 Downloading a list works like any other download: the site hosting it sees your IP address and which file was asked for. Anubis sends nothing else with it: no cookies, no identifier, and nothing about your searches.
 

@@ -23,13 +23,31 @@ export function t(key: MessageKey, ...subs: (string | number)[]): string {
   return getMessage(key, subs.map(String)) || key;
 }
 
+/** The language the messages are in, as a BCP 47 tag (pt-BR) for Intl. */
+const lang = () => t('langCode').replace('_', '-');
+
 let pluralRules: Intl.PluralRules | undefined;
 
 /** A message about `count` things, in the right plural form. `$1` is the count. */
 export function tn(key: PluralKey, count: number, ...subs: (string | number)[]): string {
-  pluralRules ??= new Intl.PluralRules(t('langCode').replace('_', '-'));
+  pluralRules ??= new Intl.PluralRules(lang());
   const args = [String(count), ...subs.map(String)];
   return getMessage(`${key}_${pluralRules.select(count)}`, args) || getMessage(`${key}_other`, args) || key;
+}
+
+// Stands in for the items while the message is looked up; a private-use
+// character, so it's never in a message.
+const SLOT = '\uE000';
+
+/**
+ * A message whose `$1` is a list of items that may be elements, such as links:
+ * "Suggest it to <a>A</a> or <a>B</a>." Returns the message's text with the items
+ * in place of `$1`, joined the way the language joins a list.
+ */
+export function tList<T>(key: MessageKey, items: T[], type: 'conjunction' | 'disjunction' = 'conjunction'): (string | T)[] {
+  const [before = '', after = ''] = t(key, SLOT).split(SLOT);
+  const parts = new Intl.ListFormat(lang(), { type }).formatToParts(items.map((_, i) => String(i)));
+  return [before, ...parts.map((p) => (p.type === 'element' ? items[Number(p.value)]! : p.value)), after];
 }
 
 /**
