@@ -16,10 +16,12 @@ html[data-anubis-hide='collapse'] [data-anubis-state~='hide']:not([data-anubis-r
 [data-anubis-removed]:not([data-anubis-reveal]) {
   display: none !important;
 }
-/* Shown again: marked, so it's clear they're normally removed. */
+/* Shown again: marked, so it's clear they're normally removed. The outline sits
+   just inside the block's own edge (and follows its rounded corners), so it
+   neither overlaps its neighbours nor stands off from the engine's panels. */
 [data-anubis-removed][data-anubis-reveal] {
   outline: 1px dashed color-mix(in srgb, currentColor 30%, transparent);
-  outline-offset: 6px;
+  outline-offset: -1px;
 }
 
 /* Hidden, "collapse" style: a run of hidden results in a row shares one line. */

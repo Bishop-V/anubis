@@ -8,11 +8,11 @@
 
 import { tJoin, tn, type PluralKey } from './i18n';
 
-export type CleanupKind = 'ai' | 'videos' | 'questions' | 'discussions' | 'news' | 'images' | 'related';
+export type CleanupKind = 'ai' | 'videos' | 'questions' | 'discussions' | 'news' | 'images' | 'related' | 'elsewhere';
 
 export type Cleanup = Record<CleanupKind, boolean>;
 
-export const NO_CLEANUP: Cleanup = { ai: false, videos: false, questions: false, discussions: false, news: false, images: false, related: false };
+export const NO_CLEANUP: Cleanup = { ai: false, videos: false, questions: false, discussions: false, news: false, images: false, related: false, elsewhere: false };
 
 export interface CleanupDef {
   id: CleanupKind;
@@ -112,6 +112,12 @@ export const CLEANUP: CleanupDef[] = [
     ],
     prefixes: ['Searches related to '],
   },
+  {
+    id: 'elsewhere',
+    label: 'Other search engines',
+    hint: 'Rows of buttons that repeat your search on another engine, like Brave’s “Find elsewhere”.',
+    headings: ['Find elsewhere', 'Search elsewhere'],
+  },
 ];
 
 /**
@@ -161,6 +167,7 @@ const REMOVED = {
   news: 'summaryRemovedNews',
   images: 'summaryRemovedImages',
   related: 'summaryRemovedRelated',
+  elsewhere: 'summaryRemovedElsewhere',
 } as const satisfies Record<CleanupKind, PluralKey>;
 
 /** "an AI answer and 2 video panels", or '' when nothing was removed. */
