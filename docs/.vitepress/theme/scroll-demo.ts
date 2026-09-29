@@ -81,8 +81,11 @@ const STEPS: { title: string; text: string }[] = [
 //   public/_locales/en/messages.json; its mark and layout: .summary in
 //   entrypoints/content/shadow.css. On phones (600px or less) it's the short form
 //   (shortSummary) with Show hidden and Details, and the tags wait behind Details;
-// - the labels under a title: .chips and .verdict in shadow.css (Pinned and Raised in
-//   gold, Pinned bold, Lowered muted, each with its icon);
+// - the labels under a title: renderChips in ui.ts and .chips and .verdict in
+//   shadow.css (Raised in gold and Lowered muted, each with its icon; a pinned site
+//   has no label, since its button shows the pin);
+// - the button on each result: .weigh in shadow.css (muted, and gold only for a
+//   pinned site);
 // - the hidden line: renderHiddenBar in entrypoints/content/ui.ts and .gone in
 //   shadow.css: the crossed-out eye, then the site and its reason on one line, cut
 //   short with an ellipsis when it doesn't fit (as it often doesn't on a phone), then
@@ -110,10 +113,10 @@ const WEIGH: Record<Level, string> = {
 // A new key on each ranking, so the icon swaps in with a small tip.
 // The labels' icons (LEVEL_ICONS) and the summary's mark (ICON_ANUBIS, its eye cut out
 // in the page's colour).
-const CHIP_ICONS = { pin: WEIGH.pin, raise: svg('<path d="M4 9.5l4-4 4 4"/>'), lower: svg('<path d="M4 6.5l4 4 4-4"/>') };
+const CHIP_ICONS = { raise: svg('<path d="M4 9.5l4-4 4 4"/>'), lower: svg('<path d="M4 6.5l4 4 4-4"/>') };
 const MARK =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="26 14 82 108" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M39.5 19 L55 48 L101 63 Q105 66 100.5 70 L79 72.5 Q63 76 62 88 L62 97 L32 97 Z"/><path fill="currentColor" d="M31 105 L63 105 L65 118 L30 118 Z"/><ellipse cx="67" cy="58" rx="4.2" ry="2.7" transform="rotate(18 67 58)" fill="var(--demo-page)"/></svg>';
-const chip = (on: boolean, level: 'pin' | 'raise' | 'lower', text: string) =>
+const chip = (on: boolean, level: 'raise' | 'lower', text: string) =>
   h('span', { class: ['chip', 'demo-verdict', level, { on }] }, [h('span', { class: 'chip-icon', innerHTML: CHIP_ICONS[level] }), text]);
 const weigh = (level: Level) => h('span', { key: level, class: ['demo-weigh', level], innerHTML: WEIGH[level] });
 
@@ -142,8 +145,7 @@ function renderResult(r: Result, step: number): VNode {
         weigh(level),
       ]),
       h('div', { class: 'title' }, r.title),
-      fold(pinned || raised || lowered || tagged, 'chips', [
-        r.pinned ? chip(pinned, 'pin', 'Pinned') : null,
+      fold(raised || lowered || tagged, 'chips', [
         r.raised ? chip(raised, 'raise', 'Raised') : null,
         r.lowered ? chip(lowered, 'lower', 'Lowered') : null,
         r.tag ? h('span', { class: ['chip', { on: tagged }] }, [tag(r.tag)]) : null,

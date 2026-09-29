@@ -329,6 +329,10 @@ body .VPContent .VPHome {
 .demo-summary .short {
   display: none;
 }
+/* With the space before it, about the extension's 12px between buttons. */
+.demo-summary .short .demo-link {
+  margin-left: 8px;
+}
 @media (max-width: 600px) {
   .demo-summary .short {
     display: inline;
@@ -433,8 +437,8 @@ body .VPContent .VPHome {
 .demo-result .chip.on {
   opacity: 1;
 }
-/* Labels under a title, as the extension's .verdict: Pinned and Raised in gold,
-   Pinned bold, Lowered muted, each after its icon. */
+/* Labels under a title, as the extension's .verdict: Raised in gold, Lowered muted,
+   each after its icon. A pinned site has none; its button shows the pin. */
 .demo-verdict {
   display: inline-flex;
   align-items: center;
@@ -443,12 +447,8 @@ body .VPContent .VPHome {
   color: var(--vp-c-text-2);
   white-space: nowrap;
 }
-.demo-verdict.pin,
 .demo-verdict.raise {
   color: var(--vp-c-brand-1);
-}
-.demo-verdict.pin {
-  font-weight: 600;
 }
 .demo-verdict .chip-icon,
 .hidden-line .gone-icon {
@@ -492,7 +492,8 @@ body .VPContent .VPHome {
 .hidden-line .demo-link {
   flex: none;
 }
-/* The button on each result: muted at Normal, gold once the site is ranked. */
+/* The button on each result, as the extension's .weigh: muted, its balance tipping
+   with the ranking, and gold only for a pinned site. */
 .demo-weigh {
   display: grid;
   place-items: center;
@@ -503,7 +504,7 @@ body .VPContent .VPHome {
   color: var(--vp-c-text-2);
   opacity: 0.6;
 }
-.demo-weigh:not(.normal) {
+.demo-weigh.pin {
   color: var(--vp-c-brand-1);
   opacity: 1;
 }
