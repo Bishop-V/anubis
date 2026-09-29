@@ -17,7 +17,7 @@ import {
   type SiteChange,
 } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
-import { colorSchemeItem, editPersonal, type Theme } from '@/utils/storage';
+import { colorSchemeItem, editPersonal, MAX_DEEPER, type Theme } from '@/utils/storage';
 import { reportUrl, suggestionUrl } from '@/utils/subscriptions';
 import { changeSentence } from '@/utils/summary';
 import { findClutter, mainColumn, redirectFor, watchAllTab, type Clutter } from './cleanup';
@@ -230,7 +230,7 @@ export default defineContentScript({
       // "Load more results automatically": once per search.
       if (rules.settings.deeper > 0 && stats.canGoDeeper && deeper.pages === 1 && !deeper.auto) {
         deeper.auto = true;
-        goDeeper(rules.settings.deeper);
+        goDeeper(Math.min(rules.settings.deeper, MAX_DEEPER));
       }
 
       lastResults = results;
