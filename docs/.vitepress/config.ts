@@ -36,6 +36,7 @@ export default defineConfig({
       { text: 'Wiki', link: '/guide/introduction', activeMatch: '/guide/' },
       { text: 'Lists', link: '/lists' },
       { text: 'List format', link: '/list-format' },
+      { text: 'Privacy', link: '/guide/privacy' },
     ],
     sidebar: [
       {

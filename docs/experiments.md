@@ -2,6 +2,12 @@
 
 What was tried while building the tagging and lists release, what failed, and what is still unverified. Newest notes go at the top of each section.
 
+## Store privacy disclosure (2026-09-29)
+
+- **Checked:** Google's current [User Data FAQ](https://developer.chrome.com/docs/webstore/program-policies/user-data-faq) says local processing is handling user data, requires a privacy policy and dashboard disclosure, and describes an exception for protocol clients connecting to user-specified servers. The FAQ does not decide whether Anubis's optional WebDAV feature qualifies, so confirm the dashboard categories and do not claim an exemption without checking the exact facts.
+- **Changed:** added the Limited Use statement to the privacy page, linked Privacy directly from site navigation, and replaced the store listing's absolute "nothing collected" wording with local processing and optional user-directed sync.
+- **Still blocked:** the release GitHub environment is not configured, store listings and real-page screenshots do not exist, and the Chrome dashboard's data categories must match the behavior and current policy. Firefox's consent prompt with a real WebDAV server also remains untested.
+
 ## Result selector indicators (2026-09-29)
 
 - Removed redundant "Pinned" and "Hidden" chips; "Raised" and "Lowered" remain. The scale button's pin is gold and keeps its accessible ranking name. DuckDuckGo's light and dark mocks check that other selector icons match the neighbouring menu button, while hover remains gold.

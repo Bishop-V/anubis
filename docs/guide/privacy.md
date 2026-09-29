@@ -1,6 +1,12 @@
 # Privacy and permissions
 
-Anubis has no server and collects nothing. Everything it knows about you stays in your browser, unless you connect a storage server of your own to sync between browsers.
+Anubis has no developer-operated server. It reads search results and the current tab's address in your browser to apply your choices; it does not send that browsing data to the developer. Your settings stay in your browser unless you connect a storage server of your own to sync between browsers.
+
+## How Anubis uses data
+
+Anubis uses information accessed through browser permissions only for its user-facing features: applying your rankings and tags to search results, showing the current site's settings in the popup, downloading subscribed lists, and syncing to a WebDAV server you connect. It does not send this information to the developer, use it for advertising, or let the developer read it. A sync file goes only to the WebDAV server you choose.
+
+This use complies with the Chrome Web Store User Data Policy, including its Limited Use requirements.
 
 ## What's stored, and where
 

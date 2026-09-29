@@ -27,7 +27,7 @@ Setting it up: create a Google Cloud project, turn on the Chrome Web Store API, 
 5. The privacy policy link below has to load: GitHub Pages must be publishing the docs site.
 6. Merge, then push a matching tag (`git tag v<version> && git push origin v<version>`). [`release.yml`](../.github/workflows/release.yml) builds the zips, creates the GitHub Release and, once approved, submits to Chrome, Firefox, and Edge.
 
-The release workflow rejects tags whose commit is not already on `main`, as well as tags that do not match `package.json`. Before the first submission, create the store listings manually, verify their permanent IDs and privacy answers, confirm the docs site is publishing on GitHub Pages, and configure the protected `release` environment with the store credentials. Do not test publishing against production store credentials from a pull request.
+The release workflow rejects tags whose commit is not already on `main`, as well as tags that do not match `package.json`. Before the first submission, create the store listings manually, verify their permanent IDs and privacy answers, confirm the docs site is publishing on GitHub Pages, and configure the protected `release` environment with the store credentials. As of 2026-09-29, that environment was not configured. Do not test publishing against production store credentials from a pull request.
 
 ## Chrome Web Store
 
@@ -69,7 +69,9 @@ The release workflow rejects tags whose commit is not already on `main`, as well
 
 > All JavaScript ships in the package. Subscribed lists are plain-text data (site names and patterns) that Anubis parses; nothing in them is run.
 
-**Data usage (decision required before submission):** Anubis reads search results and the current tab's address only inside the browser and sends none of it to the developer; settings sync through the browser's own account sync, which Anubis doesn't operate. The optional, user-chosen WebDAV sync sends ranked sites, settings, tag choices, and subscriptions to the server the user connects, and nowhere else. Decide against the store's current policy whether that user-directed transfer counts as collection; declare the applicable categories and explain that the user chooses the server if required. Do not submit until this classification is resolved.
+**Data usage:** Chrome's [User Data FAQ](https://developer.chrome.com/docs/webstore/program-policies/user-data-faq) says handling includes local processing, and that products which handle user data need a privacy policy. It also describes an exception for data transmitted between a protocol client and a user-specified server. Anubis uses browser data locally for search filtering and sends a sync file only to the WebDAV server the user configures. The privacy policy now links directly from the site navigation and includes Chrome's required Limited Use statement.
+
+**Still required before submission:** In the Chrome dashboard, declare each data type the current form considers handled and describe the corresponding user-facing purpose. Do not classify the user-chosen WebDAV transfer as exempt without confirming the exception applies to this extension; Google's FAQ does not decide Anubis's specific facts, and this README is not legal advice. Confirm the privacy answers match the dashboard's current questions.
 
 **Certifications:** tick all three (no selling or transferring data, no use unrelated to the single purpose, no use for credit decisions).
 
@@ -125,7 +127,7 @@ Nothing disappears without a trace. A one-line summary says what Anubis changed,
 
 Works on Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex, and Mojeek.
 
-No server, no account, nothing collected. Your list and settings stay in your browser, or go to a storage service of your own if you connect one to sync between browsers.
+No Anubis server or account. Anubis does not send your searches or settings to the developer. If you connect your own WebDAV server, it sends your rankings, tags, settings, and lists there to sync between browsers.
 
 Wiki: https://bishop-v.github.io/anubis/
 Source code (AGPL-3.0): https://github.com/Bishop-V/anubis
