@@ -12,7 +12,7 @@ The button's balance tips with the site's ranking: down on the left for a lowere
 | **Lower** | They move five places down and fade a little. |
 | **Normal** | They stay where the engine put them, whatever your lists say. |
 | **Raise** | They move five places up. |
-| **Pin** | They go to the top, with a thin gold outline. |
+| **Pin** | They go to the top, with a thin gold outline (grey with the Plain colours in **Settings → Appearance**). |
 
 Your choice always beats your lists. If a list lowers a site and you raise it, it's raised. Without a choice of yours, the lists' rankings and [the tags you set to Raise or Lower](./tags.md#several-tags-on-one-result) add up.
 

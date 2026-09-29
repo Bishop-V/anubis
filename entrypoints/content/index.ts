@@ -25,6 +25,7 @@ import { freshState, weighDeeper } from './deeper';
 import './page.css';
 import { findResults, OWN_TAGS, type FoundResult } from './results';
 import {
+  applyPalette,
   applyTheme,
   closePopover,
   detachResult,
@@ -116,6 +117,7 @@ export default defineContentScript({
       const theme = pageTheme(rules.settings.theme);
       document.documentElement.dataset.anubisHide = rules.settings.hideStyle;
       applyTheme(theme);
+      applyPalette(rules.settings.palette);
 
       // A new search (Google and DuckDuckGo change the URL without reloading).
       if (deeper.url !== location.href && !deeper.busy) {

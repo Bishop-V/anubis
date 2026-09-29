@@ -150,3 +150,13 @@ describe('hidden results style', () => {
     expect((await getSettings()).hideStyle).toBe('collapse');
   });
 });
+
+describe('colours on search pages', () => {
+  it('stays gold for settings saved before the choice existed', async () => {
+    const { palette: _, ...older } = DEFAULT_SETTINGS;
+    await settingsItem.setValue(older as typeof DEFAULT_SETTINGS);
+    expect((await getSettings()).palette).toBe('gold');
+    await updateSettings({ palette: 'plain' });
+    expect((await getSettings()).palette).toBe('plain');
+  });
+});
