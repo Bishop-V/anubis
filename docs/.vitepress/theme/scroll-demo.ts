@@ -1,10 +1,12 @@
 import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, ref, type VNode } from 'vue';
 
-// The homepage's demo, below its heading: one search on a drawn results page that
-// Anubis works through as you scroll. Each step on the left changes the page on the
-// right: clean-up removes the panels, a site is hidden, and the rest are ranked,
-// then tagged. The words match what the extension says (the summary, the hidden line,
-// the tags). Without JavaScript, or before it loads, the page shows the first step.
+// The homepage's demo: one search on a drawn results page that Anubis works through
+// as you scroll. The page's heading (the default slot, from home.ts) is the first
+// step, beside the page before Anubis. Each step after it changes the page:
+// clean-up removes the panels, a site is hidden, and the rest are ranked, then
+// tagged, while a line beside the steps fills as you go. The words match what the
+// extension says (the summary, the hidden line, the tags). Without JavaScript, or
+// before it loads, the page shows the first step.
 
 type Tag = { name: string; color: string };
 type Result = {
@@ -51,8 +53,8 @@ const SUMMARY = [
   `Anubis pinned 1, raised 1, lowered 1, and hid 1 of 5 results. It also removed ${REMOVED}.`,
 ];
 
+// The steps after the heading; the heading is step 1, the page before Anubis.
 const STEPS: { title: string; text: string }[] = [
-  { title: 'Before Anubis', text: 'Your results are in there somewhere, under an AI answer, videos, and a list of questions.' },
   { title: 'Clutter out', text: 'Anubis strips AI answers, video panels, and question lists. You pick which.' },
   { title: 'Done with a site?', text: 'Hide it from the scales beside any result. It stays hidden on every search, folded to one line in case you want it back.' },
   { title: 'Your sites first', text: 'Pin or raise the sites you trust. Lower the ones you put up with. The scales tip to show where each one stands.' },
@@ -155,9 +157,12 @@ function renderPage(step: number): VNode {
 
 export default defineComponent({
   name: 'ScrollDemo',
-  setup() {
+  setup(_, { slots }) {
     const step = ref(1);
     const root = ref<HTMLElement>();
+    const track = ref<HTMLElement>();
+    const rail = ref<HTMLElement>();
+    const fill = ref<HTMLElement>();
     let frame = 0;
 
     // Slide results to their new places when the order changes (first, last, invert,
@@ -187,15 +192,25 @@ export default defineComponent({
     };
 
     // The step is the last one whose heading has passed a line across the window:
-    // halfway down beside the page, lower on phones, where the page sits above.
+    // halfway down beside the page, lower on phones, where the page sits above. The
+    // line beside the steps runs from the first step's marker to the last one's and
+    // fills up to that same line, so it moves with the scroll, not only per step.
     const update = () => {
       frame = 0;
-      const steps = root.value?.querySelectorAll('.demo-step h2') ?? [];
+      const headings = [...(track.value?.querySelectorAll<HTMLElement>('.demo-step h2') ?? [])];
       const line = innerHeight * (matchMedia('(min-width: 960px)').matches ? 0.55 : 0.8);
       let current = 1;
-      steps.forEach((el, i) => {
-        if (el.getBoundingClientRect().top < line) current = i + 1;
+      headings.forEach((el, i) => {
+        if (el.getBoundingClientRect().top < line) current = i + 2;
       });
+      if (track.value && rail.value && fill.value && headings.length) {
+        const top = track.value.getBoundingClientRect().top;
+        const first = headings[0]!.getBoundingClientRect().top + 14;
+        const last = headings[headings.length - 1]!.getBoundingClientRect().top + 14;
+        rail.value.style.top = `${first - top}px`;
+        rail.value.style.height = `${last - first}px`;
+        fill.value.style.height = `${Math.min(Math.max(line - first, 0), last - first)}px`;
+      }
       void go(current);
     };
     const onScroll = () => {
@@ -214,19 +229,29 @@ export default defineComponent({
     });
 
     return () =>
-      h('section', { ref: root, class: 'scroll-demo', 'aria-label': 'What Anubis does to a search' }, [
+      h('div', { ref: root, class: 'scroll-demo' }, [
+        h('div', { class: ['demo-intro', { active: step.value === 1 }] }, [
+          slots.default?.(),
+          h('p', { class: 'demo-cue' }, [h('span', { class: 'arrow', 'aria-hidden': 'true' }, '↓'), ' Scroll, and watch Anubis tidy up this search']),
+        ]),
         h('div', { class: 'demo-stage' }, [renderPage(step.value)]),
-        h(
-          'ol',
-          { class: 'demo-steps' },
-          STEPS.map((s, i) =>
-            h('li', { class: ['demo-step', { active: step.value === i + 1 }], 'aria-current': step.value === i + 1 ? 'step' : undefined }, [
-              h('h2', s.title),
-              h('p', s.text),
-              i === 0 ? h('p', { class: 'demo-cue' }, [h('span', { class: 'arrow', 'aria-hidden': 'true' }, '↓'), ' Scroll, and watch Anubis tidy it up']) : null,
-            ]),
+        h('div', { ref: track, class: 'demo-track' }, [
+          h('div', { ref: rail, class: 'demo-rail', 'aria-hidden': 'true' }, [h('span', { ref: fill, class: 'demo-rail-fill' })]),
+          h(
+            'ol',
+            { class: 'demo-steps', 'aria-label': 'What Anubis does to a search' },
+            STEPS.map((s, i) =>
+              h(
+                'li',
+                {
+                  class: ['demo-step', { active: step.value === i + 2, reached: step.value >= i + 2 }],
+                  'aria-current': step.value === i + 2 ? 'step' : undefined,
+                },
+                [h('h2', [h('span', { class: 'demo-marker', 'aria-hidden': 'true' }), s.title]), h('p', s.text)],
+              ),
+            ),
           ),
-        ),
+        ]),
       ]);
   },
 });
