@@ -130,9 +130,8 @@ Parts talk through `browser.runtime` messages, all typed in `utils/messages.ts`:
 | `sync-server` | Settings | Background | Connect and "Sync now": sync with the WebDAV server, answering with the outcome |
 | `open-options` | Content script, popup | Background | Open settings |
 | `open-subscribe` | Subscribe page | Background | Open Settings → Lists with a list filled in |
-| `get-page-stats`, `set-reveal`, `go-deeper` | Popup | Content script | "This page" in the popup |
+| `get-page-stats`, `set-reveal`, `go-deeper`, `set-filter` | Popup | Content script | "This page" in the popup: its numbers, Show hidden, Load more results and Show only |
 | `toggle-reveal` | Background | Content script | The Show hidden keyboard shortcut |
-| `set-filter` | (e2e checks) | Content script | Show only one tag |
 
 A listener that answers calls `sendResponse`, and returns `true` if the answer comes later. Chrome ignores a promise returned from a listener, so an answer sent that way works in Firefox and silently fails in Chrome.
 

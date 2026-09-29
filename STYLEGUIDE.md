@@ -5,7 +5,7 @@ How Anubis looks and reads, on every surface it has: the popup, settings, the we
 ## Principles
 
 1. **Quiet on someone else's page.** On a search page Anubis is a guest. It uses the page's own font, muted text, hairlines and no fills. It never moves, restyles or covers the engine's content.
-2. **One flourish.** The result menu's cartouche (the gold oval around the site's name) and balance are the only decoration. The Anubis motif stays in the logo, the summary's mark and the menu; it never names a function.
+2. **One flourish.** The result menu's cartouche (the gold oval around the site's name) and balance are the only decoration. The popup shows the same pair for the site you're on, since it does the same job there. The Anubis motif stays in the logo, the summary's mark and the menu; it never names a function.
 3. **Plain words over clever ones.** A label says what happens. The same word means the same thing everywhere.
 4. **Nothing without a trace.** What Anubis hid, removed or reranked is stated in the summary, and "Show hidden" undoes it for the page.
 5. **Gold is for what matters.** The primary action, focus, a choice that's been made, and the cartouche. Nothing else is gold.
@@ -72,7 +72,7 @@ One palette, defined twice: `assets/theme.css` for extension pages and `entrypoi
 
 | Surface | Layout |
 | --- | --- |
-| Popup | 340px wide. Header (logo, status, theme, on/off), then sections under hairlines with a 12.5px muted label, then a footer. |
+| Popup | 340px wide. Header (logo, status, on/off), then sections under hairlines with a 12.5px muted label, then a footer. What shows depends on the tab: on a search page, what Anubis did there and its tags to show only; on any other site, that site in the cartouche over the balance, with the rankings and tags; elsewhere, Add a site. The last few of your sites always follow. |
 | Settings | Two columns in 1040px: a 210px navigation column and sections up to 760px. One row per thing you can change. Below 760px, one column with the navigation across the top. |
 | Welcome page | The same idea in 1040px: section titles in a 220px column, what to do beside them, lists two across. Below 900px, one column. |
 | Search pages | The summary sits above the results, lined up with them. Tags go under each title. The result menu opens under its ⇅ button, 312px wide. |
