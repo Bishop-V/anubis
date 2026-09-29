@@ -10,8 +10,8 @@ This project values documented experimentation, so record what was tried and wha
 
 ## Stack
 
-- [WXT](https://wxt.dev) 0.21 with Vite and TypeScript. There's no UI framework; the popup, options page and in-page UI are plain DOM built with the `h()` helper in `utils/dom.ts`. Text from lists always goes in as text nodes, never markup.
-- Interface text goes in `public/_locales/en/messages.json` and is used through `t()`, `tn()` (counts) and `localizePage()` (static HTML) from `utils/i18n.ts`. The manifest, ranking names and popup are converted; `ROADMAP.md` lists the rest. Put new text there rather than in code.
+- [WXT](https://wxt.dev) 0.21 with Vite and TypeScript. There's no UI framework; the popup, options page, welcome page and in-page UI are plain DOM built with the `h()` helper in `utils/dom.ts`. Text from lists always goes in as text nodes, never markup.
+- Interface text goes in `public/_locales/en/messages.json` and is used through `t()`, `tn()` (counts) and `localizePage()` (static HTML) from `utils/i18n.ts`. The manifest, ranking names, popup and welcome page are converted; `ROADMAP.md` lists the rest. Put new text there rather than in code.
 - It builds as Chrome MV3 and Firefox MV2 from one codebase.
 - Storage uses WXT's `storage` (`#imports`):
   - `sync:settings`, `sync:tagPrefs`, `sync:subscriptions` (absent means the default subscriptions)
@@ -27,7 +27,7 @@ Firefox is the default target (`browser: 'firefox'` in `wxt.config.ts`). The `:c
 - `npm run build` / `npm run build:chrome`: production build into `.output/`
 - `npm run compile`: type-check. Run it after every change.
 - `npm test`: Vitest unit tests in `tests/` (list format, matcher, personal list edits, storage, bundled lists)
-- `npm run e2e`: builds for Chrome and runs `e2e/run.mjs` against mock search pages, saving screenshots to `e2e/shots/`. Needs `CHROMIUM_PATH` pointing at a Chromium binary; Playwright's downloaded browsers don't run on NixOS, so use the system one (`CHROMIUM_PATH=$(which chromium)`). `node e2e/run.mjs <part>` runs one part: `pages`, `hostile`, `grouped`, `reveal`, `runs`, `shortcuts`, `mobile`, `off`, `cleanup`, `popover`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `options`. `subscribe` downloads a real list from GitHub; behind a TLS-intercepting proxy set `PROXY_CA_CERT` to its CA.
+- `npm run e2e`: builds for Chrome and runs `e2e/run.mjs` against mock search pages, saving screenshots to `e2e/shots/`. Needs `CHROMIUM_PATH` pointing at a Chromium binary; Playwright's downloaded browsers don't run on NixOS, so use the system one (`CHROMIUM_PATH=$(which chromium)`). `node e2e/run.mjs <part>` runs one part: `pages`, `hostile`, `grouped`, `reveal`, `runs`, `shortcuts`, `mobile`, `off`, `cleanup`, `popover`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `options`, `welcome`. `subscribe` downloads a real list from GitHub; behind a TLS-intercepting proxy set `PROXY_CA_CERT` to its CA.
 - `npx web-ext lint -s .output/firefox-mv2`: the Mozilla add-on linter; keep it at zero warnings (CI treats warnings as errors)
 - `.github/workflows/ci.yml` runs compile, tests, both builds and the lint on pushes to main and on pull requests. Its `check` job is required: `main` is protected, so changes land through a pull request from a branch, never a direct push. `CONTRIBUTING.md` is the contributor-facing version of these rules, and `.github/pull_request_template.md` their checklist; keep both in step with this file.
 - `.github/workflows/engines.yml` runs weekly: when uBlacklist changes its rules for an engine Anubis supports, it opens an issue labelled `engines` (`.github/scripts/watch-engines.mjs`, which maps uBlacklist's files to engines; keep it in step with `utils/engines.ts`)
@@ -55,8 +55,9 @@ Everything on search pages was built against the mocks in `e2e/fixtures.mjs`: th
   - `deeper.ts`: "Load more results", bringing later result pages onto the current one
   - `cleanup.ts`: finding the blocks that clean-up removes (AI answers, video panels…), and its redirects (DuckDuckGo's no-AI version, Google's Web tab)
   - `page.css`: page-level treatments keyed off `data-anubis-*` attributes (hidden, lowered, pinned, highlight, rerank)
-- `entrypoints/background.ts`: list updates (on startup and when a search page asks, at most every 30 minutes), the toolbar badge, and the grey icon while Anubis is off (`public/icon-off/`)
+- `entrypoints/background.ts`: list updates (on startup and when a search page asks, at most every 30 minutes), the toolbar badge, the grey icon while Anubis is off (`public/icon-off/`), and opening the welcome page on first install
 - `entrypoints/popup/`: what Anubis did on this page, adding a site, recent sites
+- `entrypoints/welcome/`: the page that opens on first install: how to pin the toolbar button in this browser, searches to try, and the lists you start with
 - `entrypoints/options/`: settings sections (your sites, tags, lists, clean up, appearance, engines, share and back up)
 - `utils/engines.ts`: engine definitions. Also imported at build time for the manifest's matches, so keep it free of browser APIs. When an engine breaks, diff against uBlacklist's ruleset at <https://github.com/ublacklist/builtin> (`serpinfo/*.yml`), which tracks these layouts continuously. An engine's `mobile` holds its phone layout's differences, chosen by user agent when the content script starts.
 - `utils/listformat.ts`: the list parser; `utils/matcher.ts`: compiling lists and weighing a result; `utils/personal.ts`: line-level edits to the personal list

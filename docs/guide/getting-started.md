@@ -17,7 +17,13 @@ Then load it:
 - **Firefox:** open `about:debugging`, choose **This Firefox**, then **Load Temporary Add-on**, and pick `.output/firefox-mv2/manifest.json`. Firefox removes temporary add-ons when it closes.
 - **Chrome:** open `chrome://extensions`, turn on **Developer mode**, choose **Load unpacked**, and pick the `.output/chrome-mv3` folder.
 
-In Chrome, new extensions are hidden behind the puzzle-piece icon in the toolbar. Pin Anubis there so its icon is always visible.
+When Anubis is installed, it opens a welcome tab with the steps for your browser to keep its button in the toolbar, a search to try, and the lists you start with.
+
+Browsers put new extensions behind the Extensions button (a puzzle piece) next to the address bar. To keep Anubis's button in view:
+
+- **Chrome:** press the puzzle piece, then the pin beside Anubis.
+- **Edge:** press the puzzle piece, then the eye beside Anubis.
+- **Firefox:** press the puzzle piece, then the gear beside Anubis, and choose **Pin to Toolbar**.
 
 ## Search as usual
 
