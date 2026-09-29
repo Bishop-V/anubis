@@ -40,4 +40,4 @@ To keep the engine's order and only use tags and hiding, turn off **Settings →
 
 ![Settings, Your sites](../img/options-sites.png)
 
-Your sites are saved as a list in the [Anubis list format](../list-format.md), so you can [publish it](./publish-a-list.md) for others to subscribe to. It's kept in your browser's sync storage, so it follows you to other computers where you're signed in to the same browser account.
+Your sites are saved as a list in the [Anubis list format](../list-format.md), so you can [publish it](./publish-a-list.md) for others to subscribe to. It's kept in your browser's sync storage, so it follows you to other computers where you're signed in to the same browser account ([more about sync](./sync.md)).

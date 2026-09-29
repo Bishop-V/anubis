@@ -2,6 +2,7 @@ import '@/assets/theme.css';
 import './style.css';
 import { h, icon } from '@/utils/dom';
 import { ICON_EXTERNAL } from '@/utils/icons';
+import { t } from '@/utils/i18n';
 import { guide, REPO_URL } from '@/utils/links';
 import { listSites } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet } from '@/utils/ruleset';
@@ -11,6 +12,7 @@ import { renderCleanup } from './cleanup';
 import { renderAppearance, renderEngines, renderShare } from './general';
 import { renderLists } from './lists';
 import { renderSites } from './sites';
+import { renderSync, watchSync } from './sync';
 import { renderTags } from './tags';
 
 // The options page: a sidebar of sections, each rendered from storage and
@@ -31,6 +33,7 @@ const SECTIONS: Section[] = [
   { id: 'cleanup', label: 'Clean up', render: renderCleanup, help: ['guide/clean-up', 'How clean-up works'] },
   { id: 'appearance', label: 'Appearance', render: renderAppearance, help: ['guide/ranking#hidden-results', 'About hidden results'] },
   { id: 'engines', label: 'Search engines', render: renderEngines, help: ['guide/search-engines', 'Which engines work'] },
+  { id: 'sync', label: t('syncHeading'), render: renderSync, help: ['guide/sync', 'How sync works'] },
   { id: 'share', label: 'Share and back up', render: renderShare, help: ['guide/import-and-backup', 'Moving from other tools'] },
 ];
 
@@ -120,6 +123,7 @@ async function start() {
   await initTheme();
   await Promise.all([renderNav(), renderMain()]);
   watchRuleSet(() => void refresh());
+  watchSync(() => void refresh());
 }
 
 void start();

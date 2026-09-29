@@ -4,7 +4,8 @@
 //
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
-//                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options, welcome
+//                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options, welcome,
+//                               sync, webdav
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slides
 //                               in docs/public/
 //
@@ -14,7 +15,7 @@
 
 import { chromium } from 'playwright-core';
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -63,11 +64,11 @@ function proxyTrustArgs() {
   return [`--ignore-certificate-errors-spki-list=${spki}`];
 }
 
-async function launch(settings = {}) {
+async function launch(settings = {}, ext = EXT) {
   const ctx = await chromium.launchPersistentContext(mkdtempSync(join(tmpdir(), 'anubis-')), {
     executablePath,
     headless: true,
-    args: [`--disable-extensions-except=${EXT}`, `--load-extension=${EXT}`, ...proxyTrustArgs()],
+    args: [`--disable-extensions-except=${ext}`, `--load-extension=${ext}`, ...proxyTrustArgs()],
     viewport: { width: 1180, height: 1000 },
     // Sharper screenshots for the documentation site.
     deviceScaleFactor: only === 'docs' ? 2 : 1,
@@ -871,7 +872,7 @@ if (!only || only === 'options') {
     await opt.goto(`chrome-extension://${extId}/options.html#appearance`);
     await opt.waitForTimeout(300);
     await opt.getByRole('button', { name: theme === 'dark' ? 'Dark theme' : 'Light theme' }).first().click();
-    for (const section of ['sites', 'tags', 'lists', 'cleanup', 'appearance', 'share']) {
+    for (const section of ['sites', 'tags', 'lists', 'cleanup', 'appearance', 'sync', 'share']) {
       await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
       await opt.waitForTimeout(500);
       await opt.screenshot({ path: `${SHOTS}options-${section}-${theme}.png`, fullPage: true });
@@ -920,6 +921,113 @@ if (!only || only === 'welcome') {
 
 // Not part of a normal run: regenerates the screenshots in docs/img/ from
 // the mock pages, so the documentation shows the current interface.
+if (!only || only === 'sync') {
+  // Browser sync. A change from the result menu is saved compressed, with a
+  // checksum. Another computer's change that arrives in pieces (the count of
+  // chunks first, the chunks later) is only used once all of it is there.
+  const sw = ctx.serviceWorkers()[0];
+  // Start from the test list, as saved before lists were compressed.
+  const seed = () => sw.evaluate((personal) => chrome.storage.sync.set({ 'personal.0': personal, personal: { chunks: 1, updatedAt: Date.now() } }), PERSONAL);
+  await seed();
+  const state = () => page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' }).getAttribute('data-anubis-state');
+  await page.goto('https://duckduckgo.com/?q=javascript+promises');
+  await page.waitForTimeout(600);
+  const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
+  await target.hover();
+  await target.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+  await page.waitForTimeout(300);
+  // Focus starts on the chosen weight (Raise); Tab to Pin and press it.
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Enter');
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(900);
+  const saved = await sw.evaluate(async () => (await chrome.storage.sync.get('personal')).personal);
+  const pinned = await state();
+  const chunk = await sw.evaluate(async (text) => {
+    const stream = new Blob([text]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+    const bytes = new Uint8Array(await new Response(stream).arrayBuffer());
+    let hash = 0x811c9dc5;
+    for (let i = 0; i < text.length; i++) hash = Math.imul(hash ^ text.charCodeAt(i), 0x01000193);
+    const sum = `${text.length}:${(hash >>> 0).toString(16)}`;
+    await chrome.storage.sync.set({ personal: { chunks: 1, updatedAt: Date.now(), encoding: 'deflate', sum } });
+    return btoa(String.fromCharCode(...bytes));
+  }, '! name: My list\n$site=javascript.info,discard\n');
+  await page.waitForTimeout(600);
+  const countOnly = await state();
+  await sw.evaluate((chunk) => chrome.storage.sync.set({ 'personal.0': chunk }), chunk);
+  await page.waitForTimeout(800);
+  console.log('\n== sync:', JSON.stringify({
+    saved: { encoding: saved?.encoding, checksum: Boolean(saved?.sum), chunks: saved?.chunks },
+    'after Pin': pinned,
+    'count arrived, chunks not': countOnly,
+    'chunks arrived (hidden there)': await state(),
+  }));
+  await seed();
+}
+
+if (!only || only === 'webdav') {
+  // Syncing between browsers through a WebDAV server, against a mock one. Chrome
+  // asks before allowing the server's host, which a script can't answer, so this
+  // runs a copy of the build whose manifest already allows it. The mock answers
+  // the background script, which Playwright only routes with this set.
+  process.env.PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS = '1';
+  const copy = mkdtempSync(join(tmpdir(), 'anubis-ext-'));
+  cpSync(EXT, copy, { recursive: true });
+  const manifest = JSON.parse(readFileSync(join(copy, 'manifest.json'), 'utf8'));
+  manifest.host_permissions = [...(manifest.host_permissions ?? []), 'https://dav.example/*'];
+  writeFileSync(join(copy, 'manifest.json'), JSON.stringify(manifest));
+  const { ctx: dav, extId: davId } = await launch({}, copy);
+  const davWorker = dav.serviceWorkers()[0];
+  const FILE = 'https://dav.example/files/me/anubis-sync.json';
+  const files = new Map();
+  const requests = [];
+  let version = 0;
+  await dav.route(/^https:\/\/dav\.example\//, async (route) => {
+    const req = route.request();
+    const headers = await req.allHeaders();
+    requests.push(req.method());
+    if (headers.authorization !== `Basic ${Buffer.from('me:app-password').toString('base64')}`) return route.fulfill({ status: 401 });
+    const file = files.get(req.url());
+    if (req.method() === 'GET') return file ? route.fulfill({ headers: { ETag: file.etag }, body: file.body }) : route.fulfill({ status: 404 });
+    if (headers['if-match'] && headers['if-match'] !== file?.etag) return route.fulfill({ status: 412 });
+    files.set(req.url(), { body: req.postData(), etag: `"${++version}"` });
+    return route.fulfill({ status: 201 });
+  });
+  const opt = await dav.newPage();
+  opt.on('pageerror', (e) => console.log('  options page error:', e.message));
+  await opt.goto(`chrome-extension://${davId}/options.html#sync`);
+  await opt.waitForTimeout(500);
+  await opt.getByLabel('Address').fill('https://dav.example/files/me');
+  await opt.getByLabel('User name').fill('me');
+  await opt.getByLabel('Password').fill('app-password');
+  await opt.getByRole('button', { name: 'Connect' }).click();
+  await opt.waitForTimeout(1500);
+  await opt.screenshot({ path: `${SHOTS}options-webdav.png`, fullPage: true });
+  const created = JSON.parse(files.get(FILE)?.body ?? 'null');
+  const status = await opt.locator('.notice').first().textContent({ timeout: 2000 }).catch(() => 'no status');
+  // Another browser adds a site; Sync now brings it here.
+  files.set(FILE, { body: JSON.stringify({ ...created, personal: `${created.personal}$site=from-firefox.example,discard\n` }), etag: `"${++version}"` });
+  await opt.getByRole('button', { name: 'Sync now' }).click();
+  await opt.waitForTimeout(1500);
+  await opt.goto(`chrome-extension://${davId}/options.html#sites`);
+  await opt.waitForTimeout(500);
+  const arrived = await opt.getByText('from-firefox.example').count();
+  // A change here reaches the server a few seconds later.
+  await davWorker.evaluate(async () => {
+    const { settings } = await chrome.storage.sync.get('settings');
+    await chrome.storage.sync.set({ settings: { ...settings, deeper: 2 } });
+  });
+  await opt.waitForTimeout(4500);
+  console.log('\n== webdav:', JSON.stringify({
+    requests: requests.join(' '),
+    'file created': Boolean(created?.anubis),
+    status,
+    'site from the other browser shown': arrived > 0,
+    'change here on the server': JSON.parse(files.get(FILE).body).settings.deeper === 2,
+  }));
+  await dav.close();
+}
+
 if (only === 'docs') {
   const DOCS_IMG = fileURLToPath(new URL('../docs/img/', import.meta.url));
   mkdirSync(DOCS_IMG, { recursive: true });
@@ -1048,7 +1156,7 @@ if (only === 'docs') {
   await pop.setViewportSize({ width: 364, height: 600 });
   for (const [colorScheme, suffix] of SCHEMES) {
     await opt.emulateMedia({ colorScheme });
-    for (const section of ['sites', 'tags', 'lists', 'cleanup']) {
+    for (const section of ['sites', 'tags', 'lists', 'cleanup', 'sync']) {
       await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
       await opt.waitForTimeout(500);
       await opt.screenshot({ path: `${DOCS_IMG}options-${section}${suffix}.png` });

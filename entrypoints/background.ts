@@ -1,13 +1,24 @@
 import { browser, defineBackground, storage } from '#imports';
 import { readSubscribeLink, subscribeQuery } from '@/utils/links';
 import { sendToActiveTab, type Message } from '@/utils/messages';
-import { getSettings, migrateLegacy, migrateSettings, settingsItem, updateSettings } from '@/utils/storage';
+import {
+  getSettings,
+  migrateLegacy,
+  migrateSettings,
+  settingsItem,
+  subscriptionsItem,
+  tagPrefsItem,
+  updateSettings,
+  watchPersonal,
+} from '@/utils/storage';
 import { refreshStale } from '@/utils/subscriptions';
 import { recordColorScheme } from '@/utils/theme';
+import { syncChanges, syncIfDue, syncWithServer } from '@/utils/webdav';
 
 // The background script keeps subscribed lists fresh, shows the hidden-result
-// count on the toolbar icon, greys the icon out while Anubis is off, and opens the
-// welcome page on first install. Updates run when the browser starts and when a
+// count on the toolbar icon, greys the icon out while Anubis is off, unpacks your
+// list when it arrives from sync, syncs with a WebDAV server if one is connected,
+// and opens the welcome page on first install. Updates run when the browser starts and when a
 // search page asks, at most every 30 minutes, so no "alarms" permission is needed.
 
 const LAST_CHECK = 'local:lastUpdateCheck' as const;
@@ -30,6 +41,22 @@ export default defineBackground(() => {
   // Firefox's background page sees light or dark as the popup will. Chrome's service
   // worker can't (no matchMedia), but there search pages see the same.
   recordColorScheme();
+
+  // Syncing with a WebDAV server, when one is connected (Settings → Sync): a few
+  // seconds after a change here, when the browser starts, and when a search page
+  // opens, at most every 5 minutes. Changes the sync itself makes match what it
+  // last synced, so they don't start another.
+  let changed: ReturnType<typeof setTimeout> | undefined;
+  const syncSoon = () => {
+    clearTimeout(changed);
+    changed = setTimeout(() => void syncChanges(), 3000);
+  };
+  settingsItem.watch(syncSoon);
+  tagPrefsItem.watch(syncSoon);
+  subscriptionsItem.watch(syncSoon);
+  // Reading the list when it arrives from browser sync also unpacks it into this
+  // device's copy, so search pages find it ready even if they can't unpack it.
+  watchPersonal(syncSoon);
 
   // One update at a time. "Update all" (forced) doesn't settle for a routine check
   // that's already running: it runs straight after it.
@@ -67,8 +94,12 @@ export default defineBackground(() => {
     await migrateLegacy();
     await migrateSettings();
     await refresh();
+    await syncWithServer();
   });
-  browser.runtime.onStartup.addListener(() => void maybeRefresh());
+  browser.runtime.onStartup.addListener(() => {
+    void maybeRefresh();
+    void syncWithServer();
+  });
 
   // Keyboard shortcuts, declared as `commands` in wxt.config.ts. The page keeps
   // its own Show hidden state, so that one goes to the tab as a message.
@@ -97,9 +128,13 @@ export default defineBackground(() => {
       }
       case 'refresh-stale':
         void maybeRefresh();
+        void syncIfDue();
         return;
       case 'refresh-all':
         void refresh(true).then(sendResponse);
+        return true;
+      case 'sync-server':
+        void syncWithServer().then(sendResponse);
         return true;
       case 'open-options':
         if (message.tab) void browser.tabs.create({ url: `${browser.runtime.getURL('/options.html')}#${message.tab}` });

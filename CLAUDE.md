@@ -15,8 +15,9 @@ This project values documented experimentation, so record what was tried and wha
 - It builds as Chrome MV3 and Firefox MV2 from one codebase.
 - Storage uses WXT's `storage` (`#imports`):
   - `sync:settings`, `sync:tagPrefs`, `sync:subscriptions` (absent means the default subscriptions)
-  - `sync:personal` + `sync:personal.N`: the personal list as text in the list format, chunked to fit sync's 8 KB items; falls back to `local:personal` when too big
+  - `sync:personal` + `sync:personal.N`: the personal list as text in the list format, compressed and chunked to fit sync's 8 KB items, with a checksum so a list still arriving from sync isn't read short (`local:personalCopy` stands in); falls back to `local:personal` when too big
   - `local:listCache`: downloaded list texts; `local:lastUpdateCheck`: when the background last checked lists for updates; `local:colorScheme`: light or dark as the popup sees it, so the result menu can match it on Auto
+  - `local:webdav` (the server's address and login, never in sync), `local:webdavBase` (what both sides had at the last sync, for the merge) and `local:webdavStatus` (when the last sync ended, and why it failed): the optional sync between browsers
   - `sync:blockedSites` is the old block list, migrated into the personal list on install; `sync:hideStyleMoved` records the one-time move from Collapse to Remove as the default
 
 ## Commands
@@ -26,8 +27,8 @@ Firefox is the default target (`browser: 'firefox'` in `wxt.config.ts`). The `:c
 - `npm run dev` / `npm run dev:chrome`: opens a browser with the extension loaded and reloads it on save
 - `npm run build` / `npm run build:chrome`: production build into `.output/`
 - `npm run compile`: type-check. Run it after every change.
-- `npm test`: Vitest unit tests in `tests/` (list format, matcher, personal list edits, storage, bundled lists, clean-up, domains and issue links, engines, interface text, importers)
-- `npm run e2e`: builds for Chrome and runs `e2e/run.mjs` against mock search pages, saving screenshots to `e2e/shots/`. Needs `CHROMIUM_PATH` pointing at a Chromium binary; Playwright's downloaded browsers don't run on NixOS, so use the system one (`CHROMIUM_PATH=$(which chromium)`). `node e2e/run.mjs <part>` runs one part: `pages`, `hostile`, `grouped`, `reveal`, `runs`, `shortcuts`, `mobile`, `off`, `cleanup`, `pins`, `popover`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `subscribe-link`, `options`, `welcome`. `subscribe` downloads a real list from GitHub; behind a TLS-intercepting proxy set `PROXY_CA_CERT` to its CA.
+- `npm test`: Vitest unit tests in `tests/` (list format, matcher, personal list edits, storage, merging, WebDAV sync, bundled lists, clean-up, domains and issue links, engines, interface text, importers)
+- `npm run e2e`: builds for Chrome and runs `e2e/run.mjs` against mock search pages, saving screenshots to `e2e/shots/`. Needs `CHROMIUM_PATH` pointing at a Chromium binary; Playwright's downloaded browsers don't run on NixOS, so use the system one (`CHROMIUM_PATH=$(which chromium)`). `node e2e/run.mjs <part>` runs one part: `pages`, `hostile`, `grouped`, `reveal`, `runs`, `shortcuts`, `mobile`, `off`, `cleanup`, `pins`, `popover`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `subscribe-link`, `options`, `welcome`, `sync`, `webdav`. `subscribe` downloads a real list from GitHub; behind a TLS-intercepting proxy set `PROXY_CA_CERT` to its CA.
 - `npx web-ext lint -s .output/firefox-mv2`: the Mozilla add-on linter; keep it at zero warnings (CI treats warnings as errors)
 - `.github/workflows/ci.yml` runs compile, tests, both builds and the lint on pushes to main and on pull requests. Its `check` job is required: `main` is protected, so changes land through a pull request from a branch, never a direct push. `CONTRIBUTING.md` is the contributor-facing version of these rules, `.github/pull_request_template.md` their checklist, and `DEVELOPMENT.md` the developer-facing version of the Layout and Pitfalls sections below, with recipes for common changes; keep all three in step with this file.
 - `.github/workflows/engines.yml` runs weekly: when uBlacklist changes its rules for an engine Anubis supports, it opens an issue labelled `engines` (`.github/scripts/watch-engines.mjs`, which maps uBlacklist's files to engines; keep it in step with `utils/engines.ts`)
@@ -56,14 +57,15 @@ Everything on search pages was built against the mocks in `e2e/fixtures.mjs`: th
   - `cleanup.ts`: finding the blocks that clean-up removes (AI answers, video panels…), and its redirect to Google's Web tab
   - `page.css`: page-level treatments keyed off `data-anubis-*` attributes (hidden, lowered, pinned, highlight, rerank)
 - `entrypoints/subscribe.content.ts`: runs only on the guide's subscribe page (`…/anubis/subscribe?url=…&name=…`, where subscribe links lead) and asks the background to open Settings → Lists with that list filled in. Settings asks before subscribing: anyone can make a link.
-- `entrypoints/background.ts`: list updates (on startup and when a search page asks, at most every 30 minutes), the toolbar badge, the grey icon while Anubis is off (`public/icon-off/`), and opening the welcome page on first install
+- `entrypoints/background.ts`: list updates (on startup and when a search page asks, at most every 30 minutes), syncing with a WebDAV server when one is connected (a few seconds after a change, on startup, and when a search page asks, at most every 5 minutes), the toolbar badge, the grey icon while Anubis is off (`public/icon-off/`), and opening the welcome page on first install
 - `entrypoints/popup/`: what Anubis did on this page, adding a site, recent sites
 - `entrypoints/welcome/`: the page that opens on first install: how to pin the toolbar button in this browser, searches to try, and the lists you start with
-- `entrypoints/options/`: settings sections (your sites, tags, lists, clean up, appearance, engines, share and back up)
+- `entrypoints/options/`: settings sections (your sites, tags, lists, clean up, appearance, engines, sync, share and back up)
 - `utils/engines.ts`: engine definitions. Also imported at build time for the manifest's matches, so keep it free of browser APIs. When an engine breaks, diff against uBlacklist's ruleset at <https://github.com/ublacklist/builtin> (`serpinfo/*.yml`), which tracks these layouts continuously. An engine's `mobile` holds its phone layout's differences, chosen by user agent when the content script starts.
 - `utils/listformat.ts`: the list parser; `utils/matcher.ts`: compiling lists and weighing a result; `utils/personal.ts`: line-level edits to the personal list
 - `utils/storage.ts`, `utils/ruleset.ts`, `utils/subscriptions.ts`: storage items, loading everything into one rule set, downloading lists
 - `utils/importers.ts`: bringing sites over from uBlacklist rules, HOHSER exports, Goggles and domain lists
+- `utils/backup.ts`: everything that follows the user (settings, tag choices, subscriptions, the personal list), as a backup file and as the sync file; `utils/merge.ts`: three-way merges of it; `utils/webdav.ts`: the optional sync between browsers through a WebDAV server
 - `utils/links.ts`: the user guide and repository addresses the extension links to, and subscribe links
 - `utils/cleanup.ts`: the clean-up kinds, the headings that identify each one (with translations) and per-engine selectors
 - `lists/`: the bundled lists and `directory.json` (the "More lists" directory). `docs/list-format.md` is the format reference.
@@ -94,6 +96,7 @@ Lessons from earlier bugs and design decisions; `docs/experiments.md` has the de
 - State a click sets on the page (a revealed result, a filter) belongs in the content script's variables, not only in DOM attributes: the next pass rewrites the attributes from that state, and engines trigger passes on hover.
 - No `innerHTML`: `web-ext lint` flags it. Build DOM with `h()`, parse constant SVG with `DOMParser`. Pass `data-*` to `h()` through `attrs`; `dataset` is read-only.
 - Engines change markup without notice. Prefer structural fixes (headings, links, nesting) over class names.
+- Playwright can't answer a permission prompt, and only routes the background script's requests with `PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1`. The `webdav` e2e part runs a copy of the build whose manifest already allows its mock server.
 - VitePress's router follows links within the docs site without loading a page, and content scripts only run on page loads. Links to the subscribe page carry `target="_self"`, which the router leaves alone.
 
 ## Working agreements

@@ -68,12 +68,22 @@ Two builds of the same commit are identical file for file. Firefox's reviewers r
 | `sync:settings` | Sync | Every setting (`Settings` in `utils/storage.ts`). Read with `getSettings()`, which fills in defaults for anything missing. |
 | `sync:tagPrefs` | Sync | What the user chose for each tag: its action, colour, label, and whether it's shown. |
 | `sync:subscriptions` | Sync | The lists the user subscribes to. Absent means the default subscriptions, so a second computer's sync can't be overwritten by defaults on install. |
-| `sync:personal`, `sync:personal.N` | Sync | The personal list, as text in the list format, split into chunks under sync's 8 KB per item. |
-| `local:personal` | This computer | The personal list, once it's too big for sync (about 100 KB in total). |
+| `sync:personal`, `sync:personal.N` | Sync | The personal list: text in the list format, compressed (deflate, then base64) and split into chunks under sync's 8 KB per item. `sync:personal` counts the chunks and holds the text's checksum; lists saved before compression are plain text with no checksum, and still read. |
+| `local:personal` | This computer | The personal list, once it's too big for sync (about 100 KB in total, some 10,000 sites compressed). |
+| `local:personalCopy` | This computer | The last personal list read whole, with its checksum. Read instead of unpacking the chunks while the checksum matches, and in their place while chunks arriving from sync don't match it yet. |
 | `local:listCache` | This computer | Downloaded lists, with when they were fetched and the last error. |
 | `local:lastUpdateCheck` | This computer | When the background script last checked lists for updates. |
 | `local:colorScheme` | This computer | Light or dark as the extension's own pages see it, written by the popup, settings and (in Firefox) the background page. On Auto the result menu uses it, since a search page can be told otherwise (Firefox's Website appearance). |
 | `sync:blockedSites`, `sync:hideStyleMoved` | Sync | Migration leftovers: the old block list, and a flag for a one-time settings change. |
+| `local:webdav` | This computer | The WebDAV server connected for syncing between browsers: its address, user name and password. Never in sync. |
+| `local:webdavBase` | This computer | What this browser and the server both had at the last sync: the starting point for the next merge. |
+| `local:webdavStatus` | This computer | When the last sync with the server ended, and why it failed if it did. |
+
+### Syncing between browsers
+
+Browser sync needs nothing from Anubis beyond using `storage.sync`. Sharing between browsers is optional: the user connects a WebDAV server in Settings → Sync, and each browser reads and writes one file there, `anubis-sync.json`, in the backup format (`utils/backup.ts`). A sync (`utils/webdav.ts`, run only by the background script) reads the file, merges it with what this browser has, saves the result here and there, and keeps it as `local:webdavBase`. The merge is three-way (`utils/merge.ts`): against that base, so a change from either side since the last sync survives. Settings and tag choices merge key by key, subscriptions per list, and the personal list line by line, per site where it can. When both sides changed the same thing, this browser wins, except on its first sync, which starts from what a fresh install has and lets the server win. Writing sends `If-Match` with the file's ETag, so a browser that saved in between makes the server refuse, and the sync merges again.
+
+The background script syncs a few seconds after a change here (unless everything still matches the base), on startup, and when a search page asks, at most every 5 minutes; that needs no `alarms` permission. Connecting asks for the server's host (`optional_host_permissions`) and, in Firefox 140 and later, for the `browsingActivity` data permission, straight from the click.
 
 Every change reads the stored value, changes it and writes it back, so writes go through a queue per item (`writeQueue` in `utils/storage.ts`): `editPersonal`, `updateSettings`, `setTagPref`, `editSubscriptions` and `editListCache`. Use them rather than `setValue` whenever the new value depends on the old one. Pass `updateSettings` a function when the change depends on the current settings (turning one engine off among several).
 
@@ -115,8 +125,9 @@ Parts talk through `browser.runtime` messages, all typed in `utils/messages.ts`:
 | Message | From | To | For |
 | --- | --- | --- | --- |
 | `stats` | Content script | Background | The hidden count on the toolbar button |
-| `refresh-stale` | Content script | Background | Update lists that are due (at most every 30 minutes) |
+| `refresh-stale` | Content script | Background | Update lists that are due (at most every 30 minutes), and sync with a WebDAV server if one is connected (at most every 5 minutes) |
 | `refresh-all` | Settings | Background | "Update all" |
+| `sync-server` | Settings | Background | Connect and "Sync now": sync with the WebDAV server, answering with the outcome |
 | `open-options` | Content script, popup | Background | Open settings |
 | `open-subscribe` | Subscribe page | Background | Open Settings → Lists with a list filled in |
 | `get-page-stats`, `set-reveal`, `go-deeper` | Popup | Content script | "This page" in the popup |
@@ -158,7 +169,7 @@ Clean-up kinds live in `utils/cleanup.ts`:
 4. Changing a default for people who already use Anubis needs a one-time migration, run from the background script's `onInstalled` (see `migrateSettings`, which moved hidden results from Collapse to Remove).
 5. Describe it in the guide page for that section. Settings links each section to its page (`help` in `SECTIONS`), so keep page paths as they are.
 
-Backups include every setting without further work.
+Backups and the sync between browsers include every setting without further work.
 
 ### Add interface text
 
@@ -177,7 +188,7 @@ Not everything is converted yet: `ROADMAP.md` lists what's left. Wording follows
 2. If changes depend on the current value, give it a `writeQueue` and an `edit…` helper, as the others have.
 3. Add it to the list of keys at the top of `utils/storage.ts`, to "Where things are stored" above and to the storage list in `CLAUDE.md`.
 4. If it should reload open search pages when it changes, watch it in `watchRuleSet` (`utils/ruleset.ts`).
-5. If it belongs in backups, add it to `Backup` in `options/general.ts`, and to both the export and the restore there.
+5. If it belongs in backups and the sync between browsers, add it to `SyncData` in `utils/backup.ts`, to `collectData`, `readBackup`, `applyData` and `mergeData` there, and to `freshInstall` with its default.
 
 ### Add something to the page
 
@@ -201,14 +212,16 @@ Not everything is converted yet: `ROADMAP.md` lists what's left. Wording follows
 | `matcher.test.ts` | Which rule wins, tag choices, lenses, reasons |
 | `personal.test.ts` | Line-level edits to the personal list, and undoing them |
 | `importers.test.ts` | Importing uBlacklist, HOHSER, Goggles and domain lists |
-| `storage.test.ts` | Chunking the personal list, migrations, default subscriptions |
+| `storage.test.ts` | Chunking and compressing the personal list, lists arriving from sync in pieces, migrations, default subscriptions |
+| `merge.test.ts` | Three-way merges of the personal list, settings and subscriptions |
+| `webdav.test.ts` | Syncing two browsers through a fake WebDAV server: first sync, changes on both sides, a save in between, errors |
 | `lists.test.ts` | Every bundled list, and the directory |
 | `cleanup.test.ts` | Clean-up headings and markers, the summary sentence, redirects |
 | `domain.test.ts` | Domains, redirect links, raw list addresses, issue links, subscribe links |
 | `engines.test.ts` | Picking an engine's phone layout |
 | `i18n.test.ts` | Message keys, plural forms and placeholders, the undo line's wording |
 
-**End-to-end checks** (`npm run e2e`, or `node e2e/run.mjs <part>` after `npm run build:chrome`) load the Chrome build into Chromium. `CHROMIUM_PATH` has to point at a Chromium binary: branded Chrome no longer loads unpacked extensions from the command line. The harness answers the real engines' addresses with the mock pages in `e2e/fixtures.mjs` (Google, DuckDuckGo, Bing, Brave, and Google's phone layout), seeds storage with a test personal list and settings, prints what Anubis decided and saves screenshots to `e2e/shots/`. Each part is a block in `e2e/run.mjs`: `pages`, `hostile`, `grouped`, `reveal`, `runs`, `shortcuts`, `mobile`, `off`, `cleanup`, `pins`, `popover`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `subscribe-link`, `options` and `welcome`.
+**End-to-end checks** (`npm run e2e`, or `node e2e/run.mjs <part>` after `npm run build:chrome`) load the Chrome build into Chromium. `CHROMIUM_PATH` has to point at a Chromium binary: branded Chrome no longer loads unpacked extensions from the command line. The harness answers the real engines' addresses with the mock pages in `e2e/fixtures.mjs` (Google, DuckDuckGo, Bing, Brave, and Google's phone layout), seeds storage with a test personal list and settings, prints what Anubis decided and saves screenshots to `e2e/shots/`. Each part is a block in `e2e/run.mjs`: `pages`, `hostile`, `grouped`, `reveal`, `runs`, `shortcuts`, `mobile`, `off`, `cleanup`, `pins`, `popover`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `subscribe-link`, `options`, `welcome`, `sync` and `webdav`. `webdav` connects a mock WebDAV server in Settings; a script can't answer the browser's permission prompt, so it runs a copy of the build whose manifest already allows the mock's host, and Playwright only reaches the background script's requests with `PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1`, which the part sets.
 
 Parts print their findings rather than failing on them (turning them into assertions is on the roadmap), so read the output: a check that should say `false` and says `true` is a failure. Mock pages are models of the engines' markup, not copies of it; when an engine breaks, model the markup that broke as a variant of its mock (Google's `hostile` and `grouped` are examples) and never commit a page saved from a live search.
 

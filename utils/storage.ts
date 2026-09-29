@@ -1,4 +1,4 @@
-import { storage } from '#imports';
+import { browser, storage } from '#imports';
 import { NO_CLEANUP, type Cleanup } from './cleanup';
 import { guide } from './links';
 import type { TagPref } from './matcher';
@@ -9,8 +9,9 @@ import { fromBlockedSites, PERSONAL_HEADER } from './personal';
 //   sync:settings        appearance and behaviour (small)
 //   sync:tagPrefs        what to do with each tag (small)
 //   sync:subscriptions   which lists the user subscribes to (small); absent means the defaults
-//   sync:personal*       the personal list as text, split into chunks (see below)
+//   sync:personal*       the personal list, compressed and split into chunks (see below)
 //   local:personal       the personal list, when it's too big for sync
+//   local:personalCopy   this device's last good copy of the personal list
 //   local:listCache      downloaded list texts; too big for sync, re-fetched per device
 //   local:lastUpdateCheck  when the background last checked lists for updates
 //   local:colorScheme    light or dark, as the extension's own pages see it (see utils/theme.ts)
@@ -76,10 +77,14 @@ export function writeQueue(): <T>(change: () => Promise<T>) => Promise<T> {
 
 export const settingsItem = storage.defineItem<Settings>('sync:settings', { fallback: DEFAULT_SETTINGS });
 
-export async function getSettings(): Promise<Settings> {
-  const stored = await settingsItem.getValue();
+/** Stored settings with defaults for anything missing. */
+export function normalizeSettings(stored: Partial<Settings> | null | undefined): Settings {
   // Merge one level down too, so a clean-up kind added later starts off.
   return { ...DEFAULT_SETTINGS, ...stored, cleanup: { ...NO_CLEANUP, ...stored?.cleanup } };
+}
+
+export async function getSettings(): Promise<Settings> {
+  return normalizeSettings(await settingsItem.getValue());
 }
 
 const settingsQueue = writeQueue();
@@ -147,25 +152,67 @@ export function editListCache(edit: (cache: Record<string, CachedList>) => Recor
 }
 
 // ---------------------------------------------------------------------------
-// Personal list, chunked across sync items.
+// Personal list, compressed and chunked across sync items.
 //
 // storage.sync allows 8 KB per item and ~100 KB in total, in both Chrome and
-// Firefox. One item holds ~300 rules; chunking gets to a few thousand. If even
-// that overflows, the list falls back to local storage on this device.
+// Firefox. Compressed, the list shrinks about 3×, so sync holds about 10,000
+// sites. If even that overflows, the list falls back to local storage on this
+// device.
+//
+// The browser syncs each chunk on its own, so another computer can briefly see
+// new chunks next to old ones, or chunks from two computers mixed. The checksum
+// in the meta item catches that, and this device's last good copy
+// (local:personalCopy) stands in until the chunks match again.
 
 const PERSONAL_META = 'sync:personal' as const;
 const PERSONAL_LOCAL = 'local:personal' as const;
+const PERSONAL_COPY = 'local:personalCopy' as const;
 const LEGACY_BLOCKED = 'sync:blockedSites' as const;
 const CHUNK_BYTES = 7000;
+
+/** What storage.sync holds in all, in both Chrome and Firefox. */
+export const SYNC_QUOTA_BYTES = 102400;
 
 interface PersonalMeta {
   chunks: number;
   /** True when the list outgrew sync and lives in local storage instead. */
   local?: boolean;
   updatedAt: number;
+  /** `deflate`: the chunks hold the text compressed, in base64. Absent: plain text. */
+  encoding?: 'deflate';
+  /** The text's `checksum`. Absent in lists saved before there was one. */
+  sum?: string;
+}
+
+interface PersonalCopy {
+  sum: string;
+  text: string;
 }
 
 const chunkKey = (i: number) => `sync:personal.${i}` as const;
+
+/** Length and FNV-1a hash: enough to notice a list that hasn't fully arrived, not a security check. */
+export function checksum(text: string): string {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < text.length; i++) hash = Math.imul(hash ^ text.charCodeAt(i), 0x01000193);
+  return `${text.length}:${(hash >>> 0).toString(16)}`;
+}
+
+/** Deflate, then base64 so it stores as a string. */
+export async function compress(text: string): Promise<string> {
+  const stream = new Blob([text]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+  const bytes = new Uint8Array(await new Response(stream).arrayBuffer());
+  let binary = '';
+  // In slices: spreading a whole big array overflows the call stack.
+  for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(binary);
+}
+
+export async function decompress(data: string): Promise<string> {
+  const bytes = Uint8Array.from(atob(data), (c) => c.charCodeAt(0));
+  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+  return new Response(stream).text();
+}
 
 /** Split into pieces that fit one sync item. Joining them with '' gives the text back exactly. */
 export function splitIntoChunks(text: string): string[] {
@@ -191,29 +238,59 @@ export const DEFAULT_PERSONAL = `${PERSONAL_HEADER}
 $site=fandom.com,discard
 `;
 
-export async function loadPersonal(): Promise<string> {
+/**
+ * The personal list, and whether it's the one sync holds. `settled` is false while
+ * sync's chunks don't match their checksum; the text is then this device's last
+ * good copy.
+ */
+async function readPersonal(): Promise<{ text: string; settled: boolean }> {
   const meta = await storage.getItem<PersonalMeta>(PERSONAL_META);
   if (!meta) {
     // First run, or an install from before the personal list existed.
     const legacy = await storage.getItem<string[]>(LEGACY_BLOCKED);
-    return legacy ? fromBlockedSites(legacy) : DEFAULT_PERSONAL;
+    return { text: legacy ? fromBlockedSites(legacy) : DEFAULT_PERSONAL, settled: true };
   }
-  if (meta.local) return (await storage.getItem<string>(PERSONAL_LOCAL)) ?? '';
+  const copy = await storage.getItem<PersonalCopy>(PERSONAL_COPY);
+  // Another computer's list can be the one that's too big: it isn't here, so show
+  // the last one that synced.
+  if (meta.local) return { text: (await storage.getItem<string>(PERSONAL_LOCAL)) ?? copy?.text ?? '', settled: true };
+  if (meta.sum && copy?.sum === meta.sum) return { text: copy.text, settled: true };
   const items = await storage.getItems(Array.from({ length: meta.chunks }, (_, i) => chunkKey(i)));
-  return items.map((it) => (typeof it.value === 'string' ? it.value : '')).join('');
+  const joined = items.map((it) => (typeof it.value === 'string' ? it.value : '')).join('');
+  const text = meta.encoding === 'deflate' ? await decompress(joined).catch(() => undefined) : joined;
+  if (text !== undefined && (!meta.sum || checksum(text) === meta.sum)) {
+    if (meta.sum) await storage.setItem(PERSONAL_COPY, { sum: meta.sum, text } satisfies PersonalCopy);
+    return { text, settled: true };
+  }
+  return { text: copy?.text ?? text ?? '', settled: false };
+}
+
+export async function loadPersonal(): Promise<string> {
+  return (await readPersonal()).text;
+}
+
+/** Compressed where the browser can (Chrome 103, Firefox 113); plain text otherwise. */
+async function pack(text: string): Promise<{ data: string; encoding?: 'deflate' }> {
+  try {
+    return { data: await compress(text), encoding: 'deflate' };
+  } catch {
+    return { data: text };
+  }
 }
 
 export async function savePersonal(text: string): Promise<{ synced: boolean }> {
   const prev = await storage.getItem<PersonalMeta>(PERSONAL_META);
-  const chunks = splitIntoChunks(text);
+  const sum = checksum(text);
+  const { data, encoding } = await pack(text);
+  const chunks = splitIntoChunks(data);
   const stale = Array.from({ length: Math.max(0, (prev?.chunks ?? 0) - chunks.length) }, (_, i) =>
     chunkKey(chunks.length + i),
   );
+  // The copy first, so this device reads its own change without unpacking it.
+  await storage.setItem(PERSONAL_COPY, { sum, text } satisfies PersonalCopy);
   try {
-    await storage.setItems([
-      ...chunks.map((value, i) => ({ key: chunkKey(i), value })),
-      { key: PERSONAL_META, value: { chunks: chunks.length, updatedAt: Date.now() } satisfies PersonalMeta },
-    ]);
+    const meta: PersonalMeta = { chunks: chunks.length, updatedAt: Date.now(), sum, ...(encoding && { encoding }) };
+    await storage.setItems([...chunks.map((value, i) => ({ key: chunkKey(i), value })), { key: PERSONAL_META, value: meta }]);
     if (stale.length) await storage.removeItems(stale);
     if (prev?.local) await storage.removeItem(PERSONAL_LOCAL);
     return { synced: true };
@@ -222,6 +299,8 @@ export async function savePersonal(text: string): Promise<{ synced: boolean }> {
     console.warn('[anubis] personal list too big for sync, keeping it local', error);
     await storage.setItem(PERSONAL_LOCAL, text);
     await storage.setItem(PERSONAL_META, { chunks: 0, local: true, updatedAt: Date.now() } satisfies PersonalMeta);
+    // The last list that fit is no use now, and its space is.
+    await storage.removeItems(Array.from({ length: prev?.chunks ?? 0 }, (_, i) => chunkKey(i)));
     return { synced: false };
   }
 }
@@ -234,7 +313,14 @@ const personalQueue = writeQueue();
  */
 export function editPersonal(edit: (text: string) => string): Promise<string> {
   return personalQueue(async () => {
-    const next = edit(await loadPersonal());
+    let current = await readPersonal();
+    // Sync may still be bringing the rest of the list: wait for it rather than
+    // save a change on top of an older copy.
+    if (!current.settled) {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      current = await readPersonal();
+    }
+    const next = edit(current.text);
     await savePersonal(next);
     return next;
   });
@@ -246,13 +332,30 @@ export async function personalIsLocal(): Promise<boolean> {
 
 /** Calls back with the new text whenever the personal list changes anywhere. */
 export function watchPersonal(cb: (text: string) => void): () => void {
-  const reload = () => void loadPersonal().then(cb);
-  const a = storage.watch(PERSONAL_META, reload);
-  const b = storage.watch(PERSONAL_LOCAL, reload);
-  return () => {
-    a();
-    b();
+  // One save changes several items at once: read the list once for them all.
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const reload = () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => void loadPersonal().then(cb), 20);
   };
+  const unwatch = [PERSONAL_META, PERSONAL_LOCAL, PERSONAL_COPY].map((key) => storage.watch(key, reload));
+  // Chunks can arrive from sync after the meta item that counts them.
+  const onSync = (changes: Record<string, unknown>) => {
+    if (Object.keys(changes).some((key) => key.startsWith('personal.'))) reload();
+  };
+  browser.storage.sync.onChanged.addListener(onSync);
+  return () => {
+    clearTimeout(timer);
+    unwatch.forEach((u) => u());
+    browser.storage.sync.onChanged.removeListener(onSync);
+  };
+}
+
+/** How much of storage.sync Anubis uses, counted as the browsers count it: each key plus its value as JSON. */
+export async function syncBytesInUse(): Promise<number> {
+  const all = await browser.storage.sync.get(null);
+  const encoder = new TextEncoder();
+  return Object.entries(all).reduce((n, [key, value]) => n + encoder.encode(key + JSON.stringify(value)).length, 0);
 }
 
 /**

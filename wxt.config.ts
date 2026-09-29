@@ -26,7 +26,8 @@ export default defineConfig({
     permissions: ['storage', 'activeTab'],
     // Lists on raw.githubusercontent.com and gists download without any extra
     // permission (they allow cross-origin reads). Lists hosted anywhere else ask
-    // for access to that one host, at the moment you subscribe.
+    // for access to that one host, at the moment you subscribe; so does a WebDAV
+    // server, when you connect one to sync between browsers.
     ...(manifestVersion === 3
       ? { optional_host_permissions: ['https://*/*'] }
       : { optional_permissions: ['https://*/*'] }),
@@ -46,12 +47,15 @@ export default defineConfig({
     // Firefox needs an add-on ID for storage.sync. It is the add-on's permanent
     // identity, so don't change it once anyone has installed: a new ID reads as a
     // different add-on and orphans the settings stored under the old one.
-    // Anubis sends nothing anywhere, which Firefox asks new add-ons to declare.
+    // Firefox asks add-ons to declare what they send anywhere. Anubis sends nothing
+    // unless you connect a WebDAV server to sync between browsers; then your list
+    // (the sites in it: "browsing activity" to Firefox) goes to that server, and
+    // Settings asks for consent when you connect.
     ...(browser === 'firefox' && {
       browser_specific_settings: {
         gecko: {
           id: '{9ab93008-4ecd-4923-8a62-d81099997d39}',
-          data_collection_permissions: { required: ['none'] },
+          data_collection_permissions: { required: ['none'], optional: ['browsingActivity'] },
         },
       },
     }),
