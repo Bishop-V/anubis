@@ -70,3 +70,21 @@ export function displayedDomainToUrl(text: string | null | undefined): string | 
   const domain = normalizeDomain(first);
   return domain ? `https://${domain}/` : undefined;
 }
+
+// Forums whose results Google shows with the forum's name ("Reddit · r/learnpython")
+// and a line like "20+ comments · 2 years ago" instead of the address.
+const FORUM_NAMES = new Map<string, string>([
+  ['reddit', 'reddit.com'],
+  ['quora', 'quora.com'],
+  ['stack overflow', 'stackoverflow.com'],
+  ['hacker news', 'news.ycombinator.com'],
+  ['steam community', 'steamcommunity.com'],
+  ['tripadvisor', 'tripadvisor.com'],
+]);
+
+/** The site behind a forum's displayed name, "Reddit · r/learnpython" → https://reddit.com/. */
+export function forumNameToUrl(text: string | null | undefined): string | undefined {
+  const name = (text ?? '').split(/\s+·\s+/)[0]!.replace(/\s+/g, ' ').trim().toLowerCase();
+  const domain = FORUM_NAMES.get(name);
+  return domain ? `https://${domain}/` : undefined;
+}

@@ -392,20 +392,39 @@ export function renderHiddenBar(
 // The summary line above the results
 
 let summaryHost: HTMLElement | undefined;
+/** The results area, while the summary sits outside it and lines up with it. */
+let summaryArea: HTMLElement | undefined;
+/** Places that didn't put the summary above the results once the page had loaded, so aren't tried again. */
+const misplaced = new WeakSet<HTMLElement>();
+let realignOnResize = false;
+
+/**
+ * Where the summary goes: just before `before`. When that's outside the results
+ * `area` (above an AI answer), the summary lines up with the area, and goes before
+ * `fallback` instead if the page's layout puts it anywhere but above the results.
+ */
+export interface SummaryPlace {
+  before: HTMLElement;
+  area?: HTMLElement;
+  fallback?: HTMLElement;
+}
 
 export function renderSummary(
-  before: HTMLElement | undefined,
+  place: SummaryPlace | undefined,
   stats: PageStats,
   theme: PageTheme,
   actions: { toggleReveal: () => void; settings: () => void; deeper: () => void; filter: (tag?: string) => void },
 ): void {
   const worthShowing =
     hiddenCount(stats) || stats.pinned || stats.raised || stats.lowered || stats.tagged || stats.canGoDeeper || stats.pages > 1;
-  if (!before?.parentElement || !worthShowing) {
+  if (!place?.before.parentElement || !worthShowing) {
     summaryHost?.remove();
+    summaryArea = undefined;
     return;
   }
   summaryHost ??= makeHost('anubis-summary', theme).host;
+  const tryFirst = !!place.fallback && !misplaced.has(place.before);
+  const before = tryFirst || !place.fallback ? place.before : place.fallback;
   if (summaryHost.nextElementSibling !== before) before.before(summaryHost);
   keepUpright(summaryHost);
   summaryHost.dataset.theme = theme;
@@ -464,6 +483,58 @@ export function renderSummary(
         : null,
     ),
   );
+
+  summaryArea = place.area && !place.area.contains(summaryHost) ? place.area : undefined;
+  alignSummary();
+  if (tryFirst && summaryArea && !aboveResults(summaryHost, place.before, summaryArea)) {
+    // While the page is still loading, its layout may not be final: try again next pass.
+    if (document.readyState === 'complete') misplaced.add(place.before);
+    place.fallback!.before(summaryHost);
+    keepUpright(summaryHost);
+    summaryArea = place.area && !place.area.contains(summaryHost) ? place.area : undefined;
+    alignSummary();
+  }
+  if (summaryArea && !realignOnResize) {
+    realignOnResize = true;
+    let queued = false;
+    addEventListener('resize', () => {
+      if (queued || !summaryArea) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        queued = false;
+        alignSummary();
+      });
+    });
+  }
+}
+
+/**
+ * Outside the results area, inset the summary so its text lines up with the
+ * results. Only the host's padding changes, so its own box stays where the page
+ * lays it out.
+ */
+function alignSummary(): void {
+  const host = summaryHost;
+  if (!host) return;
+  for (const prop of ['padding-left', 'padding-right', 'box-sizing']) host.style.removeProperty(prop);
+  if (!summaryArea?.isConnected || !host.isConnected) return;
+  const box = host.getBoundingClientRect();
+  const area = summaryArea.getBoundingClientRect();
+  if (!box.width || !area.width) return;
+  const left = Math.max(0, Math.round(area.left - box.left));
+  const right = Math.max(0, Math.round(box.right - area.right));
+  host.style.setProperty('box-sizing', 'border-box', 'important');
+  if (left) host.style.setProperty('padding-left', `${left}px`, 'important');
+  if (right) host.style.setProperty('padding-right', `${right}px`, 'important');
+}
+
+/** Above the results area and across it, and above `next` when that's showing. */
+function aboveResults(host: HTMLElement, next: HTMLElement, area: HTMLElement): boolean {
+  const box = host.getBoundingClientRect();
+  const results = area.getBoundingClientRect();
+  const after = next.getBoundingClientRect();
+  const across = Math.min(box.right, results.right) - Math.max(box.left, results.left);
+  return box.width > 0 && box.bottom <= results.top + 1 && across >= results.width / 2 && (!after.height || box.bottom <= after.top + 1);
 }
 
 /** The cog that opens settings, in the summary and the result menu. */
@@ -475,6 +546,7 @@ function settingsButton(open: () => void): HTMLButtonElement {
 export function removeAllUi(): void {
   document.querySelectorAll(HOST_TAGS).forEach((el) => el.remove());
   summaryHost = undefined;
+  summaryArea = undefined;
 }
 
 // ---------------------------------------------------------------------------

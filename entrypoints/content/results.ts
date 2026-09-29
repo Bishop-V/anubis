@@ -1,4 +1,4 @@
-import { decodeBingRedirect, displayedDomainToUrl, siteOf } from '@/utils/domain';
+import { decodeBingRedirect, displayedDomainToUrl, forumNameToUrl, siteOf } from '@/utils/domain';
 import type { EngineDef } from '@/utils/engines';
 
 export interface FoundResult {
@@ -209,13 +209,56 @@ export function resolveUrl(link: HTMLAnchorElement, container: HTMLElement, engi
 
   if (siteOf(link.hostname) !== siteOf(location.hostname)) return href;
 
-  const params = new URLSearchParams(link.search);
-  for (const key of ['uddg', 'url', 'q', 'u', 'imgurl']) {
-    const value = params.get(key);
-    if (value && /^https?:\/\//i.test(value)) return value;
+  const fromParams = (search: string) => {
+    const params = new URLSearchParams(search);
+    for (const key of ['uddg', 'url', 'q', 'u', 'imgurl']) {
+      const value = params.get(key);
+      if (value && /^https?:\/\//i.test(value)) return value;
+    }
+    return undefined;
+  };
+  const direct = fromParams(link.search);
+  if (direct) return direct;
+  // Google's click-tracking address, when the link itself is opaque.
+  const ping = link.getAttribute('ping');
+  if (ping) {
+    try {
+      const pinged = fromParams(new URL(ping, location.href).search);
+      if (pinged) return pinged;
+    } catch {
+      // not a URL
+    }
   }
 
-  return displayedUrl(container, engine);
+  // An opaque redirect (Google's /goto): the address the engine shows, then a
+  // plain link to the same result, then a forum's name where the address would be.
+  // A link to another search is never a result.
+  const shown = displayedUrl(container, engine);
+  if (shown || /^\/search\b/.test(link.pathname)) return shown;
+  return otherLink(container) ?? forumUrl(container, engine);
+}
+
+/** A link in the result that goes straight to another site. */
+function otherLink(container: HTMLElement): string | null {
+  for (const a of container.querySelectorAll<HTMLAnchorElement>('a[href]')) {
+    if (/^https?:$/.test(a.protocol) && siteOf(a.hostname) !== siteOf(location.hostname)) return a.href;
+  }
+  return null;
+}
+
+/**
+ * Google shows forum results with the forum's name ("Reddit · r/learnpython") and
+ * a line like "20+ comments · 2 years ago" where the address would be.
+ */
+function forumUrl(container: HTMLElement, engine: EngineDef): string | null {
+  const walker = container.ownerDocument.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const text = node.nodeValue ?? '';
+    if (text.length > 80 || node.parentElement?.closest(engine.heading ?? engine.title ?? 'h3')) continue;
+    const url = forumNameToUrl(text);
+    if (url) return url;
+  }
+  return null;
 }
 
 /** Read the displayed domain ("example.com › docs › page") from the result. */

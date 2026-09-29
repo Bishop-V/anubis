@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { decodeBingRedirect, displayedDomainToUrl, domainChoices, normalizeDomain, siteOf } from '@/utils/domain';
+import { decodeBingRedirect, displayedDomainToUrl, domainChoices, forumNameToUrl, normalizeDomain, siteOf } from '@/utils/domain';
 import { existsSync } from 'node:fs';
 import { DOCS_URL, readSubscribeLink, SUBSCRIBE_PAGE, subscribeLink } from '@/utils/links';
 import { issueUrl, originPermissionFor, reportTracker, reportUrl, suggestionUrl, toRawUrl } from '@/utils/subscriptions';
@@ -28,6 +28,13 @@ describe('domains', () => {
   it('reads displayed domains', () => {
     expect(displayedDomainToUrl('en.wikipedia.org › wiki › Anubis')).toBe('https://en.wikipedia.org/');
     expect(displayedDomainToUrl('Wikipedia')).toBeUndefined();
+  });
+
+  it('reads the forum a Google forum result names instead of its address', () => {
+    expect(forumNameToUrl('Reddit · r/learnpython')).toBe('https://reddit.com/');
+    expect(forumNameToUrl('Stack Overflow')).toBe('https://stackoverflow.com/');
+    expect(forumNameToUrl('20+ comments · 2 years ago')).toBeUndefined();
+    expect(forumNameToUrl('Reddit is great')).toBeUndefined();
   });
 });
 

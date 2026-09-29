@@ -1,4 +1,5 @@
 import { browser, defineContentScript } from '#imports';
+import { NO_CLEANUP } from '@/utils/cleanup';
 import { engineFor, ENGINE_MATCHES, isMobileAgent, type EngineDef } from '@/utils/engines';
 import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { evaluate, type Verdict } from '@/utils/matcher';
@@ -7,7 +8,7 @@ import { formatSiteLine, getSite, setSiteLevel, toggleSiteTag, upsertTagDef, typ
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal, type Theme } from '@/utils/storage';
 import { reportUrl, suggestionUrl } from '@/utils/subscriptions';
-import { findClutter, mainColumn, redirectFor, watchAllTab } from './cleanup';
+import { findClutter, mainColumn, redirectFor, watchAllTab, type Clutter } from './cleanup';
 import { freshState, weighDeeper } from './deeper';
 import './page.css';
 import { findResults, OWN_TAGS, type FoundResult } from './results';
@@ -24,6 +25,7 @@ import {
   renderSummary,
   weighButtonOf,
   type PageTheme,
+  type SummaryPlace,
 } from './ui';
 
 // Runs on search result pages. Each pass: find the results, weigh each one against
@@ -177,7 +179,8 @@ export default defineContentScript({
       rerank(results, scores, rules.settings.rerank && !engine.table);
 
       if (rules.settings.showSummary && !engine.table) {
-        renderSummary(summaryAnchor(results, engine), stats, theme, {
+        const ai = rules.settings.cleanup.ai ? clutter : findClutter(engine, results, { ...NO_CLEANUP, ai: true });
+        renderSummary(summaryPlace(results, engine, ai), stats, theme, {
           toggleReveal: () => {
             reveal = !reveal;
             if (!reveal) shown.clear();
@@ -474,14 +477,32 @@ function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enable
  * most web results, widened to the engine's boundary (Google's #rso) when it has
  * one. Results that show their address count; videos in a panel don't.
  */
-function summaryAnchor(results: FoundResult[], engine: EngineDef): HTMLElement | undefined {
+function summaryAnchor(results: FoundResult[], engine: EngineDef): { before?: HTMLElement; area?: HTMLElement } {
   const main = mainColumn(results, engine).list;
-  if (!main) return results[0]?.container;
+  if (!main) return { before: results[0]?.container };
   const area = (engine.boundary && main.closest<HTMLElement>(engine.boundary)) || main;
   for (const child of area.children) {
-    if (child instanceof HTMLElement && !/^(ANUBIS-SUMMARY|SCRIPT|STYLE|TEMPLATE|LINK|META)$/.test(child.tagName)) return child;
+    if (child instanceof HTMLElement && !/^(ANUBIS-SUMMARY|SCRIPT|STYLE|TEMPLATE|LINK|META)$/.test(child.tagName)) return { before: child, area };
   }
-  return results[0]?.container;
+  return { before: results[0]?.container, area };
+}
+
+/**
+ * Above an AI answer that comes before the results area (Google can put its AI
+ * Overview above the results column), so what Anubis did is the first thing on
+ * the page and "Show hidden" doesn't push it down. Otherwise at the top of the
+ * results area, which is also the fallback if the page lays the first place out
+ * somewhere else.
+ */
+function summaryPlace(results: FoundResult[], engine: EngineDef, clutter: Clutter[]): SummaryPlace | undefined {
+  const { before, area } = summaryAnchor(results, engine);
+  if (!before) return undefined;
+  const ai = clutter
+    .filter((c) => c.kind === 'ai' && !c.uncounted)
+    .map((c) => c.block)
+    .filter((b) => b.isConnected && !b.contains(before) && before.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_PRECEDING && !b.closest('aside, [role="complementary"], #rhs'))
+    .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
+  return ai[0] ? { before: ai[0], area, fallback: before } : { before, area };
 }
 
 /** The next result in the page after this one, skipping Anubis's own elements and blocks clean-up removed. */

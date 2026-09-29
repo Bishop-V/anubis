@@ -8,11 +8,11 @@
 
 import { andList } from './dom';
 
-export type CleanupKind = 'ai' | 'videos' | 'questions' | 'news' | 'images' | 'related';
+export type CleanupKind = 'ai' | 'videos' | 'questions' | 'discussions' | 'news' | 'images' | 'related';
 
 export type Cleanup = Record<CleanupKind, boolean>;
 
-export const NO_CLEANUP: Cleanup = { ai: false, videos: false, questions: false, news: false, images: false, related: false };
+export const NO_CLEANUP: Cleanup = { ai: false, videos: false, questions: false, discussions: false, news: false, images: false, related: false };
 
 export interface CleanupDef {
   id: CleanupKind;
@@ -86,6 +86,14 @@ export const CLEANUP: CleanupDef[] = [
     ],
   },
   {
+    id: 'discussions',
+    label: 'Discussions',
+    hint: 'Panels of forum threads between the results, like Google’s “Discussions and forums”. Forum results in the list stay.',
+    one: 'a discussions panel',
+    many: 'discussions panels',
+    headings: ['Discussions and forums', 'Discussions'],
+  },
+  {
     id: 'news',
     label: 'Top stories',
     hint: 'News panels between the results.',
@@ -110,6 +118,7 @@ export const CLEANUP: CleanupDef[] = [
     many: 'lists of related searches',
     headings: [
       'Related searches',
+      'Related queries',
       'People also search for',
       'Recherches associées',
       'Ähnliche Suchanfragen',

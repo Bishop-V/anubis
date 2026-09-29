@@ -10,11 +10,18 @@ export interface Clutter {
 }
 
 const HEADINGS = 'h1, h2, h3, h4, h5, [role="heading"]';
-/** Where a label or marker text can't belong to a block that clean-up removes. */
-const NOT_A_BLOCK = '[data-anubis-result], anubis-summary, header, nav, [role="navigation"], form[role="search"], a, button, script, style, noscript, template, textarea, select, option';
+/** Where a label or marker text can't belong to a block that clean-up removes. The page's header is checked separately. */
+const NOT_A_BLOCK = '[data-anubis-result], anubis-summary, nav, [role="navigation"], form[role="search"], a, button, script, style, noscript, template, textarea, select, option';
+/** Where a link can't be a panel's title: rows of tabs and the search form. */
+const NOT_A_TITLE = 'nav, [role="navigation"], [role="tablist"], [role="tab"], form, anubis-summary';
 /** What a tab or button to an AI chat can be, and the item in a row of them that holds one. */
 const CONTROL = 'a, button, [role="link"], [role="button"], [role="tab"], [role="option"], [role="menuitem"]';
 const ROW_ITEM = '[role="listitem"], [role="tab"], [role="option"], [role="menuitem"], li';
+/**
+ * Panels an engine puts inside a result: Bing and Google add "People also search
+ * for" under a result you went to and came back from.
+ */
+const INSIDE_RESULTS = new Set<CleanupKind>(['related', 'questions']);
 
 /**
  * Blocks in the results column to remove, found three ways and then widened to the
@@ -30,7 +37,7 @@ const ROW_ITEM = '[role="listitem"], [role="tab"], [role="option"], [role="menui
  */
 export function findClutter(engine: EngineDef, results: FoundResult[], wanted: Cleanup): Clutter[] {
   if (!results.length || !Object.values(wanted).some(Boolean)) return [];
-  const column = mainColumn(results, engine);
+  const column: Column = { ...mainColumn(results, engine), keep: pagers(engine) };
   // The page's own search box: the first one in the page. A follow-up box inside an
   // AI answer comes later and doesn't protect the answer.
   const searchBox = document.querySelector('form[role="search"], textarea[name="q"], input[name="q"], input[type="search"]');
@@ -55,10 +62,23 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
     }
   };
 
+  const resultAround = (el: Element) => results.find((r) => r.container.contains(el));
+  const addInResult = (label: HTMLElement, result: FoundResult, kind: CleanupKind) => {
+    // The result's own title and its sitelinks are links.
+    if (!INSIDE_RESULTS.has(kind) || label.closest('a, [role="link"]') || label.querySelector('a[href]')) return;
+    const block = panelInResult(label, result);
+    if (!block || seen.has(block) || (searchBox && block.contains(searchBox))) return;
+    seen.add(block);
+    found.push({ block, kind });
+  };
+
   for (const heading of document.querySelectorAll<HTMLElement>(HEADINGS)) {
-    if (heading.closest('[data-anubis-result], anubis-summary, header, nav, [role="navigation"], form')) continue;
+    if (heading.closest('anubis-summary, nav, [role="navigation"], form') || inPageHeader(heading)) continue;
     const kind = cleanupKindFor(heading.textContent ?? '');
-    if (kind && wanted[kind]) addLabelled(labelledBlock(heading, engine, column, levelOf(heading)), kind);
+    if (!kind || !wanted[kind]) continue;
+    const result = resultAround(heading);
+    if (result) addInResult(heading, result, kind);
+    else addLabelled(labelledBlock(heading, engine, column, levelOf(heading)), kind);
   }
 
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
@@ -69,7 +89,22 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
     const kind = label ?? cleanupMarkerFor(text);
     if (!kind || !wanted[kind]) continue;
     const el = node.parentElement;
-    if (!el || el.closest(NOT_A_BLOCK)) continue;
+    if (!el || inPageHeader(el)) continue;
+    const result = resultAround(el);
+    if (result) {
+      if (label) addInResult(el, result, kind);
+      continue;
+    }
+    if (el.closest(NOT_A_BLOCK)) {
+      // A panel's title can be a link to the engine's own page of that kind (its
+      // Videos tab). A row of tabs holds only such links; a panel holds links to
+      // other sites or pictures.
+      const title = label ? el.closest<HTMLElement>('a[href]') : null;
+      if (!title || textLength(title) > text.trim().length + 2 || title.closest(NOT_A_TITLE) || title.parentElement?.closest(NOT_A_BLOCK)) continue;
+      const block = labelledBlock(title, engine, column, levelOf(title.closest<HTMLElement>(HEADINGS) ?? title));
+      if (block && holdsContent(block, title)) add(block, kind);
+      continue;
+    }
     // A label is the block's title: judge its level like a heading's. A marker sits
     // anywhere in the block, so only the column decides how far it reaches.
     if (label) addLabelled(labelledBlock(el, engine, column, levelOf(el.closest<HTMLElement>(HEADINGS) ?? el)), kind);
@@ -113,6 +148,8 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
 interface Column {
   list: HTMLElement | undefined;
   results: HTMLElement[];
+  /** What a block may never take with it: the links to later pages. */
+  keep?: Element[];
 }
 
 /** The element holding most web results, and those results. Also where the summary goes. */
@@ -138,7 +175,9 @@ export function mainColumn(results: FoundResult[], engine: Pick<EngineDef, 'disp
  */
 function labelledBlock(label: HTMLElement, engine: EngineDef, column: Column, level: number): HTMLElement | undefined {
   const marked = engine.blocks ? label.closest<HTMLElement>(engine.blocks) : null;
-  if (!marked || column.results.some((r) => r.contains(marked) || marked.contains(r))) return blockAround(label, engine, column, level);
+  if (!marked || column.results.some((r) => r.contains(marked) || marked.contains(r)) || column.keep?.some((k) => marked.contains(k))) {
+    return blockAround(label, engine, column, level);
+  }
   // Only if the marked block is in the results column (not a side panel).
   const whole = blockAround(marked, engine, column);
   if (!whole) return undefined;
@@ -157,6 +196,8 @@ function labelledBlock(label: HTMLElement, engine: EngineDef, column: Column, le
  * (a side panel) isn't touched. Starting from a heading, the climb also stops below
  * a parent with another heading of the same or higher level: the block is one
  * section of a bigger panel ("Images" inside a knowledge panel), not the whole panel.
+ * It also stops below a parent holding the links to later pages, which can share a
+ * block with related searches at the bottom of the page.
  */
 function blockAround(start: HTMLElement, engine: EngineDef, column: Column, level?: number): HTMLElement | undefined {
   let block = start;
@@ -166,6 +207,7 @@ function blockAround(start: HTMLElement, engine: EngineDef, column: Column, leve
   for (let depth = 0; depth < 30; depth++) {
     const parent = block.parentElement;
     if (!parent || parent === document.body || parent === document.documentElement) return undefined;
+    if (!section && column.keep?.some((k) => parent.contains(k) && !block.contains(k))) section = block;
     if (parent === column.list) return section ?? block;
     if (engine.boundary && parent.matches(engine.boundary)) return section ?? block;
     if ((!engine.boundary || parent.closest(engine.boundary)) && column.results.some((r) => parent.contains(r))) return section ?? block;
@@ -222,8 +264,8 @@ function isItemTitle(heading: HTMLElement, within: HTMLElement): boolean {
 }
 
 /**
- * Never remove the main results, the page's search box, or Anubis's own summary.
- * Results inside a panel (its videos) go with the panel.
+ * Never remove the main results, the page's search box, the links to later pages,
+ * or Anubis's own summary. Results inside a panel (its videos) go with the panel.
  */
 function safeToRemove(block: HTMLElement, column: Column, searchBox: Element | null): boolean {
   return (
@@ -231,8 +273,68 @@ function safeToRemove(block: HTMLElement, column: Column, searchBox: Element | n
     !column.results.some((r) => r.contains(block) || block.contains(r)) &&
     !(column.list && block.contains(column.list)) &&
     !block.querySelector('anubis-summary') &&
-    !(searchBox && block.contains(searchBox))
+    !(searchBox && block.contains(searchBox)) &&
+    !column.keep?.some((k) => block.contains(k))
   );
+}
+
+/**
+ * The links to later pages ("Gooooogle 1 2 3 Next"): the engine's own Next link or
+ * More button with the row around it, and any navigation of page numbers.
+ */
+function pagers(engine: EngineDef): Element[] {
+  const out = new Set<Element>();
+  const more = engine.more;
+  const own = more?.kind === 'link' ? document.querySelector(more.next) : more?.kind === 'click' ? document.querySelector(more.button) : null;
+  if (own) out.add(own.closest('[role="navigation"], nav, table') ?? own);
+  for (const nav of document.querySelectorAll('[role="navigation"], nav')) {
+    const numbers = [...nav.querySelectorAll('a, [role="link"]')].filter((a) => /^\s*\d+\s*$/.test(a.textContent ?? ''));
+    if (numbers.length >= 2) out.add(nav);
+  }
+  return [...out];
+}
+
+/**
+ * The page's own header, where tabs named like panels ("Videos", "News") live. A
+ * panel's header inside the results (or an article or section) doesn't count.
+ */
+function inPageHeader(el: Element): boolean {
+  const header = el.closest('header');
+  if (!header) return false;
+  return !header.parentElement?.closest('main, [role="main"], article, section, aside, li') || !!header.querySelector('form, input, textarea, [role="search"]');
+}
+
+/** More in the block than its title link: links to other sites, or pictures. */
+function holdsContent(block: HTMLElement, title: HTMLElement): boolean {
+  if (block.querySelector('img, picture, video')) return true;
+  const here = location.hostname;
+  return [...block.querySelectorAll<HTMLAnchorElement>('a[href]')].some((a) => !title.contains(a) && /^https?:$/.test(a.protocol) && a.hostname !== here);
+}
+
+/**
+ * The panel around a label inside a result: climb from the label while the parent
+ * holds neither the result's title nor text of its own (the result's snippet).
+ * The panel's own text is mostly links or buttons (other searches, questions).
+ */
+function panelInResult(label: HTMLElement, result: FoundResult): HTMLElement | undefined {
+  let block = label;
+  for (let parent = block.parentElement; parent && parent !== result.container; parent = parent.parentElement) {
+    if (parent.contains(result.link) || parent.contains(result.titleBlock)) break;
+    if (plainTextLength(parent) - plainTextLength(block) > 40) break;
+    block = parent;
+  }
+  return block.contains(result.link) ? undefined : block;
+}
+
+/** Text outside links and buttons. */
+function plainTextLength(el: HTMLElement): number {
+  let n = 0;
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    if (node.parentElement?.closest('a, button, [role="button"], [role="link"]')) continue;
+    n += (node.nodeValue ?? '').replace(/\s+/g, ' ').trim().length;
+  }
+  return n;
 }
 
 const WEB_TAB_KEY = 'anubis:all-tab';

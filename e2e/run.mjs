@@ -120,6 +120,9 @@ async function launch(settings = {}) {
     ]),
     'https://www.google.com/search?q=anubis&udm=14': google('anubis', ANUBIS_RESULTS),
     'https://www.google.com/search?q=anubis&mobile=1': googleMobile('anubis', ANUBIS_RESULTS),
+    'https://www.google.com/search?q=anubis&forum=1': google('anubis', ANUBIS_RESULTS, { forum: true, aiAbove: true, related: true, next: '/search?q=anubis&start=10' }),
+    'https://www.bing.com/search?q=javascript+promises&inline=1': bing('javascript promises', JS_RESULTS, { inline: true }),
+    'https://search.brave.com/search?q=anubis&panels=1': brave('anubis', ANUBIS_RESULTS, { panels: true }),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
   };
@@ -256,6 +259,25 @@ if (!only || only === 'grouped') {
   });
   console.log('\n== grouped google:', JSON.stringify(check));
   await page.screenshot({ path: `${SHOTS}google-grouped.png`, fullPage: true });
+
+  // Opaque /goto links everywhere, and a Reddit thread with no address shown: the
+  // forum's name stands in for it.
+  await page.goto('https://www.google.com/search?q=anubis&forum=1');
+  await page.waitForTimeout(700);
+  console.log(
+    '== google forum result:',
+    JSON.stringify(
+      await page.evaluate(() => {
+        const reddit = document.querySelector('.forum-meta')?.closest('.MjjYud');
+        return {
+          results: document.querySelectorAll('[data-anubis-result]').length,
+          redditFound: !!reddit?.hasAttribute('data-anubis-result'),
+          redditButton: !!reddit?.querySelector(':scope > anubis-weigh'),
+          redditTagged: !!reddit?.querySelector('anubis-chips'),
+        };
+      }),
+    ),
+  );
 }
 
 if (!only || only === 'reveal') {
@@ -448,12 +470,62 @@ if (!only || only === 'cleanup') {
   console.log('   removed:', JSON.stringify((await statsNow())?.removed));
   await page.screenshot({ path: `${SHOTS}ddg-cleanup.png`, fullPage: true });
 
+  // Panels found other ways. Brave's: a title that links to its Videos tab (the
+  // tab of that name stays), and plain titles beside an icon. The box Bing puts
+  // inside a result you came back to. Google's related searches sharing a block
+  // with the page navigation, which stays.
+  await setSettings({ cleanup: { ...all, discussions: true } });
+  await page.goto('https://search.brave.com/search?q=anubis&panels=1');
+  await page.waitForTimeout(800);
+  const visibleIn = (selectors) =>
+    page.evaluate((selectors) => {
+      const visible = (el) => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0;
+      return Object.fromEntries(Object.entries(selectors).map(([k, sel]) => [k, visible(document.querySelector(sel))]).concat([['results', [...document.querySelectorAll('[data-anubis-result]')].filter(visible).length]]));
+    }, selectors);
+  console.log('== Brave panels:', JSON.stringify(await visibleIn({ videos: '.cluster-videos', discussions: '.cluster-discussions', relatedQueries: '.related-queries', videosTab: '.tabs a[href^="/videos"]' })));
+  console.log('   removed:', JSON.stringify((await statsNow())?.removed));
+  await page.goto('https://www.bing.com/search?q=javascript+promises&inline=1');
+  await page.waitForTimeout(800);
+  console.log('== Bing box inside a result:', JSON.stringify(await visibleIn({ box: '.b_rrsr', title: 'li.b_algo:nth-child(2) h2', snippet: 'li.b_algo:nth-child(2) .b_caption' })));
+  console.log('   removed:', JSON.stringify((await statsNow())?.removed));
+  await page.goto('https://www.google.com/search?q=anubis&forum=1');
+  await page.waitForTimeout(800);
+  console.log('== Google related searches and pages:', JSON.stringify(await visibleIn({ related: '#bres', pager: '.AaVjTc', next: '#pnnext', aiOverview: '.aiabove' })));
+  console.log('   removed:', JSON.stringify((await statsNow())?.removed));
+
+  // The summary goes above an AI answer that sits above the results column, lined
+  // up with the results, and stays put when Show hidden brings the answer back.
+  const summaryPlace = () =>
+    page.evaluate(() => {
+      const summary = document.querySelector('anubis-summary');
+      const ai = document.querySelector('.aiabove');
+      const rso = document.querySelector('#rso');
+      if (!summary || !ai || !rso) return { summary: !!summary };
+      const s = summary.getBoundingClientRect();
+      const inset = parseFloat(getComputedStyle(summary).paddingLeft);
+      return {
+        aboveAi: summary.nextElementSibling === ai,
+        aboveResults: s.bottom <= rso.getBoundingClientRect().top + 1,
+        linedUp: Math.abs(s.left + inset - rso.getBoundingClientRect().left) < 2,
+        top: Math.round(s.top),
+      };
+    });
+  console.log('== summary with the AI answer removed:', JSON.stringify(await summaryPlace()));
+  await clickShadowButton('anubis-summary', 'Show hidden');
+  await page.waitForTimeout(300);
+  console.log('   after Show hidden:', JSON.stringify(await summaryPlace()));
+  await page.screenshot({ path: `${SHOTS}google-ai-above.png`, fullPage: true });
+  await setSettings({ cleanup: { ...all, ai: false } });
+  await page.goto('https://www.google.com/search?q=anubis&forum=1');
+  await page.waitForTimeout(800);
+  console.log('   with clean-up of AI answers off:', JSON.stringify(await summaryPlace()));
+
   // Forcing it on Google: the Web tab.
   await setSettings({ cleanup: { ...all, ai: false } , googleWebTab: true });
   await page.goto('https://www.google.com/search?q=anubis');
   await page.waitForURL(/udm=14/, { timeout: 3000 }).catch(() => {});
   console.log('== Google with the Web tab on:', page.url());
-  await setSettings({ cleanup: { ai: false, videos: false, questions: false, news: false, images: false, related: false }, googleWebTab: false });
+  await setSettings({ cleanup: { ai: false, videos: false, questions: false, discussions: false, news: false, images: false, related: false }, googleWebTab: false });
 }
 
 if (!only || only === 'runs') {
