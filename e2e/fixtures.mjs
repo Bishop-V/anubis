@@ -66,13 +66,14 @@ const siteIcon = (svg) =>
 // live page): the answer as the list's first item, found by its data-testid with no
 // heading to go by, and Duck.ai as a tab and a button in the search box.
 // `wide`: the results in a list that isn't an <ol>, inside a <main> that also holds
-// a side panel, so the results area is wider than the results.
+// a side panel, so the results area is wider than the results, and each result's
+// whole address, long enough to run under the result's buttons.
 export function duckduckgo(query, results, dark = false, more = [], { ai = false, wide = false } = {}) {
   const item = ([url, title, snippet], i) => `
       <li data-layout="organic" class="wLL07_0Xnd1QZpzpfR4W">
         <article id="r1-${i}" data-testid="result" data-nrn="result" class="yQDlj3B5DI5YO8c8Ulio CpkrTDP54mqzpuCSn1Fa SKlplDuh9FjtDprgoMxk">
           <div class="OHr0VX9IuNcv6iakvT6A"><div class="favicon"></div>
-            <a href="${url}" rel="noopener" class="Rn_JXVtoPVAFyGkcaXyK"><span>${esc(hostOf(url))}</span></a>
+            <a href="${url}" rel="noopener" class="Rn_JXVtoPVAFyGkcaXyK"><span>${esc(wide ? url : hostOf(url))}</span></a>
           </div>
           <h2 class="LnpumSThxEWMIsDdAT17 CXMyPcQ6nDv47DKFeywM"><a href="${url}" rel="noopener" data-testid="result-title-a" class="eVNpHGjtxRBq_gLOfGDr LQNqh2U1kzYxREs65IJu"><span class="EKtkFWMYpwzMKOYr0GYm LQVY1Jpkk8nyJ6HBWKAk">${esc(title)}</span></a></h2>
           <div data-result="snippet" class="OgdwYG6KE2qthn9XQWFC"><div><span class="kY2IgmnCmOGjharHErah">${esc(snippet)}</span></div></div>

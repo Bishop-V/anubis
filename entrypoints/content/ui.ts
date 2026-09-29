@@ -325,6 +325,51 @@ export function ensureWeighButton(
     positioned.add(container);
     if (getComputedStyle(container).position === 'static') container.style.position = 'relative';
   }
+  if (coversText(host, container)) moveOffText(host, container, menu);
+}
+
+/** Whether the button sits over any of the result's text (a long address, a title). */
+function coversText(host: HTMLElement, container: HTMLElement): boolean {
+  const b = host.getBoundingClientRect();
+  if (!b.width) return false;
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+  const range = document.createRange();
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const parent = node.parentElement;
+    if (!parent || !node.textContent?.trim()) continue;
+    const p = parent.getBoundingClientRect();
+    if (p.bottom <= b.top || p.top >= b.bottom || p.right <= b.left || p.left >= b.right) continue;
+    range.selectNodeContents(node);
+    for (const r of range.getClientRects()) {
+      if (r.bottom > b.top + 1 && r.top < b.bottom - 1 && r.right > b.left + 1 && r.left < b.right - 1) return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Off the text it covers: under the engine's menu button when there is one,
+ * otherwise out past the result's right edge if the window has room, otherwise
+ * down the result's right edge until it's clear.
+ */
+function moveOffText(host: HTMLElement, container: HTMLElement, menu: HTMLElement | undefined): void {
+  const box = container.getBoundingClientRect();
+  const b = host.getBoundingClientRect();
+  const top = parseFloat(host.style.top) || 0;
+  if (menu) {
+    const m = menu.getBoundingClientRect();
+    host.style.setProperty('top', `${Math.round(top + m.bottom + 2 - b.top)}px`, 'important');
+    host.style.setProperty('right', `${Math.round(box.right - m.right + (m.width - b.width) / 2)}px`, 'important');
+    if (!coversText(host, container)) return;
+    host.style.setProperty('top', `${Math.round(top)}px`, 'important');
+  }
+  if (box.right + b.width + 8 <= document.documentElement.clientWidth) {
+    host.style.setProperty('right', `${-Math.round(b.width + 4)}px`, 'important');
+    return;
+  }
+  for (let step = 1; step <= 4 && coversText(host, container); step++) {
+    host.style.setProperty('top', `${Math.round(top + step * (b.height + 2))}px`, 'important');
+  }
 }
 
 /**

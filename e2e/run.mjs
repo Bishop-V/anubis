@@ -769,6 +769,43 @@ if (!only || only === 'cleanup' || checks) {
     return { found: true, left: Math.round(left), right: Math.round(right), colLeft: Math.round(col.left), colRight: Math.round(col.right) };
   });
   console.log('== summary on a results area wider than the results:', JSON.stringify(wide));
+
+  // The ⚖ button never sits over a result's text.
+  const covering = {};
+  for (const url of [
+    'https://duckduckgo.com/?q=javascript+promises&wide=1',
+    'https://duckduckgo.com/?q=javascript+promises',
+    'https://www.google.com/search?q=anubis',
+    'https://www.bing.com/search?q=javascript+promises',
+    'https://search.brave.com/search?q=anubis',
+  ]) {
+    await page.goto(url);
+    await page.waitForTimeout(800);
+    covering[url] = await page.evaluate(() => {
+      let buttons = 0;
+      const over = [];
+      for (const host of document.querySelectorAll('anubis-weigh')) {
+        const b = host.getBoundingClientRect();
+        if (!b.width) continue;
+        buttons++;
+        const walker = document.createTreeWalker(host.parentElement, NodeFilter.SHOW_TEXT);
+        const range = document.createRange();
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          if (!node.textContent.trim()) continue;
+          range.selectNodeContents(node);
+          if ([...range.getClientRects()].some((r) => r.bottom > b.top + 1 && r.top < b.bottom - 1 && r.right > b.left + 1 && r.left < b.right - 1)) {
+            over.push(node.textContent.trim().slice(0, 40));
+            break;
+          }
+        }
+      }
+      return { buttons, over };
+    });
+  }
+  console.log('== buttons over text:', JSON.stringify(covering));
+  if (checks) {
+    assertChecks('the ⚖ button never covers text', Object.fromEntries(Object.entries(covering).map(([url, c]) => [url, c.buttons > 0 && c.over.length === 0])));
+  }
   if (checks) {
     assertChecks('summary as wide as the results', {
       found: wide.found,
