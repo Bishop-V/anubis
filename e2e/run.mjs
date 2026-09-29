@@ -277,6 +277,24 @@ if (!only || only === 'pages') {
     );
   const pairs = await pair();
   console.log('\n== ddg button beside its menu:', JSON.stringify({ results: pairs.length, all: pairs.every((p) => p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6), failing: pairs.filter((p) => !(p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6)) }));
+  // DuckDuckGo's open ⋯ menu is a role="menu" layer inside the result at z-index 1
+  // (read from the live page): it must cover the button, not the other way round.
+  const underMenu = await page.evaluate(() => {
+    const li = document.querySelector('li[data-anubis-result]:not([data-anubis-state~="hide"])');
+    const host = li.querySelector(':scope > anubis-weigh');
+    const r = host.getBoundingClientRect();
+    const layer = document.createElement('div');
+    layer.style.cssText = 'position:absolute;top:0;right:0;width:220px;height:120px';
+    const menu = document.createElement('div');
+    menu.setAttribute('role', 'menu');
+    menu.style.cssText = 'position:absolute;inset:0;z-index:1;background:#333';
+    layer.append(menu);
+    li.querySelector('article').append(layer);
+    const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    layer.remove();
+    return top === menu;
+  });
+  assertChecks('ddg open menu', { coversButton: underMenu });
   const first = page.locator('li[data-anubis-result]').first();
   await first.locator('anubis-weigh').hover();
   await page.waitForTimeout(250);
@@ -793,6 +811,11 @@ if (!only || only === 'cleanup' || checks) {
   if (checks) assertChecks('DuckDuckGo side panel is not a result', { found: sidePanel.found, notAResult: !sidePanel.result });
 
   // DuckDuckGo's Videos and Images tabs: cards in a grid, hidden and tagged, not reranked.
+  // Earlier parts change the personal list and tag choices, so start from the seeded ones.
+  await ctx.serviceWorkers()[0].evaluate(
+    (personal) => chrome.storage.sync.set({ 'personal.0': personal, personal: { chunks: 1, updatedAt: Date.now() }, tagPrefs: { 'ai-slop': { action: 'hide' } } }),
+    PERSONAL,
+  );
   for (const tab of ['videos', 'images']) {
     await page.goto(`https://duckduckgo.com/?q=javascript+promises&iax=${tab}&ia=${tab}`);
     // Wait until the lists have weighed the cards (some are hidden), not a fixed time.

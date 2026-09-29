@@ -320,7 +320,8 @@ export function ensureWeighButton(
   }
   host.style.setProperty('left', 'auto', 'important');
   host.style.setProperty('bottom', 'auto', 'important');
-  host.style.setProperty('z-index', '5', 'important');
+  // DuckDuckGo draws its open menu inside the result at z-index 1: stay under it.
+  host.style.setProperty('z-index', menu ? '0' : '5', 'important');
   if (host.parentElement !== container) container.append(host);
   keepUpright(host);
   // The button is absolutely positioned, so the result must be a positioning context.
