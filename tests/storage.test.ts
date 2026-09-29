@@ -1,6 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fakeBrowser } from 'wxt/testing/fake-browser';
 import { storage } from '#imports';
+import { readBackup } from '@/utils/backup';
+import { parseList } from '@/utils/listformat';
+import { collectTags, compileList } from '@/utils/matcher';
 import { listSites, setSiteLevel } from '@/utils/personal';
 import {
   checksum,
@@ -158,5 +161,21 @@ describe('colours on search pages', () => {
     expect((await getSettings()).palette).toBe('gold');
     await updateSettings({ palette: 'plain' });
     expect((await getSettings()).palette).toBe('plain');
+  });
+});
+
+describe('tag choices from a backup or sync file', () => {
+  const read = (tagPrefs: unknown) => readBackup(JSON.stringify({ anubis: 1, tagPrefs })).tagPrefs;
+
+  it('keeps what Settings saves', () => {
+    const prefs = { reference: { action: 'raise', color: '#3FA37A', label: 'Docs', muted: true }, paywall: { action: 'hide' } };
+    expect(read(prefs)).toEqual({ reference: { action: 'raise', color: '#3fa37a', label: 'Docs', muted: true }, paywall: { action: 'hide' } });
+  });
+
+  it('drops entries search pages couldn’t read', () => {
+    const prefs = read({ reference: null, paywall: 'hide', docs: { action: 'explode', color: 'red; background: url(https://x.test/)', muted: 'yes' } });
+    expect(prefs).toEqual({ docs: {} });
+    const list = compileList('a', parseList('! tag: reference | Reference\nexample.com$tag=reference\n'));
+    expect(collectTags([list], read({ reference: null })).get('reference')?.label).toBe('Reference');
   });
 });

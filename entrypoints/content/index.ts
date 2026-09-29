@@ -126,6 +126,7 @@ export default defineContentScript({
       if (deeper.url !== location.href && !deeper.busy) {
         deeper = freshState(engine);
         filter = undefined;
+        reveal = false;
         shown = new Set();
         change = undefined;
       }

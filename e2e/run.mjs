@@ -482,6 +482,23 @@ if (!only || only === 'reveal' || checks) {
   const afterChange = await hidden.evaluate((el) => el.hasAttribute('data-anubis-reveal'));
   console.log('\n== reveal one result:', JSON.stringify({ afterClick, afterChange, hiddenChip }));
   assertChecks('reveal hidden result', { revealsAfterClick: afterClick, staysRevealedAfterPageChange: afterChange, noRedundantHiddenChip: !hiddenChip });
+
+  // Show hidden is for the search it was pressed on. Google and DuckDuckGo start a
+  // new search without loading a page, which has to hide those results again.
+  await page.goto('https://www.google.com/search?q=anubis');
+  await page.waitForSelector('anubis-summary');
+  await page.waitForTimeout(300);
+  await clickShadowButton('anubis-summary', 'Show hidden');
+  await page.waitForTimeout(200);
+  const revealedAll = await page.evaluate(() => document.querySelectorAll('[data-anubis-result][data-anubis-reveal]').length);
+  await page.evaluate(() => {
+    history.pushState(null, '', '/search?q=anubis+gods');
+    document.body.append(document.createElement('div'));
+  });
+  await page.waitForTimeout(300);
+  const revealedAfterSearch = await page.evaluate(() => document.querySelectorAll('[data-anubis-result][data-anubis-reveal]').length);
+  console.log('\n== show hidden, then a new search in the page:', JSON.stringify({ revealedAll, revealedAfterSearch }));
+  assertChecks('show hidden ends with the search', { revealsAll: revealedAll > 0, hidesAgainOnNewSearch: revealedAfterSearch === 0 });
 }
 
 if (!only || checks) {

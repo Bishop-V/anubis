@@ -1,5 +1,6 @@
 import { storage } from '#imports';
-import type { TagPref } from './matcher';
+import { normalizeColor } from './listformat';
+import type { TagAction, TagPref } from './matcher';
 import { deepEqual, mergeById, mergeLists, mergeValue, type Side } from './merge';
 import {
   DEFAULT_PERSONAL,
@@ -55,6 +56,28 @@ export function toBackup(data: SyncData): Backup {
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 
+const TAG_ACTIONS: readonly TagAction[] = ['list', 'label', 'highlight', 'raise', 'lower', 'hide'];
+
+/**
+ * Tag choices from a file, keeping only what Settings could have saved. Search
+ * pages read each choice as an object, and put its colour into a style.
+ */
+function readTagPrefs(value: unknown): Record<string, TagPref> {
+  const prefs: Record<string, TagPref> = {};
+  if (!isRecord(value)) return prefs;
+  for (const [id, pref] of Object.entries(value)) {
+    if (!isRecord(pref)) continue;
+    const out: TagPref = {};
+    if (TAG_ACTIONS.includes(pref.action as TagAction)) out.action = pref.action as TagAction;
+    const color = typeof pref.color === 'string' ? normalizeColor(pref.color) : undefined;
+    if (color) out.color = color;
+    if (typeof pref.label === 'string') out.label = pref.label;
+    if (typeof pref.muted === 'boolean') out.muted = pref.muted;
+    prefs[id] = out;
+  }
+  return prefs;
+}
+
 /** A backup or sync file's contents, checked and filled in; throws if it isn't one. */
 export function readBackup(text: string): SyncData {
   let data: unknown;
@@ -67,7 +90,7 @@ export function readBackup(text: string): SyncData {
   const subs = Array.isArray(data.subscriptions) ? data.subscriptions : undefined;
   return {
     settings: normalizeSettings(isRecord(data.settings) ? (data.settings as Partial<Settings>) : undefined),
-    tagPrefs: isRecord(data.tagPrefs) ? (data.tagPrefs as Record<string, TagPref>) : {},
+    tagPrefs: readTagPrefs(data.tagPrefs),
     subscriptions: subs
       ? subs.filter((s): s is Subscription => isRecord(s) && typeof s.id === 'string' && typeof s.url === 'string')
       : defaultSubs(),
