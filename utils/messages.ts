@@ -45,7 +45,9 @@ export type Message =
   | { type: 'go-deeper' }
   | { type: 'set-filter'; tag?: string }
   /** From settings: sync with the WebDAV server now. Replies with its `SyncStatus`. */
-  | { type: 'sync-server' };
+  | { type: 'sync-server' }
+  /** From settings: re-encrypt the sync file under a new passphrase. Replies with its `SyncStatus`. */
+  | { type: 'change-passphrase'; passphrase: string };
 
 export function send<T = unknown>(message: Message): Promise<T | undefined> {
   return browser.runtime.sendMessage(message).catch(() => undefined) as Promise<T | undefined>;

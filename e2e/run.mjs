@@ -5,7 +5,7 @@
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
 //                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options,
-//                               responsive, welcome, sync, webdav, checks (hostile, grouped, reveal, lifecycle, mobile assertions)
+//                               responsive, welcome, sync, webdav, checks (layout, lifecycle, pin/hidden chips, DDG icon colors)
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slides
 //                               in docs/public/
 //
@@ -66,6 +66,15 @@ function proxyTrustArgs() {
   return [`--ignore-certificate-errors-spki-list=${spki}`];
 }
 
+async function waitForWorker(sw, check, error) {
+  const deadline = Date.now() + 10000;
+  while (Date.now() < deadline) {
+    if (await sw.evaluate(check)) return;
+    await new Promise((resolve) => setTimeout(resolve, 25));
+  }
+  throw new Error(error);
+}
+
 async function launch(settings = {}, ext = EXT) {
   const ctx = await chromium.launchPersistentContext(mkdtempSync(join(tmpdir(), 'anubis-')), {
     executablePath,
@@ -80,18 +89,8 @@ async function launch(settings = {}, ext = EXT) {
   let [sw] = ctx.serviceWorkers();
   if (!sw) sw = await ctx.waitForEvent('serviceworker');
   const extId = new URL(sw.url()).host;
-  await sw.evaluate(
-    () =>
-      new Promise((resolve, reject) => {
-        const deadline = Date.now() + 5000;
-        const wait = () => {
-          if (typeof chrome !== 'undefined' && chrome.storage) return resolve();
-          if (Date.now() >= deadline) return reject(new Error('Extension storage API did not become ready'));
-          setTimeout(wait, 25);
-        };
-        wait();
-      }),
-  );
+  await waitForWorker(sw, () => typeof chrome !== 'undefined' && !!chrome.storage, 'Extension storage API did not become ready');
+  await waitForWorker(sw, async () => !!(await chrome.storage.sync.get('personal')).personal, 'Extension personal-list migration did not finish');
   await sw.evaluate(
     async ({ personal, settings }) => {
       await chrome.storage.sync.set({
@@ -214,6 +213,49 @@ async function clickShadowButton(hostSelector, text, index = 0) {
   await cdp.detach();
 }
 
+async function hasChipInHost(cdp, hostId, level) {
+  const { node: host } = await cdp.send('DOM.describeNode', { nodeId: hostId, depth: -1, pierce: true });
+  const shadow = host.shadowRoots?.[0];
+  if (!shadow) return false;
+  const { nodeId } = await cdp.send('DOM.querySelector', { nodeId: shadow.nodeId, selector: `.verdict.${level}` });
+  return !!nodeId;
+}
+
+async function hasResultChip(cdp, resultId, level) {
+  const { nodeId: hostId } = await cdp.send('DOM.querySelector', { nodeId: resultId, selector: 'anubis-chips' });
+  return hostId ? hasChipInHost(cdp, hostId, level) : false;
+}
+
+async function weighButtonColors(page, selector) {
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('DOM.enable');
+  await cdp.send('CSS.enable');
+  const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+  const { nodeId: hostId } = await cdp.send('DOM.querySelector', { nodeId: root.nodeId, selector });
+  if (!hostId) throw new Error(`No weigh button host matches ${selector}`);
+  const { node: host } = await cdp.send('DOM.describeNode', { nodeId: hostId, depth: -1, pierce: true });
+  const shadow = host.shadowRoots?.[0];
+  if (!shadow) throw new Error(`No shadow root on ${selector}`);
+  const { nodeId: buttonId } = await cdp.send('DOM.querySelector', { nodeId: shadow.nodeId, selector: 'button.weigh' });
+  if (!buttonId) throw new Error(`No weigh button inside ${selector}`);
+  const { model } = await cdp.send('DOM.getBoxModel', { nodeId: buttonId });
+  const [x1, y1, , , x3, y3] = model.content;
+  await page.mouse.move((x1 + x3) / 2, (y1 + y3) / 2);
+  await page.waitForTimeout(200);
+  const [{ computedStyle: buttonStyle }, { computedStyle: hostStyle }] = await Promise.all([
+    cdp.send('CSS.getComputedStyleForNode', { nodeId: buttonId }),
+    cdp.send('CSS.getComputedStyleForNode', { nodeId: hostId }),
+  ]);
+  const property = (style, name) => style.find((item) => item.name === name)?.value;
+  const button = property(buttonStyle, 'color');
+  const goldInk = property(hostStyle, '--gold-ink')?.match(/^#([\da-f]{6})$/i)?.[1];
+  await cdp.detach();
+  return {
+    button,
+    goldInk: goldInk && `rgb(${parseInt(goldInk.slice(0, 2), 16)}, ${parseInt(goldInk.slice(2, 4), 16)}, ${parseInt(goldInk.slice(4, 6), 16)})`,
+  };
+}
+
 // The links inside the closed shadow roots of hosts with this tag, read the same way.
 async function shadowLinks(hostTag) {
   const cdp = await page.context().newCDPSession(page);
@@ -300,6 +342,30 @@ if (!only || only === 'pages') {
   await page.waitForTimeout(250);
   const box = await first.locator('button.menu').boundingBox();
   await page.screenshot({ path: `${SHOTS}ddg-menu-pair.png`, clip: { x: box.x - 60, y: box.y - 14, width: 110, height: 56 } });
+}
+
+if (!only || only === 'ddg-colors' || checks) {
+  for (const [mode, query] of [['light', ''], ['dark', '&dark=1']]) {
+    await page.goto(`https://duckduckgo.com/?q=javascript+promises${query}`);
+    await page.waitForTimeout(700);
+    const selector = 'li[data-anubis-result]:not([data-anubis-state~="pin"]):not([data-anubis-state~="hide"]) > anubis-weigh';
+    const check = await page.evaluate(() =>
+      [...document.querySelectorAll('li[data-anubis-result]:not([data-anubis-state~="pin"]):not([data-anubis-state~="hide"])')].map((result) => {
+        const host = result.querySelector(':scope > anubis-weigh');
+        const menu = result.querySelector('button.menu');
+        return {
+          button: host?.style.getPropertyValue('--anubis-weigh-color').trim(),
+          menu: menu ? getComputedStyle(menu).color : '',
+        };
+      }),
+    );
+    console.log(`\n== DuckDuckGo ${mode} icon colors:`, JSON.stringify({ results: check.length, matching: check.filter((item) => item.button && item.button === item.menu).length }));
+    assertChecks(`DuckDuckGo ${mode} icon color`, {
+      allUnpinnedWeighIconsMatchMenu: check.length > 0 && check.every((item) => !!item.button && item.button === item.menu),
+    });
+    const hoverColor = await weighButtonColors(page, selector);
+    assertChecks(`DuckDuckGo ${mode} hover`, { hoverRemainsGold: hoverColor.button === hoverColor.goldInk });
+  }
 }
 
 if (!only || only === 'hostile' || checks) {
@@ -403,13 +469,19 @@ if (!only || only === 'reveal' || checks) {
   await clickShadowButton('anubis-bar', 'Show');
   await page.waitForTimeout(200);
   const afterClick = await hidden.evaluate((el) => el.hasAttribute('data-anubis-reveal'));
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('DOM.enable');
+  const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+  const { nodeId } = await cdp.send('DOM.querySelector', { nodeId: root.nodeId, selector: '[data-anubis-state~="hide"][data-anubis-reveal]' });
+  const hiddenChip = nodeId ? await hasResultChip(cdp, nodeId, 'hide') : false;
+  await cdp.detach();
   await page.evaluate(() => document.body.append(document.createElement('div')));
   await page.mouse.move(300, 300);
   await page.mouse.move(320, 340);
   await page.waitForTimeout(300);
   const afterChange = await hidden.evaluate((el) => el.hasAttribute('data-anubis-reveal'));
-  console.log('\n== reveal one result:', JSON.stringify({ afterClick, afterChange }));
-  assertChecks('reveal hidden result', { revealsAfterClick: afterClick, staysRevealedAfterPageChange: afterChange });
+  console.log('\n== reveal one result:', JSON.stringify({ afterClick, afterChange, hiddenChip }));
+  assertChecks('reveal hidden result', { revealsAfterClick: afterClick, staysRevealedAfterPageChange: afterChange, noRedundantHiddenChip: !hiddenChip });
 }
 
 if (!only || checks) {
@@ -1052,7 +1124,7 @@ async function browserScheme(colorScheme) {
   await ctx.serviceWorkers()[0].evaluate((s) => (s ? chrome.storage.local.set({ colorScheme: s }) : chrome.storage.local.remove('colorScheme')), colorScheme);
 }
 
-if (!only || only === 'pins') {
+if (!only || only === 'pins' || checks) {
   // Each pinned result has a frame drawn 8px outside it, so two pinned results in a
   // row need 16px between them, or their frames cross.
   const measure = () =>
@@ -1062,8 +1134,61 @@ if (!only || only === 'pins') {
       return { pinned: pinned.length, gaps, framesApart: gaps.every((g) => g >= 16), pushed: document.querySelectorAll('[data-anubis-pin-room]').length };
     });
   await page.goto('https://www.google.com/search?q=promise+mdn&inner=1');
-  await page.waitForTimeout(700);
-  console.log('\n== pinned results in a row:', JSON.stringify(await measure()));
+  await page.waitForFunction(() => document.querySelector('[data-anubis-state~="pin"]'));
+  await page.waitForTimeout(200);
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('DOM.enable');
+  await cdp.send('CSS.enable');
+  const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+  const { nodeIds } = await cdp.send('DOM.querySelectorAll', { nodeId: root.nodeId, selector: '[data-anubis-state~="pin"]' });
+  const chips = await Promise.all(nodeIds.map((id) => hasResultChip(cdp, id, 'pin')));
+  const { nodeIds: chipHosts } = await cdp.send('DOM.querySelectorAll', { nodeId: root.nodeId, selector: 'anubis-chips' });
+  const retainedRankChips = { raised: false, lowered: false };
+  for (const hostId of chipHosts) {
+    retainedRankChips.raised ||= await hasChipInHost(cdp, hostId, 'raise');
+    retainedRankChips.lowered ||= await hasChipInHost(cdp, hostId, 'lower');
+  }
+  const pinPresentation = [];
+  for (const [index, id] of nodeIds.entries()) {
+    const { nodeId: hostId } = await cdp.send('DOM.querySelector', { nodeId: id, selector: 'anubis-weigh' });
+    if (!hostId) {
+      pinPresentation.push({ chip: chips[index], goldIcon: false, accessibleName: false });
+      continue;
+    }
+    const { node: host } = await cdp.send('DOM.describeNode', { nodeId: hostId, depth: -1, pierce: true });
+    const shadow = host.shadowRoots?.[0];
+    const { nodeId: buttonId } = shadow ? await cdp.send('DOM.querySelector', { nodeId: shadow.nodeId, selector: 'button.weigh' }) : {};
+    if (!buttonId) {
+      pinPresentation.push({ chip: chips[index], goldIcon: false, accessibleName: false });
+      continue;
+    }
+    const [{ computedStyle: buttonStyle }, { computedStyle: hostStyle }, { attributes }] = await Promise.all([
+      cdp.send('CSS.getComputedStyleForNode', { nodeId: buttonId }),
+      cdp.send('CSS.getComputedStyleForNode', { nodeId: hostId }),
+      cdp.send('DOM.getAttributes', { nodeId: buttonId }),
+    ]);
+    const property = (style, name) => style.find((item) => item.name === name)?.value;
+    const ariaLabel = attributes[attributes.indexOf('aria-label') + 1] ?? '';
+    const goldInk = property(hostStyle, '--gold-ink');
+    const hex = goldInk?.match(/^#([\da-f]{6})$/i)?.[1];
+    const goldRgb = hex && `rgb(${parseInt(hex.slice(0, 2), 16)}, ${parseInt(hex.slice(2, 4), 16)}, ${parseInt(hex.slice(4, 6), 16)})`;
+    pinPresentation.push({
+      chip: chips[index],
+      goldIcon: property(buttonStyle, 'color') === goldRgb,
+      accessibleName: ariaLabel.toLowerCase().includes('pinned'),
+    });
+  }
+  await cdp.detach();
+  console.log('\n== pinned results in a row:', JSON.stringify({ layout: await measure(), presentation: pinPresentation, retainedRankChips }));
+  if (checks) {
+    assertChecks('pinned result indicator', {
+      pinnedResultsFound: pinPresentation.length > 0,
+      noRedundantPinnedChip: pinPresentation.every((pin) => !pin.chip),
+      pinIconUsesGold: pinPresentation.every((pin) => pin.goldIcon),
+      accessibleNameRetained: pinPresentation.every((pin) => pin.accessibleName),
+      raisedAndLoweredChipsRemain: retainedRankChips.raised && retainedRankChips.lowered,
+    });
+  }
   await page.screenshot({ path: `${SHOTS}google-pins.png`, fullPage: true });
   // The same after passes that change which results are shown: no creeping or leftovers.
   await clickShadowButton('anubis-summary', 'Official docs4');
@@ -1140,6 +1265,8 @@ if (!only || only === 'popover') {
   await mdn.hover();
   await mdn.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
   await page.waitForTimeout(300);
+  const explanation = await shadowText('anubis-popover');
+  if (!explanation.includes('Matched rule, line ')) throw new Error('The result menu does not show the matching list rule');
   const reportLink = (await shadowLinks('anubis-popover')).find((a) => a.href.includes('/issues/new'));
   const issue = reportLink && new URL(reportLink.href);
   console.log('\n== report a wrong result:', JSON.stringify({
@@ -1567,13 +1694,30 @@ if (!only || only === 'webdav') {
   await opt.getByLabel('Address').fill('https://dav.example/files/me');
   await opt.getByLabel('User name').fill('me');
   await opt.getByLabel('Password').fill('app-password');
+  if (!(await opt.getByLabel('Encrypt the sync file end to end (recommended)').isChecked())) throw new Error('End-to-end encryption is not enabled by default');
+  await opt.getByLabel('Encryption passphrase').fill('a long e2e sync passphrase');
+  await opt.getByLabel('Confirm passphrase').fill('a long e2e sync passphrase');
   await opt.getByRole('button', { name: 'Connect' }).click();
   await opt.waitForTimeout(1500);
   await opt.screenshot({ path: `${SHOTS}options-webdav.png`, fullPage: true });
   const created = JSON.parse(files.get(FILE)?.body ?? 'null');
   const status = await opt.locator('.notice').first().textContent({ timeout: 2000 }).catch(() => 'no status');
-  // Another browser adds a site; Sync now brings it here.
-  files.set(FILE, { body: JSON.stringify({ ...created, personal: `${created.personal}$site=from-firefox.example,discard\n` }), etag: `"${++version}"` });
+  // A second browser changes the encrypted payload; Sync now brings it here.
+  const fromFirefox = await opt.evaluate(async ({ body, passphrase }) => {
+    const decode = (value) => Uint8Array.from(atob(value), (char) => char.charCodeAt(0));
+    const encode = (value) => btoa(String.fromCharCode(...new Uint8Array(value)));
+    const old = JSON.parse(body).encryption;
+    const material = await crypto.subtle.importKey('raw', new TextEncoder().encode(passphrase), 'PBKDF2', false, ['deriveKey']);
+    const oldKey = await crypto.subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt: decode(old.salt), iterations: 600000 }, material, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+    const data = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: decode(old.iv) }, oldKey, decode(old.ciphertext))));
+    data.personal += '$site=from-firefox.example,discard\n';
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations: 600000 }, material, { name: 'AES-GCM', length: 256 }, false, ['encrypt']);
+    const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(JSON.stringify(data)));
+    return JSON.stringify({ anubis: 2, encryption: { algorithm: 'AES-GCM', kdf: 'PBKDF2-SHA-256', iterations: 600000, salt: encode(salt), iv: encode(iv), ciphertext: encode(ciphertext) } });
+  }, { body: files.get(FILE).body, passphrase: 'a long e2e sync passphrase' });
+  files.set(FILE, { body: fromFirefox, etag: `"${++version}"` });
   await opt.getByRole('button', { name: 'Sync now' }).click();
   await opt.waitForTimeout(1500);
   await opt.goto(`chrome-extension://${davId}/options.html#sites`);
@@ -1585,13 +1729,43 @@ if (!only || only === 'webdav') {
     await chrome.storage.sync.set({ settings: { ...settings, deeper: 2 } });
   });
   await opt.waitForTimeout(4500);
+  const remoteDepth = await opt.evaluate(async (body) => {
+    const decode = (value) => Uint8Array.from(atob(value), (char) => char.charCodeAt(0));
+    const envelope = JSON.parse(body).encryption;
+    const material = await crypto.subtle.importKey('raw', new TextEncoder().encode('a long e2e sync passphrase'), 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt: decode(envelope.salt), iterations: 600000 }, material, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+    const data = JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: decode(envelope.iv) }, key, decode(envelope.ciphertext))));
+    return data.settings.deeper;
+  }, files.get(FILE).body);
+  await opt.goto(`chrome-extension://${davId}/options.html#sync`);
+  await opt.waitForTimeout(500);
+  const newPassphrase = 'a newly changed e2e passphrase';
+  await opt.locator('#webdav-new-passphrase').fill(newPassphrase);
+  await opt.locator('#webdav-new-passphrase-confirm').fill(newPassphrase);
+  await opt.getByRole('button', { name: 'Change encryption passphrase', exact: true }).click();
+  await opt.waitForTimeout(1500);
+  const rotated = await opt.evaluate(async ({ body, passphrase }) => {
+    const decode = (value) => Uint8Array.from(atob(value), (char) => char.charCodeAt(0));
+    const envelope = JSON.parse(body).encryption;
+    const material = await crypto.subtle.importKey('raw', new TextEncoder().encode(passphrase), 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', hash: 'SHA-256', salt: decode(envelope.salt), iterations: 600000 }, material, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+    return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: decode(envelope.iv) }, key, decode(envelope.ciphertext))));
+  }, { body: files.get(FILE).body, passphrase: newPassphrase });
+  const rotationStatus = await opt.locator('.notice').last().textContent().catch(() => 'no status');
+  const encryptedAfterRotation = JSON.parse(files.get(FILE).body).anubis === 2;
   console.log('\n== webdav:', JSON.stringify({
     requests: requests.join(' '),
-    'file created': Boolean(created?.anubis),
+    'encrypted file created': created?.anubis === 2,
+    'server cannot read synced list': !files.get(FILE).body.includes('$site='),
     status,
     'site from the other browser shown': arrived > 0,
-    'change here on the server': JSON.parse(files.get(FILE).body).settings.deeper === 2,
+    'change here on the server': remoteDepth === 2,
+    'rotation status': rotationStatus,
+    'requests after rotation': requests.length,
+    'rotated data': { format: rotated?.anubis, deeper: rotated?.settings?.deeper },
+    'passphrase change re-encrypted the current file': encryptedAfterRotation && rotated?.anubis === 1 && rotated?.settings?.deeper === 2,
   }));
+  if (!encryptedAfterRotation || rotated?.anubis !== 1 || rotated?.settings?.deeper !== 2) throw new Error('WebDAV passphrase change did not preserve and re-encrypt the sync data');
   await dav.close();
 }
 

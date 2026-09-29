@@ -20,14 +20,12 @@ Setting it up: create a Google Cloud project, turn on the Chrome Web Store API, 
 
 ## Before each release
 
-1. Bump `version` in `package.json` (WXT copies it into the manifest). Both stores reject a version they've already seen.
-2. `npm run compile`, `npm test`, both builds, `npx web-ext lint -s .output/firefox-mv2`, and `npm run e2e`.
-3. Load the build and check the engines listed under "Still unverified" in [`docs/experiments.md`](../docs/experiments.md).
-4. `npm run zip:chrome` for Chrome. `npm run zip` for Firefox, which also makes `anubis-<version>-sources.zip` for AMO's reviewers.
-5. The privacy policy link below has to load: GitHub Pages must be publishing the docs site.
-6. Merge, then push a matching tag (`git tag v<version> && git push origin v<version>`). [`release.yml`](../.github/workflows/release.yml) builds the zips, creates the GitHub Release and, once approved, submits to Chrome, Firefox, and Edge.
+1. `npm run release:prep -- <version>` (or `patch`, `minor`, or `major`). It sets `version` in `package.json` and `package-lock.json` (WXT copies it into the manifest), then runs the type-check, unit tests, `npm run zip`, `npx web-ext lint`, and `npm run e2e`, stopping at the first failure. Both stores reject a version they've already seen. Run it without a version to repeat the checks. `npm run zip` makes the Firefox zip and `anubis-<version>-sources.zip` for AMO's reviewers; run `npm run zip:chrome` too when Chrome is ready.
+2. Load the build and check the engines listed under "Still unverified" in [`docs/experiments.md`](../docs/experiments.md).
+3. The privacy policy link below has to load: GitHub Pages must be publishing the docs site.
+4. Merge, then push a matching tag (`git tag v<version> && git push origin v<version>`). [`release.yml`](../.github/workflows/release.yml) builds the zips, creates the GitHub Release and, once approved, submits to each store whose keys are in the `release` environment.
 
-The release workflow rejects tags whose commit is not already on `main`, as well as tags that do not match `package.json`. Before the first submission, create the store listings manually, verify their permanent IDs and privacy answers, confirm the docs site is publishing on GitHub Pages, and configure the protected `release` environment with the store credentials. Do not test publishing against production store credentials from a pull request.
+The release workflow rejects tags whose commit is not already on `main`, as well as tags that do not match `package.json`. It submits only to stores whose keys are all set in the `release` environment and skips the rest, so Firefox ships first: add `FIREFOX_JWT_ISSUER` and `FIREFOX_JWT_SECRET` (AMO → Tools → Manage API Keys) and leave the Chrome and Edge keys out until those listings exist. A store with only some of its keys set fails the release rather than being skipped. Before the first submission, create the store listings manually, verify their permanent IDs and privacy answers, confirm the docs site is publishing on GitHub Pages, and configure the protected `release` environment with the store credentials. As of 2026-09-29, that environment was not configured. Do not test publishing against production store credentials from a pull request.
 
 ## Chrome Web Store
 
@@ -51,7 +49,7 @@ The release workflow rejects tags whose commit is not already on `main`, as well
 
 **storage**
 
-> Saves the user's ranked sites, tags, settings, and list subscriptions in browser storage (sync storage, so they follow the user's browser account), and keeps downloaded copies of subscribed lists on the device. If the user connects a WebDAV server of their own to sync between browsers, its address and login are kept in local storage on that device only. Nothing is sent to the developer.
+> Saves the user's ranked sites, tags, settings, and list subscriptions in browser storage (sync storage, so they follow the user's browser account), and keeps downloaded copies of subscribed lists on the device. If the user connects a WebDAV server of their own to sync between browsers, its address and login are kept in local storage on that device only; the login is sent to that server to sign in. End-to-end encryption is on by default for new connections: the user-chosen passphrase is saved in local extension storage on each device and never sent to the server; Anubis derives an AES-256-GCM key and encrypts the sync file before upload. The server operator cannot read an encrypted file. Users can turn encryption off, and existing connections remain unencrypted until enabled; in that case the server operator can read the file. Nothing is sent to the developer.
 
 **activeTab**
 
@@ -69,7 +67,9 @@ The release workflow rejects tags whose commit is not already on `main`, as well
 
 > All JavaScript ships in the package. Subscribed lists are plain-text data (site names and patterns) that Anubis parses; nothing in them is run.
 
-**Data usage (decision required before submission):** Anubis reads search results and the current tab's address only inside the browser and sends none of it to the developer; settings sync through the browser's own account sync, which Anubis doesn't operate. The optional, user-chosen WebDAV sync sends ranked sites, settings, tag choices, and subscriptions to the server the user connects, and nowhere else. Decide against the store's current policy whether that user-directed transfer counts as collection; declare the applicable categories and explain that the user chooses the server if required. Do not submit until this classification is resolved.
+**Data usage:** Chrome's [User Data FAQ](https://developer.chrome.com/docs/webstore/program-policies/user-data-faq) says local processing can still be handling user data, so Anubis discloses its local use of search results and the current tab's address in its privacy policy. The FAQ's FTP/IRC example says a protocol client communicating with a server chosen by the user does not thereby collect data for the developer; it also says Limited Use does not apply to data exchanged with that server. Anubis has no sync server of its own: WebDAV runs only after the user connects their server, and sends the sync file there. New connections encrypt the file by default, but users can turn encryption off and existing connections require opting in; the privacy policy describes both cases. That exception concerns the user-directed server transfer; it does not change how Anubis locally uses browsing data.
+
+**Before submission:** Answer the Chrome dashboard's current questions based on what Anubis and its developer actually do. Do not report the user's WebDAV server as a developer-operated collection endpoint: it is user-configured and the FAQ's protocol-client example directly supports treating that transfer as user-directed. Separately disclose Anubis's local processing accurately, and check that the dashboard answers, listing, and privacy policy agree. Google's FAQ is policy guidance, not a guarantee of a particular review outcome.
 
 **Certifications:** tick all three (no selling or transferring data, no use unrelated to the single purpose, no use for credit decisions).
 
@@ -125,7 +125,7 @@ Nothing disappears without a trace. A one-line summary says what Anubis changed,
 
 Works on Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex, and Mojeek.
 
-No server, no account, nothing collected. Your list and settings stay in your browser, or go to a storage service of your own if you connect one to sync between browsers.
+No Anubis server or account. Anubis does not send your searches or settings to the developer. If you connect your own WebDAV server, it sends your rankings, tags, settings, and lists there to sync between browsers; the sync file is encrypted by default for new connections, but you can turn encryption off.
 
 Wiki: https://bishop-v.github.io/anubis/
 Source code (AGPL-3.0): https://github.com/Bishop-V/anubis

@@ -6,7 +6,7 @@ import { readSubscribeLink, REPO_URL, type SubscribeLink } from '@/utils/links';
 import { colorForTag, parseList, type ListFormat, type ParsedList } from '@/utils/listformat';
 import { send } from '@/utils/messages';
 import { flash, flashed, rerender } from './flash';
-import { pageTitle } from './parts';
+import { helpLink, pageTitle } from './parts';
 import { editListCache, listCacheItem, type CachedList, type Subscription } from '@/utils/storage';
 import {
   builtinId,
@@ -170,7 +170,13 @@ export async function renderLists(): Promise<HTMLElement> {
       'div',
       { class: 'panel' },
       h('h3', null, 'Add a list'),
-      h('p', { class: 'muted' }, 'Paste a link to the file. Links to a GitHub page, a gist, or a Brave Goggle work too.'),
+      h(
+        'p',
+        { class: 'muted' },
+        'Paste a link to the file. Links to a GitHub page, a gist, or a Brave Goggle work too.',
+        ' ',
+        helpLink('guide/lists#what-lists-work', 'Which lists work'),
+      ),
       form,
       offer ? null : notice,
     ),
@@ -213,6 +219,8 @@ export async function renderLists(): Promise<HTMLElement> {
       'Made a list worth sharing? Add it to the directory with a pull request to ',
       h('a', { href: `${REPO_URL}/blob/main/lists/directory.json`, target: '_blank', rel: 'noopener noreferrer' }, 'lists/directory.json'),
       '.',
+      ' ',
+      helpLink('guide/publish-a-list', 'How to publish a list'),
     ),
   );
 }

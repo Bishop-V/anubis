@@ -76,8 +76,7 @@ nav .foot .links {
   flex-direction: column;
   gap: 6px;
 }
-nav .foot .links a,
-.help-link {
+nav .foot .links a {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -88,9 +87,14 @@ nav .foot .links svg,
   height: 11px;
   opacity: 0.7;
 }
+/* Wraps like the sentence it follows, so it fits the narrowest screens. */
 .help-link {
   color: var(--gold-ink);
-  white-space: nowrap;
+}
+.help-link svg {
+  display: inline;
+  margin-left: 4px;
+  vertical-align: -1px;
 }
 
 /* ------------------------------------------------------------------- main */
@@ -155,11 +159,35 @@ main {
   margin-bottom: 12px;
   font-size: 13px;
 }
+.fields > h3,
+.fields > p {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+.fields > p {
+  color: var(--muted);
+}
 .fields .hint {
   grid-column: 2;
   margin-top: -4px;
   font-size: 12.5px;
   color: var(--muted);
+}
+.fields .check-row {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.fields .check-row input {
+  accent-color: var(--gold);
+}
+.fields .passphrase-fields {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 8px 14px;
+  min-width: 0;
 }
 .fields button {
   grid-column: 2;
@@ -575,6 +603,12 @@ textarea.code {
   }
   .fields .hint,
   .fields button {
+    grid-column: 1;
+  }
+  .fields .passphrase-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .fields .passphrase-fields .hint {
     grid-column: 1;
   }
   .tag-row {

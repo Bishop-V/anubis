@@ -4,7 +4,8 @@ Work that's planned but not started, or started and not finished. Each item says
 
 ## Before the first store release
 
-- **Verify store declarations.** The Firefox manifest now sets `gecko.strict_min_version` to 142 so WebDAV can use built-in data consent and the AMO linter accepts the minimum. Before submission, verify the declaration in the generated manifest and check Chrome Web Store API V2 credentials.
+- **Verify store declarations.** The Firefox manifest now sets `gecko.strict_min_version` to 142 so WebDAV can use built-in data consent and the AMO linter accepts the minimum. Before submission, verify the declaration in the generated manifest and check Chrome Web Store API V2 credentials. In the Chrome dashboard, distinguish Anubis's local processing from collection by the developer; the FAQ's protocol-client example supports treating the user-configured WebDAV transfer as user-directed, not as developer collection.
+- **Complete first-store setup.** Neither store listing nor the protected GitHub `release` environment exists yet; create each listing manually, confirm its permanent ID, then configure the protected environment. The `release` environment was absent on 2026-09-29.
 - **Check live pages.** Everything on search pages was built against mocks. Work through "Still unverified" in `docs/experiments.md`. Done on 2026-09-29 for DuckDuckGo (all three versions), Bing, Brave, Startpage, Ecosia, and Yahoo. Left: Kagi, Yandex, and Mojeek (they showed automated Chromium a human check), Load more results on Bing, Ecosia, and Yahoo in an everyday browser, Google's phone layout, and DuckDuckGo's AI answer and Duck.ai buttons, which are now removed on the page (their selectors come from EasyList's AI list). From the reports of 2026-09-29 ("Reported from live pages" in `docs/experiments.md`): that Brave's Videos, Discussions, and Related queries panels and Bing's "People also search for" box are removed, and that Google's `/goto` results shown by name ("Reddit · …", "LinkedIn · …") get their ⚖ button.
 - **Fix what the live check found** (details in `docs/experiments.md`, 2026-09-29). For each, model the live markup in `e2e/fixtures.mjs` and confirm the check fails before fixing:
   - *Load more results stops without saying why.* On Bing, Ecosia, and Yahoo the fetched page came back as a bot check, and Bing's (status 200) reads as a last page with no results. In `fetchNext` (`entrypoints/content/deeper.ts`), recognise a page with no results, or a challenge, and set an error the summary shows ("Bing asked to confirm you're not a robot. Open the next page instead.").
@@ -59,6 +60,6 @@ Started: interface text is moving into `public/_locales/<language>/messages.json
 
 ## Not planned
 
-- Telemetry or an uninstall survey: Anubis collects nothing, and says so.
+- Telemetry or an uninstall survey: Anubis does not send user data to a developer-operated server; the privacy policy explains local processing and optional sync to a server the user chooses.
 - A server, or a UI framework.
 - Safari: it needs Xcode and a paid Apple developer account.

@@ -2,8 +2,8 @@ name: Release
 
 # Push a tag like v0.3.0 to release that version. The tag has to match the
 # version in package.json. This runs the CI checks, builds the store zips,
-# creates a GitHub Release with them, then submits to the Chrome Web Store,
-# Firefox Add-ons (AMO) and Edge Add-ons.
+# creates a GitHub Release with them, then submits to each of the Chrome Web
+# Store, Firefox Add-ons (AMO), and Edge Add-ons that has its keys set.
 #
 # The store keys live in the "release" environment, which waits for approval
 # and only accepts v* tags, so no pull request or branch can read them.
@@ -100,10 +100,38 @@ jobs:
           EDGE_PRODUCT_ID: ${{ vars.EDGE_PRODUCT_ID }}
           EDGE_CLIENT_ID: ${{ secrets.EDGE_CLIENT_ID }}
           EDGE_API_KEY: ${{ secrets.EDGE_API_KEY }}
+        # Submits only to the stores whose keys are all set, so a store can wait
+        # (Firefox shipped first). A store with only some of its keys set is a
+        # mistake, not a skip, and fails the release.
         run: |
           version=${GITHUB_REF_NAME#v}
-          npx wxt submit \
-            --chrome-zip ".output/anubis-$version-chrome.zip" \
-            --firefox-zip ".output/anubis-$version-firefox.zip" \
-            --firefox-sources-zip ".output/anubis-$version-sources.zip" \
-            --edge-zip ".output/anubis-$version-chrome.zip"
+          args=()
+          # has <store> <variable names…>: true when all are set; fails when only some are.
+          has() {
+            local store=$1 found=0 missing=()
+            shift
+            for name in "$@"; do
+              if [ -n "${!name}" ]; then found=$((found + 1)); else missing+=("$name"); fi
+            done
+            if [ "$found" -eq "$#" ]; then return 0; fi
+            if [ "$found" -eq 0 ]; then
+              echo "::notice::Skipping $store: no keys in the release environment."
+              return 1
+            fi
+            echo "::error::$store is missing ${missing[*]} in the release environment."
+            exit 1
+          }
+          if has Firefox FIREFOX_JWT_ISSUER FIREFOX_JWT_SECRET; then
+            args+=(--firefox-zip ".output/anubis-$version-firefox.zip" --firefox-sources-zip ".output/anubis-$version-sources.zip")
+          fi
+          if has Chrome CHROME_EXTENSION_ID CHROME_PUBLISHER_ID CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL CHROME_SERVICE_ACCOUNT_PRIVATE_KEY; then
+            args+=(--chrome-zip ".output/anubis-$version-chrome.zip")
+          fi
+          if has Edge EDGE_PRODUCT_ID EDGE_CLIENT_ID EDGE_API_KEY; then
+            args+=(--edge-zip ".output/anubis-$version-chrome.zip")
+          fi
+          if [ "${#args[@]}" -eq 0 ]; then
+            echo "::error::No store has its keys in the release environment, so nothing was submitted."
+            exit 1
+          fi
+          npx wxt submit "${args[@]}"

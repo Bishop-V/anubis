@@ -121,12 +121,8 @@ button {
   width: 13px;
   height: 13px;
 }
-.verdict.pin,
 .verdict.raise {
   color: var(--gold-ink);
-}
-.verdict.pin {
-  font-weight: 600;
 }
 .page-note {
   opacity: 0.8;
@@ -162,6 +158,10 @@ button {
   opacity: 1;
   color: var(--gold-ink);
   background: color-mix(in srgb, var(--gold) 14%, transparent);
+}
+.weigh[data-level='pin'] {
+  color: var(--gold-ink);
+  opacity: 1;
 }
 .weigh svg {
   width: 15px;
@@ -587,6 +587,12 @@ button {
 .reasons b {
   font-weight: 600;
   color: var(--text);
+}
+.reasons small {
+  display: block;
+  margin: 3px 0 1px;
+  font: 12px/1.4 ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  overflow-wrap: anywhere;
 }
 .foot {
   display: flex;

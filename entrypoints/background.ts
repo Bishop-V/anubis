@@ -14,7 +14,7 @@ import {
 } from '@/utils/storage';
 import { refreshStale } from '@/utils/subscriptions';
 import { recordColorScheme } from '@/utils/theme';
-import { syncChanges, syncIfDue, syncWithServer } from '@/utils/webdav';
+import { changeEncryptionPassphrase, syncChanges, syncIfDue, syncWithServer } from '@/utils/webdav';
 
 // The background script keeps subscribed lists fresh, shows the hidden-result
 // count on the toolbar icon, greys the icon out while Anubis is off, unpacks your
@@ -142,6 +142,10 @@ export default defineBackground(() => {
         return true;
       case 'sync-server':
         void syncWithServer().then(sendResponse);
+        return true;
+      // Here rather than in settings, so it can't overlap a sync.
+      case 'change-passphrase':
+        void changeEncryptionPassphrase(message.passphrase).then(sendResponse);
         return true;
       case 'open-options':
         if (message.tab) void browser.tabs.create({ url: `${browser.runtime.getURL('/options.html')}#${message.tab}` });
