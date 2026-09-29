@@ -63,6 +63,14 @@
   "hiddenMore_one": { "message": "and $1 more", "description": "After a site's name on the one line standing for several hidden results in a row, e.g. “fandom.com and 1 more hidden by your list”." },
   "hiddenMore_other": { "message": "and $1 more" },
 
+  "offerTitle": { "message": "Subscribe to $1?", "description": "Settings → Lists, after a subscribe link opened it. $1 is the list's name." },
+  "offerTrust": { "message": "A list can hide, rank and tag sites in your results. Only subscribe to lists you trust." },
+  "offerPermission": { "message": "Your browser will then ask to let Anubis read from $1, the site the list is on.", "description": "$1 is a website, e.g. example.org." },
+  "offerAlready": { "message": "You already subscribe to $1.", "description": "$1 is a list's name." },
+  "offerSubscribe": { "message": "Subscribe" },
+  "offerSubscribing": { "message": "Subscribing…" },
+  "offerCancel": { "message": "Cancel" },
+
   "welcomeTitle": { "message": "Welcome to Anubis", "description": "Tab title of the page that opens when Anubis is installed." },
   "welcomeHeading": { "message": "Anubis is installed" },
   "welcomeIntro": { "message": "It tags, reranks and hides search results, following your own choices and the lists you subscribe to." },

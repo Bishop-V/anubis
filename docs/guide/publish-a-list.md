@@ -29,6 +29,8 @@ Create a public repository on GitHub, GitLab or Codeberg, or a gist, and add the
 
 People paste the link into **Settings → Lists → Add a list**. A link to the file's page works; Anubis finds the raw file. Lists on GitHub and gists download without asking for any extra permission.
 
+For one click, share a [subscribe link](../subscribe.md#make-a-subscribe-link) instead: it opens Anubis's settings with your list filled in.
+
 ## 4. Let people suggest sites
 
 Set `! issues:` to your repository's issue tracker. Subscribers then see "Suggest it to *your list*" in the menu on each result, which opens a pre-filled issue for them to send. Pull requests work as for any repository.
