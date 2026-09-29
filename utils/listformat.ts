@@ -1,4 +1,4 @@
-import { normalizeDomain } from './domain';
+import { normalizeDomain, normalizeHostname } from './domain';
 
 // Parser for the list files Anubis can subscribe to. It reads:
 //
@@ -208,7 +208,7 @@ export function detectFormat(lines: string[]): ListFormat {
       goggle++;
       if (/[$,](tag=|pin\b|allow\b)/.test(line)) anubis++;
     } else if (/^@?\d*(\*|https?|ftp|wss?):\/\//.test(line)) ublacklist++;
-    else if (normalizeDomain(line) === line.toLowerCase().replace(/^www\./, '')) domains++;
+    else if (normalizeDomain(line) === normalizeHostname(line)) domains++;
   }
   if (anubis) return 'anubis';
   if (goggle && goggle >= ublacklist) return 'goggle';

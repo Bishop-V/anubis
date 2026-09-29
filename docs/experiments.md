@@ -2,9 +2,21 @@
 
 What was tried while building the tagging and lists release, what failed, and what is still unverified. Newest notes go at the top of each section.
 
+## Keeping engine definitions in sync (2026-09-29)
+
+- **Starting point:** the weekly workflow already watched eight uBlacklist `serpinfo/*.yml` files, but its file-to-engine mapping lived only in `watch-engines.mjs`. It could silently fall behind when an engine was added, and fetching the 50 most recent engine issues could miss a previously reported commit.
+- **Upstream check:** GitHub's Contents API listed the current `serpinfo/` files, including `google.yml`, `duckduckgo.yml`, `bing.yml`, `brave.yml`, `startpage.yml`, `ecosia.yml`, `kagi.yml`, `yandex.yml`, and `yahoo-japan.yml`. The GitHub HTML directory view could not be retrieved in this environment; the API endpoint worked. `yahoo-japan.yml` is not a match for Anubis's supported Yahoo engine, and there is no Mojeek file, so those remain explicitly unwatched rather than guessed.
+- **Shipped experiment:** move the mapping into `.github/engine-watch.json`; test that every engine in `utils/engines.ts` is either watched exactly once or has a stated reason it is not. The watcher also fails if a mapped upstream path disappears. Add local-repository tests for recent upstream changes, deduplication, unrelated files, old commits, and missing mapped files. Remove the issue-watch's silent failure and raise its pagination limit.
+- **Ran against upstream:** cloned `ublacklist/builtin`, collected the existing engine-issue bodies with `gh`, and ran the watcher without creating an issue. It found two Google commits from 2026-09-27: desktop video `/goto` links now fall back to the displayed domain, and image links can fall back to `data-lpage`. Anubis already uses the displayed `cite` fallback for opaque links on supported web results; image-search pages are intentionally excluded, so neither change needed a selector change here.
+- **Rejected:** generating Anubis selectors directly from SERPINFO. The upstream rules describe a different matching model and don't cover Anubis's structural boundaries, page cleanup, or pagination; generated selectors could appear current while breaking real pages. The weekly issue remains a signal for human review and live-page confirmation.
+
 ## Still unverified against live pages
 
 The development sandbox could not reach any search engine, so everything on search pages was tested against mock pages (see [`e2e/`](https://github.com/Bishop-V/anubis/tree/main/e2e)) shaped like each engine's markup as described by uBlacklist's maintained [SERPINFO definitions](https://github.com/ublacklist/builtin/tree/main/serpinfo), checked on 2026-09-28. Before a release, load the extension and check each engine by hand:
+
+**Later live check (2026-09-29):** with Anubis loaded in a clean headless Chromium profile, Bing returned usable results and Anubis marked 10 results and rendered its summary. Google returned a CAPTCHA; DuckDuckGo showed its protection/landing page, its HTML and Lite pages returned 403, Brave returned 429 with a CAPTCHA, Startpage returned an access-denied page, Ecosia returned 403, Yahoo navigation failed, Kagi returned a page with no recognized results, Yandex asked whether the visitor was a robot, and Mojeek returned 403. A mobile-user-agent Google request also returned a CAPTCHA. A second Bing query returned usable results but did not show the AI-answer or video panels under investigation. These blocks and missing panels are not confirmations of the corresponding live layouts.
+
+The full mock-page e2e run succeeded after retrying with Nix-provided Chromium. The first attempt used branded Chrome, which timed out waiting for the extension worker; the first Chromium attempt evaluated the worker before its extension API was available. No change to the runner was needed: a clean retry loaded the extension and completed all parts. The e2e suite exercises the reported Brave/Bing/Google panel mocks, but it does not replace the live checks above.
 
 | Engine | How results are found | Confidence |
 | --- | --- | --- |

@@ -1,0 +1,16 @@
+{
+  "watched": {
+    "serpinfo/google.yml": ["Google"],
+    "serpinfo/duckduckgo.yml": ["DuckDuckGo", "DuckDuckGo (HTML)", "DuckDuckGo (Lite)"],
+    "serpinfo/bing.yml": ["Bing"],
+    "serpinfo/brave.yml": ["Brave Search"],
+    "serpinfo/startpage.yml": ["Startpage"],
+    "serpinfo/ecosia.yml": ["Ecosia"],
+    "serpinfo/kagi.yml": ["Kagi"],
+    "serpinfo/yandex.yml": ["Yandex"]
+  },
+  "unwatched": {
+    "Yahoo": "No matching SERPINFO definition for the supported Yahoo engine.",
+    "Mojeek": "No SERPINFO definition upstream."
+  }
+}

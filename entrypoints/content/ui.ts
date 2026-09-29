@@ -1,5 +1,5 @@
 import { balanceSvg, setBalance } from '@/utils/balance';
-import { domainChoices, siteOf } from '@/utils/domain';
+import { domainChoices, normalizeHostname, siteOf } from '@/utils/domain';
 import { h, icon } from '@/utils/dom';
 import type { EngineDef } from '@/utils/engines';
 import { ICON_ANUBIS, ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS, WEIGH_ICONS } from '@/utils/icons';
@@ -283,7 +283,7 @@ export function ensureWeighButton(
   host.dataset.theme = theme;
   // Named for its site, so a list of the page's buttons tells them apart, and for its
   // ranking, which the icon shows: the balance tips with it.
-  const site = result.host.replace(/^www\./, '');
+  const site = normalizeHostname(result.host);
   const label = level === 'normal' ? t('weighLabel', site) : t('weighLabelRanked', site, LEVEL_CHIPS[level].toLocaleLowerCase());
   const button = rendered.get(host) as HTMLElement | undefined;
   if (button && button.title !== label) {
@@ -430,7 +430,7 @@ export function renderHiddenBar(
 
   const why = hiddenReason(verdict, tags);
   const sameWhy = more.every((v) => hiddenReason(v, tags) === why);
-  const site = result.host.replace(/^www\./, '');
+  const site = normalizeHostname(result.host);
   render(host, JSON.stringify([site, why, more.length, sameWhy]), () =>
     h(
       'div',
@@ -968,4 +968,3 @@ function buildPopover(
   );
   return { pop, level: shown };
 }
-

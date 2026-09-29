@@ -148,7 +148,7 @@ The popup, settings, and welcome page are plain DOM, built with `h()` from `util
 ### Add or fix a search engine
 
 1. Add or edit its entry in `ENGINES` (`utils/engines.ts`). Prefer structural detection (`heading`, with a `boundary` the climb must not pass) when titles are headings; otherwise give `item`, `link` and `title` selectors, taking them from [uBlacklist's rules](https://github.com/ublacklist/builtin) (`serpinfo/*.yml`). `matches` becomes the manifest's content script matches. Add `more` if the engine can load another page of results, and `mobile` for its phone layout's differences.
-2. If uBlacklist has a file for it, add the file to `WATCHED` in `.github/scripts/watch-engines.mjs`, so the weekly engine watch reports changes to it.
+2. Add its display name to `.github/engine-watch.json` under the matching `serpinfo/*.yml` file, or document why there is no upstream file under `unwatched`. `tests/engine-watch.test.ts` checks that every engine is accounted for exactly once.
 3. Model the engine's page as a mock in `e2e/fixtures.mjs`, serve it from the `pages` map in `e2e/run.mjs` at the engine's real address, and add a check. For a fix, first confirm the check fails on the current build.
 4. Update the engine table in `docs/guide/search-engines.md`, the engine lists in the README, and `store/README.md`, and `docs/guide/more-results.md` if it loads more results.
 5. Load it on the live engine and record what you confirmed, with the date, in `docs/experiments.md`.
@@ -163,6 +163,10 @@ Clean-up kinds live in `utils/cleanup.ts`:
 - **A new kind:** add it to `CleanupKind`, `NO_CLEANUP` and `CLEANUP` (`label` and `hint` for settings, `one` and `many` for the summary). Settings shows it automatically, and `getSettings` switches it off for people who saved settings before it existed. Add it to the table in `docs/guide/clean-up.md`.
 
 `tests/cleanup.test.ts` covers headings and the summary's wording; the `cleanup` e2e part covers finding blocks on mock pages.
+
+### Keep engine definitions in view
+
+The weekly workflow compares changes in mapped files from [uBlacklist's SERPINFO repository](https://github.com/ublacklist/builtin/tree/main/serpinfo) and opens an issue as an early warning. `.github/engine-watch.json` maps those files to supported engines; CI checks that mapping against `utils/engines.ts`. This is a review signal, not an automatic selector update: Anubis's structural detection, cleanup, and paging can differ from uBlacklist, so verify proposed changes against a mock and a live results page.
 
 ### Add a setting
 
