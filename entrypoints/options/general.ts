@@ -70,7 +70,7 @@ export async function renderAppearance(): Promise<HTMLElement> {
           'div',
           null,
           h('b', null, 'Colour scheme'),
-          h('span', { class: 'muted' }, 'Auto follows your system here, and each search engine’s own light or dark mode on its pages.'),
+          h('span', { class: 'muted' }, 'Auto follows your browser here and in the menu on each result, and each search engine’s own light or dark mode for the rest of what Anubis adds to its pages.'),
         ),
         themeSwitcher(settings.theme),
       ),

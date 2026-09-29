@@ -16,7 +16,7 @@ This project values documented experimentation, so record what was tried and wha
 - Storage uses WXT's `storage` (`#imports`):
   - `sync:settings`, `sync:tagPrefs`, `sync:subscriptions` (absent means the default subscriptions)
   - `sync:personal` + `sync:personal.N`: the personal list as text in the list format, compressed and chunked to fit sync's 8 KB items, with a checksum so a list still arriving from sync isn't read short (`local:personalCopy` stands in); falls back to `local:personal` when too big
-  - `local:listCache`: downloaded list texts; `local:lastUpdateCheck`: when the background last checked lists for updates
+  - `local:listCache`: downloaded list texts; `local:lastUpdateCheck`: when the background last checked lists for updates; `local:colorScheme`: light or dark as the popup sees it, so the result menu can match it on Auto
   - `local:webdav` (the server's address and login, never in sync), `local:webdavBase` (what both sides had at the last sync, for the merge) and `local:webdavStatus` (when the last sync ended, and why it failed): the optional sync between browsers
   - `sync:blockedSites` is the old block list, migrated into the personal list on install; `sync:hideStyleMoved` records the one-time move from Collapse to Remove as the default
 

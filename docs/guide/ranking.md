@@ -12,7 +12,7 @@ Every site has a *ranking*, which you choose from the ⇅ button on any of its r
 | **Raise** | They move five places up. |
 | **Pin** | They go to the top, with a thin gold outline. |
 
-Your choice always beats your lists. If a list lowers a site and you raise it, it's raised.
+Your choice always beats your lists. If a list lowers a site and you raise it, it's raised. Without a choice of yours, the lists' rankings and [the tags you set to Raise or Lower](./tags.md#several-tags-on-one-result) add up.
 
 After a change from the menu, the summary above the results says what you did ("Hid fandom.com.") with an **Undo** button. Undo puts the site back as it was before you opened its menu, tags included, even after several changes. It stays until your next search, or until you change another site.
 

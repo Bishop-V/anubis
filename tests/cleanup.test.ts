@@ -17,6 +17,10 @@ describe('clean-up headings', () => {
     expect(cleanupKindFor('Short videos')).toBe('videos');
     expect(cleanupKindFor('Images for anubis')).toBe('images');
     expect(cleanupKindFor('Searches related to anubis')).toBe('related');
+    expect(cleanupKindFor('Related queries')).toBe('related');
+    expect(cleanupKindFor('People also search for')).toBe('related');
+    expect(cleanupKindFor('Discussions and forums')).toBe('discussions');
+    expect(cleanupKindFor('Discussions')).toBe('discussions');
   });
 
   it('recognises text only an AI answer has', () => {

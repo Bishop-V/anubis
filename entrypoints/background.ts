@@ -12,6 +12,7 @@ import {
   watchPersonal,
 } from '@/utils/storage';
 import { refreshStale } from '@/utils/subscriptions';
+import { recordColorScheme } from '@/utils/theme';
 import { syncChanges, syncIfDue, syncWithServer } from '@/utils/webdav';
 
 // The background script keeps subscribed lists fresh, shows the hidden-result
@@ -36,6 +37,10 @@ export default defineBackground(() => {
   };
   void getSettings().then((s) => showEnabled(s.enabled));
   settingsItem.watch((s) => showEnabled(s?.enabled !== false));
+
+  // Firefox's background page sees light or dark as the popup will. Chrome's service
+  // worker can't (no matchMedia), but there search pages see the same.
+  recordColorScheme();
 
   // Syncing with a WebDAV server, when one is connected (Settings → Sync): a few
   // seconds after a change here, when the browser starts, and when a search page

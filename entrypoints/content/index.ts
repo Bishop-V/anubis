@@ -1,4 +1,5 @@
 import { browser, defineContentScript } from '#imports';
+import { NO_CLEANUP } from '@/utils/cleanup';
 import { engineFor, ENGINE_MATCHES, isMobileAgent, type EngineDef } from '@/utils/engines';
 import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { evaluate, type Verdict } from '@/utils/matcher';
@@ -16,10 +17,10 @@ import {
   type SiteChange,
 } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
-import { editPersonal, type Theme } from '@/utils/storage';
+import { colorSchemeItem, editPersonal, type Theme } from '@/utils/storage';
 import { reportUrl, suggestionUrl } from '@/utils/subscriptions';
 import { changeSentence } from '@/utils/summary';
-import { findClutter, mainColumn, redirectFor, watchAllTab } from './cleanup';
+import { findClutter, mainColumn, redirectFor, watchAllTab, type Clutter } from './cleanup';
 import { freshState, weighDeeper } from './deeper';
 import './page.css';
 import { findResults, OWN_TAGS, type FoundResult } from './results';
@@ -36,6 +37,7 @@ import {
   renderSummary,
   weighButtonOf,
   type PageTheme,
+  type SummaryPlace,
 } from './ui';
 
 // Runs on search result pages. Each pass: find the results, weigh each one against
@@ -70,6 +72,11 @@ export default defineContentScript({
     };
     if (redirected()) return;
     if (engine.id === 'google') watchAllTab();
+
+    // Light or dark as the popup sees it, for the result menu on "auto".
+    let scheme = await colorSchemeItem.getValue().catch(() => null);
+    const menuTheme = (setting: Theme): PageTheme =>
+      setting !== 'auto' ? setting : (scheme ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
 
     let reveal = false;
     // Blocks removed by clean-up in the last pass.
@@ -194,8 +201,9 @@ export default defineContentScript({
       makeRoomForPins(new Set(engine.table ? [] : pinned));
 
       if (rules.settings.showSummary && !engine.table) {
+        const ai = rules.settings.cleanup.ai ? clutter : findClutter(engine, results, { ...NO_CLEANUP, ai: true });
         const changed = change && changeSentence(change, (id) => rules.tags.get(id)?.label ?? id);
-        renderSummary(summaryAnchor(results, engine), stats, theme, {
+        renderSummary(summaryPlace(results, engine, ai), stats, theme, {
           toggleReveal: () => {
             reveal = !reveal;
             if (!reveal) shown.clear();
@@ -345,7 +353,7 @@ export default defineContentScript({
           tags: rules.tags,
           trackers,
           reports,
-          theme: pageTheme(rules.settings.theme),
+          theme: menuTheme(rules.settings.theme),
         },
         {
           setLevel: (domain, level: PersonalLevel) => editSite(domain, (t) => setSiteLevel(t, domain, level)),
@@ -436,6 +444,11 @@ export default defineContentScript({
     pass();
     // One early pass may run before the results exist; the observer catches the rest.
     document.addEventListener('DOMContentLoaded', () => schedule(), { once: true });
+
+    colorSchemeItem.watch((next) => {
+      scheme = next;
+      refreshOpenPopover();
+    });
 
     watchRuleSet(async () => {
       rules = await loadRuleSet();
@@ -566,14 +579,32 @@ function makeRoomForPins(pinned: Set<HTMLElement>) {
  * most web results, widened to the engine's boundary (Google's #rso) when it has
  * one. Results that show their address count; videos in a panel don't.
  */
-function summaryAnchor(results: FoundResult[], engine: EngineDef): HTMLElement | undefined {
+function summaryAnchor(results: FoundResult[], engine: EngineDef): { before?: HTMLElement; area?: HTMLElement } {
   const main = mainColumn(results, engine).list;
-  if (!main) return results[0]?.container;
+  if (!main) return { before: results[0]?.container };
   const area = (engine.boundary && main.closest<HTMLElement>(engine.boundary)) || main;
   for (const child of area.children) {
-    if (child instanceof HTMLElement && !/^(ANUBIS-SUMMARY|SCRIPT|STYLE|TEMPLATE|LINK|META)$/.test(child.tagName)) return child;
+    if (child instanceof HTMLElement && !/^(ANUBIS-SUMMARY|SCRIPT|STYLE|TEMPLATE|LINK|META)$/.test(child.tagName)) return { before: child, area };
   }
-  return results[0]?.container;
+  return { before: results[0]?.container, area };
+}
+
+/**
+ * Above an AI answer that comes before the results area (Google can put its AI
+ * Overview above the results column), so what Anubis did is the first thing on
+ * the page and "Show hidden" doesn't push it down. Otherwise at the top of the
+ * results area, which is also the fallback if the page lays the first place out
+ * somewhere else.
+ */
+function summaryPlace(results: FoundResult[], engine: EngineDef, clutter: Clutter[]): SummaryPlace | undefined {
+  const { before, area } = summaryAnchor(results, engine);
+  if (!before) return undefined;
+  const ai = clutter
+    .filter((c) => c.kind === 'ai' && !c.uncounted)
+    .map((c) => c.block)
+    .filter((b) => b.isConnected && !b.contains(before) && before.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_PRECEDING && !b.closest('aside, [role="complementary"], #rhs'))
+    .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
+  return ai[0] ? { before: ai[0], area, fallback: before } : { before, area };
 }
 
 /** The next result in the page after this one, skipping Anubis's own elements and blocks clean-up removed. */
@@ -583,7 +614,11 @@ function nextResultAfter(container: HTMLElement): HTMLElement | undefined {
   return next instanceof HTMLElement && next.hasAttribute('data-anubis-result') ? next : undefined;
 }
 
-/** Light or dark, from the setting or, on "auto", from the page's own background. */
+/**
+ * Light or dark for what sits on the page (the summary, tags, hidden-result lines),
+ * from the setting or, on "auto", from the page's own background, so it stays
+ * readable. The result menu is a card of its own and matches the popup instead.
+ */
 function pageTheme(setting: Theme): PageTheme {
   if (setting !== 'auto') return setting;
   for (const el of [document.body, document.documentElement]) {

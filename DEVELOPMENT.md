@@ -73,6 +73,7 @@ Two builds of the same commit are identical file for file. Firefox's reviewers r
 | `local:personalCopy` | This computer | The last personal list read whole, with its checksum. Read instead of unpacking the chunks while the checksum matches, and in their place while chunks arriving from sync don't match it yet. |
 | `local:listCache` | This computer | Downloaded lists, with when they were fetched and the last error. |
 | `local:lastUpdateCheck` | This computer | When the background script last checked lists for updates. |
+| `local:colorScheme` | This computer | Light or dark as the extension's own pages see it, written by the popup, settings and (in Firefox) the background page. On Auto the result menu uses it, since a search page can be told otherwise (Firefox's Website appearance). |
 | `sync:blockedSites`, `sync:hideStyleMoved` | Sync | Migration leftovers: the old block list, and a flag for a one-time settings change. |
 | `local:webdav` | This computer | The WebDAV server connected for syncing between browsers: its address, user name and password. Never in sync. |
 | `local:webdavBase` | This computer | What this browser and the server both had at the last sync: the starting point for the next merge. |
@@ -100,17 +101,17 @@ a result's URL, title, snippet ──evaluate(result, lists, prefs)──► Ver
 - `parseList` detects the format (Anubis, Goggle, uBlacklist, plain domains), reads the `! key: value` header and turns each line into a `Rule`, or a line error.
 - `compileList` indexes rules by site and by host, so matching a result is a few map lookups.
 - `loadRuleSet` puts the personal list first, then every enabled subscription (the downloaded copy, or the bundled copy of a built-in list).
-- `evaluate` returns a `Verdict`: the result's ranking (`level`), how far it moves (`score`), whether it's hidden and why (`hiddenBy`), its tags, and one `Reason` per rule that matched, which the result menu shows under **Why**. The personal list beats tag choices, which beat the lists; `docs/list-format.md` has the rules.
+- `evaluate` returns a `Verdict`: the result's ranking (`level`), how far it moves (`score`), whether it's hidden and why (`hiddenBy`), its tags, and one `Reason` per rule that matched, which the result menu shows under **Why**. The personal list beats tag choices, which beat the lists; `docs/list-format.md` has the rules. Tag choices count once per tag and add up (five places per Raise or Lower), and one more `Reason` (`TAG_CHOICES`) explains them.
 
 ### One pass over a search page
 
 `entrypoints/content/index.ts` runs a *pass* when the page loads, whenever the page changes (a `MutationObserver`, batched to one pass per frame) and whenever storage changes (`watchRuleSet`):
 
-1. **Find the results** (`findResults` in `results.ts`). Engines with headings for titles are found by structure: each title heading, the link around it, then the smallest ancestor that holds only that result. Others use selectors from the engine's definition. Redirect links (Bing's `/ck/a`, Yahoo's `/RU=`…) are resolved to the real address.
-2. **Find what clean-up removes** (`findClutter` in `cleanup.ts`): blocks recognised by their heading, a marker text or a selector, widened to the whole block in the results column. Nothing that holds a result or the search box is removed.
+1. **Find the results** (`findResults` in `results.ts`). Engines with headings for titles are found by structure: each title heading, the link around it, then the smallest ancestor that holds only that result. Others use selectors from the engine's definition. Redirect links (Bing's `/ck/a`, Yahoo's `/RU=`…) are resolved to the real address. An opaque one (Google's `/goto`) falls back to the address the engine shows, another direct link in the result, and then a forum's name ("Reddit · r/…") where the address would be.
+2. **Find what clean-up removes** (`findClutter` in `cleanup.ts`): blocks recognised by their heading, a marker text or a selector, widened to the whole block in the results column. Nothing that holds a result, the search box or the links to later pages is removed. Related searches and "People also ask" can also be a panel inside a result (the box Bing and Google add under a result you came back to); only that panel goes.
 3. **Weigh each result** (`evaluate`) and write the decision onto the page as attributes: `data-anubis-result`, `data-anubis-state` (the ranking, plus `tagged`), `data-anubis-reveal`, `data-anubis-highlight`. `page.css` does the hiding, fading and outlining from those attributes. Each result also gets its tags under the title and its ⇅ button (`ui.ts`), and in the Collapse style each run of hidden results gets one line.
 4. **Rerank** by setting CSS `order` on the results inside a flex column. The engine's nodes never move: its scripts own them.
-5. **Draw the summary** above the results: what Anubis did, Show hidden, Load more results, the tags on the page, and Undo for the last change from the result menu.
+5. **Draw the summary** above the results: what Anubis did, Show hidden, Load more results, the tags on the page, and Undo for the last change from the result menu. When an AI answer sits above the results area (Google can put its AI Overview above the results column), the summary goes above it, inset to line up with the results, and falls back to the top of the results if the page lays it out anywhere else.
 6. **Send the page's numbers** to the background script, which shows the hidden count on the toolbar button, and to the popup when it asks.
 
 State that a click sets on the page (a result shown with its own Show button, a tag filter, Show hidden, the change Undo would take back) lives in the content script's variables, because the next pass rewrites every attribute from them.

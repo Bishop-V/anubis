@@ -130,6 +130,9 @@ async function launch(settings = {}, ext = EXT) {
       ['https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then', 'Promise.prototype.then() - MDN', 'The then() method of Promise instances takes up to two arguments.'],
     ], { inner: true }),
     'https://www.google.com/search?q=anubis&mobile=1': googleMobile('anubis', ANUBIS_RESULTS),
+    'https://www.google.com/search?q=anubis&forum=1': google('anubis', ANUBIS_RESULTS, { forum: true, grouped: true, aiAbove: true, related: true, next: '/search?q=anubis&start=10' }),
+    'https://www.bing.com/search?q=javascript+promises&inline=1': bing('javascript promises', JS_RESULTS, { inline: true }),
+    'https://search.brave.com/search?q=anubis&panels=1': brave('anubis', ANUBIS_RESULTS, { panels: true }),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
   };
@@ -227,6 +230,32 @@ if (!only || only === 'pages') {
   await shoot('https://www.google.com/search?q=anubis&dark=1', 'google-dark');
   await shoot('https://www.bing.com/search?q=javascript+promises', 'bing');
   await shoot('https://search.brave.com/search?q=anubis', 'brave');
+
+  // DuckDuckGo: the ⇅ button sits beside each result's own ⋯ menu, centred on it,
+  // at its size and shape, in Anubis's colours.
+  await page.goto('https://duckduckgo.com/?q=javascript+promises&dark=1');
+  await page.waitForTimeout(600);
+  const pair = () =>
+    page.evaluate(() =>
+      [...document.querySelectorAll('li[data-anubis-result]:not([data-anubis-state~="hide"])')].map((li) => {
+        const host = li.querySelector(':scope > anubis-weigh');
+        const menu = li.querySelector('button.menu');
+        const a = host.getBoundingClientRect();
+        const b = menu.getBoundingClientRect();
+        return {
+          centred: Math.abs(a.top + a.height / 2 - (b.top + b.height / 2)) < 1,
+          gap: Math.round(b.left - a.right),
+          sameSize: Math.round(a.width) === Math.round(b.width) && Math.round(a.height) === Math.round(b.height),
+        };
+      }),
+    );
+  const pairs = await pair();
+  console.log('\n== ddg button beside its menu:', JSON.stringify({ results: pairs.length, all: pairs.every((p) => p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6), failing: pairs.filter((p) => !(p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6)) }));
+  const first = page.locator('li[data-anubis-result]').first();
+  await first.locator('anubis-weigh').hover();
+  await page.waitForTimeout(250);
+  const box = await first.locator('button.menu').boundingBox();
+  await page.screenshot({ path: `${SHOTS}ddg-menu-pair.png`, clip: { x: box.x - 60, y: box.y - 14, width: 110, height: 56 } });
 }
 
 if (!only || only === 'hostile') {
@@ -278,6 +307,29 @@ if (!only || only === 'grouped') {
   });
   console.log('\n== grouped google:', JSON.stringify(check));
   await page.screenshot({ path: `${SHOTS}google-grouped.png`, fullPage: true });
+
+  // Opaque /goto links everywhere, and a Reddit thread and a LinkedIn page with no
+  // address shown: the site's name stands in for it. The first result's sitelinks,
+  // also /goto with no address, stay part of it.
+  await page.goto('https://www.google.com/search?q=anubis&forum=1');
+  await page.waitForTimeout(700);
+  console.log(
+    '== google forum result:',
+    JSON.stringify(
+      await page.evaluate(() => {
+        const reddit = document.querySelector('.forum-meta:not(.social)')?.closest('.MjjYud');
+        const linkedin = document.querySelector('.forum-meta.social')?.closest('.MjjYud');
+        return {
+          results: document.querySelectorAll('[data-anubis-result]').length,
+          sitelinksInFirstResult: !!document.querySelector('.MjjYud[data-anubis-result] .sitelinks'),
+          linkedinFound: !!linkedin?.hasAttribute('data-anubis-result'),
+          redditFound: !!reddit?.hasAttribute('data-anubis-result'),
+          redditButton: !!reddit?.querySelector(':scope > anubis-weigh'),
+          redditTagged: !!reddit?.querySelector('anubis-chips'),
+        };
+      }),
+    ),
+  );
 }
 
 if (!only || only === 'reveal') {
@@ -470,12 +522,62 @@ if (!only || only === 'cleanup') {
   console.log('   removed:', JSON.stringify((await statsNow())?.removed));
   await page.screenshot({ path: `${SHOTS}ddg-cleanup.png`, fullPage: true });
 
+  // Panels found other ways. Brave's: a title that links to its Videos tab (the
+  // tab of that name stays), and plain titles beside an icon. The box Bing puts
+  // inside a result you came back to. Google's related searches sharing a block
+  // with the page navigation, which stays.
+  await setSettings({ cleanup: { ...all, discussions: true } });
+  await page.goto('https://search.brave.com/search?q=anubis&panels=1');
+  await page.waitForTimeout(800);
+  const visibleIn = (selectors) =>
+    page.evaluate((selectors) => {
+      const visible = (el) => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0;
+      return Object.fromEntries(Object.entries(selectors).map(([k, sel]) => [k, visible(document.querySelector(sel))]).concat([['results', [...document.querySelectorAll('[data-anubis-result]')].filter(visible).length]]));
+    }, selectors);
+  console.log('== Brave panels:', JSON.stringify(await visibleIn({ videos: '.cluster-videos', discussions: '.cluster-discussions', relatedQueries: '.related-queries', videosTab: '.tabs a[href^="/videos"]' })));
+  console.log('   removed:', JSON.stringify((await statsNow())?.removed));
+  await page.goto('https://www.bing.com/search?q=javascript+promises&inline=1');
+  await page.waitForTimeout(1200);
+  console.log('== Bing box inside a result:', JSON.stringify(await visibleIn({ box: '#inline_rs', title: 'li.b_algo:nth-child(2) h2', snippet: 'li.b_algo:nth-child(2) .b_caption' })));
+  console.log('   removed:', JSON.stringify((await statsNow())?.removed));
+  await page.goto('https://www.google.com/search?q=anubis&forum=1');
+  await page.waitForTimeout(800);
+  console.log('== Google related searches and pages:', JSON.stringify(await visibleIn({ related: '#bres', pager: '.AaVjTc', next: '#pnnext', aiOverview: '.aiabove' })));
+  console.log('   removed:', JSON.stringify((await statsNow())?.removed));
+
+  // The summary goes above an AI answer that sits above the results column, lined
+  // up with the results, and stays put when Show hidden brings the answer back.
+  const summaryPlace = () =>
+    page.evaluate(() => {
+      const summary = document.querySelector('anubis-summary');
+      const ai = document.querySelector('.aiabove');
+      const rso = document.querySelector('#rso');
+      if (!summary || !ai || !rso) return { summary: !!summary };
+      const s = summary.getBoundingClientRect();
+      const inset = parseFloat(getComputedStyle(summary).paddingLeft);
+      return {
+        aboveAi: summary.nextElementSibling === ai,
+        aboveResults: s.bottom <= rso.getBoundingClientRect().top + 1,
+        linedUp: Math.abs(s.left + inset - rso.getBoundingClientRect().left) < 2,
+        top: Math.round(s.top),
+      };
+    });
+  console.log('== summary with the AI answer removed:', JSON.stringify(await summaryPlace()));
+  await clickShadowButton('anubis-summary', 'Show hidden');
+  await page.waitForTimeout(300);
+  console.log('   after Show hidden:', JSON.stringify(await summaryPlace()));
+  await page.screenshot({ path: `${SHOTS}google-ai-above.png`, fullPage: true });
+  await setSettings({ cleanup: { ...all, ai: false } });
+  await page.goto('https://www.google.com/search?q=anubis&forum=1');
+  await page.waitForTimeout(800);
+  console.log('   with clean-up of AI answers off:', JSON.stringify(await summaryPlace()));
+
   // Forcing it on Google: the Web tab.
   await setSettings({ cleanup: { ...all, ai: false } , googleWebTab: true });
   await page.goto('https://www.google.com/search?q=anubis');
   await page.waitForURL(/udm=14/, { timeout: 3000 }).catch(() => {});
   console.log('== Google with the Web tab on:', page.url());
-  await setSettings({ cleanup: { ai: false, videos: false, questions: false, news: false, images: false, related: false }, googleWebTab: false });
+  await setSettings({ cleanup: { ai: false, videos: false, questions: false, discussions: false, news: false, images: false, related: false }, googleWebTab: false });
 }
 
 if (!only || only === 'runs') {
@@ -497,6 +599,12 @@ if (!only || only === 'runs') {
   await page.waitForTimeout(300);
   console.log('\n== hidden runs:', JSON.stringify({ before, afterShow: await count() }));
   await page.screenshot({ path: `${SHOTS}google-runs.png`, fullPage: true });
+}
+
+/** Light or dark for the browser, as search pages and the extension's own pages see it. */
+async function browserScheme(colorScheme) {
+  await page.emulateMedia({ colorScheme });
+  await ctx.serviceWorkers()[0].evaluate((s) => (s ? chrome.storage.local.set({ colorScheme: s }) : chrome.storage.local.remove('colorScheme')), colorScheme);
 }
 
 if (!only || only === 'pins') {
@@ -530,6 +638,7 @@ if (!only || only === 'popover') {
     ['https://duckduckgo.com/?q=javascript+promises', 'popover-light'],
     ['https://duckduckgo.com/?q=javascript+promises&dark=1', 'popover-dark'],
   ]) {
+    await browserScheme(name === 'popover-dark' ? 'dark' : 'light');
     await page.goto(url);
     await page.waitForTimeout(600);
     const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
@@ -559,6 +668,24 @@ if (!only || only === 'popover') {
     }
     await page.keyboard.press('Escape');
   }
+
+  // On "auto", the menu matches the popup (the browser's light or dark), while what
+  // sits on the page follows the page, to stay readable on it.
+  await browserScheme('dark');
+  await page.goto('https://duckduckgo.com/?q=javascript+promises');
+  await page.waitForTimeout(600);
+  const tutorial = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
+  await tutorial.hover();
+  await tutorial.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+  await page.waitForTimeout(300);
+  console.log('\n== auto theme, dark browser, light page:', JSON.stringify(await page.evaluate(() => ({
+    menu: document.querySelector('anubis-popover')?.dataset.theme,
+    summary: document.querySelector('anubis-summary')?.dataset.theme,
+    tags: document.querySelector('anubis-chips')?.dataset.theme,
+  }))));
+  await page.screenshot({ path: `${SHOTS}popover-auto-dark-browser.png`, fullPage: false });
+  await page.keyboard.press('Escape');
+  await browserScheme(null);
 
   // A result a subscribed list weighs (Official docs tags MDN) offers to report it
   // to that list, as a pre-filled issue with the rule that matched.
@@ -933,7 +1060,8 @@ if (only === 'docs') {
     ['light', '', ''],
     ['dark', '-dark', '&dark=1'],
   ];
-  for (const [, suffix, query] of SCHEMES) {
+  for (const [scheme, suffix, query] of SCHEMES) {
+    await browserScheme(scheme);
     await page.goto(`https://www.google.com/search?q=anubis${query}`);
     await page.waitForTimeout(700);
     await clip(`summary${suffix}`, ['anubis-summary', '#rso > .MjjYud:nth-of-type(2)']);
@@ -952,6 +1080,7 @@ if (only === 'docs') {
     await clip(`menu${suffix}`, ['anubis-popover', '[data-anubis-result]:has(a[href*="javascript.info"])'], 12);
     await page.keyboard.press('Escape');
   }
+  await browserScheme(null);
 
   await setSettings({ cleanup: { ai: true, videos: true, questions: true, news: true, images: true, related: true } });
   for (const [, suffix, query] of SCHEMES) {
