@@ -270,7 +270,7 @@ export default defineContentScript({
       if (rules.settings.showChips) renderChips(result, verdict, ctx, revealed);
       else renderChips(result, { ...verdict, level: 'normal', tags: [] }, ctx, false);
 
-      ensureWeighButton(result, engine, theme, openWeigh);
+      ensureWeighButton(result, verdict.level, engine, theme, openWeigh);
     };
 
     /**

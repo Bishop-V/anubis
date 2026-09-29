@@ -1,8 +1,10 @@
 # Ranking sites
 
-Every site has a *ranking*, which you choose from the ⇅ button on any of its results, from the toolbar popup, or in **Settings → Your sites**.
+Every site has a *ranking*, which you choose from the ⚖ button on any of its results, from the toolbar popup, or in **Settings → Your sites**.
 
-![A result with its tags and the ⇅ button](../img/result.png)
+![A result with its tags and the ⚖ button](../img/result.png)
+
+The button's balance tips with the site's ranking: down on the left for a lowered site, up for a raised one, and level for the rest. A pinned site's button shows a pin, and a hidden site's (once you show it) a crossed-out eye.
 
 | Ranking | What happens to the site's results |
 | --- | --- |

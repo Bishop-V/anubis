@@ -191,7 +191,7 @@ function sitesPanel(tag: TagDef, mine: boolean, sites: SiteEntry[], lists: Compi
             ),
           ),
         )
-      : h('p', { class: 'muted' }, 'None yet. Add one here, or use the ⇅ button on a search result.'),
+      : h('p', { class: 'muted' }, 'None yet. Add one here, or use the ⚖ button on a search result.'),
     form,
     error,
     ...(fromLists.some(Boolean) ? [h('h4', null, 'From your lists'), ...fromLists] : []),

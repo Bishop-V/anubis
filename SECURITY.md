@@ -32,6 +32,6 @@ Anubis has no server and collects nothing (see [Privacy and permissions](docs/gu
 
 Not vulnerabilities, but welcome as ordinary issues:
 
-- A list you subscribed to hiding, lowering, or tagging sites you'd rather it didn't: that's what lists do. Tell the list, with "Report it to…" in the ⇅ menu on the result.
+- A list you subscribed to hiding, lowering, or tagging sites you'd rather it didn't: that's what lists do. Tell the list, with "Report it to…" in the ⚖ menu on the result.
 - A search engine changing its page so that Anubis misses results or its buttons disappear.
 - Anything that needs someone to have control of your browser or computer already.
