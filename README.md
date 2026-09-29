@@ -91,6 +91,7 @@ The user guide is at **[bishop-v.github.io/anubis](https://bishop-v.github.io/an
 - [Lists](lists/README.md): the lists that ship with Anubis and how to contribute one.
 - [Experiments and decisions](docs/experiments.md): what was tried, what failed, and what still needs checking on live pages.
 - [Roadmap](ROADMAP.md): planned work.
+- [Security](SECURITY.md): how to report a vulnerability privately, and what counts as one.
 - [Publishing](store/README.md): store listings, privacy answers and release steps.
 
 ## Inspirations

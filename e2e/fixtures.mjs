@@ -136,7 +136,11 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
 // Anubis's elements; `grouped`, results nested the way Google does for a first
 // result with sitelinks and for a group of results from one site; `modules`, the
 // blocks that aren't results (AI Overview, videos, "People also ask", a side panel).
-export function google(query, results, { dark = false, next = '', hostile = false, grouped = false, modules = false, aiLabel = false, videos = '' } = {}) {
+// `inner`: the space between results is a margin inside each one. It collapses
+// through the result in the page's own layout, but stays inside it once reranking
+// makes the list a flex column, so results touch. Modelled on a live Google page
+// (2026-09-29) where the frames of pinned results in a row crossed.
+export function google(query, results, { dark = false, next = '', hostile = false, grouped = false, modules = false, aiLabel = false, videos = '', inner = false } = {}) {
   const sitelinks = (url) =>
     `<div class="sitelinks">${['History', 'Symbols', 'Worship', 'Family', 'Names', 'Legacy']
       .map((s) => `<div class="usJj9c"><h3><a href="${url}#${s}">${s}</a></h3><div>About ${s.toLowerCase()}.</div></div>`)
@@ -273,6 +277,7 @@ export function google(query, results, { dark = false, next = '', hostile = fals
     .tabs>.tools{margin-left:28px}
     #search{padding:20px 0 60px 180px;max-width:652px}
     .MjjYud{margin-bottom:30px}
+    ${inner ? '.MjjYud{margin-bottom:0}.MjjYud>.g{margin-bottom:30px}' : ''}
     .yuRUbf a{text-decoration:none;display:inline-block}
     .yuRUbf br{display:none}
     h3{margin:0 0 3px;padding-top:5px;font-size:20px;font-weight:400;line-height:1.3;color:${c.link}}

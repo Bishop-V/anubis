@@ -236,6 +236,15 @@ button {
   flex: 1;
   min-width: 12em;
 }
+/* What the last change from the result menu did, and Undo. */
+.change {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 10px;
+  color: var(--ink);
+}
 .filters {
   flex-basis: 100%;
   display: flex;
