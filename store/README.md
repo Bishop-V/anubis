@@ -49,7 +49,7 @@ Setting it up: create a Google Cloud project, turn on the Chrome Web Store API, 
 
 **storage**
 
-> Saves the user's ranked sites, tags, settings and list subscriptions in browser storage (sync storage, so they follow the user's browser account), and keeps downloaded copies of subscribed lists on the device. Nothing is sent to the developer.
+> Saves the user's ranked sites, tags, settings and list subscriptions in browser storage (sync storage, so they follow the user's browser account), and keeps downloaded copies of subscribed lists on the device. If the user connects a WebDAV server of their own to sync between browsers, its address and login are kept in local storage on that device only. Nothing is sent to the developer.
 
 **activeTab**
 
@@ -61,13 +61,13 @@ Setting it up: create a Google Cloud project, turn on the Chrome Web Store API, 
 >
 > A second, small content script runs on one page of Anubis's own user guide, `https://bishop-v.github.io/anubis/subscribe`, where subscribe links lead. It reads the list address from the link and opens Anubis's settings with that list filled in; the user presses Subscribe to add it. Neither script runs on any other site.
 >
-> `https://*/*` is optional and never granted at install. When the user subscribes to a list hosted outside GitHub, Anubis asks for access to that one host (for example `https://example.org/*`) so it can download the list file. Lists on raw.githubusercontent.com and gist.githubusercontent.com need no permission. The pattern is broad only because the host isn't known until the user types the list's address.
+> `https://*/*` is optional and never granted at install. When the user subscribes to a list hosted outside GitHub, Anubis asks for access to that one host (for example `https://example.org/*`) so it can download the list file. Lists on raw.githubusercontent.com and gist.githubusercontent.com need no permission. The same goes for a WebDAV server the user connects in Settings → Sync to sync between browsers: Anubis asks for that one host when they press Connect. The pattern is broad only because the host isn't known until the user types the address.
 
 **Remote code:** No.
 
 > All JavaScript ships in the package. Subscribed lists are plain-text data (site names and patterns) that Anubis parses; nothing in them is run.
 
-**Data usage:** leave every category unticked. Anubis reads search results and the current tab's address only inside the browser and sends none of it to the developer or anyone else; settings sync through the browser's own account sync, which Anubis doesn't operate. If a reviewer disagrees, the cautious fallback is ticking "Web history" and "Website content" with the same explanation, which the certifications below still cover.
+**Data usage:** leave every category unticked. Anubis reads search results and the current tab's address only inside the browser and sends none of it to the developer or anyone else; settings sync through the browser's own account sync, which Anubis doesn't operate. The one exception is optional and chosen by the user: syncing between browsers through a WebDAV server they connect themselves sends their list and settings to that server, and nowhere else. Check at submission whether the store counts that as collection; if so, tick "Web history" for it. If a reviewer disagrees, the cautious fallback is ticking "Web history" and "Website content" with the same explanation, which the certifications below still cover.
 
 **Certifications:** tick all three (no selling or transferring data, no use unrelated to the single purpose, no use for credit decisions).
 
@@ -85,7 +85,7 @@ Public, all regions.
 - **Platforms:** Firefox for desktop. Leave Firefox for Android unticked until the work in [`ROADMAP.md`](../ROADMAP.md) is checked on a phone.
 - **License:** GNU Affero General Public License v3.0 (the project is AGPL-3.0 or later; the lists in `lists/` are CC0).
 - **Homepage and support site:** as for Chrome.
-- **Privacy policy:** not needed. The manifest declares no data collection (`data_collection_permissions: none`), which Firefox shows on the listing and at install, and which AMO requires of every add-on from 2026.
+- **Privacy policy:** `https://bishop-v.github.io/anubis/guide/privacy`. The manifest declares no required data collection (`required: ['none']`), which Firefox shows on the listing and at install, and one optional category, `browsingActivity`, which Settings requests only when the user connects a WebDAV server to sync between browsers (their list is a set of sites). AMO requires the declaration of every add-on from 2026.
 - **Manifest version:** stays on MV2 for Firefox. Mozilla has no plans to drop it, and MV3 in Firefox changes how host permissions are granted for no gain here.
 - **Source code:** yes, the build bundles and minifies. Upload `.output/anubis-<version>-sources.zip`.
 
@@ -122,7 +122,7 @@ Nothing disappears without a trace. A one-line summary says what Anubis changed,
 
 Works on Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex and Mojeek.
 
-No server, no account, nothing collected. Your list and settings stay in your browser.
+No server, no account, nothing collected. Your list and settings stay in your browser, or go to a storage service of your own if you connect one to sync between browsers.
 
 User guide: https://bishop-v.github.io/anubis/
 Source code (AGPL-3.0): https://github.com/Bishop-V/anubis
