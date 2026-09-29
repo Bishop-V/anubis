@@ -26,7 +26,7 @@ const HOST_TAGS = [...OWN_TAGS].map((tag) => tag.toLowerCase()).join(', ');
 // The shadow root protects what's inside a host, but the host element itself is
 // part of the page and the page's CSS can still reach it (Google's stylesheets
 // match on structure, like `… > :last-child`). These inline !important values
-// win over any page rule, so a host can't be hidden, faded, moved or flipped.
+// win over any page rule, so a host can't be hidden, faded, moved, or flipped.
 const GUARDS: [string, string][] = [
   ['visibility', 'visible'],
   ['opacity', '1'],

@@ -16,9 +16,9 @@ Anubis works on the web results of these engines. Turn any of them off in **Sett
 | Yandex | No | Not yet |
 | Mojeek | No | Not yet |
 
-\* Bing, Ecosia and Yahoo sometimes answer the request for the next page with a "confirm you're not a robot" check. Load more results then stops without saying why. If that happens, use the engine's own Next link.
+\* Bing, Ecosia, and Yahoo sometimes answer the request for the next page with a "confirm you're not a robot" check. Load more results then stops without saying why. If that happens, use the engine's own Next link.
 
-Only the main web results are changed. Image, video, news and shopping tabs are left alone.
+Only the main web results are changed. Image, video, news, and shopping tabs are left alone.
 
 ## How results are found
 

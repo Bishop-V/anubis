@@ -1,6 +1,6 @@
 name: CI
 
-# Type-check, test, build both browsers and lint the Firefox build. The tests
+# Type-check, test, build both browsers, and lint the Firefox build. The tests
 # parse every file in lists/, so a pull request that adds a site to a list is
 # checked too.
 

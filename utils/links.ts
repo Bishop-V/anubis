@@ -4,7 +4,7 @@
 export const REPO_URL = 'https://github.com/Bishop-V/anubis';
 export const DOCS_URL = 'https://bishop-v.github.io/anubis/';
 
-/** A page of the user guide, e.g. `guide('guide/lists')`. */
+/** A page of the wiki, e.g. `guide('guide/lists')`. */
 export const guide = (path = ''): string => `${DOCS_URL}${path}`;
 
 /**

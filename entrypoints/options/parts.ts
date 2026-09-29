@@ -4,7 +4,7 @@ import { h } from '@/utils/dom';
 
 /**
  * A section's heading and what it's for, with its buttons beside them. main.ts
- * adds a link to the section's page in the user guide after the description.
+ * adds a link to the section's page in the wiki after the description.
  */
 export function pageTitle(heading: string, text: string, ...tools: HTMLElement[]): HTMLElement {
   return h(
