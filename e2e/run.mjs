@@ -809,6 +809,8 @@ if (!only || only === 'cleanup' || checks) {
         cards: cards.length,
         found: cards.filter((li) => li.hasAttribute('data-anubis-result')).length,
         hidden: cards.length - shown.length,
+        states: cards.map((li) => li.getAttribute('data-anubis-state')).join('|'),
+        hideStyle: document.documentElement.getAttribute('data-anubis-hide'),
         buttonsInCards: buttons.length > 0 && buttons.every((b) => b.closest('li')?.contains(b)),
         stillGrid: getComputedStyle(ol).display === 'grid' && !ol.hasAttribute('data-anubis-rerank'),
         // Shown cards fill the grid's cells in order, with no gaps.
