@@ -9,7 +9,8 @@
 - [ ] A change to the interface passes `node e2e/run.mjs responsive` (320px, 360px, and 390px)
 - [ ] A change to the interface works from the keyboard and makes sense to a screen reader (`ACCESSIBILITY.md`)
 - [ ] Existing storage formats, extension identity, permissions, public URLs, and browser behavior are preserved or have a tested migration
-- [ ] `docs/experiments.md` notes what was tried, and `docs/guide/` and its screenshots match the change
+- [ ] Relevant user and developer documentation (including privacy, store, or platform notes when affected) matches code behaviour and architectural changes
+- [ ] `docs/experiments.md` records what was tried; affected generated documentation screenshots have been regenerated in light and dark, and their captions/text match
 - [ ] Nothing personal, and no page captured from a live search, is committed
 
 See [CONTRIBUTING.md](https://github.com/Bishop-V/anubis/blob/main/CONTRIBUTING.md) for the details.

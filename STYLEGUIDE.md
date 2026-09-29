@@ -6,7 +6,7 @@ How Anubis looks and reads on every surface it has: the popup, settings, the wel
 - [`ACCESSIBILITY.md`](ACCESSIBILITY.md) covers the keyboard and screen readers. This guide only repeats what's visual (contrast, sizes, the focus ring).
 - `docs/experiments.md` records why things are the way they are, including what was tried and dropped.
 
-The screenshots below come from the wiki (`docs/img/`, regenerated with `node e2e/run.mjs docs`), so they show the current build.
+The screenshots below come from the wiki (`docs/img/`, regenerated with `node e2e/run.mjs docs`), so they show the current build. When an interface change affects one, regenerate the affected light and dark screenshots and update their nearby descriptions together; don't include unrelated generated files.
 
 ## Principles
 
@@ -224,4 +224,5 @@ The one place with character. In order:
 - Looks right in light and dark, at phone width, and (for search pages) on a light and a dark engine page: `npm run e2e` saves screenshots of each to `e2e/shots/`.
 - Works from the keyboard and makes sense to a screen reader (`ACCESSIBILITY.md`).
 - Wording follows the list above, and the text is in `messages.json`.
-- The wiki's screenshots are regenerated (`node e2e/run.mjs docs`) if they show what changed.
+- The relevant user and developer documentation describes the changed behaviour; update privacy, store, or platform references too when their claims are affected.
+- The wiki's generated screenshots are refreshed with `node e2e/run.mjs docs` when they show what changed, and the affected light/dark images and page captions are committed together.

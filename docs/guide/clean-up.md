@@ -2,6 +2,8 @@
 
 Search pages carry a lot that isn't results: AI answers, video panels, "People also ask". **Settings → Clean up** removes the ones you turn on, on every search: a switch that's on means Anubis removes that part, and off leaves it on the page.
 
+<!-- Maintainer: the generated screenshots on this page come from mock pages. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark images and their descriptions together. -->
+
 ![Settings, Clean up](../img/options-cleanup.png)
 
 | Switch | What it removes |

@@ -31,6 +31,8 @@ Search on any [supported engine](./search-engines.md). Anubis starts with a few 
 
 A one-line summary above the results says what Anubis did: which results it raised, lowered, or hid, and which tags are on the page.
 
+<!-- Maintainer: the generated screenshots on this page come from mock pages. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark images and their descriptions together. -->
+
 ![The summary line above the results](../img/summary.png)
 
 ## Hide a site

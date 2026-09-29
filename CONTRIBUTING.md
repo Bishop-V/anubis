@@ -38,7 +38,8 @@ Keep each pull request to one topic. The project's conventions, briefly:
 - **Permissions.** Ask for as few as possible, and only the ones a feature actually needs.
 - **Search pages.** Engines change their markup without notice, so find things by structure (headings, links, nesting) rather than class names. For a fix to an engine, add the layout that broke as a variant of that engine's mock page in `e2e/fixtures.mjs`, with a check in `e2e/run.mjs`, and confirm the check fails without your change. When adding an engine, account for it in `.github/engine-watch.json`; `tests/engine-watch.test.ts` checks that every supported engine is watched or explicitly marked as unwatched.
 - **Record what you tried** in [`docs/experiments.md`](docs/experiments.md), including what didn't work.
-- **Update the wiki** in `docs/guide/` when behaviour changes. Keep page paths as they are: the extension links to them.
+- **Keep documentation in step with code.** When a feature, component, data flow, or user-visible behaviour changes or is overhauled, update the relevant user guide and technical references; also review privacy, store, and platform notes when their claims are affected. Keep page paths as they are: the extension links to them.
+- **Keep generated screenshots in step with the interface.** If a UI change affects a screenshot in `docs/`, run `node e2e/run.mjs docs`, review both themes, and commit the affected images with their captions and explanatory text. Leave unrelated regenerated images out.
 - **Keep committed files neutral.** No captured search pages, and nothing personal: names, emails, locations, or machine details.
 
 [`DEVELOPMENT.md`](DEVELOPMENT.md) explains how the code fits together, has step-by-step recipes for the usual changes (an engine, a clean-up panel, a setting, interface text) and lists the mistakes that have already been made once.
@@ -54,7 +55,7 @@ npm run build && npm run build:chrome   # both browsers
 npx web-ext lint -s .output/firefox-mv2 # must show zero warnings
 ```
 
-If you changed `docs/`, also run `npm run docs:build`, which fails on a broken link. If you changed something the wiki's screenshots show, redraw them with `node e2e/run.mjs docs` (it makes light and dark versions) and commit only the ones your change affects. If you changed anything on search pages and have Chromium, run `npm run e2e`; it needs no network. CI runs the network-free `responsive` and asserted `checks` parts on every pull request.
+If you changed `docs/`, also run `npm run docs:build`, which fails on a broken link. If you changed something the wiki's screenshots show, redraw them with `node e2e/run.mjs docs` (it makes light and dark versions) and commit the affected images with the matching page text, not unrelated regenerated files. If you changed anything on search pages and have Chromium, run `npm run e2e`; it needs no network. CI runs the network-free `responsive` and asserted `checks` parts on every pull request.
 
 For interface changes, run `node e2e/run.mjs responsive` to check every Settings section at 320px, 360px, and 390px. Read [`docs/platform-watch.md`](docs/platform-watch.md) before changing browser APIs, manifests, publishing, or storage assumptions.
 

@@ -11,7 +11,8 @@ Before changing code, read the relevant section of [`DEVELOPMENT.md`](DEVELOPMEN
 - Search-engine markup is unstable. Model a broken layout in `e2e/fixtures.mjs`, assert the behavior in `e2e/run.mjs`, and record what was confirmed on a real page separately. A passing mock is not proof of live compatibility.
 - Test interface changes in light and dark themes and at 320px, 360px, and 390px. Keep page-level horizontal overflow at zero; if a table needs more room, confine scrolling to that table.
 - Keep DOM text as text nodes; do not use `innerHTML`. Keep permissions minimal and explain any new permission in the user-facing privacy and store documentation.
-- Update the user guide when behavior changes. Record experiments and rejected approaches in `docs/experiments.md`; don't commit incidental screenshot regeneration.
+- Keep documentation in step with the code: when changing or overhauling a feature, component, data flow, or user-visible behaviour, update every relevant user guide, developer reference, and privacy/store/platform note. Record experiments and rejected approaches in `docs/experiments.md`.
+- Keep generated documentation screenshots in step with the interface. If a UI change affects what a screenshot shows, run `node e2e/run.mjs docs`, review the light and dark outputs, and commit the affected images with the text/captions that describe them. Don't commit unrelated regenerated images.
 - Never add local agent notes (for example, `CLAUDE.local.md`) to version control or store source archives.
 
 ## Before handing off

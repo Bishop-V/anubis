@@ -238,6 +238,8 @@ Most parts print their findings rather than failing on them, so read the output:
 
 `node e2e/run.mjs docs` redraws the wiki's screenshots in `docs/img/`, each in light and dark, a before and after of one search, and the same pair as slides in `docs/public/`. Rendering differs slightly between runs, so commit only the images your change affects. The homepage's scroll-driven demo (`docs/.vitepress/theme/scroll-demo.ts`) is drawn in HTML rather than screenshots: update its wording by hand when the summary, tags, or hidden line change.
 
+When a feature or code area is changed or overhauled, update the documentation that explains its behaviour, implementation, data flow, or user-facing promises—not only the guide page. Check related references such as `DEVELOPMENT.md`, `CLAUDE.md`, the privacy guide, store listing notes, and platform notes as applicable. Pages with generated screenshots have source comments pointing maintainers to the regeneration command; update the affected light and dark images and the nearby captions/text together.
+
 ## Checking live pages
 
 The mocks can't prove a live engine still works. With the extension loaded (`npm run dev`, or a build loaded by hand as the README describes), open a results page and look at:

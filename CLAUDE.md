@@ -70,7 +70,7 @@ Everything on search pages was built against the mocks in `e2e/fixtures.mjs`: th
 - `utils/links.ts`: the wiki and repository addresses the extension links to, and subscribe links
 - `utils/cleanup.ts`: the clean-up kinds, the headings that identify each one (with translations) and per-engine selectors
 - `lists/`: the bundled lists and `directory.json` (the "More lists" directory). `docs/list-format.md` is the format reference.
-- `docs/`: the documentation site. `guide/` holds the wiki's pages, `lists.md` renders `lists/directory.json`, and `.vitepress/` holds the config and brand theme. The extension links to the published site through `utils/links.ts` (the manifest's `homepage_url`, the popup's Help link, a wiki link on each settings section). Earlier builds link to `docs/list-format.md` on GitHub, so don't move that file, and keep page paths stable or the links from settings break. `subscribe.md` is where subscribe links lead and what the subscribe content script matches, so it can't move either. Write for people who use the extension, in the same plain words as its interface, and update the wiki when a feature changes.
+- `docs/`: the documentation site. `guide/` holds the wiki's pages, `lists.md` renders `lists/directory.json`, and `.vitepress/` holds the config and brand theme. The extension links to the published site through `utils/links.ts` (the manifest's `homepage_url`, the popup's Help link, a wiki link on each settings section). Earlier builds link to `docs/list-format.md` on GitHub, so don't move that file, and keep page paths stable or the links from settings break. `subscribe.md` is where subscribe links lead and what the subscribe content script matches, so it can't move either. Write for people who use the extension, in the same plain words as its interface. When changing or overhauling a feature, component, data flow, or user-visible behaviour, update every relevant guide and technical reference; review privacy, store, and platform notes whenever their claims are affected.
 - `public/`: the logo (`anubis.svg`), toolbar icons (`icon/{16,32,48,96,128}.png`) and interface text (`_locales/`). WXT detects these automatically.
 - `store/`: store listing text and images. `ROADMAP.md`: planned work.
 
@@ -111,4 +111,4 @@ Lessons from earlier bugs and design decisions; `docs/experiments.md` has the de
 
 ## Roadmap
 
-Planned work lives in `ROADMAP.md`: releases, security fixes, e2e assertions, Firefox for Android, translation, and features. Move an item into `docs/experiments.md` once it's tried.
+Planned work lives in `ROADMAP.md`: releases, security fixes, e2e assertions, Firefox for Android, translation, and features. Move an item into `docs/experiments.md` once it's tried. If an interface change affects generated documentation screenshots, run `node e2e/run.mjs docs`, review and update the affected light and dark screenshots alongside their captions, and leave unrelated regenerated files out.

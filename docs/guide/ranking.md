@@ -2,6 +2,8 @@
 
 Every site has a *ranking*, which you choose from the ⚖ button on any of its results, from the toolbar popup, or in **Settings → Your sites**.
 
+<!-- Maintainer: the generated screenshots on this page come from mock pages. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark images and their descriptions together. -->
+
 ![A result with its tags and the ⚖ button](../img/result.png)
 
 The button's balance tips with the site's ranking: down on the left for a lowered site, up for a raised one, and level for the rest. A pinned site's button shows a pin, and a hidden site's (once you show it) a crossed-out eye.
