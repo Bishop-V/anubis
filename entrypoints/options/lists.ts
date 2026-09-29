@@ -2,7 +2,7 @@ import { browser } from '#imports';
 import { h, icon, plural, timeAgo } from '@/utils/dom';
 import { t } from '@/utils/i18n';
 import { ICON_EXTERNAL, ICON_REFRESH, ICON_TRASH } from '@/utils/icons';
-import { readSubscribeLink, type SubscribeLink } from '@/utils/links';
+import { readSubscribeLink, REPO_URL, type SubscribeLink } from '@/utils/links';
 import { colorForTag, parseList, type ListFormat, type ParsedList } from '@/utils/listformat';
 import { send } from '@/utils/messages';
 import { flash, flashed, rerender } from './flash';
@@ -223,7 +223,7 @@ export async function renderLists(): Promise<HTMLElement> {
       'p',
       { class: 'muted', style: 'margin-top:26px;font-size:13px' },
       'Made a list worth sharing? Add it to the directory with a pull request to ',
-      h('a', { href: 'https://github.com/Bishop-V/anubis/blob/main/lists/directory.json', target: '_blank', rel: 'noopener noreferrer' }, 'lists/directory.json'),
+      h('a', { href: `${REPO_URL}/blob/main/lists/directory.json`, target: '_blank', rel: 'noopener noreferrer' }, 'lists/directory.json'),
       '.',
     ),
   );

@@ -1,7 +1,6 @@
-import { storage } from '#imports';
 import { h, icon } from '@/utils/dom';
 import { ENGINES } from '@/utils/engines';
-import { ICON_DOWNLOAD, ICON_SHARE } from '@/utils/icons';
+import { ICON_DOWNLOAD, ICON_UPLOAD } from '@/utils/icons';
 import type { TagPref } from '@/utils/matcher';
 import { loadRuleSet } from '@/utils/ruleset';
 import { getSubscriptions, saveSubscriptions } from '@/utils/subscriptions';
@@ -11,6 +10,7 @@ import {
   savePersonal,
   setTagPref,
   settingsItem,
+  subscriptionsItem,
   tagPrefsItem,
   updateSettings,
   DEFAULT_SETTINGS,
@@ -19,7 +19,7 @@ import {
   type Subscription,
 } from '@/utils/storage';
 import { importIntoPersonal } from '@/utils/importers';
-import { guide } from '@/utils/links';
+import { guide, REPO_URL } from '@/utils/links';
 import { themeSwitcher } from '@/utils/theme';
 import { flash, flashed, rerender } from './flash';
 import { download } from './sites';
@@ -110,7 +110,7 @@ export async function renderAppearance(): Promise<HTMLElement> {
         String(settings.deeper),
         (v) => void updateSettings({ deeper: Number(v) }),
       ),
-      toggleRow('Tag chips', 'Show tags and verdicts under each result title.', 'showChips', settings),
+      toggleRow('Tag chips', 'Show tags and rankings under each result title.', 'showChips', settings),
       toggleRow('Summary', 'Show a one-line summary of what Anubis changed above the results.', 'showSummary', settings),
       toggleRow('Anubis is on', 'Turn this off to leave search pages alone without uninstalling.', 'enabled', settings),
     ),
@@ -229,7 +229,8 @@ export async function renderShare(): Promise<HTMLElement> {
     if (!confirm('Reset all Anubis settings, tags and subscriptions? Your list is kept.')) return;
     await settingsItem.setValue(DEFAULT_SETTINGS);
     await tagPrefsItem.setValue({});
-    await storage.removeItem('sync:subscriptions');
+    // Absent, not empty: the default subscriptions come back.
+    await subscriptionsItem.removeValue();
     flash('backup', 'ok', 'Settings reset.');
     rerender();
   };
@@ -248,13 +249,13 @@ export async function renderShare(): Promise<HTMLElement> {
         { class: 'steps' },
         h('li', null, 'Download your list below. Set its ', h('code', null, '! name:'), ', ', h('code', null, '! description:'), ' and ', h('code', null, '! author:'), ' lines at the top.'),
         h('li', null, 'Create a public GitHub repository (or a gist) and add the file, e.g. ', h('code', null, 'lists/my-list.anubis'), '.'),
-        h('li', null, 'Add ', h('code', null, '! issues: https://github.com/you/repo/issues'), ' so the menu on each result can offer “Suggest to your list”.'),
+        h('li', null, 'Add ', h('code', null, '! issues: https://github.com/you/repo/issues'), ' so people can suggest sites to your list from the menu on each result.'),
         h('li', null, 'Share the file’s link. People paste it into Lists → Add a list.'),
         h(
           'li',
           null,
           'Want it under More lists for everyone? Open a pull request adding it to ',
-          h('a', { href: 'https://github.com/Bishop-V/anubis/blob/main/lists/directory.json', target: '_blank', rel: 'noopener noreferrer' }, 'lists/directory.json'),
+          h('a', { href: `${REPO_URL}/blob/main/lists/directory.json`, target: '_blank', rel: 'noopener noreferrer' }, 'lists/directory.json'),
           '.',
         ),
       ),
@@ -293,7 +294,7 @@ export async function renderShare(): Promise<HTMLElement> {
         'div',
         { class: 'toolbar' },
         h('button', { class: 'btn', type: 'button', on: { click: () => void exportAll() } }, icon(ICON_DOWNLOAD), 'Export backup'),
-        h('button', { class: 'btn', type: 'button', on: { click: () => file.click() } }, icon(ICON_SHARE), 'Restore backup'),
+        h('button', { class: 'btn', type: 'button', on: { click: () => file.click() } }, icon(ICON_UPLOAD), 'Restore backup'),
         h('button', { class: 'btn ghost danger', type: 'button', on: { click: () => void reset() } }, 'Reset settings'),
         file,
       ),

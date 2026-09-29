@@ -7,6 +7,7 @@ import { LEVELS, type Level } from '@/utils/matcher';
 import { listSites, setSite, type SiteEntry } from '@/utils/personal';
 import { loadRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal, personalIsLocal, savePersonal } from '@/utils/storage';
+import { rerender } from './flash';
 
 let editingText = false;
 let filter = '';
@@ -43,7 +44,7 @@ export async function renderSites(): Promise<HTMLElement> {
             on: {
               click: () => {
                 editingText = !editingText;
-                window.dispatchEvent(new HashChangeEvent('hashchange'));
+                rerender();
               },
             },
           },
@@ -266,7 +267,7 @@ function textEditor(rules: RuleSet): HTMLElement {
             click: async () => {
               await savePersonal(area.value);
               editingText = false;
-              window.dispatchEvent(new HashChangeEvent('hashchange'));
+              rerender();
             },
           },
         },
@@ -280,7 +281,7 @@ function textEditor(rules: RuleSet): HTMLElement {
           on: {
             click: () => {
               editingText = false;
-              window.dispatchEvent(new HashChangeEvent('hashchange'));
+              rerender();
             },
           },
         },

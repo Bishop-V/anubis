@@ -1,5 +1,6 @@
 import { parseList, type ListMeta, type TagDef } from './listformat';
 import { collectTags, compileList, type CompiledList, type TagPref } from './matcher';
+import { PERSONAL_ID, PERSONAL_NAME } from './personal';
 import {
   getSettings,
   listCacheItem,
@@ -11,9 +12,6 @@ import {
   type Settings,
 } from './storage';
 import { displayName, getSubscriptions, listText, reportTracker } from './subscriptions';
-
-export const PERSONAL_ID = 'personal';
-export const PERSONAL_NAME = 'Your list';
 
 export interface RuleSet {
   settings: Settings;

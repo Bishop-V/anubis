@@ -6,9 +6,9 @@ import type { TagDef } from '@/utils/listformat';
 import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
 import { t, tList, tn } from '@/utils/i18n';
 import { hiddenCount, type PageStats } from '@/utils/messages';
-import { getSite, type PersonalLevel } from '@/utils/personal';
+import { getSite, PERSONAL_NAME, type PersonalLevel } from '@/utils/personal';
 import { summarySentence } from '@/utils/summary';
-import type { FoundResult } from './results';
+import { OWN_TAGS, type FoundResult } from './results';
 import shadowCss from './shadow.css?inline';
 
 export type PageTheme = 'light' | 'dark';
@@ -20,7 +20,7 @@ const renderKeys = new WeakMap<HTMLElement, string>();
 // What each host currently shows. (`:scope` can't be used for this: inside a
 // shadow root it matches nothing, so old content would pile up.)
 const rendered = new WeakMap<HTMLElement, Node>();
-const HOST_TAGS = 'anubis-chips, anubis-weigh, anubis-bar, anubis-summary, anubis-popover';
+const HOST_TAGS = [...OWN_TAGS].map((tag) => tag.toLowerCase()).join(', ');
 
 // The shadow root protects what's inside a host, but the host element itself is
 // part of the page and the page's CSS can still reach it (Google's stylesheets
@@ -681,7 +681,7 @@ function buildPopover(
 
   // Tags you set toggle; tags from lists are shown but fixed.
   const mine = new Set(entry?.tags ?? []);
-  const fromList = new Set(data.verdict.tags.filter((id) => (data.verdict.tagSources[id] ?? []).some((s) => s !== 'Your list')));
+  const fromList = new Set(data.verdict.tags.filter((id) => (data.verdict.tagSources[id] ?? []).some((s) => s !== PERSONAL_NAME)));
   const tagIds = [...data.tags.keys()].sort((a, b) => {
     const rank = (id: string) => (mine.has(id) ? 0 : fromList.has(id) ? 1 : 2);
     return rank(a) - rank(b) || data.tags.get(a)!.label.localeCompare(data.tags.get(b)!.label);

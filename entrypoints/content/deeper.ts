@@ -1,7 +1,7 @@
 import type { EngineDef } from '@/utils/engines';
 import { findResults } from './results';
 
-// "Weigh deeper": bring the next pages of results onto this one, so reranking
+// "Load more results": bring the next pages of results onto this one, so reranking
 // works across 20–30 results instead of 10. A site pinned or boosted on page 3
 // can then surface at the top, which is what Kagi and Brave Goggles do server-side.
 //
@@ -17,7 +17,7 @@ export interface DeeperState {
   done: boolean;
   next?: string;
   error?: string;
-  /** The automatic "look deeper" already ran for this search. */
+  /** "Load more results automatically" already ran for this search. */
   auto?: boolean;
 }
 

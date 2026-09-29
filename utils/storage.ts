@@ -1,5 +1,6 @@
 import { storage } from '#imports';
 import { NO_CLEANUP, type Cleanup } from './cleanup';
+import { guide } from './links';
 import type { TagPref } from './matcher';
 import { fromBlockedSites, PERSONAL_HEADER } from './personal';
 
@@ -7,10 +8,13 @@ import { fromBlockedSites, PERSONAL_HEADER } from './personal';
 //
 //   sync:settings        appearance and behaviour (small)
 //   sync:tagPrefs        what to do with each tag (small)
-//   sync:subscriptions   which lists the user subscribes to (small)
+//   sync:subscriptions   which lists the user subscribes to (small); absent means the defaults
 //   sync:personal*       the personal list as text, split into chunks (see below)
+//   local:personal       the personal list, when it's too big for sync
 //   local:listCache      downloaded list texts; too big for sync, re-fetched per device
+//   local:lastUpdateCheck  when the background last checked lists for updates
 //   sync:blockedSites    legacy block list, migrated into the personal list
+//   sync:hideStyleMoved  the one-time move from Collapse to Remove as the default
 
 export type Theme = 'auto' | 'dark' | 'light';
 export type HideStyle = 'collapse' | 'remove' | 'dim';
@@ -146,8 +150,8 @@ export function splitIntoChunks(text: string): string[] {
 }
 
 export const DEFAULT_PERSONAL = `${PERSONAL_HEADER}
-! One instruction per line. The weigh menu on each search result edits this list.
-! See docs/list-format.md for the syntax.
+! One instruction per line. The ⇅ menu on each search result edits this list.
+! The format: ${guide('list-format')}
 $site=fandom.com,discard
 `;
 

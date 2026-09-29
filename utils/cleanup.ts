@@ -6,6 +6,8 @@
 // a few selectors where a heading isn't enough. Keep this file free of browser
 // APIs: the options page and the content script both use it.
 
+import { andList } from './dom';
+
 export type CleanupKind = 'ai' | 'videos' | 'questions' | 'news' | 'images' | 'related';
 
 export type Cleanup = Record<CleanupKind, boolean>;
@@ -157,9 +159,10 @@ export function cleanupMarkerFor(text: string): CleanupKind | undefined {
 
 /** "an AI answer and 2 video panels", or '' when nothing was removed. */
 export function describeRemoved(removed: Partial<Record<CleanupKind, number>>): string {
-  const parts = CLEANUP.filter((def) => removed[def.id]).map((def) => {
-    const n = removed[def.id]!;
-    return n === 1 ? def.one : `${n} ${def.many}`;
-  });
-  return parts.length < 2 ? (parts[0] ?? '') : `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
+  return andList(
+    CLEANUP.filter((def) => removed[def.id]).map((def) => {
+      const n = removed[def.id]!;
+      return n === 1 ? def.one : `${n} ${def.many}`;
+    }),
+  );
 }

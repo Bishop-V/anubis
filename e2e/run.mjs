@@ -3,8 +3,8 @@
 // prints what Anubis decided for each result and saves screenshots to e2e/shots/.
 //
 //   npm run e2e                 build, then run everything
-//   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, off, cleanup, popover, ddg-hide,
-//                               filter, deeper, import, subscribe, subscribe-link, options, welcome
+//   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
+//                               popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options, welcome
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/
 //
 // Needs a Chromium build (branded Chrome no longer loads unpacked extensions from

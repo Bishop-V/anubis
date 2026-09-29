@@ -25,4 +25,4 @@ In Egyptian myth, Anubis weighed each heart against a feather. This extension do
 
 ## Status
 
-Anubis is young. It isn't in the browser stores yet, and it has mostly been tested on test pages built to match each engine's layout. [Getting started](./getting-started.md) explains how to install it from the source code. If something looks wrong on a real search page, see [Troubleshooting](./troubleshooting.md).
+Anubis is young. It isn't in the browser stores yet. Most engines have been checked on their live pages, and the rest only on test pages built to match their layout; [Search engines](./search-engines.md) says which. [Getting started](./getting-started.md) explains how to install it from the source code. If something looks wrong on a real search page, see [Troubleshooting](./troubleshooting.md).

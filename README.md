@@ -20,7 +20,7 @@ In Egyptian myth, Anubis weighed each heart against a feather. This extension we
 
 Works on Google (every country domain), DuckDuckGo (including the HTML and Lite versions), Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex and Mojeek.
 
-It asks for the `storage` permission and runs on search result pages, plus the user guide's subscribe page so subscribe links work. Lists hosted on GitHub download without any extra permission; lists hosted elsewhere ask for access to that one host when you subscribe. Nothing is sent anywhere else.
+It asks for the `storage` and `activeTab` permissions (the second lets the toolbar popup read the address of the tab you're on, only when you open it) and runs on search result pages, plus the user guide's subscribe page so subscribe links work. Lists hosted on GitHub download without any extra permission; lists hosted elsewhere ask for access to that one host when you subscribe. Nothing is sent anywhere else.
 
 ## Setup
 
@@ -38,7 +38,7 @@ Firefox is the default target; every `:chrome` variant overrides it.
 
 ```sh
 npm run compile      # type-check; run it after every change
-npm test             # unit tests: list format, matching, personal list, storage
+npm test             # unit tests in tests/
 npm run build        # production build into .output/firefox-mv2
 npm run build:chrome # production build into .output/chrome-mv3
 ```

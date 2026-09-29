@@ -25,10 +25,10 @@ When you install Anubis, your browser asks for:
 
 - **Access to the search engines' sites**, so Anubis can change their results pages.
 - **Access to this guide's [subscribe page](../subscribe.md)**, so a subscribe link can open Anubis's settings with a list filled in. Your browser names it after the site this guide is on, `bishop-v.github.io`. Anubis reads only the link's address there.
-
-Anubis runs on no other sites.
 - **Storage**, to keep your list and settings.
 - **The current tab, when you open the toolbar popup** (called `activeTab`). This lets the popup read the address of the site you're on, so you can rank it. It shows no install warning and lasts until that tab goes to another page.
+
+Anubis runs on no other sites.
 
 Anubis may also ask, at the moment you subscribe, to **read from one website** that hosts a list. That's needed for lists hosted anywhere other than GitHub or a gist. You can take it back in your browser's extension settings.
 

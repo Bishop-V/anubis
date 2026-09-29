@@ -1,13 +1,13 @@
 import { browser, defineContentScript } from '#imports';
-import { engineFor, ENGINE_MATCHES, isMobileAgent } from '@/utils/engines';
+import { engineFor, ENGINE_MATCHES, isMobileAgent, type EngineDef } from '@/utils/engines';
 import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { evaluate, type Verdict } from '@/utils/matcher';
 import { send, type Message, type PageStats } from '@/utils/messages';
 import { formatSiteLine, getSite, setSiteLevel, toggleSiteTag, upsertTagDef, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
-import { editPersonal } from '@/utils/storage';
+import { editPersonal, type Theme } from '@/utils/storage';
 import { reportUrl, suggestionUrl } from '@/utils/subscriptions';
-import { findClutter, redirectFor, watchAllTab } from './cleanup';
+import { findClutter, mainColumn, redirectFor, watchAllTab } from './cleanup';
 import { freshState, weighDeeper } from './deeper';
 import './page.css';
 import { findResults, OWN_TAGS, type FoundResult } from './results';
@@ -193,7 +193,7 @@ export default defineContentScript({
         });
       } else renderSummary(undefined, stats, theme, { toggleReveal() {}, settings() {}, deeper() {}, filter() {} });
 
-      // "Look deeper automatically": once per search.
+      // "Load more results automatically": once per search.
       if (rules.settings.deeper > 0 && stats.canGoDeeper && deeper.pages === 1 && !deeper.auto) {
         deeper.auto = true;
         goDeeper(rules.settings.deeper);
@@ -319,11 +319,7 @@ export default defineContentScript({
           suggest: (tracker, domain) => {
             const entry = getSite(rules.personalText, domain);
             const line = formatSiteLine(domain, entry?.level ?? 'normal', entry?.tags ?? []) ?? `$site=${domain}`;
-            return suggestionUrl(
-              tracker.issues,
-              `Suggest ${domain}`,
-              `Suggested instruction for **${tracker.name}**:\n\n\`\`\`\n${line}\n\`\`\`\n\nExample result: ${result.url.split('?')[0]}\n\n_Sent from Anubis._`,
-            );
+            return suggestionUrl(tracker.issues, tracker.name, domain, line, result.url);
           },
           settings: () => void send({ type: 'open-options' }),
         },
@@ -479,15 +475,8 @@ function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enable
  * most web results, widened to the engine's boundary (Google's #rso) when it has
  * one. Results that show their address count; videos in a panel don't.
  */
-function summaryAnchor(results: FoundResult[], engine: { boundary?: string; displayed?: string }): HTMLElement | undefined {
-  const web = results.filter((r) => r.container.querySelector(engine.displayed ?? 'cite'));
-  const counts = new Map<HTMLElement, number>();
-  for (const r of web.length ? web : results) {
-    const parent = r.container.parentElement;
-    if (parent) counts.set(parent, (counts.get(parent) ?? 0) + 1);
-  }
-  let main: HTMLElement | undefined;
-  for (const [parent, n] of counts) if (!main || n > counts.get(main)!) main = parent;
+function summaryAnchor(results: FoundResult[], engine: EngineDef): HTMLElement | undefined {
+  const main = mainColumn(results, engine).list;
   if (!main) return results[0]?.container;
   const area = (engine.boundary && main.closest<HTMLElement>(engine.boundary)) || main;
   for (const child of area.children) {
@@ -504,7 +493,7 @@ function nextResultAfter(container: HTMLElement): HTMLElement | undefined {
 }
 
 /** Light or dark, from the setting or, on "auto", from the page's own background. */
-function pageTheme(setting: 'auto' | 'light' | 'dark'): PageTheme {
+function pageTheme(setting: Theme): PageTheme {
   if (setting !== 'auto') return setting;
   for (const el of [document.body, document.documentElement]) {
     if (!el) continue;

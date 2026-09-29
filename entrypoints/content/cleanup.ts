@@ -97,21 +97,22 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
  * video panel, which have titles like results) don't protect a block from removal.
  */
 interface Column {
-  list: Element | undefined;
+  list: HTMLElement | undefined;
   results: HTMLElement[];
 }
 
-function mainColumn(results: FoundResult[], engine: EngineDef): Column {
+/** The element holding most web results, and those results. Also where the summary goes. */
+export function mainColumn(results: FoundResult[], engine: Pick<EngineDef, 'displayed'>): Column {
   // Web results show their address; videos in a panel don't, and a panel of them
   // can outnumber the results in any one wrapper (Google groups some results).
   const withAddress = results.filter((r) => r.container.querySelector(engine.displayed ?? 'cite'));
   const main = withAddress.length ? withAddress : results;
-  const counts = new Map<Element, number>();
+  const counts = new Map<HTMLElement, number>();
   for (const r of main) {
     const parent = r.container.parentElement;
     if (parent) counts.set(parent, (counts.get(parent) ?? 0) + 1);
   }
-  let list: Element | undefined;
+  let list: HTMLElement | undefined;
   for (const [parent, n] of counts) if (!list || n > counts.get(list)!) list = parent;
   return { list, results: main.map((r) => r.container) };
 }

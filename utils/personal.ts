@@ -5,6 +5,10 @@ import type { Level } from './matcher';
 // published unchanged. These helpers edit it line by line and leave comments and
 // hand-written rules alone.
 
+/** The personal list's id, and its name wherever Anubis shows it (a reason, a tag's source). */
+export const PERSONAL_ID = 'personal';
+export const PERSONAL_NAME = 'Your list';
+
 export const PERSONAL_HEADER = `! name: My list
 ! description: Sites I've weighed myself.
 ! author: me
