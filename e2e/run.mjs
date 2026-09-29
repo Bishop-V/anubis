@@ -144,6 +144,9 @@ async function launch(settings = {}, ext = EXT) {
       ['https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then', 'Promise.prototype.then() - MDN', 'The then() method of Promise instances takes up to two arguments.'],
     ], { inner: true }),
     'https://www.google.com/search?q=anubis&mobile=1': googleMobile('anubis', ANUBIS_RESULTS),
+    // What an earlier copy of the extension leaves on the page when it reloads or
+    // updates while the page is open (Firefox then runs the new copy in the same page).
+    'https://www.google.com/search?q=anubis&leftover=1': google('anubis', ANUBIS_RESULTS).replace('<div id="rcnt">', '<anubis-summary style="display:block">old summary</anubis-summary><div id="rcnt">'),
     'https://www.google.com/search?q=anubis&forum=1': google('anubis', ANUBIS_RESULTS, { forum: true, grouped: true, aiAbove: true, related: true, next: '/search?q=anubis&start=10' }),
     'https://www.google.com/search?q=anubis&aigrid=1': google('anubis', ANUBIS_RESULTS, { forum: true, grouped: true, aiAbove: 'grid', related: true, next: '/search?q=anubis&start=10' }),
     'https://www.bing.com/search?q=javascript+promises&inline=1': bing('javascript promises', JS_RESULTS, { inline: true }),
@@ -725,14 +728,29 @@ if (!only || only === 'cleanup' || checks) {
   // of the Overview instead.
   await page.goto('https://www.google.com/search?q=anubis&aigrid=1');
   await page.waitForTimeout(800);
-  console.log('   in a grid, AI answers kept:', JSON.stringify(await summaryPlace()));
+  const gridKept = await summaryPlace();
+  console.log('   in a grid, AI answers kept:', JSON.stringify(gridKept));
   await setSettings({ cleanup: { ...all, ai: true } });
   await page.goto('https://www.google.com/search?q=anubis&aigrid=1');
   await page.waitForTimeout(800);
   console.log('   in a grid, AI answer removed:', JSON.stringify(await summaryPlace()));
   await clickShadowButton('anubis-summary', 'Show hidden');
   await page.waitForTimeout(300);
-  console.log('   in a grid, after Show hidden:', JSON.stringify(await summaryPlace()));
+  const gridShown = await summaryPlace();
+  console.log('   in a grid, after Show hidden:', JSON.stringify(gridShown));
+  if (checks) {
+    assertChecks('summary above an AI Overview in a grid', {
+      aboveWhenKept: gridKept.aboveAi && gridKept.aboveResults && gridKept.linedUp,
+      aboveAfterShowHidden: gridShown.aboveAi && gridShown.aboveResults && gridShown.linedUp,
+    });
+  }
+
+  // An earlier copy's summary is cleared, so the page shows one.
+  await page.goto('https://www.google.com/search?q=anubis&leftover=1');
+  await page.waitForTimeout(800);
+  const summaries = await page.evaluate(() => document.querySelectorAll('anubis-summary').length);
+  console.log('== summaries after a reload of the extension:', summaries);
+  if (checks) assertChecks('one summary after a reload of the extension', { oneSummary: summaries === 1 });
 
   // Forcing it on Google: the Web tab.
   await setSettings({ cleanup: { ...all, ai: false } , googleWebTab: true });

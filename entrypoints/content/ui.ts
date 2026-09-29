@@ -512,6 +512,8 @@ export function renderSummary(
     return;
   }
   summaryHost ??= makeHost('anubis-summary', theme).host;
+  // One summary: another is left over from an earlier copy of the extension.
+  for (const other of document.querySelectorAll('anubis-summary')) if (other !== summaryHost) other.remove();
   const tryFirst = !!place.fallback && !misplaced.has(place.before);
   const inside = place.fallback && !misplacedInside.has(place.before) ? topOf(place.before) : undefined;
   if (tryFirst) {
