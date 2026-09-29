@@ -33,13 +33,13 @@ Hover a result and press the ⇅ button at its top-right corner. In the menu, ch
 
 ![The menu on a result: Hide, Lower, Normal, Raise and Pin, with tags below](../img/menu.png)
 
-The result shrinks to one line, and so will every result from that site, on every search.
+The result disappears, and so will every result from that site, on every search. The summary above the results counts what was hidden.
 
-![A hidden result: one line with a Show button](../img/hidden.png)
+- **Show hidden** in the summary shows every hidden result on the page, faded, until you press it again.
+- To stop hiding the site, show it, open its menu and choose **Normal**.
+- To leave a line where each hidden result was, choose **Collapse** in **Settings → Appearance → Hidden results**:
 
-- **Show** on that line shows the result on this page.
-- **Show hidden** in the summary shows every hidden result on the page.
-- To stop hiding the site, open the menu again and choose **Normal**.
+![A hidden result in the Collapse style: one line with a Show button](../img/hidden.png)
 
 Your choice applies to the whole site, including its subdomains. The name at the top of the menu picks how much of the site it covers: `en.wikipedia.org` or all of `wikipedia.org`.
 

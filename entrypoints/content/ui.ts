@@ -4,6 +4,7 @@ import type { EngineDef } from '@/utils/engines';
 import { ICON_ANUBIS, ICON_CLOSE, ICON_GEAR, ICON_HIDE, ICON_RANK, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
 import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
+import { tn } from '@/utils/i18n';
 import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, type PersonalLevel } from '@/utils/personal';
 import { summarySentence } from '@/utils/summary';
@@ -277,7 +278,7 @@ export function ensureWeighButton(
   const { top, right } = engine.button ?? { top: '2px', right: '2px' };
   host.style.setProperty('position', 'absolute', 'important');
   host.style.setProperty('top', top, 'important');
-  host.style.setProperty('right', right, 'important');
+  host.style.setProperty('right', clearOfPictures(container, right), 'important');
   host.style.setProperty('left', 'auto', 'important');
   host.style.setProperty('bottom', 'auto', 'important');
   host.style.setProperty('z-index', '5', 'important');
@@ -289,6 +290,23 @@ export function ensureWeighButton(
     positioned.add(container);
     if (getComputedStyle(container).position === 'static') container.style.position = 'relative';
   }
+}
+
+/**
+ * How far from the right edge the button sits. Some results show a thumbnail in
+ * their top-right corner (Google does beside many results); the button moves to
+ * its left instead of covering it. Favicons are too small to count.
+ */
+function clearOfPictures(container: HTMLElement, right: string): string {
+  const box = container.getBoundingClientRect();
+  if (!box.width) return right;
+  let edge = box.right;
+  for (const pic of container.querySelectorAll<HTMLElement>('img, video, canvas, [role="img"]')) {
+    const r = pic.getBoundingClientRect();
+    if (r.width < 40 || r.height < 40 || r.right < box.right - 80 || r.top > box.top + 60) continue;
+    edge = Math.min(edge, r.left);
+  }
+  return edge === box.right ? right : `${Math.round(box.right - edge + 6)}px`;
 }
 
 export function weighButtonOf(container: HTMLElement): HTMLButtonElement | undefined {
@@ -309,6 +327,11 @@ export function hiddenReason(verdict: Verdict, tags: Map<string, TagDef>): strin
   return `by ${by.name}`;
 }
 
+/**
+ * The one line standing for a hidden result, or for a run of hidden results in a
+ * row: "fandom.com and 5 more hidden by your list". `more` is the rest of the run,
+ * as their reasons; the line gives one reason only when they all share it.
+ */
 export function renderHiddenBar(
   result: FoundResult,
   verdict: Verdict,
@@ -316,6 +339,7 @@ export function renderHiddenBar(
   tags: Map<string, TagDef>,
   show: boolean,
   actions: { reveal: () => void },
+  more: Verdict[] = [],
 ): void {
   const { container } = result;
   let host = barHosts.get(container);
@@ -332,13 +356,20 @@ export function renderHiddenBar(
   host.dataset.theme = theme;
 
   const why = hiddenReason(verdict, tags);
+  const sameWhy = more.every((v) => hiddenReason(v, tags) === why);
   const site = result.host.replace(/^www\./, '');
-  render(host, JSON.stringify([site, why]), () =>
+  render(host, JSON.stringify([site, why, more.length, sameWhy]), () =>
     h(
       'div',
       { class: 'gone' },
       icon(ICON_HIDE),
-      h('span', { class: 'why' }, h('b', null, site), ` hidden ${why}`),
+      h(
+        'span',
+        { class: 'why' },
+        h('b', null, site),
+        more.length ? ` ${tn('hiddenMore', more.length)}` : '',
+        sameWhy && why ? ` hidden ${why}` : ' hidden',
+      ),
       h(
         'button',
         {

@@ -22,6 +22,10 @@ html[data-anubis-hide='collapse'] [data-anubis-state~='hide']:not([data-anubis-r
   outline-offset: 6px;
 }
 
+/* Hidden, "collapse" style: a run of hidden results in a row shares one line. */
+html[data-anubis-hide='collapse'] [data-anubis-grouped]:not([data-anubis-reveal]) {
+  display: none !important;
+}
 /* Hidden, "remove" style, and table layouts in every style. */
 html[data-anubis-hide='remove'] [data-anubis-state~='hide']:not([data-anubis-reveal]),
 [data-anubis-state~='hide'][data-anubis-row]:not([data-anubis-reveal]) {

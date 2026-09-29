@@ -40,6 +40,9 @@ Clean-up on Google, confirmed from a live results page on 2026-09-29 (the troubl
 - AI Mode appears twice: a tab (`div[role=listitem]` in `div[role=list]` in `[role=navigation]`) and a `button[role=link]` beside the search box in `form#tsf[role=search]`. Both are removed with AI answers (the button alone, never the form).
 - Tabs named "Videos" and "Short videos" are links in that navigation row and are rightly left alone.
 
+- A second search showed the AI Overview outside the results column altogether: `#rcnt > div.bzXtMb.M8OgIe > …`, above `#center_col`. Only the selector from community filter lists (`.M8OgIe`) caught it, since its label never reaches the column. The images panel is `span.mgAbYb[role=heading]` inside `div.Lv2Cle[data-count]`, in the usual `div.ULSxyf > div.MjjYud > div.A6K0A[data-rpos]`.
+- The summary went above the first result, so a panel before it (the images panel) pushed it down. It's now the first thing in the results area (`#rso` on Google), above panels. Some results carry a thumbnail in their top-right corner, where the ⇅ button sat on top of it; the button now moves left of any picture there. Both are in the `videos=google` mock; the previous build fails them.
+
 Still to check for clean-up:
 
 - Google: that "AI Overview", "Videos", "People also ask", "Top stories" and "Related searches" are still headings (`h1`–`h4` or `role="heading"`) at the top of their blocks, and that the blocks sit in `#rso`, `#botstuff` or the `role="main"` column. That the AI Mode tab is a link with that exact text in a `role="navigation"` or `role="list"` element. That choosing All from the Web tab lands on a `/search` URL without `udm`, so Anubis leaves it alone.
@@ -115,6 +118,14 @@ Asked for: a global option to force-remove AI answers (Gemini's AI Overview, Duc
 - **Still only the heading, on live Google:** a screenshot showed the dashed "removed" outline around the "Videos" header row alone. Three layouts give that, and all three are now Google mocks (`videos=titles|groups|split`) that fail on the previous build: each video's title is a heading outside its link, which the section rule took for a separate section; the videos have `<h3>` links, and Google's results sit in small groups, so the videos were the biggest "list" and got protected as the main results; or the header row, the videos and "View all" are separate blocks. Main results are now the ones that show an address; a heading repeated across look-alike cards is an item title, not a section; and when a removed block is little more than its label, the blocks after it go too, up to a result or another section. Which layout Google really uses is still unknown; the troubleshooting page's snippet now covers panels as well as AI answers.
 - **Fixed from the live structure:** on the real page Anubis stopped at the video panel's header row (`div.UjLRDc`) instead of the panel. Google marks each block in the list with `data-rpos`, so engines can now declare a `blocks` selector: a recognised heading inside a marked block removes the whole block, up to the column, unless a real section of it is meant ("Images" in a panel keeps the panel). A "section" that is only its heading row no longer counts as one, and clickable cards (`[role=link]`, `[jsaction]`) count as items. The `videos=google` mock copies the reported structure; the previous build left the videos in place on it.
 - **Visible and undoable:** the summary names what was removed ("…and removed an AI answer and a video panel"), and "Show hidden" brings removed blocks back on that page, marked with a dashed outline. The AI Mode tab is removed but not counted, since it isn't content.
+
+## Hidden results: removed by default
+
+Feedback from use, with a screenshot of a page where one site filled most results: the "Collapse" style's line per hidden result ("fandom.com hidden by your list · Show", fifteen times) clogged the page.
+
+- **Default changed** from Collapse to Remove. Hidden results leave the page; the summary counts them ("Anubis hid 12 of 20 results") and **Show hidden** brings them back, so nothing goes without a trace. Settings saved with the old default move over once (`sync:hideStyleMoved` records it); choosing Collapse afterwards sticks.
+- **Collapse, better:** hidden results in a row now share one line ("starwars.fandom.com and 1 more hidden by your list"), whose **Show** brings back the whole run. A run is results that are next to each other in the page, skipping Anubis's own elements and removed panels. The `runs` e2e part checks it on a Google page where one site is everywhere.
+- The e2e harness keeps Collapse (most checks use the lines) and marks the migration as done, since it would otherwise switch the seeded setting to Remove the moment the extension installs.
 
 ## Toolbar icon when off
 

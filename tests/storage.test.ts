@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { fakeBrowser } from 'wxt/testing/fake-browser';
 import { storage } from '#imports';
 import { listSites, setSiteLevel } from '@/utils/personal';
-import { DEFAULT_PERSONAL, editPersonal, loadPersonal, migrateLegacy, savePersonal, splitIntoChunks } from '@/utils/storage';
+import { DEFAULT_PERSONAL, DEFAULT_SETTINGS, editPersonal, getSettings, loadPersonal, migrateLegacy, migrateSettings, savePersonal, settingsItem, splitIntoChunks, updateSettings } from '@/utils/storage';
 import { getSubscriptions, saveSubscriptions } from '@/utils/subscriptions';
 
 beforeEach(() => fakeBrowser.reset());
@@ -48,5 +48,21 @@ describe('edits and subscriptions', () => {
     expect((await getSubscriptions()).map((s) => s.id)).toContain('builtin:official-docs');
     await saveSubscriptions([]);
     expect(await getSubscriptions()).toEqual([]);
+  });
+});
+
+describe('hidden results style', () => {
+  it('removes hidden results by default', async () => {
+    expect((await getSettings()).hideStyle).toBe('remove');
+  });
+
+  it('moves settings saved with the old default over once, then leaves them alone', async () => {
+    await settingsItem.setValue({ ...DEFAULT_SETTINGS, hideStyle: 'collapse' });
+    await migrateSettings();
+    expect((await getSettings()).hideStyle).toBe('remove');
+    // Choosing Collapse afterwards sticks.
+    await updateSettings({ hideStyle: 'collapse' });
+    await migrateSettings();
+    expect((await getSettings()).hideStyle).toBe('collapse');
   });
 });
