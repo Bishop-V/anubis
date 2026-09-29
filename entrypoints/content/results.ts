@@ -16,6 +16,8 @@ export interface FoundResult {
   extras: HTMLElement[];
   /** Results page this came from, when Anubis fetched more pages ("Load more results"). */
   page?: number;
+  /** A card in a grid on another tab (images, videos, news): hidden and tagged, not reranked or collapsed. */
+  card?: boolean;
 }
 
 /** Our own elements, which must never be mistaken for page content. */
@@ -23,7 +25,17 @@ export const OWN_TAGS = new Set(['ANUBIS-CHIPS', 'ANUBIS-WEIGH', 'ANUBIS-BAR', '
 
 /** Results in the live page, or in a fetched results page parsed with DOMParser. */
 export function findResults(engine: EngineDef, root: Document = document): FoundResult[] {
-  return engine.heading ? findStructural(engine, root) : findBySelector(engine, root);
+  const out = engine.heading ? findStructural(engine, root) : findBySelector(engine, root);
+  if (!engine.cards) return out;
+  const seen = new Set(out.map((r) => r.container));
+  for (const def of engine.cards) {
+    for (const r of findBySelector({ ...engine, ...def, extraRows: 0 }, root)) {
+      if (seen.has(r.container) || [...seen].some((c) => c.contains(r.container))) continue;
+      seen.add(r.container);
+      out.push({ ...r, card: true });
+    }
+  }
+  return out;
 }
 
 function findBySelector(engine: EngineDef, root: Document): FoundResult[] {

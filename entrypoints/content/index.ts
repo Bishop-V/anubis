@@ -201,9 +201,11 @@ export default defineContentScript({
         for (const row of result.extras) row.toggleAttribute('data-anubis-filtered', out);
       }
 
-      rerank(results, scores, rules.settings.rerank && !engine.table);
+      // Cards sit in a grid, which reranking's flex column would break.
+      const cards = results.some((r) => r.card);
+      rerank(results, scores, rules.settings.rerank && !engine.table && !cards);
       const pinned = results.filter((r) => verdictFor(r).level === 'pin' && !verdictFor(r).hidden).map((r) => r.container);
-      makeRoomForPins(new Set(engine.table ? [] : pinned));
+      makeRoomForPins(new Set(engine.table || cards ? [] : pinned));
 
       if (rules.settings.showSummary && !engine.table) {
         const ai = rules.settings.cleanup.ai ? clutter : findClutter(engine, results, { ...NO_CLEANUP, ai: true });
@@ -255,7 +257,8 @@ export default defineContentScript({
       if (verdict.tags.length) state.push('tagged');
       container.setAttribute('data-anubis-state', state.join(' '));
       container.toggleAttribute('data-anubis-reveal', revealed);
-      if (engine.table) container.setAttribute('data-anubis-row', '');
+      // Table rows and cards are removed when hidden, whatever the style.
+      if (engine.table || result.card) container.setAttribute('data-anubis-row', '');
       for (const row of result.extras) {
         row.setAttribute('data-anubis-row', '');
         row.setAttribute('data-anubis-state', verdict.level);
@@ -286,7 +289,7 @@ export default defineContentScript({
     const renderHiddenRuns = (results: FoundResult[], theme: PageTheme) => {
       const collapsed = (r: FoundResult) => {
         const v = verdictFor(r);
-        return v.hidden && !(reveal || shown.has(r.url)) && rules.settings.hideStyle === 'collapse' && !engine.table;
+        return v.hidden && !(reveal || shown.has(r.url)) && rules.settings.hideStyle === 'collapse' && !engine.table && !r.card;
       };
       const runs: FoundResult[][] = [];
       let last: FoundResult | undefined;
@@ -618,6 +621,9 @@ function summaryAnchor(results: FoundResult[], engine: EngineDef): { before?: HT
   const main = mainColumn(results, engine).list;
   if (!main) return { before: results[0]?.container };
   const area = (engine.boundary && main.closest<HTMLElement>(engine.boundary)) || main;
+  // Results in a grid (DuckDuckGo's Videos and Images tabs): inside it, the summary
+  // would take a cell, so it goes before the grid.
+  if (/grid/.test(getComputedStyle(area).display) && area.parentElement) return { before: area, area, column: main };
   for (const child of area.children) {
     if (child instanceof HTMLElement && !/^(ANUBIS-SUMMARY|SCRIPT|STYLE|TEMPLATE|LINK|META)$/.test(child.tagName)) return { before: child, area, column: main };
   }

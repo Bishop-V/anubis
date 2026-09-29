@@ -54,6 +54,12 @@ export interface EngineDef {
    * `top` and `right` apply when a result has no such button.
    */
   button?: { top: string; right: string; besideMenu?: boolean };
+  /**
+   * Result cards on the engine's other tabs (images, videos, news), found by
+   * selector, as uBlacklist's rules find them. They're hidden and tagged, but not
+   * reranked, and hidden ones go without a line in their place.
+   */
+  cards?: { item: string; link: string; title: string }[];
   /** How "Load more results" gets more results onto the page. */
   more?: MoreResults;
   /** Changes for the phone layout some engines send to mobile browsers (Firefox for Android). */
@@ -124,12 +130,17 @@ export const ENGINES: EngineDef[] = [
       '*://noai.duckduckgo.com/*',
     ],
     host: /^(safe\.|start\.|noai\.)?duckduckgo\.com$/,
-    // Not the Images, Videos, News, Maps, or Shopping tabs (`iax`), which have no web results.
-    isResultsPage: (url) => hasQuery(url, 'q') && !url.searchParams.has('iax'),
+    isResultsPage: (url) => hasQuery(url, 'q'),
     // Web results are in the web-vertical list (uBlacklist's rules); the side
     // panel's heading links to a site too, and isn't a result.
     heading: '[data-testid="web-vertical"] li > article h2',
-    boundary: 'ol, main, [data-testid="web-vertical"]',
+    boundary: 'ol, main, [data-testid="web-vertical"], [data-testid="zci-images"], [data-testid="zci-videos"], [data-testid="news-vertical"]',
+    // The Images, Videos, and News tabs, from uBlacklist's rules.
+    cards: [
+      { item: '[data-testid="zci-images"] li:has(> figure)', link: 'figcaption > a', title: 'figcaption > a > p' },
+      { item: '[data-testid="zci-videos"] li:has(> a > article)', link: 'a', title: 'h2' },
+      { item: '[data-testid="news-vertical"] li:has(> article)', link: 'article > a', title: 'h2' },
+    ],
     cleanupSelectors: { ai: '[data-testid="duckassist-answer-content"], [data-react-module-id="wikinlp"]' },
     // Beside DuckDuckGo's own ⋯ menu on each result, as a second option.
     button: { top: '6px', right: '36px', besideMenu: true },

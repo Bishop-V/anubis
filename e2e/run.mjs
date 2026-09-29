@@ -153,6 +153,8 @@ async function launch(settings = {}, ext = EXT) {
     'https://search.brave.com/search?q=anubis&panels=1': brave('anubis', ANUBIS_RESULTS, { panels: true }),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
+    'https://duckduckgo.com/?q=javascript+promises&iax=videos&ia=videos': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'videos' }),
+    'https://duckduckgo.com/?q=javascript+promises&iax=images&ia=images': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'images' }),
     'https://duckduckgo.com/?q=javascript+promises&wide=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { wide: true }),
   };
   await ctx.route(/^https:\/\/((noai\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com)\//, (route) => {
@@ -789,6 +791,42 @@ if (!only || only === 'cleanup' || checks) {
     return { found: !!side, result: !!side?.querySelector('[data-anubis-result], anubis-weigh, anubis-chips') || !!side?.closest('[data-anubis-result]') };
   });
   if (checks) assertChecks('DuckDuckGo side panel is not a result', { found: sidePanel.found, notAResult: !sidePanel.result });
+
+  // DuckDuckGo's Videos and Images tabs: cards in a grid, hidden and tagged, not reranked.
+  for (const tab of ['videos', 'images']) {
+    await page.goto(`https://duckduckgo.com/?q=javascript+promises&iax=${tab}&ia=${tab}`);
+    await page.waitForTimeout(800);
+    const grid = await page.evaluate(() => {
+      const ol = document.querySelector('ol');
+      const summary = document.querySelector('anubis-summary')?.getBoundingClientRect();
+      const cards = [...ol.children].filter((el) => el.tagName === 'LI');
+      const shown = cards.filter((li) => li.getBoundingClientRect().height > 0);
+      const buttons = [...document.querySelectorAll('anubis-weigh')].filter((b) => b.getBoundingClientRect().width);
+      const g = ol.getBoundingClientRect();
+      return {
+        cards: cards.length,
+        found: cards.filter((li) => li.hasAttribute('data-anubis-result')).length,
+        hidden: cards.length - shown.length,
+        buttonsInCards: buttons.length > 0 && buttons.every((b) => b.closest('li')?.contains(b)),
+        stillGrid: getComputedStyle(ol).display === 'grid' && !ol.hasAttribute('data-anubis-rerank'),
+        // Shown cards fill the grid's cells in order, with no gaps.
+        noGaps: shown.every((li, i) => i === 0 || li.getBoundingClientRect().top >= shown[i - 1].getBoundingClientRect().top - 1) && new Set(shown.map((li) => Math.round(li.getBoundingClientRect().top))).size === Math.ceil(shown.length / 4),
+        summaryAbove: !!summary && summary.bottom <= g.top + 1 && summary.width >= g.width - 1,
+      };
+    });
+    console.log(`== DuckDuckGo ${tab} tab:`, JSON.stringify(grid));
+    await page.screenshot({ path: `${SHOTS}ddg-${tab}.png` });
+    if (checks) {
+      assertChecks(`DuckDuckGo ${tab} tab`, {
+        allFound: grid.found === grid.cards,
+        hidesSome: grid.hidden > 0,
+        buttonsInCards: grid.buttonsInCards,
+        stillGrid: grid.stillGrid,
+        noGaps: grid.noGaps,
+        summaryAboveGrid: grid.summaryAbove,
+      });
+    }
+  }
 
   // Where results are cards, the summary lines up with their text.
   await page.goto('https://search.brave.com/search?q=anubis');

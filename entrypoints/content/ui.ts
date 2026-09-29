@@ -307,7 +307,7 @@ export function ensureWeighButton(
   }
   const { top, right, besideMenu } = engine.button ?? { top: '2px', right: '2px' };
   host.style.setProperty('position', 'absolute', 'important');
-  const menu = besideMenu ? resultMenuOf(container) : undefined;
+  const menu = besideMenu && !result.card ? resultMenuOf(container) : undefined;
   // While the engine's own menu is open, it's drawn over the result; the button
   // would sit on top of it (DuckDuckGo's opens beside it).
   const menuOpen = !!menu && (menu.getAttribute('aria-expanded') === 'true' || [...container.querySelectorAll('[role="menu"], [role="dialog"]')].some((el) => el.getClientRects().length > 0));
@@ -328,6 +328,15 @@ export function ensureWeighButton(
   if (!positioned.has(container)) {
     positioned.add(container);
     if (getComputedStyle(container).position === 'static') container.style.position = 'relative';
+  }
+  // A card (an image, a video) is mostly picture: the button sits on its corner,
+  // on a background of its own so it shows over the picture.
+  host.style.setProperty('--anubis-weigh-bg', result.card ? 'var(--raised)' : 'transparent');
+  if (result.card) {
+    host.style.setProperty('--anubis-weigh-opacity', '0.9');
+    host.style.setProperty('top', '6px', 'important');
+    host.style.setProperty('right', '6px', 'important');
+    return;
   }
   if (!menu) {
     lineUpWithHeader(host, container, result.titleBlock);
