@@ -351,6 +351,25 @@ if (!only || only === 'pages') {
     return top === menu;
   });
   assertChecks('ddg open menu', { coversButton: underMenu });
+  // A menu that closes by a style change adds or removes no nodes, so no pass runs
+  // after it: nothing a pass set while it was open may outlast it.
+  const afterMenu = await page.evaluate(async () => {
+    const frame = () => new Promise((r) => requestAnimationFrame(() => setTimeout(r, 50)));
+    const li = document.querySelector('li[data-anubis-result]:not([data-anubis-state~="hide"])');
+    const host = li.querySelector(':scope > anubis-weigh');
+    const menu = document.createElement('div');
+    menu.setAttribute('role', 'menu');
+    menu.style.cssText = 'position:absolute;top:0;right:0;width:220px;height:120px;z-index:1;background:#333';
+    li.querySelector('article').append(menu);
+    await frame();
+    menu.style.display = 'none';
+    await frame();
+    const r = host.getBoundingClientRect();
+    const shown = getComputedStyle(host).visibility === 'visible' && document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2) === host;
+    menu.remove();
+    return shown;
+  });
+  assertChecks('ddg closed menu', { buttonShows: afterMenu });
   const first = page.locator('li[data-anubis-result]').first();
   await first.locator('anubis-weigh').hover();
   await page.waitForTimeout(250);
