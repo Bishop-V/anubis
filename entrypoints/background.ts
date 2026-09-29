@@ -16,12 +16,6 @@ import { refreshStale } from '@/utils/subscriptions';
 import { recordColorScheme } from '@/utils/theme';
 import { syncChanges, syncIfDue, syncWithServer } from '@/utils/webdav';
 
-// The background script keeps subscribed lists fresh, shows the hidden-result
-// count on the toolbar icon, greys the icon out while Anubis is off, unpacks your
-// list when it arrives from sync, syncs with a WebDAV server if one is connected,
-// and opens the welcome page on first install. Updates run when the browser starts and when a
-// search page asks, at most every 30 minutes, so no "alarms" permission is needed.
-
 const LAST_CHECK = 'local:lastUpdateCheck' as const;
 const CHECK_EVERY_MS = 30 * 60 * 1000;
 
@@ -29,8 +23,7 @@ export default defineBackground(() => {
   // MV3 has `action`; Firefox MV2 has `browserAction`.
   const action = browser.action ?? browser.browserAction;
 
-  // Badges belong to a document, not to the tab indefinitely. Clear the old
-  // count as soon as navigation starts; the next search page will report anew.
+  // Clear the old page's count while the tab navigates.
   browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
     if (changeInfo.status === 'loading') void action.setBadgeText({ tabId, text: '' });
   });
@@ -49,10 +42,7 @@ export default defineBackground(() => {
   // worker can't (no matchMedia), but there search pages see the same.
   recordColorScheme();
 
-  // Syncing with a WebDAV server, when one is connected (Settings → Sync): a few
-  // seconds after a change here, when the browser starts, and when a search page
-  // opens, at most every 5 minutes. Changes the sync itself makes match what it
-  // last synced, so they don't start another.
+  // Debounce WebDAV sync after changes; sync writes don't trigger another sync.
   let changed: ReturnType<typeof setTimeout> | undefined;
   const syncSoon = () => {
     clearTimeout(changed);
@@ -61,12 +51,10 @@ export default defineBackground(() => {
   settingsItem.watch(syncSoon);
   tagPrefsItem.watch(syncSoon);
   subscriptionsItem.watch(syncSoon);
-  // Reading the list when it arrives from browser sync also unpacks it into this
-  // device's copy, so search pages find it ready even if they can't unpack it.
+  // Unpack synced list changes for search pages.
   watchPersonal(syncSoon);
 
-  // One update at a time. "Update all" (forced) doesn't settle for a routine check
-  // that's already running: it runs straight after it.
+  // Serialize updates; a forced update waits for an active routine check.
   let running: Promise<number> | undefined;
   let runningForced = false;
   const refresh = (force = false): Promise<number> => {
@@ -96,7 +84,6 @@ export default defineBackground(() => {
   };
 
   browser.runtime.onInstalled.addListener(async ({ reason }) => {
-    // First install only: how to keep Anubis in the toolbar, and a search to try.
     if (reason === 'install') void browser.tabs.create({ url: browser.runtime.getURL('/welcome.html') });
     await migrateLegacy();
     await migrateSettings();
@@ -108,15 +95,13 @@ export default defineBackground(() => {
     void syncWithServer();
   });
 
-  // Keyboard shortcuts, declared as `commands` in wxt.config.ts. The page keeps
-  // its own Show hidden state, so that one goes to the tab as a message.
+  // Reveal state lives in the content script, so forward the shortcut there.
   browser.commands?.onCommand.addListener((command) => {
     if (command === 'toggle-enabled') void updateSettings((s) => ({ enabled: !s.enabled }));
     else if (command === 'toggle-hidden') void sendToActiveTab({ type: 'toggle-reveal' });
   });
 
-  // Replies go through sendResponse (and `return true` while one is pending):
-  // Chrome ignores a promise returned from the listener.
+  // Use sendResponse: Chrome ignores promises returned by message listeners.
   browser.runtime.onMessage.addListener((raw, sender, sendResponse) => {
     const message = raw as Message;
     switch (message.type) {
@@ -126,7 +111,7 @@ export default defineBackground(() => {
         const n = hiddenCount(message.stats);
         void action.setBadgeText({ tabId, text: n ? String(n) : '' });
         void action.setBadgeBackgroundColor({ tabId, color: '#d4a637' });
-        // Firefox only: dark text reads better on gold.
+        // Firefox only: dark text on gold.
         (action as { setBadgeTextColor?: (d: object) => Promise<void> }).setBadgeTextColor?.({
           tabId,
           color: '#1b1a16',
@@ -148,9 +133,7 @@ export default defineBackground(() => {
         else void browser.runtime.openOptionsPage();
         return;
       case 'open-subscribe': {
-        // Settings open in a new tab next to the subscribe page, which goes back to
-        // where the link was (the directory, a README), or closes if it was opened
-        // on its own. That leaves no page in the history that opens settings again.
+        // Open Settings beside the link, then return to its source or close the tab.
         const tab = sender.tab;
         const link = readSubscribeLink(subscribeQuery(message.link));
         if (tab?.id === undefined || !link) return;
