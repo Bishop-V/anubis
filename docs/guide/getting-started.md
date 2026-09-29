@@ -70,7 +70,7 @@ On a Mac, press Control instead of Alt. To change them, open `chrome://extension
 
 ## Help
 
-**Help** in the toolbar popup opens this guide. In **Settings**, each section links to its page here, and **User guide** at the bottom of the sidebar opens the start.
+**Help** in the toolbar popup opens this wiki. In **Settings**, each section links to its page here, and **Wiki** at the bottom of the sidebar opens the start.
 
 ## Next
 

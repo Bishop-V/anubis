@@ -22,7 +22,7 @@ interface Section {
   id: string;
   label: string;
   render: () => Promise<HTMLElement>;
-  /** The user guide's page for this section, linked after its description. */
+  /** The wiki's page for this section, linked after its description. */
   help?: [path: string, label: string];
 }
 
@@ -76,7 +76,7 @@ async function renderNav() {
       'div',
       { class: 'foot' },
       themeSwitcher(rules.settings.theme),
-      h('div', { class: 'links' }, external(guide(), 'User guide'), external(REPO_URL, 'Source on GitHub')),
+      h('div', { class: 'links' }, external(guide(), 'Wiki'), external(REPO_URL, 'Source on GitHub')),
     ),
   );
 }

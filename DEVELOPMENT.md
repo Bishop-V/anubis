@@ -11,7 +11,7 @@ How the extension is put together, and how to make the changes that come up most
 | Vitest | Unit tests in `tests/`, with WXT's fake browser so storage code runs in Node. |
 | Playwright (`playwright-core`) | Drives Chromium for the end-to-end checks in `e2e/`. |
 | `web-ext lint` | Mozilla's add-on linter. CI fails on any warning. |
-| VitePress | The user guide in `docs/`, published to GitHub Pages. |
+| VitePress | The wiki in `docs/`, published to GitHub Pages. |
 
 Node 22 is what CI and releases use; `flake.nix` pins it for `nix develop`. `npm install` runs `wxt prepare`, which writes `.wxt/` (generated types and the `tsconfig.json` the repo's own extends). Type-checking fails until it has run.
 
@@ -28,8 +28,8 @@ npm run build          # .output/firefox-mv2/
 npm run build:chrome   # .output/chrome-mv3/
 npx web-ext lint -s .output/firefox-mv2
 npm run e2e            # Chrome build, then every end-to-end check (needs CHROMIUM_PATH)
-npm run docs:dev       # the user guide, with live reload
-npm run docs:build     # the user guide; fails on a broken link
+npm run docs:dev       # the wiki, with live reload
+npm run docs:build     # the wiki; fails on a broken link
 npm run zip            # store packages (see "Releasing")
 npm run zip:chrome
 ```
@@ -41,7 +41,7 @@ WXT turns each file or folder in `entrypoints/` into a part of the extension and
 | Entry point | Becomes | Runs |
 | --- | --- | --- |
 | `content/index.ts` | The main content script, `content.js`, with `page.css` injected beside it | On every search engine's pages (`ENGINE_MATCHES` from `utils/engines.ts`) |
-| `subscribe.content.ts` | A second content script | Only on the user guide's subscribe page |
+| `subscribe.content.ts` | A second content script | Only on the wiki's subscribe page |
 | `background.ts` | The background script: a service worker in Chrome, a background page in Firefox | Whenever the browser wakes it: install, startup, a message, a keyboard shortcut |
 | `popup/` | The toolbar button's popup | When the toolbar button is pressed |
 | `options/` | The settings page, opened in a tab | When opened |
@@ -166,7 +166,7 @@ Clean-up kinds live in `utils/cleanup.ts`:
 2. Add a row to the right settings section: `toggleRow` or `segRow` in `options/general.ts`, or `switchRow` from `options/parts.ts`.
 3. Read it where it's needed: `rules.settings` in the content script, `getSettings()` elsewhere.
 4. Changing a default for people who already use Anubis needs a one-time migration, run from the background script's `onInstalled` (see `migrateSettings`, which moved hidden results from Collapse to Remove).
-5. Describe it in the guide page for that section. Settings links each section to its page (`help` in `SECTIONS`), so keep page paths as they are.
+5. Describe it in the wiki page for that section. Settings links each section to its page (`help` in `SECTIONS`), so keep page paths as they are.
 
 Backups and the sync between browsers include every setting without further work.
 
@@ -225,7 +225,7 @@ Not everything is converted yet: `ROADMAP.md` lists what's left. Wording follows
 
 Parts print their findings rather than failing on them (turning them into assertions is on the roadmap), so read the output: a check that should say `false` and says `true` is a failure. Mock pages are models of the engines' markup, not copies of it; when an engine breaks, model the markup that broke as a variant of its mock (Google's `hostile` and `grouped` are examples) and never commit a page saved from a live search.
 
-`node e2e/run.mjs docs` redraws the user guide's screenshots in `docs/img/`, each in light and dark, the homepage's before and after, and the same pair as slides in `docs/public/`. Rendering differs slightly between runs, so commit only the images your change affects.
+`node e2e/run.mjs docs` redraws the wiki's screenshots in `docs/img/`, each in light and dark, the homepage's before and after, and the same pair as slides in `docs/public/`. Rendering differs slightly between runs, so commit only the images your change affects.
 
 ## Checking live pages
 
@@ -254,6 +254,6 @@ Mistakes that have been made once already. `docs/experiments.md` has the details
 - **Keep page state in the content script's variables**, not only in attributes: the next pass rewrites attributes, and engines trigger passes on hover.
 - **No `innerHTML`.** The add-on linter flags it. Build with `h()`, parse constant SVG with `DOMParser`, and pass `data-*` attributes to `h()` through `attrs`.
 - **Engines change their markup without notice.** Prefer structure (headings, links, nesting) to class names.
-- **Links to the guide's subscribe page carry `target="_self"`**, or VitePress's router follows them without loading the page, and the subscribe content script never runs.
+- **Links to the wiki's subscribe page carry `target="_self"`**, or VitePress's router follows them without loading the page, and the subscribe content script never runs.
 - **Keep `utils/engines.ts` and `utils/links.ts` free of browser APIs.** The build and the docs site import them.
 - **Don't change the Firefox add-on ID** in `wxt.config.ts`: it's the add-on's permanent identity, and a new one orphans everyone's stored settings.

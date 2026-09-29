@@ -59,7 +59,7 @@ Setting it up: create a Google Cloud project, turn on the Chrome Web Store API, 
 
 > The main content script runs only on the results pages of the supported search engines (Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex and Mojeek) to hide, reorder and tag the results on the page. It matches every Google country domain and the whole Google site because Google moves from its home page to results without loading a new page.
 >
-> A second, small content script runs on one page of Anubis's own user guide, `https://bishop-v.github.io/anubis/subscribe`, where subscribe links lead. It reads the list address from the link and opens Anubis's settings with that list filled in; the user presses Subscribe to add it. Neither script runs on any other site.
+> A second, small content script runs on one page of Anubis's own wiki, `https://bishop-v.github.io/anubis/subscribe`, where subscribe links lead. It reads the list address from the link and opens Anubis's settings with that list filled in; the user presses Subscribe to add it. Neither script runs on any other site.
 >
 > `https://*/*` is optional and never granted at install. When the user subscribes to a list hosted outside GitHub, Anubis asks for access to that one host (for example `https://example.org/*`) so it can download the list file. Lists on raw.githubusercontent.com and gist.githubusercontent.com need no permission. The same goes for a WebDAV server the user connects in Settings → Sync to sync between browsers: Anubis asks for that one host when they press Connect. The pattern is broad only because the host isn't known until the user types the address.
 
@@ -124,7 +124,7 @@ Works on Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo,
 
 No server, no account, nothing collected. Your list and settings stay in your browser, or go to a storage service of your own if you connect one to sync between browsers.
 
-User guide: https://bishop-v.github.io/anubis/
+Wiki: https://bishop-v.github.io/anubis/
 Source code (AGPL-3.0): https://github.com/Bishop-V/anubis
 ```
 

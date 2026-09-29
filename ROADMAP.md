@@ -49,7 +49,7 @@ Started: interface text is moving into `public/_locales/<language>/messages.json
 
 - **The in-page UI** (`entrypoints/content/ui.ts`): the rest of the result menu, hidden lines' reasons, and chips.
 - **Settings** (`entrypoints/options/`), list errors shown there (`utils/listformat.ts`).
-- **Then invite translators:** a hosted Weblate or Crowdin project (both are free for open-source projects and read this format), a "Help translate" page in the guide, and translated store listings.
+- **Then invite translators:** a hosted Weblate or Crowdin project (both are free for open-source projects and read this format), a "Help translate" page in the wiki, and translated store listings.
 
 ## Features
 

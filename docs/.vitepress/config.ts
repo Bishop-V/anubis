@@ -33,7 +33,7 @@ export default defineConfig({
   themeConfig: {
     logo: '/anubis.svg',
     nav: [
-      { text: 'Guide', link: '/guide/introduction', activeMatch: '/guide/' },
+      { text: 'Wiki', link: '/guide/introduction', activeMatch: '/guide/' },
       { text: 'Lists', link: '/lists' },
       { text: 'List format', link: '/list-format' },
     ],

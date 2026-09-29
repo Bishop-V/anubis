@@ -3,7 +3,7 @@ Browser extension for filtering search results, and much more.
 
 In Egyptian myth, Anubis weighed each heart against a feather. This extension weighs search results: it tags them, raises the ones you trust, lowers or hides the ones you don't, and lets you subscribe to lists other people publish, the way Brave Goggles do, but on the search engine you already use.
 
-**[Read the user guide →](https://bishop-v.github.io/anubis/)**
+**[Read the wiki →](https://bishop-v.github.io/anubis/)**
 
 ## What it does
 
@@ -21,7 +21,7 @@ In Egyptian myth, Anubis weighed each heart against a feather. This extension we
 
 Works on Google (every country domain), DuckDuckGo (including the HTML and Lite versions), Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex and Mojeek.
 
-It asks for the `storage` and `activeTab` permissions (the second lets the toolbar popup read the address of the tab you're on, only when you open it) and runs on search result pages, plus the user guide's subscribe page so subscribe links work. Lists hosted on GitHub download without any extra permission; lists hosted elsewhere ask for access to that one host when you subscribe. Nothing is sent anywhere else.
+It asks for the `storage` and `activeTab` permissions (the second lets the toolbar popup read the address of the tab you're on, only when you open it) and runs on search result pages, plus the wiki's subscribe page so subscribe links work. Lists hosted on GitHub download without any extra permission; lists hosted elsewhere ask for access to that one host when you subscribe. Nothing is sent anywhere else.
 
 ## Setup
 
@@ -85,7 +85,7 @@ To publish a version, set `version` in `package.json`, merge it, then push a mat
 
 ## Documentation
 
-The user guide is at **[bishop-v.github.io/anubis](https://bishop-v.github.io/anubis/)**, built from [`docs/`](docs) (start with [the introduction](docs/guide/introduction.md)). `npm run docs:dev` previews it locally.
+The wiki is at **[bishop-v.github.io/anubis](https://bishop-v.github.io/anubis/)**, built from [`docs/`](docs) (start with [the introduction](docs/guide/introduction.md)). `npm run docs:dev` previews it locally.
 
 - [Developing Anubis](DEVELOPMENT.md): how the extension is put together, how a build is made, and how to add an engine, a setting or interface text.
 - [Accessibility](ACCESSIBILITY.md): keeping Anubis usable with a screen reader and from the keyboard, and where it falls short today.

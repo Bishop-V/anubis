@@ -148,7 +148,7 @@ describe('subscribe links', () => {
     expect(readSubscribeLink(`?url=${encodeURIComponent(list)}&name=+++`)).toEqual({ url: list });
   });
 
-  it('points at a page the guide has', () => {
+  it('points at a page the wiki has', () => {
     expect(SUBSCRIBE_PAGE.startsWith(DOCS_URL)).toBe(true);
     expect(existsSync(`docs/${SUBSCRIBE_PAGE.slice(DOCS_URL.length)}.md`)).toBe(true);
   });
