@@ -136,11 +136,20 @@ export function keepUpright(host: HTMLElement): void {
 function render(host: HTMLElement, key: string, build: () => Node): void {
   if (renderKeys.get(host) === key) return;
   renderKeys.set(host, key);
+  // Replacing the focused button would send focus to the top of the page, so it
+  // goes to the button with the same data-focus-key in the new content, or, when
+  // that button is gone (Undo, Show all), to the first one.
+  const root = roots.get(host)!;
+  const focusKey = root.activeElement?.getAttribute('data-focus-key');
   const next = build();
   const prev = rendered.get(host);
   if (prev?.parentNode) prev.parentNode.replaceChild(next, prev);
-  else roots.get(host)!.append(next);
+  else root.append(next);
   rendered.set(host, next);
+  if (focusKey && next instanceof Element) {
+    const target = [...next.querySelectorAll<HTMLElement>('[data-focus-key]')];
+    (target.find((el) => el.dataset.focusKey === focusKey) ?? target[0])?.focus({ preventScroll: true });
+  }
 }
 
 /** The theme of everything on the page but the result menu, which has its own (`PopoverData.theme`). */
@@ -244,16 +253,7 @@ export function ensureWeighButton(
   let host = weighHosts.get(container);
   if (!host) {
     const made = makeHost('anubis-weigh', theme, engine.table ? 'inline-block' : 'block');
-    const button = h(
-      'button',
-      {
-        class: 'weigh',
-        type: 'button',
-        title: 'Hide, rank or tag this site',
-        attrs: { 'aria-label': 'Hide, rank or tag this site', 'aria-haspopup': 'dialog', 'aria-expanded': 'false' },
-      },
-      icon(ICON_RANK),
-    );
+    const button = h('button', { class: 'weigh', type: 'button', attrs: { 'aria-haspopup': 'dialog', 'aria-expanded': 'false' } }, icon(ICON_RANK));
     const owner = made.host;
     button.addEventListener('click', (e) => {
       // Keep the click from reaching the result link underneath.
@@ -261,11 +261,19 @@ export function ensureWeighButton(
       onOpen(button, weighResult.get(owner)!);
     });
     made.root.append(button);
+    rendered.set(owner, button);
     host = owner;
     weighHosts.set(container, host);
   }
   weighResult.set(host, result);
   host.dataset.theme = theme;
+  // Named for its site, so a list of the page's buttons tells them apart.
+  const label = t('weighLabel', result.host.replace(/^www\./, ''));
+  const button = rendered.get(host) as HTMLElement | undefined;
+  if (button && button.title !== label) {
+    button.title = label;
+    button.setAttribute('aria-label', label);
+  }
 
   if (engine.table) {
     // Table rows can't position children; sit inline after the title instead.
@@ -420,14 +428,17 @@ export function renderHiddenBar(
         {
           class: 'text-btn',
           type: 'button',
+          attrs: { 'aria-label': t('hiddenShowSite', site) },
           on: {
             click: (e) => {
               stop(e);
               actions.reveal();
+              // The line goes with the click; the result it stood for takes focus.
+              result.link.focus({ preventScroll: true });
             },
           },
         },
-        'Show',
+        t('hiddenShow'),
       ),
     ),
   );
@@ -491,12 +502,12 @@ export function renderSummary(
       h('span', { class: 'mark' }, icon(ICON_ANUBIS)),
       h('span', { class: 'sentence' }, summarySentence(stats)),
       stats.filter
-        ? h('button', { class: 'text-btn', type: 'button', on: { click: () => actions.filter(undefined) } }, t('summaryShowAll'))
+        ? h('button', { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'show-all' }, on: { click: () => actions.filter(undefined) } }, t('summaryShowAll'))
         : null,
       hiddenCount(stats) && !stats.filter
         ? h(
             'button',
-            { class: 'text-btn', type: 'button', on: { click: actions.toggleReveal } },
+            { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'reveal' }, on: { click: actions.toggleReveal } },
             stats.revealed ? t('hideAgain') : t('showHidden'),
           )
         : null,
@@ -508,18 +519,19 @@ export function renderSummary(
               type: 'button',
               disabled: stats.loading,
               title: t('loadMoreTitle'),
+              attrs: { 'data-focus-key': 'deeper' },
               on: { click: actions.deeper },
             },
             stats.loading ? t('loading') : t('loadMore'),
           )
         : null,
-      settingsButton(actions.settings),
+      settingsButton(actions.settings, 'settings'),
       change
         ? h(
             'div',
             { class: 'change' },
             h('span', null, change),
-            h('button', { class: 'text-btn', type: 'button', on: { click: actions.undo } }, t('summaryUndo')),
+            h('button', { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'undo' }, on: { click: actions.undo } }, t('summaryUndo')),
           )
         : null,
       // The tags on this page, as a legend you can click to show only that tag.
@@ -534,7 +546,7 @@ export function renderSummary(
                   type: 'button',
                   style: `--c: ${tag.color}`,
                   title: stats.filter === tag.id ? t('summaryFilterOff') : t('summaryFilterOn', tag.label),
-                  attrs: { 'aria-pressed': String(stats.filter === tag.id) },
+                  attrs: { 'aria-pressed': String(stats.filter === tag.id), 'data-focus-key': `tag-${tag.id}` },
                   on: { click: () => actions.filter(stats.filter === tag.id ? undefined : tag.id) },
                 },
                 h('i', { class: 'gem' }),
@@ -546,6 +558,8 @@ export function renderSummary(
         : null,
     ),
   );
+
+  announce(summaryHost, change ?? '');
 
   summaryArea = place.area && !place.area.contains(summaryHost) ? place.area : undefined;
   alignSummary();
@@ -569,6 +583,23 @@ export function renderSummary(
       });
     });
   }
+}
+
+const statusRegions = new WeakMap<HTMLElement, HTMLElement>();
+
+/**
+ * Say `text` to screen readers without moving focus ("Hid fandom.com."). The
+ * region stays in the host across renders: one added along with its text isn't
+ * reliably read.
+ */
+function announce(host: HTMLElement, text: string): void {
+  let region = statusRegions.get(host);
+  if (!region) {
+    region = h('div', { class: 'sr-only', attrs: { role: 'status' } });
+    roots.get(host)!.append(region);
+    statusRegions.set(host, region);
+  }
+  if (region.textContent !== text) region.textContent = text;
 }
 
 /**
@@ -601,9 +632,11 @@ function aboveResults(host: HTMLElement, next: HTMLElement, area: HTMLElement): 
 }
 
 /** The cog that opens settings, in the summary and the result menu. */
-function settingsButton(open: () => void): HTMLButtonElement {
+function settingsButton(open: () => void, focusKey?: string): HTMLButtonElement {
   const label = t('anubisSettings');
-  return h('button', { class: 'icon-btn', type: 'button', title: label, attrs: { 'aria-label': label }, on: { click: open } }, icon(ICON_GEAR));
+  const attrs: Record<string, string> = { 'aria-label': label };
+  if (focusKey) attrs['data-focus-key'] = focusKey;
+  return h('button', { class: 'icon-btn', type: 'button', title: label, attrs, on: { click: open } }, icon(ICON_GEAR));
 }
 
 export function removeAllUi(): void {
@@ -647,6 +680,13 @@ export function closePopover(): void {
   popover = undefined;
 }
 
+/** Close the result menu and put focus back on the ⇅ button that opened it. */
+function closeAndReturn(): void {
+  const anchor = popover?.anchor;
+  closePopover();
+  anchor?.focus({ preventScroll: true });
+}
+
 export function popoverAnchor(): HTMLElement | undefined {
   return popover?.anchor;
 }
@@ -664,10 +704,7 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
       if (!e.composedPath().includes(host) && !e.composedPath().includes(anchor)) closePopover();
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        closePopover();
-        anchor.focus();
-      }
+      if (e.key === 'Escape') closeAndReturn();
     };
     const onResize = () => position(host, anchor);
     document.addEventListener('pointerdown', onDown, true);
@@ -864,14 +901,14 @@ function buildPopover(
 
   const pop = h(
     'div',
-    { class: 'pop', attrs: { role: 'dialog', 'aria-label': `Hide, rank or tag ${domain}` } },
+    { class: 'pop', attrs: { role: 'dialog', 'aria-label': t('weighLabel', domain) } },
     h(
       'div',
       { class: 'head' },
       cartouche,
       h(
         'button',
-        { class: 'icon-btn close', type: 'button', title: 'Close', attrs: { 'aria-label': 'Close' }, on: { click: () => closePopover() } },
+        { class: 'icon-btn close', type: 'button', title: 'Close', attrs: { 'aria-label': 'Close' }, on: { click: closeAndReturn } },
         icon(ICON_CLOSE),
       ),
     ),

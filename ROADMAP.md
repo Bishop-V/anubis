@@ -47,8 +47,8 @@ Started: Anubis picks an engine's phone layout by user agent (`mobile` in `utils
 
 Started: interface text is moving into `public/_locales/<language>/messages.json` (the browsers' own format), used through `t()`, `tn()` for counts, and `localizePage()` for static HTML (`utils/i18n.ts`). Done: the manifest's description and shortcut names, the ranking names, the welcome page, the toolbar popup, and on search pages the summary (its sentence and buttons) and the result menu's report and suggestion lines. `tests/i18n.test.ts` checks keys and placeholders. Next:
 
-- **The in-page UI** (`entrypoints/content/ui.ts`): the rest of the result menu, hidden lines and their reasons, and chips.
-- **Settings** (`entrypoints/options/`), list errors shown there (`utils/listformat.ts`), and the toolbar tooltip ("Anubis is off").
+- **The in-page UI** (`entrypoints/content/ui.ts`): the rest of the result menu, hidden lines' reasons, and chips.
+- **Settings** (`entrypoints/options/`), list errors shown there (`utils/listformat.ts`).
 - **Then invite translators:** a hosted Weblate or Crowdin project (both are free for open-source projects and read this format), a "Help translate" page in the guide, and translated store listings.
 
 ## Features

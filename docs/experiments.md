@@ -97,6 +97,16 @@ Asked for: pinning and the starter lists were only explained in the user guide, 
 - `npm run dev` starts with a fresh browser profile, so it opens the welcome tab each time.
 - **Too narrow on a desktop (2026-09-29):** one 580px column in a wide window read as a phone layout. It now uses the settings page's shape: 1040px, section titles in a 220px column and what to do beside them, the lists two across. Below 900px it's one column again. Checked at 1920, 1180, 820 and 390px.
 
+## Screen readers and focus on search pages (2026-09-29)
+
+Four of the gaps `ACCESSIBILITY.md` listed, fixed on search pages. The `a11y` e2e part reads the accessibility tree (CDP's `Accessibility.getFullAXTree`, which sees into closed shadow roots) and checks each; the previous build fails all of them.
+
+- **Each ⇅ button names its site:** "Hide, rank or tag javascript.info", as a label and a tooltip, instead of nine buttons all called "Hide, rank or tag this site". The hidden line's Show button is labelled "Show mythology.fandom.com" (it still reads "Show"; the label starts with the visible word, so voice control finds it), and moves focus to the result it brought back, since the line goes with the click.
+- **The change line is announced.** "Pinned javascript.info." goes into a `role="status"` region that stays in the summary's shadow root; one created along with its text isn't reliably read.
+- **The summary keeps focus.** Its buttons carry `data-focus-key`, and `render` in `ui.ts` focuses the same key after replacing the content, or the first button when that one is gone (Undo, Show all). Show hidden keeps focus on itself, now "Hide them again".
+- **× in the result menu puts focus back on the ⇅ button,** as Escape did.
+- Reading the focused element: the tree marks the page itself as focused too, so the check takes the last focused node that isn't the page.
+
 ## Keyboard shortcuts
 
 - Two `commands`: Alt+Shift+O turns Anubis on or off, Alt+Shift+H shows hidden results and hides them again. They need no permission. On a Mac they use Control, because Option+Shift types characters (Ø, Ó) and would be taken from text fields.
@@ -286,6 +296,8 @@ Subscribe on the lists directory, and links list authors share, lead to the guid
 - **"Share and back up" was too long for the settings sidebar (2026-09-29):** it wrapped onto two lines. The sidebar now says **Backup**, the most common reason to open it, and the page's title names all three things it does: "Back up, import and share". The address stays `#share`, since the guide and earlier builds link to it.
 - **Tagging sites from Settings → Tags (2026-09-29):** a tag's row only had its colour, an inline name field, what it does and Shown, so the only way to tag a site was the ⇅ menu on a search result, and a tag's sites weren't visible anywhere. The project owner asked to add sites to a tag and edit it from there. Each row now has **Edit**, which opens the tag's name (a labelled field, where before the name was an input that only looked like one on hover), its description for your own tags, your sites with the tag (× untags), a field that tags one or more sites, and up to eight sites from each list that gives the tag. Open tags stay open when the page renders again after a change, and the cursor goes back to the field, so several sites can be added in a row. At phone width a row's controls now wrap under its name; the name was cut to one letter.
 - **Saying what a tag does (2026-09-29):** a tag's row read "Most articles need a subscription. From Paywalls, on 23 sites.", which said what the tag means but not what it does; the project owner took Paywall to lower sites, when the Paywalls list only labels them. Each row now opens with a sentence worked out from the tag's setting and, on "Follow the lists", from the lists' own rules: "Marks 23 sites from Paywalls. Only a label: their ranking stays the same.", "Marks 60 sites from Official docs. Official docs raises 51 of them." The tag's description follows in small print. Paywall's description now says which sites it marks. Tag names were left short, since they're also the labels under results.
+
+- **Style guide redone with examples (2026-09-29):** screenshots from the user guide, `h()` snippets for each control, a table of wording to use and avoid, and the summary as its own section. Checking the code against it found two classes that did nothing: `.btn.ghost` (Disconnect in Sync) and `.danger` on a `.btn` (Reset settings) had no CSS. Disconnect is now a plain button, and `.btn.danger` exists: red text, a red border on hover. The focus ring had 3px corners on search pages and square ones on extension pages; both are 3px now. Keyboard and screen reader guidance moved out to `ACCESSIBILITY.md`, which the guide links.
 
 ## Undo (2026-09-29)
 

@@ -145,7 +145,7 @@ function connectedPanel(account: WebdavAccount, status: SyncStatus | null, dataC
       'div',
       { class: 'toolbar', style: 'margin-top:12px' },
       h('button', { class: 'btn primary', type: 'button', disabled: syncing, on: { click: () => syncNow(account, dataConsent) } }, t('webdavSyncNow')),
-      h('button', { class: 'btn ghost', type: 'button', on: { click: () => void leave() } }, t('webdavDisconnect')),
+      h('button', { class: 'btn', type: 'button', on: { click: () => void leave() } }, t('webdavDisconnect')),
     ),
     flashed('sync'),
   );
