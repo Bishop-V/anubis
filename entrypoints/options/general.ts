@@ -1,4 +1,5 @@
 import { h, icon } from '@/utils/dom';
+import { t } from '@/utils/i18n';
 import { ENGINES } from '@/utils/engines';
 import { ICON_DOWNLOAD, ICON_UPLOAD } from '@/utils/icons';
 import type { TagPref } from '@/utils/matcher';
@@ -7,13 +8,16 @@ import { getSubscriptions, saveSubscriptions } from '@/utils/subscriptions';
 import {
   editPersonal,
   getSettings,
+  personalIsLocal,
   savePersonal,
   setTagPref,
   settingsItem,
   subscriptionsItem,
+  syncBytesInUse,
   tagPrefsItem,
   updateSettings,
   DEFAULT_SETTINGS,
+  SYNC_QUOTA_BYTES,
   type HideStyle,
   type Settings,
   type Subscription,
@@ -141,6 +145,27 @@ interface Backup {
   tagPrefs: Record<string, TagPref>;
   subscriptions: Subscription[];
   personal: string;
+}
+
+/** Where the browser syncs Anubis's data, how much room it takes, and how to move to another browser. */
+async function syncPanel(): Promise<HTMLElement> {
+  const android = import.meta.env.FIREFOX && /Android/.test(navigator.userAgent);
+  const [local, bytes] = await Promise.all([personalIsLocal(), syncBytesInUse()]);
+  const kb = (n: number) => Math.ceil(n / 1024);
+  return h(
+    'div',
+    { class: 'panel' },
+    h('h3', null, t('syncHeading')),
+    h('p', { class: 'muted' }, t(android ? 'syncFirefoxAndroid' : import.meta.env.FIREFOX ? 'syncFirefox' : 'syncChrome')),
+    android ? null : local ? h('div', { class: 'notice' }, t('syncTooBig')) : h('p', { class: 'muted' }, t('syncUsage', kb(bytes), kb(SYNC_QUOTA_BYTES))),
+    h(
+      'p',
+      { class: 'muted' },
+      t('syncOtherBrowser'),
+      ' ',
+      h('a', { href: guide('guide/sync'), target: '_blank', rel: 'noopener noreferrer' }, t('syncHelp')),
+    ),
+  );
 }
 
 export async function renderShare(): Promise<HTMLElement> {
@@ -274,6 +299,7 @@ export async function renderShare(): Promise<HTMLElement> {
       ),
       importStatus,
     ),
+    await syncPanel(),
     h(
       'div',
       { class: 'panel' },

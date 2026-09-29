@@ -1,12 +1,12 @@
 import { browser, defineBackground, storage } from '#imports';
 import { readSubscribeLink, subscribeQuery } from '@/utils/links';
 import { sendToActiveTab, type Message } from '@/utils/messages';
-import { getSettings, migrateLegacy, migrateSettings, settingsItem, updateSettings } from '@/utils/storage';
+import { getSettings, migrateLegacy, migrateSettings, settingsItem, updateSettings, watchPersonal } from '@/utils/storage';
 import { refreshStale } from '@/utils/subscriptions';
 
 // The background script keeps subscribed lists fresh, shows the hidden-result
-// count on the toolbar icon, greys the icon out while Anubis is off, and opens the
-// welcome page on first install. Updates run when the browser starts and when a
+// count on the toolbar icon, greys the icon out while Anubis is off, unpacks your
+// list when it arrives from sync, and opens the welcome page on first install. Updates run when the browser starts and when a
 // search page asks, at most every 30 minutes, so no "alarms" permission is needed.
 
 const LAST_CHECK = 'local:lastUpdateCheck' as const;
@@ -25,6 +25,10 @@ export default defineBackground(() => {
   };
   void getSettings().then((s) => showEnabled(s.enabled));
   settingsItem.watch((s) => showEnabled(s?.enabled !== false));
+
+  // Reading the list when it arrives from sync unpacks it into this device's copy,
+  // so search pages find it ready even if they can't unpack it themselves.
+  watchPersonal(() => undefined);
 
   // One update at a time. "Update all" (forced) doesn't settle for a routine check
   // that's already running: it runs straight after it.

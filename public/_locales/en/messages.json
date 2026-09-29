@@ -102,5 +102,13 @@
   "welcomeListsMore": { "message": "Turn these off, or find more lists, in the settings." },
   "welcomeListsOpen": { "message": "Open list settings" },
   "welcomeGuide": { "message": "User guide" },
-  "welcomePrivacy": { "message": "Privacy" }
+  "welcomePrivacy": { "message": "Privacy" },
+  "syncHeading": { "message": "Sync" },
+  "syncFirefox": { "message": "Your list, settings, tag choices and subscriptions are saved in Firefox's sync storage. Firefox copies them to your other computers when you're signed in to Firefox with Add-ons ticked in its sync settings. It syncs about every 10 minutes, or when you choose Sync Now." },
+  "syncFirefoxAndroid": { "message": "Firefox for Android doesn't sync add-on data, so your list, settings, tag choices and subscriptions stay on this device." },
+  "syncChrome": { "message": "Your list, settings, tag choices and subscriptions are saved in the browser's sync storage. The browser copies them to your other computers when you're signed in to it with extensions syncing." },
+  "syncUsage": { "message": "They take $1 KB of the $2 KB sync has room for.", "description": "$1 and $2 are numbers of kilobytes." },
+  "syncTooBig": { "message": "Your list is too big for sync, so it's saved on this device only. Your settings, tag choices and subscriptions still sync." },
+  "syncOtherBrowser": { "message": "Firefox and Chrome don't sync with each other. To move to the other one, export a backup below and restore it there." },
+  "syncHelp": { "message": "How sync works" }
 }

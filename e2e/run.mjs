@@ -4,7 +4,8 @@
 //
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
-//                               popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options, welcome
+//                               popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options, welcome,
+//                               sync
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slides
 //                               in docs/public/
 //
@@ -738,6 +739,50 @@ if (!only || only === 'welcome') {
 
 // Not part of a normal run: regenerates the screenshots in docs/img/ from
 // the mock pages, so the documentation shows the current interface.
+if (!only || only === 'sync') {
+  // Browser sync. A change from the result menu is saved compressed, with a
+  // checksum. Another computer's change that arrives in pieces (the count of
+  // chunks first, the chunks later) is only used once all of it is there.
+  const sw = ctx.serviceWorkers()[0];
+  // Start from the test list, as saved before lists were compressed.
+  const seed = () => sw.evaluate((personal) => chrome.storage.sync.set({ 'personal.0': personal, personal: { chunks: 1, updatedAt: Date.now() } }), PERSONAL);
+  await seed();
+  const state = () => page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' }).getAttribute('data-anubis-state');
+  await page.goto('https://duckduckgo.com/?q=javascript+promises');
+  await page.waitForTimeout(600);
+  const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
+  await target.hover();
+  await target.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+  await page.waitForTimeout(300);
+  // Focus starts on the chosen weight (Raise); Tab to Pin and press it.
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Enter');
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(900);
+  const saved = await sw.evaluate(async () => (await chrome.storage.sync.get('personal')).personal);
+  const pinned = await state();
+  const chunk = await sw.evaluate(async (text) => {
+    const stream = new Blob([text]).stream().pipeThrough(new CompressionStream('deflate-raw'));
+    const bytes = new Uint8Array(await new Response(stream).arrayBuffer());
+    let hash = 0x811c9dc5;
+    for (let i = 0; i < text.length; i++) hash = Math.imul(hash ^ text.charCodeAt(i), 0x01000193);
+    const sum = `${text.length}:${(hash >>> 0).toString(16)}`;
+    await chrome.storage.sync.set({ personal: { chunks: 1, updatedAt: Date.now(), encoding: 'deflate', sum } });
+    return btoa(String.fromCharCode(...bytes));
+  }, '! name: My list\n$site=javascript.info,discard\n');
+  await page.waitForTimeout(600);
+  const countOnly = await state();
+  await sw.evaluate((chunk) => chrome.storage.sync.set({ 'personal.0': chunk }), chunk);
+  await page.waitForTimeout(800);
+  console.log('\n== sync:', JSON.stringify({
+    saved: { encoding: saved?.encoding, checksum: Boolean(saved?.sum), chunks: saved?.chunks },
+    'after Pin': pinned,
+    'count arrived, chunks not': countOnly,
+    'chunks arrived (hidden there)': await state(),
+  }));
+  await seed();
+}
+
 if (only === 'docs') {
   const DOCS_IMG = fileURLToPath(new URL('../docs/img/', import.meta.url));
   mkdirSync(DOCS_IMG, { recursive: true });

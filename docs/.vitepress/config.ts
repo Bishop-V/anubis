@@ -54,6 +54,7 @@ export default defineConfig({
           { text: 'Cleaning up pages', link: '/guide/clean-up' },
           { text: 'Loading more results', link: '/guide/more-results' },
           { text: 'Moving from other tools', link: '/guide/import-and-backup' },
+          { text: 'Syncing between computers', link: '/guide/sync' },
         ],
       },
       {

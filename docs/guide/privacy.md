@@ -4,7 +4,7 @@ Anubis has no server and collects nothing. Everything it knows about you stays i
 
 ## What's stored, and where
 
-- **Your list, settings, tag choices and subscriptions** are kept in your browser's sync storage. If you're signed in to your browser (a Firefox or Google account) with sync on, the browser copies them to your other computers. Anubis never sees them. If your list grows too big for sync storage, it's kept on this computer only.
+- **Your list, settings, tag choices and subscriptions** are kept in your browser's sync storage. If you're signed in to your browser (a Firefox or Google account) with sync on, the browser copies them to your other computers. Anubis never sees them. If your list grows too big for sync storage, it's kept on this computer only. See [Syncing between computers](./sync.md).
 - **Downloaded lists** are kept only on this computer, and downloaded again elsewhere.
 
 ## What Anubis connects to

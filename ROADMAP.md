@@ -10,6 +10,7 @@ Work that's planned but not started, or started and not finished. Each item says
   - *Bing's AI answer stays.* It's `li.b_ans.b_top` with `.cht_container`, labelled only by `aria-label="AI Overview"`. Read `aria-label` as a label, or add `.cht_container` to Bing in `CLEANUP_SELECTORS` (`utils/cleanup.ts`).
   - *Bing's video panel stays.* Its heading is "Videos of <search>": add `Videos of ` to the videos kind's `prefixes`.
   - *Brave's AI selector is out of date.* The block is `#llm-snippet`, not `#summarizer`. It's removed anyway through its disclaimer, so this is only a backup; update the selector.
+- **Try sync between two computers**, in Firefox and in Chrome: change a site's ranking on one and wait for it on the other. Also check that a change from a Firefox search page's result menu is saved compressed (`encoding: 'deflate'` in `sync:personal`, visible in `about:debugging` → Inspect → Storage): `CompressionStream` in Firefox content scripts is unverified (`docs/experiments.md`, Storage).
 - **Take real screenshots** for the listings, following the shot list in `store/README.md`.
 - **Turn on GitHub Pages** (Settings → Pages → Source: GitHub Actions), so the privacy policy link in the listings loads and subscribe links have a page to land on. Then try a subscribe link in Firefox, where it hasn't been run yet.
 

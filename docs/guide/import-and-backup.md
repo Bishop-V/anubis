@@ -17,7 +17,7 @@ You don't have to import a list someone else publishes. [Subscribe to it](./list
 
 ## Back up
 
-**Export backup** saves everything in one file: settings, tag choices, subscriptions and your list. **Restore backup** loads that file, on this browser or another one. **Reset settings** puts settings, tag choices and subscriptions back to how they were at install, and keeps your list.
+**Export backup** saves everything in one file: settings, tag choices, subscriptions and your list. **Restore backup** loads that file, on this browser or another one. It's also how to move between Firefox and Chrome, which don't [sync](./sync.md) with each other. **Reset settings** puts settings, tag choices and subscriptions back to how they were at install, and keeps your list.
 
 ## Share your list
 

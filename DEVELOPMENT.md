@@ -68,8 +68,9 @@ Two builds of the same commit are identical file for file. Firefox's reviewers r
 | `sync:settings` | Sync | Every setting (`Settings` in `utils/storage.ts`). Read with `getSettings()`, which fills in defaults for anything missing. |
 | `sync:tagPrefs` | Sync | What the user chose for each tag: its action, colour, label, and whether it's shown. |
 | `sync:subscriptions` | Sync | The lists the user subscribes to. Absent means the default subscriptions, so a second computer's sync can't be overwritten by defaults on install. |
-| `sync:personal`, `sync:personal.N` | Sync | The personal list, as text in the list format, split into chunks under sync's 8 KB per item. |
-| `local:personal` | This computer | The personal list, once it's too big for sync (about 100 KB in total). |
+| `sync:personal`, `sync:personal.N` | Sync | The personal list: text in the list format, compressed (deflate, then base64) and split into chunks under sync's 8 KB per item. `sync:personal` counts the chunks and holds the text's checksum; lists saved before compression are plain text with no checksum, and still read. |
+| `local:personal` | This computer | The personal list, once it's too big for sync (about 100 KB in total, some 10,000 sites compressed). |
+| `local:personalCopy` | This computer | The last personal list read whole, with its checksum. Read instead of unpacking the chunks while the checksum matches, and in their place while chunks arriving from sync don't match it yet. |
 | `local:listCache` | This computer | Downloaded lists, with when they were fetched and the last error. |
 | `local:lastUpdateCheck` | This computer | When the background script last checked lists for updates. |
 | `sync:blockedSites`, `sync:hideStyleMoved` | Sync | Migration leftovers: the old block list, and a flag for a one-time settings change. |
@@ -200,14 +201,14 @@ Not everything is converted yet: `ROADMAP.md` lists what's left. Wording follows
 | `matcher.test.ts` | Which rule wins, tag choices, lenses, reasons |
 | `personal.test.ts` | Line-level edits to the personal list |
 | `importers.test.ts` | Importing uBlacklist, HOHSER, Goggles and domain lists |
-| `storage.test.ts` | Chunking the personal list, migrations, default subscriptions |
+| `storage.test.ts` | Chunking and compressing the personal list, lists arriving from sync in pieces, migrations, default subscriptions |
 | `lists.test.ts` | Every bundled list, and the directory |
 | `cleanup.test.ts` | Clean-up headings and markers, the summary sentence, redirects |
 | `domain.test.ts` | Domains, redirect links, raw list addresses, issue links, subscribe links |
 | `engines.test.ts` | Picking an engine's phone layout |
 | `i18n.test.ts` | Message keys, plural forms and placeholders |
 
-**End-to-end checks** (`npm run e2e`, or `node e2e/run.mjs <part>` after `npm run build:chrome`) load the Chrome build into Chromium. `CHROMIUM_PATH` has to point at a Chromium binary: branded Chrome no longer loads unpacked extensions from the command line. The harness answers the real engines' addresses with the mock pages in `e2e/fixtures.mjs` (Google, DuckDuckGo, Bing, Brave, and Google's phone layout), seeds storage with a test personal list and settings, prints what Anubis decided and saves screenshots to `e2e/shots/`. Each part is a block in `e2e/run.mjs`: `pages`, `hostile`, `grouped`, `reveal`, `runs`, `shortcuts`, `mobile`, `off`, `cleanup`, `popover`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `subscribe-link`, `options` and `welcome`.
+**End-to-end checks** (`npm run e2e`, or `node e2e/run.mjs <part>` after `npm run build:chrome`) load the Chrome build into Chromium. `CHROMIUM_PATH` has to point at a Chromium binary: branded Chrome no longer loads unpacked extensions from the command line. The harness answers the real engines' addresses with the mock pages in `e2e/fixtures.mjs` (Google, DuckDuckGo, Bing, Brave, and Google's phone layout), seeds storage with a test personal list and settings, prints what Anubis decided and saves screenshots to `e2e/shots/`. Each part is a block in `e2e/run.mjs`: `pages`, `hostile`, `grouped`, `reveal`, `runs`, `shortcuts`, `mobile`, `off`, `cleanup`, `popover`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `subscribe-link`, `options`, `welcome` and `sync`.
 
 Parts print their findings rather than failing on them (turning them into assertions is on the roadmap), so read the output: a check that should say `false` and says `true` is a failure. Mock pages are models of the engines' markup, not copies of it; when an engine breaks, model the markup that broke as a variant of its mock (Google's `hostile` and `grouped` are examples) and never commit a page saved from a live search.
 
