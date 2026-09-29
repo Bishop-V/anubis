@@ -245,10 +245,11 @@ button {
     padding-inline: 12px;
   }
 }
+/* Everything lines up with the sentence's first line, however many lines it wraps to. */
 .summary {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   gap: 4px 14px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--line);
@@ -257,7 +258,13 @@ button {
   color: var(--muted);
 }
 .summary .mark {
+  display: flex;
+  align-items: center;
+  height: 20px;
   color: var(--gold);
+}
+.summary > .icon-btn {
+  margin-block: -2px;
 }
 .summary .mark svg {
   width: 15px;
