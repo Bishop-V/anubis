@@ -11,6 +11,7 @@ import {
   tagPrefsItem,
   updateSettings,
   DEFAULT_SETTINGS,
+  MAX_DEEPER,
   type HideStyle,
   type Palette,
   type Settings,
@@ -97,16 +98,26 @@ export async function renderAppearance(): Promise<HTMLElement> {
         (hideStyle) => void updateSettings({ hideStyle }),
       ),
       toggleRow('Rerank results', 'Move raised and pinned results up and lowered ones down, like a Brave Goggle.', 'rerank', settings),
-      segRow<string>(
-        'Load more results automatically',
-        'Add the next pages of results to the first one and rank them together, so a site you pinned on page 3 rises to the top. “Load more results” above the results does the same when you ask.',
-        [
-          { value: '0', label: 'Off' },
-          { value: '1', label: '+1 page' },
-          { value: '2', label: '+2 pages' },
-        ],
-        String(settings.deeper),
-        (v) => void updateSettings({ deeper: Number(v) }),
+      h(
+        'div',
+        { class: 'setting' },
+        h(
+          'div',
+          null,
+          h('label', { attrs: { for: 'deeper' } }, h('b', null, 'Load more results automatically')),
+          h(
+            'span',
+            { class: 'muted' },
+            'Add the next pages of results to the first one and rank them together, so a site you pinned on page 3 rises to the top. “Load more results” above the results does the same when you ask. Each page is another request to the search engine, so a few is usually enough.',
+          ),
+        ),
+        h(
+          'select',
+          { id: 'deeper', on: { change: (e: Event) => void updateSettings({ deeper: Number((e.target as HTMLSelectElement).value) }) } },
+          ...Array.from({ length: MAX_DEEPER + 1 }, (_, n) =>
+            h('option', { value: String(n), selected: n === Math.min(settings.deeper, MAX_DEEPER) }, n === 0 ? 'Off' : n === 1 ? '1 more page' : `${n} more pages`),
+          ),
+        ),
       ),
       toggleRow('Tag chips', 'Show tags and rankings under each result title.', 'showChips', settings),
       toggleRow('Summary', 'Show a one-line summary of what Anubis changed above the results.', 'showSummary', settings),
