@@ -1176,8 +1176,9 @@ if (only === 'docs') {
     await clip(`cleanup-summary${suffix}`, ['anubis-summary']);
   }
 
-  // The homepage's before and after: the same search with Anubis off, then on with
-  // clean-up, cut to the same box (the logo, the search box and the results column).
+  // A before and after, for the style guide and the slides below: the same search
+  // with Anubis off, then on with clean-up, cut to the same box (the logo, the
+  // search box and the results column).
   // A wider window keeps the side panel clear of the box.
   const beforeAfter = async (name) => {
     for (const [, suffix, query] of SCHEMES) {
