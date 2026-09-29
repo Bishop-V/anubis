@@ -5,9 +5,6 @@ hero:
   name: Anubis
   text: Hide, rank and tag search results
   tagline: On the search engine you already use, with lists anyone can publish.
-  image:
-    src: /anubis.svg
-    alt: The Anubis logo, a jackal's head in gold
   actions:
     - theme: brand
       text: Get started

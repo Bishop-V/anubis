@@ -43,3 +43,56 @@
   font-size: 13px;
   color: var(--vp-c-text-2);
 }
+
+/* The homepage's before and after (before-after.ts), lined up with the heading
+   above and the features below: the same side padding and width. */
+.before-after {
+  max-width: 1152px;
+  margin: -1rem auto 3rem;
+  padding: 0 24px;
+  box-sizing: content-box;
+}
+.before-after .shots {
+  display: grid;
+  gap: 24px;
+}
+.before-after .label {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--vp-c-text-2);
+}
+.before-after img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  /* The pictures are cut from longer pages: let them fade out, not stop. */
+  mask-image: linear-gradient(to bottom, #000 75%, transparent);
+}
+.before-after .after img {
+  border-color: var(--vp-c-brand-3);
+}
+.before-after figcaption {
+  max-width: 40rem;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--vp-c-text-2);
+}
+@media (min-width: 640px) {
+  .before-after {
+    padding: 0 48px;
+  }
+  .before-after .shots {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (min-width: 960px) {
+  .before-after {
+    padding: 0 64px;
+  }
+  .before-after .shots {
+    gap: 32px;
+  }
+}

@@ -33,7 +33,7 @@ Firefox is the default target (`browser: 'firefox'` in `wxt.config.ts`). The `:c
 - `.github/workflows/engines.yml` runs weekly: when uBlacklist changes its rules for an engine Anubis supports, it opens an issue labelled `engines` (`.github/scripts/watch-engines.mjs`, which maps uBlacklist's files to engines; keep it in step with `utils/engines.ts`)
 - `npm run zip` / `npm run zip:chrome`: package for the store. `store/README.md` has the listings, privacy answers and release steps; `node store/render.mjs` redraws the store icon and promo tile.
 - `.github/workflows/release.yml` releases on a `v*` tag that matches `package.json`'s version: CI, both zips, a GitHub Release, then `wxt submit` to Chrome, Firefox and Edge after approval in the `release` environment, which holds the store keys
-- `npm run docs:dev` / `npm run docs:build`: the documentation site (VitePress) from `docs/`. The build fails on a broken link. `.github/workflows/docs.yml` builds it on pull requests and publishes it to GitHub Pages from main. `node e2e/run.mjs docs` regenerates its screenshots in `docs/img/` from the mock pages; rerun it after changing anything they show.
+- `npm run docs:dev` / `npm run docs:build`: the documentation site (VitePress) from `docs/`. The build fails on a broken link. `.github/workflows/docs.yml` builds it on pull requests and publishes it to GitHub Pages from main. `node e2e/run.mjs docs` regenerates its screenshots in `docs/img/` from the mock pages, including the homepage's before and after (`docs/.vitepress/theme/before-after.ts`) and the same pair as a 1920×1080 slide (`docs/public/before-after.png`); rerun it after changing anything they show.
 
 ## Checking on live pages
 

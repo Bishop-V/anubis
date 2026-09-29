@@ -5,7 +5,8 @@
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, off, cleanup, popover, ddg-hide,
 //                               filter, deeper, import, subscribe, options
-//   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/
+//   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slide
+//                               in docs/public/
 //
 // Needs a Chromium build (branded Chrome no longer loads unpacked extensions from
 // the command line). Point CHROMIUM_PATH at it, e.g. CHROMIUM_PATH=$(which chromium).
@@ -639,7 +640,47 @@ if (only === 'docs') {
   await page.goto('https://www.google.com/search?q=anubis&modules=1');
   await page.waitForTimeout(800);
   await clip('cleanup-summary', ['anubis-summary']);
-  await setSettings({ cleanup: { ai: false, videos: false, questions: false, news: false, images: false, related: false } });
+
+  // The homepage's before and after: the same search with Anubis off, then on with
+  // clean-up, cut to the same box (the search box and the results column).
+  const beforeAfter = async (name) => {
+    await page.goto('https://www.google.com/search?q=anubis&modules=1');
+    await page.waitForTimeout(800);
+    const x = await page.evaluate(() => document.querySelector('form[role="search"]').getBoundingClientRect().left - 24);
+    await page.screenshot({ path: `${DOCS_IMG}${name}.png`, clip: { x, y: 0, width: 720, height: 880 } });
+  };
+  await beforeAfter('after');
+  await setSettings({ enabled: false });
+  await beforeAfter('before');
+  await setSettings({ enabled: true, cleanup: { ai: false, videos: false, questions: false, news: false, images: false, related: false } });
+
+  // The same pair as a 1920×1080 slide, for talks and posts. It's in docs/public so
+  // the site serves it at a fixed address.
+  const png = (name) => `data:image/png;base64,${readFileSync(`${DOCS_IMG}${name}.png`).toString('base64')}`;
+  const logo = readFileSync(fileURLToPath(new URL('../public/anubis.svg', import.meta.url)), 'utf8');
+  // The jackal without its tile, on the tile's own ground; the type is store/render.mjs's.
+  const jackal = logo.replace(/<rect[^>]*\/>/, '').replace('<svg ', '<svg width="46" height="46" ');
+  const serif = `'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', 'Bitstream Charter', Charter, Georgia, serif`;
+  const shot = (label, name, edge) => `<div>
+      <div style="margin:0 0 10px 2px;font-size:15px;color:#a39b8c">${label}</div>
+      <img src="${png(name)}" style="display:block;width:100%;border-radius:8px 8px 0 0;box-shadow:0 0 0 1px ${edge}">
+    </div>`;
+  const slide = await ctx.newPage();
+  await slide.setViewportSize({ width: 960, height: 540 });
+  await slide.setContent(`<!doctype html><meta charset="utf-8">
+    <body style="margin:0;width:960px;height:540px;background:#1b1a16;color:#e8e2d2;font-family:${serif};overflow:hidden;position:relative">
+      <div style="position:absolute;left:44px;right:48px;top:30px;display:flex;align-items:center;gap:12px">
+        ${jackal}
+        <span style="color:#d4a637;font-size:34px;line-height:1">Anubis</span>
+        <span style="margin-left:14px;padding-left:18px;border-left:1px solid #d4a63773;font-size:19px;line-height:30px">Hide, rank and tag search results</span>
+        <span style="margin-left:auto;font-size:12px;color:#8a8272">Shown on a test page</span>
+      </div>
+      <div style="position:absolute;left:48px;right:48px;top:112px;display:grid;grid-template-columns:1fr 1fr;gap:32px">
+        ${shot('Without Anubis', 'before', '#4a4438')}${shot('With Anubis', 'after', '#d4a637')}
+      </div>
+    </body>`);
+  await slide.screenshot({ path: fileURLToPath(new URL('../docs/public/before-after.png', import.meta.url)) });
+  await slide.close();
 
   // Downloads fail inside the test browser, which would put "Failed to fetch" under
   // every list. Store the bundled lists as if just downloaded, as a user sees them.
