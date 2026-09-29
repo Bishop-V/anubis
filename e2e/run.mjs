@@ -726,6 +726,74 @@ if (!only || only === 'popover') {
   await page.keyboard.press('Escape');
 }
 
+// What a screen reader hears, from the accessibility tree (it sees inside closed
+// shadow roots): each ⇅ button names its site, focus stays put when a click
+// re-renders or closes what was clicked, and a change is announced.
+async function axTree() {
+  const cdp = await page.context().newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  await cdp.detach();
+  return nodes.filter((n) => !n.ignored).map((n) => ({
+    id: n.nodeId,
+    parent: n.parentId,
+    role: n.role?.value,
+    name: n.name?.value ?? '',
+    focused: !!n.properties?.find((p) => p.name === 'focused')?.value?.value,
+  }));
+}
+const focused = async () => {
+  // The page itself counts as focused too; the element is the last one.
+  const hit = (await axTree()).filter((n) => n.focused && n.role !== 'RootWebArea').pop();
+  return hit ? `${hit.role}: ${hit.name}` : 'nothing';
+};
+
+if (!only || only === 'a11y') {
+  await page.goto('https://duckduckgo.com/?q=javascript+promises');
+  await page.waitForTimeout(600);
+  const buttons = (await axTree()).filter((n) => n.role === 'button' && n.name.startsWith('Hide, rank or tag'));
+  console.log('\n== ⇅ buttons:', JSON.stringify({ count: buttons.length, distinct: new Set(buttons.map((b) => b.name)).size, first: buttons[0]?.name }));
+
+  const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
+  await target.hover();
+  await target.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+  await page.waitForTimeout(300);
+  // Focus starts on the chosen ranking; back up to × and press it.
+  let steps = 0;
+  while (!(await focused()).startsWith('button: Close') && steps++ < 4) await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(200);
+  console.log('== focus after × closes the menu:', await focused());
+
+  // Pin it from the menu: the change is announced.
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(300);
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(900);
+  await page.keyboard.press('Escape');
+  const tree = await axTree();
+  const status = tree.find((n) => n.role === 'status');
+  const statusText = status && tree.filter((n) => n.parent === status.id).map((n) => n.name).join(' ');
+  console.log('== announced:', JSON.stringify(statusText ?? null));
+  // Undo goes with the click; focus stays in the summary.
+  await clickShadowButton('anubis-summary', 'Undo');
+  await page.waitForTimeout(600);
+  console.log('== focus after Undo:', await focused());
+
+  // A hidden result's Show line names the site, and hands focus to the result.
+  await page.goto('https://www.google.com/search?q=anubis');
+  await page.waitForSelector('anubis-bar');
+  await page.waitForTimeout(300);
+  const show = (await axTree()).find((n) => n.role === 'button' && /^Show \S+\.\S+/.test(n.name));
+  await clickShadowButton('anubis-bar', 'Show');
+  await page.waitForTimeout(300);
+  console.log('== hidden line:', JSON.stringify({ button: show?.name ?? null, focusAfter: await focused() }));
+  // Show hidden keeps focus on its own button, now Hide them again.
+  await clickShadowButton('anubis-summary', 'Show hidden');
+  await page.waitForTimeout(300);
+  console.log('== focus after Show hidden:', await focused());
+}
+
 if (!only || only === 'ddg-hide') {
   await page.goto('https://duckduckgo.com/?q=javascript+promises');
   await page.waitForTimeout(600);

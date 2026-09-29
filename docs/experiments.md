@@ -97,6 +97,16 @@ Asked for: pinning and the starter lists were only explained in the user guide, 
 - `npm run dev` starts with a fresh browser profile, so it opens the welcome tab each time.
 - **Too narrow on a desktop (2026-09-29):** one 580px column in a wide window read as a phone layout. It now uses the settings page's shape: 1040px, section titles in a 220px column and what to do beside them, the lists two across. Below 900px it's one column again. Checked at 1920, 1180, 820 and 390px.
 
+## Screen readers and focus on search pages (2026-09-29)
+
+Four of the gaps `ACCESSIBILITY.md` listed, fixed on search pages. The `a11y` e2e part reads the accessibility tree (CDP's `Accessibility.getFullAXTree`, which sees into closed shadow roots) and checks each; the previous build fails all of them.
+
+- **Each ⇅ button names its site:** "Hide, rank or tag javascript.info", as a label and a tooltip, instead of nine buttons all called "Hide, rank or tag this site". The hidden line's Show button is labelled "Show mythology.fandom.com" (it still reads "Show"; the label starts with the visible word, so voice control finds it), and moves focus to the result it brought back, since the line goes with the click.
+- **The change line is announced.** "Pinned javascript.info." goes into a `role="status"` region that stays in the summary's shadow root; one created along with its text isn't reliably read.
+- **The summary keeps focus.** Its buttons carry `data-focus-key`, and `render` in `ui.ts` focuses the same key after replacing the content, or the first button when that one is gone (Undo, Show all). Show hidden keeps focus on itself, now "Hide them again".
+- **× in the result menu puts focus back on the ⇅ button,** as Escape did.
+- Reading the focused element: the tree marks the page itself as focused too, so the check takes the last focused node that isn't the page.
+
 ## Keyboard shortcuts
 
 - Two `commands`: Alt+Shift+O turns Anubis on or off, Alt+Shift+H shows hidden results and hides them again. They need no permission. On a Mac they use Control, because Option+Shift types characters (Ø, Ó) and would be taken from text fields.

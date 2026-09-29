@@ -37,7 +37,7 @@ Anubis works in two places, and they need different care:
 
 **Focus goes somewhere sensible, and comes back.** When a control opens something, focus moves into it; when it closes, focus returns to what opened it. The result menu is the model: it opens with focus on the chosen ranking, Escape closes it and puts focus back on the ⇅ button, and Enter in the new tag field adds the tag.
 
-**Re-rendering mustn't drop focus.** Replacing the focused element sends focus back to the top of the page, and a keyboard or screen reader user loses their place. The result menu survives its own re-renders by giving controls a `data-focus-key` and focusing the same key in the new content (`openPopover` in `entrypoints/content/ui.ts`). Do the same, or update the existing nodes, wherever a click re-renders the thing that was clicked.
+**Re-rendering mustn't drop focus.** Replacing the focused element sends focus back to the top of the page, and a keyboard or screen reader user loses their place. The result menu and the summary survive their own re-renders by giving controls a `data-focus-key` and focusing the same key in the new content (`openPopover` and `render` in `entrypoints/content/ui.ts`); when that control is gone (Undo), focus goes to the first one. Do the same, or update the existing nodes, wherever a click re-renders the thing that was clicked.
 
 **Shortcuts are the browser's, and people can change them.** The two shortcuts (Alt+Shift+O for on and off, Alt+Shift+H for Show hidden) are `commands` in `wxt.config.ts`: suggested keys that people can reassign, and that the browser leaves empty if another extension has them. So:
 
@@ -64,8 +64,6 @@ Anubis works in two places, and they need different care:
 What the code does today that falls short of the above, found while writing this (2026-09-29). Fix them as the code around them changes, and move each to `docs/experiments.md` once it's tried.
 
 - **Reranked order isn't the reading order**, as above. Needs an idea that doesn't move the engine's nodes.
-- **Every ⇅ button has the same name.** It's "Hide, rank or tag this site" on every result; it should name the site. Likewise the hidden-result line's "Show" button.
-- **The summary's change line isn't announced.** "Hid fandom.com." appears with Undo after it, but nothing tells a screen reader. It wants `role="status"`.
-- **The summary and the popup drop focus.** Both replace their content after a click (`render()` in `ui.ts` for the summary's Show hidden, filters and Undo; `renderHere()` in `entrypoints/popup/main.ts` for "This site"), so the button that was pressed disappears with focus on it.
-- **The result menu only returns focus on Escape.** Closing it with × removes the focused button, so focus falls back to the top of the page. And since it's added at the end of the page, Tab from its last control goes to the end of the page rather than back to the result.
+- **The popup drops focus.** It replaces its content after a click (`renderHere()` in `entrypoints/popup/main.ts` for "This site"), so the button that was pressed disappears with focus on it. The summary had the same gap; it now keeps focus with `data-focus-key`, as the result menu does.
+- **Tab from the result menu's last control goes to the end of the page,** since the menu is added at the end of the page, rather than back to the result.
 - **Tag reasons are tooltip-only on the chips.** Covered in the menu's Why section, but that's one step further away.
