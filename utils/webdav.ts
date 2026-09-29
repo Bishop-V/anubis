@@ -20,7 +20,7 @@ export interface WebdavAccount {
   encryptionReady?: boolean;
 }
 
-export type SyncErrorCode = 'auth' | 'forbidden' | 'folder' | 'permission' | 'network' | 'file' | 'encrypted' | 'passphrase' | 'unencrypted' | 'changed' | 'server' | 'failed';
+export type SyncErrorCode = 'auth' | 'forbidden' | 'folder' | 'permission' | 'network' | 'file' | 'encrypted' | 'passphrase' | 'unencrypted' | 'changed' | 'unconfirmed' | 'server' | 'failed';
 
 export interface SyncStatus {
   /** When the last sync finished. */
@@ -219,8 +219,29 @@ export function syncWithServer(): Promise<SyncStatus | null> {
 }
 
 /**
+ * Whether the server's file opens with this passphrase: for when a save's answer
+ * was lost or an error, since the server may have saved it anyway.
+ */
+async function fileOpensWith(account: WebdavAccount, url: string, passphrase: string): Promise<boolean> {
+  let got: Response;
+  try {
+    got = await request(account, 'GET', url);
+  } catch {
+    throw new SyncError('unconfirmed');
+  }
+  if (!got.ok) throw new SyncError('unconfirmed');
+  try {
+    await decryptSyncData(await got.text(), passphrase);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Re-encrypt the shared file under a new passphrase. The current file must be
  * readable here and support a strong ETag so concurrent writes cannot be lost.
+ * Runs in the background script, where `serialize` also holds syncs back.
  */
 export function changeEncryptionPassphrase(nextPassphrase: string): Promise<SyncStatus | null> {
   return serialize(async () => {
@@ -242,11 +263,21 @@ export function changeEncryptionPassphrase(nextPassphrase: string): Promise<Sync
       const data = await decryptSyncData(text, account.encryptionPassphrase);
       const body = await encryptSyncData(data, nextPassphrase);
       if (!sameAccount(await accountItem.getValue(), account)) throw new SyncError('changed');
-      const put = await request(account, 'PUT', url, { 'Content-Type': 'application/json', 'If-Match': etag }, body);
-      if (put.status === 412) throw new SyncError('changed');
-      if (!put.ok) throw httpError(put.status);
-      const updated = { ...account, encryptionPassphrase: nextPassphrase, encryptionReady: true };
-      await accountItem.setValue(updated);
+      let put: Response | undefined;
+      try {
+        put = await request(account, 'PUT', url, { 'Content-Type': 'application/json', 'If-Match': etag }, body);
+      } catch (error) {
+        if (!(error instanceof SyncError) || error.code !== 'network') throw error;
+      }
+      if (put?.status === 412) throw new SyncError('changed');
+      // A refusal (4xx) saved nothing. No answer, or a server error, may have come
+      // after the file was saved: then only the new passphrase opens it.
+      if (put && !put.ok && put.status < 500) throw httpError(put.status);
+      if (!put?.ok && !(await fileOpensWith(account, url, nextPassphrase))) throw put ? httpError(put.status) : new SyncError('network');
+      // Disconnected or changed meanwhile: don't bring the old connection back.
+      if (sameAccount(await accountItem.getValue(), account)) {
+        await accountItem.setValue({ ...account, encryptionPassphrase: nextPassphrase, encryptionReady: true });
+      }
       status = { at: Date.now() };
     } catch (error) {
       console.warn('[anubis] changing the sync encryption passphrase failed', error);
