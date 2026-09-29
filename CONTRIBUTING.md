@@ -30,6 +30,7 @@ Keep each pull request to one topic. The project's conventions, briefly:
 
 - **Interface.** The popup, settings, welcome page and in-page UI are plain DOM built with `h()` from `utils/dom.ts`. Text from lists always goes in as text nodes, never markup, and nothing uses `innerHTML`. Interface text goes in `public/_locales/en/messages.json` and is used through `t()`, `tn()` (counts) and `localizePage()` (static HTML) from `utils/i18n.ts`.
 - **Look.** [`STYLEGUIDE.md`](STYLEGUIDE.md) has the palette, type sizes, controls and layouts. Use what's there rather than a new colour, size or radius.
+- **Access.** [`ACCESSIBILITY.md`](ACCESSIBILITY.md) has what to keep in mind for screen readers and the keyboard, on Anubis's own pages and on search pages.
 - **Wording.** Labels say what happens in plain words ("Load more results", "Hide, rank or tag this site"). A site's *ranking* is Hide, Lower, Normal, Raise or Pin, and the same word means the same thing everywhere. Use an icon only where everyone knows it (a cog for settings, × to close), and give every icon-only button a label and a tooltip.
 - **Nothing hidden without a trace.** The summary above the results says what Anubis changed, and "Show hidden" undoes it for the page.
 - **Permissions.** Ask for as few as possible, and only the ones a feature actually needs.
