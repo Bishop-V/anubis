@@ -88,10 +88,10 @@ export async function renderAppearance(): Promise<HTMLElement> {
       ),
       segRow<HideStyle>(
         'Hidden results',
-        'Collapse leaves a slim bar you can open. Remove takes them off the page. Dim fades them.',
+        'Remove takes them off the page; the summary above the results counts them, and Show hidden brings them back. Collapse leaves one slim line for each run of hidden results. Dim fades them.',
         [
-          { value: 'collapse', label: 'Collapse' },
           { value: 'remove', label: 'Remove' },
+          { value: 'collapse', label: 'Collapse' },
           { value: 'dim', label: 'Dim' },
         ],
         settings.hideStyle,

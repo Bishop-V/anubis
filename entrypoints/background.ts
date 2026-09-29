@@ -1,6 +1,6 @@
 import { browser, defineBackground, storage } from '#imports';
 import { sendToActiveTab, type Message } from '@/utils/messages';
-import { getSettings, migrateLegacy, settingsItem, updateSettings } from '@/utils/storage';
+import { getSettings, migrateLegacy, migrateSettings, settingsItem, updateSettings } from '@/utils/storage';
 import { refreshStale } from '@/utils/subscriptions';
 
 // The background script keeps subscribed lists fresh, shows the hidden-result
@@ -47,6 +47,7 @@ export default defineBackground(() => {
 
   browser.runtime.onInstalled.addListener(async () => {
     await migrateLegacy();
+    await migrateSettings();
     await refresh();
   });
   browser.runtime.onStartup.addListener(() => void maybeRefresh());

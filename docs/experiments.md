@@ -119,6 +119,14 @@ Asked for: a global option to force-remove AI answers (Gemini's AI Overview, Duc
 - **Fixed from the live structure:** on the real page Anubis stopped at the video panel's header row (`div.UjLRDc`) instead of the panel. Google marks each block in the list with `data-rpos`, so engines can now declare a `blocks` selector: a recognised heading inside a marked block removes the whole block, up to the column, unless a real section of it is meant ("Images" in a panel keeps the panel). A "section" that is only its heading row no longer counts as one, and clickable cards (`[role=link]`, `[jsaction]`) count as items. The `videos=google` mock copies the reported structure; the previous build left the videos in place on it.
 - **Visible and undoable:** the summary names what was removed ("…and removed an AI answer and a video panel"), and "Show hidden" brings removed blocks back on that page, marked with a dashed outline. The AI Mode tab is removed but not counted, since it isn't content.
 
+## Hidden results: removed by default
+
+Feedback from use, with a screenshot of a page where one site filled most results: the "Collapse" style's line per hidden result ("fandom.com hidden by your list · Show", fifteen times) clogged the page.
+
+- **Default changed** from Collapse to Remove. Hidden results leave the page; the summary counts them ("Anubis hid 12 of 20 results") and **Show hidden** brings them back, so nothing goes without a trace. Settings saved with the old default move over once (`sync:hideStyleMoved` records it); choosing Collapse afterwards sticks.
+- **Collapse, better:** hidden results in a row now share one line ("starwars.fandom.com and 1 more hidden by your list"), whose **Show** brings back the whole run. A run is results that are next to each other in the page, skipping Anubis's own elements and removed panels. The `runs` e2e part checks it on a Google page where one site is everywhere.
+- The e2e harness keeps Collapse (most checks use the lines) and marks the migration as done, since it would otherwise switch the seeded setting to Remove the moment the extension installs.
+
 ## Toolbar icon when off
 
 - Turning Anubis off now swaps the toolbar icon for a grey copy (`public/icon-off/`) and sets its tooltip to "Anubis is off". The grey icons were made once from the colour ones with a canvas in Chromium: luminance, flattened, 75% opacity, so they read as "off" on light and dark toolbars. The icon is set every time the background script starts, because the browser forgets a changed icon on restart.

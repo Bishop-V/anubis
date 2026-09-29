@@ -4,6 +4,7 @@ import type { EngineDef } from '@/utils/engines';
 import { ICON_ANUBIS, ICON_CLOSE, ICON_GEAR, ICON_HIDE, ICON_RANK, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
 import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
+import { tn } from '@/utils/i18n';
 import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, type PersonalLevel } from '@/utils/personal';
 import { summarySentence } from '@/utils/summary';
@@ -326,6 +327,11 @@ export function hiddenReason(verdict: Verdict, tags: Map<string, TagDef>): strin
   return `by ${by.name}`;
 }
 
+/**
+ * The one line standing for a hidden result, or for a run of hidden results in a
+ * row: "fandom.com and 5 more hidden by your list". `more` is the rest of the run,
+ * as their reasons; the line gives one reason only when they all share it.
+ */
 export function renderHiddenBar(
   result: FoundResult,
   verdict: Verdict,
@@ -333,6 +339,7 @@ export function renderHiddenBar(
   tags: Map<string, TagDef>,
   show: boolean,
   actions: { reveal: () => void },
+  more: Verdict[] = [],
 ): void {
   const { container } = result;
   let host = barHosts.get(container);
@@ -349,13 +356,20 @@ export function renderHiddenBar(
   host.dataset.theme = theme;
 
   const why = hiddenReason(verdict, tags);
+  const sameWhy = more.every((v) => hiddenReason(v, tags) === why);
   const site = result.host.replace(/^www\./, '');
-  render(host, JSON.stringify([site, why]), () =>
+  render(host, JSON.stringify([site, why, more.length, sameWhy]), () =>
     h(
       'div',
       { class: 'gone' },
       icon(ICON_HIDE),
-      h('span', { class: 'why' }, h('b', null, site), ` hidden ${why}`),
+      h(
+        'span',
+        { class: 'why' },
+        h('b', null, site),
+        more.length ? ` ${tn('hiddenMore', more.length)}` : '',
+        sameWhy && why ? ` hidden ${why}` : ' hidden',
+      ),
       h(
         'button',
         {

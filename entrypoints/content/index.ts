@@ -162,6 +162,7 @@ export default defineContentScript({
           for (const id of verdict.tags) if (!rules.prefs[id]?.muted) tagCounts.set(id, (tagCounts.get(id) ?? 0) + 1);
         }
       }
+      renderHiddenRuns(results, theme);
       stats.tags = [...tagCounts]
         .map(([id, count]) => ({ id, count, label: rules.tags.get(id)?.label ?? id, color: rules.tags.get(id)?.color ?? '#c8962e' }))
         .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
@@ -234,12 +235,42 @@ export default defineContentScript({
       else renderChips(result, { ...verdict, level: 'normal', tags: [] }, ctx, false);
 
       ensureWeighButton(result, engine, theme, openWeigh);
-      renderHiddenBar(result, verdict, theme, rules.tags, verdict.hidden && !revealed && rules.settings.hideStyle === 'collapse' && !engine.table, {
-        reveal: () => {
-          shown.add(result.url);
-          pass();
-        },
-      });
+    };
+
+    /**
+     * "Collapse" style: one line per run of hidden results in a row, not one per
+     * result, so a page full of one site doesn't fill up with lines. The rest of
+     * the run is marked data-anubis-grouped and hidden by page.css.
+     */
+    const renderHiddenRuns = (results: FoundResult[], theme: PageTheme) => {
+      const collapsed = (r: FoundResult) => {
+        const v = verdictFor(r);
+        return v.hidden && !(reveal || shown.has(r.url)) && rules.settings.hideStyle === 'collapse' && !engine.table;
+      };
+      const runs: FoundResult[][] = [];
+      let last: FoundResult | undefined;
+      for (const result of results) {
+        if (!collapsed(result)) {
+          last = undefined;
+          continue;
+        }
+        const run = last && nextResultAfter(last.container) === result.container ? runs[runs.length - 1] : undefined;
+        if (run) run.push(result);
+        else runs.push([result]);
+        last = result;
+      }
+      const lead = new Map<HTMLElement, FoundResult[]>(runs.map((run) => [run[0]!.container, run]));
+      const grouped = new Set(runs.flatMap((run) => run.slice(1).map((r) => r.container)));
+      for (const result of results) {
+        const run = lead.get(result.container);
+        result.container.toggleAttribute('data-anubis-grouped', grouped.has(result.container));
+        renderHiddenBar(result, verdictFor(result), theme, rules.tags, !!run, {
+          reveal: () => {
+            for (const r of run ?? [result]) shown.add(r.url);
+            pass();
+          },
+        }, run?.slice(1).map(verdictFor));
+      }
     };
 
     const goDeeper = (count: number) => {
@@ -304,7 +335,7 @@ export default defineContentScript({
 
     const forget = (el: HTMLElement) => {
       detachResult(el);
-      for (const attr of ['data-anubis-result', 'data-anubis-state', 'data-anubis-reveal', 'data-anubis-highlight', 'data-anubis-row', 'data-anubis-filtered']) {
+      for (const attr of ['data-anubis-result', 'data-anubis-state', 'data-anubis-reveal', 'data-anubis-highlight', 'data-anubis-row', 'data-anubis-filtered', 'data-anubis-grouped']) {
         el.removeAttribute(attr);
       }
       el.style.removeProperty('--anubis-hl');
@@ -455,6 +486,13 @@ function summaryAnchor(results: FoundResult[], engine: { boundary?: string; disp
     if (child instanceof HTMLElement && !/^(ANUBIS-SUMMARY|SCRIPT|STYLE|TEMPLATE|LINK|META)$/.test(child.tagName)) return child;
   }
   return results[0]?.container;
+}
+
+/** The next result in the page after this one, skipping Anubis's own elements and blocks clean-up removed. */
+function nextResultAfter(container: HTMLElement): HTMLElement | undefined {
+  let next = container.nextElementSibling;
+  while (next instanceof HTMLElement && (OWN_TAGS.has(next.tagName) || next.hasAttribute('data-anubis-removed'))) next = next.nextElementSibling;
+  return next instanceof HTMLElement && next.hasAttribute('data-anubis-result') ? next : undefined;
 }
 
 /** Light or dark, from the setting or, on "auto", from the page's own background. */

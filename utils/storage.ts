@@ -20,7 +20,7 @@ export interface Settings {
   enabled: boolean;
   /** Colour scheme for the popup, options page and in-page UI. `auto` follows the page / OS. */
   theme: Theme;
-  /** How hidden results look: a slim bar you can expand, gone entirely, or faded. */
+  /** How hidden results look: gone (the summary counts them), a slim line you can open, or faded. */
   hideStyle: HideStyle;
   /** Reorder results on the page according to boosts, downranks and pins. */
   rerank: boolean;
@@ -43,7 +43,7 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   enabled: true,
   theme: 'auto',
-  hideStyle: 'collapse',
+  hideStyle: 'remove',
   rerank: true,
   showChips: true,
   showSummary: true,
@@ -218,6 +218,19 @@ export function watchPersonal(cb: (text: string) => void): () => void {
 }
 
 /** Moves the legacy `sync:blockedSites` array into the personal list. Safe to call repeatedly. */
+/**
+ * Hidden results used to collapse to a line each by default, which filled pages
+ * where one site is everywhere. The default is now to remove them; move settings
+ * saved with the old default over, once.
+ */
+const HIDE_STYLE_MOVED = 'sync:hideStyleMoved' as const;
+export async function migrateSettings(): Promise<void> {
+  if (await storage.getItem<boolean>(HIDE_STYLE_MOVED)) return;
+  const stored = await settingsItem.getValue();
+  if (stored?.hideStyle === 'collapse') await updateSettings({ hideStyle: 'remove' });
+  await storage.setItem(HIDE_STYLE_MOVED, true);
+}
+
 export async function migrateLegacy(): Promise<void> {
   const meta = await storage.getItem<PersonalMeta>(PERSONAL_META);
   if (meta) return;

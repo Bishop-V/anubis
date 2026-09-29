@@ -3,7 +3,7 @@
 // prints what Anubis decided for each result and saves screenshots to e2e/shots/.
 //
 //   npm run e2e                 build, then run everything
-//   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, off, cleanup, popover, ddg-hide,
+//   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, off, cleanup, popover, ddg-hide,
 //                               filter, deeper, import, subscribe, options
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/
 //
@@ -82,6 +82,8 @@ async function launch(settings = {}) {
         'personal.0': personal,
         personal: { chunks: 1, updatedAt: Date.now() },
         tagPrefs: { 'ai-slop': { action: 'hide' } },
+        // The tests use the "Collapse" style; keep the one-time move to "Remove" away.
+        hideStyleMoved: true,
         settings: { enabled: true, theme: 'auto', hideStyle: 'collapse', rerank: true, showChips: true, showSummary: true, engines: {}, updateHours: 24, ...settings },
       });
     },
@@ -104,6 +106,16 @@ async function launch(settings = {}) {
     'https://www.google.com/search?q=anubis&videos=groups': google('anubis', ANUBIS_RESULTS, { videos: 'groups' }),
     'https://www.google.com/search?q=anubis&videos=split': google('anubis', ANUBIS_RESULTS, { videos: 'split' }),
     'https://www.google.com/search?q=anubis&videos=google': google('anubis', ANUBIS_RESULTS, { videos: 'google' }),
+    // A search where one hidden site is everywhere: three fandom.com results in a
+    // row, one other result, then two more.
+    'https://www.google.com/search?q=fandom': google('fandom', [
+      ['https://www.fandom.com/', 'Fandom', 'The fan platform.'],
+      ['https://about.fandom.com/', 'About Fandom', 'About the company.'],
+      ['https://community.fandom.com/wiki/Help', 'Community Central', 'Help for wikis.'],
+      ['https://en.wikipedia.org/wiki/Fandom', 'Fandom - Wikipedia', 'A fandom is a subculture of fans.'],
+      ['https://starwars.fandom.com/', 'Wookieepedia', 'The Star Wars wiki.'],
+      ['https://roblox.fandom.com/', 'Roblox Wiki', 'The Roblox wiki.'],
+    ]),
     'https://www.google.com/search?q=anubis&udm=14': google('anubis', ANUBIS_RESULTS),
     'https://www.google.com/search?q=anubis&mobile=1': googleMobile('anubis', ANUBIS_RESULTS),
     'https://noai.duckduckgo.com/?q=javascript+promises': duckduckgo('javascript promises', JS_RESULTS),
@@ -404,6 +416,27 @@ if (!only || only === 'cleanup') {
   await page.waitForURL(/udm=14/, { timeout: 3000 }).catch(() => {});
   console.log('== Google with the Web tab on:', page.url());
   await setSettings({ cleanup: { ai: false, videos: false, questions: false, news: false, images: false, related: false }, googleWebTab: false });
+}
+
+if (!only || only === 'runs') {
+  // "Collapse" style: hidden results in a row share one line, and its Show brings
+  // back the whole run.
+  await page.goto('https://www.google.com/search?q=fandom');
+  await page.waitForSelector('anubis-bar');
+  await page.waitForTimeout(300);
+  const count = () =>
+    page.evaluate(() => {
+      const visible = (el) => getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0;
+      return {
+        lines: [...document.querySelectorAll('anubis-bar')].filter(visible).length,
+        shown: [...document.querySelectorAll('[data-anubis-result]')].filter((el) => visible(el) && !el.querySelector(':scope > anubis-bar')).length,
+      };
+    });
+  const before = await count();
+  await clickShadowButton('anubis-bar', 'Show');
+  await page.waitForTimeout(300);
+  console.log('\n== hidden runs:', JSON.stringify({ before, afterShow: await count() }));
+  await page.screenshot({ path: `${SHOTS}google-runs.png`, fullPage: true });
 }
 
 if (!only || only === 'popover') {
