@@ -134,9 +134,8 @@ export async function renderEngines(): Promise<HTMLElement> {
         { class: 'engines' },
         ENGINES.map((engine) => {
           const input = h('input', { type: 'checkbox', checked: settings.engines[engine.id] !== false, attrs: { 'aria-label': engine.name } });
-          input.addEventListener('change', async () => {
-            const current = await getSettings();
-            await updateSettings({ engines: { ...current.engines, [engine.id]: input.checked } });
+          input.addEventListener('change', () => {
+            void updateSettings((current) => ({ engines: { ...current.engines, [engine.id]: input.checked } }));
           });
           return h('label', { class: 'engine' }, h('span', null, engine.name), h('span', { class: 'switch' }, input, h('span')));
         }),

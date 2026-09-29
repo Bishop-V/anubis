@@ -7,9 +7,11 @@ import { storage } from '#imports';
 import { andList } from './dom';
 import { parseList, safeWebUrl } from './listformat';
 import {
+  editListCache,
   getSettings,
   listCacheItem,
   subscriptionsItem,
+  writeQueue,
   type CachedList,
   type Subscription,
 } from './storage';
@@ -37,8 +39,15 @@ export async function getSubscriptions(): Promise<Subscription[]> {
   return stored ?? defaultSubscriptions();
 }
 
-export async function saveSubscriptions(subs: Subscription[]): Promise<void> {
-  await subscriptionsItem.setValue(subs);
+const subscriptionsQueue = writeQueue();
+
+/** Change the subscriptions, one change at a time, starting from the defaults if they were never changed. */
+export function editSubscriptions(edit: (subs: Subscription[]) => Subscription[]): Promise<void> {
+  return subscriptionsQueue(async () => subscriptionsItem.setValue(edit(await getSubscriptions())));
+}
+
+export function saveSubscriptions(subs: Subscription[]): Promise<void> {
+  return editSubscriptions(() => subs);
 }
 
 /** The directory shipped with this build. A fresher copy is fetched from GitHub when possible. */
@@ -187,8 +196,7 @@ export async function refreshList(sub: Subscription): Promise<CachedList> {
       errorAt: Date.now(),
     };
   }
-  const latest = await listCacheItem.getValue();
-  await listCacheItem.setValue({ ...latest, [sub.id]: entry });
+  await editListCache((latest) => ({ ...latest, [sub.id]: entry }));
   return entry;
 }
 

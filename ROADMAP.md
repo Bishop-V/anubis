@@ -20,7 +20,6 @@ Work that's planned but not started, or started and not finished. Each item says
 
 ## Security
 
-- **A slow pattern in a subscribed list can freeze search tabs.** `parseUblacklistLine` in `utils/listformat.ts` compiles a list's `/regex/` rules as they are, and they're tested against every result on every pass, in the page. A pattern like `/(a+)+$/` backtracks for seconds. Reject nested quantifiers and cap the pattern's length at parse time, and show it as a list error.
 - **The 5 MB limit is checked after the download.** `fetchText` in `utils/subscriptions.ts` reads the whole body first. Check `Content-Length`, or stop reading at the limit.
 - **`ci.yml` has no `permissions:` block.** Add `contents: read`, as `docs.yml` has.
 - **Dependabot** for npm and GitHub Actions: weekly, grouped, with a 7-day cooldown (the default is 3). Pin actions to commit SHAs and let Dependabot move them.
@@ -33,10 +32,11 @@ Work that's planned but not started, or started and not finished. Each item says
 
 ## Performance
 
-Fine as it is (content script 84 KB). Two cheap wins:
+Fine as it is (content script 84 KB). Two cheap wins, and one to measure:
 
 - Any change, even one click in the result menu, re-parses every subscribed list in every open search tab (`watchRuleSet` in `utils/ruleset.ts`). Re-parse only what changed.
 - `refreshStale` in `utils/subscriptions.ts` parses each list just to read `! expires:`. Store it in the cache when the list is downloaded.
+- With any clean-up switch on, `findClutter` (`entrypoints/content/cleanup.ts`) walks every text node on the page, on every pass. Measure it on a live Google page before changing anything; if it matters, skip the results' subtrees, which clean-up never removes.
 
 ## Firefox for Android
 

@@ -229,8 +229,13 @@ const WEB_TAB_KEY = 'anubis:all-tab';
  * chose the All tab for this search.
  */
 export function redirectFor(engine: EngineDef, url: URL, cleanup: Cleanup, googleWebTab: boolean): string | undefined {
-  if (engine.id === 'duckduckgo' && cleanup.ai && url.hostname === 'duckduckgo.com' && engine.isResultsPage(url)) {
-    return `https://noai.duckduckgo.com${url.pathname}${url.search}${url.hash}`;
+  if (engine.id === 'duckduckgo' && cleanup.ai && url.hostname !== 'noai.duckduckgo.com' && engine.isResultsPage(url)) {
+    const next = new URL(url);
+    next.hostname = 'noai.duckduckgo.com';
+    // safe.duckduckgo.com always has strict safe search; keep it, with DuckDuckGo's
+    // own parameter for it, unless the search already chose a level.
+    if (url.hostname === 'safe.duckduckgo.com' && !next.searchParams.has('kp')) next.searchParams.set('kp', '1');
+    return next.href;
   }
   if (engine.id === 'google' && googleWebTab && url.pathname === '/search' && !url.searchParams.has('udm') && !url.searchParams.has('tbm')) {
     let chosen: string | null = null;

@@ -1,5 +1,5 @@
 import { parseList, type TagDef } from './listformat';
-import { getSite, listTagDefs, setSite, upsertTagDef, type PersonalLevel } from './personal';
+import { formatSiteLine, listSites, listTagDefs, setSites, upsertTagDef, type PersonalLevel } from './personal';
 
 // Bring sites over from the tools Anubis grew out of: uBlacklist rules, HOHSER's
 // JSON export, a Brave Goggle, or a plain list of domains. Site-level entries are
@@ -32,29 +32,44 @@ function isHohser(data: unknown): data is HohserEntry[] {
   return Array.isArray(data) && data.every((e) => e && typeof e === 'object' && typeof (e as HohserEntry).domainName === 'string');
 }
 
-function merge(
-  text: string,
-  site: string,
-  level: PersonalLevel,
-  tags: string[],
-  counts: { added: number; updated: number },
-): string {
-  const entry = getSite(text, site);
-  if (entry) counts.updated++;
-  else counts.added++;
-  const nextLevel = level === 'normal' ? (entry?.level ?? 'normal') : level;
-  return setSite(text, site, nextLevel, [...new Set([...(entry?.tags ?? []), ...tags])]);
-}
+type SiteChange = { level: PersonalLevel; tags: string[] };
 
-function defineTags(text: string, tags: TagDef[]): string {
-  const known = new Set(listTagDefs(text).map((t) => t.id));
-  let next = text;
-  for (const tag of tags) if (!known.has(tag.id)) next = upsertTagDef(next, tag);
-  return next;
+/**
+ * Gathers the imported sites, merged with what the personal list already says,
+ * then writes them in one pass: a list of thousands of sites (a big Goggle) took
+ * half a minute when each site rewrote the whole list.
+ */
+function importer(personalText: string) {
+  const existing = new Map(listSites(personalText).map((e) => [e.site, e]));
+  const sites = new Map<string, SiteChange>();
+  const tags = new Map<string, TagDef>();
+  const counts = { added: 0, updated: 0 };
+  return {
+    counts,
+    merge(site: string, level: PersonalLevel, siteTags: string[]) {
+      const pending = sites.get(site);
+      // A site this import already set to plain normal has no line left.
+      const entry = pending ? (formatSiteLine(site, pending.level, pending.tags) ? pending : undefined) : existing.get(site);
+      if (entry) counts.updated++;
+      else counts.added++;
+      const nextLevel = level === 'normal' ? (entry?.level ?? 'normal') : level;
+      sites.set(site, { level: nextLevel, tags: [...new Set([...(entry?.tags ?? []), ...siteTags])] });
+    },
+    defineTags(defs: TagDef[]) {
+      for (const tag of defs) if (!tags.has(tag.id)) tags.set(tag.id, tag);
+    },
+    text(): string {
+      const known = new Set(listTagDefs(personalText).map((t) => t.id));
+      let text = personalText;
+      for (const tag of tags.values()) if (!known.has(tag.id)) text = upsertTagDef(text, tag);
+      return setSites(text, sites);
+    },
+  };
 }
 
 export function importIntoPersonal(personalText: string, input: string): ImportResult {
-  const counts = { added: 0, updated: 0 };
+  const into = importer(personalText);
+  const { counts } = into;
   const trimmed = input.trim();
 
   // HOHSER: [{ "domainName": "www.x.com", "display": "FULL_HIDE" | "PARTIAL_HIDE" | "HIGHLIGHT", "color": "COLOR_1" }]
@@ -66,7 +81,6 @@ export function importIntoPersonal(personalText: string, input: string): ImportR
       data = undefined;
     }
     if (isHohser(data)) {
-      let text = personalText;
       const highlightTags = new Set<string>();
       let skipped = 0;
       for (const e of data) {
@@ -75,22 +89,23 @@ export function importIntoPersonal(personalText: string, input: string): ImportR
           skipped++;
           continue;
         }
-        if (e.display === 'FULL_HIDE') text = merge(text, site, 'hide', [], counts);
-        else if (e.display === 'PARTIAL_HIDE') text = merge(text, site, 'lower', [], counts);
+        if (e.display === 'FULL_HIDE') into.merge(site, 'hide', []);
+        else if (e.display === 'PARTIAL_HIDE') into.merge(site, 'lower', []);
         else {
           const slot = /^COLOR_(\d)$/.exec(e.color ?? '')?.[1] ?? '1';
           const id = `highlight-${slot}`;
           highlightTags.add(id);
-          text = defineTags(text, [{ id, label: `Highlight ${slot}`, color: HOHSER_COLORS[`COLOR_${slot}`] ?? '#c8962e' }]);
-          text = merge(text, site, 'normal', [id], counts);
+          into.defineTags([{ id, label: `Highlight ${slot}`, color: HOHSER_COLORS[`COLOR_${slot}`] ?? '#c8962e' }]);
+          into.merge(site, 'normal', [id]);
         }
       }
-      return { text, source: 'hohser', ...counts, skipped, highlightTags: [...highlightTags] };
+      return { text: into.text(), source: 'hohser', ...counts, skipped, highlightTags: [...highlightTags] };
     }
   }
 
   const parsed = parseList(input);
-  let text = defineTags(personalText, parsed.tags.filter((t) => parsed.rules.some((r) => r.tags.includes(t.id))));
+  const used = new Set(parsed.rules.flatMap((r) => r.tags));
+  into.defineTags(parsed.tags.filter((t) => used.has(t.id)));
   let skipped = parsed.errors.length;
   const highlightTags = new Set<string>();
   for (const rule of parsed.rules) {
@@ -112,7 +127,7 @@ export function importIntoPersonal(personalText: string, input: string): ImportR
             : rule.boost < 0
               ? 'lower'
               : 'normal';
-    text = merge(text, site.replace(/^www\./, ''), level, rule.tags, counts);
+    into.merge(site.replace(/^www\./, ''), level, rule.tags);
   }
-  return { text, source: parsed.format, ...counts, skipped, highlightTags: [...highlightTags] };
+  return { text: into.text(), source: parsed.format, ...counts, skipped, highlightTags: [...highlightTags] };
 }

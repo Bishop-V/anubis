@@ -26,17 +26,27 @@ export default defineBackground(() => {
   void getSettings().then((s) => showEnabled(s.enabled));
   settingsItem.watch((s) => showEnabled(s?.enabled !== false));
 
+  // One update at a time. "Update all" (forced) doesn't settle for a routine check
+  // that's already running: it runs straight after it.
   let running: Promise<number> | undefined;
-  const refresh = (force = false) => {
-    running ??= refreshStale(force)
+  let runningForced = false;
+  const refresh = (force = false): Promise<number> => {
+    if (running && (runningForced || !force)) return running;
+    const before = running;
+    const run: Promise<number> = (async () => {
+      await before;
+      return refreshStale(force);
+    })()
       .catch((error) => {
         console.warn('[anubis] list update failed', error);
         return 0;
       })
       .finally(() => {
-        running = undefined;
+        if (running === run) running = undefined;
       });
-    return running;
+    running = run;
+    runningForced = force;
+    return run;
   };
 
   const maybeRefresh = async () => {
@@ -58,7 +68,7 @@ export default defineBackground(() => {
   // Keyboard shortcuts, declared as `commands` in wxt.config.ts. The page keeps
   // its own Show hidden state, so that one goes to the tab as a message.
   browser.commands?.onCommand.addListener((command) => {
-    if (command === 'toggle-enabled') void getSettings().then((s) => updateSettings({ enabled: !s.enabled }));
+    if (command === 'toggle-enabled') void updateSettings((s) => ({ enabled: !s.enabled }));
     else if (command === 'toggle-hidden') void sendToActiveTab({ type: 'toggle-reveal' });
   });
 

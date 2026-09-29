@@ -17,10 +17,7 @@ function switchRow(label: string, hint: string, checked: boolean, onChange: (on:
 
 export async function renderCleanup(): Promise<HTMLElement> {
   const settings = await getSettings();
-  const setKind = async (id: CleanupKind, on: boolean) => {
-    const current = await getSettings();
-    await updateSettings({ cleanup: { ...current.cleanup, [id]: on } });
-  };
+  const setKind = (id: CleanupKind, on: boolean) => updateSettings((current) => ({ cleanup: { ...current.cleanup, [id]: on } }));
   return h(
     'div',
     null,

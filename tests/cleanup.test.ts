@@ -65,6 +65,16 @@ describe('clean-up redirects', () => {
     expect(redirectFor(engine('duckduckgo'), new URL('https://noai.duckduckgo.com/?q=anubis'), { ...NO_CLEANUP, ai: true }, false)).toBeUndefined();
   });
 
+  it('opens the no-AI version from DuckDuckGo’s other addresses, keeping safe.’s strict safe search', () => {
+    const ai = { ...NO_CLEANUP, ai: true };
+    const ddg = engine('duckduckgo');
+    expect(redirectFor(ddg, new URL('https://start.duckduckgo.com/?q=anubis'), ai, false)).toBe('https://noai.duckduckgo.com/?q=anubis');
+    expect(redirectFor(ddg, new URL('https://safe.duckduckgo.com/?q=anubis'), ai, false)).toBe('https://noai.duckduckgo.com/?q=anubis&kp=1');
+    expect(redirectFor(ddg, new URL('https://safe.duckduckgo.com/?q=anubis&kp=-1'), ai, false)).toBe('https://noai.duckduckgo.com/?q=anubis&kp=-1');
+    // The home page isn't a search.
+    expect(redirectFor(ddg, new URL('https://safe.duckduckgo.com/'), ai, false)).toBeUndefined();
+  });
+
   it('opens Google’s Web tab only from the All tab', () => {
     const google = engine('google');
     expect(redirectFor(google, new URL('https://www.google.com/search?q=anubis'), NO_CLEANUP, true)).toBe(

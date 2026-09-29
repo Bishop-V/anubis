@@ -397,6 +397,55 @@ export function compileGogglePattern(pattern: string): RegExp | string {
   return new RegExp((start ? '^' : '') + re + (end ? '$' : ''), 'i');
 }
 
+/** Longest `/regex/` a list may use. The longest in the directory's lists is under 100 characters. */
+const MAX_REGEX = 1000;
+
+/**
+ * Whether a regular expression repeats a group that repeats something inside, like
+ * `(a+)+` or `(\w+\s?)*`. On the wrong address those backtrack for seconds, and
+ * rules run on every result of every search, in the page. Judged by structure
+ * alone, so it also turns down a few safe patterns like `([a-z]+\.)*`; none of
+ * the directory's lists uses a repeated group at all.
+ */
+export function nestedRepeat(source: string): boolean {
+  // For each open group: whether something inside it repeats.
+  const groups: boolean[] = [];
+  // Whether the atom just read is a group with a repeat inside.
+  let afterRepeatingGroup = false;
+  for (let i = 0; i < source.length; i++) {
+    const ch = source[i]!;
+    if (ch === '\\') {
+      i++;
+    } else if (ch === '[') {
+      // A character class: skip to its end, minding escapes and a leading ].
+      i++;
+      if (source[i] === '^') i++;
+      if (source[i] === ']') i++;
+      while (i < source.length && source[i] !== ']') i += source[i] === '\\' ? 2 : 1;
+    } else if (ch === '(') {
+      groups.push(false);
+      // (?:…), (?=…), (?<name>…): that ? isn't a quantifier.
+      if (source[i + 1] === '?') i++;
+    } else if (ch === ')') {
+      const inner = groups.pop() ?? false;
+      if (inner && groups.length) groups[groups.length - 1] = true;
+      afterRepeatingGroup = inner;
+      continue;
+    } else {
+      // A quantifier: *, + and {n,} or {n,m} repeat; ? and {n} don't.
+      const range = ch === '{' ? /^\{(\d+)(,(\d*))?\}/.exec(source.slice(i)) : null;
+      const repeats = ch === '*' || ch === '+' || (!!range && range[2] !== undefined && (range[3] === '' || Number(range[3]) > Number(range[1])));
+      if (repeats && afterRepeatingGroup) return true;
+      if (repeats && groups.length) groups[groups.length - 1] = true;
+      if (range) i += range[0].length - 1;
+      // A lazy quantifier's ?.
+      if ((repeats || ch === '?' || range) && source[i + 1] === '?') i++;
+    }
+    afterRepeatingGroup = false;
+  }
+  return false;
+}
+
 /** uBlacklist: match patterns, /regex/, `@` unblock and `@N` highlight prefixes. */
 export function parseUblacklistLine(input: string, lineNo: number): Rule | string {
   // Trailing comments: "rule # comment"
@@ -417,6 +466,8 @@ export function parseUblacklistLine(input: string, lineNo: number): Rule | strin
 
   const regex = /^\/(.+)\/([a-z]*)$/i.exec(body);
   if (regex) {
+    if (regex[1]!.length > MAX_REGEX) return `Regular expression is longer than ${MAX_REGEX} characters`;
+    if (nestedRepeat(regex[1]!)) return `Regular expression could freeze search pages (a repeated group repeats inside): ${body}`;
     try {
       rule.pattern = new RegExp(regex[1]!, regex[2]!.replace(/[^imsu]/g, ''));
     } catch {
