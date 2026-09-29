@@ -30,7 +30,7 @@ const tile = `<body style="margin:0;width:440px;height:280px;background:#1b1a16;
   <div style="position:absolute;left:200px;top:86px;right:28px">
     <div style="color:#d4a637;font-size:54px;line-height:1;letter-spacing:0.01em">Anubis</div>
     <div style="margin-top:16px;height:1px;background:#d4a637;opacity:0.45;width:172px"></div>
-    <div style="margin-top:14px;color:#e8e2d2;font-size:19px;line-height:1.35">Hide, rank and tag<br>search results</div>
+    <div style="margin-top:14px;color:#e8e2d2;font-size:19px;line-height:1.35">Hide, rank, and tag<br>search results</div>
   </div>
 </body>`;
 

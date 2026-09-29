@@ -24,7 +24,7 @@ const withDark = (html: string, env: MarkdownEnv) =>
 
 export default defineConfig({
   title: 'Anubis',
-  description: 'A browser extension that hides, ranks and tags search results, with lists anyone can publish.',
+  description: 'A browser extension that hides, ranks, and tags search results, with lists anyone can publish.',
   lang: 'en',
   base,
   cleanUrls: true,

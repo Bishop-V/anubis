@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { t, tList, tn } from '@/utils/i18n';
+import { andList } from '@/utils/dom';
+import { t, tJoin, tList, tn } from '@/utils/i18n';
 import type { SiteChange } from '@/utils/personal';
 import { changeSentence } from '@/utils/summary';
 import { useEnglish } from './english';
@@ -67,6 +68,17 @@ describe('t and tn', () => {
     const b = { name: 'B' };
     expect(tList('menuReport', [a], 'disjunction')).toEqual(['Wrong? Report it to ', a, '.']);
     expect(tList('menuReport', [a, b], 'disjunction')).toEqual(['Wrong? Report it to ', a, ' or ', b, '.']);
+    const c = { name: 'C' };
+    expect(tList('menuReport', [a, b, c], 'disjunction')).toEqual(['Wrong? Report it to ', a, ', ', b, ', or ', c, '.']);
+  });
+
+  it('joins lists of three or more with the serial comma', () => {
+    expect(tJoin(['a', 'b'])).toBe('a and b');
+    expect(tJoin(['a', 'b', 'c'])).toBe('a, b, and c');
+    expect(tJoin(['a', 'b', 'c'], 'disjunction')).toBe('a, b, or c');
+    expect(andList(['a'])).toBe('a');
+    expect(andList(['a', 'b'])).toBe('a and b');
+    expect(andList(['a', 'b', 'c'])).toBe('a, b, and c');
   });
 
   it('says what a change from the result menu did', () => {

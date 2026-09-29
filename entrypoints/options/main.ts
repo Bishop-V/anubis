@@ -62,7 +62,7 @@ async function renderNav() {
       'div',
       { class: 'brand' },
       h('img', { src: '/anubis.svg', alt: '', width: 36, height: 36 }),
-      h('div', null, h('h1', null, 'Anubis'), h('p', null, 'Hide, rank and tag search results')),
+      h('div', null, h('h1', null, 'Anubis'), h('p', null, 'Hide, rank, and tag search results')),
     ),
     ...SECTIONS.map((s) =>
       h(

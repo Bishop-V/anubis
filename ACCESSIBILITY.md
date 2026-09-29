@@ -4,7 +4,7 @@ Guidelines for keeping Anubis usable with a screen reader and from the keyboard.
 
 Anubis works in two places, and they need different care:
 
-- **Its own pages**: the popup, settings and the welcome page. Anubis owns these completely.
+- **Its own pages**: the popup, settings, and the welcome page. Anubis owns these completely.
 - **Search pages**: someone else's page, which a person may already be navigating with a screen reader or the keyboard. Anubis adds to it and hides parts of it. The first rule there is to leave the page no harder to use than it was.
 
 ## Screen readers
@@ -13,7 +13,7 @@ Anubis works in two places, and they need different care:
 
 **Reading order is the page's order.** Reranking moves results with CSS `order` and never moves the nodes (see Pitfalls in `CLAUDE.md`). Screen readers and Tab follow the DOM, so they meet results in the engine's order, not the reranked one. This can't be fixed without moving nodes the engine owns; keep it in mind, and don't make anything depend on the visual order being the reading order.
 
-**Everything Anubis adds is read aloud, on every result.** The shadow roots keep the page's CSS out, not screen readers: the chips, the ⇅ button and the hidden-result line are read between each title and its snippet. Keep them short, and don't add text to a result that a sighted person wouldn't need either.
+**Everything Anubis adds is read aloud, on every result.** The shadow roots keep the page's CSS out, not screen readers: the chips, the ⇅ button, and the hidden-result line are read between each title and its snippet. Keep them short, and don't add text to a result that a sighted person wouldn't need either.
 
 **A control has to make sense on its own.** Screen reader users often jump from button to button or pull up a list of them. A button repeated on every result should say which result it's for, and a text button's label should stand without the sentence around it.
 
@@ -25,13 +25,13 @@ Anubis works in two places, and they need different care:
 
 **State goes in attributes, not only in colour or shape.** Chosen options in a row of choices use `aria-pressed`, the rows use `role="group"` with a label, the settings navigation marks its page with `aria-current`, and the ⇅ button keeps `aria-expanded` in step with the menu. Follow the same patterns for new controls instead of inventing new ones.
 
-**Leave the engine's own structure alone.** Clean-up removes content blocks (AI answers, video panels), never the page's navigation, search form or landmarks (`NOT_A_BLOCK` in `entrypoints/content/cleanup.ts`). Keep it that way when adding a clean-up kind or an engine.
+**Leave the engine's own structure alone.** Clean-up removes content blocks (AI answers, video panels), never the page's navigation, search form, or landmarks (`NOT_A_BLOCK` in `entrypoints/content/cleanup.ts`). Keep it that way when adding a clean-up kind or an engine.
 
 **Labels are interface text.** An `aria-label` is read to people just like visible text, so it goes in `messages.json` and through `t()` like the rest (static HTML uses `data-i18n-aria-label`). Many labels are still hard-coded English; move them when you touch the code around them.
 
 ## Keyboard
 
-**Everything the pointer can do, the keyboard can do.** Use real `<button>`, `<a href>`, `<input>` and `<select>` elements: they get Tab, Enter and Space for free. A `div` with a click handler gets none of that. Hover-only behaviour needs a focus equivalent: the ⇅ button brightens on `:focus-within` as well as `:hover`.
+**Everything the pointer can do, the keyboard can do.** Use real `<button>`, `<a href>`, `<input>` and `<select>` elements: they get Tab, Enter, and Space for free. A `div` with a click handler gets none of that. Hover-only behaviour needs a focus equivalent: the ⇅ button brightens on `:focus-within` as well as `:hover`.
 
 **Focus is always visible.** The focus ring is the 2px gold outline on `:focus-visible` (`assets/theme.css`, `shadow.css`). Never remove an outline without replacing it, and where a native control sits invisibly over a styled one (the cartouche's site picker), draw the ring on what can be seen.
 
@@ -54,9 +54,9 @@ Anubis works in two places, and they need different care:
 
 ## Checking a change
 
-- Put the mouse away and do the thing with Tab, Shift+Tab, Enter, Space and Escape. Watch where focus goes after each step.
+- Put the mouse away and do the thing with Tab, Shift+Tab, Enter, Space, and Escape. Watch where focus goes after each step.
 - Listen to it once. NVDA with Firefox on Windows, Orca on Linux, or VoiceOver with Chrome on a Mac are all free. On a search page, move through a few results and hear what Anubis adds to each.
-- Look at the accessibility tree: Firefox's Accessibility panel in DevTools, or Chrome's Accessibility pane in Elements. It shows each control's name, role and state, and it can see inside the closed shadow roots.
+- Look at the accessibility tree: Firefox's Accessibility panel in DevTools, or Chrome's Accessibility pane in Elements. It shows each control's name, role, and state, and it can see inside the closed shadow roots.
 - If something was tried and didn't work, note it in `docs/experiments.md` like any other experiment.
 
 ## Known gaps

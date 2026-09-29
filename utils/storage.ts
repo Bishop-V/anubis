@@ -24,11 +24,11 @@ export type HideStyle = 'collapse' | 'remove' | 'dim';
 export interface Settings {
   /** Master switch: when false the content script leaves pages alone. */
   enabled: boolean;
-  /** Colour scheme for the popup, options page and in-page UI. `auto` follows the page / OS. */
+  /** Colour scheme for the popup, options page, and in-page UI. `auto` follows the page / OS. */
   theme: Theme;
   /** How hidden results look: gone (the summary counts them), a slim line you can open, or faded. */
   hideStyle: HideStyle;
-  /** Reorder results on the page according to boosts, downranks and pins. */
+  /** Reorder results on the page according to boosts, downranks, and pins. */
   rerank: boolean;
   /** Show tag and verdict chips under result titles. */
   showChips: boolean;
@@ -40,7 +40,7 @@ export interface Settings {
   updateHours: number;
   /** Extra result pages to load and rerank automatically (0 = only on request). */
   deeper: number;
-  /** Parts of result pages to remove: AI answers, video panels and so on. */
+  /** Parts of result pages to remove: AI answers, video panels, and so on. */
   cleanup: Cleanup;
   /** Always open Google's Web tab (`udm=14`), which has no AI Overview or panels. */
   googleWebTab: boolean;

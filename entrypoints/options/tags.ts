@@ -322,7 +322,7 @@ export async function renderTags(): Promise<HTMLElement> {
     null,
     pageTitle(
       'Tags',
-      'Lists label results. You decide what each label does: follow the list, only show it, highlight it, or raise, lower or hide what carries it. Lists that use the same tag name share it.',
+      'Lists label results. You decide what each label does: follow the list, only show it, highlight it, or raise, lower, or hide what carries it. Lists that use the same tag name share it.',
     ),
     h('div', { class: 'panel' }, h('h3', null, 'New tag'), h('p', { class: 'muted' }, 'Your tags are saved in your list, so they go with it when you publish it.'), form, error),
     h(
