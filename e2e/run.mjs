@@ -680,12 +680,26 @@ if (!only || only === 'cleanup' || checks) {
     }, selectors);
   const braveCleanup = await visibleIn({ videos: '.cluster-videos', discussions: '.cluster-discussions', relatedQueries: '.related-queries', elsewhere: '.find-elsewhere', videosTab: '.tabs a[href^="/videos"]' });
   console.log('== Brave panels:', JSON.stringify(braveCleanup));
+  // A thumbnail in a result's corner: the buttons stay in one column, clear of it.
+  const braveButtons = await page.evaluate(() => {
+    const thumb = document.querySelector('.thumb img')?.getBoundingClientRect();
+    const boxes = [...document.querySelectorAll('anubis-weigh')].map((el) => el.getBoundingClientRect()).filter((r) => r.width);
+    return {
+      buttons: boxes.length,
+      lefts: [...new Set(boxes.map((r) => Math.round(r.left)))],
+      clearOfThumb: !!thumb && boxes.every((r) => r.right <= thumb.left || r.left >= thumb.right || r.bottom <= thumb.top || r.top >= thumb.bottom),
+    };
+  });
+  console.log('   buttons beside a thumbnail:', JSON.stringify(braveButtons));
+  await page.screenshot({ path: `${SHOTS}brave-thumbnail.png`, clip: { x: 0, y: 80, width: 1000, height: 520 } });
   if (checks) {
     assertChecks('Brave cleanup selectors', {
       removesVideos: !braveCleanup.videos,
       removesDiscussions: !braveCleanup.discussions,
       removesRelatedQueries: !braveCleanup.relatedQueries,
       removesFindElsewhere: !braveCleanup.elsewhere,
+      buttonsInOneColumn: braveButtons.buttons > 0 && braveButtons.lefts.length === 1,
+      buttonsClearOfThumbnail: braveButtons.clearOfThumb,
       keepsVideosTab: braveCleanup.videosTab,
     });
   }

@@ -508,8 +508,8 @@ export function brave(query, results, { panels = false } = {}) {
   const elsewhere = `
       <div class="snippet find-elsewhere"><div class="fe-row"><span class="fe-label">${icon}<b>Find elsewhere</b></span>${['Google', 'Bing', 'Mojeek'].map((e) => `<a class="fe-btn" href="https://www.${e.toLowerCase()}.com/search?q=${encodeURIComponent(query)}">${e}</a>`).join('')}</div></div>`;
   const items = results
-    .map(([url, title, snippet]) => `
-      <div class="snippet svelte-1234" data-type="web" data-pos="0">
+    .map(([url, title, snippet], i) => `
+      <div class="snippet svelte-1234" data-type="web" data-pos="0">${panels && i === 0 ? '\n        <div class="thumb"><img alt="" width="112" height="112"></div>' : ''}
         <a href="${url}" class="svelte-1234 l1"><div class="site-wrapper"><div class="favicon"></div><div class="site-name-content"><div class="site-name">${esc(hostOf(url).split('.')[0])}</div><cite class="snippet-url"><span class="netloc">${esc(hostOf(url))}</span></cite></div></div>
         <div class="title search-snippet-title svelte-1234" title="${esc(title)}">${esc(title)}</div></a>
         <div class="generic-snippet"><div class="content desktop-default-regular t-primary line-clamp-dynamic">${esc(snippet)}</div></div>
@@ -540,6 +540,7 @@ export function brave(query, results, { panels = false } = {}) {
     .panel{margin:0 0 14px;padding:16px 18px;border-radius:12px;background:#fff}
     .cluster-header{display:flex;gap:8px;align-items:center;font-weight:600;color:#1b1c21}.cluster-header a{display:flex;gap:8px;align-items:center;color:inherit;text-decoration:none}
     .vgrid,.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.vcard,.related-query{color:inherit;text-decoration:none}
+    .thumb{float:right;margin:0 0 8px 16px}.thumb img{display:block;border-radius:10px;background:#c9ccd6}
     .fe-row{display:flex;gap:10px;align-items:center}.fe-label{display:flex;gap:6px;align-items:center;margin-right:8px}.fe-btn{padding:8px 22px;border:1px solid #d0d3de;border-radius:20px}
     .related-query{padding:10px 14px;border:1px solid #d0d3de;border-radius:20px}
     .ditem{position:relative;padding:10px 0}.ditem a{color:#1b1c21;text-decoration:none}.dmeta{font-size:13px;color:#6b6f80}.ditem button{position:absolute;right:0;top:12px}

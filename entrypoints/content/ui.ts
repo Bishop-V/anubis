@@ -312,7 +312,7 @@ export function ensureWeighButton(
   else {
     for (const prop of MENU_LOOK) host.style.removeProperty(prop);
     host.style.setProperty('top', top, 'important');
-    host.style.setProperty('right', clearOfPictures(container, right), 'important');
+    host.style.setProperty('right', right, 'important');
   }
   host.style.setProperty('left', 'auto', 'important');
   host.style.setProperty('bottom', 'auto', 'important');
@@ -325,7 +325,10 @@ export function ensureWeighButton(
     positioned.add(container);
     if (getComputedStyle(container).position === 'static') container.style.position = 'relative';
   }
-  if (!menu) lineUpWithHeader(host, container, result.titleBlock);
+  if (!menu) {
+    lineUpWithHeader(host, container, result.titleBlock);
+    clearOfPictures(host, container);
+  }
   if (coversText(host, container)) moveOffText(host, container, menu);
 }
 
@@ -408,21 +411,48 @@ function moveOffText(host: HTMLElement, container: HTMLElement, menu: HTMLElemen
   }
 }
 
+/** Once a result's picture pushes a button out past the results, they all go there, in one column. */
+let buttonsInGutter = false;
+
 /**
- * How far from the right edge the button sits. Some results show a thumbnail in
- * their top-right corner (Google does beside many results); the button moves to
- * its left instead of covering it. Favicons are too small to count.
+ * Clear of a thumbnail beside the result's first row (Google and Brave show them
+ * in the top-right corner). The button goes just past the result's right edge,
+ * where the other results' buttons follow it so they stay in one column, or,
+ * where something else is there, to the thumbnail's left. Favicons are too small
+ * to count.
  */
-function clearOfPictures(container: HTMLElement, right: string): string {
+function clearOfPictures(host: HTMLElement, container: HTMLElement): void {
   const box = container.getBoundingClientRect();
-  if (!box.width) return right;
+  const b = host.getBoundingClientRect();
+  if (!box.width || !b.width) return;
   let edge = box.right;
   for (const pic of container.querySelectorAll<HTMLElement>('img, video, canvas, [role="img"]')) {
     const r = pic.getBoundingClientRect();
-    if (r.width < 40 || r.height < 40 || r.right < box.right - 80 || r.top > box.top + 60) continue;
+    if (r.width < 40 || r.height < 40 || r.right < box.right - 80 || r.bottom <= b.top || r.top >= b.bottom) continue;
     edge = Math.min(edge, r.left);
   }
-  return edge === box.right ? right : `${Math.round(box.right - edge + 6)}px`;
+  const blocked = edge < b.right;
+  if (!blocked && !buttonsInGutter) return;
+  const outside = { left: box.right + 4, right: box.right + 4 + b.width, top: b.top, bottom: b.bottom };
+  if (gutterIsFree(container, outside)) {
+    buttonsInGutter = true;
+    host.style.setProperty('right', `${-Math.round(b.width + 4)}px`, 'important');
+  } else if (blocked) {
+    host.style.setProperty('right', `${Math.round(box.right - edge + 6)}px`, 'important');
+  }
+}
+
+/** Whether nothing but the result's own ancestors is in this spot beside it, and it's in the window. */
+function gutterIsFree(container: HTMLElement, spot: { left: number; right: number; top: number; bottom: number }): boolean {
+  if (spot.right + 4 > document.documentElement.clientWidth) return false;
+  for (let el: HTMLElement | null = container; el && el !== document.body; el = el.parentElement) {
+    for (const sibling of el.parentElement?.children ?? []) {
+      if (sibling === el || OWN_TAGS.has(sibling.tagName)) continue;
+      const r = sibling.getBoundingClientRect();
+      if (r.width && r.height && r.left < spot.right && r.right > spot.left && r.top < spot.bottom && r.bottom > spot.top) return false;
+    }
+  }
+  return true;
 }
 
 /** The engine's own menu button on a result: the right-most small button in its top-right corner. */
@@ -812,6 +842,7 @@ function settingsButton(open: () => void, focusKey?: string): HTMLButtonElement 
 export function removeAllUi(): void {
   document.querySelectorAll(HOST_TAGS).forEach((el) => el.remove());
   summaryHost = undefined;
+  buttonsInGutter = false;
   summaryColumn = undefined;
   summaryTitles = [];
   summaryArea = undefined;
