@@ -784,6 +784,11 @@ if (!only || only === 'cleanup' || checks) {
     return { found: true, left: Math.round(left), right: Math.round(right), colLeft: Math.round(col.left), colRight: Math.round(col.right) };
   });
   console.log('== summary on a results area wider than the results:', JSON.stringify(wide));
+  const sidePanel = await page.evaluate(() => {
+    const side = document.querySelector('[data-area="sidebar"]');
+    return { found: !!side, result: !!side?.querySelector('[data-anubis-result], anubis-weigh, anubis-chips') || !!side?.closest('[data-anubis-result]') };
+  });
+  if (checks) assertChecks('DuckDuckGo side panel is not a result', { found: sidePanel.found, notAResult: !sidePanel.result });
 
   // Where results are cards, the summary lines up with their text.
   await page.goto('https://search.brave.com/search?q=anubis');
