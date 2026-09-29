@@ -79,6 +79,9 @@ com.tr com.tw com.ua com.uy com.vc com.vn cv cz de dj dk dm dz ee es fi fm fr ga
 is it je jo kg ki kz la li lk lt lu lv md me mg mk ml mn mu mv mw ne nl no nr nu pl pn ps pt ro rs ru rw sc se sh si sk
 sm sn so sr st td tg tl tm tn to tt vu ws`.split(/\s+/);
 
+// The countries uBlacklist lists for Yandex (upstream/serpinfo/yandex.yml).
+const YANDEX_TLDS = 'az by co.il com com.am com.ge com.tr ee eu kz lt lv md ru tj tm uz'.split(' ');
+
 const hasQuery = (url: URL, ...keys: string[]) => keys.some((k) => url.searchParams.get(k));
 
 export const ENGINES: EngineDef[] = [
@@ -157,8 +160,8 @@ export const ENGINES: EngineDef[] = [
   {
     id: 'bing',
     name: 'Bing',
-    matches: ['*://www.bing.com/*', '*://cn.bing.com/*'],
-    host: /^(www|cn)\.bing\.com$/,
+    matches: ['*://www.bing.com/*', '*://www2.bing.com/*', '*://www4.bing.com/*', '*://cn.bing.com/*'],
+    host: /^(www[24]?|cn)\.bing\.com$/,
     isResultsPage: (url) => url.pathname === '/search',
     item: '#b_results > li.b_algo',
     link: 'h2 a',
@@ -231,8 +234,8 @@ export const ENGINES: EngineDef[] = [
   {
     id: 'yandex',
     name: 'Yandex',
-    matches: ['*://yandex.com/*', '*://yandex.ru/*', '*://yandex.com.tr/*', '*://ya.ru/*'],
-    host: /^(yandex\.(com|ru|com\.tr)|ya\.ru)$/,
+    matches: [...YANDEX_TLDS.map((tld) => `*://yandex.${tld}/*`), '*://ya.ru/*'],
+    host: new RegExp(`^(yandex\\.(${YANDEX_TLDS.join('|').replace(/\./g, '\\.')})|ya\\.ru)$`),
     isResultsPage: (url) => /^\/search\/?$/.test(url.pathname),
     item: 'li:has(> .Organic), .serp-item:has(.Organic)',
     link: '.Organic a',
