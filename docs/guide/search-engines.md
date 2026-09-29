@@ -4,17 +4,19 @@ Anubis works on the web results of these engines. Turn any of them off in **Sett
 
 | Engine | Load more results | Checked on the live site |
 | --- | --- | --- |
-| Google (every country's domain) | Yes | An early version was. Later changes are only tested on test pages. |
-| DuckDuckGo | Yes | An early version was. Later changes are only tested on test pages. |
-| DuckDuckGo HTML and Lite | No | Not yet |
-| Bing | Yes | Not yet |
-| Brave Search | Yes | Not yet |
-| Startpage | No | Not yet |
-| Ecosia | Yes | Not yet |
+| Google (every country's domain) | Yes | Yes, results and clean-up. The phone layout isn't yet. |
+| DuckDuckGo | Yes | Yes |
+| DuckDuckGo HTML and Lite | No | Yes |
+| Bing | Yes* | Yes |
+| Brave Search | Yes | Yes |
+| Startpage | No | Yes |
+| Ecosia | Yes* | Yes |
 | Kagi | No | Not yet |
-| Yahoo | Yes | Not yet |
+| Yahoo | Yes* | Yes |
 | Yandex | No | Not yet |
 | Mojeek | No | Not yet |
+
+\* Bing, Ecosia and Yahoo sometimes answer the request for the next page with a "confirm you're not a robot" check. Load more results then stops without saying why. If that happens, use the engine's own Next link.
 
 Only the main web results are changed. Image, video, news and shopping tabs are left alone.
 

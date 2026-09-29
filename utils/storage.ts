@@ -217,7 +217,6 @@ export function watchPersonal(cb: (text: string) => void): () => void {
   };
 }
 
-/** Moves the legacy `sync:blockedSites` array into the personal list. Safe to call repeatedly. */
 /**
  * Hidden results used to collapse to a line each by default, which filled pages
  * where one site is everywhere. The default is now to remove them; move settings
@@ -231,6 +230,7 @@ export async function migrateSettings(): Promise<void> {
   await storage.setItem(HIDE_STYLE_MOVED, true);
 }
 
+/** Moves the legacy `sync:blockedSites` array into the personal list. Safe to call repeatedly. */
 export async function migrateLegacy(): Promise<void> {
   const meta = await storage.getItem<PersonalMeta>(PERSONAL_META);
   if (meta) return;

@@ -1,5 +1,5 @@
 import { h, icon, plural } from '@/utils/dom';
-import { ICON_TRASH } from '@/utils/icons';
+import { ICON_TRASH, LEVEL_LABELS } from '@/utils/icons';
 import { normalizeColor, slugifyTag, TAG_PALETTE, type TagDef } from '@/utils/listformat';
 import type { CompiledList, TagAction } from '@/utils/matcher';
 import { listSites, listTagDefs, removeTag, upsertTagDef } from '@/utils/personal';
@@ -10,9 +10,9 @@ const ACTIONS: { value: TagAction; label: string }[] = [
   { value: 'list', label: 'Follow the lists' },
   { value: 'label', label: 'Label only' },
   { value: 'highlight', label: 'Highlight' },
-  { value: 'raise', label: 'Raise' },
-  { value: 'lower', label: 'Lower' },
-  { value: 'hide', label: 'Hide' },
+  { value: 'raise', label: LEVEL_LABELS.raise },
+  { value: 'lower', label: LEVEL_LABELS.lower },
+  { value: 'hide', label: LEVEL_LABELS.hide },
 ];
 
 function ruleCount(list: CompiledList, tag: string): number {

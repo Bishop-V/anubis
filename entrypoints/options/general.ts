@@ -3,7 +3,8 @@ import { h, icon } from '@/utils/dom';
 import { ENGINES } from '@/utils/engines';
 import { ICON_DOWNLOAD, ICON_SHARE } from '@/utils/icons';
 import type { TagPref } from '@/utils/matcher';
-import { getSubscriptions, loadRuleSet, saveSubscriptions } from '@/utils/ruleset';
+import { loadRuleSet } from '@/utils/ruleset';
+import { getSubscriptions, saveSubscriptions } from '@/utils/subscriptions';
 import {
   editPersonal,
   getSettings,

@@ -7,15 +7,15 @@ In Egyptian myth, Anubis weighed each heart against a feather. This extension we
 
 ## What it does
 
-- **Rank any site from the results.** Hover a result and press its ⇅ button to hide, lower, keep, raise or pin that site, and to tag it. Your choices apply on every search and beat every list.
+- **Rank any site from the results.** Hover a result and press its ⇅ button to hide, lower, raise or pin that site, and to tag it. Your choices apply on every search and beat every list.
 - **Tags.** Results carry small labels ("Official docs", "Discussion", "Paywall"…) from your own tags and from lists you subscribe to. For each tag you decide what it does: just show it, highlight results, or raise, lower or hide them.
-- **Reranking.** Boosts, downranks and pins reorder the results on the page. **Load more results** brings the next pages of results onto the first one and reranks them together, so a pinned site on page 3 rises to the top.
+- **Reranking.** Raised, lowered and pinned sites move up or down the page. **Load more results** brings the next pages of results onto the first one and reranks them together, so a pinned site on page 3 rises to the top.
 - **Lists anyone can publish.** A list is a text file on GitHub, GitLab, Codeberg or a gist; there is no server. Anubis reads its own list format, Brave Goggles, uBlacklist rulesets and plain domain lists, so existing community lists work unchanged. The menu on each result can open a pre-filled issue to suggest a site to a list.
 - **Your list is a list too.** Every site you rank is stored in the same format, so you can download it and publish it for others.
 - **Bring your old lists.** Paste uBlacklist rules, a HOHSER export or a Goggle into Settings → Share and back up to move your sites over.
 - **Filter by tag.** The summary above the results lists the tags on the page; click one to see only those results.
-- **Clean up pages.** Remove AI answers (Google's AI Overview, Bing's Copilot, Brave's AI answers, and DuckDuckGo's Search Assist and Duck.ai by opening its no-AI version), video panels, "People also ask", top stories, image rows and related searches, on every search. Google can also always open its plain Web tab. "Show hidden" brings removed parts back on that page.
-- **Quiet on the page.** Hidden results collapse to one line you can open; the summary above the results is one sentence. Light and dark themes follow the search engine or your choice.
+- **Clean up pages.** Remove AI answers (Google's AI Overview, Brave's AI answers, and DuckDuckGo's Search Assist and Duck.ai by opening its no-AI version), video panels, "People also ask", top stories, image rows and related searches, on every search (Bing's AI answer and video panel aren't recognised yet). Google can also always open its plain Web tab. "Show hidden" brings removed parts back on that page.
+- **Quiet on the page.** Hidden results leave the page (or collapse to one line, if you prefer); the summary above the results is one sentence. Light and dark themes follow the search engine or your choice.
 - **Keyboard shortcuts.** Alt+Shift+O turns Anubis on or off, and Alt+Shift+H shows hidden results (Control instead of Alt on a Mac).
 
 Works on Google (every country domain), DuckDuckGo (including the HTML and Lite versions), Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex and Mojeek.
@@ -58,7 +58,7 @@ If the dev browser doesn't open on its own, build and load the extension yoursel
 
 ### Building the store release
 
-These are the steps the release uses, and the ones for rebuilding the Firefox add-on from its source zip. Use **Node.js 22** and npm on Linux, macOS or Windows:
+These are the steps the release uses, and the ones for rebuilding the Firefox add-on from its source zip. Use **Node.js 22** and npm on Linux or macOS:
 
 ```sh
 npm ci               # installs the exact versions in package-lock.json
@@ -102,7 +102,7 @@ Anubis takes a different approach because of that. Rather than tracking class na
 
 **[Brave Search Goggles](https://github.com/brave/goggles-quickstart)** are the model for lists: plain text files hosted on GitHub or GitLab that anyone can publish, with instructions to boost, downrank or discard results. The Anubis list format is the Goggles syntax plus tags, and any public Goggle can be subscribed to as-is. Goggles rerank inside Brave's own index; Anubis reranks what your engine returns, which is why Load more results exists.
 
-**[Kagi](https://help.kagi.com/kagi/features/website-info-personalized-results.html)** personalised results gave the five weights (block, lower, normal, raise, pin) chosen from a menu on each result.
+**[Kagi](https://help.kagi.com/kagi/features/website-info-personalized-results.html)** personalised results gave the five rankings (hide, lower, normal, raise, pin) chosen from a menu on each result.
 
 **[HOHSER](https://github.com/pistom/hohser)** (Highlight or Hide Search Engine Results) showed the value of highlighting as well as hiding, and of letting people choose how hidden results look.
 

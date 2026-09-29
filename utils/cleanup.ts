@@ -31,7 +31,7 @@ export const CLEANUP: CleanupDef[] = [
   {
     id: 'ai',
     label: 'AI answers',
-    hint: 'Google’s AI Overview and AI Mode link, Bing’s Copilot answers and Brave’s AI answers. On DuckDuckGo, searches open in its no-AI version, without Search Assist or Duck.ai.',
+    hint: 'Google’s AI Overview and AI Mode tab, and Brave’s AI answers. On DuckDuckGo, searches open in its no-AI version, without Search Assist or Duck.ai.',
     one: 'an AI answer',
     many: 'AI answers',
     headings: [
@@ -123,7 +123,8 @@ export const CLEANUP: CleanupDef[] = [
 /**
  * Selectors for blocks a heading can't identify, per engine. The block is the
  * element itself, or the results-column block around it. These come from
- * community filter lists and haven't been checked against live pages.
+ * community filter lists. Google's `.M8OgIe` and `.YzCcne` were seen on live
+ * pages (2026-09-29); the rest haven't been checked.
  */
 export const CLEANUP_SELECTORS: Record<string, Partial<Record<CleanupKind, string>>> = {
   google: { ai: '[data-attrid="AIOverview"], .M8OgIe, .YzCcne', questions: '.related-question-pair' },
