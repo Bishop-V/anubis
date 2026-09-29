@@ -225,7 +225,7 @@ Not everything is converted yet: `ROADMAP.md` lists what's left. Wording follows
 
 Parts print their findings rather than failing on them (turning them into assertions is on the roadmap), so read the output: a check that should say `false` and says `true` is a failure. Mock pages are models of the engines' markup, not copies of it; when an engine breaks, model the markup that broke as a variant of its mock (Google's `hostile` and `grouped` are examples) and never commit a page saved from a live search.
 
-`node e2e/run.mjs docs` redraws the wiki's screenshots in `docs/img/`, each in light and dark, the homepage's before and after, and the same pair as slides in `docs/public/`. Rendering differs slightly between runs, so commit only the images your change affects.
+`node e2e/run.mjs docs` redraws the wiki's screenshots in `docs/img/`, each in light and dark, a before and after of one search, and the same pair as slides in `docs/public/`. Rendering differs slightly between runs, so commit only the images your change affects. The homepage's scroll-driven demo (`docs/.vitepress/theme/scroll-demo.ts`) is drawn in HTML rather than screenshots: update its wording by hand when the summary, tags, or hidden line change.
 
 ## Checking live pages
 
