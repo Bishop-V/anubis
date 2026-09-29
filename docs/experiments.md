@@ -2,6 +2,12 @@
 
 What was tried while building the tagging and lists release, what failed, and what is still unverified. Newest notes go at the top of each section.
 
+## Passphrase changes that race or lose their answer (2026-09-29)
+
+- **Found:** a review of the passphrase change turned up three gaps. It ran in the Settings page, so the lock that keeps syncs from overlapping (which only works within one script) didn't hold back the background script's syncs; a sync's last attempt writes without `If-Match` and could put back a file under the old passphrase. When the server saved the new file but the answer was lost, the old passphrase stayed saved and the next sync failed. And a server disconnected during the change was connected again when it finished.
+- **Fixed:** Settings asks the background script to change the passphrase (`change-passphrase`), where it queues behind syncs. When the save gets no answer or a server error, Anubis reads the file back and keeps the new passphrase if it opens the file; when the server can't be reached, it keeps the old one with an `unconfirmed` status telling the user what to do. The new passphrase is saved only while the same connection is still there.
+- **Checked:** unit tests for a lost answer, the server going away after the save, and a disconnect during the change each failed before the fix. The `webdav` e2e part still changes the passphrase through Settings.
+
 ## Firefox first, and one command before a release (2026-09-29)
 
 - **Found:** the release workflow passed the Chrome, Firefox, and Edge zips to one `wxt submit`, so a release needed every store's keys, even with only the Firefox listing ready.

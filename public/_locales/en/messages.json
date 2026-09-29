@@ -215,6 +215,7 @@
   "webdavErrorWrongPassphrase": { "message": "That passphrase couldn't decrypt the sync file. Check it; the server file was left unchanged." },
   "webdavErrorUnencrypted": { "message": "This connection was encrypted before, but the server now has a plain-text sync file. It was left unchanged. Check the server file before syncing again." },
   "webdavErrorChanged": { "message": "The sync file changed during the passphrase change, or the server cannot protect it from concurrent edits. Nothing was overwritten. Sync again and retry." },
+  "webdavErrorUnconfirmed": { "message": "The connection to $1 dropped while it saved the file, so Anubis can't tell which passphrase it has now. The old passphrase is still saved here. If the next sync says it's wrong, enter the new one.", "description": "$1 is the server's host name." },
   "webdavErrorServer": { "message": "The server answered with an error (HTTP $1). Try again later.", "description": "$1 is an HTTP status code, e.g. 500." },
   "webdavErrorFailed": { "message": "Sync didn't finish. Try again." }
 }

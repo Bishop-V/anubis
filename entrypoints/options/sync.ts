@@ -5,7 +5,6 @@ import { send } from '@/utils/messages';
 import { personalIsLocal, SYNC_QUOTA_BYTES, syncBytesInUse } from '@/utils/storage';
 import {
   accountItem,
-  changeEncryptionPassphrase,
   connect,
   disconnect,
   hasDataConsent,
@@ -40,6 +39,7 @@ const ERRORS: Record<SyncErrorCode, MessageKey> = {
   passphrase: 'webdavErrorWrongPassphrase',
   unencrypted: 'webdavErrorUnencrypted',
   changed: 'webdavErrorChanged',
+  unconfirmed: 'webdavErrorUnconfirmed',
 };
 
 const host = (account: WebdavAccount) => new URL(account.url).hostname;
@@ -214,7 +214,7 @@ function changePassphrasePanel(): HTMLElement {
     }
     syncing = true;
     rerender();
-    await changeEncryptionPassphrase(input.value);
+    await send({ type: 'change-passphrase', passphrase: input.value });
     syncing = false;
     rerender();
   });
