@@ -11,7 +11,7 @@ This project values documented experimentation, so record what was tried and wha
 ## Stack
 
 - [WXT](https://wxt.dev) 0.21 with Vite and TypeScript. There's no UI framework; the popup, options page, welcome page and in-page UI are plain DOM built with the `h()` helper in `utils/dom.ts`. Text from lists always goes in as text nodes, never markup.
-- Interface text goes in `public/_locales/en/messages.json` and is used through `t()`, `tn()` (counts) and `localizePage()` (static HTML) from `utils/i18n.ts`. The manifest, ranking names, popup, welcome page and the result menu's report and suggestion lines are converted; `ROADMAP.md` lists the rest. Put new text there rather than in code.
+- Interface text goes in `public/_locales/en/messages.json` and is used through `t()`, `tn()` (counts) and `localizePage()` (static HTML) from `utils/i18n.ts`. The manifest, ranking names, popup, welcome page, the summary's buttons and the result menu's report and suggestion lines are converted; `ROADMAP.md` lists the rest. Put new text there rather than in code.
 - It builds as Chrome MV3 and Firefox MV2 from one codebase.
 - Storage uses WXT's `storage` (`#imports`):
   - `sync:settings`, `sync:tagPrefs`, `sync:subscriptions` (absent means the default subscriptions)

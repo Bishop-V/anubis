@@ -7,9 +7,9 @@ name: Docs
 on:
   push:
     branches: [main]
-    paths: ['docs/**', 'lists/directory.json', 'package.json', 'package-lock.json', '.github/workflows/docs.yml']
+    paths: ['docs/**', 'lists/directory.json', 'utils/links.ts', 'package.json', 'package-lock.json', '.github/workflows/docs.yml']
   pull_request:
-    paths: ['docs/**', 'lists/directory.json', 'package.json', 'package-lock.json', '.github/workflows/docs.yml']
+    paths: ['docs/**', 'lists/directory.json', 'utils/links.ts', 'package.json', 'package-lock.json', '.github/workflows/docs.yml']
   workflow_dispatch:
 
 permissions:

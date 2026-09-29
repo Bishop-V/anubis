@@ -4,6 +4,7 @@ import { browser } from '#imports';
 import { domainChoices, normalizeDomain, siteOf } from '@/utils/domain';
 import { engineFor } from '@/utils/engines';
 import { guide } from '@/utils/links';
+import { colorForTag } from '@/utils/listformat';
 import { LEVELS } from '@/utils/matcher';
 import { h, icon } from '@/utils/dom';
 import { ICON_CLOSE, ICON_GEAR, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
@@ -66,7 +67,7 @@ async function renderAll() {
                     : null,
                 entry.tags.map((id) => {
                   const tag = rules.tags.get(id);
-                  return h('span', { class: 'tag', style: `--c: ${tag?.color ?? 'var(--gold)'}` }, h('i', { class: 'gem' }), tag?.label ?? id);
+                  return h('span', { class: 'tag', style: `--c: ${tag?.color ?? colorForTag(id)}` }, h('i', { class: 'gem' }), tag?.label ?? id);
                 }),
               ),
             ),

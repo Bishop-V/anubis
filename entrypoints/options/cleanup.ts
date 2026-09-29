@@ -1,19 +1,9 @@
 import { CLEANUP, type CleanupKind } from '@/utils/cleanup';
 import { h } from '@/utils/dom';
 import { getSettings, updateSettings } from '@/utils/storage';
+import { pageTitle, switchRow } from './parts';
 
 // "Clean up": parts of search pages that aren't results, removed on every search.
-
-function switchRow(label: string, hint: string, checked: boolean, onChange: (on: boolean) => void): HTMLElement {
-  const input = h('input', { type: 'checkbox', checked, attrs: { 'aria-label': label } });
-  input.addEventListener('change', () => onChange(input.checked));
-  return h(
-    'div',
-    { class: 'setting' },
-    h('div', null, h('b', null, label), h('span', { class: 'muted' }, hint)),
-    h('label', { class: 'switch' }, input, h('span')),
-  );
-}
 
 export async function renderCleanup(): Promise<HTMLElement> {
   const settings = await getSettings();
@@ -21,16 +11,7 @@ export async function renderCleanup(): Promise<HTMLElement> {
   return h(
     'div',
     null,
-    h(
-      'div',
-      { class: 'page-title' },
-      h(
-        'div',
-        null,
-        h('h2', null, 'Clean up pages'),
-        h('p', null, 'Remove parts of search pages that aren’t results. “Show hidden” above the results brings them back on that page.'),
-      ),
-    ),
+    pageTitle('Clean up pages', 'Remove parts of search pages that aren’t results. “Show hidden” above the results brings them back on that page.'),
     h(
       'div',
       { class: 'panel' },

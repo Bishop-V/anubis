@@ -49,7 +49,7 @@ npm run build && npm run build:chrome   # both browsers
 npx web-ext lint -s .output/firefox-mv2 # must show zero warnings
 ```
 
-If you changed `docs/`, also run `npm run docs:build`, which fails on a broken link. If you changed anything on search pages and have Chromium, run `npm run e2e` with `CHROMIUM_PATH` set; it needs no network.
+If you changed `docs/`, also run `npm run docs:build`, which fails on a broken link. If you changed something the guide's screenshots show, redraw them with `node e2e/run.mjs docs` (it makes light and dark versions) and commit only the ones your change affects. If you changed anything on search pages and have Chromium, run `npm run e2e` with `CHROMIUM_PATH` set; it needs no network.
 
 ## Pull requests and merging
 

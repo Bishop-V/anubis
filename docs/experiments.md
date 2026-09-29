@@ -101,6 +101,7 @@ Asked for: pinning and the starter lists were only explained in the user guide, 
 - **Shipped:** the browsers' own `_locales/<language>/messages.json` format, which translation tools read as they are, with a small helper (`utils/i18n.ts`). Keys are type-checked against the English file. Counts use `Intl.PluralRules` with keys like `popupListCount_one` and `popupListCount_other`, falling back to `_other`. A `langCode` message gives the language the text is actually in, for the page's `lang` attribute, since a missing translation falls back to English.
 - WXT types `getMessage` with one overload per key, which a key held in a variable can't satisfy, so the helper calls it through a looser signature.
 - The fake browser in unit tests has no `i18n`; `tests/i18n.test.ts` answers from the English file.
+- **The summary's buttons (2026-09-29)** now use the popup's messages (`showHidden`, `loadMore`…), so the two can't drift apart: the page's Load more results tooltip had its own wording. The cog's label, shared by the popup, the summary and the result menu, lost its `popup` prefix (`anubisSettings`).
 
 ## Engine watch
 
