@@ -65,7 +65,9 @@ const siteIcon = (svg) =>
 // `ai`: DuckDuckGo's AI features, modelled on EasyList's AI filters (unchecked on a
 // live page): the answer as the list's first item, found by its data-testid with no
 // heading to go by, and Duck.ai as a tab and a button in the search box.
-export function duckduckgo(query, results, dark = false, more = [], { ai = false } = {}) {
+// `wide`: the results in a list that isn't an <ol>, inside a <main> that also holds
+// a side panel, so the results area is wider than the results.
+export function duckduckgo(query, results, dark = false, more = [], { ai = false, wide = false } = {}) {
   const item = ([url, title, snippet], i) => `
       <li data-layout="organic" class="wLL07_0Xnd1QZpzpfR4W">
         <article id="r1-${i}" data-testid="result" data-nrn="result" class="yQDlj3B5DI5YO8c8Ulio CpkrTDP54mqzpuCSn1Fa SKlplDuh9FjtDprgoMxk">
@@ -88,6 +90,10 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
     .tabs{padding:10px 28px 0 76px;color:${dark ? '#aaa' : '#666'};font-size:13px;display:flex;gap:20px;border-bottom:1px solid ${dark ? '#333' : '#eee'}}
     .tabs b{color:${dark ? '#fff' : '#111'};border-bottom:2px solid #de5833;padding-bottom:8px}
     main{padding:18px 28px 60px 76px;max-width:660px}
+    main.wide{position:relative;max-width:none}
+    main.wide li{list-style:none}
+    main.wide [data-testid=mainline]{max-width:620px}
+    main.wide [data-area=sidebar]{position:absolute;top:18px;left:760px;width:300px;padding:12px;border:1px solid ${dark ? '#333' : '#e5e5e5'};border-radius:10px}
     ol{list-style:none;margin:0;padding:0}
     li{margin:0 0 26px}
     article{position:relative}
@@ -105,11 +111,11 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
   </style></head><body>
   <div class="hdr"><div class="logo"></div><div class="q">${esc(query)}${ai ? '<button type="button" class="ask" title="Ask Duck.ai" data-ssg-id="ai-searchbox-chat-submit">✦</button>' : ''}</div></div>
   <div class="tabs"><b>All</b><span>Images</span><span>Videos</span><span>News</span><span>Maps</span>${ai ? `<a class="chat" href="/?q=${encodeURIComponent(query)}&ia=chat">Duck.ai</a>` : ''}</div>
-  <main><section data-testid="web-vertical"><ol class="react-results--main">${ai ? `
+  <main${wide ? ' class="wide"' : ''}><section data-testid="${wide ? 'mainline' : 'web-vertical'}"><${wide ? 'div' : 'ol'} class="react-results--main">${ai ? `
       <li class="assist"><div class="assist-box"><div data-testid="duckassist-answer-content"><p>A promise is an object representing the eventual completion or failure of an asynchronous operation, and its resulting value.</p></div>
-        <a href="/?q=${encodeURIComponent(query)}&ia=chat&duckai=1">Ask a follow-up</a></div></li>` : ''}${items}</ol>
+        <a href="/?q=${encodeURIComponent(query)}&ia=chat&duckai=1">Ask a follow-up</a></div></li>` : ''}${items}</${wide ? 'div' : 'ol'}>
   ${more.length ? '<button id="more-results" style="margin:10px 0;padding:8px 18px;border-radius:8px;border:1px solid #ccc;background:none;color:inherit">More results</button>' : ''}
-  </section></main>
+  </section>${wide ? '<section data-area="sidebar"><b>JavaScript</b><p>A programming language for the web.</p></section>' : ''}</main>
   <script>
     // DuckDuckGo's own "hide this site": the result's menu collapses it into a notice.
     document.addEventListener('click', (e) => {

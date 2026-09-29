@@ -470,6 +470,8 @@ export function renderHiddenBar(
 let summaryHost: HTMLElement | undefined;
 /** The results area, while the summary sits outside it and lines up with it. */
 let summaryArea: HTMLElement | undefined;
+/** The list of results, which the summary also lines up with where the area is wider (DuckDuckGo's spans the side panel). */
+let summaryColumn: HTMLElement | undefined;
 /** Places that didn't put the summary above the results once the page had loaded, so aren't tried again. */
 const misplaced = new WeakSet<HTMLElement>();
 const misplacedInside = new WeakSet<HTMLElement>();
@@ -485,6 +487,7 @@ let realignOnResize = false;
 export interface SummaryPlace {
   before: HTMLElement;
   area?: HTMLElement;
+  column?: HTMLElement;
   fallback?: HTMLElement;
 }
 
@@ -509,6 +512,7 @@ export function renderSummary(
   if (!place?.before.parentElement || !worthShowing) {
     summaryHost?.remove();
     summaryArea = undefined;
+    summaryColumn = undefined;
     return;
   }
   summaryHost ??= makeHost('anubis-summary', theme).host;
@@ -593,6 +597,7 @@ export function renderSummary(
 
   announce(summaryHost, change ?? '');
 
+  summaryColumn = place.column;
   summaryArea = place.area && !place.area.contains(summaryHost) ? place.area : undefined;
   alignSummary();
   // While the page is still loading, its layout may not be final: a place that
@@ -617,11 +622,11 @@ export function renderSummary(
     summaryArea = place.area && !place.area.contains(summaryHost) ? place.area : undefined;
     alignSummary();
   }
-  if (summaryArea && !realignOnResize) {
+  if ((summaryArea || summaryColumn) && !realignOnResize) {
     realignOnResize = true;
     let queued = false;
     addEventListener('resize', () => {
-      if (queued || !summaryArea) return;
+      if (queued || !(summaryArea || summaryColumn)) return;
       queued = true;
       requestAnimationFrame(() => {
         queued = false;
@@ -649,18 +654,24 @@ function announce(host: HTMLElement, text: string): void {
 }
 
 /**
- * Outside the results area, inset the summary so its text lines up with the
- * results. Only the host's padding changes, so its own box stays where the page
- * lays it out.
+ * Inset the summary so it lines up with the results: with the results area when
+ * it sits outside it, and with the list of results when that's narrower. Only the
+ * host's padding changes, so its own box stays where the page lays it out.
  */
 function alignSummary(): void {
   const host = summaryHost;
   if (!host) return;
   for (const prop of ['padding-left', 'padding-right', 'box-sizing']) host.style.removeProperty(prop);
-  if (!summaryArea?.isConnected || !host.isConnected) return;
+  if (!host.isConnected) return;
   const box = host.getBoundingClientRect();
-  const area = summaryArea.getBoundingClientRect();
-  if (!box.width || !area.width) return;
+  if (!box.width) return;
+  const target = [summaryArea, summaryColumn]
+    .filter((el): el is HTMLElement => !!el?.isConnected && !el.contains(host))
+    .map((el) => el.getBoundingClientRect())
+    .filter((r) => r.width)
+    .sort((a, b) => a.width - b.width)[0];
+  if (!target) return;
+  const area = target;
   const left = Math.max(0, Math.round(area.left - box.left));
   const right = Math.max(0, Math.round(box.right - area.right));
   host.style.setProperty('box-sizing', 'border-box', 'important');
@@ -703,6 +714,7 @@ function settingsButton(open: () => void, focusKey?: string): HTMLButtonElement 
 export function removeAllUi(): void {
   document.querySelectorAll(HOST_TAGS).forEach((el) => el.remove());
   summaryHost = undefined;
+  summaryColumn = undefined;
   summaryArea = undefined;
 }
 

@@ -614,14 +614,14 @@ function makeRoomForPins(pinned: Set<HTMLElement>) {
  * most web results, widened to the engine's boundary (Google's #rso) when it has
  * one. Results that show their address count; videos in a panel don't.
  */
-function summaryAnchor(results: FoundResult[], engine: EngineDef): { before?: HTMLElement; area?: HTMLElement } {
+function summaryAnchor(results: FoundResult[], engine: EngineDef): { before?: HTMLElement; area?: HTMLElement; column?: HTMLElement } {
   const main = mainColumn(results, engine).list;
   if (!main) return { before: results[0]?.container };
   const area = (engine.boundary && main.closest<HTMLElement>(engine.boundary)) || main;
   for (const child of area.children) {
-    if (child instanceof HTMLElement && !/^(ANUBIS-SUMMARY|SCRIPT|STYLE|TEMPLATE|LINK|META)$/.test(child.tagName)) return { before: child, area };
+    if (child instanceof HTMLElement && !/^(ANUBIS-SUMMARY|SCRIPT|STYLE|TEMPLATE|LINK|META)$/.test(child.tagName)) return { before: child, area, column: main };
   }
-  return { before: results[0]?.container, area };
+  return { before: results[0]?.container, area, column: main };
 }
 
 /**
@@ -632,14 +632,14 @@ function summaryAnchor(results: FoundResult[], engine: EngineDef): { before?: HT
  * somewhere else.
  */
 function summaryPlace(results: FoundResult[], engine: EngineDef, clutter: Clutter[]): SummaryPlace | undefined {
-  const { before, area } = summaryAnchor(results, engine);
+  const { before, area, column } = summaryAnchor(results, engine);
   if (!before) return undefined;
   const ai = clutter
     .filter((c) => c.kind === 'ai' && !c.uncounted)
     .map((c) => c.block)
     .filter((b) => b.isConnected && !b.contains(before) && before.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_PRECEDING && !b.closest('aside, [role="complementary"], #rhs'))
     .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
-  return ai[0] ? { before: ai[0], area, fallback: before } : { before, area };
+  return ai[0] ? { before: ai[0], area, column, fallback: before } : { before, area, column };
 }
 
 /** The next result in the page after this one, skipping Anubis's own elements and blocks clean-up removed. */

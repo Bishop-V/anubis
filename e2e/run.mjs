@@ -153,6 +153,7 @@ async function launch(settings = {}, ext = EXT) {
     'https://search.brave.com/search?q=anubis&panels=1': brave('anubis', ANUBIS_RESULTS, { panels: true }),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
+    'https://duckduckgo.com/?q=javascript+promises&wide=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { wide: true }),
   };
   await ctx.route(/^https:\/\/((noai\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com)\//, (route) => {
     const body = pages[route.request().url()];
@@ -751,6 +752,28 @@ if (!only || only === 'cleanup' || checks) {
   const summaries = await page.evaluate(() => document.querySelectorAll('anubis-summary').length);
   console.log('== summaries after a reload of the extension:', summaries);
   if (checks) assertChecks('one summary after a reload of the extension', { oneSummary: summaries === 1 });
+
+  // Where the results area also holds a side panel, the summary still spans only the results.
+  await page.goto('https://duckduckgo.com/?q=javascript+promises&wide=1');
+  await page.waitForTimeout(800);
+  const wide = await page.evaluate(() => {
+    const host = document.querySelector('anubis-summary');
+    const list = document.querySelector('.react-results--main');
+    if (!host || !list) return { found: false };
+    const box = host.getBoundingClientRect();
+    const cs = getComputedStyle(host);
+    const left = box.left + parseFloat(cs.paddingLeft);
+    const right = box.right - parseFloat(cs.paddingRight);
+    const col = list.getBoundingClientRect();
+    return { found: true, left: Math.round(left), right: Math.round(right), colLeft: Math.round(col.left), colRight: Math.round(col.right) };
+  });
+  console.log('== summary on a results area wider than the results:', JSON.stringify(wide));
+  if (checks) {
+    assertChecks('summary as wide as the results', {
+      found: wide.found,
+      linedUp: wide.found && Math.abs(wide.left - wide.colLeft) <= 1 && Math.abs(wide.right - wide.colRight) <= 1,
+    });
+  }
 
   // Forcing it on Google: the Web tab.
   await setSettings({ cleanup: { ...all, ai: false } , googleWebTab: true });
