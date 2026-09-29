@@ -2,7 +2,7 @@ import { balanceSvg, setBalance } from '@/utils/balance';
 import { domainChoices, siteOf } from '@/utils/domain';
 import { h, icon } from '@/utils/dom';
 import type { EngineDef } from '@/utils/engines';
-import { ICON_ANUBIS, ICON_CLOSE, ICON_GEAR, ICON_HIDE, ICON_RANK, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
+import { ICON_ANUBIS, ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS, WEIGH_ICONS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
 import { LEVELS, TAG_CHOICES, type Level, type TagPref, type Verdict } from '@/utils/matcher';
 import { t, tList, tn } from '@/utils/i18n';
@@ -245,6 +245,7 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
 
 export function ensureWeighButton(
   result: FoundResult,
+  level: Level,
   engine: EngineDef,
   theme: PageTheme,
   onOpen: (button: HTMLElement, result: FoundResult) => void,
@@ -253,7 +254,7 @@ export function ensureWeighButton(
   let host = weighHosts.get(container);
   if (!host) {
     const made = makeHost('anubis-weigh', theme, engine.table ? 'inline-block' : 'block');
-    const button = h('button', { class: 'weigh', type: 'button', attrs: { 'aria-haspopup': 'dialog', 'aria-expanded': 'false' } }, icon(ICON_RANK));
+    const button = h('button', { class: 'weigh', type: 'button', attrs: { 'aria-haspopup': 'dialog', 'aria-expanded': 'false' } });
     const owner = made.host;
     button.addEventListener('click', (e) => {
       // Keep the click from reaching the result link underneath.
@@ -267,12 +268,18 @@ export function ensureWeighButton(
   }
   weighResult.set(host, result);
   host.dataset.theme = theme;
-  // Named for its site, so a list of the page's buttons tells them apart.
-  const label = t('weighLabel', result.host.replace(/^www\./, ''));
+  // Named for its site, so a list of the page's buttons tells them apart, and for its
+  // ranking, which the icon shows: the balance tips with it.
+  const site = result.host.replace(/^www\./, '');
+  const label = level === 'normal' ? t('weighLabel', site) : t('weighLabelRanked', site, LEVEL_CHIPS[level].toLocaleLowerCase());
   const button = rendered.get(host) as HTMLElement | undefined;
   if (button && button.title !== label) {
     button.title = label;
     button.setAttribute('aria-label', label);
+  }
+  if (button && button.dataset.level !== level) {
+    button.dataset.level = level;
+    button.replaceChildren(icon(WEIGH_ICONS[level]));
   }
 
   if (engine.table) {
@@ -680,7 +687,7 @@ export function closePopover(): void {
   popover = undefined;
 }
 
-/** Close the result menu and put focus back on the ⇅ button that opened it. */
+/** Close the result menu and put focus back on the button that opened it. */
 function closeAndReturn(): void {
   const anchor = popover?.anchor;
   closePopover();

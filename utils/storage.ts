@@ -235,7 +235,7 @@ export function splitIntoChunks(text: string): string[] {
 }
 
 export const DEFAULT_PERSONAL = `${PERSONAL_HEADER}
-! One instruction per line. The ⇅ menu on each search result edits this list.
+! One instruction per line. The ⚖ menu on each search result edits this list.
 ! The format: ${guide('list-format')}
 $site=fandom.com,discard
 `;

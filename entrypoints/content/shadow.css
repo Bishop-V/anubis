@@ -179,7 +179,7 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
-  /* Clear of the ⇅ button in the result's corner, which a long line would reach on a phone. */
+  /* Clear of the ⚖ button in the result's corner, which a long line would reach on a phone. */
   padding-right: 28px;
   font-size: 12.5px;
   line-height: 20px;

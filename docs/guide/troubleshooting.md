@@ -7,7 +7,7 @@
 - **Is it the web results?** Anubis leaves the image, video, news and shopping tabs alone.
 - **Is the extension still loaded?** When it's installed from source, Firefox removes it each time it closes. Load it again from `about:debugging`.
 
-## Some results have no tags or ⇅ button
+## Some results have no tags or ⚖ button
 
 Search engines change their pages without notice, and a new layout can hide results from Anubis. Please [open an issue](https://github.com/Bishop-V/anubis/issues) with:
 
@@ -53,4 +53,4 @@ That's **Settings → Clean up → Always open the Web tab**. Choose **All** abo
 
 ## Something was hidden and I don't know why
 
-Open the ⇅ menu on the result. **Why** lists each list or tag behind the decision. Your own ranking beats all of them. If a list got it wrong, "Wrong? Report it to *list name*" tells the list's maintainers ([Report a mistake in a list](./lists.md#report-a-mistake-in-a-list)).
+Open the ⚖ menu on the result. **Why** lists each list or tag behind the decision. Your own ranking beats all of them. If a list got it wrong, "Wrong? Report it to *list name*" tells the list's maintainers ([Report a mistake in a list](./lists.md#report-a-mistake-in-a-list)).

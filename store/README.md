@@ -108,7 +108,7 @@ Plain text, so it reads the same in both dashboards.
 ```text
 Anubis hides, ranks and tags search results, on the search engine you already use.
 
-Rank any site from the results. Press the ⇅ button on a result to hide, lower, raise or pin that site, or to tag it. Your choices apply to every search.
+Rank any site from the results. Press the ⚖ button on a result to hide, lower, raise or pin that site, or to tag it. Your choices apply to every search.
 
 Tags. Results carry small labels such as "Official docs", "Discussion" or "Paywall", from your own tags and from lists you subscribe to. For each tag, choose whether it only shows, highlights results, or raises, lowers or hides them.
 
@@ -135,7 +135,7 @@ From real search pages, not the e2e mocks: a listing has to show the product as 
 Take them in a fresh browser profile that isn't signed in, so no account picture, history or location shows. In Chrome: DevTools → device toolbar → Responsive, 1280 × 800, device pixel ratio 1 → ⋮ → Capture screenshot. Save them in `store/screenshots/`. Don't save page HTML here; it carries the account and location.
 
 1. Google results for a programming question: tags under titles, a pinned documentation result at the top, and the summary counting a hidden result.
-2. The ⇅ menu open on a result: the site's name, the five rankings and its tags.
+2. The ⚖ menu open on a result: the site's name, the five rankings and its tags.
 3. A results page after clean-up, with the summary saying an AI answer was removed.
 4. The toolbar popup over a results page.
 5. Settings → Lists, with the lists Anubis starts with and More lists.

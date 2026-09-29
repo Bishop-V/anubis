@@ -35,7 +35,7 @@ A one-line summary above the results says what Anubis did: which results it rais
 
 ## Hide a site
 
-Hover a result and press the ⇅ button at its top-right corner. In the menu, choose **Hide**.
+Hover a result and press the ⚖ button at its top-right corner. In the menu, choose **Hide**.
 
 ![The menu on a result: Hide, Lower, Normal, Raise and Pin, with tags below](../img/menu.png)
 

@@ -231,7 +231,7 @@ if (!only || only === 'pages') {
   await shoot('https://www.bing.com/search?q=javascript+promises', 'bing');
   await shoot('https://search.brave.com/search?q=anubis', 'brave');
 
-  // DuckDuckGo: the ⇅ button sits beside each result's own ⋯ menu, centred on it,
+  // DuckDuckGo: the ⚖ button sits beside each result's own ⋯ menu, centred on it,
   // at its size and shape, in Anubis's colours.
   await page.goto('https://duckduckgo.com/?q=javascript+promises&dark=1');
   await page.waitForTimeout(600);
@@ -727,7 +727,7 @@ if (!only || only === 'popover') {
 }
 
 // What a screen reader hears, from the accessibility tree (it sees inside closed
-// shadow roots): each ⇅ button names its site, focus stays put when a click
+// shadow roots): each ⚖ button names its site, focus stays put when a click
 // re-renders or closes what was clicked, and a change is announced.
 async function axTree() {
   const cdp = await page.context().newCDPSession(page);
@@ -751,7 +751,7 @@ if (!only || only === 'a11y') {
   await page.goto('https://duckduckgo.com/?q=javascript+promises');
   await page.waitForTimeout(600);
   const buttons = (await axTree()).filter((n) => n.role === 'button' && n.name.startsWith('Hide, rank or tag'));
-  console.log('\n== ⇅ buttons:', JSON.stringify({ count: buttons.length, distinct: new Set(buttons.map((b) => b.name)).size, first: buttons[0]?.name }));
+  console.log('\n== ⚖ buttons:', JSON.stringify({ count: buttons.length, distinct: new Set(buttons.map((b) => b.name)).size, first: buttons[0]?.name }));
 
   const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
   await target.hover();
