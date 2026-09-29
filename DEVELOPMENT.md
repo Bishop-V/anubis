@@ -72,6 +72,7 @@ Two builds of the same commit are identical file for file. Firefox's reviewers r
 | `local:personal` | This computer | The personal list, once it's too big for sync (about 100 KB in total). |
 | `local:listCache` | This computer | Downloaded lists, with when they were fetched and the last error. |
 | `local:lastUpdateCheck` | This computer | When the background script last checked lists for updates. |
+| `local:colorScheme` | This computer | Light or dark as the extension's own pages see it, written by the popup, settings and (in Firefox) the background page. On Auto the result menu uses it, since a search page can be told otherwise (Firefox's Website appearance). |
 | `sync:blockedSites`, `sync:hideStyleMoved` | Sync | Migration leftovers: the old block list, and a flag for a one-time settings change. |
 
 Every change reads the stored value, changes it and writes it back, so writes go through a queue per item (`writeQueue` in `utils/storage.ts`): `editPersonal`, `updateSettings`, `setTagPref`, `editSubscriptions` and `editListCache`. Use them rather than `setValue` whenever the new value depends on the old one. Pass `updateSettings` a function when the change depends on the current settings (turning one engine off among several).

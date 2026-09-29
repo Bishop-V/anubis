@@ -3,6 +3,7 @@ import { readSubscribeLink, subscribeQuery } from '@/utils/links';
 import { sendToActiveTab, type Message } from '@/utils/messages';
 import { getSettings, migrateLegacy, migrateSettings, settingsItem, updateSettings } from '@/utils/storage';
 import { refreshStale } from '@/utils/subscriptions';
+import { recordColorScheme } from '@/utils/theme';
 
 // The background script keeps subscribed lists fresh, shows the hidden-result
 // count on the toolbar icon, greys the icon out while Anubis is off, and opens the
@@ -25,6 +26,10 @@ export default defineBackground(() => {
   };
   void getSettings().then((s) => showEnabled(s.enabled));
   settingsItem.watch((s) => showEnabled(s?.enabled !== false));
+
+  // Firefox's background page sees light or dark as the popup will. Chrome's service
+  // worker can't (no matchMedia), but there search pages see the same.
+  recordColorScheme();
 
   // One update at a time. "Update all" (forced) doesn't settle for a routine check
   // that's already running: it runs straight after it.

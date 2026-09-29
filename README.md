@@ -15,7 +15,7 @@ In Egyptian myth, Anubis weighed each heart against a feather. This extension we
 - **Bring your old lists.** Paste uBlacklist rules, a HOHSER export or a Goggle into Settings → Share and back up to move your sites over.
 - **Filter by tag.** The summary above the results lists the tags on the page; click one to see only those results.
 - **Clean up pages.** Remove AI answers (Google's AI Overview and AI Mode tab, DuckDuckGo's AI-assisted answers and Duck.ai buttons, and Brave's AI answers), video panels, "People also ask", top stories, image rows and related searches, on every search (Bing's AI answer and video panel aren't recognised yet). Google can also always open its plain Web tab. "Show hidden" brings removed parts back on that page.
-- **Quiet on the page.** Hidden results leave the page (or collapse to one line, if you prefer); the summary above the results is one sentence. Light and dark themes follow the search engine or your choice.
+- **Quiet on the page.** Hidden results leave the page (or collapse to one line, if you prefer); the summary above the results is one sentence. Light and dark themes follow your browser and the search engine, or your choice.
 - **Keyboard shortcuts.** Alt+Shift+O turns Anubis on or off, and Alt+Shift+H shows hidden results (Control instead of Alt on a Mac).
 
 Works on Google (every country domain), DuckDuckGo (including the HTML and Lite versions), Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex and Mojeek.

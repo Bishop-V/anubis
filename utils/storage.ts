@@ -13,6 +13,7 @@ import { fromBlockedSites, PERSONAL_HEADER } from './personal';
 //   local:personal       the personal list, when it's too big for sync
 //   local:listCache      downloaded list texts; too big for sync, re-fetched per device
 //   local:lastUpdateCheck  when the background last checked lists for updates
+//   local:colorScheme    light or dark, as the extension's own pages see it (see utils/theme.ts)
 //   sync:blockedSites    legacy block list, migrated into the personal list
 //   sync:hideStyleMoved  the one-time move from Collapse to Remove as the default
 
@@ -133,6 +134,11 @@ export const subscriptionsItem = storage.defineItem<Subscription[]>('sync:subscr
 export const listCacheItem = storage.defineItem<Record<string, CachedList>>('local:listCache', {
   fallback: {},
 });
+/**
+ * Light or dark as the popup sees it on "auto". Search pages can have their own
+ * (Firefox's "Website appearance"), so the result menu reads this to match the popup.
+ */
+export const colorSchemeItem = storage.defineItem<'light' | 'dark' | null>('local:colorScheme', { fallback: null });
 const listCacheQueue = writeQueue();
 
 /** Change the downloaded lists, one change at a time. */

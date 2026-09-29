@@ -6,7 +6,7 @@ import { evaluate, type Verdict } from '@/utils/matcher';
 import { send, type Message, type PageStats } from '@/utils/messages';
 import { formatSiteLine, getSite, setSiteLevel, toggleSiteTag, upsertTagDef, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
-import { editPersonal, type Theme } from '@/utils/storage';
+import { colorSchemeItem, editPersonal, type Theme } from '@/utils/storage';
 import { reportUrl, suggestionUrl } from '@/utils/subscriptions';
 import { findClutter, mainColumn, redirectFor, watchAllTab, type Clutter } from './cleanup';
 import { freshState, weighDeeper } from './deeper';
@@ -60,6 +60,11 @@ export default defineContentScript({
     };
     if (redirected()) return;
     if (engine.id === 'google') watchAllTab();
+
+    // Light or dark as the popup sees it, for the result menu on "auto".
+    let scheme = await colorSchemeItem.getValue().catch(() => null);
+    const menuTheme = (setting: Theme): PageTheme =>
+      setting !== 'auto' ? setting : (scheme ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
 
     let reveal = false;
     // Blocks removed by clean-up in the last pass.
@@ -305,7 +310,7 @@ export default defineContentScript({
           tags: rules.tags,
           trackers,
           reports,
-          theme: pageTheme(rules.settings.theme),
+          theme: menuTheme(rules.settings.theme),
         },
         {
           setLevel: (domain, level: PersonalLevel) => void editPersonal((t) => setSiteLevel(t, domain, level)),
@@ -395,6 +400,11 @@ export default defineContentScript({
     pass();
     // One early pass may run before the results exist; the observer catches the rest.
     document.addEventListener('DOMContentLoaded', () => schedule(), { once: true });
+
+    colorSchemeItem.watch((next) => {
+      scheme = next;
+      refreshOpenPopover();
+    });
 
     watchRuleSet(async () => {
       rules = await loadRuleSet();
@@ -512,7 +522,11 @@ function nextResultAfter(container: HTMLElement): HTMLElement | undefined {
   return next instanceof HTMLElement && next.hasAttribute('data-anubis-result') ? next : undefined;
 }
 
-/** Light or dark, from the setting or, on "auto", from the page's own background. */
+/**
+ * Light or dark for what sits on the page (the summary, tags, hidden-result lines),
+ * from the setting or, on "auto", from the page's own background, so it stays
+ * readable. The result menu is a card of its own and matches the popup instead.
+ */
 function pageTheme(setting: Theme): PageTheme {
   if (setting !== 'auto') return setting;
   for (const el of [document.body, document.documentElement]) {

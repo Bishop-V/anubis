@@ -579,11 +579,18 @@ if (!only || only === 'runs') {
   await page.screenshot({ path: `${SHOTS}google-runs.png`, fullPage: true });
 }
 
+/** Light or dark for the browser, as search pages and the extension's own pages see it. */
+async function browserScheme(colorScheme) {
+  await page.emulateMedia({ colorScheme });
+  await ctx.serviceWorkers()[0].evaluate((s) => (s ? chrome.storage.local.set({ colorScheme: s }) : chrome.storage.local.remove('colorScheme')), colorScheme);
+}
+
 if (!only || only === 'popover') {
   for (const [url, name] of [
     ['https://duckduckgo.com/?q=javascript+promises', 'popover-light'],
     ['https://duckduckgo.com/?q=javascript+promises&dark=1', 'popover-dark'],
   ]) {
+    await browserScheme(name === 'popover-dark' ? 'dark' : 'light');
     await page.goto(url);
     await page.waitForTimeout(600);
     const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
@@ -605,6 +612,24 @@ if (!only || only === 'popover') {
     }
     await page.keyboard.press('Escape');
   }
+
+  // On "auto", the menu matches the popup (the browser's light or dark), while what
+  // sits on the page follows the page, to stay readable on it.
+  await browserScheme('dark');
+  await page.goto('https://duckduckgo.com/?q=javascript+promises');
+  await page.waitForTimeout(600);
+  const tutorial = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
+  await tutorial.hover();
+  await tutorial.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+  await page.waitForTimeout(300);
+  console.log('\n== auto theme, dark browser, light page:', JSON.stringify(await page.evaluate(() => ({
+    menu: document.querySelector('anubis-popover')?.dataset.theme,
+    summary: document.querySelector('anubis-summary')?.dataset.theme,
+    tags: document.querySelector('anubis-chips')?.dataset.theme,
+  }))));
+  await page.screenshot({ path: `${SHOTS}popover-auto-dark-browser.png`, fullPage: false });
+  await page.keyboard.press('Escape');
+  await browserScheme(null);
 
   // A result a subscribed list weighs (Official docs tags MDN) offers to report it
   // to that list, as a pre-filled issue with the rule that matched.
@@ -872,7 +897,8 @@ if (only === 'docs') {
     ['light', '', ''],
     ['dark', '-dark', '&dark=1'],
   ];
-  for (const [, suffix, query] of SCHEMES) {
+  for (const [scheme, suffix, query] of SCHEMES) {
+    await browserScheme(scheme);
     await page.goto(`https://www.google.com/search?q=anubis${query}`);
     await page.waitForTimeout(700);
     await clip(`summary${suffix}`, ['anubis-summary', '#rso > .MjjYud:nth-of-type(2)']);
@@ -891,6 +917,7 @@ if (only === 'docs') {
     await clip(`menu${suffix}`, ['anubis-popover', '[data-anubis-result]:has(a[href*="javascript.info"])'], 12);
     await page.keyboard.press('Escape');
   }
+  await browserScheme(null);
 
   await setSettings({ cleanup: { ai: true, videos: true, questions: true, news: true, images: true, related: true } });
   for (const [, suffix, query] of SCHEMES) {

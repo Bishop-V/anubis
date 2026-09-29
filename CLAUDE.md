@@ -16,7 +16,7 @@ This project values documented experimentation, so record what was tried and wha
 - Storage uses WXT's `storage` (`#imports`):
   - `sync:settings`, `sync:tagPrefs`, `sync:subscriptions` (absent means the default subscriptions)
   - `sync:personal` + `sync:personal.N`: the personal list as text in the list format, chunked to fit sync's 8 KB items; falls back to `local:personal` when too big
-  - `local:listCache`: downloaded list texts; `local:lastUpdateCheck`: when the background last checked lists for updates
+  - `local:listCache`: downloaded list texts; `local:lastUpdateCheck`: when the background last checked lists for updates; `local:colorScheme`: light or dark as the popup sees it, so the result menu can match it on Auto
   - `sync:blockedSites` is the old block list, migrated into the personal list on install; `sync:hideStyleMoved` records the one-time move from Collapse to Remove as the default
 
 ## Commands

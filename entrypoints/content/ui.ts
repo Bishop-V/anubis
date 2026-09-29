@@ -142,8 +142,9 @@ function render(host: HTMLElement, key: string, build: () => Node): void {
   rendered.set(host, next);
 }
 
+/** The theme of everything on the page but the result menu, which has its own (`PopoverData.theme`). */
 export function applyTheme(theme: PageTheme): void {
-  for (const el of document.querySelectorAll<HTMLElement>(HOST_TAGS)) el.dataset.theme = theme;
+  for (const el of document.querySelectorAll<HTMLElement>(HOST_TAGS)) if (el.tagName !== 'ANUBIS-POPOVER') el.dataset.theme = theme;
 }
 
 const chipsHosts = new WeakMap<HTMLElement, HTMLElement>();
