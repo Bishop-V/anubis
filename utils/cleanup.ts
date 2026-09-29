@@ -7,7 +7,6 @@
 // APIs: the options page and the content script both use it.
 
 import { tJoin, tn, type PluralKey } from './i18n';
-import { ENGINES } from './engines';
 
 export type CleanupKind = 'ai' | 'videos' | 'questions' | 'discussions' | 'news' | 'images' | 'related';
 

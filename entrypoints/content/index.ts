@@ -41,11 +41,15 @@ import {
   type SummaryPlace,
 } from './ui';
 
+// Runs on search result pages. Each pass: find the results, weigh each one against
+// the personal list and subscriptions, then tag, hide, highlight, and rerank them.
 export default defineContentScript({
   matches: ENGINE_MATCHES,
+  // Start early so results are weighed as they stream in, before they paint.
   runAt: 'document_start',
 
   async main() {
+    // Phones get a different layout from some engines (Firefox for Android).
     const engine = engineFor(location.hostname, isMobileAgent(navigator.userAgent));
     if (!engine) return;
 
@@ -70,7 +74,7 @@ export default defineContentScript({
     if (redirected()) return;
     if (engine.id === 'google') watchAllTab();
 
-    // Match the result menu's auto theme to the popup.
+    // Light or dark as the popup sees it, for the result menu on "auto".
     let scheme = await colorSchemeItem.getValue().catch(() => null);
     const menuTheme = (setting: Theme): PageTheme =>
       setting !== 'auto' ? setting : (scheme ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
