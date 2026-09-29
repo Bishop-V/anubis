@@ -704,6 +704,25 @@ if (!only || only === 'popover') {
     rule: /```\n(.*)\n```/.exec(issue?.searchParams.get('body') ?? '')?.[1],
   }));
   await page.screenshot({ path: `${SHOTS}popover-report.png`, fullPage: false });
+  // The site name is text with the select unseen over it. Focus the select and
+  // choose the whole site with the keyboard.
+  {
+    const cdp = await page.context().newCDPSession(page);
+    const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+    const find = (node) => (node.nodeName === 'SELECT' ? node : [...(node.children ?? []), ...(node.shadowRoots ?? [])].map(find).find(Boolean));
+    const host = (function hostOf(node) {
+      return node.localName === 'anubis-popover' ? node : [...(node.children ?? []), ...(node.shadowRoots ?? [])].map(hostOf).find(Boolean);
+    })(root);
+    const select = host && find(host);
+    if (select) await cdp.send('DOM.focus', { nodeId: select.nodeId });
+    await cdp.detach();
+  }
+  await page.keyboard.press('ArrowDown');
+  await page.waitForTimeout(300);
+  const menu = await shadowText('anubis-popover');
+  const focused = await page.evaluate(() => document.activeElement?.localName);
+  console.log('== site name after choosing the whole site:', JSON.stringify(menu.split(' ')[0]), '| focus in the menu:', focused === 'anubis-popover');
+  await page.screenshot({ path: `${SHOTS}popover-site.png`, fullPage: false });
   await page.keyboard.press('Escape');
 }
 

@@ -90,7 +90,7 @@ async function renderMain() {
   if (ticket !== rendering) return;
   if (section.help) el.querySelector('.page-title p')?.append(' ', external(guide(section.help[0]), section.help[1], 'help-link'));
   main.replaceChildren(el);
-  document.title = `${section.label} · Anubis`;
+  document.title = `${section.label} – Anubis`;
   window.scrollTo(0, scroll);
 }
 

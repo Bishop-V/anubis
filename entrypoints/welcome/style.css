@@ -1,40 +1,56 @@
-/* The welcome page: one narrow column, sections divided by hairlines like the
-   popup and settings. The logo is the only ornament. */
+/* The welcome page. On a wide window it's the settings page's two columns: section
+   names down the left, what to do on the right, sections divided by hairlines.
+   On a narrow one it's a single column. The logo is the only ornament. */
 
 main {
-  max-width: 580px;
+  max-width: 1040px;
   margin: 0 auto;
-  padding: 64px 24px 48px;
+  padding: 72px 40px 56px;
+}
+header,
+section,
+footer {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  column-gap: 48px;
+}
+.body {
+  min-width: 0;
+  max-width: 680px;
 }
 
+header {
+  align-items: center;
+  padding-bottom: 36px;
+}
 header img {
   display: block;
-  margin-bottom: 18px;
-  border-radius: 12px;
 }
 h1 {
   margin: 0;
   font: 400 34px/1.15 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
 }
 .lead {
-  margin: 10px 0 30px;
-  font-size: 15.5px;
+  margin: 10px 0 0;
+  max-width: 56ch;
+  font-size: 16px;
   color: var(--muted);
 }
 
 section {
-  padding: 24px 0 26px;
+  align-items: baseline;
+  padding: 28px 0 30px;
   border-top: 1px solid var(--line);
 }
 h2 {
-  margin: 0 0 6px;
+  margin: 0;
   font: 500 21px/1.3 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
 }
 section p {
   margin: 0 0 10px;
   max-width: 62ch;
 }
-section p:last-child {
+.body > :last-child {
   margin-bottom: 0;
 }
 
@@ -60,32 +76,34 @@ section p:last-child {
   gap: 8px;
 }
 
-/* Your lists */
+/* Your lists: two across, each under its own hairline, like the settings' engines. */
 .lists {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  column-gap: 32px;
   list-style: none;
-  margin: 4px 0 16px;
+  margin: 14px 0 18px;
   padding: 0;
 }
 .lists li {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  padding: 10px 0;
-}
-.lists li + li {
+  padding: 12px 0 14px;
   border-top: 1px solid var(--line);
 }
 .lists .name {
   font-weight: 600;
 }
 .lists .description {
+  font-size: 13px;
   color: var(--muted);
 }
 .lists .tags {
   display: flex;
   flex-wrap: wrap;
   gap: 2px 14px;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 .more {
   display: flex;
@@ -96,11 +114,14 @@ section p:last-child {
 }
 
 footer {
-  display: flex;
-  gap: 18px;
-  padding-top: 16px;
+  padding-top: 18px;
   border-top: 1px solid var(--line);
   font-size: 13px;
+}
+footer .body {
+  grid-column: 2;
+  display: flex;
+  gap: 18px;
 }
 footer a {
   color: var(--muted);
@@ -111,6 +132,26 @@ footer a:hover {
   text-decoration: underline;
 }
 
+@media (max-width: 900px) {
+  main {
+    max-width: 640px;
+    padding: 56px 24px 48px;
+  }
+  header,
+  section,
+  footer {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  header img {
+    margin-bottom: 18px;
+  }
+  h2 {
+    margin-bottom: 6px;
+  }
+  footer .body {
+    grid-column: 1;
+  }
+}
 @media (max-width: 600px) {
   main {
     padding: 36px 16px 32px;

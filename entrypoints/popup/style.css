@@ -45,14 +45,12 @@ h2 {
   min-width: 0;
 }
 .row select {
-  width: 76px;
-  padding: 0 6px;
+  width: 84px;
 }
 
 /* This page */
 .sentence {
   margin: 0;
-  font-size: 13.5px;
 }
 .page-actions {
   display: flex;
