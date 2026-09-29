@@ -4,7 +4,7 @@ A list is a text file anyone can subscribe to. You don't need a server or an acc
 
 ## 1. Write it
 
-The quickest start is your own list. **Settings → Share and back up → Download my list** saves every site you've ranked and tagged. Or write one from scratch:
+The quickest start is your own list. **Settings → Backup → Download my list** saves every site you've ranked and tagged. Or write one from scratch:
 
 ```
 ! name: Official docs

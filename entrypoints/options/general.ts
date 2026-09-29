@@ -203,7 +203,7 @@ export async function renderShare(): Promise<HTMLElement> {
   return h(
     'div',
     null,
-    pageTitle('Share and back up', 'Your list is a plain text file. Publish it and anyone can subscribe; keep a backup of everything else.'),
+    pageTitle('Back up, import and share', 'Keep a copy of everything, bring your sites over from another tool, or publish your list for others to subscribe to.'),
     h(
       'div',
       { class: 'panel' },

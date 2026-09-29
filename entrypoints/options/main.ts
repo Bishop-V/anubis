@@ -34,7 +34,7 @@ const SECTIONS: Section[] = [
   { id: 'appearance', label: 'Appearance', render: renderAppearance, help: ['guide/ranking#hidden-results', 'About hidden results'] },
   { id: 'engines', label: 'Search engines', render: renderEngines, help: ['guide/search-engines', 'Which engines work'] },
   { id: 'sync', label: t('syncHeading'), render: renderSync, help: ['guide/sync', 'How sync works'] },
-  { id: 'share', label: 'Share and back up', render: renderShare, help: ['guide/import-and-backup', 'Moving from other tools'] },
+  { id: 'share', label: 'Backup', render: renderShare, help: ['guide/import-and-backup', 'Moving from other tools'] },
 ];
 
 function external(href: string, text: string, className?: string): HTMLElement {
