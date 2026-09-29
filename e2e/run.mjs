@@ -3,8 +3,8 @@
 // prints what Anubis decided for each result and saves screenshots to e2e/shots/.
 //
 //   npm run e2e                 build, then run everything
-//   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, off, cleanup, popover, ddg-hide,
-//                               filter, deeper, import, subscribe, subscribe-link, options, welcome
+//   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
+//                               popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options, welcome
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slides
 //                               in docs/public/
 //
@@ -120,7 +120,7 @@ async function launch(settings = {}) {
     ]),
     'https://www.google.com/search?q=anubis&udm=14': google('anubis', ANUBIS_RESULTS),
     'https://www.google.com/search?q=anubis&mobile=1': googleMobile('anubis', ANUBIS_RESULTS),
-    'https://noai.duckduckgo.com/?q=javascript+promises': duckduckgo('javascript promises', JS_RESULTS),
+    'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
   };
   await ctx.route(/^https:\/\/((noai\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com)\//, (route) => {
@@ -425,10 +425,30 @@ if (!only || only === 'cleanup') {
     console.log(`== video panel (${layout}):`, JSON.stringify(check));
   }
 
-  // Forcing it: DuckDuckGo opens its no-AI version, Google its Web tab.
-  await page.goto('https://duckduckgo.com/?q=javascript+promises');
-  await page.waitForURL(/noai\.duckduckgo\.com/, { timeout: 3000 }).catch(() => {});
-  console.log('== DuckDuckGo with AI answers off:', page.url());
+  // DuckDuckGo stays where it is, with your settings: the AI answer goes, and so do
+  // the Duck.ai tab and button, which aren't counted.
+  await page.goto('https://duckduckgo.com/?q=javascript+promises&ai=1');
+  await page.waitForTimeout(800);
+  console.log(
+    '== DuckDuckGo with AI answers removed:',
+    JSON.stringify(
+      await page.evaluate(() => {
+        const visible = (el) => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0;
+        return {
+          host: location.hostname,
+          answer: visible(document.querySelector('[data-testid="duckassist-answer-content"]')),
+          duckAiTab: visible(document.querySelector('.tabs .chat')),
+          duckAiButton: visible(document.querySelector('.ask')),
+          otherTabs: [...document.querySelectorAll('.tabs span')].filter(visible).length,
+          results: [...document.querySelectorAll('[data-anubis-result]')].filter(visible).length,
+        };
+      }),
+    ),
+  );
+  console.log('   removed:', JSON.stringify((await statsNow())?.removed));
+  await page.screenshot({ path: `${SHOTS}ddg-cleanup.png`, fullPage: true });
+
+  // Forcing it on Google: the Web tab.
   await setSettings({ cleanup: { ...all, ai: false } , googleWebTab: true });
   await page.goto('https://www.google.com/search?q=anubis');
   await page.waitForURL(/udm=14/, { timeout: 3000 }).catch(() => {});

@@ -5,6 +5,10 @@ import type { Level } from './matcher';
 // published unchanged. These helpers edit it line by line and leave comments and
 // hand-written rules alone.
 
+/** The personal list's id, and its name wherever Anubis shows it (a reason, a tag's source). */
+export const PERSONAL_ID = 'personal';
+export const PERSONAL_NAME = 'Your list';
+
 export const PERSONAL_HEADER = `! name: My list
 ! description: Sites I've weighed myself.
 ! author: me
@@ -93,23 +97,36 @@ export function getSite(text: string, site: string): SiteEntry | undefined {
 
 /** Replace every simple line for `site` with one canonical line (or none). */
 export function setSite(text: string, site: string, level: PersonalLevel, tags: string[]): string {
-  const lines = text.split(/\r?\n/);
-  let insertAt = -1;
+  return setSites(text, new Map([[site, { level, tags }]]));
+}
+
+/**
+ * `setSite` for many sites in one pass over the text, so importing thousands of
+ * sites doesn't re-read the list once per site. A site's line goes where its first
+ * line was; new sites go at the end, in the order given.
+ */
+export function setSites(text: string, sites: Map<string, { level: PersonalLevel; tags: string[] }>): string {
+  const line = (site: string) => {
+    const { level, tags } = sites.get(site)!;
+    return formatSiteLine(site, level, [...new Set(tags)]);
+  };
+  const placed = new Set<string>();
   const kept: string[] = [];
-  for (const line of lines) {
-    const parsed = parseSimpleLine(line);
-    if (parsed?.site === site) {
-      if (insertAt === -1) insertAt = kept.length;
+  for (const raw of text.split(/\r?\n/)) {
+    const site = parseSimpleLine(raw)?.site;
+    if (site === undefined || !sites.has(site)) {
+      kept.push(raw);
       continue;
     }
-    kept.push(line);
+    if (placed.has(site)) continue;
+    placed.add(site);
+    const next = line(site);
+    if (next) kept.push(next);
   }
-  const next = formatSiteLine(site, level, [...new Set(tags)]);
-  if (next) {
-    if (insertAt === -1) {
-      while (kept.length && kept[kept.length - 1]!.trim() === '') kept.pop();
-      kept.push(next, '');
-    } else kept.splice(insertAt, 0, next);
+  const added = [...sites.keys()].filter((site) => !placed.has(site)).flatMap((site) => line(site) ?? []);
+  if (added.length) {
+    while (kept.length && kept[kept.length - 1]!.trim() === '') kept.pop();
+    kept.push(...added, '');
   }
   return kept.join('\n');
 }

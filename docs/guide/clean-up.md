@@ -6,7 +6,7 @@ Search pages carry a lot that isn't results: AI answers, video panels, "People a
 
 | Switch | What it removes |
 | --- | --- |
-| **AI answers** | Google's AI Overview and its AI Mode tab, Brave's AI answers. On DuckDuckGo, searches open in its no-AI version instead (see below). |
+| **AI answers** | Google's AI Overview and its AI Mode tab, DuckDuckGo's AI-assisted answers and its Duck.ai tab and buttons, Brave's AI answers. |
 | **Videos** | Video and short-video panels between the results. |
 | **People also ask** | Lists of other people's questions with expandable answers. |
 | **Top stories** | News panels between the results. |
@@ -31,7 +31,6 @@ Headings are recognised in English and some common translations (French, German,
 
 ## Stopping AI answers at the source
 
-Removing a panel after the engine sends it depends on recognising it. Two engines have their own switch for a page without AI, and Anubis uses them:
+Removing a panel after the engine sends it depends on recognising it. Google has its own view without AI, and Anubis can use it:
 
-- **DuckDuckGo:** with **AI answers** on, searches open on `noai.duckduckgo.com`, DuckDuckGo's own version without Search Assist or Duck.ai.
 - **Google:** **Always open the Web tab** opens Google's own "Web" view (the one under **More → Web**), which shows plain links with no AI Overview and no panels at all. This is a separate switch because it removes everything that isn't a link, including panels you might want. To see the usual page for one search, choose **All** above the results.

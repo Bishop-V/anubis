@@ -1,9 +1,6 @@
 import { describeRemoved } from './cleanup';
+import { andList } from './dom';
 import type { PageStats } from './messages';
-
-function andList(parts: string[]): string {
-  return parts.length < 2 ? (parts[0] ?? '') : `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
-}
 
 /**
  * "Anubis pinned 1, raised 2 and hid 2 of 9 results, and removed an AI answer."

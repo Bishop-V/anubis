@@ -4,11 +4,14 @@ import officialDocs from '@/lists/official-docs.anubis?raw';
 import paywalls from '@/lists/paywalls.anubis?raw';
 import reference from '@/lists/reference.anubis?raw';
 import { storage } from '#imports';
+import { andList } from './dom';
 import { parseList, safeWebUrl } from './listformat';
 import {
+  editListCache,
   getSettings,
   listCacheItem,
   subscriptionsItem,
+  writeQueue,
   type CachedList,
   type Subscription,
 } from './storage';
@@ -36,8 +39,15 @@ export async function getSubscriptions(): Promise<Subscription[]> {
   return stored ?? defaultSubscriptions();
 }
 
-export async function saveSubscriptions(subs: Subscription[]): Promise<void> {
-  await subscriptionsItem.setValue(subs);
+const subscriptionsQueue = writeQueue();
+
+/** Change the subscriptions, one change at a time, starting from the defaults if they were never changed. */
+export function editSubscriptions(edit: (subs: Subscription[]) => Subscription[]): Promise<void> {
+  return subscriptionsQueue(async () => subscriptionsItem.setValue(edit(await getSubscriptions())));
+}
+
+export function saveSubscriptions(subs: Subscription[]): Promise<void> {
+  return editSubscriptions(() => subs);
 }
 
 /** The directory shipped with this build. A fresher copy is fetched from GitHub when possible. */
@@ -186,8 +196,7 @@ export async function refreshList(sub: Subscription): Promise<CachedList> {
       errorAt: Date.now(),
     };
   }
-  const latest = await listCacheItem.getValue();
-  await listCacheItem.setValue({ ...latest, [sub.id]: entry });
+  await editListCache((latest) => ({ ...latest, [sub.id]: entry }));
   return entry;
 }
 
@@ -227,7 +236,7 @@ export async function fetchDirectory(): Promise<DirectoryEntry[]> {
  * A link that opens a pre-filled issue on the list's tracker, so anyone can
  * propose an addition without an account on anything but the forge itself.
  */
-export function suggestionUrl(issues: string | undefined, title: string, body: string): string | undefined {
+export function issueUrl(issues: string | undefined, title: string, body: string): string | undefined {
   const safe = safeWebUrl(issues);
   if (!safe) return undefined;
   try {
@@ -286,16 +295,15 @@ export function reportTracker(url: string, meta: { issues?: string; homepage?: s
   return meta.issues ?? repoIssues(meta.homepage) ?? repoIssues(url);
 }
 
-/** "a", "a and b", "a, b and c" */
-function joinAnd(items: string[]): string {
-  return items.length < 2 ? (items[0] ?? '') : `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`;
+/** A result's address for an issue: without its query and fragment, which can carry session details. */
+function plainAddress(url: URL): string {
+  return `${url.origin}${url.pathname}`;
 }
 
 /**
  * A pre-filled issue telling a list it's wrong about a result: what the list does,
- * the rules that matched and the result's address. The issue is written in English
- * whatever the interface language, for the list's maintainers. The address loses
- * its query and fragment, which can carry session details.
+ * the rules that matched and the result's address. Like suggestions, the issue is
+ * written in English whatever the interface language, for the list's maintainers.
  */
 export function reportUrl(
   issues: string | undefined,
@@ -311,14 +319,26 @@ export function reportUrl(
   }
   const site = url.hostname.replace(/^www\./, '');
   const rules = reasons.flatMap((r) => (r.rule ? [r.rule] : []));
-  const lines = [`Result: ${url.origin}${url.pathname}`, '', `**${list}** ${joinAnd([...new Set(reasons.map((r) => r.text))])}, and I think that’s wrong.`];
+  const lines = [`Result: ${plainAddress(url)}`, '', `**${list}** ${andList([...new Set(reasons.map((r) => r.text))])}, and I think that’s wrong.`];
   if (rules.length) {
     // A fence longer than any run of backticks in the rules, so none can close it.
     const longest = Math.max(0, ...rules.map((r) => Math.max(0, ...(r.raw.match(/`+/g) ?? []).map((m) => m.length))));
     const fence = '`'.repeat(Math.max(3, longest + 1));
-    const numbers = joinAnd(rules.map((r) => String(r.line)));
+    const numbers = andList(rules.map((r) => String(r.line)));
     lines.push('', rules.length === 1 ? `Rule on line ${numbers}:` : `Rules on lines ${numbers}:`, fence, ...rules.map((r) => r.raw), fence);
   }
   lines.push('', 'What should change:', '', '', '_Sent from Anubis._');
-  return suggestionUrl(issues, `Wrong rule for ${site}`, lines.join('\n'));
+  return issueUrl(issues, `Wrong rule for ${site}`, lines.join('\n'));
+}
+
+/** A pre-filled issue proposing a site to a list: the line for it, and a result from the site as an example. */
+export function suggestionUrl(issues: string | undefined, list: string, domain: string, line: string, resultUrl: string): string | undefined {
+  let url: URL;
+  try {
+    url = new URL(resultUrl);
+  } catch {
+    return undefined;
+  }
+  const body = [`Suggested instruction for **${list}**:`, '', '```', line, '```', '', `Example result: ${plainAddress(url)}`, '', '_Sent from Anubis._'];
+  return issueUrl(issues, `Suggest ${domain}`, body.join('\n'));
 }

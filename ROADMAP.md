@@ -4,10 +4,9 @@ Work that's planned but not started, or started and not finished. Each item says
 
 ## Before the first store release
 
-- **Check live pages.** Everything on search pages was built against mocks. Work through "Still unverified" in `docs/experiments.md`. Done on 2026-09-29 for DuckDuckGo (all three versions), Bing, Brave, Startpage, Ecosia and Yahoo. Left: Kagi, Yandex and Mojeek (they showed automated Chromium a human check), Load more results on Bing, Ecosia and Yahoo in an everyday browser, and Google's phone layout.
+- **Check live pages.** Everything on search pages was built against mocks. Work through "Still unverified" in `docs/experiments.md`. Done on 2026-09-29 for DuckDuckGo (all three versions), Bing, Brave, Startpage, Ecosia and Yahoo. Left: Kagi, Yandex and Mojeek (they showed automated Chromium a human check), Load more results on Bing, Ecosia and Yahoo in an everyday browser, Google's phone layout, and DuckDuckGo's AI answer and Duck.ai buttons, which are now removed on the page (their selectors come from EasyList's AI list).
 - **Fix what the live check found** (details in `docs/experiments.md`, 2026-09-29). For each, model the live markup in `e2e/fixtures.mjs` and confirm the check fails before fixing:
   - *Load more results stops without saying why.* On Bing, Ecosia and Yahoo the fetched page came back as a bot check, and Bing's (status 200) reads as a last page with no results. In `fetchNext` (`entrypoints/content/deeper.ts`), recognise a page with no results, or a challenge, and set an error the summary shows ("Bing asked to confirm you're not a robot. Open the next page instead.").
-  - *DuckDuckGo loses your settings on its no-AI version.* Its settings cookies are set for `duckduckgo.com` only, so the redirect to `noai.duckduckgo.com` (`entrypoints/content/cleanup.ts`) resets region, theme and the rest. Carry them over as DuckDuckGo's URL parameters, which share the cookies' names (`kl`, `kae`…).
   - *Bing's AI answer stays.* It's `li.b_ans.b_top` with `.cht_container`, labelled only by `aria-label="AI Overview"`. Read `aria-label` as a label, or add `.cht_container` to Bing in `CLEANUP_SELECTORS` (`utils/cleanup.ts`).
   - *Bing's video panel stays.* Its heading is "Videos of <search>": add `Videos of ` to the videos kind's `prefixes`.
   - *Brave's AI selector is out of date.* The block is `#llm-snippet`, not `#summarizer`. It's removed anyway through its disclaimer, so this is only a backup; update the selector.
@@ -20,7 +19,6 @@ Work that's planned but not started, or started and not finished. Each item says
 
 ## Security
 
-- **A slow pattern in a subscribed list can freeze search tabs.** `parseUblacklistLine` in `utils/listformat.ts` compiles a list's `/regex/` rules as they are, and they're tested against every result on every pass, in the page. A pattern like `/(a+)+$/` backtracks for seconds. Reject nested quantifiers and cap the pattern's length at parse time, and show it as a list error.
 - **The 5 MB limit is checked after the download.** `fetchText` in `utils/subscriptions.ts` reads the whole body first. Check `Content-Length`, or stop reading at the limit.
 - **`ci.yml` has no `permissions:` block.** Add `contents: read`, as `docs.yml` has.
 - **Dependabot** for npm and GitHub Actions: weekly, grouped, with a 7-day cooldown (the default is 3). Pin actions to commit SHAs and let Dependabot move them.
@@ -33,10 +31,11 @@ Work that's planned but not started, or started and not finished. Each item says
 
 ## Performance
 
-Fine as it is (content script 84 KB). Two cheap wins:
+Fine as it is (content script 84 KB). Two cheap wins, and one to measure:
 
 - Any change, even one click in the result menu, re-parses every subscribed list in every open search tab (`watchRuleSet` in `utils/ruleset.ts`). Re-parse only what changed.
 - `refreshStale` in `utils/subscriptions.ts` parses each list just to read `! expires:`. Store it in the cache when the list is downloaded.
+- With any clean-up switch on, `findClutter` (`entrypoints/content/cleanup.ts`) walks every text node on the page, on every pass. Measure it on a live Google page before changing anything; if it matters, skip the results' subtrees, which clean-up never removes.
 
 ## Firefox for Android
 

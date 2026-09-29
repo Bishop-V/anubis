@@ -2,21 +2,21 @@ import { browser } from '#imports';
 import { h, icon, plural, timeAgo } from '@/utils/dom';
 import { t } from '@/utils/i18n';
 import { ICON_EXTERNAL, ICON_REFRESH, ICON_TRASH } from '@/utils/icons';
-import { readSubscribeLink, type SubscribeLink } from '@/utils/links';
+import { readSubscribeLink, REPO_URL, type SubscribeLink } from '@/utils/links';
 import { colorForTag, parseList, type ListFormat, type ParsedList } from '@/utils/listformat';
 import { send } from '@/utils/messages';
 import { flash, flashed, rerender } from './flash';
-import { listCacheItem, type CachedList, type Subscription } from '@/utils/storage';
+import { editListCache, listCacheItem, type CachedList, type Subscription } from '@/utils/storage';
 import {
   builtinId,
   displayName,
   downloadList,
+  editSubscriptions,
   fetchDirectory,
   getSubscriptions,
   listText,
   originPermissionFor,
   refreshList,
-  saveSubscriptions,
   subscriptionId,
   toRawUrl,
   type DirectoryEntry,
@@ -79,24 +79,24 @@ async function subscribe(input: string, entry?: DirectoryEntry, name = entry?.na
   rerender();
   try {
     const text = await downloadList(url);
-    const subs = await getSubscriptions();
-    const existing = subs.find((s) => s.id === id || s.url === url);
-    const next: Subscription[] = existing
-      ? subs.map((s) => (s === existing ? { ...s, enabled: true } : s))
-      : [...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: entry?.builtin || undefined, name }];
-    const cache = await listCacheItem.getValue();
-    await listCacheItem.setValue({ ...cache, [existing?.id ?? id]: { text, fetchedAt: Date.now() } });
-    await saveSubscriptions(next);
+    const same = (s: Subscription) => s.id === id || s.url === url;
+    // The copy first, so the list has its text as soon as it's subscribed.
+    const existing = (await getSubscriptions()).find(same);
+    await editListCache((cache) => ({ ...cache, [existing?.id ?? id]: { text, fetchedAt: Date.now() } }));
+    await editSubscriptions((subs) =>
+      subs.some(same)
+        ? subs.map((s) => (same(s) ? { ...s, enabled: true } : s))
+        : [...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: entry?.builtin || undefined, name }],
+    );
     const parsed = parseList(text);
     flash('lists', 'ok', `Subscribed to ${displayName({ url, name }, parsed.meta)}: ${plural(parsed.rules.length, 'instruction')}, ${plural(parsed.tags.length, 'tag')}.`);
     if (offer && offered(offer).url === url) dropOffer();
   } catch (error) {
     // Built-in lists still work from their bundled copy when the download fails.
     if (entry?.builtin) {
-      const subs = await getSubscriptions();
-      if (!subs.some((s) => s.id === id)) {
-        await saveSubscriptions([...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: true, name: entry.name }]);
-      }
+      await editSubscriptions((subs) =>
+        subs.some((s) => s.id === id) ? subs : [...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: true, name: entry.name }],
+      );
       flash('lists', 'ok', `Subscribed to ${entry.name} (using the copy bundled with Anubis until it can update).`);
       if (offer && offered(offer).url === url) dropOffer();
     } else {
@@ -223,7 +223,7 @@ export async function renderLists(): Promise<HTMLElement> {
       'p',
       { class: 'muted', style: 'margin-top:26px;font-size:13px' },
       'Made a list worth sharing? Add it to the directory with a pull request to ',
-      h('a', { href: 'https://github.com/Bishop-V/anubis/blob/main/lists/directory.json', target: '_blank', rel: 'noopener noreferrer' }, 'lists/directory.json'),
+      h('a', { href: `${REPO_URL}/blob/main/lists/directory.json`, target: '_blank', rel: 'noopener noreferrer' }, 'lists/directory.json'),
       '.',
     ),
   );
@@ -277,9 +277,8 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
   const color = meta.avatar ?? colorForTag(sub.id);
 
   const toggle = h('input', { type: 'checkbox', checked: sub.enabled, attrs: { 'aria-label': `Use ${name}` } });
-  toggle.addEventListener('change', async () => {
-    const subs = await getSubscriptions();
-    await saveSubscriptions(subs.map((s) => (s.id === sub.id ? { ...s, enabled: toggle.checked } : s)));
+  toggle.addEventListener('change', () => {
+    void editSubscriptions((subs) => subs.map((s) => (s.id === sub.id ? { ...s, enabled: toggle.checked } : s)));
   });
 
   const update = async (e: Event) => {
@@ -293,11 +292,8 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
 
   const remove = async () => {
     if (!confirm(`Unsubscribe from ${name}?`)) return;
-    const subs = await getSubscriptions();
-    await saveSubscriptions(subs.filter((s) => s.id !== sub.id));
-    const cache = await listCacheItem.getValue();
-    delete cache[sub.id];
-    await listCacheItem.setValue(cache);
+    await editSubscriptions((subs) => subs.filter((s) => s.id !== sub.id));
+    await editListCache(({ [sub.id]: _, ...rest }) => rest);
   };
 
   const facts = [

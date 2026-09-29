@@ -11,7 +11,7 @@ This project values documented experimentation, so record what was tried and wha
 ## Stack
 
 - [WXT](https://wxt.dev) 0.21 with Vite and TypeScript. There's no UI framework; the popup, options page, welcome page and in-page UI are plain DOM built with the `h()` helper in `utils/dom.ts`. Text from lists always goes in as text nodes, never markup.
-- Interface text goes in `public/_locales/en/messages.json` and is used through `t()`, `tn()` (counts) and `localizePage()` (static HTML) from `utils/i18n.ts`. The manifest, ranking names, popup and welcome page are converted; `ROADMAP.md` lists the rest. Put new text there rather than in code.
+- Interface text goes in `public/_locales/en/messages.json` and is used through `t()`, `tn()` (counts) and `localizePage()` (static HTML) from `utils/i18n.ts`. The manifest, ranking names, popup, welcome page and the result menu's report and suggestion lines are converted; `ROADMAP.md` lists the rest. Put new text there rather than in code.
 - It builds as Chrome MV3 and Firefox MV2 from one codebase.
 - Storage uses WXT's `storage` (`#imports`):
   - `sync:settings`, `sync:tagPrefs`, `sync:subscriptions` (absent means the default subscriptions)
@@ -26,7 +26,7 @@ Firefox is the default target (`browser: 'firefox'` in `wxt.config.ts`). The `:c
 - `npm run dev` / `npm run dev:chrome`: opens a browser with the extension loaded and reloads it on save
 - `npm run build` / `npm run build:chrome`: production build into `.output/`
 - `npm run compile`: type-check. Run it after every change.
-- `npm test`: Vitest unit tests in `tests/` (list format, matcher, personal list edits, storage, bundled lists)
+- `npm test`: Vitest unit tests in `tests/` (list format, matcher, personal list edits, storage, bundled lists, clean-up, domains and issue links, engines, interface text, importers)
 - `npm run e2e`: builds for Chrome and runs `e2e/run.mjs` against mock search pages, saving screenshots to `e2e/shots/`. Needs `CHROMIUM_PATH` pointing at a Chromium binary; Playwright's downloaded browsers don't run on NixOS, so use the system one (`CHROMIUM_PATH=$(which chromium)`). `node e2e/run.mjs <part>` runs one part: `pages`, `hostile`, `grouped`, `reveal`, `runs`, `shortcuts`, `mobile`, `off`, `cleanup`, `popover`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `subscribe-link`, `options`, `welcome`. `subscribe` downloads a real list from GitHub; behind a TLS-intercepting proxy set `PROXY_CA_CERT` to its CA.
 - `npx web-ext lint -s .output/firefox-mv2`: the Mozilla add-on linter; keep it at zero warnings (CI treats warnings as errors)
 - `.github/workflows/ci.yml` runs compile, tests, both builds and the lint on pushes to main and on pull requests. Its `check` job is required: `main` is protected, so changes land through a pull request from a branch, never a direct push. `CONTRIBUTING.md` is the contributor-facing version of these rules, and `.github/pull_request_template.md` their checklist; keep both in step with this file.
@@ -53,7 +53,7 @@ Everything on search pages was built against the mocks in `e2e/fixtures.mjs`: th
   - `results.ts`: finding results, structurally (title heading → link → smallest single-result ancestor) or by selector, and resolving redirect links to the real URL
   - `ui.ts` + `shadow.css`: tags under titles, the ⇅ button on each result and its menu, hidden-result lines, the summary; all in closed shadow roots
   - `deeper.ts`: "Load more results", bringing later result pages onto the current one
-  - `cleanup.ts`: finding the blocks that clean-up removes (AI answers, video panels…), and its redirects (DuckDuckGo's no-AI version, Google's Web tab)
+  - `cleanup.ts`: finding the blocks that clean-up removes (AI answers, video panels…), and its redirect to Google's Web tab
   - `page.css`: page-level treatments keyed off `data-anubis-*` attributes (hidden, lowered, pinned, highlight, rerank)
 - `entrypoints/subscribe.content.ts`: runs only on the guide's subscribe page (`…/anubis/subscribe?url=…&name=…`, where subscribe links lead) and asks the background to open Settings → Lists with that list filled in. Settings asks before subscribing: anyone can make a link.
 - `entrypoints/background.ts`: list updates (on startup and when a search page asks, at most every 30 minutes), the toolbar badge, the grey icon while Anubis is off (`public/icon-off/`), and opening the welcome page on first install

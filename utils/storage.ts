@@ -1,5 +1,6 @@
 import { storage } from '#imports';
 import { NO_CLEANUP, type Cleanup } from './cleanup';
+import { guide } from './links';
 import type { TagPref } from './matcher';
 import { fromBlockedSites, PERSONAL_HEADER } from './personal';
 
@@ -7,10 +8,13 @@ import { fromBlockedSites, PERSONAL_HEADER } from './personal';
 //
 //   sync:settings        appearance and behaviour (small)
 //   sync:tagPrefs        what to do with each tag (small)
-//   sync:subscriptions   which lists the user subscribes to (small)
+//   sync:subscriptions   which lists the user subscribes to (small); absent means the defaults
 //   sync:personal*       the personal list as text, split into chunks (see below)
+//   local:personal       the personal list, when it's too big for sync
 //   local:listCache      downloaded list texts; too big for sync, re-fetched per device
+//   local:lastUpdateCheck  when the background last checked lists for updates
 //   sync:blockedSites    legacy block list, migrated into the personal list
+//   sync:hideStyleMoved  the one-time move from Collapse to Remove as the default
 
 export type Theme = 'auto' | 'dark' | 'light';
 export type HideStyle = 'collapse' | 'remove' | 'dim';
@@ -54,6 +58,21 @@ export const DEFAULT_SETTINGS: Settings = {
   googleWebTab: false,
 };
 
+/**
+ * Runs read-modify-write changes to one stored item one after another, so two
+ * quick changes from this page can't read the same value and overwrite each
+ * other. Each page (a search tab, the popup, settings) has its own queues; see
+ * "Storage" in docs/experiments.md.
+ */
+export function writeQueue(): <T>(change: () => Promise<T>) => Promise<T> {
+  let tail: Promise<unknown> = Promise.resolve();
+  return (change) => {
+    const run = tail.then(change);
+    tail = run.catch(() => undefined);
+    return run;
+  };
+}
+
 export const settingsItem = storage.defineItem<Settings>('sync:settings', { fallback: DEFAULT_SETTINGS });
 
 export async function getSettings(): Promise<Settings> {
@@ -62,19 +81,28 @@ export async function getSettings(): Promise<Settings> {
   return { ...DEFAULT_SETTINGS, ...stored, cleanup: { ...NO_CLEANUP, ...stored?.cleanup } };
 }
 
-export async function updateSettings(patch: Partial<Settings>): Promise<Settings> {
-  const next = { ...(await getSettings()), ...patch };
-  await settingsItem.setValue(next);
-  return next;
+const settingsQueue = writeQueue();
+
+/** Change some settings. Pass a function to work from the current ones (turning one engine off among many). */
+export function updateSettings(patch: Partial<Settings> | ((current: Settings) => Partial<Settings>)): Promise<Settings> {
+  return settingsQueue(async () => {
+    const current = await getSettings();
+    const next = { ...current, ...(typeof patch === 'function' ? patch(current) : patch) };
+    await settingsItem.setValue(next);
+    return next;
+  });
 }
 
 export const tagPrefsItem = storage.defineItem<Record<string, TagPref>>('sync:tagPrefs', { fallback: {} });
+const tagPrefsQueue = writeQueue();
 
-export async function setTagPref(id: string, patch: Partial<TagPref>): Promise<void> {
-  const prefs = await tagPrefsItem.getValue();
-  const next = { ...prefs[id], ...patch };
-  for (const k of Object.keys(next) as (keyof TagPref)[]) if (next[k] === undefined) delete next[k];
-  await tagPrefsItem.setValue({ ...prefs, [id]: next });
+export function setTagPref(id: string, patch: Partial<TagPref>): Promise<void> {
+  return tagPrefsQueue(async () => {
+    const prefs = await tagPrefsItem.getValue();
+    const next = { ...prefs[id], ...patch };
+    for (const k of Object.keys(next) as (keyof TagPref)[]) if (next[k] === undefined) delete next[k];
+    await tagPrefsItem.setValue({ ...prefs, [id]: next });
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -105,6 +133,12 @@ export const subscriptionsItem = storage.defineItem<Subscription[]>('sync:subscr
 export const listCacheItem = storage.defineItem<Record<string, CachedList>>('local:listCache', {
   fallback: {},
 });
+const listCacheQueue = writeQueue();
+
+/** Change the downloaded lists, one change at a time. */
+export function editListCache(edit: (cache: Record<string, CachedList>) => Record<string, CachedList>): Promise<void> {
+  return listCacheQueue(async () => listCacheItem.setValue(edit(await listCacheItem.getValue())));
+}
 
 // ---------------------------------------------------------------------------
 // Personal list, chunked across sync items.
@@ -146,8 +180,8 @@ export function splitIntoChunks(text: string): string[] {
 }
 
 export const DEFAULT_PERSONAL = `${PERSONAL_HEADER}
-! One instruction per line. The weigh menu on each search result edits this list.
-! See docs/list-format.md for the syntax.
+! One instruction per line. The ⇅ menu on each search result edits this list.
+! The format: ${guide('list-format')}
 $site=fandom.com,discard
 `;
 
@@ -186,20 +220,18 @@ export async function savePersonal(text: string): Promise<{ synced: boolean }> {
   }
 }
 
-let editQueue: Promise<unknown> = Promise.resolve();
+const personalQueue = writeQueue();
 
 /**
  * Read-modify-write helper for the personal list. Edits from this page run one
  * after another, so two quick clicks can't overwrite each other.
  */
 export function editPersonal(edit: (text: string) => string): Promise<string> {
-  const run = editQueue.then(async () => {
+  return personalQueue(async () => {
     const next = edit(await loadPersonal());
     await savePersonal(next);
     return next;
   });
-  editQueue = run.catch(() => undefined);
-  return run;
 }
 
 export async function personalIsLocal(): Promise<boolean> {

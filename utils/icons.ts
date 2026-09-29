@@ -41,7 +41,7 @@ export const ICON_AUTO = svg('<circle cx="8" cy="8" r="5.5"/><path d="M8 2.5v11"
 export const ICON_REFRESH = svg('<path d="M13 3.5v3h-3"/><path d="M12.6 6.5A5 5 0 103 9.5"/>');
 export const ICON_TRASH = svg('<path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5"/>');
 
-export const ICON_SHARE = svg('<path d="M8 10V2.5M5 5.5l3-3 3 3"/><path d="M3.5 9v4h9V9"/>');
+export const ICON_UPLOAD = svg('<path d="M8 10V2.5M5 5.5l3-3 3 3"/><path d="M3.5 9v4h9V9"/>');
 export const ICON_DOWNLOAD = svg('<path d="M8 2.5V10M5 7l3 3 3-3"/><path d="M3.5 10.5V13h9v-2.5"/>');
 export const ICON_EDIT = svg('<path d="M10.5 2.8l2.7 2.7-7.4 7.4H3.1v-2.7z"/>');
 

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { decodeBingRedirect, displayedDomainToUrl, domainChoices, normalizeDomain, siteOf } from '@/utils/domain';
 import { existsSync } from 'node:fs';
 import { DOCS_URL, readSubscribeLink, SUBSCRIBE_PAGE, subscribeLink } from '@/utils/links';
-import { originPermissionFor, reportTracker, reportUrl, suggestionUrl, toRawUrl } from '@/utils/subscriptions';
+import { issueUrl, originPermissionFor, reportTracker, reportUrl, suggestionUrl, toRawUrl } from '@/utils/subscriptions';
 
 describe('domains', () => {
   it('normalizes what people type', () => {
@@ -52,15 +52,15 @@ describe('subscription URLs', () => {
   });
 
   it('builds pre-filled issue links', () => {
-    const gh = new URL(suggestionUrl('https://github.com/o/r/issues', 'Add x', 'body')!);
+    const gh = new URL(issueUrl('https://github.com/o/r/issues', 'Add x', 'body')!);
     expect(gh.pathname).toBe('/o/r/issues/new');
     expect(gh.searchParams.get('title')).toBe('Add x');
-    const gl = new URL(suggestionUrl('https://gitlab.com/g/r/-/issues', 'Add x', 'body')!);
+    const gl = new URL(issueUrl('https://gitlab.com/g/r/-/issues', 'Add x', 'body')!);
     expect(gl.searchParams.get('issue[title]')).toBe('Add x');
   });
 
   it('never builds a link from a non-web address', () => {
-    expect(suggestionUrl('javascript:alert(1)', 't', 'b')).toBeUndefined();
+    expect(issueUrl('javascript:alert(1)', 't', 'b')).toBeUndefined();
     expect(reportUrl('javascript:alert(1)', 'L', 'https://a.com/', [{ text: 'hides it' }])).toBeUndefined();
   });
 
@@ -93,6 +93,15 @@ describe('subscription URLs', () => {
     expect(body).not.toContain('secret');
     expect(body).toContain('**AI list** hides it and tags it “AI”, and I think that’s wrong.');
     expect(body).toContain('Rules on lines 12 and 40:\n```\n*://*.example.com/*\n/ex`ample/\n```');
+  });
+
+  it('builds a suggestion without the example result’s query or fragment', () => {
+    const url = new URL(suggestionUrl('https://github.com/o/r/issues', 'Docs', 'example.com', '$site=example.com,tag=docs', 'https://example.com/a#token=secret')!);
+    expect(url.searchParams.get('title')).toBe('Suggest example.com');
+    const body = url.searchParams.get('body')!;
+    expect(body).toContain('Suggested instruction for **Docs**:\n\n```\n$site=example.com,tag=docs\n```');
+    expect(body).toContain('Example result: https://example.com/a\n');
+    expect(body).not.toContain('secret');
   });
 
   it('reports a lens leaving a result out, which has no rule', () => {

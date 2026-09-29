@@ -62,7 +62,10 @@ const siteIcon = (svg) =>
   `<img class="XNo5Ab" alt="" width="18" height="18" src="data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">${svg}</svg>`)}">`;
 
 // ---------------------------------------------------------------- DuckDuckGo
-export function duckduckgo(query, results, dark = false, more = []) {
+// `ai`: DuckDuckGo's AI features, modelled on EasyList's AI filters (unchecked on a
+// live page): the answer as the list's first item, found by its data-testid with no
+// heading to go by, and Duck.ai as a tab and a button in the search box.
+export function duckduckgo(query, results, dark = false, more = [], { ai = false } = {}) {
   const item = ([url, title, snippet], i) => `
       <li data-layout="organic" class="wLL07_0Xnd1QZpzpfR4W">
         <article id="r1-${i}" data-testid="result" data-nrn="result" class="yQDlj3B5DI5YO8c8Ulio CpkrTDP54mqzpuCSn1Fa SKlplDuh9FjtDprgoMxk">
@@ -95,10 +98,15 @@ export function duckduckgo(query, results, dark = false, more = []) {
     h2 a{color:${dark ? '#a7b7ff' : '#1a0dab'};text-decoration:none}
     [data-result=snippet]{color:${dark ? '#bbb' : '#494949'};font-size:14px}
     .menu{position:absolute;top:0;right:0;border:0;background:none;color:${dark ? '#888' : '#999'};font-size:16px}
+    .ask{margin-left:auto;border:0;background:none;color:#de5833}
+    .chat{color:inherit;text-decoration:none}
+    .assist-box{border:1px solid ${dark ? '#333' : '#e5e5e5'};border-radius:10px;padding:12px 14px}
   </style></head><body>
-  <div class="hdr"><div class="logo"></div><div class="q">${esc(query)}</div></div>
-  <div class="tabs"><b>All</b><span>Images</span><span>Videos</span><span>News</span><span>Maps</span></div>
-  <main><section data-testid="web-vertical"><ol class="react-results--main">${items}</ol>
+  <div class="hdr"><div class="logo"></div><div class="q">${esc(query)}${ai ? '<button type="button" class="ask" title="Ask Duck.ai" data-ssg-id="ai-searchbox-chat-submit">✦</button>' : ''}</div></div>
+  <div class="tabs"><b>All</b><span>Images</span><span>Videos</span><span>News</span><span>Maps</span>${ai ? `<a class="chat" href="/?q=${encodeURIComponent(query)}&ia=chat">Duck.ai</a>` : ''}</div>
+  <main><section data-testid="web-vertical"><ol class="react-results--main">${ai ? `
+      <li class="assist"><div class="assist-box"><div data-testid="duckassist-answer-content"><p>A promise is an object representing the eventual completion or failure of an asynchronous operation, and its resulting value.</p></div>
+        <a href="/?q=${encodeURIComponent(query)}&ia=chat&duckai=1">Ask a follow-up</a></div></li>` : ''}${items}</ol>
   ${more.length ? '<button id="more-results" style="margin:10px 0;padding:8px 18px;border-radius:8px;border:1px solid #ccc;background:none;color:inherit">More results</button>' : ''}
   </section></main>
   <script>

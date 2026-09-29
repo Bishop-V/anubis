@@ -6,6 +6,8 @@
 // a few selectors where a heading isn't enough. Keep this file free of browser
 // APIs: the options page and the content script both use it.
 
+import { andList } from './dom';
+
 export type CleanupKind = 'ai' | 'videos' | 'questions' | 'news' | 'images' | 'related';
 
 export type Cleanup = Record<CleanupKind, boolean>;
@@ -31,7 +33,7 @@ export const CLEANUP: CleanupDef[] = [
   {
     id: 'ai',
     label: 'AI answers',
-    hint: 'Google’s AI Overview and AI Mode tab, and Brave’s AI answers. On DuckDuckGo, searches open in its no-AI version, without Search Assist or Duck.ai.',
+    hint: 'Google’s AI Overview and AI Mode tab, DuckDuckGo’s AI-assisted answers and Duck.ai, and Brave’s AI answers.',
     one: 'an AI answer',
     many: 'AI answers',
     headings: [
@@ -123,12 +125,28 @@ export const CLEANUP: CleanupDef[] = [
 /**
  * Selectors for blocks a heading can't identify, per engine. The block is the
  * element itself, or the results-column block around it. These come from
- * community filter lists. Google's `.M8OgIe` and `.YzCcne` were seen on live
- * pages (2026-09-29); the rest haven't been checked.
+ * community filter lists (DuckDuckGo's from EasyList's AI list). Google's
+ * `.M8OgIe` and `.YzCcne` were seen on live pages (2026-09-29); the rest haven't
+ * been checked.
  */
 export const CLEANUP_SELECTORS: Record<string, Partial<Record<CleanupKind, string>>> = {
   google: { ai: '[data-attrid="AIOverview"], .M8OgIe, .YzCcne', questions: '.related-question-pair' },
+  duckduckgo: { ai: '[data-testid="duckassist-answer-content"], [data-react-module-id="wikinlp"]' },
   brave: { ai: '#summarizer' },
+};
+
+/**
+ * Tabs, links and buttons that open an engine's AI chat: Google's AI Mode,
+ * DuckDuckGo's Duck.ai. They go with AI answers but aren't counted, since they
+ * aren't content. Found by their whole text, title or label, or by selectors
+ * from EasyList's AI list where there may be no label.
+ */
+export const AI_ENTRY_POINTS: Record<string, { labels: RegExp; selector?: string }> = {
+  google: { labels: /^AI Mode$/i },
+  duckduckgo: {
+    labels: /^((Ask )?Duck\.ai|Search Assist)$/i,
+    selector: 'a[href*="ia=chat"], [data-testid="aichat-button"], [data-ssg-id="ai-searchbox-chat-submit"], [data-ssg-id="ask-duck-ai-submit"]',
+  },
 };
 
 const normalize = (text: string) => text.replace(/\s+/g, ' ').trim().toLowerCase();
@@ -157,9 +175,10 @@ export function cleanupMarkerFor(text: string): CleanupKind | undefined {
 
 /** "an AI answer and 2 video panels", or '' when nothing was removed. */
 export function describeRemoved(removed: Partial<Record<CleanupKind, number>>): string {
-  const parts = CLEANUP.filter((def) => removed[def.id]).map((def) => {
-    const n = removed[def.id]!;
-    return n === 1 ? def.one : `${n} ${def.many}`;
-  });
-  return parts.length < 2 ? (parts[0] ?? '') : `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
+  return andList(
+    CLEANUP.filter((def) => removed[def.id]).map((def) => {
+      const n = removed[def.id]!;
+      return n === 1 ? def.one : `${n} ${def.many}`;
+    }),
+  );
 }

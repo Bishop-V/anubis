@@ -116,7 +116,7 @@ Reranking moves results within the page you're on (and within extra pages brough
 Anubis detects the format of each file, so existing lists work without changes.
 
 - **Brave Goggles**: everything above except tags, `pin` and `allow`.
-- **uBlacklist rulesets**: match patterns (`*://*.example.com/*`), regular expressions (`/example\.(net|org)/`), unblock rules (`@…`, treated as `allow`) and highlight rules (`@1…`, turned into a `highlight-1` tag). YAML front matter supplies the name. Expression rules such as `title *= "x"` and `@if(…)` guards are skipped and counted in settings.
+- **uBlacklist rulesets**: match patterns (`*://*.example.com/*`), regular expressions (`/example\.(net|org)/`; one that repeats a repeated group, like `/(a+)+/`, is skipped, since it can freeze search pages), unblock rules (`@…`, treated as `allow`) and highlight rules (`@1…`, turned into a `highlight-1` tag). YAML front matter supplies the name. Expression rules such as `title *= "x"` and `@if(…)` guards are skipped and counted in settings.
 - **Plain domain lists**: one domain per line, hidden. Hosts-file lines (`0.0.0.0 example.com`) work too.
 
 ## Publishing a list

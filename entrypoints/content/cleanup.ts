@@ -1,4 +1,4 @@
-import { CLEANUP_SELECTORS, cleanupKindFor, cleanupMarkerFor, type Cleanup, type CleanupKind } from '@/utils/cleanup';
+import { AI_ENTRY_POINTS, CLEANUP_SELECTORS, cleanupKindFor, cleanupMarkerFor, type Cleanup, type CleanupKind } from '@/utils/cleanup';
 import type { EngineDef } from '@/utils/engines';
 import type { FoundResult } from './results';
 
@@ -12,6 +12,9 @@ export interface Clutter {
 const HEADINGS = 'h1, h2, h3, h4, h5, [role="heading"]';
 /** Where a label or marker text can't belong to a block that clean-up removes. */
 const NOT_A_BLOCK = '[data-anubis-result], anubis-summary, header, nav, [role="navigation"], form[role="search"], a, button, script, style, noscript, template, textarea, select, option';
+/** What a tab or button to an AI chat can be, and the item in a row of them that holds one. */
+const CONTROL = 'a, button, [role="link"], [role="button"], [role="tab"], [role="option"], [role="menuitem"]';
+const ROW_ITEM = '[role="listitem"], [role="tab"], [role="option"], [role="menuitem"], li';
 
 /**
  * Blocks in the results column to remove, found three ways and then widened to the
@@ -80,11 +83,22 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
     }
   }
 
-  // Google's "AI Mode" tab, next to All, Images and News.
-  if (wanted.ai && engine.id === 'google') {
-    for (const link of document.querySelectorAll<HTMLElement>('a, [role="link"], [role="tab"]')) {
-      if (link.closest('[data-anubis-result]') || !/^AI Mode$/i.test((link.textContent ?? '').trim())) continue;
-      add(link.closest<HTMLElement>('[role="listitem"]') ?? link, 'ai', true);
+  // Tabs and buttons that open an AI chat: Google's "AI Mode" beside All and
+  // Images, DuckDuckGo's Duck.ai. The tab's item in its row goes too, when it
+  // holds little more than the tab.
+  const entry = AI_ENTRY_POINTS[engine.id];
+  if (wanted.ai && entry) {
+    // Attributes, not properties: SVG icons carry titles too, and have no `title` property.
+    const named = (el: Element) =>
+      entry.labels.test(el.getAttribute('title')?.trim() ?? '') ||
+      entry.labels.test(el.getAttribute('aria-label')?.trim() ?? '') ||
+      (el.matches(CONTROL) && entry.labels.test((el.textContent ?? '').trim()));
+    for (const el of document.querySelectorAll(`${CONTROL}, [title], [aria-label]`)) {
+      if (!(entry.selector && el.matches(entry.selector)) && !named(el)) continue;
+      const control = el.closest<HTMLElement>(CONTROL) ?? (el instanceof HTMLElement ? el : undefined);
+      if (!control || control.closest('[data-anubis-result], anubis-summary')) continue;
+      const item = control.parentElement?.closest<HTMLElement>(ROW_ITEM);
+      add(item && textLength(item) <= textLength(control) + 12 ? item : control, 'ai', true);
     }
   }
 
@@ -97,21 +111,22 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
  * video panel, which have titles like results) don't protect a block from removal.
  */
 interface Column {
-  list: Element | undefined;
+  list: HTMLElement | undefined;
   results: HTMLElement[];
 }
 
-function mainColumn(results: FoundResult[], engine: EngineDef): Column {
+/** The element holding most web results, and those results. Also where the summary goes. */
+export function mainColumn(results: FoundResult[], engine: Pick<EngineDef, 'displayed'>): Column {
   // Web results show their address; videos in a panel don't, and a panel of them
   // can outnumber the results in any one wrapper (Google groups some results).
   const withAddress = results.filter((r) => r.container.querySelector(engine.displayed ?? 'cite'));
   const main = withAddress.length ? withAddress : results;
-  const counts = new Map<Element, number>();
+  const counts = new Map<HTMLElement, number>();
   for (const r of main) {
     const parent = r.container.parentElement;
     if (parent) counts.set(parent, (counts.get(parent) ?? 0) + 1);
   }
-  let list: Element | undefined;
+  let list: HTMLElement | undefined;
   for (const [parent, n] of counts) if (!list || n > counts.get(list)!) list = parent;
   return { list, results: main.map((r) => r.container) };
 }
@@ -223,14 +238,10 @@ function safeToRemove(block: HTMLElement, column: Column, searchBox: Element | n
 const WEB_TAB_KEY = 'anubis:all-tab';
 
 /**
- * Where to send this page instead, or undefined. "AI answers" opens DuckDuckGo's
- * no-AI version; "Always open the Web tab" adds Google's `udm=14`, unless you
- * chose the All tab for this search.
+ * Where to send this page instead, or undefined: "Always open the Web tab" adds
+ * Google's `udm=14`, unless you chose the All tab for this search.
  */
-export function redirectFor(engine: EngineDef, url: URL, cleanup: Cleanup, googleWebTab: boolean): string | undefined {
-  if (engine.id === 'duckduckgo' && cleanup.ai && url.hostname === 'duckduckgo.com' && engine.isResultsPage(url)) {
-    return `https://noai.duckduckgo.com${url.pathname}${url.search}${url.hash}`;
-  }
+export function redirectFor(engine: EngineDef, url: URL, googleWebTab: boolean): string | undefined {
   if (engine.id === 'google' && googleWebTab && url.pathname === '/search' && !url.searchParams.has('udm') && !url.searchParams.has('tbm')) {
     let chosen: string | null = null;
     try {

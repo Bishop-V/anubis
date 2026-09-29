@@ -14,13 +14,13 @@ In Egyptian myth, Anubis weighed each heart against a feather. This extension we
 - **Your list is a list too.** Every site you rank is stored in the same format, so you can download it and publish it for others.
 - **Bring your old lists.** Paste uBlacklist rules, a HOHSER export or a Goggle into Settings → Share and back up to move your sites over.
 - **Filter by tag.** The summary above the results lists the tags on the page; click one to see only those results.
-- **Clean up pages.** Remove AI answers (Google's AI Overview, Brave's AI answers, and DuckDuckGo's Search Assist and Duck.ai by opening its no-AI version), video panels, "People also ask", top stories, image rows and related searches, on every search (Bing's AI answer and video panel aren't recognised yet). Google can also always open its plain Web tab. "Show hidden" brings removed parts back on that page.
+- **Clean up pages.** Remove AI answers (Google's AI Overview and AI Mode tab, DuckDuckGo's AI-assisted answers and Duck.ai buttons, and Brave's AI answers), video panels, "People also ask", top stories, image rows and related searches, on every search (Bing's AI answer and video panel aren't recognised yet). Google can also always open its plain Web tab. "Show hidden" brings removed parts back on that page.
 - **Quiet on the page.** Hidden results leave the page (or collapse to one line, if you prefer); the summary above the results is one sentence. Light and dark themes follow the search engine or your choice.
 - **Keyboard shortcuts.** Alt+Shift+O turns Anubis on or off, and Alt+Shift+H shows hidden results (Control instead of Alt on a Mac).
 
 Works on Google (every country domain), DuckDuckGo (including the HTML and Lite versions), Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex and Mojeek.
 
-It asks for the `storage` permission and runs on search result pages, plus the user guide's subscribe page so subscribe links work. Lists hosted on GitHub download without any extra permission; lists hosted elsewhere ask for access to that one host when you subscribe. Nothing is sent anywhere else.
+It asks for the `storage` and `activeTab` permissions (the second lets the toolbar popup read the address of the tab you're on, only when you open it) and runs on search result pages, plus the user guide's subscribe page so subscribe links work. Lists hosted on GitHub download without any extra permission; lists hosted elsewhere ask for access to that one host when you subscribe. Nothing is sent anywhere else.
 
 ## Setup
 
@@ -38,7 +38,7 @@ Firefox is the default target; every `:chrome` variant overrides it.
 
 ```sh
 npm run compile      # type-check; run it after every change
-npm test             # unit tests: list format, matching, personal list, storage
+npm test             # unit tests in tests/
 npm run build        # production build into .output/firefox-mv2
 npm run build:chrome # production build into .output/chrome-mv3
 ```

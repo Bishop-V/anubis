@@ -1,5 +1,7 @@
+import { andList } from './dom';
 import { hostSuffixes } from './domain';
-import type { ParsedList, Rule, TagDef } from './listformat';
+import { MAX_STRENGTH, type ParsedList, type Rule, type TagDef } from './listformat';
+import { PERSONAL_NAME } from './personal';
 
 // Turns parsed lists into lookup tables and weighs search results against them.
 //
@@ -27,7 +29,7 @@ export interface TagPref {
 export const PERSONAL_STRENGTH = 5;
 const PIN_SCORE = 1000;
 /** Subscribed lists can't pin; a `pin` from one is treated as the strongest boost. */
-const MAX_LIST_BOOST = 10;
+const MAX_LIST_BOOST = MAX_STRENGTH;
 
 export interface CompiledList {
   id: string;
@@ -153,8 +155,7 @@ function describe(rule: Rule, tagLabel: (id: string) => string): string {
   if (rule.boost > 0) parts.push(`raises it by ${rule.boost}`);
   if (rule.boost < 0) parts.push(`lowers it by ${-rule.boost}`);
   if (rule.tags.length) parts.push(`tags it ${rule.tags.map((t) => `“${tagLabel(t)}”`).join(', ')}`);
-  if (!parts.length) return 'mentions it';
-  return parts.length < 2 ? parts[0]! : `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
+  return parts.length ? andList(parts) : 'mentions it';
 }
 
 type Effect = { discard: boolean; boost: number; highlight?: string; tag?: string };
@@ -296,7 +297,7 @@ export function evaluate(
 }
 
 function personalName(lists: CompiledList[]): string {
-  return lists.find((l) => l.personal)?.name ?? 'Your list';
+  return lists.find((l) => l.personal)?.name ?? PERSONAL_NAME;
 }
 
 /** Every tag known to the given lists, first definition wins, with user overrides applied. */

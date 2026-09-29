@@ -14,7 +14,7 @@ export interface FoundResult {
   description: string;
   /** Other elements belonging to this result (DuckDuckGo Lite rows). */
   extras: HTMLElement[];
-  /** Results page this came from, when Anubis fetched more pages ("Weigh deeper"). */
+  /** Results page this came from, when Anubis fetched more pages ("Load more results"). */
   page?: number;
 }
 

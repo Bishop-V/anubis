@@ -45,7 +45,7 @@ export interface EngineDef {
   table?: boolean;
   /** Where the weigh button sits in the top-right corner of each result. */
   button?: { top: string; right: string };
-  /** How "Weigh deeper" gets more results onto the page. */
+  /** How "Load more results" gets more results onto the page. */
   more?: MoreResults;
   /** Changes for the phone layout some engines send to mobile browsers (Firefox for Android). */
   mobile?: Partial<Omit<EngineDef, 'id' | 'name' | 'matches' | 'host' | 'mobile'>>;

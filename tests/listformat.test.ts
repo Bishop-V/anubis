@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { compileGogglePattern, detectFormat, parseList, parseTagDef } from '@/utils/listformat';
+import { compileGogglePattern, detectFormat, nestedRepeat, parseList, parseTagDef } from '@/utils/listformat';
 
 describe('Goggles instructions', () => {
   it('reads site, actions and strengths', () => {
@@ -129,6 +129,25 @@ title *= "x"`);
     expect(highlight).toMatchObject({ host: 'docs.example.com', tags: ['highlight-1'], discard: false });
     // Expressions aren't supported: reported, not silently misread.
     expect(list.errors).toHaveLength(1);
+  });
+});
+
+describe('slow regular expressions', () => {
+  it('spots a repeated group that repeats inside', () => {
+    for (const bad of ['(a+)+$', '(\\w+\\s?)*$', '(?:x|y+)*', '(a{2,})+', '((a+))+', '(?<n>a*)+', '(a+)+?']) {
+      expect(nestedRepeat(bad), bad).toBe(true);
+    }
+    for (const ok of ['pinterest.+\\/foo', '^https?:\\/\\/(www\\.)?example\\.(net|org)\\/', '(a+)?', '(a+){3}', '((a)+)', '[(+]*', '\\(a+\\)+', '(?:a|b)+', 'x{2,}']) {
+      expect(nestedRepeat(ok), ok).toBe(false);
+    }
+  });
+
+  it('turns them down as list errors, and keeps the rest of the list', () => {
+    const list = parseList('*://*.example.com/*\n/(a+)+$/\n/example\\.net/');
+    expect(list.format).toBe('ublacklist');
+    expect(list.rules).toHaveLength(2);
+    expect(list.errors).toEqual([{ line: 2, message: expect.stringContaining('could freeze search pages') }]);
+    expect(parseList(`*://*.example.com/*\n/${'a'.repeat(1001)}/`).errors[0]!.message).toContain('longer than 1000');
   });
 });
 
