@@ -440,12 +440,15 @@ let summaryHost: HTMLElement | undefined;
 let summaryArea: HTMLElement | undefined;
 /** Places that didn't put the summary above the results once the page had loaded, so aren't tried again. */
 const misplaced = new WeakSet<HTMLElement>();
+const misplacedInside = new WeakSet<HTMLElement>();
 let realignOnResize = false;
 
 /**
  * Where the summary goes: just before `before`. When that's outside the results
- * `area` (above an AI answer), the summary lines up with the area, and goes before
- * `fallback` instead if the page's layout puts it anywhere but above the results.
+ * `area` (above an AI answer), the summary lines up with the area. If the page's
+ * layout puts it anywhere but above the results (the AI answer is one cell of a
+ * grid, and the summary would get a cell of its own), it goes at the top of the AI
+ * answer instead, and failing that before `fallback`.
  */
 export interface SummaryPlace {
   before: HTMLElement;
@@ -478,8 +481,15 @@ export function renderSummary(
   }
   summaryHost ??= makeHost('anubis-summary', theme).host;
   const tryFirst = !!place.fallback && !misplaced.has(place.before);
-  const before = tryFirst || !place.fallback ? place.before : place.fallback;
-  if (summaryHost.nextElementSibling !== before) before.before(summaryHost);
+  const inside = place.fallback && !misplacedInside.has(place.before) ? topOf(place.before) : undefined;
+  if (tryFirst) {
+    if (summaryHost.nextElementSibling !== place.before) place.before.before(summaryHost);
+  } else if (inside) {
+    if (summaryHost.parentElement !== inside || summaryHost.previousElementSibling) inside.prepend(summaryHost);
+  } else {
+    const before = place.fallback ?? place.before;
+    if (summaryHost.nextElementSibling !== before) before.before(summaryHost);
+  }
   keepUpright(summaryHost);
   summaryHost.dataset.theme = theme;
 
@@ -548,9 +558,23 @@ export function renderSummary(
 
   summaryArea = place.area && !place.area.contains(summaryHost) ? place.area : undefined;
   alignSummary();
+  // While the page is still loading, its layout may not be final: a place that
+  // fails is only given up once it has loaded, and tried again next pass until then.
+  const loaded = document.readyState === 'complete';
+  let tryInside = !tryFirst && !!inside;
   if (tryFirst && summaryArea && !aboveResults(summaryHost, place.before, summaryArea)) {
-    // While the page is still loading, its layout may not be final: try again next pass.
-    if (document.readyState === 'complete') misplaced.add(place.before);
+    if (loaded) misplaced.add(place.before);
+    if (inside) {
+      inside.prepend(summaryHost);
+      tryInside = true;
+    } else place.fallback!.before(summaryHost);
+    keepUpright(summaryHost);
+    summaryArea = place.area && !place.area.contains(summaryHost) ? place.area : undefined;
+    alignSummary();
+  }
+  if (tryInside && summaryArea && !aboveResults(summaryHost, summaryHost.nextElementSibling ?? place.before, summaryArea)) {
+    // A removed AI answer hides the summary with it; it's tried again once it's shown.
+    if (loaded && summaryHost.getBoundingClientRect().width) misplacedInside.add(place.before);
     place.fallback!.before(summaryHost);
     keepUpright(summaryHost);
     summaryArea = place.area && !place.area.contains(summaryHost) ? place.area : undefined;
@@ -590,8 +614,23 @@ function alignSummary(): void {
   if (right) host.style.setProperty('padding-right', `${right}px`, 'important');
 }
 
+/**
+ * Where the summary goes at the top of a block: the block itself, or, where the
+ * block lays out its children in a row or grid, its first child that doesn't.
+ */
+function topOf(block: HTMLElement): HTMLElement | undefined {
+  let el: Element | null = block;
+  for (let depth = 0; el instanceof HTMLElement && depth < 6; depth++) {
+    if (!/(^|-)(flex|grid)$/.test(getComputedStyle(el).display)) return el;
+    // The summary itself may already be the first child.
+    el = el.firstElementChild;
+    while (el && OWN_TAGS.has(el.tagName)) el = el.nextElementSibling;
+  }
+  return undefined;
+}
+
 /** Above the results area and across it, and above `next` when that's showing. */
-function aboveResults(host: HTMLElement, next: HTMLElement, area: HTMLElement): boolean {
+function aboveResults(host: HTMLElement, next: Element, area: HTMLElement): boolean {
   const box = host.getBoundingClientRect();
   const results = area.getBoundingClientRect();
   const after = next.getBoundingClientRect();

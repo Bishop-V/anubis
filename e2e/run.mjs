@@ -131,6 +131,7 @@ async function launch(settings = {}, ext = EXT) {
     ], { inner: true }),
     'https://www.google.com/search?q=anubis&mobile=1': googleMobile('anubis', ANUBIS_RESULTS),
     'https://www.google.com/search?q=anubis&forum=1': google('anubis', ANUBIS_RESULTS, { forum: true, grouped: true, aiAbove: true, related: true, next: '/search?q=anubis&start=10' }),
+    'https://www.google.com/search?q=anubis&aigrid=1': google('anubis', ANUBIS_RESULTS, { forum: true, grouped: true, aiAbove: 'grid', related: true, next: '/search?q=anubis&start=10' }),
     'https://www.bing.com/search?q=javascript+promises&inline=1': bing('javascript promises', JS_RESULTS, { inline: true }),
     'https://search.brave.com/search?q=anubis&panels=1': brave('anubis', ANUBIS_RESULTS, { panels: true }),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
@@ -556,7 +557,7 @@ if (!only || only === 'cleanup') {
       const s = summary.getBoundingClientRect();
       const inset = parseFloat(getComputedStyle(summary).paddingLeft);
       return {
-        aboveAi: summary.nextElementSibling === ai,
+        aboveAi: (summary.nextElementSibling === ai || ai.firstElementChild === summary) && (!ai.getClientRects().length || s.bottom <= ai.querySelector('.YzCcne').getBoundingClientRect().top + 1),
         aboveResults: s.bottom <= rso.getBoundingClientRect().top + 1,
         linedUp: Math.abs(s.left + inset - rso.getBoundingClientRect().left) < 2,
         top: Math.round(s.top),
@@ -571,6 +572,19 @@ if (!only || only === 'cleanup') {
   await page.goto('https://www.google.com/search?q=anubis&forum=1');
   await page.waitForTimeout(800);
   console.log('   with clean-up of AI answers off:', JSON.stringify(await summaryPlace()));
+  // Where the page lays the row out as a grid, the summary can't go before the
+  // Overview (it would land in a cell beside the results), so it goes at the top
+  // of the Overview instead.
+  await page.goto('https://www.google.com/search?q=anubis&aigrid=1');
+  await page.waitForTimeout(800);
+  console.log('   in a grid, AI answers kept:', JSON.stringify(await summaryPlace()));
+  await setSettings({ cleanup: { ...all, ai: true } });
+  await page.goto('https://www.google.com/search?q=anubis&aigrid=1');
+  await page.waitForTimeout(800);
+  console.log('   in a grid, AI answer removed:', JSON.stringify(await summaryPlace()));
+  await clickShadowButton('anubis-summary', 'Show hidden');
+  await page.waitForTimeout(300);
+  console.log('   in a grid, after Show hidden:', JSON.stringify(await summaryPlace()));
 
   // Forcing it on Google: the Web tab.
   await setSettings({ cleanup: { ...all, ai: false } , googleWebTab: true });
