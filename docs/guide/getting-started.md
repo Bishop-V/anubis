@@ -51,9 +51,11 @@ Your choice applies to the whole site, including its subdomains. The name at the
 
 ## Rank the site you're on
 
-Press the Anubis icon in the toolbar while you're on any website. Under **This site**, choose how its results should rank in future searches.
+Press the Anubis icon in the toolbar while you're on any website. The popup shows the site's name over the balance: choose how its results should rank in future searches, and tag it if you like. When the site's address has more than one part, like `en.wikipedia.org`, press the name to choose how much of it your choice covers.
 
-<img src="../img/popup.png" width="364" alt="The toolbar popup: an on/off switch, adding a site, and your sites">
+On a search page the popup instead says what Anubis did to the results, with **Show hidden**, **Load more results** and the page's tags, to show only the results with one of them. On any other page, **Add a site** takes a site's name and the ranking to give it.
+
+<img src="../img/popup.png" width="364" alt="The toolbar popup on wikipedia.org: the site's name over the balance, the five rankings, its tags, and your sites">
 
 ## Turn Anubis off
 

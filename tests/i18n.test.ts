@@ -57,7 +57,7 @@ describe('t and tn', () => {
   });
 
   it('fills in placeholders', () => {
-    expect(t('popupForget', 'fandom.com')).toBe('Forget fandom.com');
+    expect(t('popupHintMine', 'fandom.com')).toBe('Your choice for fandom.com, on every search.');
   });
 
   it('picks the plural form for a count', () => {

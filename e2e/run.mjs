@@ -1170,9 +1170,7 @@ if (only === 'docs') {
     await chrome.storage.local.set({ listCache });
   }, bundled);
   const opt = await ctx.newPage();
-  const pop = await ctx.newPage();
   await opt.setViewportSize({ width: 1100, height: 760 });
-  await pop.setViewportSize({ width: 364, height: 600 });
   for (const [colorScheme, suffix] of SCHEMES) {
     await opt.emulateMedia({ colorScheme });
     for (const section of ['sites', 'tags', 'lists', 'cleanup', 'sync']) {
@@ -1180,13 +1178,26 @@ if (only === 'docs') {
       await opt.waitForTimeout(500);
       await opt.screenshot({ path: `${DOCS_IMG}options-${section}${suffix}.png` });
     }
-    await pop.emulateMedia({ colorScheme });
-    await pop.goto(`chrome-extension://${extId}/popup.html`);
-    await pop.waitForTimeout(400);
-    await pop.screenshot({ path: `${DOCS_IMG}popup${suffix}.png` });
+    // The popup as it opens on an ordinary site. Opened as a page, its active tab
+    // would be itself, so it's told the site's tab is the active one.
+    const site = await ctx.newPage();
+    await site.route('https://en.wikipedia.org/**', (route) => route.fulfill({ contentType: 'text/html', body: '<title>Anubis</title><h1>Anubis</h1>' }));
+    await site.goto('https://en.wikipedia.org/wiki/Anubis');
+    const tabId = await sw.evaluate(async () => Math.max(...(await chrome.tabs.query({})).map((t) => t.id)));
+    const sitePop = await ctx.newPage();
+    await sitePop.setViewportSize({ width: 364, height: 600 });
+    await sitePop.emulateMedia({ colorScheme });
+    await sitePop.addInitScript((tab) => {
+      const query = chrome.tabs.query.bind(chrome.tabs);
+      chrome.tabs.query = async (q) => (q.active ? [tab] : query(q));
+    }, { id: tabId, url: 'https://en.wikipedia.org/wiki/Anubis' });
+    await sitePop.goto(`chrome-extension://${extId}/popup.html`);
+    await sitePop.waitForTimeout(900);
+    await sitePop.screenshot({ path: `${DOCS_IMG}popup${suffix}.png` });
+    await sitePop.close();
+    await site.close();
   }
   await opt.close();
-  await pop.close();
   console.log('\n== documentation screenshots saved to docs/img/');
 }
 
