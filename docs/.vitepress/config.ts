@@ -58,6 +58,7 @@ export default defineConfig({
           { text: 'Privacy and permissions', link: '/guide/privacy' },
           { text: 'Troubleshooting', link: '/guide/troubleshooting' },
           { text: 'Experiments and decisions', link: '/experiments' },
+          { text: 'Contributing', link: `${repo}/blob/main/CONTRIBUTING.md` },
         ],
       },
     ],

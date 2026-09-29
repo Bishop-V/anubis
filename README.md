@@ -72,7 +72,7 @@ To publish a version, set `version` in `package.json`, merge it, then push a mat
 
 ### Before opening a pull request
 
-`npm run compile` and `npm test` should pass, both builds should succeed, and `npx web-ext lint -s .output/firefox-mv2` should be at zero warnings — CI treats warnings as errors. `.github/workflows/ci.yml` runs all of it on pushes to main and on pull requests.
+[CONTRIBUTING.md](CONTRIBUTING.md) covers how to contribute and how changes are merged. In short: `npm run compile` and `npm test` should pass, both builds should succeed, and `npx web-ext lint -s .output/firefox-mv2` should be at zero warnings (CI treats warnings as errors). Changes reach `main` only through pull requests, once CI's `check` job has passed.
 
 ### Worth knowing
 
