@@ -1,4 +1,5 @@
 import { browser, defineBackground, storage } from '#imports';
+import { t } from '@/utils/i18n';
 import { readSubscribeLink, subscribeQuery } from '@/utils/links';
 import { sendToActiveTab, type Message } from '@/utils/messages';
 import {
@@ -33,7 +34,7 @@ export default defineBackground(() => {
   const showEnabled = (enabled: boolean) => {
     const dir = enabled ? 'icon' : 'icon-off';
     void action.setIcon({ path: { 16: `/${dir}/16.png`, 32: `/${dir}/32.png`, 48: `/${dir}/48.png` } });
-    void action.setTitle({ title: enabled ? 'Anubis' : 'Anubis is off' });
+    void action.setTitle({ title: enabled ? 'Anubis' : t('toolbarOff') });
   };
   void getSettings().then((s) => showEnabled(s.enabled));
   settingsItem.watch((s) => showEnabled(s?.enabled !== false));

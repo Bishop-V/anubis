@@ -206,6 +206,16 @@ button {
   color: var(--text);
 }
 
+/* Read by screen readers, not shown: the summary's announcement of a change. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 /* ---------------------------------------------------------------- summary */
 :host(anubis-summary) {
   display: block;
