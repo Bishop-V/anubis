@@ -26,7 +26,7 @@ Work that's planned but not started, or started and not finished. Each item says
 
 ## Testing
 
-- **Make e2e fail when something's wrong.** `e2e/run.mjs` prints each part's findings but only fails when a button is missing. Give each part expected values, exit non-zero on a mismatch, then run it in CI (headless Chromium works) and upload `e2e/shots/` when it fails. `hostile`'s `containersAreResults` reads `false` today because the off-screen "Sponsored offer" heading counts as a result; decide whether it should before turning that into an assertion.
+- **Expand asserted e2e coverage.** The `checks` part now fails on regressions in hostile/grouped Google results, reveal state, forum links, and Google's phone layout; CI runs it on every pull request. Most other parts still only report findings. Add assertions for the remaining user-facing behavior, then consider uploading `e2e/shots/` when CI fails. Don't assert `hostile`'s `containersAreResults` yet: its off-screen "Sponsored offer" heading currently counts as a result, and that needs a deliberate fixture/finder decision first.
 
 ## Performance
 

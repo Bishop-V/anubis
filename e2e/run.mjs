@@ -5,7 +5,7 @@
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
 //                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options,
-//                               responsive, welcome, sync, webdav
+//                               responsive, welcome, sync, webdav, checks (hostile, grouped, reveal, mobile assertions)
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slides
 //                               in docs/public/
 //
@@ -25,6 +25,7 @@ import { ANUBIS_PAGE2, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, brave, duckduc
 const EXT = fileURLToPath(new URL('../.output/chrome-mv3', import.meta.url));
 const SHOTS = fileURLToPath(new URL('./shots/', import.meta.url));
 const only = process.argv[2];
+const checks = only === 'checks';
 const executablePath = process.env.CHROMIUM_PATH || chromium.executablePath();
 
 if (!existsSync(join(EXT, 'manifest.json'))) {
@@ -157,6 +158,11 @@ async function report(page, label) {
   return info;
 }
 
+function assertChecks(label, checks) {
+  const failed = Object.entries(checks).filter(([, passed]) => !passed).map(([name]) => name);
+  if (failed.length) throw new Error(`${label}: failed checks: ${failed.join(', ')}`);
+}
+
 const { ctx, extId } = await launch();
 const page = await ctx.newPage();
 page.on('console', (m) => m.type() === 'error' && console.log('  console error:', m.text()));
@@ -259,7 +265,7 @@ if (!only || only === 'pages') {
   await page.screenshot({ path: `${SHOTS}ddg-menu-pair.png`, clip: { x: box.x - 60, y: box.y - 14, width: 110, height: 56 } });
 }
 
-if (!only || only === 'hostile') {
+if (!only || only === 'hostile' || checks) {
   await page.goto('https://www.google.com/search?q=anubis&hostile=1');
   await page.waitForTimeout(700);
   const check = await page.evaluate(() => {
@@ -287,9 +293,15 @@ if (!only || only === 'hostile') {
   });
   console.log('\n== hostile google:', JSON.stringify(check));
   await page.screenshot({ path: `${SHOTS}google-hostile.png`, fullPage: true });
+  assertChecks('hostile google', {
+    resultsFound: check.results >= ANUBIS_RESULTS.length,
+    everyResultHasVisibleWeighButton: check.weighVisible === check.results,
+    chipsRemainUpright: check.chipsUpright.length > 0 && check.chipsUpright.every(Boolean),
+    summaryBeforeResults: check.summaryBeforeFirstResult,
+  });
 }
 
-if (!only || only === 'grouped') {
+if (!only || only === 'grouped' || checks) {
   await page.goto('https://www.google.com/search?q=anubis&grouped=1');
   await page.waitForTimeout(700);
   const check = await page.evaluate(() => {
@@ -308,32 +320,43 @@ if (!only || only === 'grouped') {
   });
   console.log('\n== grouped google:', JSON.stringify(check));
   await page.screenshot({ path: `${SHOTS}google-grouped.png`, fullPage: true });
+  assertChecks('grouped google', {
+    allExpectedResultsFound: check.results === ANUBIS_RESULTS.length,
+    sitelinksStayWithFirstResult: check.sitelinksInFirstResult,
+    resultsUseWholeContainers: check.containersAreResults,
+    summaryIsInResultsColumn: check.summaryInList,
+    summaryPrecedesFirstResult: check.summaryBeforeFirstResult,
+  });
 
   // Opaque /goto links everywhere, and a Reddit thread and a LinkedIn page with no
   // address shown: the site's name stands in for it. The first result's sitelinks,
   // also /goto with no address, stay part of it.
   await page.goto('https://www.google.com/search?q=anubis&forum=1');
   await page.waitForTimeout(700);
-  console.log(
-    '== google forum result:',
-    JSON.stringify(
-      await page.evaluate(() => {
-        const reddit = document.querySelector('.forum-meta:not(.social)')?.closest('.MjjYud');
-        const linkedin = document.querySelector('.forum-meta.social')?.closest('.MjjYud');
-        return {
-          results: document.querySelectorAll('[data-anubis-result]').length,
-          sitelinksInFirstResult: !!document.querySelector('.MjjYud[data-anubis-result] .sitelinks'),
-          linkedinFound: !!linkedin?.hasAttribute('data-anubis-result'),
-          redditFound: !!reddit?.hasAttribute('data-anubis-result'),
-          redditButton: !!reddit?.querySelector(':scope > anubis-weigh'),
-          redditTagged: !!reddit?.querySelector('anubis-chips'),
-        };
-      }),
-    ),
-  );
+  const forumCheck = await page.evaluate(() => {
+    const reddit = document.querySelector('.forum-meta:not(.social)')?.closest('.MjjYud');
+    const linkedin = document.querySelector('.forum-meta.social')?.closest('.MjjYud');
+    return {
+      results: document.querySelectorAll('[data-anubis-result]').length,
+      sitelinksInFirstResult: !!document.querySelector('.MjjYud[data-anubis-result] .sitelinks'),
+      linkedinFound: !!linkedin?.hasAttribute('data-anubis-result'),
+      redditFound: !!reddit?.hasAttribute('data-anubis-result'),
+      redditButton: !!reddit?.querySelector(':scope > anubis-weigh'),
+      redditTagged: !!reddit?.querySelector('anubis-chips'),
+    };
+  });
+  console.log('== google forum result:', JSON.stringify(forumCheck));
+  if (checks) {
+    assertChecks('google forum results', {
+      redditRecognized: forumCheck.redditFound,
+      linkedinRecognized: forumCheck.linkedinFound,
+      redditHasWeighButton: forumCheck.redditButton,
+      redditHasTags: forumCheck.redditTagged,
+    });
+  }
 }
 
-if (!only || only === 'reveal') {
+if (!only || only === 'reveal' || checks) {
   // Showing one hidden result has to survive the page changing afterwards: engines
   // rewrite parts of the page on hover, which runs another pass.
   await page.goto('https://www.google.com/search?q=anubis');
@@ -349,6 +372,7 @@ if (!only || only === 'reveal') {
   await page.waitForTimeout(300);
   const afterChange = await hidden.evaluate((el) => el.hasAttribute('data-anubis-reveal'));
   console.log('\n== reveal one result:', JSON.stringify({ afterClick, afterChange }));
+  assertChecks('reveal hidden result', { revealsAfterClick: afterClick, staysRevealedAfterPageChange: afterChange });
 }
 
 if (!only || only === 'shortcuts') {
@@ -372,7 +396,7 @@ if (!only || only === 'shortcuts') {
   console.log('\n== shortcuts:', JSON.stringify({ keys: commands.map((c) => `${c.name} ${c.shortcut}`), before, shown, again }));
 }
 
-if (!only || only === 'mobile') {
+if (!only || only === 'mobile' || checks) {
   // Google's phone layout, as Firefox for Android gets it: the browser has to say
   // it's a phone before the page loads, since Anubis picks the layout at start.
   const phone = await ctx.newPage();
@@ -396,6 +420,14 @@ if (!only || only === 'mobile') {
   await report(phone, 'google-mobile');
   console.log('\n== google mobile:', JSON.stringify(check));
   await phone.screenshot({ path: `${SHOTS}google-mobile.png`, fullPage: true });
+  assertChecks('google mobile', {
+    allExpectedResultsFound: check.results === ANUBIS_RESULTS.length,
+    newsCardsNotTreatedAsResults: check.newsCardsAsResults === 0,
+    everyResultHasWeighButton: check.weighButtons === check.results,
+    namedRedirectGetsTagged: check.gotoLinkTagged === 'normal tagged',
+    summaryRendered: check.summary,
+    noHorizontalOverflow: !check.scrollsSideways,
+  });
   await phone.close();
 }
 

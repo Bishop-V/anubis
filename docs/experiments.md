@@ -2,6 +2,12 @@
 
 What was tried while building the tagging and lists release, what failed, and what is still unverified. Newest notes go at the top of each section.
 
+## Asserted end-to-end checks (2026-09-29)
+
+- **Starting point:** the Chromium harness printed most findings but did not fail when behavior was wrong; only missing buttons stopped a run. CI checked Settings responsiveness, not what the extension did on search pages.
+- **Shipped:** `node e2e/run.mjs checks` asserts that hostile Google markup keeps visible weigh buttons and upright chips, grouped results retain sitelinks and the summary, opaque forum results are recognized and tagged, revealing a hidden result survives another page pass, and Google's phone layout has its expected results and no horizontal overflow. It runs against local fixtures without search-engine network access; CI runs it alongside the responsive Settings test on pull requests.
+- **Not asserted yet:** the hostile fixture's `containersAreResults` is false because its off-screen "Sponsored offer" heading is detected as a result. The check was deliberately not promoted to an assertion until the desired treatment is decided; other parts still report findings without failing.
+
 ## Settings on narrow screens (2026-09-29)
 
 - **Found:** at 320px, the Your sites table forced the whole Settings page wider than the screen. The labelled ranking choices in the Add a site form also wrapped as an accidental run of buttons.

@@ -34,4 +34,6 @@ jobs:
         run: npx playwright-core install --with-deps chromium
       - name: Check Settings at phone widths
         run: node e2e/run.mjs responsive
+      - name: Assert core search-page behavior
+        run: node e2e/run.mjs checks
       - run: npx web-ext lint --source-dir .output/firefox-mv2 --warnings-as-errors
