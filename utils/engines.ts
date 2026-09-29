@@ -43,8 +43,13 @@ export interface EngineDef {
   extraRows?: number;
   /** Results are table rows: hide rows instead of collapsing, and don't rerank. */
   table?: boolean;
-  /** Where the weigh button sits in the top-right corner of each result. */
-  button?: { top: string; right: string };
+  /**
+   * Where the weigh button sits in the top-right corner of each result. With
+   * `besideMenu`, it sits just left of the engine's own menu button on the result
+   * (DuckDuckGo's ⋯) instead, at its size and in its colour, like a second option;
+   * `top` and `right` apply when a result has no such button.
+   */
+  button?: { top: string; right: string; besideMenu?: boolean };
   /** How "Load more results" gets more results onto the page. */
   more?: MoreResults;
   /** Changes for the phone layout some engines send to mobile browsers (Firefox for Android). */
@@ -114,8 +119,8 @@ export const ENGINES: EngineDef[] = [
     isResultsPage: (url) => hasQuery(url, 'q'),
     heading: 'h2',
     boundary: 'ol, main, [data-testid="web-vertical"]',
-    // Clear of DuckDuckGo's own result menu in the corner.
-    button: { top: '6px', right: '36px' },
+    // Beside DuckDuckGo's own ⋯ menu on each result, as a second option.
+    button: { top: '6px', right: '36px', besideMenu: true },
     more: { kind: 'click', button: '#more-results, button[data-testid="more-results"]' },
   },
   {

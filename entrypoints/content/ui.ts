@@ -275,10 +275,15 @@ export function ensureWeighButton(
     keepUpright(host);
     return;
   }
-  const { top, right } = engine.button ?? { top: '2px', right: '2px' };
+  const { top, right, besideMenu } = engine.button ?? { top: '2px', right: '2px' };
   host.style.setProperty('position', 'absolute', 'important');
-  host.style.setProperty('top', top, 'important');
-  host.style.setProperty('right', clearOfPictures(container, right), 'important');
+  const menu = besideMenu ? resultMenuOf(container) : undefined;
+  if (menu) placeBesideMenu(host, container, menu);
+  else {
+    for (const prop of MENU_LOOK) host.style.removeProperty(prop);
+    host.style.setProperty('top', top, 'important');
+    host.style.setProperty('right', clearOfPictures(container, right), 'important');
+  }
   host.style.setProperty('left', 'auto', 'important');
   host.style.setProperty('bottom', 'auto', 'important');
   host.style.setProperty('z-index', '5', 'important');
@@ -307,6 +312,44 @@ function clearOfPictures(container: HTMLElement, right: string): string {
     edge = Math.min(edge, r.left);
   }
   return edge === box.right ? right : `${Math.round(box.right - edge + 6)}px`;
+}
+
+/** The engine's own menu button on a result: the right-most small button in its top-right corner. */
+function resultMenuOf(container: HTMLElement): HTMLElement | undefined {
+  const box = container.getBoundingClientRect();
+  if (!box.width) return undefined;
+  let menu: HTMLElement | undefined;
+  let menuRight = -Infinity;
+  for (const el of container.querySelectorAll<HTMLElement>('button, [role="button"]')) {
+    const r = el.getBoundingClientRect();
+    if (!r.width || r.width > 48 || r.height > 48 || r.top > box.top + 64 || r.right < box.right - 64) continue;
+    if (r.right > menuRight) {
+      menu = el;
+      menuRight = r.right;
+    }
+  }
+  return menu;
+}
+
+/** What the weigh button takes from the engine's menu button to look like its neighbour. */
+const MENU_LOOK = ['--anubis-weigh-size', '--anubis-weigh-radius'];
+
+/**
+ * Just left of the engine's menu button and centred on it, at its size and shape,
+ * so the two read as a pair of options. The colours stay Anubis's own.
+ */
+function placeBesideMenu(host: HTMLElement, container: HTMLElement, menu: HTMLElement): void {
+  const box = container.getBoundingClientRect();
+  const m = menu.getBoundingClientRect();
+  const cs = getComputedStyle(container);
+  const ms = getComputedStyle(menu);
+  const size = Math.round(Math.min(44, Math.max(20, m.width, m.height)));
+  const top = m.top + m.height / 2 - size / 2 - box.top - parseFloat(cs.borderTopWidth);
+  const right = box.right - parseFloat(cs.borderRightWidth) - m.left + 4;
+  host.style.setProperty('top', `${Math.round(top)}px`, 'important');
+  host.style.setProperty('right', `${Math.round(right)}px`, 'important');
+  host.style.setProperty('--anubis-weigh-size', `${size}px`);
+  host.style.setProperty('--anubis-weigh-radius', parseFloat(ms.borderTopLeftRadius) ? ms.borderTopLeftRadius : '50%');
 }
 
 export function weighButtonOf(container: HTMLElement): HTMLButtonElement | undefined {

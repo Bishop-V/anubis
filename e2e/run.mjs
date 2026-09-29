@@ -208,6 +208,32 @@ if (!only || only === 'pages') {
   await shoot('https://www.google.com/search?q=anubis&dark=1', 'google-dark');
   await shoot('https://www.bing.com/search?q=javascript+promises', 'bing');
   await shoot('https://search.brave.com/search?q=anubis', 'brave');
+
+  // DuckDuckGo: the ⇅ button sits beside each result's own ⋯ menu, centred on it,
+  // at its size and shape, in Anubis's colours.
+  await page.goto('https://duckduckgo.com/?q=javascript+promises&dark=1');
+  await page.waitForTimeout(600);
+  const pair = () =>
+    page.evaluate(() =>
+      [...document.querySelectorAll('li[data-anubis-result]:not([data-anubis-state~="hide"])')].map((li) => {
+        const host = li.querySelector(':scope > anubis-weigh');
+        const menu = li.querySelector('button.menu');
+        const a = host.getBoundingClientRect();
+        const b = menu.getBoundingClientRect();
+        return {
+          centred: Math.abs(a.top + a.height / 2 - (b.top + b.height / 2)) < 1,
+          gap: Math.round(b.left - a.right),
+          sameSize: Math.round(a.width) === Math.round(b.width) && Math.round(a.height) === Math.round(b.height),
+        };
+      }),
+    );
+  const pairs = await pair();
+  console.log('\n== ddg button beside its menu:', JSON.stringify({ results: pairs.length, all: pairs.every((p) => p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6), failing: pairs.filter((p) => !(p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6)) }));
+  const first = page.locator('li[data-anubis-result]').first();
+  await first.locator('anubis-weigh').hover();
+  await page.waitForTimeout(250);
+  const box = await first.locator('button.menu').boundingBox();
+  await page.screenshot({ path: `${SHOTS}ddg-menu-pair.png`, clip: { x: box.x - 60, y: box.y - 14, width: 110, height: 56 } });
 }
 
 if (!only || only === 'hostile') {

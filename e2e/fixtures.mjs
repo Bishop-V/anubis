@@ -97,7 +97,8 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
     h2{margin:4px 0 4px;font-size:18px;font-weight:500;line-height:1.3}
     h2 a{color:${dark ? '#a7b7ff' : '#1a0dab'};text-decoration:none}
     [data-result=snippet]{color:${dark ? '#bbb' : '#494949'};font-size:14px}
-    .menu{position:absolute;top:0;right:0;border:0;background:none;color:${dark ? '#888' : '#999'};font-size:16px}
+    .menu{position:absolute;top:-4px;right:0;display:grid;place-items:center;width:28px;height:28px;padding:0;border:0;border-radius:50%;background:none;color:${dark ? '#ccc' : '#666'};font-size:16px;cursor:pointer;transition:background .15s}
+    .menu:hover{background:${dark ? '#ffffff26' : '#0000000f'}}
     .ask{margin-left:auto;border:0;background:none;color:#de5833}
     .chat{color:inherit;text-decoration:none}
     .assist-box{border:1px solid ${dark ? '#333' : '#e5e5e5'};border-radius:10px;padding:12px 14px}
