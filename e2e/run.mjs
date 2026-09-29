@@ -103,6 +103,7 @@ async function launch(settings = {}) {
     'https://www.google.com/search?q=anubis&videos=titles': google('anubis', ANUBIS_RESULTS, { videos: 'titles' }),
     'https://www.google.com/search?q=anubis&videos=groups': google('anubis', ANUBIS_RESULTS, { videos: 'groups' }),
     'https://www.google.com/search?q=anubis&videos=split': google('anubis', ANUBIS_RESULTS, { videos: 'split' }),
+    'https://www.google.com/search?q=anubis&videos=google': google('anubis', ANUBIS_RESULTS, { videos: 'google' }),
     'https://www.google.com/search?q=anubis&udm=14': google('anubis', ANUBIS_RESULTS),
     'https://www.google.com/search?q=anubis&mobile=1': googleMobile('anubis', ANUBIS_RESULTS),
     'https://noai.duckduckgo.com/?q=javascript+promises': duckduckgo('javascript promises', JS_RESULTS),
@@ -369,7 +370,7 @@ if (!only || only === 'cleanup') {
   console.log('   removed:', JSON.stringify((await statsNow())?.removed));
 
   // Video panels laid out like Google's: the whole panel goes, not just its header.
-  for (const layout of ['titles', 'groups', 'split']) {
+  for (const layout of ['titles', 'groups', 'split', 'google']) {
     await page.goto(`https://www.google.com/search?q=anubis&videos=${layout}`);
     await page.waitForTimeout(800);
     const check = await page.evaluate(() => {

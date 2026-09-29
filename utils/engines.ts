@@ -34,6 +34,11 @@ export interface EngineDef {
   title?: string;
   /** Elements showing the displayed domain, used when the link is a tracking redirect. */
   displayed?: string;
+  /**
+   * Marks each block in the results column (a result, a video panel, "People also
+   * ask"). Clean-up removes the whole marked block around a heading it recognises.
+   */
+  blocks?: string;
   /** Sibling rows that belong to the same result (table layouts). */
   extraRows?: number;
   /** Results are table rows: hide rows instead of collapsing, and don't rerank. */
@@ -81,6 +86,8 @@ export const ENGINES: EngineDef[] = [
     heading: 'h3',
     boundary: '#search, #rso, #botstuff, main, [role="main"]',
     displayed: 'cite',
+    // Seen on a live page (2026-09): div.A6K0A[data-rpos] inside each panel's div.MjjYud.
+    blocks: '[data-rpos]',
     button: { top: '2px', right: '2px' },
     more: { kind: 'link', next: 'a#pnnext' },
     // On phones, titles are ARIA headings rather than h3 and the address isn't a

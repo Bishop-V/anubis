@@ -151,8 +151,20 @@ export function google(query, results, { dark = false, next = '', hostile = fals
     const head = `<div class="vhead"><div role="heading" aria-level="2"><span>Videos</span></div><div class="vmenu">⋮</div></div>`;
     const list = `<div class="vlist">${['What is a fandom?', 'Stop using Fandom', 'What exactly is Fandom?'].map(card).join('')}</div>`;
     const all = `<div class="vall"><a href="/search?q=anubis&tbm=vid">View all</a></div>`;
-    // `split`: the header row, the videos and "View all" are separate blocks in the list.
-    if (videos === 'split') items.splice(1, 0, `<div class="MjjYud vpanel">${head}</div>`, `<div class="MjjYud vpanel">${list}</div>`, `<div class="MjjYud vpanel">${all}</div>`);
+    // `google`: the layout reported from a live page. The list sits in a wrapper div
+    // in #rso; the panel is div.ULSxyf > div.MjjYud > div.A6K0A[data-rpos] > the
+    // header row, the videos and "View all"; the header row is div.UjLRDc holding a
+    // span[role=heading]. Each video is a card clickable through a script, not a
+    // link, with its title as a heading, and the cards don't all share a class.
+    if (videos === 'google') {
+      const gcard = (t, i) =>
+        `<div class="${i === 0 ? 'vcard first' : 'vcard'}" jsaction="click:open"><span class="thumb">▶</span><div><div role="heading">${t}</div><div>YouTube · Channel ${i}</div></div></div>`;
+      const glist = `<div class="vlist">${['What is a fandom?', 'Stop using Fandom', 'What exactly is Fandom?'].map(gcard).join('')}</div>`;
+      items.splice(1, 0, `<div class="ULSxyf"><div class="MjjYud"><div class="A6K0A" data-rpos="1"><div class="vtSz8d vpanel">
+        <div class="UjLRDc vhead"><div class="PJI6ge"><span class="mgAbYb" role="heading"><span>Videos</span></span></div><div class="vmenu">⋮</div></div>
+        ${glist}${all}</div></div></div></div>`);
+      items.splice(0, items.length, `<div>${items.join('')}</div>`);
+    } else if (videos === 'split') items.splice(1, 0, `<div class="MjjYud vpanel">${head}</div>`, `<div class="MjjYud vpanel">${list}</div>`, `<div class="MjjYud vpanel">${all}</div>`);
     else items.splice(1, 0, `<div class="MjjYud"><div class="module vpanel">${head}${list}${all}</div></div>`);
   }
   if (aiLabel) {
@@ -162,14 +174,16 @@ export function google(query, results, { dark = false, next = '', hostile = fals
       <div class="MjjYud"><div class="module videos"><div role="heading"><span>Videos</span></div>
         <div class="vrow">${['Anubis explained', 'Tomb of Anubis', 'Jackal gods'].map((t) => `<div class="vitem"><a href="https://www.youtube.com/watch?v=${t.length}"><h3>${t}</h3></a><div>YouTube</div></div>`).join('')}</div></div></div>`);
   }
+  // Image rows are pictures with no text.
+  const thumbs = [1, 2, 3].map(() => '<img alt="" width="48" height="48" style="background:#8884">').join(' ');
   if (modules) {
     // Modelled on community filter lists and uBlacklist's notes; not copied from a live page.
     items.splice(2, 0, `
       <div class="MjjYud"><div class="module videos"><div role="heading" aria-level="2">Videos</div>
         <div class="vrow">${['Anubis explained', 'Tomb of Anubis', 'Jackal gods'].map((t) => `<a href="https://www.youtube.com/watch?v=${t.length}"><div role="heading" aria-level="3">${t}</div><span>YouTube</span></a>`).join('')}</div></div></div>`);
     items.splice(6, 0, `
-      <div class="MjjYud"><div class="module kp"><h2>Anubis in art</h2><p>Statues, amulets and papyri.</p>
-        <div class="kp-images"><div role="heading" aria-level="2">Images</div><div class="thumbs">▢ ▢ ▢</div></div></div></div>`);
+      <div class="MjjYud"><div data-rpos="7"><div class="module kp"><h2>Anubis in art</h2><p>Statues, amulets and papyri.</p>
+        <div class="kp-images"><div role="heading" aria-level="2">Images</div><div class="thumbs">${thumbs}</div></div></div></div></div>`);
     items.splice(4, 0, `
       <div class="MjjYud"><div class="module paa"><div><h2 role="heading">People also ask</h2></div>
         ${['Who is Anubis?', 'Why is Anubis a jackal?', 'Is Anubis good or evil?'].map((q) => `<div class="related-question-pair"><div role="button">${q}</div></div>`).join('')}</div></div>`);
@@ -188,7 +202,7 @@ export function google(query, results, { dark = false, next = '', hostile = fals
         <button type="button">Dive deeper in AI Mode</button></div></div>`
       : '';
   const sidePanel = modules
-    ? `<div id="rhs"><h2>Anubis</h2><p>Egyptian deity</p><div><div role="heading" aria-level="2">Images</div><div class="thumbs">▢ ▢ ▢</div></div></div>`
+    ? `<div id="rhs"><h2>Anubis</h2><p>Egyptian deity</p><div><div role="heading" aria-level="2">Images</div><div class="thumbs">${thumbs}</div></div></div>`
     : '';
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${esc(query)} - Google Search</title>
   <style>

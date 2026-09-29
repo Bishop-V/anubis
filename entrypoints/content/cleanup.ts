@@ -55,7 +55,7 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
   for (const heading of document.querySelectorAll<HTMLElement>(HEADINGS)) {
     if (heading.closest('[data-anubis-result], anubis-summary, header, nav, [role="navigation"], form')) continue;
     const kind = cleanupKindFor(heading.textContent ?? '');
-    if (kind && wanted[kind]) addLabelled(blockAround(heading, engine, column, levelOf(heading)), kind);
+    if (kind && wanted[kind]) addLabelled(labelledBlock(heading, engine, column, levelOf(heading)), kind);
   }
 
   const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
@@ -69,7 +69,7 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
     if (!el || el.closest(NOT_A_BLOCK)) continue;
     // A label is the block's title: judge its level like a heading's. A marker sits
     // anywhere in the block, so only the column decides how far it reaches.
-    if (label) addLabelled(blockAround(el, engine, column, levelOf(el.closest<HTMLElement>(HEADINGS) ?? el)), kind);
+    if (label) addLabelled(labelledBlock(el, engine, column, levelOf(el.closest<HTMLElement>(HEADINGS) ?? el)), kind);
     else add(blockAround(el, engine, column), kind);
   }
 
@@ -117,6 +117,25 @@ function mainColumn(results: FoundResult[], engine: EngineDef): Column {
 }
 
 /**
+ * The block a recognised heading belongs to. Where the engine marks its blocks
+ * (Google's data-rpos), the marked block around the heading, widened to the column;
+ * otherwise worked out from the page's structure.
+ */
+function labelledBlock(label: HTMLElement, engine: EngineDef, column: Column, level: number): HTMLElement | undefined {
+  const marked = engine.blocks ? label.closest<HTMLElement>(engine.blocks) : null;
+  if (!marked || column.results.some((r) => r.contains(marked) || marked.contains(r))) return blockAround(label, engine, column, level);
+  // Only if the marked block is in the results column (not a side panel).
+  const whole = blockAround(marked, engine, column);
+  if (!whole) return undefined;
+  // One section of a bigger block ("Images" in a panel) is just that section.
+  const labelLength = textLength(label);
+  for (let block = label; block !== marked && block.parentElement; block = block.parentElement) {
+    if (!headerOnly(block, labelLength) && hasSiblingSection(block.parentElement, block, level)) return block;
+  }
+  return whole;
+}
+
+/**
  * The block in the results column holding `start`: climb until the parent is the
  * main results list, the engine's results boundary, or an element inside that
  * boundary that also holds main results. A heading that never reaches the column
@@ -126,6 +145,7 @@ function mainColumn(results: FoundResult[], engine: EngineDef): Column {
  */
 function blockAround(start: HTMLElement, engine: EngineDef, column: Column, level?: number): HTMLElement | undefined {
   let block = start;
+  const labelLength = (start.textContent ?? '').trim().length;
   // The section, once found; the climb goes on to check it's in the column.
   let section: HTMLElement | undefined;
   for (let depth = 0; depth < 30; depth++) {
@@ -134,7 +154,8 @@ function blockAround(start: HTMLElement, engine: EngineDef, column: Column, leve
     if (parent === column.list) return section ?? block;
     if (engine.boundary && parent.matches(engine.boundary)) return section ?? block;
     if ((!engine.boundary || parent.closest(engine.boundary)) && column.results.some((r) => parent.contains(r))) return section ?? block;
-    if (!section && level !== undefined && hasSiblingSection(parent, block, level)) section = block;
+    // A section holds more than its heading: a header row on its own isn't one.
+    if (!section && level !== undefined && !headerOnly(block, labelLength) && hasSiblingSection(parent, block, level)) section = block;
     block = parent;
   }
   return undefined;
@@ -156,6 +177,15 @@ function hasSiblingSection(parent: HTMLElement, block: HTMLElement, level: numbe
   return false;
 }
 
+function textLength(el: HTMLElement): number {
+  return (el.textContent ?? '').replace(/\s+/g, ' ').trim().length;
+}
+
+/** Little more than the label (a header row with a menu button), and no pictures. */
+function headerOnly(block: HTMLElement, labelLength: number): boolean {
+  return textLength(block) <= labelLength + 12 && !block.querySelector('img, picture, video, canvas, iframe');
+}
+
 /** Holds a heading that starts a section of its own, not just items' titles. */
 function hasSection(el: HTMLElement): boolean {
   const headings = el.matches(HEADINGS) ? [el] : [...el.querySelectorAll<HTMLElement>(HEADINGS)];
@@ -167,7 +197,7 @@ function hasSection(el: HTMLElement): boolean {
  * it: it's a link or holds one, or it sits in one of several look-alike cards.
  */
 function isItemTitle(heading: HTMLElement, within: HTMLElement): boolean {
-  if (heading.closest('a') || heading.querySelector('a[href]')) return true;
+  if (heading.closest('a, [role="link"], [jsaction]') || heading.querySelector('a[href], [role="link"]')) return true;
   for (let el: HTMLElement | null = heading; el && el !== within; el = el.parentElement) {
     const siblings = el.parentElement ? [...el.parentElement.children] : [];
     const alike = siblings.filter((s) => s.tagName === el!.tagName && s.className === el!.className && (s.matches(HEADINGS) || s.querySelector(HEADINGS)));
