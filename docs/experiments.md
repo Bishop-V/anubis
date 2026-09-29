@@ -8,12 +8,27 @@ The development sandbox could not reach any search engine, so everything on sear
 
 | Engine | How results are found | Confidence |
 | --- | --- | --- |
-| Google | Structural (h3), `<cite>` fallback for `/goto` links | Structural approach verified live on `main` before this work; `#pnnext` for Load more results is long-standing |
-| DuckDuckGo | Structural (h2) | Verified live on `main`; the `#more-results` button selector for Load more results is a guess |
-| DuckDuckGo HTML / Lite | Selectors from uBlacklist | Unverified |
-| Bing | Selectors from uBlacklist, `/ck/a` redirects decoded | Unverified; `a.sb_pagN` for Load more results is a guess |
-| Brave, Startpage, Ecosia, Kagi, Yandex | Selectors from uBlacklist | Unverified; Brave's `offset` and Ecosia's `p` parameters are guesses |
-| Yahoo, Mojeek | Structural, not covered by uBlacklist | Guesses, including Yahoo's `/RU=` redirect decoding |
+| Google | Structural (h3), `<cite>` fallback for `/goto` links | Structural approach verified live on `main` before this work; `#pnnext` for Load more results is long-standing. Automated Chromium gets a CAPTCHA, so the 2026-09-29 check below couldn't reach it |
+| DuckDuckGo | Structural (h2) | Verified live, including `#more-results` for Load more results (2026-09-29) |
+| DuckDuckGo HTML / Lite | Selectors from uBlacklist | Verified live, including its redirect links (2026-09-29) |
+| Bing | Selectors from uBlacklist, `/ck/a` redirects decoded | Results and redirects verified live; `a.sb_pagN` is right, but the fetched page can be a CAPTCHA (2026-09-29) |
+| Brave | Selectors from uBlacklist | Verified live, including `offset` for Load more results (2026-09-29) |
+| Startpage | Selectors from uBlacklist | Verified live (2026-09-29) |
+| Ecosia | Selectors from uBlacklist | Results verified live; `p` is right, but the fetched page is blocked (2026-09-29) |
+| Yahoo | Structural, not covered by uBlacklist | Results and `/RU=` decoding verified live; `a.next` is right, but the fetched page is blocked (2026-09-29) |
+| Kagi, Yandex, Mojeek | Selectors from uBlacklist (Mojeek structural) | Unverified: each showed a human check to automated Chromium |
+
+Checked on live pages on 2026-09-29, with the Chrome build loaded in automated (headless) Chromium, clean-up fully on, and a test list that hid, lowered, raised, pinned and tagged common sites. Engines treat automated browsers with more suspicion than a person's, so the blocks below may not all happen in everyday use.
+
+- **Results and redirects:** every engine that loaded found all its results, put the button on each, and applied the test list correctly, which means redirect links resolved to the real site: DuckDuckGo HTML and Lite, Bing's `/ck/a`, Yahoo's `/RU=`, and Startpage, Ecosia and Brave's direct links.
+- **Load more results worked** on DuckDuckGo (11 results to 26, by pressing `#more-results`) and Brave (20 to 40, `offset=1`, which matches Brave's own Next link).
+- **Load more results failed without saying why** on Bing, Ecosia and Yahoo. Their next-page selectors and parameters are right (Bing's Next link is `a.sb_pagN` with `first=11`, Ecosia's is `p=1`, Yahoo's is `a.next`), but the page Anubis fetches came back as a bot check: Bing's Turnstile page ("One last step", status 200, so it parses as a page with no results), Ecosia's Cloudflare firewall (403, and navigating to page 2 directly was challenged too), and Yahoo redirecting to a `_bv/v.gif` beacon (500). A 200 challenge page looks the same as the last page of results, so the button just disappears. **To do:** recognise an empty or challenged page and say so in the summary ("Bing asked to confirm you're not a robot"), and check these three engines again in an everyday browser.
+- **DuckDuckGo loses your settings on its no-AI version.** DuckDuckGo stores settings as cookies for `duckduckgo.com` only: changing the region set `l=uk-en` on `duckduckgo.com`, and `noai.duckduckgo.com` went back to the region its location suggests. So "AI answers" quietly resets region, theme and the rest. **To do:** carry the settings over, for example as DuckDuckGo's documented URL parameters (`kl`, `kae`…), which share the cookies' names.
+- **DuckDuckGo's Wikipedia panel** (`li[data-layout="about"]`, in the results list) counts as a result, linked to Wikipedia. Hiding wikipedia.org hides it. That seems reasonable, but it's a panel, not a result.
+- **Brave's AI answer** is `#llm-snippet` inside `#mixed-top`, not `#summarizer` (which wasn't on the page). It has no heading; clean-up removed it through its disclaimer, "AI-generated answer. Please verify critical facts.", which starts with the `AI-generated answer` marker.
+- **Bing's AI answer is not removed.** It is `li.b_ans.b_top` at the top of `#b_results`, with the answer in `.cht_container` and a `.cht_disclaimer` element. Its only label is `aria-label="AI Overview"`, which clean-up doesn't read, and its visible `h2` is the answer's first sentence. It didn't appear for every query. **To do:** accept `aria-label` text as a label, or add `.cht_container` to Bing's selectors.
+- **Bing's video panel is not removed.** It's `li.b_ans.b_vidAns` (`#serpvidans`) with the heading "Videos of how to bake sourdough bread", which the whole-text match for "Videos" misses. **To do:** add `Videos of ` as a prefix. Bing's related searches were removed.
+- **Yahoo:** its video and image panels and related searches were removed. **Ecosia:** related searches removed. **DuckDuckGo:** the image row and related searches removed.
 
 DuckDuckGo's own "hide this site" was simulated in the mocks (the result collapses into a notice); Anubis removes its UI from the collapsed result. The real feature's markup is unknown.
 
@@ -28,8 +43,7 @@ Clean-up on Google, confirmed from a live results page on 2026-09-29 (the troubl
 Still to check for clean-up:
 
 - Google: that "AI Overview", "Videos", "People also ask", "Top stories" and "Related searches" are still headings (`h1`–`h4` or `role="heading"`) at the top of their blocks, and that the blocks sit in `#rso`, `#botstuff` or the `role="main"` column. That the AI Mode tab is a link with that exact text in a `role="navigation"` or `role="list"` element. That choosing All from the Web tab lands on a `/search` URL without `udm`, so Anubis leaves it alone.
-- DuckDuckGo: that `noai.duckduckgo.com` keeps your DuckDuckGo settings (theme, region). They are cookies, and a cookie set only for `duckduckgo.com` wouldn't reach the subdomain.
-- Bing and Brave: what their AI answers' headings actually say. The selectors `[data-attrid="AIOverview"]` (Google), `.related-question-pair` (Google) and `#summarizer` (Brave) come from community filter lists.
+- The selectors `[data-attrid="AIOverview"]` and `.related-question-pair` (Google) come from community filter lists. `#summarizer` (Brave) wasn't on the page on 2026-09-29; see above. DuckDuckGo's settings on `noai.` and Bing's and Brave's AI answers were checked on 2026-09-29, above.
 
 Google's phone layout (for Firefox for Android) is modelled on uBlacklist's "Web (mobile)" rules only. To check on a phone: that titles are `role="heading"` elements with `aria-level="3"` inside the result's link, that the address is in `.ob9lvb`, that top stories cards carry `data-news-cluster-id`, and how the phone layout loads more results.
 
