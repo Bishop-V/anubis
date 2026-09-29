@@ -795,7 +795,9 @@ if (!only || only === 'cleanup' || checks) {
   // DuckDuckGo's Videos and Images tabs: cards in a grid, hidden and tagged, not reranked.
   for (const tab of ['videos', 'images']) {
     await page.goto(`https://duckduckgo.com/?q=javascript+promises&iax=${tab}&ia=${tab}`);
-    await page.waitForTimeout(800);
+    // Wait until the lists have weighed the cards (some are hidden), not a fixed time.
+    await page.waitForFunction(() => !!document.querySelector('ol > li[data-anubis-state~="hide"]') && !!document.querySelector('anubis-summary'), null, { timeout: 5000 }).catch(() => {});
+    await page.waitForTimeout(200);
     const grid = await page.evaluate(() => {
       const ol = document.querySelector('ol');
       const summary = document.querySelector('anubis-summary')?.getBoundingClientRect();
