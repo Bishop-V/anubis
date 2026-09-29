@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title data-i18n="welcomeTitle">Welcome to Anubis</title>
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="/anubis.svg" alt="" width="60" height="60" />
+        <h1 data-i18n="welcomeHeading">Anubis is installed</h1>
+        <p class="lead" data-i18n="welcomeIntro"></p>
+      </header>
+
+      <section aria-labelledby="pin-heading">
+        <h2 id="pin-heading" data-i18n="welcomePinHeading">Keep it in the toolbar</h2>
+        <p data-i18n="welcomePinWhy"></p>
+        <p id="pin" class="pin">
+          <img src="/icon/32.png" alt="" width="20" height="20" />
+          <span id="pin-text"></span>
+        </p>
+      </section>
+
+      <section aria-labelledby="search-heading">
+        <h2 id="search-heading" data-i18n="welcomeSearchHeading">Try a search</h2>
+        <p data-i18n="welcomeSearchHow"></p>
+        <p id="search-for"></p>
+        <div id="engines" class="engines"></div>
+      </section>
+
+      <section aria-labelledby="lists-heading">
+        <h2 id="lists-heading" data-i18n="welcomeListsHeading">Your lists</h2>
+        <p id="lists-intro"></p>
+        <ul id="lists" class="lists"></ul>
+        <p class="more">
+          <span data-i18n="welcomeListsMore"></span>
+          <a class="btn small" href="/options.html#lists" target="_blank" data-i18n="welcomeListsOpen">Open list settings</a>
+        </p>
+      </section>
+
+      <footer>
+        <a id="guide" target="_blank" rel="noopener noreferrer" data-i18n="welcomeGuide">User guide</a>
+        <a id="privacy" target="_blank" rel="noopener noreferrer" data-i18n="welcomePrivacy">Privacy</a>
+      </footer>
+    </main>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

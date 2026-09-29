@@ -29,6 +29,11 @@ describe('evaluate', () => {
     expect(v.score).toBe(-3);
     expect(v.level).toBe('lower');
     expect(v.reasons.map((r) => r.list)).toEqual(['a', 'b']);
+    // Each reason carries the rule behind it, for reporting it to the list.
+    expect(v.reasons.map((r) => r.rule)).toEqual([
+      { line: 1, raw: '$boost=2,site=x.com' },
+      { line: 1, raw: '$downrank=5,site=x.com' },
+    ]);
   });
 
   it('collects tags with their sources', () => {

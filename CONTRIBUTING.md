@@ -27,7 +27,7 @@ The [README](README.md#setup) has the rest, including loading a build by hand.
 
 Keep each pull request to one topic. The project's conventions, briefly:
 
-- **Interface.** The popup, settings and in-page UI are plain DOM built with `h()` from `utils/dom.ts`. Text from lists always goes in as text nodes, never markup, and nothing uses `innerHTML`. Interface text goes in `public/_locales/en/messages.json` and is used through `t()` and `tn()` from `utils/i18n.ts`.
+- **Interface.** The popup, settings, welcome page and in-page UI are plain DOM built with `h()` from `utils/dom.ts`. Text from lists always goes in as text nodes, never markup, and nothing uses `innerHTML`. Interface text goes in `public/_locales/en/messages.json` and is used through `t()` and `tn()` from `utils/i18n.ts`.
 - **Wording.** Labels say what happens in plain words ("Load more results", "Hide, rank or tag this site"). A site's *ranking* is Hide, Lower, Normal, Raise or Pin, and the same word means the same thing everywhere. Use an icon only where everyone knows it (a cog for settings, × to close), and give every icon-only button a label and a tooltip.
 - **Nothing hidden without a trace.** The summary above the results says what Anubis changed, and "Show hidden" undoes it for the page.
 - **Permissions.** Ask for as few as possible, and only the ones a feature actually needs.

@@ -366,6 +366,28 @@ textarea.code {
   font-size: 12.5px;
   color: var(--danger);
 }
+/* A list a subscribe link asked for: the one panel waiting for an answer. */
+.panel.offer {
+  border-top: 2px solid var(--gold);
+}
+.panel.offer p {
+  margin: 4px 0 0;
+  font-size: 13px;
+}
+.panel.offer .kind {
+  margin-left: 8px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.panel.offer .address {
+  overflow-wrap: anywhere;
+}
+.panel.offer .address a {
+  color: var(--muted);
+}
+.panel.offer .inline-form {
+  margin-top: 14px;
+}
 .discover-row {
   display: flex;
   align-items: baseline;

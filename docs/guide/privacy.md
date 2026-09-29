@@ -15,7 +15,7 @@ Only these:
 - **The directory of lists** on GitHub, when you open **Settings → Lists**, so **More lists** shows the newest ones.
 - **The search engine you're on**, for [Load more results](./more-results.md), which loads its next page like the "Next" link would.
 - **`noai.duckduckgo.com`**, if [AI answers](./clean-up.md) are removed, because DuckDuckGo searches open there. On Google, the Web tab option adds `udm=14` to the search's address.
-- **Issue trackers**, when you choose "Suggest it to…". That opens a page in a new tab; nothing is sent unless you submit the issue yourself.
+- **Issue trackers**, when you choose "Report it to…" or "Suggest it to…". That opens a page in a new tab, with the result's address (without anything after `?`, which can carry details of your visit) and the rule that matched; nothing is sent unless you submit the issue yourself.
 
 Downloading a list works like any other download: the site hosting it sees your IP address and which file was asked for. Anubis sends nothing else with it: no cookies, no identifier, and nothing about your searches.
 
@@ -23,7 +23,10 @@ Downloading a list works like any other download: the site hosting it sees your 
 
 When you install Anubis, your browser asks for:
 
-- **Access to the search engines' sites**, so Anubis can change their results pages. It runs on those sites only.
+- **Access to the search engines' sites**, so Anubis can change their results pages.
+- **Access to this guide's [subscribe page](../subscribe.md)**, so a subscribe link can open Anubis's settings with a list filled in. Your browser names it after the site this guide is on, `bishop-v.github.io`. Anubis reads only the link's address there.
+
+Anubis runs on no other sites.
 - **Storage**, to keep your list and settings.
 - **The current tab, when you open the toolbar popup** (called `activeTab`). This lets the popup read the address of the site you're on, so you can rank it. It shows no install warning and lasts until that tab goes to another page.
 

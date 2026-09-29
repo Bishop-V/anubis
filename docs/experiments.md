@@ -50,12 +50,33 @@ Still to check for clean-up:
 
 Google's phone layout (for Firefox for Android) is modelled on uBlacklist's "Web (mobile)" rules only. To check on a phone: that titles are `role="heading"` elements with `aria-level="3"` inside the result's link, that the address is in `.ob9lvb`, that top stories cards carry `data-news-cluster-id`, and how the phone layout loads more results.
 
+## Reporting mistakes to lists
+
+Asked for: a way to report a wrong result, like SponsorBlock's feedback loop but without a backend. Lists already live in Git repositories, so a report can be an issue there.
+
+- **Shipped:** under **Why** in the result menu, "Wrong? Report it to *list*" for each list that weighed the result. It opens a pre-filled issue: the result's address without its query or fragment (which can carry session details), what the list does with it, the rules that matched with their line numbers, and a "What should change:" prompt. The issue is in English whatever the interface language, since it's for the list's maintainers. Line numbers come from the copy Anubis has, which can be older than the repository's, so the rules' text goes in too.
+- **Where it goes:** the list's `! issues:`, else the repository its `! homepage:` or its own address points into (`raw.githubusercontent.com/<owner>/<repo>/…`, GitLab's `…/-/raw/…`, Codeberg's `…/raw/…`). Gists and other hosts have no tracker to derive, so they get no link. None of the seven third-party lists in the directory sets `! issues:` or `! homepage:` (checked 2026-09-29), so without deriving it the feature would reach only Anubis's own lists.
+- **Suggestions stay opt-in.** "Suggest it to…" still needs `! issues:`: a report of a mistake is an ordinary bug report for any repository, but unsolicited additions aren't. Suggestions now skip lists that already weigh the result, since for those the report is the right link; before, such a list could be offered a suggestion.
+- **Considered:** a "Report" link on each line under Why. Rejected because one list can give several reasons for one result; one link per list, named, also says where the report goes.
+- The report and suggestion lines are the first of the menu's text in `messages.json`. `tList` in `utils/i18n.ts` puts the links in place of `$1`, joined with `Intl.ListFormat` ("A or B").
+- **Unverified:** what GitHub does when a repository has issues turned off (it should show the repository), or has issue forms with blank issues turned off (it may show the template chooser and drop the pre-filled text).
+
 ## Store listings
 
 - **Chrome's publishing API:** v1.1 and its refresh tokens stop working on 15 October 2026. `wxt submit` (publish-browser-extension 6.1.1 in WXT 0.21) can use v2 with a service account but still defaults to v1.1, so `CHROME_API_VERSION=v2` has to be set. Found by reading the installed package, not its documentation.
 - **Privacy page:** it said Anubis connects to list hosts "only when you use the feature", but the four built-in lists download from GitHub on install, and opening Settings → Lists fetches the directory. Both are now listed, since the page doubles as the stores' privacy policy.
 - **Store icon:** Chrome wants the logo at 96×96 inside 128×128 of transparent padding; the toolbar icon fills the square, so `store/icon-128.png` is rendered separately (`store/render.mjs`), as is the 440×280 promo tile.
 - **Screenshots:** not made from the e2e mocks. They look like the engines but aren't them, and a listing has to show the real thing.
+
+## Welcome page
+
+Asked for: pinning and the starter lists were only explained in the user guide, which people rarely open before their first search.
+
+- **Shipped:** `entrypoints/welcome/`, opened by the background script when `runtime.onInstalled` says `install` (never on updates, and it needs no permission). It gives this browser's steps to pin the toolbar button, a search to try on four engines, and the lists you're subscribed to with the tags each adds. The search is "python list comprehension", which brings up official docs, forums and Wikipedia, so three of the four starter lists show a tag. The lists come from storage rather than the directory, so a reinstall that syncs other subscriptions shows those.
+- **Pinned or not:** Chromium browsers answer `action.getUserSettings()` with `isOnToolbar`, and newer Chrome fires `onUserSettingsChanged`. The page checks on load, on that event and when the window regains focus, and says "Anubis is in your toolbar." instead of the steps once it is. Where the browser doesn't say, the steps stay. The e2e browser can't pin, so only the unpinned state is tested.
+- **Not done:** `browser_action.default_area: "navbar"` for Firefox, which would put the button on the toolbar straight away. Firefox's own default keeps new buttons in the Extensions panel, and the steps cover it.
+- **Firefox for Android** has no toolbar for extensions; the page still shows Firefox's desktop steps there. Fix that when Android is checked (`ROADMAP.md`).
+- `npm run dev` starts with a fresh browser profile, so it opens the welcome tab each time.
 
 ## Keyboard shortcuts
 
@@ -192,6 +213,15 @@ Called "Weigh deeper" until the wording review below.
 - `raw.githubusercontent.com` and `gist.githubusercontent.com` send `Access-Control-Allow-Origin: *`, so lists there download with no host permission at all. Other hosts ask for permission to that one host when you subscribe (`optional_host_permissions` on Chrome, `optional_permissions` on Firefox MV2, which WXT doesn't convert automatically).
 - Updates run when the browser starts and when a search page loads, at most every 30 minutes, instead of using the `alarms` permission.
 - Real lists parsed while testing: Brave's Hacker News Goggle (6,238 rules in 14 ms), Tech blogs, Rust, Copycats and No Pinterest Goggles; laylavish's AI blocklist in uBlacklist format (1,673 rules; one line skipped for a TLD wildcard, which isn't a valid match pattern); arosh's Stack Overflow and GitHub copy lists. A README fetched by mistake parses to zero rules and is rejected.
+
+### Subscribe links (2026-09-29)
+
+Subscribe on the lists directory, and links list authors share, lead to the guide's `subscribe?url=…&name=…` page, the same shape as uBlacklist's. Anubis opens Settings → Lists with a "Subscribe to …?" panel there; nothing is added until you press Subscribe, since anyone can make a link. A list from the directory shows the directory's name and description, whatever name the link gives.
+
+- **How the link reaches the extension.** uBlacklist redirects its subscribe page to its options page with a `declarativeNetRequest` rule. That needs host access to its site, which it asks for with a separate "enable subscription links" button (so the first link someone follows does nothing), and the options page listed in `web_accessible_resources`, which lets any page frame it. Anubis uses a content script that matches only the subscribe page: no new permission, no web-accessible page, and it works from the first click. The cost is one more site in the install prompt (`bishop-v.github.io`), explained in the privacy page and the store notes.
+- **Where settings open.** Turning the subscribe page's own tab into settings (`tabs.update`) would leave the subscribe page in its history, so Back would open settings again, and Chrome has no way to replace the entry (Firefox's `loadReplace`). Settings open in a new tab beside it instead, and the subscribe page goes back to where the link was, or closes if it was opened in a tab of its own. Back or Forward onto it does nothing (its navigation type is `back_forward`); the page itself explains and links to itself.
+- **VitePress's router.** It follows same-site links without loading a page, and a content script only runs on a page load, so a plain link on the directory would never reach Anubis. Its router leaves links with a `target` alone (seen in its source), so the directory's carry `target="_self"`; the check against the built site below confirms it.
+- Checked in Chromium: `node e2e/run.mjs subscribe-link` (mock directory, subscribe page and list; the directory tab goes back, a new tab closes, Forward doesn't reopen settings, a second link says you already subscribe), and the built docs site served at its real address, with and without the extension. Not yet run in Firefox, nor on the live site, which isn't published until GitHub Pages is on.
 
 ## Design
 

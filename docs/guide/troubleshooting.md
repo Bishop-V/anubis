@@ -49,4 +49,4 @@ That's **Settings → Clean up → AI answers**, which sends DuckDuckGo searches
 
 ## Something was hidden and I don't know why
 
-Open the ⇅ menu on the result. **Why** lists each list or tag behind the decision. Your own ranking beats all of them.
+Open the ⇅ menu on the result. **Why** lists each list or tag behind the decision. Your own ranking beats all of them. If a list got it wrong, "Wrong? Report it to *list name*" tells the list's maintainers ([Report a mistake in a list](./lists.md#report-a-mistake-in-a-list)).

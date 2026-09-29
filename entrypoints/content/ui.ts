@@ -4,7 +4,7 @@ import type { EngineDef } from '@/utils/engines';
 import { ICON_ANUBIS, ICON_CLOSE, ICON_GEAR, ICON_HIDE, ICON_RANK, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
 import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
-import { tn } from '@/utils/i18n';
+import { t, tList, tn } from '@/utils/i18n';
 import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, type PersonalLevel } from '@/utils/personal';
 import { summarySentence } from '@/utils/summary';
@@ -486,7 +486,9 @@ export interface PopoverData {
   personalText: string;
   tags: Map<string, TagDef>;
   /** Subscribed lists with an issue tracker, for "suggest" links, with the tag ids each defines. */
-  trackers: { name: string; issues: string; tags: string[] }[];
+  trackers: { id: string; name: string; issues: string; tags: string[] }[];
+  /** Pre-filled issues telling each list that weighed this result it's wrong. */
+  reports: { id: string; name: string; href: string }[];
   theme: PageTheme;
 }
 
@@ -494,7 +496,7 @@ export interface PopoverActions {
   setLevel(domain: string, level: PersonalLevel): void;
   toggleTag(domain: string, tag: string): void;
   createTag(domain: string, label: string): void;
-  suggest(tracker: { name: string; issues: string; tags: string[] }, domain: string): string | undefined;
+  suggest(tracker: PopoverData['trackers'][number], domain: string): string | undefined;
   settings(): void;
 }
 
@@ -726,18 +728,24 @@ function buildPopover(
     }
   });
 
-  // Once you've weighed a site yourself, offer to propose it to up to two lists:
-  // those that already use one of your tags for it come first.
+  const link = (href: string, title: string, name: string) => h('a', { href, target: '_blank', rel: 'noopener noreferrer', title }, name);
+
+  // Every list that weighed the result can be told it's wrong about it.
+  const reportLinks = data.reports.map((r) => link(r.href, t('menuReportTitle', r.name), r.name));
+
+  // Once you've weighed a site yourself, offer to propose it to up to two of the
+  // lists that don't mention it yet: those that already use one of your tags come first.
+  const reported = new Set(data.reports.map((r) => r.id));
   const ranked = entry
-    ? [...data.trackers].sort((a, b) => Number(b.tags.some((t) => mine.has(t))) - Number(a.tags.some((t) => mine.has(t))))
+    ? data.trackers
+        .filter((tr) => !reported.has(tr.id))
+        .sort((a, b) => Number(b.tags.some((id) => mine.has(id))) - Number(a.tags.some((id) => mine.has(id))))
     : [];
   const suggestLinks = ranked
     .slice(0, 2)
-    .map((t) => {
-      const href = actions.suggest(t, domain);
-      return href
-        ? h('a', { href, target: '_blank', rel: 'noopener noreferrer', title: `Propose ${domain} to ${t.name} on its issue tracker` }, t.name)
-        : null;
+    .map((tr) => {
+      const href = actions.suggest(tr, domain);
+      return href ? link(href, t('menuSuggestTitle', domain, tr.name), tr.name) : null;
     })
     .filter((a): a is HTMLAnchorElement => a !== null);
 
@@ -779,15 +787,8 @@ function buildPopover(
           reasons.length
             ? h('ul', { class: 'reasons' }, reasons.map((r) => h('li', null, h('b', null, r.list), ` ${r.text}.`)))
             : null,
-          suggestLinks.length
-            ? h(
-                'p',
-                { class: 'suggest' },
-                'Should a list include it? Suggest it to ',
-                suggestLinks.flatMap((a, i) => (i ? [' or ', a] : [a])),
-                '.',
-              )
-            : null,
+          reportLinks.length ? h('p', { class: 'forge' }, tList('menuReport', reportLinks, 'disjunction')) : null,
+          suggestLinks.length ? h('p', { class: 'forge' }, tList('menuSuggest', suggestLinks, 'disjunction')) : null,
         )
       : null,
     h(
