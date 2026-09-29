@@ -41,6 +41,26 @@ export const JS_MORE = [
 
 const hostOf = (u) => new URL(u).hostname.replace(/^www\./, '');
 
+// Google shows each result's site name and icon. Simple stand-ins for the icons of
+// the sites in the results above; any other site gets its address and a globe.
+const letter = (bg, fg, ch, font = 'Arial,sans-serif', size = 11) =>
+  `<rect width="16" height="16" rx="3" fill="${bg}"/><text x="8" y="${8 + size * 0.36}" text-anchor="middle" font-family="${font}" font-weight="700" font-size="${size}" fill="${fg}">${ch}</text>`;
+const SITES = [
+  ['wikipedia.org', 'Wikipedia', letter('#fff', '#202122', 'W', 'Georgia,serif', 12)],
+  ['fandom.com', 'Fandom', letter('#fa005a', '#fff', 'F')],
+  ['britannica.com', 'Britannica', letter('#0f4c81', '#fff', 'B', 'Georgia,serif')],
+  ['nytimes.com', 'The New York Times', letter('#fff', '#000', 'T', 'Georgia,serif', 13)],
+  ['reddit.com', 'Reddit', '<circle cx="8" cy="8" r="8" fill="#ff4500"/><ellipse cx="8" cy="9.6" rx="4.8" ry="3.3" fill="#fff"/><circle cx="6.2" cy="9.4" r="1" fill="#ff4500"/><circle cx="9.8" cy="9.4" r="1" fill="#ff4500"/>'],
+  ['worldhistory.org', 'World History Encyclopedia', letter('#7a1f2b', '#fff', 'W', 'Georgia,serif')],
+  ['metmuseum.org', 'The Metropolitan Museum of Art', letter('#e4002b', '#fff', 'M')],
+  ['smithsonianmag.com', 'Smithsonian Magazine', letter('#1d1d1b', '#fff', 'S', 'Georgia,serif')],
+  ['wsj.com', 'The Wall Street Journal', letter('#fff', '#000', 'W', 'Georgia,serif', 12)],
+];
+const GLOBE = '<circle cx="8" cy="8" r="6.4" fill="none" stroke="#5f6368" stroke-width="1.3"/><path d="M1.6 8h12.8M8 1.6c-2.3 2.3-2.3 10.5 0 12.8M8 1.6c2.3 2.3 2.3 10.5 0 12.8" fill="none" stroke="#5f6368" stroke-width="1.1"/>';
+const siteOf = (host) => SITES.find(([d]) => host === d || host.endsWith(`.${d}`)) ?? [host, host, GLOBE];
+const siteIcon = (svg) =>
+  `<img class="XNo5Ab" alt="" width="18" height="18" src="data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">${svg}</svg>`)}">`;
+
 // ---------------------------------------------------------------- DuckDuckGo
 // `ai`: DuckDuckGo's AI features, modelled on EasyList's AI filters (unchecked on a
 // live page): the answer as the list's first item, found by its data-testid with no
@@ -123,7 +143,7 @@ export function google(query, results, { dark = false, next = '', hostile = fals
       .join('')}</div>`;
   const items = results
     .map(([url, title, snippet], i) => {
-      const host = hostOf(url);
+      const [, name, icon] = siteOf(hostOf(url));
       const crumbs = `https://${new URL(url).hostname} › ${new URL(url).pathname.split('/').filter(Boolean).slice(0, 2).join(' › ')}`;
       // Mix of link styles: direct, /url?q=, and opaque /goto (needs the <cite> fallback).
       const href = i === 1 ? `/url?q=${encodeURIComponent(url)}&sa=U` : i === 3 ? `/goto?url=CAESopaqueblob${i}` : url;
@@ -133,8 +153,8 @@ export function google(query, results, { dark = false, next = '', hostile = fals
       <div class="MjjYud">${open}<div class="g Ww4FFb vt6azd tF2Cxc asEBEc"><div class="N54PNb BToiNc">
         <div class="kb0PBd A9Y9g jGGQ5e" data-snf="x5WNvb"><div class="yuRUbf"><div class="flipwrap"><span jscontroller="msmzHf">
           <a jsname="UWckNb" href="${href}"><br><h3 class="LC20lb MBeuO DKV0Md">${esc(title)}</h3>
-            <div class="notranslate TbwUpd NJjxre iUh30 ojE3Fb"><span class="H9lube"><div class="eqA2re NjwKYd Vwoesf"><div class="favicon"></div></div></span>
-            <div><span class="VuuXrf">${esc(host.split('.')[0])}</span><div class="byrV5b"><cite class="qLRx3b tjvcx GvPZzd cHaqb" role="text">${esc(crumbs)}</cite></div></div></div>
+            <div class="notranslate TbwUpd NJjxre iUh30 ojE3Fb"><span class="H9lube"><div class="eqA2re NjwKYd Vwoesf"><div class="favicon">${siteIcon(icon)}</div></div></span>
+            <div><span class="VuuXrf">${esc(name)}</span><div class="byrV5b"><cite class="qLRx3b tjvcx GvPZzd cHaqb" role="text">${esc(crumbs)}</cite></div></div></div>
           </a><span class="aux"></span></span><div class="B6fmyf">⋮</div></div></div></div>
         <div class="kb0PBd A9Y9g" data-sncf="1"><div class="VwiC3b yXK7lf p4wth r025kc hJNv6b Hdw6tb" style="-webkit-line-clamp:2"><span>${esc(snippet)}</span></div></div>
       </div>${grouped && i === 0 ? sitelinks(url) : ''}</div>${close}</div>`;
@@ -195,7 +215,13 @@ export function google(query, results, { dark = false, next = '', hostile = fals
     // Modelled on community filter lists and uBlacklist's notes; not copied from a live page.
     items.splice(2, 0, `
       <div class="MjjYud"><div class="module videos"><div role="heading" aria-level="2">Videos</div>
-        <div class="vrow">${['Anubis explained', 'Tomb of Anubis', 'Jackal gods'].map((t) => `<a href="https://www.youtube.com/watch?v=${t.length}"><div role="heading" aria-level="3">${t}</div><span>YouTube</span></a>`).join('')}</div></div></div>`);
+        <div class="vrow">${[
+          ['Anubis explained', 'Ancient Egypt Explained', 'Mar 3, 2025'],
+          ['Tomb of Anubis', 'Museum Talks', '8 months ago'],
+          ['Jackal gods', 'Desert Nights', '2 years ago'],
+        ]
+          .map(([t, channel, when]) => `<a href="https://www.youtube.com/watch?v=${t.length}"><div role="heading" aria-level="3">${t}</div><span>YouTube · ${channel}</span><span>${when}</span></a>`)
+          .join('')}</div></div></div>`);
     items.splice(6, 0, `
       <div class="MjjYud"><div data-rpos="7"><div class="module kp"><h2>Anubis in art</h2><p>Statues, amulets and papyri.</p>
         <div class="kp-images"><div role="heading" aria-level="2">Images</div><div class="thumbs">${thumbs}</div></div></div></div></div>`);
@@ -213,41 +239,84 @@ export function google(query, results, { dark = false, next = '', hostile = fals
         <div class="followup"><textarea name="q" aria-label="Ask a follow up"></textarea></div>
         <div class="disclaimer">AI responses may include mistakes. <a href="/learn">Learn more</a></div></div></div>`
     : modules
-      ? `<div class="M8OgIe module ai"><div><h1 class="aio">AI Overview</h1><div>Anubis is the jackal-headed god of the dead in ancient Egyptian religion…</div>
+      ? `<div class="M8OgIe module ai"><div><h1 class="aio">AI Overview</h1><div>Anubis is the jackal-headed god of the dead in ancient Egyptian religion, linked with mummification and the protection of tombs. He guided souls into the afterlife and oversaw the Weighing of the Heart, in which a person’s heart was weighed against the feather of Maat…</div>
         <button type="button">Dive deeper in AI Mode</button></div></div>`
       : '';
   const sidePanel = modules
     ? `<div id="rhs"><h2>Anubis</h2><p>Egyptian deity</p><div><div role="heading" aria-level="2">Images</div><div class="thumbs">${thumbs}</div></div></div>`
     : '';
+  // Colours for light and dark mode.
+  const c = dark
+    ? { bg: '#1f1f1f', text: '#e3e3e3', site: '#dadce0', muted: '#bdc1c6', link: '#99c3ff', line: '#3c4043', rule: '#5f6368', soft: '#303134', box: '#303134', shadow: '0 1px 6px #0008' }
+    : { bg: '#fff', text: '#1f1f1f', site: '#202124', muted: '#4d5156', link: '#1a0dab', line: '#ebebeb', rule: '#dadce0', soft: '#f1f3f4', box: '#fff', shadow: '0 2px 5px 1px #403c4329' };
+  // Google's wordmark, from the CC0 collection at github.com/gilbarbara/logos, in Google's colours.
+  const logo = `<svg viewBox="0 0 512 168" width="92" height="30" role="img" aria-label="Google"><path fill="#ea4335" d="M496.1,102.7L510.3,112.1C505.6,118.9 494.6,130.6 475.6,130.6C451.9,130.6 434.3,112.3 434.3,89C434.3,64.2 452.1,47.4 473.6,47.4C495.2,47.4 505.8,64.5 509.2,73.8L511.1,78.6L455.4,101.6C459.6,110 466.2,114.2 475.6,114.2C484.9,114.2 491.4,109.6 496.1,102.7L496.1,102.7ZM452.4,87.7L489.6,72.2C487.5,67 481.4,63.4 474.1,63.4C464.8,63.4 451.9,71.6 452.4,87.7L452.4,87.7Z"/><path fill="#34a853" d="M407.4,4.9L425.3,4.9L425.3,126.8L407.4,126.8L407.4,4.9L407.4,4.9Z"/><path fill="#4285f4" d="M379.1,50.6L396.4,50.6L396.4,124.6C396.4,155.3 378.3,168 356.9,168C336.7,168 324.6,154.4 320,143.4L335.9,136.7C338.8,143.5 345.7,151.6 356.9,151.6C370.7,151.6 379.1,143 379.1,127.1L379.1,121.1L378.5,121.1C374.4,126.1 366.5,130.6 356.6,130.6C335.8,130.6 316.7,112.5 316.7,89.1C316.7,65.6 335.8,47.3 356.6,47.3C366.5,47.3 374.4,51.7 378.5,56.6L379.1,56.6L379.1,50.6L379.1,50.6ZM380.4,89.1C380.4,74.4 370.6,63.7 358.1,63.7C345.5,63.7 335,74.4 335,89.1C335,103.6 345.5,114.1 358.1,114.1C370.6,114.2 380.4,103.6 380.4,89.1L380.4,89.1Z"/><path fill="#ea4335" d="M218.2,88.8C218.2,112.8 199.5,130.4 176.6,130.4C153.7,130.4 135,112.7 135,88.8C135,64.7 153.7,47.1 176.6,47.1C199.5,47.1 218.2,64.7 218.2,88.8L218.2,88.8ZM200,88.8C200,73.8 189.2,63.6 176.6,63.6C164,63.6 153.2,73.8 153.2,88.8C153.2,103.6 164,114 176.6,114C189.2,114 200,103.6 200,88.8L200,88.8Z"/><path fill="#fbbc05" d="M309.1,89C309.1,113 290.4,130.6 267.5,130.6C244.6,130.6 225.9,113 225.9,89C225.9,64.9 244.6,47.4 267.5,47.4C290.4,47.4 309.1,64.8 309.1,89L309.1,89ZM290.9,89C290.9,74 280,63.7 267.4,63.7C254.8,63.7 244,74 244,89C244,103.8 254.8,114.2 267.4,114.2C280.1,114.2 290.9,103.7 290.9,89L290.9,89Z"/><path fill="#4285f4" d="M66.6,112.3C40.5,112.3 20.1,91.3 20.1,65.2C20.1,39.1 40.5,18 66.6,18C80.7,18 90.9,23.6 98.5,30.7L111.1,18.1C100.5,8 86.3,0.3 66.6,0.3C30.8,0.3 0.7,29.4 0.7,65.2C0.7,100.9 30.8,130.1 66.6,130.1C85.9,130.1 100.5,123.7 111.9,111.9C123.6,100.2 127.2,83.7 127.2,70.4C127.2,66.2 126.7,61.9 126.1,58.8L66.6,58.8L66.6,76.1L109,76.1C107.8,86.9 104.3,94.3 99.3,99.4C93.2,105.5 83.5,112.3 66.6,112.3L66.6,112.3L66.6,112.3Z"/></svg>`;
+  // The search box's buttons: clear, voice, Lens and search.
+  const boxButtons = `<span class="qbtns" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path fill="#70757a" d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg><span class="qsep"></span>
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3" fill="#4285f4" stroke="none"/><path d="M6 11a6 6 0 0 0 6 6" stroke="#fbbc04"/><path d="M18 11a6 6 0 0 1-6 6" stroke="#ea4335"/><path d="M12 17v4" stroke="#34a853"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 10V7a3 3 0 0 1 3-3h3" stroke="#4285f4"/><path d="M14 4h3a3 3 0 0 1 3 3v3" stroke="#ea4335"/><path d="M4 14v3a3 3 0 0 0 3 3h3" stroke="#34a853"/><circle cx="12" cy="12" r="3" fill="#4285f4" stroke="none"/><circle cx="17.5" cy="17.5" r="2" fill="#fbbc04" stroke="none"/></svg>
+      <svg viewBox="0 0 24 24"><path fill="#4285f4" d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+    </span>`;
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${esc(query)} - Google Search</title>
   <style>
-    body{margin:0;font:14px/1.58 Arial,sans-serif;background:${dark ? '#1f1f1f' : '#fff'};color:${dark ? '#e3e3e3' : '#202124'}}
-    .hdr{display:flex;align-items:center;gap:28px;padding:22px 28px 16px}
-    .glogo{font:600 24px/1 "Product Sans",Arial;color:${dark ? '#fff' : '#4285f4'}}
-    .q{flex:0 1 690px;height:44px;margin:0;border-radius:24px;box-shadow:0 1px 6px ${dark ? '#0008' : '#20212447'};padding:0 20px;display:flex;align-items:center;background:${dark ? '#303134' : '#fff'}}
-    .q textarea{flex:1;height:22px;border:0;padding:0;resize:none;overflow:hidden;background:none;color:inherit;font:inherit;outline:none}
-    .tabs{padding:0 0 10px 180px;color:${dark ? '#bdc1c6' : '#5f6368'};font-size:14px;display:flex;gap:22px;border-bottom:1px solid ${dark ? '#3c4043' : '#ebebeb'}}
+    body{margin:0;font:14px/1.58 Arial,sans-serif;background:${c.bg};color:${c.text}}
+    .hdr{display:flex;align-items:center;padding:20px 0 12px}
+    .glogo{box-sizing:border-box;flex:0 0 168px;padding:2px 0 0 30px}.glogo svg{display:block}
+    .q{box-sizing:border-box;flex:0 0 692px;height:46px;margin:0;border-radius:24px;box-shadow:${c.shadow};padding:0 6px 0 20px;display:flex;align-items:center;background:${c.box}}
+    .q textarea{flex:1;height:22px;border:0;padding:0;resize:none;overflow:hidden;background:none;color:inherit;font:16px/22px Arial,sans-serif;outline:none}
+    .qbtns{display:flex;align-items:center}.qbtns svg{width:24px;height:24px;padding:0 8px}
+    .qsep{width:1px;height:28px;margin:0 4px;background:${c.rule}}
+    .tabs{display:flex;padding:0 0 0 168px;border-bottom:1px solid ${c.line};font-size:14px;color:${dark ? '#bdc1c6' : '#5f6368'}}
+    .tabs>*{padding:8px 12px 9px;border-bottom:3px solid transparent;color:inherit;text-decoration:none;white-space:nowrap}
+    .tabs>b{font-weight:700;color:${c.text};border-bottom-color:${c.text}}
+    .tabs>.tools{margin-left:28px}
     #search{padding:20px 0 60px 180px;max-width:652px}
     .MjjYud{margin-bottom:30px}
     .yuRUbf a{text-decoration:none;display:inline-block}
     .yuRUbf br{display:none}
-    h3{margin:0;padding-top:5px;font-size:20px;font-weight:400;line-height:1.3;color:${dark ? '#99c3ff' : '#1a0dab'}}
-    .TbwUpd{display:flex;align-items:center;gap:10px;order:-1}
+    h3{margin:0 0 3px;padding-top:5px;font-size:20px;font-weight:400;line-height:1.3;color:${c.link}}
+    .TbwUpd{display:flex;align-items:center;gap:12px;order:-1}
     .yuRUbf span[jscontroller]{display:flex;flex-direction:column}
-    .yuRUbf a{display:flex;flex-direction:column-reverse}
-    .favicon{width:26px;height:26px;border-radius:50%;background:${dark ? '#3c4043' : '#f1f3f4'}}
-    .VuuXrf{display:block;font-size:14px;color:${dark ? '#dadce0' : '#202124'}}
-    cite{font-style:normal;font-size:12px;color:${dark ? '#bdc1c6' : '#4d5156'}}
-    .VwiC3b{color:${dark ? '#bdc1c6' : '#4d5156'};margin-top:4px}
+    .yuRUbf a{display:flex;flex-direction:column}
+    .favicon{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:${dark ? '#3c4043' : '#f3f5f6'}}
+    .VuuXrf{display:block;font-size:14px;line-height:20px;color:${c.site}}
+    cite{font-style:normal;font-size:12px;line-height:18px;color:${c.muted}}
+    .VwiC3b{color:${dark ? '#bdc1c6' : '#474747'};line-height:22px}
     .B6fmyf{display:none}
     #rcnt{display:flex;gap:40px}
-    #rhs{width:300px;margin-top:20px;padding:16px;border:1px solid ${dark ? '#3c4043' : '#dadce0'};border-radius:8px;align-self:flex-start}
-    .module{margin:0 0 30px;padding:14px 16px;border-radius:12px;background:${dark ? '#303134' : '#f1f3f4'}}
+    #rhs{width:300px;margin-top:20px;padding:16px;border:1px solid ${c.rule};border-radius:8px;align-self:flex-start}
+    .module{margin:0 0 30px;padding:14px 16px;border-radius:12px;background:${c.soft}}
     .module [role=heading][aria-level="2"],.module h1,.module h2{font-size:18px;margin:0 0 8px}
     .vrow{display:flex;gap:12px}.vrow a{flex:1;color:inherit;text-decoration:none}
     .ai{margin:20px 0 10px 180px;max-width:620px}
     .sitelinks{display:grid;grid-template-columns:1fr 1fr;gap:4px 24px;margin:8px 0 0 20px}
     .sitelinks h3{font-size:16px}
+    /* Google's own panels have no background: a heading, then the content. */
+    .module.ai,.module.videos,.module.paa{padding:0;border-radius:0;background:none}
+    .module.ai{margin:24px 0 12px 180px;max-width:652px;padding-bottom:22px;border-bottom:1px solid ${c.line}}
+    .ai .aio{display:flex;align-items:center;gap:10px;margin:0 0 12px;font:400 16px/24px "Google Sans",Arial,sans-serif}
+    .ai .aio::before{content:"";width:20px;height:20px;background:linear-gradient(135deg,#4285f4,#9b72cb 55%,#d96570);clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%)}
+    .ai .aio+div{max-height:104px;overflow:hidden;font-size:16px;line-height:26px;-webkit-mask-image:linear-gradient(#000 45%,transparent);mask-image:linear-gradient(#000 45%,transparent)}
+    .ai button{margin-top:12px;height:40px;padding:0 18px;border:0;border-radius:20px;background:${c.soft};color:inherit;font:14px "Google Sans",Arial,sans-serif}
+    .module.videos>[role=heading],.module.paa h2{margin:0 0 14px;font:400 22px/28px "Google Sans",Arial,sans-serif}
+    .module.videos .vrow{flex-direction:column;gap:18px}
+    .module.videos .vrow>a{position:relative;display:grid;grid-template-columns:152px 1fr;column-gap:16px;align-content:start}
+    .module.videos .vrow>a::before{content:"";grid-row:1/4;height:86px;border-radius:8px}
+    .module.videos .vrow>a::after{position:absolute;left:8px;top:60px;padding:0 5px;border-radius:4px;background:#000b;color:#fff;font-size:12px;line-height:18px}
+    .module.videos .vrow>a:nth-child(1)::before{background:linear-gradient(transparent 66%,#8c5a2e 66%),conic-gradient(from 150deg at 40% 26%,#a66a35 0 60deg,transparent 0),linear-gradient(#f4c07a,#e39a52)}
+    .module.videos .vrow>a:nth-child(2)::before{background:radial-gradient(ellipse 16% 34% at 50% 58%,#c89b3c 0 90%,transparent 100%),linear-gradient(135deg,#46423b,#1e1d1a)}
+    .module.videos .vrow>a:nth-child(3)::before{background:radial-gradient(circle at 76% 26%,#f5f1e3 0 7%,transparent 8%),linear-gradient(transparent 72%,#26221e 72%),linear-gradient(#1c2a44,#4a5775)}
+    .module.videos .vrow>a:nth-child(1)::after{content:"6:14"}
+    .module.videos .vrow>a:nth-child(2)::after{content:"12:40"}
+    .module.videos .vrow>a:nth-child(3)::after{content:"3:52"}
+    .module.videos .vrow [role=heading]{font-size:18px;line-height:24px;color:${c.link}}
+    .module.videos .vrow span{font-size:14px;line-height:20px;color:${c.muted}}
+    .module.paa>div:first-child{border-bottom:1px solid ${c.rule}}
+    .module.paa h2{margin:0;padding-bottom:12px}
+    .related-question-pair{display:flex;align-items:center;min-height:48px;border-bottom:1px solid ${c.rule};font-size:16px}
+    .related-question-pair>div{flex:1}
+    .related-question-pair::after{content:"";width:7px;height:7px;margin:0 10px 5px;border:solid ${c.muted};border-width:0 2px 2px 0;transform:rotate(45deg)}
     ${hostile ? `
     .aux{display:none}
     .flipwrap>span{transform:scaleY(-1)}
@@ -255,8 +324,8 @@ export function google(query, results, { dark = false, next = '', hostile = fals
     .MjjYud>:last-child:not(.hw1){display:none}
     #top-extra{position:absolute;left:-9999px}` : ''}
   </style></head><body>
-  <div class="hdr"><span class="glogo">Google</span><form class="q" role="search" action="/search"><textarea name="q" rows="1">${esc(query)}</textarea></form></div>
-  <div class="tabs" ${aiLabel ? '' : 'role="navigation"'}><b>All</b>${modules || aiLabel ? '<a href="/search?q=anubis&udm=50"><span>AI Mode</span></a>' : ''}<span>Images</span><span>News</span><span>Videos</span></div>
+  <div class="hdr"><span class="glogo">${logo}</span><form class="q" role="search" action="/search"><textarea name="q" rows="1">${esc(query)}</textarea>${boxButtons}</form></div>
+  <div class="tabs" ${aiLabel ? '' : 'role="navigation"'}>${modules || aiLabel ? '<a href="/search?q=anubis&udm=50"><span>AI Mode</span></a>' : ''}<b>All</b><span>Images</span><span>Videos</span><span>News</span><span>Short videos</span><span>Forums</span><span>More</span><span class="tools">Tools</span></div>
   ${hostile ? '<div id="top-extra"><a href="https://ads.example.net/offer"><h3>Sponsored offer</h3></a></div>' : ''}
   <div id="rcnt"><div id="center_col" role="main">${aiOverview}
   <div id="search"><div data-hveid="CAQQAA"><h1 style="display:none">Search Results</h1><div id="rso">${items.join('')}</div></div></div>
