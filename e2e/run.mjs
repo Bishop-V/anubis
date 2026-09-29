@@ -4,7 +4,7 @@
 //
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, off, cleanup, popover, ddg-hide,
-//                               filter, deeper, import, subscribe, subscribe-link, options
+//                               filter, deeper, import, subscribe, subscribe-link, options, welcome
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/
 //
 // Needs a Chromium build (branded Chrome no longer loads unpacked extensions from
@@ -646,6 +646,37 @@ if (!only || only === 'options') {
     await opt.close();
   }
   console.log('\n== options + popup screenshots done');
+}
+
+if (!only || only === 'welcome') {
+  // Installing opens the welcome page, once. It can't be pinned from a test, so it
+  // shows Chrome's steps.
+  const find = () => ctx.pages().filter((p) => p.url() === `chrome-extension://${extId}/welcome.html`);
+  for (let i = 0; i < 50 && !find().length; i++) await new Promise((r) => setTimeout(r, 100));
+  const opened = find().length;
+  const welcome = find()[0] ?? (await ctx.newPage());
+  welcome.on('pageerror', (e) => console.log('  welcome page error:', e.message));
+  const check = () =>
+    welcome.evaluate(() => ({
+      pin: document.querySelector('#pin-text')?.textContent,
+      engines: [...document.querySelectorAll('#engines a')].map((a) => `${a.textContent} ${new URL(a.href).host}`),
+      lists: [...document.querySelectorAll('#lists .name')].map((el) => el.textContent),
+      tags: document.querySelectorAll('#lists .tag').length,
+      scrollsSideways: document.documentElement.scrollWidth > innerWidth,
+    }));
+  for (const scheme of ['dark', 'light']) {
+    await welcome.emulateMedia({ colorScheme: scheme });
+    await welcome.setViewportSize({ width: 1180, height: 900 });
+    await welcome.goto(`chrome-extension://${extId}/welcome.html`);
+    await welcome.waitForTimeout(300);
+    await welcome.screenshot({ path: `${SHOTS}welcome-${scheme}.png`, fullPage: true });
+  }
+  const desktop = await check();
+  await welcome.setViewportSize({ width: 390, height: 844 });
+  await welcome.waitForTimeout(200);
+  await welcome.screenshot({ path: `${SHOTS}welcome-phone.png`, fullPage: true });
+  console.log('\n== welcome:', JSON.stringify({ opened, ...desktop, phoneScrollsSideways: (await check()).scrollsSideways }));
+  await welcome.close();
 }
 
 // Not part of a normal run: regenerates the screenshots in docs/img/ from

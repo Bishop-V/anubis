@@ -45,12 +45,12 @@ Started: Anubis picks an engine's phone layout by user agent (`mobile` in `utils
 1. Run it on a phone: turn on USB debugging on the phone and "Remote debugging via USB" in Firefox's settings, then `npm run build` and `npx web-ext run -s .output/firefox-mv2 -t firefox-android --adb-device <id> --firefox-apk org.mozilla.firefox` (`adb devices` lists the id; Firefox Nightly is `org.mozilla.fenix`).
 2. Check Google's phone markup against the mock: ARIA headings for titles, whether the link wraps the heading, `.ob9lvb` for the address, top stories cards, and how more results load (Load more results is off on Google phones until then).
 3. Check the other engines' phone layouts. uBlacklist's rules show Bing's phone results keep `.b_algo`; DuckDuckGo looks the same. Add `mobile` overrides where they differ.
-4. Check the popup and settings, which open as full pages on Android.
+4. Check the popup and settings, which open as full pages on Android, and the welcome page, whose toolbar steps don't apply there: Android keeps extensions in the browser's menu.
 5. Add `gecko_android: { strict_min_version: '120.0' }` to `browser_specific_settings` in `wxt.config.ts` (`permissions.request` needs 120). AMO offers the add-on on Android from the first version whose manifest has this key, so add it only once the steps above pass.
 
 ## Translation
 
-Started: interface text is moving into `public/_locales/<language>/messages.json` (the browsers' own format), used through `t()`, `tn()` for counts, and `localizePage()` for static HTML (`utils/i18n.ts`). Done: the manifest's description and shortcut names, the ranking names, and the toolbar popup except its summary sentence. `tests/i18n.test.ts` checks keys and placeholders. Next:
+Started: interface text is moving into `public/_locales/<language>/messages.json` (the browsers' own format), used through `t()`, `tn()` for counts, and `localizePage()` for static HTML (`utils/i18n.ts`). Done: the manifest's description and shortcut names, the ranking names, the welcome page, and the toolbar popup except its summary sentence. `tests/i18n.test.ts` checks keys and placeholders. Next:
 
 - **The in-page UI** (`entrypoints/content/ui.ts`): the result menu, hidden lines and their reasons, chips, the summary's buttons.
 - **The summary sentence** (`utils/summary.ts`, `describeRemoved` in `utils/cleanup.ts`). It builds sentences from parts ("pinned 1, raised 2 and hid 2 of 9 results"), which doesn't translate. Give each shape its own message, and join lists with `Intl.ListFormat`. Its tests in `tests/cleanup.test.ts` need the English messages, as `tests/i18n.test.ts` sets up.
