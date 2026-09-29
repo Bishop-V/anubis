@@ -308,6 +308,10 @@ export function ensureWeighButton(
   const { top, right, besideMenu } = engine.button ?? { top: '2px', right: '2px' };
   host.style.setProperty('position', 'absolute', 'important');
   const menu = besideMenu ? resultMenuOf(container) : undefined;
+  // While the engine's own menu is open, it's drawn over the result; the button
+  // would sit on top of it (DuckDuckGo's opens beside it).
+  const menuOpen = !!menu && (menu.getAttribute('aria-expanded') === 'true' || [...container.querySelectorAll('[role="menu"], [role="dialog"]')].some((el) => el.getClientRects().length > 0));
+  host.style.setProperty('visibility', menuOpen ? 'hidden' : 'visible', 'important');
   if (menu) placeBesideMenu(host, container, menu);
   else {
     for (const prop of MENU_LOOK) host.style.removeProperty(prop);
