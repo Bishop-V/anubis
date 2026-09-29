@@ -638,6 +638,7 @@ body .VPContent .VPHome {
 }
 @media (min-width: 960px) {
   .scroll-demo {
+    --demo-stage-height: min(640px, calc(100vh - var(--vp-nav-height) - 64px));
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     column-gap: 64px;
     padding: 32px 64px 0;
@@ -648,8 +649,10 @@ body .VPContent .VPHome {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: calc(100vh - var(--vp-nav-height) - 96px);
-    padding: 0 0 32px;
+    /* As tall as the drawn page beside it, so the two stay centred on each other in
+       short windows and tall ones (e2e/homepage.mjs checks). */
+    min-height: var(--demo-stage-height);
+    padding: 0;
   }
   .home-title {
     font-size: 56px;
@@ -664,7 +667,7 @@ body .VPContent .VPHome {
     grid-row: 1 / span 2;
     align-self: start;
     top: calc(var(--vp-nav-height) + 32px);
-    height: min(640px, calc(100vh - var(--vp-nav-height) - 64px));
+    height: var(--demo-stage-height);
     margin: 0;
     padding: 0;
   }
