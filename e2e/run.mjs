@@ -730,6 +730,7 @@ if (!only || only === 'cleanup' || checks) {
   await page.goto('https://www.google.com/search?q=anubis&aigrid=1');
   await page.waitForTimeout(800);
   const gridKept = await summaryPlace();
+  await page.screenshot({ path: `${SHOTS}google-ai-grid.png`, clip: { x: 0, y: 0, width: 1280, height: 900 } });
   console.log('   in a grid, AI answers kept:', JSON.stringify(gridKept));
   await setSettings({ cleanup: { ...all, ai: true } });
   await page.goto('https://www.google.com/search?q=anubis&aigrid=1');

@@ -661,8 +661,10 @@ function announce(host: HTMLElement, text: string): void {
 function alignSummary(): void {
   const host = summaryHost;
   if (!host) return;
-  for (const prop of ['padding-left', 'padding-right', 'box-sizing']) host.style.removeProperty(prop);
+  for (const prop of ['padding-left', 'padding-right', 'box-sizing', 'margin-top']) host.style.removeProperty(prop);
   if (!host.isConnected) return;
+  // Above an AI answer, nothing on the page spaces the summary from the tabs above it.
+  if (summaryArea && !summaryArea.contains(host)) host.style.setProperty('margin-top', '16px', 'important');
   const box = host.getBoundingClientRect();
   if (!box.width) return;
   const target = [summaryArea, summaryColumn]
