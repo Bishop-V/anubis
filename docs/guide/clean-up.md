@@ -1,17 +1,17 @@
 # Cleaning up pages
 
-Search pages carry a lot that isn't results: AI answers, video panels, "People also ask". **Settings → Clean up** removes them on every search.
+Search pages carry a lot that isn't results: AI answers, video panels, "People also ask". **Settings → Clean up** removes the ones you turn on, on every search: a switch that's on means Anubis removes that part, and off leaves it on the page.
 
 ![Settings, Clean up](../img/options-cleanup.png)
 
 | Switch | What it removes |
 | --- | --- |
 | **AI answers** | Google's AI Overview and its AI Mode tab, DuckDuckGo's AI-assisted answers and its Duck.ai tab and buttons, Brave's AI answers. |
-| **Videos** | Video and short-video panels between the results. |
+| **Video panels** | Video and short-video panels between the results. |
 | **People also ask** | Lists of other people's questions with expandable answers. |
-| **Discussions** | Panels of forum threads between the results, like Google's "Discussions and forums" and Brave's "Discussions". Forum results in the list itself stay. |
+| **Discussion panels** | Panels of forum threads between the results, like Google's "Discussions and forums" and Brave's "Discussions". Forum pages among the results stay. |
 | **Top stories** | News panels between the results. |
-| **Images** | Rows of images between the results. The Images tab still works. |
+| **Image rows** | Rows of images between the results. The Images tab still works. |
 | **Related searches** | Lists of other searches, usually at the bottom of the page, and the "People also search for" box Bing and Google add under a result you went to and came back from. The links to later pages stay. |
 
 All of them start off.

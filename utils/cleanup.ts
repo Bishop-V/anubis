@@ -54,7 +54,7 @@ export const CLEANUP: CleanupDef[] = [
   },
   {
     id: 'videos',
-    label: 'Videos',
+    label: 'Video panels',
     hint: 'Video and short-video panels between the results.',
     headings: ['Videos', 'Short videos', 'Vidéos', 'Vidéos courtes', 'Kurze Videos', 'Vídeos', 'Vídeos cortos', 'Video', 'Video brevi'],
   },
@@ -78,8 +78,8 @@ export const CLEANUP: CleanupDef[] = [
   },
   {
     id: 'discussions',
-    label: 'Discussions',
-    hint: 'Panels of forum threads between the results, like Google’s “Discussions and forums”. Forum results in the list stay.',
+    label: 'Discussion panels',
+    hint: 'Panels of forum threads between the results, like Google’s “Discussions and forums”. Forum pages among the results stay.',
     headings: ['Discussions and forums', 'Discussions'],
   },
   {
@@ -90,7 +90,7 @@ export const CLEANUP: CleanupDef[] = [
   },
   {
     id: 'images',
-    label: 'Images',
+    label: 'Image rows',
     hint: 'Rows of images between the results. The Images tab still works.',
     headings: ['Images', 'Bilder', 'Imágenes', 'Imagens', 'Immagini', 'Afbeeldingen'],
     prefixes: ['Images for ', 'Images de ', 'Bilder zu ', 'Imágenes de '],
