@@ -48,6 +48,18 @@ export function domainChoices(hostname: string): string[] {
   return all.filter((d) => d.split('.').length >= minLabels);
 }
 
+/**
+ * A domain's name and the ending it shares with other sites, for display:
+ * "metmuseum.org" → ["metmuseum", ".org"], "bbc.co.uk" → ["bbc", ".co.uk"].
+ */
+export function splitSuffix(domain: string): [name: string, suffix: string] {
+  const parts = domain.split('.');
+  const [sld = '', tld = ''] = parts.slice(-2);
+  const labels = parts.length >= 3 && SECOND_LEVEL.has(sld) && tld.length === 2 ? 2 : 1;
+  if (parts.length <= labels || parts.some((p) => !p)) return [domain, ''];
+  return [parts.slice(0, -labels).join('.'), `.${parts.slice(-labels).join('.')}`];
+}
+
 /** The registrable-ish domain: "docs.github.com" → "github.com", "bbc.co.uk" → "bbc.co.uk". */
 export function siteOf(hostname: string): string {
   const choices = domainChoices(hostname);

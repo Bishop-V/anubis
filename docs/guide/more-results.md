@@ -1,12 +1,12 @@
 # Loading more results
 
-Search engines send one page of results at a time, so Anubis can only rerank what's on that page. **Load more results**, in the summary above the results, brings the next page onto the current one and ranks everything together. A site you pinned that only appears on page 3 rises to the top after two presses.
+Search engines send one page of results at a time, so Anubis can only rerank what's on that page. **Load more results**, in the summary above the results, brings the next page onto the current one and ranks everything together. A site you pinned that only appears on page 3 rises to the top after two presses. On a phone, it's under **Details** in the summary.
 
 Results from later pages are marked "from page 2" and so on under their titles.
 
 ## Automatically
 
-**Settings → Appearance → Load more results automatically** loads up to five extra pages on every search, six pages in all. It's off by default: each extra page is another request to the search engine, and engines may show a CAPTCHA or slow down if they get too many.
+**Settings → Appearance → Load more results automatically** loads up to five extra pages on every search, six pages in all. It's off by default: each extra page is another request to the search engine, and engines may show a CAPTCHA or slow down if they get too many. It starts once the engine's own "Next" link or "More results" button has arrived at the foot of the page, and the button in the summary shows from then on too.
 
 ## How it works
 

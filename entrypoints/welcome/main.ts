@@ -1,6 +1,7 @@
 import '@/assets/theme.css';
 import './style.css';
 import { browser } from '#imports';
+import { balanceSvg, swingBalance } from '@/utils/balance';
 import { h } from '@/utils/dom';
 import { ENGINES } from '@/utils/engines';
 import { localizePage, t, type MessageKey } from '@/utils/i18n';
@@ -93,8 +94,26 @@ async function renderLists() {
   );
 }
 
+/**
+ * The heart and the feather: the balance settles level as the page opens, and a
+ * click on either side presses that pan down to swing again. It's decoration, so
+ * it's hidden from screen readers and holds still with reduced motion.
+ */
+function renderScales() {
+  const svg = balanceSvg();
+  $('#scales').replaceChildren(svg);
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  $('#scales').classList.add('moving');
+  swingBalance(svg, -13, 350);
+  svg.addEventListener('click', (e) => {
+    const box = svg.getBoundingClientRect();
+    swingBalance(svg, e.clientX < box.left + box.width / 2 ? -11 : 11);
+  });
+}
+
 async function main() {
   localizePage();
+  renderScales();
   $<HTMLAnchorElement>('#guide').href = guide();
   $<HTMLAnchorElement>('#privacy').href = guide('guide/privacy');
   await initTheme();

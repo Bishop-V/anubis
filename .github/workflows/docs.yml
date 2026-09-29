@@ -1,15 +1,16 @@
 name: Docs
 
-# Builds the documentation site (VitePress fails the build on a broken link) and,
-# on main, publishes it to GitHub Pages. Publishing needs Pages set to deploy from
-# GitHub Actions: repository Settings → Pages → Build and deployment → Source.
+# Builds the documentation site (VitePress fails the build on a broken link), checks
+# the homepage's layout (e2e/homepage.mjs), and, on main, publishes it to GitHub Pages.
+# Publishing needs Pages set to deploy from GitHub Actions: repository Settings →
+# Pages → Build and deployment → Source.
 
 on:
   push:
     branches: [main]
-    paths: ['docs/**', 'lists/directory.json', 'utils/links.ts', 'package.json', 'package-lock.json', '.github/workflows/docs.yml']
+    paths: ['docs/**', 'lists/directory.json', 'utils/links.ts', 'package.json', 'package-lock.json', 'e2e/homepage.mjs', '.github/workflows/docs.yml']
   pull_request:
-    paths: ['docs/**', 'lists/directory.json', 'utils/links.ts', 'package.json', 'package-lock.json', '.github/workflows/docs.yml']
+    paths: ['docs/**', 'lists/directory.json', 'utils/links.ts', 'package.json', 'package-lock.json', 'e2e/homepage.mjs', '.github/workflows/docs.yml']
   workflow_dispatch:
 
 permissions:
@@ -31,6 +32,10 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npx wxt prepare
       - run: npm run docs:build
+      - name: Install Chromium for the homepage layout check
+        run: npx playwright-core install --with-deps chromium
+      - name: Check the homepage layout
+        run: node e2e/homepage.mjs
       - if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:

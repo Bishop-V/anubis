@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { decodeBingRedirect, displayedDomainToUrl, domainChoices, normalizeDomain, normalizeHostname, siteNameToUrl, siteOf } from '@/utils/domain';
+import { decodeBingRedirect, displayedDomainToUrl, domainChoices, normalizeDomain, normalizeHostname, siteNameToUrl, siteOf, splitSuffix } from '@/utils/domain';
 import { existsSync } from 'node:fs';
 import { DOCS_URL, readSubscribeLink, SUBSCRIBE_PAGE, subscribeLink } from '@/utils/links';
 import { issueUrl, originPermissionFor, reportTracker, reportUrl, suggestionUrl, toRawUrl } from '@/utils/subscriptions';
@@ -10,6 +10,16 @@ describe('domains', () => {
     expect(normalizeDomain('  example.org ')).toBe('example.org');
     expect(normalizeDomain('localhost')).toBe('');
     expect(normalizeDomain('not a domain')).toBe('');
+  });
+
+  it('splits off the ending a site shares with others, for display', () => {
+    expect(splitSuffix('metmuseum.org')).toEqual(['metmuseum', '.org']);
+    expect(splitSuffix('en.wikipedia.org')).toEqual(['en.wikipedia', '.org']);
+    expect(splitSuffix('bbc.co.uk')).toEqual(['bbc', '.co.uk']);
+    expect(splitSuffix('news.bbc.co.uk')).toEqual(['news.bbc', '.co.uk']);
+    expect(splitSuffix('co.uk')).toEqual(['co', '.uk']);
+    expect(splitSuffix('localhost')).toEqual(['localhost', '']);
+    expect(splitSuffix('odd..example')).toEqual(['odd..example', '']);
   });
 
   it('offers the host down to the registrable domain', () => {

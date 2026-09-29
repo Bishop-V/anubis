@@ -20,11 +20,12 @@ footer {
 }
 
 header {
-  align-items: center;
+  align-items: start;
   padding-bottom: 36px;
 }
 header img {
   display: block;
+  margin-top: 12px;
 }
 h1 {
   margin: 0;
@@ -35,6 +36,20 @@ h1 {
   max-width: 56ch;
   font-size: 16px;
   color: var(--muted);
+}
+/* The balance under the lead: the one thing on the page that moves. */
+.scales {
+  margin-top: 22px;
+}
+.scales svg {
+  display: block;
+  width: 176px;
+  height: 54px;
+  color: var(--gold);
+  overflow: visible;
+}
+.scales.moving svg {
+  cursor: pointer;
 }
 
 section {

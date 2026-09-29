@@ -263,7 +263,11 @@ button {
   height: 20px;
   color: var(--gold);
 }
-.summary > .icon-btn {
+/* The sentence and its buttons, laid out one by one here; on phones, one paragraph. */
+.summary .line {
+  display: contents;
+}
+.summary .line > .icon-btn {
   margin-block: -2px;
 }
 .summary .mark svg {
@@ -273,6 +277,48 @@ button {
 .summary .sentence {
   flex: 1;
   min-width: 12em;
+}
+/* On phones the summary says it in a few words (.short), and Details shows the rest:
+   the full sentence, Load more results, settings, and the tags. Wider, there's room
+   for all of it, so the short form and Details aren't shown. */
+@media (min-width: 601px) {
+  .summary .short,
+  .summary .details {
+    display: none;
+  }
+}
+/* On phones the mark hangs to the left, and the sentence, the last change, and the
+   tags line up beside it. The buttons follow the sentence's words and wrap with them,
+   so none is left alone on a line under the mark. */
+@media (max-width: 600px) {
+  .summary {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 4px 8px;
+  }
+  .summary > :not(.mark) {
+    grid-column: 2;
+  }
+  .summary .line {
+    display: block;
+  }
+  .summary .line > .sentence {
+    display: inline;
+  }
+  .summary .line > button {
+    margin-left: 12px;
+  }
+  .summary .line > .icon-btn {
+    display: inline-grid;
+    vertical-align: middle;
+  }
+  .summary.compact:not(.open) .long,
+  .summary.compact:not(.open) .deeper,
+  .summary.compact:not(.open) .line > .icon-btn,
+  .summary.compact:not(.open) .filters,
+  .summary.open .line > .short {
+    display: none;
+  }
 }
 /* What the last change from the result menu did, and Undo. */
 .change {
@@ -372,7 +418,8 @@ button {
 
 /* The cartouche: a gold oval ring around a name, as in hieroglyphs. Here it holds
    the site being weighed. Where the rule can cover more or less of the site, the
-   native select lies unseen over the ring, and the ring shows its focus. */
+   native select lies unseen over the ring, and the ring shows its focus. The inner
+   hairline doubles the ring, as carved cartouches are drawn. */
 .cartouche {
   position: relative;
   display: inline-flex;
@@ -380,9 +427,18 @@ button {
   min-width: 0;
   max-width: 250px;
   margin-right: 8px;
-  padding: 3px 16px 4px;
+  padding: 5px 19px 6px;
   border: 1.5px solid var(--gold);
   border-radius: 999px;
+}
+.cartouche::after {
+  content: '';
+  position: absolute;
+  inset: 2.5px;
+  border: 0.75px solid var(--gold);
+  border-radius: 999px;
+  opacity: 0.55;
+  pointer-events: none;
 }
 .cartouche .name {
   overflow: hidden;
@@ -438,12 +494,28 @@ button {
   margin: 4px 12px 0;
 }
 .level {
-  padding: 7px 0 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 5px 0 6px;
   border: 0;
   border-bottom: 2px solid transparent;
   background: none;
   color: var(--muted);
   font-size: 12.5px;
+}
+/* Each ranking's icon over its name: muted at rest, the ranking's colour once chosen. */
+.level-icon svg {
+  width: 14px;
+  height: 14px;
+}
+.level.raise[aria-pressed='true'] .level-icon,
+.level.pin[aria-pressed='true'] .level-icon {
+  color: var(--gold-ink);
+}
+.level.hide[aria-pressed='true'] .level-icon {
+  color: var(--danger);
 }
 .level:hover {
   color: var(--text);
@@ -544,9 +616,30 @@ button {
 }
 .reasons small {
   display: block;
-  margin: 3px 0 1px;
-  font: 12px/1.4 ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  margin: 4px 0 0;
+  font-size: 12.5px;
+}
+/* The matched rule breaks after a comma (a <wbr>), and a long option wraps with a
+   hanging indent. Option names are muted; an option's effect takes its ranking's colour. */
+.rule {
+  display: block;
+  margin: 1px 0 2px;
+  padding-left: 2ch;
+  text-indent: -2ch;
+  font: 12.5px/1.5 ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  color: var(--muted);
   overflow-wrap: anywhere;
+}
+.rule .value {
+  color: var(--text);
+}
+.rule .raise {
+  color: var(--gold-ink);
+  font-weight: 600;
+}
+.rule .hide {
+  color: var(--danger);
+  font-weight: 600;
 }
 .foot {
   display: flex;

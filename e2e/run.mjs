@@ -10,15 +10,15 @@
 //                               in docs/public/
 //
 // Needs Chromium (branded Chrome no longer loads unpacked extensions from the
-// command line). Playwright's installed build is used by default; on NixOS, point
-// CHROMIUM_PATH at the system binary.
+// command line). It uses CHROMIUM_PATH if set, then Playwright's installed build,
+// then a chromium on PATH (NixOS, where Playwright's build doesn't run).
 // The mock pages are modelled on each engine's markup; they are not the real thing.
 
 import { chromium } from 'playwright-core';
 import { execFileSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { delimiter, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ANUBIS_PAGE2, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, brave, duckduckgo, google, googleMobile } from './fixtures.mjs';
 
@@ -26,14 +26,28 @@ const EXT = fileURLToPath(new URL('../.output/chrome-mv3', import.meta.url));
 const SHOTS = fileURLToPath(new URL('./shots/', import.meta.url));
 const only = process.argv[2];
 const checks = only === 'checks';
-const executablePath = process.env.CHROMIUM_PATH || chromium.executablePath();
+
+function findChromium() {
+  if (process.env.CHROMIUM_PATH) return process.env.CHROMIUM_PATH;
+  const playwrights = chromium.executablePath();
+  if (existsSync(playwrights)) return playwrights;
+  for (const dir of (process.env.PATH ?? '').split(delimiter)) {
+    for (const name of ['chromium', 'chromium-browser']) {
+      if (dir && existsSync(join(dir, name))) return join(dir, name);
+    }
+  }
+  return playwrights;
+}
+const executablePath = findChromium();
 
 if (!existsSync(join(EXT, 'manifest.json'))) {
   console.error('No Chrome build found. Run `npm run build:chrome` first (or `npm run e2e`).');
   process.exit(1);
 }
 if (!existsSync(executablePath)) {
-  console.error('Chromium is missing. Run `npx playwright-core install chromium` or set CHROMIUM_PATH to a system binary.');
+  console.error(
+    'Chromium is missing. Install Playwright\'s (`npx playwright-core install chromium`), put a system `chromium` on PATH (on NixOS: `nix shell nixpkgs#chromium`), or set CHROMIUM_PATH to its binary.',
+  );
   process.exit(1);
 }
 mkdirSync(SHOTS, { recursive: true });
@@ -113,6 +127,7 @@ async function launch(settings = {}, ext = EXT) {
     'https://search.brave.com/search?q=anubis': brave('anubis', ANUBIS_RESULTS),
     'https://www.google.com/search?q=anubis&deep=1': google('anubis', ANUBIS_RESULTS, { next: '/search?q=anubis&start=10' }),
     'https://www.google.com/search?q=anubis&start=10': google('anubis', ANUBIS_PAGE2),
+    'https://www.google.com/search?q=anubis&deep=late': google('anubis', ANUBIS_RESULTS, { next: '/search?q=anubis&start=10', latePager: true }),
     'https://www.google.com/search?q=anubis&hostile=1': google('anubis', ANUBIS_RESULTS, { hostile: true }),
     'https://www.google.com/search?q=anubis&grouped=1': google('anubis', ANUBIS_RESULTS, { grouped: true }),
     'https://www.google.com/search?q=anubis&modules=1': google('anubis', ANUBIS_RESULTS, { modules: true }),
@@ -337,6 +352,25 @@ if (!only || only === 'pages') {
     return top === menu;
   });
   assertChecks('ddg open menu', { coversButton: underMenu });
+  // A menu that closes by a style change adds or removes no nodes, so no pass runs
+  // after it: nothing a pass set while it was open may outlast it.
+  const afterMenu = await page.evaluate(async () => {
+    const frame = () => new Promise((r) => requestAnimationFrame(() => setTimeout(r, 50)));
+    const li = document.querySelector('li[data-anubis-result]:not([data-anubis-state~="hide"])');
+    const host = li.querySelector(':scope > anubis-weigh');
+    const menu = document.createElement('div');
+    menu.setAttribute('role', 'menu');
+    menu.style.cssText = 'position:absolute;top:0;right:0;width:220px;height:120px;z-index:1;background:#333';
+    li.querySelector('article').append(menu);
+    await frame();
+    menu.style.display = 'none';
+    await frame();
+    const r = host.getBoundingClientRect();
+    const shown = getComputedStyle(host).visibility === 'visible' && document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2) === host;
+    menu.remove();
+    return shown;
+  });
+  assertChecks('ddg closed menu', { buttonShows: afterMenu });
   const first = page.locator('li[data-anubis-result]').first();
   await first.locator('anubis-weigh').hover();
   await page.waitForTimeout(250);
@@ -578,6 +612,76 @@ if (!only || only === 'mobile' || checks) {
   await report(phone, 'google-mobile');
   console.log('\n== google mobile:', JSON.stringify(check));
   await phone.screenshot({ path: `${SHOTS}google-mobile.png`, fullPage: true });
+
+  // On a phone the summary says it in a few words, and Details shows the rest: the
+  // full sentence and the tags. Which parts show is read from the closed shadow root
+  // through the DevTools protocol: a part that isn't shown has no box.
+  const summaryLook = async () => {
+    const cdp = await ctx.newCDPSession(phone);
+    const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+    const all = (node) => [node, ...[...(node.children ?? []), ...(node.shadowRoots ?? [])].flatMap(all)];
+    const host = all(root).find((n) => n.localName === 'anubis-summary');
+    const nodes = host ? all(host) : [];
+    const classes = (n) => {
+      const attrs = n.attributes ?? [];
+      const i = attrs.indexOf('class');
+      return i >= 0 && i % 2 === 0 ? attrs[i + 1].split(' ') : [];
+    };
+    const textOf = (n) => (n.nodeType === 3 ? n.nodeValue : (n.children ?? []).map(textOf).join(''));
+    const box = async (n) => {
+      try {
+        const { model } = await cdp.send('DOM.getBoxModel', { nodeId: n.nodeId });
+        return model.content;
+      } catch {
+        return undefined;
+      }
+    };
+    const look = {};
+    for (const part of ['short', 'long', 'details', 'filters']) {
+      const n = nodes.find((node) => classes(node).includes(part));
+      look[part] = n ? !!(await box(n)) : null;
+      if (part === 'details' && n) {
+        look.detailsText = textOf(n).trim();
+        const content = await box(n);
+        look.detailsAt = content && [(content[0] + content[4]) / 2, (content[1] + content[5]) / 2];
+      }
+    }
+    // What shows lines up with the sentence or follows its words: nothing is left on a
+    // line of its own under the mark (Fewer details once was).
+    let sentenceLeft = Infinity;
+    look.sentence = '';
+    for (const n of nodes.filter((node) => classes(node).includes('sentence'))) {
+      const content = await box(n);
+      if (content) sentenceLeft = Math.min(sentenceLeft, content[0]);
+      if (content) look.sentence = textOf(n).trim();
+    }
+    look.underMark = [];
+    for (const n of nodes.filter((node) => node.nodeName === 'BUTTON' || classes(node).includes('filters') || classes(node).includes('change'))) {
+      const content = await box(n);
+      if (content && content[0] < sentenceLeft - 1) look.underMark.push(textOf(n).trim() || classes(n).join(' '));
+    }
+    await cdp.detach();
+    return look;
+  };
+  // Changes made by earlier parts can still be reaching the page, and each one
+  // rewrites the summary: read it once it has said the same thing three times running.
+  let folded = await summaryLook();
+  for (let same = 1, tries = 0; same < 3 && tries < 20; tries++) {
+    await phone.waitForTimeout(250);
+    const again = await summaryLook();
+    same = again.sentence === folded.sentence ? same + 1 : 1;
+    folded = again;
+  }
+  await phone.screenshot({ path: `${SHOTS}google-mobile-summary.png` });
+  if (folded.detailsAt) await phone.mouse.click(...folded.detailsAt);
+  await phone.waitForTimeout(200);
+  const opened = await summaryLook();
+  await phone.screenshot({ path: `${SHOTS}google-mobile-details.png` });
+  await phone.setViewportSize({ width: 1280, height: 900 });
+  await phone.waitForTimeout(200);
+  const wide = await summaryLook();
+  console.log('\n== google mobile summary:', JSON.stringify({ folded, opened, wide }));
+
   assertChecks('google mobile', {
     allExpectedResultsFound: check.results === ANUBIS_RESULTS.length,
     newsCardsNotTreatedAsResults: check.newsCardsAsResults === 0,
@@ -585,6 +689,12 @@ if (!only || only === 'mobile' || checks) {
     namedRedirectGetsTagged: check.gotoLinkTagged === 'normal tagged',
     summaryRendered: check.summary,
     noHorizontalOverflow: !check.scrollsSideways,
+    phoneSummaryIsShort: folded.short === true && folded.long === false && folded.details === true && folded.detailsText === 'Details',
+    phoneTagsWaitForDetails: folded.filters !== true,
+    detailsShowsFullSentence: opened.short === false && opened.long === true && opened.detailsText === 'Fewer details',
+    detailsShowsTags: opened.filters !== false,
+    phoneNothingUnderMark: folded.underMark.length === 0 && opened.underMark.length === 0,
+    wideSummaryIsFull: wide.long === true && wide.short === false && wide.details === false,
   });
   await phone.close();
 }
@@ -1210,6 +1320,13 @@ if (!only || only === 'popover') {
   if (!explanation.includes('Matched rule, line ')) throw new Error('The result menu does not show the matching list rule');
   const reportLink = (await shadowLinks('anubis-popover')).find((a) => a.href.includes('/issues/new'));
   const issue = reportLink && new URL(reportLink.href);
+  // The rule is broken into its options for display (shadowText puts a space between
+  // them); its text must still read exactly as in the list.
+  const reportedRule = /```\n(.*)\n```/.exec(issue?.searchParams.get('body') ?? '')?.[1];
+  const squash = (s) => s.replace(/\s+/g, '');
+  if (!reportedRule || !squash(explanation).includes(squash(reportedRule))) {
+    throw new Error(`The result menu does not show the rule as written: ${reportedRule}`);
+  }
   console.log('\n== report a wrong result:', JSON.stringify({
     link: reportLink?.text,
     tracker: issue && issue.origin + issue.pathname,
@@ -1345,11 +1462,18 @@ if (!only || only === 'filter') {
   await message({ type: 'set-filter' });
 }
 
-if (!only || only === 'deeper') {
+if (!only || only === 'deeper' || checks) {
+  const sw = ctx.serviceWorkers()[0];
+  const loadedPages = () => page.evaluate(() => new Set([...document.querySelectorAll('[data-anubis-page]')].map((el) => el.dataset.anubisPage)).size);
+  const setDeeper = (deeper) =>
+    sw.evaluate(async (deeper) => {
+      const { settings } = await chrome.storage.sync.get('settings');
+      await chrome.storage.sync.set({ settings: { ...settings, deeper } });
+    }, deeper);
+
   // Google: "Load more results" by message (the path the popup uses).
   await page.goto('https://www.google.com/search?q=anubis&deep=1');
   await page.waitForTimeout(600);
-  const sw = ctx.serviceWorkers()[0];
   await sw.evaluate(async () => {
     for (const tab of await chrome.tabs.query({})) {
       await chrome.tabs.sendMessage(tab.id, { type: 'go-deeper' }).catch(() => {});
@@ -1357,21 +1481,35 @@ if (!only || only === 'deeper') {
   });
   await page.waitForTimeout(1500);
   await report(page, 'google-deeper');
+  const googleByHand = await loadedPages();
   await page.screenshot({ path: `${SHOTS}google-deeper.png`, fullPage: true });
 
+  // Google, automatic: the Next link arrives after the results, as on the live page,
+  // where the first pass runs while the page is still streaming in.
+  await setDeeper(2);
+  await page.goto('https://www.google.com/search?q=anubis&deep=late');
+  await page.waitForTimeout(3000);
+  await report(page, 'google-deeper-auto');
+  const googleAuto = await loadedPages();
+
   // DuckDuckGo: automatic, by pressing the page's own "More results" button.
-  await sw.evaluate(async () => {
-    const { settings } = await chrome.storage.sync.get('settings');
-    await chrome.storage.sync.set({ settings: { ...settings, deeper: 1 } });
-  });
+  await setDeeper(1);
   await page.goto('https://duckduckgo.com/?q=javascript+promises&more=1');
   await page.waitForTimeout(2500);
   await report(page, 'ddg-deeper-auto');
+  const ddgAuto = await page.evaluate(() => document.querySelectorAll('[data-anubis-result]').length);
   await page.screenshot({ path: `${SHOTS}ddg-deeper.png`, fullPage: true });
-  await sw.evaluate(async () => {
-    const { settings } = await chrome.storage.sync.get('settings');
-    await chrome.storage.sync.set({ settings: { ...settings, deeper: 0 } });
-  });
+  await setDeeper(0);
+
+  console.log('\n== load more results:', JSON.stringify({ googleByHand, googleAuto, ddgAuto }));
+  if (checks) {
+    assertChecks('load more results', {
+      googleByHand: googleByHand === 1,
+      googleAutomaticWithLatePager: googleAuto === 1,
+      // The mock starts with 9 results and its More results button adds 3.
+      duckDuckGoAutomatic: ddgAuto > 9,
+    });
+  }
 }
 
 if (!only || only === 'import') {
