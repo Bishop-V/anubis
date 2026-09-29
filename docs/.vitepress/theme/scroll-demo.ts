@@ -61,8 +61,23 @@ const STEPS: { title: string; text: string }[] = [
   { title: 'Know before you click', text: 'Tags from lists mark reference sites, paywalls, and more. The summary says what changed, and Show hidden undoes it.' },
 ];
 
-// The button on each result, as utils/icons.ts draws it (copied, since that module
-// needs the extension's APIs): the balance tipped to the ranking, the pin, or the
+// Everything drawn here copies what the extension puts on a search page, so the demo
+// shows what people will see. Check it against the extension after changing any of
+// these, and update the demo with them:
+// - icons: utils/icons.ts (WEIGH_ICONS, LEVEL_ICONS, ICON_ANUBIS), copied because that
+//   module needs the extension's APIs;
+// - the summary's wording: utils/summary.ts and the summary… messages in
+//   public/_locales/en/messages.json; its mark and layout: .summary in
+//   entrypoints/content/shadow.css;
+// - the labels under a title: .chips and .verdict in shadow.css (Pinned and Raised in
+//   gold, Pinned bold, Lowered muted, each with its icon);
+// - the hidden line: renderHiddenBar in entrypoints/content/ui.ts and .gone in
+//   shadow.css: the crossed-out eye, then the site and its reason on one line, cut
+//   short with an ellipsis when it doesn't fit (as it often doesn't on a phone), then
+//   Show;
+// - lowered and pinned results: entrypoints/content/page.css (the fade, the frame).
+
+// The button on each result: the balance tipped to the ranking, the pin, or the
 // crossed-out eye.
 type Level = 'hide' | 'lower' | 'normal' | 'raise' | 'pin';
 const svg = (body: string) =>
@@ -81,6 +96,13 @@ const WEIGH: Record<Level, string> = {
   pin: svg('<path d="M9.8 2.2l4 4-1.6.5-2.6 2.6.3 3.1-1.2 1.2L5.4 10.3 2.2 13.8M5.4 10.3L2.3 7.2l1.2-1.2 3.1.3 2.6-2.6z"/>'),
 };
 // A new key on each ranking, so the icon swaps in with a small tip.
+// The labels' icons (LEVEL_ICONS) and the summary's mark (ICON_ANUBIS, its eye cut out
+// in the page's colour).
+const CHIP_ICONS = { pin: WEIGH.pin, raise: svg('<path d="M4 9.5l4-4 4 4"/>'), lower: svg('<path d="M4 6.5l4 4 4-4"/>') };
+const MARK =
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="26 14 82 108" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M39.5 19 L55 48 L101 63 Q105 66 100.5 70 L79 72.5 Q63 76 62 88 L62 97 L32 97 Z"/><path fill="currentColor" d="M31 105 L63 105 L65 118 L30 118 Z"/><ellipse cx="67" cy="58" rx="4.2" ry="2.7" transform="rotate(18 67 58)" fill="var(--demo-page)"/></svg>';
+const chip = (on: boolean, level: 'pin' | 'raise' | 'lower', text: string) =>
+  h('span', { class: ['chip', 'demo-verdict', level, { on }] }, [h('span', { class: 'chip-icon', innerHTML: CHIP_ICONS[level] }), text]);
 const weigh = (level: Level) => h('span', { key: level, class: ['demo-weigh', level], innerHTML: WEIGH[level] });
 
 const isBlock = (item: Item): item is Block => 'heading' in item;
@@ -96,6 +118,7 @@ function renderResult(r: Result, step: number): VNode {
   const hidden = !!r.hidden && step >= 3;
   const pinned = !!r.pinned && step >= 4;
   const raised = !!r.raised && step >= 4;
+  const lowered = !!r.lowered && step >= 4;
   const tagged = !!r.tag && step >= 5;
   const level: Level = step < 4 ? 'normal' : r.pinned ? 'pin' : r.raised ? 'raise' : r.lowered ? 'lower' : 'normal';
   return h('div', { class: ['demo-result', { lowered: r.lowered && step >= 4, pinned }] }, [
@@ -107,16 +130,17 @@ function renderResult(r: Result, step: number): VNode {
         weigh(level),
       ]),
       h('div', { class: 'title' }, r.title),
-      fold(pinned || raised || tagged, 'chips', [
-        r.pinned ? h('span', { class: ['chip', 'demo-raised', { on: pinned }] }, 'Pinned') : null,
-        r.raised ? h('span', { class: ['chip', 'demo-raised', { on: raised }] }, 'Raised') : null,
+      fold(pinned || raised || lowered || tagged, 'chips', [
+        r.pinned ? chip(pinned, 'pin', 'Pinned') : null,
+        r.raised ? chip(raised, 'raise', 'Raised') : null,
+        r.lowered ? chip(lowered, 'lower', 'Lowered') : null,
         r.tag ? h('span', { class: ['chip', { on: tagged }] }, [tag(r.tag)]) : null,
       ]),
       h('div', { class: 'snippet' }, r.snippet),
     ]),
     fold(hidden, 'hidden-line', [
-      h('span', { class: 'hidden-site' }, r.url.split(' ')[0]!.replace(/^www\./, '')),
-      ' hidden by your list ',
+      h('span', { class: 'gone-icon', innerHTML: WEIGH.hide }),
+      h('span', { class: 'why' }, [h('b', r.url.split(' ')[0]!.replace(/^www\./, '')), ' hidden by your list']),
       h('span', { class: 'demo-link' }, 'Show'),
       weigh('hide'),
     ]),
@@ -140,7 +164,7 @@ function renderPage(step: number): VNode {
   return h('div', { class: 'demo-page', 'aria-hidden': 'true' }, [
     h('div', { class: 'searchbar' }, [h('span', 'anubis'), h('span', { class: 'lens' })]),
     fold(step >= 2, 'demo-summary', [
-      h('p', [h('span', { class: 'mark' }), SUMMARY[step], ' ', h('span', { class: 'demo-link' }, 'Show hidden')]),
+      h('p', [h('span', { class: 'mark', innerHTML: MARK }), h('span', [SUMMARY[step], ' ', h('span', { class: 'demo-link' }, 'Show hidden')])]),
       fold(step >= 5, 'summary-tags', [tag(REFERENCE, 3), tag(PAYWALL, 1)]),
     ]),
     h(
