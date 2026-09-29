@@ -12,5 +12,10 @@
       "Bash(git add *)",
       "Bash(grep *)"
     ]
+  },
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
   }
 }
