@@ -21,12 +21,4 @@ describe('engines', () => {
     // Engines without a phone layout are the same either way.
     expect(engineFor('duckduckgo.com', true)).toBe(engineFor('duckduckgo.com'));
   });
-
-  it("leaves DuckDuckGo's Images, Videos, and News tabs alone", () => {
-    const ddg = engineFor('duckduckgo.com')!;
-    expect(ddg.isResultsPage(new URL('https://duckduckgo.com/?q=anubis'))).toBe(true);
-    expect(ddg.isResultsPage(new URL('https://duckduckgo.com/?q=anubis&ia=web'))).toBe(true);
-    expect(ddg.isResultsPage(new URL('https://duckduckgo.com/?q=anubis&iax=videos&ia=videos'))).toBe(false);
-    expect(ddg.isResultsPage(new URL('https://duckduckgo.com/?q=anubis&iax=images&ia=images'))).toBe(false);
-  });
 });

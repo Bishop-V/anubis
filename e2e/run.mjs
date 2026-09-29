@@ -153,6 +153,8 @@ async function launch(settings = {}, ext = EXT) {
     'https://search.brave.com/search?q=anubis&panels=1': brave('anubis', ANUBIS_RESULTS, { panels: true }),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
+    'https://duckduckgo.com/?q=javascript+promises&iax=videos&ia=videos': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'videos' }),
+    'https://duckduckgo.com/?q=javascript+promises&iax=images&ia=images': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'images' }),
     'https://duckduckgo.com/?q=javascript+promises&wide=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { wide: true }),
   };
   await ctx.route(/^https:\/\/((noai\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com)\//, (route) => {
@@ -275,6 +277,24 @@ if (!only || only === 'pages') {
     );
   const pairs = await pair();
   console.log('\n== ddg button beside its menu:', JSON.stringify({ results: pairs.length, all: pairs.every((p) => p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6), failing: pairs.filter((p) => !(p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6)) }));
+  // DuckDuckGo's open ⋯ menu is a role="menu" layer inside the result at z-index 1
+  // (read from the live page): it must cover the button, not the other way round.
+  const underMenu = await page.evaluate(() => {
+    const li = document.querySelector('li[data-anubis-result]:not([data-anubis-state~="hide"])');
+    const host = li.querySelector(':scope > anubis-weigh');
+    const r = host.getBoundingClientRect();
+    const layer = document.createElement('div');
+    layer.style.cssText = 'position:absolute;top:0;right:0;width:220px;height:120px';
+    const menu = document.createElement('div');
+    menu.setAttribute('role', 'menu');
+    menu.style.cssText = 'position:absolute;inset:0;z-index:1;background:#333';
+    layer.append(menu);
+    li.querySelector('article').append(layer);
+    const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    layer.remove();
+    return top === menu;
+  });
+  assertChecks('ddg open menu', { coversButton: underMenu });
   const first = page.locator('li[data-anubis-result]').first();
   await first.locator('anubis-weigh').hover();
   await page.waitForTimeout(250);
@@ -789,6 +809,51 @@ if (!only || only === 'cleanup' || checks) {
     return { found: !!side, result: !!side?.querySelector('[data-anubis-result], anubis-weigh, anubis-chips') || !!side?.closest('[data-anubis-result]') };
   });
   if (checks) assertChecks('DuckDuckGo side panel is not a result', { found: sidePanel.found, notAResult: !sidePanel.result });
+
+  // DuckDuckGo's Videos and Images tabs: cards in a grid, hidden and tagged, not reranked.
+  // Earlier parts change the personal list and tag choices, so start from the seeded ones.
+  await ctx.serviceWorkers()[0].evaluate(
+    (personal) => chrome.storage.sync.set({ 'personal.0': personal, personal: { chunks: 1, updatedAt: Date.now() }, tagPrefs: { 'ai-slop': { action: 'hide' } } }),
+    PERSONAL,
+  );
+  for (const tab of ['videos', 'images']) {
+    await page.goto(`https://duckduckgo.com/?q=javascript+promises&iax=${tab}&ia=${tab}`);
+    // Wait until the lists have weighed the cards (some are hidden), not a fixed time.
+    await page.waitForFunction(() => !!document.querySelector('ol > li[data-anubis-state~="hide"]') && !!document.querySelector('anubis-summary'), null, { timeout: 5000 }).catch(() => {});
+    await page.waitForTimeout(200);
+    const grid = await page.evaluate(() => {
+      const ol = document.querySelector('ol');
+      const summary = document.querySelector('anubis-summary')?.getBoundingClientRect();
+      const cards = [...ol.children].filter((el) => el.tagName === 'LI');
+      const shown = cards.filter((li) => li.getBoundingClientRect().height > 0);
+      const buttons = [...document.querySelectorAll('anubis-weigh')].filter((b) => b.getBoundingClientRect().width);
+      const g = ol.getBoundingClientRect();
+      return {
+        cards: cards.length,
+        found: cards.filter((li) => li.hasAttribute('data-anubis-result')).length,
+        hidden: cards.length - shown.length,
+        states: cards.map((li) => li.getAttribute('data-anubis-state')).join('|'),
+        hideStyle: document.documentElement.getAttribute('data-anubis-hide'),
+        buttonsInCards: buttons.length > 0 && buttons.every((b) => b.closest('li')?.contains(b)),
+        stillGrid: getComputedStyle(ol).display === 'grid' && !ol.hasAttribute('data-anubis-rerank'),
+        // Shown cards fill the grid's cells in order, with no gaps.
+        noGaps: shown.every((li, i) => i === 0 || li.getBoundingClientRect().top >= shown[i - 1].getBoundingClientRect().top - 1) && new Set(shown.map((li) => Math.round(li.getBoundingClientRect().top))).size === Math.ceil(shown.length / 4),
+        summaryAbove: !!summary && summary.bottom <= g.top + 1 && summary.width >= g.width - 1,
+      };
+    });
+    console.log(`== DuckDuckGo ${tab} tab:`, JSON.stringify(grid));
+    await page.screenshot({ path: `${SHOTS}ddg-${tab}.png` });
+    if (checks) {
+      assertChecks(`DuckDuckGo ${tab} tab`, {
+        allFound: grid.found === grid.cards,
+        hidesSome: grid.hidden > 0,
+        buttonsInCards: grid.buttonsInCards,
+        stillGrid: grid.stillGrid,
+        noGaps: grid.noGaps,
+        summaryAboveGrid: grid.summaryAbove,
+      });
+    }
+  }
 
   // Where results are cards, the summary lines up with their text.
   await page.goto('https://search.brave.com/search?q=anubis');

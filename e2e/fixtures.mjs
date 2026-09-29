@@ -68,7 +68,10 @@ const siteIcon = (svg) =>
 // `wide`: the results in a list that isn't an <ol>, inside a <main> that also holds
 // a side panel, so the results area is wider than the results, and each result's
 // whole address, long enough to run under the result's buttons.
-export function duckduckgo(query, results, dark = false, more = [], { ai = false, wide = false } = {}) {
+// `tab`: 'videos' or 'images', that tab's grid of cards instead of web results,
+// in the markup uBlacklist's rules describe.
+export function duckduckgo(query, results, dark = false, more = [], { ai = false, wide = false, tab } = {}) {
+  if (tab) return duckduckgoTab(query, results, tab);
   const item = ([url, title, snippet], i) => `
       <li data-layout="organic" class="wLL07_0Xnd1QZpzpfR4W">
         <article id="r1-${i}" data-testid="result" data-nrn="result" class="yQDlj3B5DI5YO8c8Ulio CpkrTDP54mqzpuCSn1Fa SKlplDuh9FjtDprgoMxk">
@@ -548,4 +551,25 @@ export function brave(query, results, { panels = false } = {}) {
   <div id="main"><header class="hdr"><div class="brlogo"></div><form class="q" role="search" action="/search"><input name="q" value="${esc(query)}"></form></header>
   <div id="nav-tabs"><div class="nav-tabs-content"><nav class="tabs"><ul id="primary-tabs">${['All', 'Images', 'Videos', 'News'].map((t) => `<li class="tab-item"><a href="/${t === 'All' ? 'search' : t.toLowerCase()}?q=anubis"><span>${t}</span></a></li>`).join('')}</ul></nav></div></div>
   <main id="search-page"><div class="serp-layout"><div class="serp-columns"><div class="serp-columns-main"><main class="main-column"><section id="mixed-main">${items.join('')}</section></main></div></div></div></main></div></body></html>`;
+}
+
+function duckduckgoTab(query, results, tab) {
+  const card = ([url, title], i) =>
+    tab === 'videos'
+      ? `<li><a href="${url}"><article><div class="thumb"></div><h2>${esc(title)}</h2><div class="src">${esc(hostOf(url))}</div></article></a></li>`
+      : `<li><figure><div class="thumb"></div><figcaption><a href="${url}"><p>${esc(title)}</p><span>${esc(hostOf(url))}</span></a></figcaption></figure></li>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${esc(query)} at DuckDuckGo</title>
+  <style>
+    body{margin:0;font:14px/1.45 -apple-system,sans-serif;background:#fff;color:#333}
+    .tabs{padding:14px 28px;border-bottom:1px solid #eee}
+    main{padding:18px 28px}
+    ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    li{margin:0}a{color:inherit;text-decoration:none}
+    .thumb{height:${tab === 'videos' ? 120 : 160}px;border-radius:8px;background:#c9ccd6}
+    h2,figcaption p{margin:6px 0 2px;font-size:14px;font-weight:600}
+    figure{margin:0}.src,figcaption span{font-size:12px;color:#777}
+  </style></head><body>
+  <div class="tabs">All <b>${tab === 'videos' ? 'Videos' : 'Images'}</b></div>
+  <main><div data-testid="zci-${tab}"><ol>${results.map(card).join('')}</ol></div></main>
+  </body></html>`;
 }
