@@ -1,5 +1,5 @@
 import { colorForTag, parseList, type TagDef } from './listformat';
-import { normalizeHostname } from './domain';
+import { isDomain, normalizeHostname } from './domain';
 import { formatSiteLine, listSites, listTagDefs, setSites, upsertTagDef, type PersonalLevel } from './personal';
 
 // Bring sites over from the tools Anubis grew out of: uBlacklist rules, HOHSER's
@@ -86,7 +86,7 @@ export function importIntoPersonal(personalText: string, input: string): ImportR
       let skipped = 0;
       for (const e of data) {
         const site = normalizeHostname((e.domainName ?? '').trim());
-        if (!/^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(site)) {
+        if (!isDomain(site)) {
           skipped++;
           continue;
         }
