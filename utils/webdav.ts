@@ -46,13 +46,25 @@ export function syncFileUrl(address: string): string {
  * asks for consent to send data (Firefox 140 and later), consent to send the
  * list. Firefox counts the sites in it as browsing activity.
  */
-export function permissionsFor(address: string, dataConsent: boolean): { origins: string[]; data_collection?: string[] } {
+export function permissionsFor(address: string, requestDataConsent: boolean): { origins: string[]; data_collection?: string[] } {
   const origins = [`https://${new URL(address.trim()).hostname}/*`];
-  return dataConsent ? { origins, data_collection: ['browsingActivity'] } : { origins };
+  return requestDataConsent ? { origins, data_collection: ['browsingActivity'] } : { origins };
 }
 
 /** `permissions.request` and `contains` take `data_collection` in Firefox 140 and later; the types don't know it yet. */
 export type PermissionRequest = Parameters<typeof browser.permissions.request>[0];
+
+/** Whether this browser requires Firefox's built-in data-transmission consent for WebDAV. */
+export async function supportsDataConsent(): Promise<boolean> {
+  const runtime = browser.runtime as typeof browser.runtime & {
+    getBrowserInfo?: () => Promise<{ name: string; version: string }>;
+  };
+  const info = await runtime.getBrowserInfo?.();
+  if (!info || info.name !== 'Firefox') return false;
+  const major = Number.parseInt(info.version, 10);
+  if (!Number.isInteger(major)) throw new Error(`Unexpected Firefox version: ${info.version}`);
+  return major >= 140;
+}
 
 /** Whether this browser has Firefox's consent for sending data (`permissions.getAll` then lists `data_collection`). */
 export async function hasDataConsent(): Promise<boolean> {
@@ -98,11 +110,8 @@ const TRIES = 3;
 
 async function syncOnce(account: WebdavAccount): Promise<void> {
   const url = syncFileUrl(account.url);
-  const needed = permissionsFor(account.url, await hasDataConsent());
-  // If this Firefox doesn't take data_collection here, the host alone decides.
-  const allowed = await browser.permissions
-    .contains(needed as PermissionRequest)
-    .catch(() => browser.permissions.contains({ origins: needed.origins }));
+  const needed = permissionsFor(account.url, await supportsDataConsent());
+  const allowed = await browser.permissions.contains(needed as PermissionRequest);
   if (!allowed) throw new SyncError('permission');
   for (let attempt = 1; ; attempt++) {
     const last = attempt === TRIES;

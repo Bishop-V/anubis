@@ -15,14 +15,11 @@ import { renderSites } from './sites';
 import { renderSync, watchSync } from './sync';
 import { renderTags } from './tags';
 
-// The options page: a sidebar of sections, each rendered from storage and
-// re-rendered whenever storage changes (unless you're typing in it).
-
 interface Section {
   id: string;
   label: string;
   render: () => Promise<HTMLElement>;
-  /** The user guide's page for this section, linked after its description. */
+  /** The wiki's page for this section, linked after its description. */
   help?: [path: string, label: string];
 }
 
@@ -34,7 +31,7 @@ const SECTIONS: Section[] = [
   { id: 'appearance', label: 'Appearance', render: renderAppearance, help: ['guide/ranking#hidden-results', 'About hidden results'] },
   { id: 'engines', label: 'Search engines', render: renderEngines, help: ['guide/search-engines', 'Which engines work'] },
   { id: 'sync', label: t('syncHeading'), render: renderSync, help: ['guide/sync', 'How sync works'] },
-  { id: 'share', label: 'Share and back up', render: renderShare, help: ['guide/import-and-backup', 'Moving from other tools'] },
+  { id: 'share', label: 'Backup', render: renderShare, help: ['guide/import-and-backup', 'Moving from other tools'] },
 ];
 
 function external(href: string, text: string, className?: string): HTMLElement {
@@ -62,7 +59,7 @@ async function renderNav() {
       'div',
       { class: 'brand' },
       h('img', { src: '/anubis.svg', alt: '', width: 36, height: 36 }),
-      h('div', null, h('h1', null, 'Anubis'), h('p', null, 'Hide, rank and tag search results')),
+      h('div', null, h('h1', null, 'Anubis'), h('p', null, 'Hide, rank, and tag search results')),
     ),
     ...SECTIONS.map((s) =>
       h(
@@ -76,7 +73,7 @@ async function renderNav() {
       'div',
       { class: 'foot' },
       themeSwitcher(rules.settings.theme),
-      h('div', { class: 'links' }, external(guide(), 'User guide'), external(REPO_URL, 'Source on GitHub')),
+      h('div', { class: 'links' }, external(guide(), 'Wiki'), external(REPO_URL, 'Source on GitHub')),
     ),
   );
 }
@@ -90,7 +87,7 @@ async function renderMain() {
   if (ticket !== rendering) return;
   if (section.help) el.querySelector('.page-title p')?.append(' ', external(guide(section.help[0]), section.help[1], 'help-link'));
   main.replaceChildren(el);
-  document.title = `${section.label} · Anubis`;
+  document.title = `${section.label} – Anubis`;
   window.scrollTo(0, scroll);
 }
 

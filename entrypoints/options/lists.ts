@@ -12,6 +12,7 @@ import {
   builtinId,
   displayName,
   downloadList,
+  freshCopy,
   editSubscriptions,
   fetchDirectory,
   getSubscriptions,
@@ -48,7 +49,7 @@ function dropOffer(): void {
   history.replaceState(null, '', location.pathname + location.hash);
 }
 
-/** What subscribing to the offered list means: its address, directory entry, id and name. */
+/** What subscribing to the offered list means: its address, directory entry, id, and name. */
 function offered(link: SubscribeLink) {
   const url = toRawUrl(link.url);
   const entry = directory?.find((d) => d.url === url);
@@ -79,17 +80,17 @@ async function subscribe(input: string, entry?: DirectoryEntry, name = entry?.na
   busy.add(id);
   rerender();
   try {
-    const text = await downloadList(url);
+    const download = await downloadList(url);
     const same = (s: Subscription) => s.id === id || s.url === url;
     // The copy first, so the list has its text as soon as it's subscribed.
     const existing = (await getSubscriptions()).find(same);
-    await editListCache((cache) => ({ ...cache, [existing?.id ?? id]: { text, fetchedAt: Date.now() } }));
+    await editListCache((cache) => ({ ...cache, [existing?.id ?? id]: freshCopy(download) }));
     await editSubscriptions((subs) =>
       subs.some(same)
         ? subs.map((s) => (same(s) ? { ...s, enabled: true } : s))
         : [...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: entry?.builtin || undefined, name }],
     );
-    const parsed = parseList(text);
+    const { parsed } = download;
     flash('lists', 'ok', `Subscribed to ${displayName({ url, name }, parsed.meta)}: ${plural(parsed.rules.length, 'instruction')}, ${plural(parsed.tags.length, 'tag')}.`);
     if (offer && offered(offer).url === url) dropOffer();
   } catch (error) {
@@ -143,7 +144,7 @@ export async function renderLists(): Promise<HTMLElement> {
     null,
     pageTitle(
       'Lists',
-      'Subscribe to lists that tag, rerank or hide sites. Any text file on GitHub, GitLab, Codeberg or a gist works: Anubis lists, Brave Goggles, uBlacklist rulesets and plain domain lists.',
+      'Subscribe to lists that tag, rerank, or hide sites. Any text file on GitHub, GitLab, Codeberg, or a gist works: Anubis lists, Brave Goggles, uBlacklist rulesets, and plain domain lists.',
       h(
         'button',
         {
@@ -169,7 +170,7 @@ export async function renderLists(): Promise<HTMLElement> {
       'div',
       { class: 'panel' },
       h('h3', null, 'Add a list'),
-      h('p', { class: 'muted' }, 'Paste a link to the file. Links to a GitHub page, a gist or a Brave Goggle work too.'),
+      h('p', { class: 'muted' }, 'Paste a link to the file. Links to a GitHub page, a gist, or a Brave Goggle work too.'),
       form,
       offer ? null : notice,
     ),
@@ -276,7 +277,12 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
     // requires; a host already allowed doesn't ask again.
     const origin = originPermissionFor(sub.url);
     const asked = origin ? browser.permissions.request({ origins: [origin] }).catch(() => false) : Promise.resolve(true);
-    void asked.then(async () => {
+    void asked.then(async (granted) => {
+      if (!granted) {
+        flash('lists', 'error', t('listPermissionDenied', new URL(sub.url).hostname));
+        rerender();
+        return;
+      }
       const entry = await refreshList(sub);
       if (entry.error) flash('lists', 'error', `${name}: ${entry.error}`);
       else flash('lists', 'ok', `${name} is up to date.`);

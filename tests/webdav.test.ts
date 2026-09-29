@@ -47,6 +47,7 @@ class FakeDav {
 let server: FakeDav;
 const browsers = new Map<string, { local: Record<string, unknown>; sync: Record<string, unknown> }>();
 let current: string | undefined;
+let firefoxVersion: string;
 
 /** Switch to another browser, keeping this one's storage for later. */
 async function use(name: string) {
@@ -58,13 +59,16 @@ async function use(name: string) {
     await local.set(saved.local);
     await sync.set(saved.sync);
   }
-  permissions();
+  permissions(name);
   current = name;
 }
 
-/** The fake browser has no permissions API: the host is allowed, and there's no data consent to ask for (as in Chrome). */
-function permissions() {
+/** The fake permissions API allows every request unless a test overrides it. */
+function permissions(name: string) {
   Object.assign(fakeBrowser.permissions, { getAll: async () => ({ origins: [], permissions: [] }), contains: async () => true });
+  Object.assign(fakeBrowser.runtime, {
+    getBrowserInfo: async () => ({ name: name === 'firefox' ? 'Firefox' : 'Chrome', version: firefoxVersion }),
+  });
 }
 
 const serverData = () => JSON.parse(server.files.get(FILE)!.body);
@@ -75,6 +79,7 @@ beforeEach(async () => {
   vi.stubGlobal('fetch', server.fetch);
   browsers.clear();
   current = undefined;
+  firefoxVersion = '142.0';
   await use('firefox');
 });
 afterEach(() => vi.unstubAllGlobals());
@@ -83,6 +88,38 @@ describe('syncing through a WebDAV server', () => {
   it('does nothing until a server is connected', async () => {
     expect(await syncWithServer()).toBeNull();
     expect(server.requests).toEqual([]);
+  });
+
+  it('requires Firefox data consent before syncing', async () => {
+    await connect(ACCOUNT);
+    const contains = vi.fn(async () => false);
+    Object.assign(fakeBrowser.permissions, { contains });
+
+    expect((await syncWithServer())?.error).toBe('permission');
+    expect(contains).toHaveBeenCalledWith({
+      origins: ['https://dav.example/*'],
+      data_collection: ['browsingActivity'],
+    });
+    expect(server.requests).toEqual([]);
+  });
+
+  it('does not fall back to host-only access if checking Firefox consent fails', async () => {
+    await connect(ACCOUNT);
+    Object.assign(fakeBrowser.permissions, { contains: async () => { throw new Error('consent check failed'); } });
+
+    expect((await syncWithServer())?.error).toBe('failed');
+    expect(server.requests).toEqual([]);
+  });
+
+  it('checks only the server permission in Chrome', async () => {
+    await connect(ACCOUNT);
+    Object.assign(fakeBrowser.runtime, { getBrowserInfo: async () => ({ name: 'Chrome', version: '148.0' }) });
+    const contains = vi.fn(async () => true);
+    Object.assign(fakeBrowser.permissions, { contains });
+
+    expect((await syncWithServer())?.error).toBeUndefined();
+    expect(contains).toHaveBeenCalledWith({ origins: ['https://dav.example/*'] });
+    expect(server.requests.length).toBeGreaterThan(0);
   });
 
   it('keeps the file in a folder, or at a .json address as given', () => {

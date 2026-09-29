@@ -13,6 +13,8 @@
 // When an engine breaks, compare against uBlacklist's maintained definitions:
 // https://github.com/ublacklist/builtin/tree/main/serpinfo
 
+import type { CleanupKind } from './cleanup';
+
 export interface EngineDef {
   id: string;
   name: string;
@@ -39,6 +41,8 @@ export interface EngineDef {
    * ask"). Clean-up removes the whole marked block around a heading it recognises.
    */
   blocks?: string;
+  /** Engine-specific selectors for clean-up blocks that headings cannot identify. */
+  cleanupSelectors?: Partial<Record<CleanupKind, string>>;
   /** Sibling rows that belong to the same result (table layouts). */
   extraRows?: number;
   /** Results are table rows: hide rows instead of collapsing, and don't rerank. */
@@ -93,6 +97,7 @@ export const ENGINES: EngineDef[] = [
     displayed: 'cite',
     // Seen on a live page (2026-09): div.A6K0A[data-rpos] inside each panel's div.MjjYud.
     blocks: '[data-rpos]',
+    cleanupSelectors: { ai: '[data-attrid="AIOverview"], .M8OgIe, .YzCcne', questions: '.related-question-pair' },
     button: { top: '2px', right: '2px' },
     more: { kind: 'link', next: 'a#pnnext' },
     // On phones, titles are ARIA headings rather than h3 and the address isn't a
@@ -119,6 +124,7 @@ export const ENGINES: EngineDef[] = [
     isResultsPage: (url) => hasQuery(url, 'q'),
     heading: 'h2',
     boundary: 'ol, main, [data-testid="web-vertical"]',
+    cleanupSelectors: { ai: '[data-testid="duckassist-answer-content"], [data-react-module-id="wikinlp"]' },
     // Beside DuckDuckGo's own ⋯ menu on each result, as a second option.
     button: { top: '6px', right: '36px', besideMenu: true },
     more: { kind: 'click', button: '#more-results, button[data-testid="more-results"]' },
@@ -170,6 +176,7 @@ export const ENGINES: EngineDef[] = [
     item: '.snippet[data-type="web"]',
     link: 'a',
     title: '.title',
+    cleanupSelectors: { ai: '#summarizer' },
     button: { top: '4px', right: '4px' },
     // Brave numbers pages from 0 in `offset`.
     more: { kind: 'param', name: 'offset', first: 0, step: 1 },

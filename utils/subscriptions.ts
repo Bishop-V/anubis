@@ -5,7 +5,8 @@ import paywalls from '@/lists/paywalls.anubis?raw';
 import reference from '@/lists/reference.anubis?raw';
 import { storage } from '#imports';
 import { andList } from './dom';
-import { parseList, safeWebUrl } from './listformat';
+import { normalizeHostname } from './domain';
+import { parseList, safeWebUrl, type ParsedList } from './listformat';
 import {
   editListCache,
   getSettings,
@@ -147,6 +148,34 @@ export function subscriptionId(url: string): string {
 
 const MAX_BYTES = 5 * 1024 * 1024;
 
+/**
+ * The body as text, giving up as soon as it passes `max` bytes: by the declared
+ * length before reading anything, otherwise while it streams in.
+ */
+async function readLimited(res: Response, max: number): Promise<string> {
+  const tooBig = () => new Error('List is larger than 5 MB');
+  if (Number(res.headers.get('content-length')) > max) {
+    void res.body?.cancel();
+    throw tooBig();
+  }
+  if (!res.body) return res.text();
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let size = 0;
+  let text = '';
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > max) {
+      void reader.cancel();
+      throw tooBig();
+    }
+    text += decoder.decode(value, { stream: true });
+  }
+  return text + decoder.decode();
+}
+
 export async function fetchText(url: string, timeoutMs = 20000): Promise<string> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -154,8 +183,7 @@ export async function fetchText(url: string, timeoutMs = 20000): Promise<string>
     // no-cache: revalidate with the server (ETag), which is cheap when nothing changed.
     const res = await fetch(url, { signal: controller.signal, cache: 'no-cache', credentials: 'omit' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const text = await res.text();
-    if (text.length > MAX_BYTES) throw new Error('List is larger than 5 MB');
+    const text = await readLimited(res, MAX_BYTES);
     if (/^\s*<(!doctype|html)/i.test(text)) throw new Error('Got a web page, not a list. Use the raw file URL.');
     return text;
   } catch (error) {
@@ -167,13 +195,18 @@ export async function fetchText(url: string, timeoutMs = 20000): Promise<string>
 }
 
 /** Download a list and check that it parses to something. */
-export async function downloadList(url: string): Promise<string> {
+export async function downloadList(url: string): Promise<{ text: string; parsed: ParsedList }> {
   const text = await fetchText(url);
   const parsed = parseList(text);
   if (!parsed.rules.length && !parsed.lens) {
     throw new Error(parsed.errors[0] ? `No usable rules (line ${parsed.errors[0].line}: ${parsed.errors[0].message})` : 'No rules found');
   }
-  return text;
+  return { text, parsed };
+}
+
+/** A downloaded list as the cache keeps it. */
+export function freshCopy({ text, parsed }: { text: string; parsed: ParsedList }): CachedList {
+  return { text, fetchedAt: Date.now(), expiresHours: parsed.meta.expiresHours ?? 0 };
 }
 
 /** The text for a subscription: downloaded copy, else the bundled copy for built-ins. */
@@ -186,12 +219,13 @@ export async function refreshList(sub: Subscription): Promise<CachedList> {
   const prev = cache[sub.id];
   let entry: CachedList;
   try {
-    entry = { text: await downloadList(sub.url), fetchedAt: Date.now() };
+    entry = freshCopy(await downloadList(sub.url));
   } catch (error) {
     // Keep the last good copy; remember the failure for the options page.
     entry = {
       text: prev?.text ?? '',
       fetchedAt: prev?.fetchedAt ?? 0,
+      expiresHours: prev?.expiresHours,
       error: error instanceof Error ? error.message : String(error),
       errorAt: Date.now(),
     };
@@ -210,8 +244,13 @@ export async function refreshStale(force = false): Promise<number> {
   for (const sub of subs) {
     if (!sub.enabled) continue;
     const entry = cache[sub.id];
-    const text = listText(sub, cache);
-    const hours = (text && parseList(text).meta.expiresHours) || settings.updateHours;
+    // Copies downloaded before expiresHours was stored are parsed for it once more.
+    let expires = entry?.text ? entry.expiresHours : undefined;
+    if (expires === undefined) {
+      const text = listText(sub, cache);
+      expires = text ? parseList(text).meta.expiresHours : undefined;
+    }
+    const hours = expires || settings.updateHours;
     const due = !entry || now - entry.fetchedAt > hours * 3600_000;
     const backingOff = entry?.errorAt && now - entry.errorAt < RETRY_AFTER_ERROR_MS;
     if (force || (due && !backingOff)) {
@@ -317,7 +356,7 @@ export function reportUrl(
   } catch {
     return undefined;
   }
-  const site = url.hostname.replace(/^www\./, '');
+  const site = normalizeHostname(url.hostname);
   const rules = reasons.flatMap((r) => (r.rule ? [r.rule] : []));
   const lines = [`Result: ${plainAddress(url)}`, '', `**${list}** ${andList([...new Set(reasons.map((r) => r.text))])}, and I think that’s wrong.`];
   if (rules.length) {

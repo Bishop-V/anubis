@@ -1,4 +1,4 @@
-// Hostname helpers shared by the popup, options page and content script.
+// Hostname helpers shared by the popup, options page, and content script.
 
 /** Turn user input ("https://www.Fandom.com/wiki/x") into a bare domain ("fandom.com"). */
 export function normalizeDomain(input: string): string {
@@ -14,9 +14,14 @@ export function normalizeDomain(input: string): string {
   return /^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(s) ? s : '';
 }
 
+/** Normalize an already-parsed hostname for consistent list matching and display. */
+export function normalizeHostname(hostname: string): string {
+  return hostname.toLowerCase().replace(/^www\./, '');
+}
+
 /** "www.a.b.example.com" → ["a.b.example.com", "b.example.com", "example.com", "com"]. */
 export function hostSuffixes(hostname: string): string[] {
-  const host = hostname.toLowerCase().replace(/^www\./, '');
+  const host = normalizeHostname(hostname);
   const parts = host.split('.');
   const out: string[] = [];
   for (let i = 0; i < parts.length; i++) out.push(parts.slice(i).join('.'));

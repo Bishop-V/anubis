@@ -10,6 +10,7 @@ import {
   hasDataConsent,
   permissionsFor,
   statusItem,
+  supportsDataConsent,
   type PermissionRequest,
   type SyncErrorCode,
   type SyncStatus,
@@ -58,8 +59,8 @@ async function browserSyncPanel(): Promise<HTMLElement> {
 }
 
 /** Ask for what syncing needs, straight from the click (Firefox only asks during it), then sync. */
-function syncNow(account: WebdavAccount, dataConsent: boolean, first = false): void {
-  const asked = browser.permissions.request(permissionsFor(account.url, dataConsent) as PermissionRequest).catch(() => false);
+function syncNow(account: WebdavAccount, requestDataConsent: boolean, first = false): void {
+  const asked = browser.permissions.request(permissionsFor(account.url, requestDataConsent) as PermissionRequest).catch(() => false);
   void asked.then(async (granted) => {
     if (!granted) {
       flash('sync', 'error', t('webdavDenied', host(account)));
@@ -77,7 +78,7 @@ function syncNow(account: WebdavAccount, dataConsent: boolean, first = false): v
   });
 }
 
-function connectPanel(dataConsent: boolean): HTMLElement {
+function connectPanel(requestDataConsent: boolean): HTMLElement {
   const field = (id: keyof typeof draft, label: MessageKey, props: Record<string, unknown>, hint?: MessageKey) => {
     const input = h('input', { id: `webdav-${id}`, value: draft[id], spellcheck: false, ...props });
     input.addEventListener('input', () => (draft[id] = input.value));
@@ -106,7 +107,7 @@ function connectPanel(dataConsent: boolean): HTMLElement {
     }
     if (!https) flash('sync', 'error', t('webdavBadAddress'));
     else if (!account.user || !account.password) flash('sync', 'error', t('webdavMissingLogin'));
-    else return syncNow(account, dataConsent, true);
+    else return syncNow(account, requestDataConsent, true);
     rerender();
   });
   return h(
@@ -120,7 +121,7 @@ function connectPanel(dataConsent: boolean): HTMLElement {
   );
 }
 
-function connectedPanel(account: WebdavAccount, status: SyncStatus | null, dataConsent: boolean): HTMLElement {
+function connectedPanel(account: WebdavAccount, status: SyncStatus | null, dataConsent: boolean, requestDataConsent: boolean): HTMLElement {
   const failed = status?.error && t(ERRORS[status.error], status.error === 'server' ? String(status.status ?? '') : host(account));
   const leave = async () => {
     await disconnect();
@@ -144,21 +145,26 @@ function connectedPanel(account: WebdavAccount, status: SyncStatus | null, dataC
     h(
       'div',
       { class: 'toolbar', style: 'margin-top:12px' },
-      h('button', { class: 'btn primary', type: 'button', disabled: syncing, on: { click: () => syncNow(account, dataConsent) } }, t('webdavSyncNow')),
-      h('button', { class: 'btn ghost', type: 'button', on: { click: () => void leave() } }, t('webdavDisconnect')),
+      h('button', { class: 'btn primary', type: 'button', disabled: syncing, on: { click: () => syncNow(account, requestDataConsent) } }, t('webdavSyncNow')),
+      h('button', { class: 'btn', type: 'button', on: { click: () => void leave() } }, t('webdavDisconnect')),
     ),
     flashed('sync'),
   );
 }
 
 export async function renderSync(): Promise<HTMLElement> {
-  const [account, status, dataConsent] = await Promise.all([accountItem.getValue(), statusItem.getValue(), hasDataConsent()]);
+  const [account, status, dataConsent, requestDataConsent] = await Promise.all([
+    accountItem.getValue(),
+    statusItem.getValue(),
+    hasDataConsent(),
+    supportsDataConsent(),
+  ]);
   return h(
     'div',
     null,
     pageTitle(t('syncHeading'), t('syncIntro')),
     await browserSyncPanel(),
-    account ? connectedPanel(account, status, dataConsent) : connectPanel(dataConsent),
+    account ? connectedPanel(account, status, dataConsent, requestDataConsent) : connectPanel(requestDataConsent),
   );
 }
 

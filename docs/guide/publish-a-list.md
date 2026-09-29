@@ -4,7 +4,7 @@ A list is a text file anyone can subscribe to. You don't need a server or an acc
 
 ## 1. Write it
 
-The quickest start is your own list. **Settings → Share and back up → Download my list** saves every site you've ranked and tagged. Or write one from scratch:
+The quickest start is your own list. **Settings → Backup → Download my list** saves every site you've ranked and tagged. Or write one from scratch:
 
 ```
 ! name: Official docs
@@ -19,11 +19,11 @@ $site=docs.python.org,tag=docs,boost=1
 
 Every line after the header is one instruction: which sites, and what to do with them. The [list format](../list-format.md) has the details.
 
-Lists that only tag, and leave ranking to each subscriber, are the friendliest to publish: subscribers can decide in **Settings → Tags** whether your tag raises, highlights or hides.
+Lists that only tag, and leave ranking to each subscriber, are the friendliest to publish: subscribers can decide in **Settings → Tags** whether your tag raises, highlights, or hides.
 
 ## 2. Put it online
 
-Create a public repository on GitHub, GitLab or Codeberg, or a gist, and add the file. Any file name works; ending it in `.anubis` helps people recognise it.
+Create a public repository on GitHub, GitLab, or Codeberg, or a gist, and add the file. Any file name works; ending it in `.anubis` helps people recognise it.
 
 ## 3. Share the link
 
@@ -33,7 +33,7 @@ For one click, share a [subscribe link](../subscribe.md#make-a-subscribe-link) i
 
 ## 4. Hear about mistakes, and let people suggest sites
 
-When your list gets a site wrong, subscribers can choose "Wrong? Report it to *your list*" in the menu on that result. It opens a pre-filled issue on your repository's issue tracker, with the rule that matched and the result's address, for them to send. This needs no setting for a list on GitHub, GitLab or Codeberg.
+When your list gets a site wrong, subscribers can choose "Wrong? Report it to *your list*" in the menu on that result. It opens a pre-filled issue on your repository's issue tracker, with the rule that matched and the result's address, for them to send. This needs no setting for a list on GitHub, GitLab, or Codeberg.
 
 Set `! issues:` to your issue tracker to also let subscribers suggest sites: "Suggest it to *your list*" then appears in the menu on results your list doesn't mention. Reports go to `! issues:` too, so set it if your repository's own issues are turned off. Pull requests work as for any repository.
 

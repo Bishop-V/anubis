@@ -1,12 +1,14 @@
-import { domainChoices, siteOf } from '@/utils/domain';
+import { balanceSvg, setBalance } from '@/utils/balance';
+import { domainChoices, normalizeHostname, siteOf } from '@/utils/domain';
 import { h, icon } from '@/utils/dom';
 import type { EngineDef } from '@/utils/engines';
-import { ICON_ANUBIS, ICON_CLOSE, ICON_GEAR, ICON_HIDE, ICON_RANK, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
+import { ICON_ANUBIS, ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS, WEIGH_ICONS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
 import { LEVELS, TAG_CHOICES, type Level, type TagPref, type Verdict } from '@/utils/matcher';
 import { t, tList, tn } from '@/utils/i18n';
 import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, PERSONAL_NAME, type PersonalLevel } from '@/utils/personal';
+import type { Palette } from '@/utils/storage';
 import { summarySentence } from '@/utils/summary';
 import { OWN_TAGS, type FoundResult } from './results';
 import shadowCss from './shadow.css?inline';
@@ -25,7 +27,7 @@ const HOST_TAGS = [...OWN_TAGS].map((tag) => tag.toLowerCase()).join(', ');
 // The shadow root protects what's inside a host, but the host element itself is
 // part of the page and the page's CSS can still reach it (Google's stylesheets
 // match on structure, like `… > :last-child`). These inline !important values
-// win over any page rule, so a host can't be hidden, faded, moved or flipped.
+// win over any page rule, so a host can't be hidden, faded, moved, or flipped.
 const GUARDS: [string, string][] = [
   ['visibility', 'visible'],
   ['opacity', '1'],
@@ -48,11 +50,15 @@ function guard(host: HTMLElement, display: string): void {
   host.style.setProperty('display', display, 'important');
 }
 
+/** The palette every host is drawn in; `applyPalette` changes it. */
+let palette: Palette = 'gold';
+
 function makeHost(tag: string, theme: PageTheme, display = 'block'): { host: HTMLElement; root: ShadowRoot } {
   const host = document.createElement(tag);
   const root = host.attachShadow({ mode: 'closed' });
   root.append(h('style', null, shadowCss));
   host.dataset.theme = theme;
+  host.dataset.palette = palette;
   guard(host, display);
   roots.set(host, root);
   return { host, root };
@@ -135,11 +141,28 @@ export function keepUpright(host: HTMLElement): void {
 function render(host: HTMLElement, key: string, build: () => Node): void {
   if (renderKeys.get(host) === key) return;
   renderKeys.set(host, key);
+  // Replacing the focused button would send focus to the top of the page, so it
+  // goes to the button with the same data-focus-key in the new content, or, when
+  // that button is gone (Undo, Show all), to the first one.
+  const root = roots.get(host)!;
+  const focusKey = root.activeElement?.getAttribute('data-focus-key');
   const next = build();
   const prev = rendered.get(host);
   if (prev?.parentNode) prev.parentNode.replaceChild(next, prev);
-  else roots.get(host)!.append(next);
+  else root.append(next);
   rendered.set(host, next);
+  if (focusKey && next instanceof Element) {
+    const target = [...next.querySelectorAll<HTMLElement>('[data-focus-key]')];
+    (target.find((el) => el.dataset.focusKey === focusKey) ?? target[0])?.focus({ preventScroll: true });
+  }
+}
+
+/** Gold or plain, for everything Anubis adds to the page, the result menu included. */
+export function applyPalette(next: Palette): void {
+  if (next === palette && document.documentElement.dataset.anubisPalette === next) return;
+  palette = next;
+  document.documentElement.dataset.anubisPalette = next;
+  for (const el of document.querySelectorAll<HTMLElement>(HOST_TAGS)) el.dataset.palette = next;
 }
 
 /** The theme of everything on the page but the result menu, which has its own (`PopoverData.theme`). */
@@ -235,6 +258,7 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
 
 export function ensureWeighButton(
   result: FoundResult,
+  level: Level,
   engine: EngineDef,
   theme: PageTheme,
   onOpen: (button: HTMLElement, result: FoundResult) => void,
@@ -243,16 +267,7 @@ export function ensureWeighButton(
   let host = weighHosts.get(container);
   if (!host) {
     const made = makeHost('anubis-weigh', theme, engine.table ? 'inline-block' : 'block');
-    const button = h(
-      'button',
-      {
-        class: 'weigh',
-        type: 'button',
-        title: 'Hide, rank or tag this site',
-        attrs: { 'aria-label': 'Hide, rank or tag this site', 'aria-haspopup': 'dialog', 'aria-expanded': 'false' },
-      },
-      icon(ICON_RANK),
-    );
+    const button = h('button', { class: 'weigh', type: 'button', attrs: { 'aria-haspopup': 'dialog', 'aria-expanded': 'false' } });
     const owner = made.host;
     button.addEventListener('click', (e) => {
       // Keep the click from reaching the result link underneath.
@@ -260,11 +275,25 @@ export function ensureWeighButton(
       onOpen(button, weighResult.get(owner)!);
     });
     made.root.append(button);
+    rendered.set(owner, button);
     host = owner;
     weighHosts.set(container, host);
   }
   weighResult.set(host, result);
   host.dataset.theme = theme;
+  // Named for its site, so a list of the page's buttons tells them apart, and for its
+  // ranking, which the icon shows: the balance tips with it.
+  const site = normalizeHostname(result.host);
+  const label = level === 'normal' ? t('weighLabel', site) : t('weighLabelRanked', site, LEVEL_CHIPS[level].toLocaleLowerCase());
+  const button = rendered.get(host) as HTMLElement | undefined;
+  if (button && button.title !== label) {
+    button.title = label;
+    button.setAttribute('aria-label', label);
+  }
+  if (button && button.dataset.level !== level) {
+    button.dataset.level = level;
+    button.replaceChildren(icon(WEIGH_ICONS[level]));
+  }
 
   if (engine.table) {
     // Table rows can't position children; sit inline after the title instead.
@@ -401,7 +430,7 @@ export function renderHiddenBar(
 
   const why = hiddenReason(verdict, tags);
   const sameWhy = more.every((v) => hiddenReason(v, tags) === why);
-  const site = result.host.replace(/^www\./, '');
+  const site = normalizeHostname(result.host);
   render(host, JSON.stringify([site, why, more.length, sameWhy]), () =>
     h(
       'div',
@@ -419,14 +448,17 @@ export function renderHiddenBar(
         {
           class: 'text-btn',
           type: 'button',
+          attrs: { 'aria-label': t('hiddenShowSite', site) },
           on: {
             click: (e) => {
               stop(e);
               actions.reveal();
+              // The line goes with the click; the result it stood for takes focus.
+              result.link.focus({ preventScroll: true });
             },
           },
         },
-        'Show',
+        t('hiddenShow'),
       ),
     ),
   );
@@ -500,12 +532,12 @@ export function renderSummary(
       h('span', { class: 'mark' }, icon(ICON_ANUBIS)),
       h('span', { class: 'sentence' }, summarySentence(stats)),
       stats.filter
-        ? h('button', { class: 'text-btn', type: 'button', on: { click: () => actions.filter(undefined) } }, t('summaryShowAll'))
+        ? h('button', { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'show-all' }, on: { click: () => actions.filter(undefined) } }, t('summaryShowAll'))
         : null,
       hiddenCount(stats) && !stats.filter
         ? h(
             'button',
-            { class: 'text-btn', type: 'button', on: { click: actions.toggleReveal } },
+            { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'reveal' }, on: { click: actions.toggleReveal } },
             stats.revealed ? t('hideAgain') : t('showHidden'),
           )
         : null,
@@ -517,18 +549,19 @@ export function renderSummary(
               type: 'button',
               disabled: stats.loading,
               title: t('loadMoreTitle'),
+              attrs: { 'data-focus-key': 'deeper' },
               on: { click: actions.deeper },
             },
             stats.loading ? t('loading') : t('loadMore'),
           )
         : null,
-      settingsButton(actions.settings),
+      settingsButton(actions.settings, 'settings'),
       change
         ? h(
             'div',
             { class: 'change' },
             h('span', null, change),
-            h('button', { class: 'text-btn', type: 'button', on: { click: actions.undo } }, t('summaryUndo')),
+            h('button', { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'undo' }, on: { click: actions.undo } }, t('summaryUndo')),
           )
         : null,
       // The tags on this page, as a legend you can click to show only that tag.
@@ -543,7 +576,7 @@ export function renderSummary(
                   type: 'button',
                   style: `--c: ${tag.color}`,
                   title: stats.filter === tag.id ? t('summaryFilterOff') : t('summaryFilterOn', tag.label),
-                  attrs: { 'aria-pressed': String(stats.filter === tag.id) },
+                  attrs: { 'aria-pressed': String(stats.filter === tag.id), 'data-focus-key': `tag-${tag.id}` },
                   on: { click: () => actions.filter(stats.filter === tag.id ? undefined : tag.id) },
                 },
                 h('i', { class: 'gem' }),
@@ -555,6 +588,8 @@ export function renderSummary(
         : null,
     ),
   );
+
+  announce(summaryHost, change ?? '');
 
   summaryArea = place.area && !place.area.contains(summaryHost) ? place.area : undefined;
   alignSummary();
@@ -592,6 +627,23 @@ export function renderSummary(
       });
     });
   }
+}
+
+const statusRegions = new WeakMap<HTMLElement, HTMLElement>();
+
+/**
+ * Say `text` to screen readers without moving focus ("Hid fandom.com."). The
+ * region stays in the host across renders: one added along with its text isn't
+ * reliably read.
+ */
+function announce(host: HTMLElement, text: string): void {
+  let region = statusRegions.get(host);
+  if (!region) {
+    region = h('div', { class: 'sr-only', attrs: { role: 'status' } });
+    roots.get(host)!.append(region);
+    statusRegions.set(host, region);
+  }
+  if (region.textContent !== text) region.textContent = text;
 }
 
 /**
@@ -639,9 +691,11 @@ function aboveResults(host: HTMLElement, next: Element, area: HTMLElement): bool
 }
 
 /** The cog that opens settings, in the summary and the result menu. */
-function settingsButton(open: () => void): HTMLButtonElement {
+function settingsButton(open: () => void, focusKey?: string): HTMLButtonElement {
   const label = t('anubisSettings');
-  return h('button', { class: 'icon-btn', type: 'button', title: label, attrs: { 'aria-label': label }, on: { click: open } }, icon(ICON_GEAR));
+  const attrs: Record<string, string> = { 'aria-label': label };
+  if (focusKey) attrs['data-focus-key'] = focusKey;
+  return h('button', { class: 'icon-btn', type: 'button', title: label, attrs, on: { click: open } }, icon(ICON_GEAR));
 }
 
 export function removeAllUi(): void {
@@ -685,6 +739,13 @@ export function closePopover(): void {
   popover = undefined;
 }
 
+/** Close the result menu and put focus back on the button that opened it. */
+function closeAndReturn(): void {
+  const anchor = popover?.anchor;
+  closePopover();
+  anchor?.focus({ preventScroll: true });
+}
+
 export function popoverAnchor(): HTMLElement | undefined {
   return popover?.anchor;
 }
@@ -702,10 +763,7 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
       if (!e.composedPath().includes(host) && !e.composedPath().includes(anchor)) closePopover();
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        closePopover();
-        anchor.focus();
-      }
+      if (e.key === 'Escape') closeAndReturn();
     };
     const onResize = () => position(host, anchor);
     document.addEventListener('pointerdown', onDown, true);
@@ -766,37 +824,6 @@ function position(host: HTMLElement, anchor: HTMLElement): void {
   host.style.top = `${rect.bottom + window.scrollY + 6}px`;
 }
 
-// The balance tilts with the verdict: a hidden site sinks, a pinned one rises
-// against the feather. Angles in degrees; negative drops the site's (left) pan.
-const TILT: Record<Level, number> = { hide: -13, lower: -6, normal: 0, raise: 6, pin: 13 };
-const ARM = 52;
-
-function balanceSvg(): SVGSVGElement {
-  return icon(`<svg xmlns="http://www.w3.org/2000/svg" class="balance" viewBox="0 0 132 40" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M66 7v28M56 37h20"/>
-    <circle cx="66" cy="5" r="1.6" fill="currentColor" stroke="none"/>
-    <g class="beam" style="transform-origin: 66px 9px; transform-box: view-box"><path d="M14 9h104"/></g>
-    <g class="pan left">
-      <path d="M14 9 7 24M14 9l7 15"/><path d="M4 24h20a10 5 0 0 1-20 0z" fill="currentColor" fill-opacity=".14"/>
-      <path d="M14 21.5c-1.8-1.6-3.2-2.6-3.2-4a1.7 1.7 0 0 1 3.2-.8 1.7 1.7 0 0 1 3.2.8c0 1.4-1.4 2.4-3.2 4z" fill="currentColor" stroke="none"/>
-    </g>
-    <g class="pan right">
-      <path d="M118 9l-7 15M118 9l7 15"/><path d="M108 24h20a10 5 0 0 1-20 0z" fill="currentColor" fill-opacity=".14"/>
-      <path d="M115 22.5c1.5-3.5 3.5-5.8 6-7-.3 3.2-2.4 5.6-6 7zM116.4 20.6l2.4-.4"/>
-    </g>
-  </svg>`) as SVGSVGElement;
-}
-
-function setBalance(svg: Element, level: Level): void {
-  const deg = TILT[level];
-  const rad = (deg * Math.PI) / 180;
-  const dy = ARM * Math.sin(rad);
-  const dx = ARM * (1 - Math.cos(rad));
-  svg.querySelector<SVGGElement>('.beam')?.style.setProperty('transform', `rotate(${deg}deg)`);
-  svg.querySelector<SVGGElement>('.pan.left')?.style.setProperty('transform', `translate(${dx}px, ${-dy}px)`);
-  svg.querySelector<SVGGElement>('.pan.right')?.style.setProperty('transform', `translate(${-dx}px, ${dy}px)`);
-}
-
 function buildPopover(
   data: PopoverData,
   actions: PopoverActions,
@@ -810,17 +837,20 @@ function buildPopover(
   const shown: Level = pressed ?? fromLists;
   const choices = domainChoices(data.result.host);
 
-  const select = h(
-    'select',
-    {
-      class: 'domain',
-      title: choices.length > 1 ? 'Choose how much of the site this applies to' : undefined,
-      disabled: choices.length < 2,
-      attrs: { 'aria-label': 'Site' },
-    },
-    choices.map((d) => h('option', { value: d, selected: d === domain }, d)),
-  );
-  select.addEventListener('change', () => switchDomain(select.value));
+  // The cartouche shows the chosen site as text, with the native select laid over it
+  // unseen: a select is as wide as its longest option, which put the name off centre.
+  let cartouche: HTMLElement;
+  if (choices.length > 1) {
+    const select = h(
+      'select',
+      { title: 'Choose how much of the site this applies to', attrs: { 'aria-label': 'Site', 'data-focus-key': 'site' } },
+      choices.map((d) => h('option', { value: d, selected: d === domain }, d)),
+    );
+    select.addEventListener('change', () => switchDomain(select.value));
+    cartouche = h('span', { class: 'cartouche choosable' }, h('span', { class: 'name', attrs: { 'aria-hidden': 'true' } }, domain), select);
+  } else {
+    cartouche = h('span', { class: 'cartouche' }, h('span', { class: 'name' }, domain));
+  }
 
   const levels = h(
     'div',
@@ -930,14 +960,14 @@ function buildPopover(
 
   const pop = h(
     'div',
-    { class: 'pop', attrs: { role: 'dialog', 'aria-label': `Hide, rank or tag ${domain}` } },
+    { class: 'pop', attrs: { role: 'dialog', 'aria-label': t('weighLabel', domain) } },
     h(
       'div',
       { class: 'head' },
-      h('span', { class: 'cartouche' }, select),
+      cartouche,
       h(
         'button',
-        { class: 'icon-btn close', type: 'button', title: 'Close', attrs: { 'aria-label': 'Close' }, on: { click: () => closePopover() } },
+        { class: 'icon-btn close', type: 'button', title: 'Close', attrs: { 'aria-label': 'Close' }, on: { click: closeAndReturn } },
         icon(ICON_CLOSE),
       ),
     ),
@@ -977,4 +1007,3 @@ function buildPopover(
   );
   return { pop, level: shown };
 }
-

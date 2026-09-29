@@ -2,28 +2,37 @@
    page, so it stays quiet: the page's own font, muted text, no fills. The one
    flourish is the weigh menu's cartouche and balance. Hosts carry data-theme. */
 
+/* The same palette as assets/theme.css, so the result menu matches the popup. */
 :host {
   --gold: #d4a637;
   --gold-ink: #8d6716;
-  --night: #1b1a16;
-  --ink: #23201a;
-  --muted: #6f695e;
-  --panel: #fbfaf8;
-  --line: #e2dfd8;
+  --text: #1f1e1a;
+  --muted: #62615b;
+  --raised: #fbfbfa;
+  --line: #dadcd7;
+  --line-strong: #c3c6bf;
   --danger: #b4492f;
   --shadow: 0 14px 40px rgb(35 30 20 / 0.16), 0 1px 3px rgb(35 30 20 / 0.12);
   all: initial;
   font-family: inherit;
-  color: var(--ink);
+  color: var(--text);
 }
 :host([data-theme='dark']) {
   --gold-ink: #e0b54e;
-  --ink: #ece6da;
+  --text: #ece6da;
   --muted: #a39b8c;
-  --panel: #1f1d18;
-  --line: #36322b;
+  --raised: #23211c;
+  --line: #35312a;
+  --line-strong: #4a453c;
   --danger: #e2735b;
   --shadow: 0 14px 40px rgb(0 0 0 / 0.5), 0 1px 3px rgb(0 0 0 / 0.4);
+}
+/* The plain palette (Settings → Appearance → Colours): no gold and no red, in light
+   and dark. What you can press keeps its weight, so it still reads as a button. */
+:host([data-palette='plain']) {
+  --gold: var(--muted);
+  --gold-ink: var(--text);
+  --danger: var(--muted);
 }
 *,
 *::before,
@@ -69,10 +78,20 @@ button {
   margin: 0 1px;
   transform: rotate(45deg);
   background: var(--c);
+  flex: none;
 }
 .gem.hollow {
   background: transparent;
   box-shadow: inset 0 0 0 1.25px var(--c);
+}
+
+/* Plain: every tag's mark in grey; tags are told apart by their names. */
+:host([data-palette='plain']) .gem {
+  background: var(--muted);
+}
+:host([data-palette='plain']) .gem.hollow {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.25px var(--muted);
 }
 
 /* ------------------------------------------------------------- chips row */
@@ -176,7 +195,7 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
-  /* Clear of the ⇅ button in the result's corner, which a long line would reach on a phone. */
+  /* Clear of the ⚖ button in the result's corner, which a long line would reach on a phone. */
   padding-right: 28px;
   font-size: 12.5px;
   line-height: 20px;
@@ -200,7 +219,17 @@ button {
 }
 .gone b {
   font-weight: 600;
-  color: var(--ink);
+  color: var(--text);
+}
+
+/* Read by screen readers, not shown: the summary's announcement of a change. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* ---------------------------------------------------------------- summary */
@@ -245,7 +274,7 @@ button {
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0 10px;
-  color: var(--ink);
+  color: var(--text);
 }
 .filters {
   flex-basis: 100%;
@@ -260,16 +289,19 @@ button {
   gap: 6px;
   padding: 1px 0;
   border: 0;
-  border-bottom: 1.5px solid transparent;
+  border-bottom: 2px solid transparent;
   background: none;
   color: var(--muted);
 }
 .filters button:hover {
-  color: var(--ink);
+  color: var(--text);
 }
 .filters button[aria-pressed='true'] {
-  color: var(--ink);
+  color: var(--text);
   border-bottom-color: var(--c);
+}
+:host([data-palette='plain']) .filters button[aria-pressed='true'] {
+  border-bottom-color: var(--text);
 }
 .filters .count {
   font-variant-numeric: tabular-nums;
@@ -305,8 +337,8 @@ button {
   width: 312px;
   max-width: calc(100vw - 16px);
   border-radius: 10px;
-  background: var(--panel);
-  color: var(--ink);
+  background: var(--raised);
+  color: var(--text);
   box-shadow:
     var(--shadow),
     0 0 0 1px var(--line);
@@ -326,61 +358,55 @@ button {
 }
 .head {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   padding: 16px 12px 0 18px;
 }
 
-/* The cartouche: an oval ring with a bar at its end, which in hieroglyphs marks a
-   name. Here it holds the site being weighed. */
+/* The cartouche: a gold oval ring around a name, as in hieroglyphs. Here it holds
+   the site being weighed. Where the rule can cover more or less of the site, the
+   native select lies unseen over the ring, and the ring shows its focus. */
 .cartouche {
   position: relative;
   display: inline-flex;
   align-items: center;
+  min-width: 0;
   max-width: 250px;
   margin-right: 8px;
   padding: 3px 16px 4px;
   border: 1.5px solid var(--gold);
   border-radius: 999px;
 }
-.cartouche::after {
-  content: '';
-  position: absolute;
-  top: 3px;
-  bottom: 3px;
-  right: -6px;
-  width: 1.5px;
-  border-radius: 1px;
-  background: var(--gold);
-}
-select.domain {
-  max-width: 100%;
-  padding: 0 14px 0 0;
-  border: 0;
-  background: transparent;
-  color: var(--ink);
-  font: 500 16px/1.3 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
-  appearance: none;
-  background-image:
-    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
-    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
-  background-position:
-    calc(100% - 6px) 55%,
-    calc(100% - 2px) 55%;
-  background-size: 4px 4px;
-  background-repeat: no-repeat;
+.cartouche .name {
+  overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 500 16px/1.3 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+}
+.cartouche.choosable .name {
+  padding-right: 14px;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%) calc(100% - 4px) 55% / 4px 4px no-repeat,
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%) 100% 55% / 4px 4px no-repeat;
+}
+.cartouche select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  margin: 0;
+  border: 0;
+  opacity: 0;
+  appearance: none;
   cursor: pointer;
 }
-select.domain:disabled {
-  background-image: none;
-  padding-right: 0;
-  cursor: default;
-}
-select.domain option {
+.cartouche select option {
   color: #000;
   background: #fff;
   font-family: system-ui, sans-serif;
+}
+.cartouche:has(select:focus-visible) {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
 }
 
 /* The balance: the site's pan on the left, the feather's on the right. */
@@ -413,10 +439,10 @@ select.domain option {
   font-size: 12.5px;
 }
 .level:hover {
-  color: var(--ink);
+  color: var(--text);
 }
 .level[aria-pressed='true'] {
-  color: var(--ink);
+  color: var(--text);
   font-weight: 600;
   border-bottom-color: var(--gold);
 }
@@ -428,7 +454,7 @@ select.domain option {
 }
 .hint {
   margin: 8px 18px 0;
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--muted);
 }
 
@@ -439,7 +465,7 @@ select.domain option {
 }
 .section h3 {
   margin: 0 0 7px;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
   color: var(--muted);
 }
@@ -460,13 +486,13 @@ select.domain option {
   color: var(--muted);
 }
 .tags button:hover {
-  color: var(--ink);
+  color: var(--text);
 }
 .tags [aria-pressed='true'] {
-  color: var(--ink);
+  color: var(--text);
 }
 .tags .fixed {
-  color: var(--ink);
+  color: var(--text);
   cursor: default;
 }
 .new-tag {
@@ -478,13 +504,17 @@ select.domain option {
 .new-tag input {
   flex: 1;
   min-width: 0;
-  height: 28px;
-  padding: 0 8px;
-  border: 1px solid var(--line);
+  height: 30px;
+  padding: 0 9px;
+  border: 1px solid var(--line-strong);
   border-radius: 6px;
   background: transparent;
-  color: var(--ink);
+  color: var(--text);
   font: inherit;
+  font-size: 13px;
+}
+.new-tag input::placeholder {
+  color: var(--muted);
 }
 .new-tag input:focus {
   outline: none;
@@ -503,7 +533,7 @@ select.domain option {
 }
 .reasons b {
   font-weight: 600;
-  color: var(--ink);
+  color: var(--text);
 }
 .foot {
   display: flex;
@@ -513,7 +543,7 @@ select.domain option {
   margin-top: 14px;
   padding: 10px 18px 12px;
   border-top: 1px solid var(--line);
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--muted);
 }
 /* "Wrong? Report it to…" and "Suggest it to…": links to a list's issue tracker. */
@@ -532,5 +562,5 @@ select.domain option {
   text-underline-offset: 3px;
 }
 .close {
-  margin: -4px -2px 0 0;
+  margin-right: -2px;
 }

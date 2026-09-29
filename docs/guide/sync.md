@@ -38,10 +38,12 @@ Other services and your own server work too, if they offer WebDAV over `https://
 
 ### Connect
 
+<!-- Maintainer: this generated screenshot comes from the mock Settings page. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark image and its description together. -->
+
 ![Settings, Sync](../img/options-sync.png)
 
-1. Open **Settings → Sync**, and under **Between browsers** enter the address, your user name and the password.
-2. Press **Connect**. The browser asks you to let Anubis reach that server; Firefox also asks whether Anubis may send your list there.
+1. Open **Settings → Sync**, and under **Between browsers** enter the address, your user name, and the password.
+2. Press **Connect**. The browser asks you to let Anubis reach that server. Firefox also asks whether Anubis may send your list there.
 3. Do the same in your other browser.
 
 **Settings → Sync** then shows when Anubis last synced, or what went wrong. **Sync now** syncs straight away.
@@ -68,7 +70,7 @@ The first time a browser connects, it takes everything from the file. Sites and 
 
 ## Limits
 
-- **Size:** browser sync holds about 100 KB for each add-on. Anubis compresses your list before saving it, so about 10,000 sites fit. **Settings → Sync** shows how much room they take. If your list outgrows it, browser sync keeps it on that computer only and Settings says so; settings, tag choices and subscriptions still sync. Syncing through a server has no such limit.
+- **Size:** browser sync holds about 100 KB for each add-on. Anubis compresses your list before saving it, so about 10,000 sites fit. **Settings → Sync** shows how much room they take. If your list outgrows it, browser sync keeps it on that computer only and Settings says so; settings, tag choices, and subscriptions still sync. Syncing through a server has no such limit.
 - **Lists from other hosts:** if you subscribe to a list that isn't on GitHub, each browser asks for permission to download it. After syncing, press that list's **Update now** button (↻) in **Settings → Lists** in the other browser to allow it there.
 - **Moving just once:** you can also [export a backup](./import-and-backup.md#back-up) and restore it in the other browser. The sync file is in the same format, so **Restore backup** reads it too.
 
@@ -76,4 +78,4 @@ The first time a browser connects, it takes everything from the file. Sites and 
 
 Browser sync goes through your browser account, like your bookmarks. Anubis never sees it.
 
-When you connect a server, your list, settings, tag choices and subscriptions go to that server and nowhere else. The user name and password are kept in that browser only, never in browser sync. See [Privacy and permissions](./privacy.md).
+When you connect a server, your list, settings, tag choices, and subscriptions go to that server and nowhere else. The user name and password are kept in that browser only, never in browser sync. See [Privacy and permissions](./privacy.md).

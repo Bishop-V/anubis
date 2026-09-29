@@ -1,4 +1,4 @@
-import { AI_ENTRY_POINTS, CLEANUP_SELECTORS, cleanupKindFor, cleanupMarkerFor, type Cleanup, type CleanupKind } from '@/utils/cleanup';
+import { AI_ENTRY_POINTS, cleanupKindFor, cleanupMarkerFor, type Cleanup, type CleanupKind } from '@/utils/cleanup';
 import type { EngineDef } from '@/utils/engines';
 import type { FoundResult } from './results';
 
@@ -49,7 +49,7 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
   };
   // A panel's header row can be a block of its own, with the videos and "View all"
   // as the next blocks. When the block is little more than its label, take the
-  // blocks after it too, up to a result, the search box or another section.
+  // blocks after it too, up to a result, the search box, or another section.
   const addLabelled = (block: HTMLElement | undefined, kind: CleanupKind) => {
     add(block, kind);
     if (!block || !seen.has(block) || (block.textContent ?? '').trim().length > 40) return;
@@ -100,7 +100,7 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
     else add(blockAround(el, engine, column), kind);
   }
 
-  for (const [kind, selector] of Object.entries(CLEANUP_SELECTORS[engine.id] ?? {}) as [CleanupKind, string][]) {
+  for (const [kind, selector] of Object.entries(engine.cleanupSelectors ?? {}) as [CleanupKind, string][]) {
     if (!wanted[kind]) continue;
     for (const el of document.querySelectorAll<HTMLElement>(selector)) {
       if (!el.closest('[data-anubis-result]')) add(blockAround(el, engine, column) ?? el, kind);

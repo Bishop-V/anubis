@@ -1,9 +1,10 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { beforeAll, describe, expect, it } from 'vitest';
-import { fakeBrowser } from 'wxt/testing/fake-browser';
-import { t, tList, tn } from '@/utils/i18n';
+import { describe, expect, it } from 'vitest';
+import { andList } from '@/utils/dom';
+import { t, tJoin, tList, tn } from '@/utils/i18n';
 import type { SiteChange } from '@/utils/personal';
 import { changeSentence } from '@/utils/summary';
+import { useEnglish } from './english';
 
 // Translations live in public/_locales/<language>/messages.json; English is the source.
 type Messages = Record<string, { message: string; description?: string }>;
@@ -50,14 +51,10 @@ describe('messages', () => {
 });
 
 describe('t and tn', () => {
-  beforeAll(() => {
-    // The fake browser has no i18n: answer from the English messages.
-    fakeBrowser.i18n.getMessage = ((key: string, subs?: string[]) =>
-      en[key]?.message.replace(/\$(\d)/g, (_, n: string) => subs?.[Number(n) - 1] ?? '') ?? '') as typeof fakeBrowser.i18n.getMessage;
-  });
+  useEnglish();
 
   it('fills in placeholders', () => {
-    expect(t('popupForget', 'fandom.com')).toBe('Forget fandom.com');
+    expect(t('popupHintMine', 'fandom.com')).toBe('Your choice for fandom.com, on every search.');
   });
 
   it('picks the plural form for a count', () => {
@@ -71,6 +68,17 @@ describe('t and tn', () => {
     const b = { name: 'B' };
     expect(tList('menuReport', [a], 'disjunction')).toEqual(['Wrong? Report it to ', a, '.']);
     expect(tList('menuReport', [a, b], 'disjunction')).toEqual(['Wrong? Report it to ', a, ' or ', b, '.']);
+    const c = { name: 'C' };
+    expect(tList('menuReport', [a, b, c], 'disjunction')).toEqual(['Wrong? Report it to ', a, ', ', b, ', or ', c, '.']);
+  });
+
+  it('joins lists of three or more with the serial comma', () => {
+    expect(tJoin(['a', 'b'])).toBe('a and b');
+    expect(tJoin(['a', 'b', 'c'])).toBe('a, b, and c');
+    expect(tJoin(['a', 'b', 'c'], 'disjunction')).toBe('a, b, or c');
+    expect(andList(['a'])).toBe('a');
+    expect(andList(['a', 'b'])).toBe('a and b');
+    expect(andList(['a', 'b', 'c'])).toBe('a, b, and c');
   });
 
   it('says what a change from the result menu did', () => {

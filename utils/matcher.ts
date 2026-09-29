@@ -1,5 +1,5 @@
 import { andList } from './dom';
-import { hostSuffixes } from './domain';
+import { hostSuffixes, normalizeHostname } from './domain';
 import { MAX_STRENGTH, type ParsedList, type Rule, type TagDef } from './listformat';
 import { PERSONAL_NAME } from './personal';
 
@@ -59,7 +59,7 @@ export function compileList(id: string, parsed: ParsedList, personal = false, na
   };
   for (const rule of parsed.rules) {
     if (rule.site) push(bySite, rule.site, rule);
-    else if (rule.host) push(byHost, rule.host.replace(/^www\./, ''), rule);
+    else if (rule.host) push(byHost, normalizeHostname(rule.host), rule);
     else generic.push(rule);
   }
   return {
@@ -121,7 +121,7 @@ function toTarget(result: ResultInfo): Target | undefined {
     const u = new URL(result.url);
     return {
       url: result.url,
-      host: u.hostname.toLowerCase().replace(/^www\./, ''),
+      host: normalizeHostname(u.hostname),
       path: u.pathname + u.search,
       title: result.title ?? '',
       description: result.description ?? '',

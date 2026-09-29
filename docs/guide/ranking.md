@@ -1,8 +1,12 @@
 # Ranking sites
 
-Every site has a *ranking*, which you choose from the ⇅ button on any of its results, from the toolbar popup, or in **Settings → Your sites**.
+Every site has a *ranking*, which you choose from the ⚖ button on any of its results, from the toolbar popup, or in **Settings → Your sites**.
 
-![A result with its tags and the ⇅ button](../img/result.png)
+<!-- Maintainer: the generated screenshots on this page come from mock pages. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark images and their descriptions together. -->
+
+![A result with its tags and the ⚖ button](../img/result.png)
+
+The button's balance tips with the site's ranking: down on the left for a lowered site, up for a raised one, and level for the rest. A pinned site's button shows a pin, and a hidden site's (once you show it) a crossed-out eye.
 
 | Ranking | What happens to the site's results |
 | --- | --- |
@@ -10,7 +14,7 @@ Every site has a *ranking*, which you choose from the ⇅ button on any of its r
 | **Lower** | They move five places down and fade a little. |
 | **Normal** | They stay where the engine put them, whatever your lists say. |
 | **Raise** | They move five places up. |
-| **Pin** | They go to the top, with a thin gold outline. |
+| **Pin** | They go to the top, with a thin gold outline (grey with the Plain colours in **Settings → Appearance**). |
 
 Your choice always beats your lists. If a list lowers a site and you raise it, it's raised. Without a choice of yours, the lists' rankings and [the tags you set to Raise or Lower](./tags.md#several-tags-on-one-result) add up.
 

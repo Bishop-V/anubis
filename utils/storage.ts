@@ -20,15 +20,22 @@ import { fromBlockedSites, PERSONAL_HEADER } from './personal';
 
 export type Theme = 'auto' | 'dark' | 'light';
 export type HideStyle = 'collapse' | 'remove' | 'dim';
+/** Colours on search pages: Anubis's gold and each tag's colour, or the page's own greys. */
+export type Palette = 'gold' | 'plain';
+
+/** The most extra pages Settings offers to load automatically: six pages in all. */
+export const MAX_DEEPER = 5;
 
 export interface Settings {
   /** Master switch: when false the content script leaves pages alone. */
   enabled: boolean;
-  /** Colour scheme for the popup, options page and in-page UI. `auto` follows the page / OS. */
+  /** Colour scheme for the popup, options page, and in-page UI. `auto` follows the page / OS. */
   theme: Theme;
+  /** Colours of what Anubis adds to search pages: `plain` drops the gold and the tags' colours. */
+  palette: Palette;
   /** How hidden results look: gone (the summary counts them), a slim line you can open, or faded. */
   hideStyle: HideStyle;
-  /** Reorder results on the page according to boosts, downranks and pins. */
+  /** Reorder results on the page according to boosts, downranks, and pins. */
   rerank: boolean;
   /** Show tag and verdict chips under result titles. */
   showChips: boolean;
@@ -38,9 +45,9 @@ export interface Settings {
   engines: Record<string, boolean>;
   /** Default hours between list updates, when a list doesn't say. */
   updateHours: number;
-  /** Extra result pages to load and rerank automatically (0 = only on request). */
+  /** Extra result pages to load and rerank automatically (0 = only on request), at most `MAX_DEEPER`. */
   deeper: number;
-  /** Parts of result pages to remove: AI answers, video panels and so on. */
+  /** Parts of result pages to remove: AI answers, video panels, and so on. */
   cleanup: Cleanup;
   /** Always open Google's Web tab (`udm=14`), which has no AI Overview or panels. */
   googleWebTab: boolean;
@@ -49,6 +56,7 @@ export interface Settings {
 export const DEFAULT_SETTINGS: Settings = {
   enabled: true,
   theme: 'auto',
+  palette: 'gold',
   hideStyle: 'remove',
   rerank: true,
   showChips: true,
@@ -128,6 +136,8 @@ export interface Subscription {
 export interface CachedList {
   text: string;
   fetchedAt: number;
+  /** The list's own `! expires:`, in hours, read when it was downloaded; 0 when it has none. */
+  expiresHours?: number;
   error?: string;
   /** When the last failed attempt happened, so we don't hammer a dead URL. */
   errorAt?: number;
@@ -233,7 +243,7 @@ export function splitIntoChunks(text: string): string[] {
 }
 
 export const DEFAULT_PERSONAL = `${PERSONAL_HEADER}
-! One instruction per line. The ⇅ menu on each search result edits this list.
+! One instruction per line. The ⚖ menu on each search result edits this list.
 ! The format: ${guide('list-format')}
 $site=fandom.com,discard
 `;

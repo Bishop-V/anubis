@@ -19,12 +19,21 @@ jobs:
   version:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0 (Node 24)
+        with:
+          fetch-depth: 0
       - name: Check the tag matches package.json
         run: |
           version=$(node -p "require('./package.json').version")
           if [ "$GITHUB_REF_NAME" != "v$version" ]; then
             echo "::error::Tag $GITHUB_REF_NAME doesn't match package.json version $version (expected v$version)"
+            exit 1
+          fi
+      - name: Check the tagged commit is on main
+        run: |
+          git fetch --no-tags origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" FETCH_HEAD; then
+            echo "::error::Release tags must point to a commit already merged into main"
             exit 1
           fi
 
@@ -38,17 +47,19 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0 (Node 24)
       # AMO reviewers rebuild from the sources zip; store/README.md says to use Node 22.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.1 (Node 24)
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      # No install scripts: npm worms spread through them. wxt prepare is the only one we need.
+      - run: npm ci --ignore-scripts
+      - run: npx wxt prepare
       # Firefox zip plus the sources zip, then the Chrome zip (Edge takes it too).
       - run: npm run zip
       - run: npm run zip:chrome
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: zips
           path: .output/*.zip
@@ -63,13 +74,15 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0 (Node 24)
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.1 (Node 24)
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
-      - uses: actions/download-artifact@v4
+      # No install scripts: npm worms spread through them. wxt prepare is the only one we need.
+      - run: npm ci --ignore-scripts
+      - run: npx wxt prepare
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: zips
           path: .output

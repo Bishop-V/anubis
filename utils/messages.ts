@@ -2,7 +2,7 @@ import { browser } from '#imports';
 import type { CleanupKind } from './cleanup';
 import type { SubscribeLink } from './links';
 
-// Messages between the content script, popup, options page and background.
+// Messages between the content script, popup, options page, and background.
 
 export interface PageStats {
   engine: string;

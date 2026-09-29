@@ -61,6 +61,7 @@ svg {
 :focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 2px;
+  border-radius: 3px;
 }
 [hidden] {
   display: none !important;
@@ -71,9 +72,6 @@ svg {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-.brand img {
-  border-radius: 8px;
 }
 .brand h1 {
   margin: 0;
@@ -121,6 +119,12 @@ svg {
   height: 26px;
   padding: 0 9px;
   font-size: 12.5px;
+}
+.btn.danger {
+  color: var(--danger);
+}
+.btn.danger:hover {
+  border-color: var(--danger);
 }
 .btn svg {
   width: 14px;
@@ -202,6 +206,20 @@ textarea:focus {
   outline: none;
   border-color: var(--gold);
 }
+/* One caret for every select, the same as on the result menu's site name. */
+select {
+  appearance: none;
+  padding-right: 26px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 55%,
+    calc(100% - 10px) 55%;
+  background-size: 4px 4px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
 input::placeholder,
 textarea::placeholder {
   color: var(--muted);
@@ -272,6 +290,12 @@ input[type='color']::-moz-color-swatch {
   outline: 2px solid var(--gold);
   outline-offset: 2px;
 }
+@media (prefers-reduced-motion: reduce) {
+  .switch span,
+  .switch span::after {
+    transition: none;
+  }
+}
 
 /* Choice row: <div class="seg"><button aria-pressed>…</button>…</div>.
    The chosen option is underlined in gold, like the weigh menu on search pages. */
@@ -299,6 +323,9 @@ input[type='color']::-moz-color-swatch {
   color: var(--text);
   font-weight: 600;
   border-bottom-color: var(--gold);
+}
+.seg button.hide[aria-pressed='true'] {
+  border-bottom-color: var(--danger);
 }
 .seg button svg {
   width: 14px;

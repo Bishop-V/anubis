@@ -34,7 +34,7 @@ Lines starting with `!` are comments. A comment of the form `! key: value` is me
 | `description` | One or two sentences on what the list is for. |
 | `author` | Who maintains it. |
 | `homepage` | Where to read more. |
-| `issues` | An issue tracker. When set, the menu on each result offers "Suggest it to *this list*", which opens a pre-filled issue, and reports of mistakes ("Wrong? Report it to *this list*") go there. Without it, reports go to the issue tracker of the repository in `homepage`, or else of the one the list is published from. GitHub, GitLab and Codeberg trackers are supported. |
+| `issues` | An issue tracker. When set, the menu on each result offers "Suggest it to *this list*", which opens a pre-filled issue, and reports of mistakes ("Wrong? Report it to *this list*") go there. Without it, reports go to the issue tracker of the repository in `homepage`, or else of the one the list is published from. GitHub, GitLab, and Codeberg trackers are supported. |
 | `license` | The license of the list's contents. CC0-1.0 is a good default for lists meant to be shared. |
 | `avatar` | A hex colour for the list. |
 | `expires` | How often Anubis should check for updates, as `N hours` or `N days`. The default is a day. |
@@ -48,14 +48,14 @@ Lines starting with `!` are comments. A comment of the form `! key: value` is me
 ! tag: id | Label | #colour | Description
 ```
 
-- **id**: lowercase letters, digits and hyphens, up to 32 characters. Lists that use the same id share the tag: if two lists both tag sites `ai-slop`, a subscriber sees one "AI slop" tag fed by both. Agreeing on ids is how communities build a shared vocabulary.
+- **id**: lowercase letters, digits, and hyphens, up to 32 characters. Lists that use the same id share the tag: if two lists both tag sites `ai-slop`, a subscriber sees one "AI slop" tag fed by both. Agreeing on ids is how communities build a shared vocabulary.
 - **Label**: what people see under results.
 - **Colour**: a hex colour. Optional; Anubis picks one from the id otherwise.
 - **Description**: optional, shown on hover and in settings.
 
 Only the id is required: `! tag: ai-slop` works. A tag used by an instruction but never defined gets a plain definition.
 
-Lists label; subscribers decide. In **Settings → Tags** each person chooses what a tag does for them: follow the list's instructions, only show the label, highlight results, or raise, lower or hide them. A list that tags without ranking (`$site=x.com,tag=paywall`) is the friendliest kind to publish.
+Lists label; subscribers decide. In **Settings → Tags** each person chooses what a tag does for them: follow the list's instructions, only show the label, highlight results, or raise, lower, or hide them. A list that tags without ranking (`$site=x.com,tag=paywall`) is the friendliest kind to publish.
 
 ## Instructions
 
@@ -105,7 +105,7 @@ A line with nothing but `$discard` turns the list into a lens: every result the 
 
 For each result, strongest first:
 
-1. **Your own list.** A site you pinned, raised, lowered, hid or kept at normal stays that way whatever your subscriptions say. The most specific entry wins, so `good.fandom.com` can be raised while `fandom.com` is hidden.
+1. **Your own list.** A site you pinned, raised, lowered, hid, or kept at normal stays that way whatever your subscriptions say. The most specific entry wins, so `good.fandom.com` can be raised while `fandom.com` is hidden.
 2. **Your tag choices.** If you chose "Hide" for a tag, results carrying it are hidden, whichever list tagged them. Tags you set to "Raise" or "Lower" add up, five places each: two raises and a lower make one raise. Each tag counts once, however many lists give it, and a rule carrying a tag you chose for leaves the ranking to your choice instead of its own `boost` or `downrank`.
 3. **Subscribed lists.** Within one list, Goggles precedence applies: `discard` beats `boost`, which beats `downrank`. Across lists, boosts and downranks add up, and any list's `discard` hides the result.
 
@@ -121,8 +121,8 @@ Anubis detects the format of each file, so existing lists work without changes.
 
 ## Publishing a list
 
-1. Write the file, or download your own from **Settings → Share and back up**.
+1. Write the file, or download your own from **Settings → Backup**.
 2. Put it in a public repository or gist. Any file extension works; `.anubis` helps people recognise it.
-3. Share the link. GitHub page links, gist links and `search.brave.com/goggles?goggles_id=…` links are all converted to the raw file automatically.
+3. Share the link. GitHub page links, gist links, and `search.brave.com/goggles?goggles_id=…` links are all converted to the raw file automatically.
 4. Set `! issues:` so people can suggest additions from the menu on each result.
 5. To have it listed in **Settings → Lists** for everyone, add an entry to [`lists/directory.json`](https://github.com/Bishop-V/anubis/blob/main/lists/directory.json) in a pull request.

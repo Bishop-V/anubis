@@ -1,8 +1,10 @@
 # Subscribing to lists
 
-A list tags, raises, lowers or hides sites for you. Anyone can publish one: it's a text file in a Git repository, a gist or any public web address. There's no Anubis server in between.
+A list tags, raises, lowers, or hides sites for you. Anyone can publish one: it's a text file in a Git repository, a gist, or any public web address. There's no Anubis server in between.
 
-Anubis starts subscribed to four small lists that ship with it: **Official docs**, **Discussions**, **Reference** and **Paywalls**. They mostly add tags.
+Anubis starts subscribed to four small lists that ship with it: **Official docs**, **Discussions**, **Reference**, and **Paywalls**. They mostly add tags.
+
+<!-- Maintainer: this generated screenshot comes from the mock Settings page. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark image and its description together. -->
 
 ![Settings, Lists](../img/options-lists.png)
 
@@ -10,7 +12,7 @@ Anubis starts subscribed to four small lists that ship with it: **Official docs*
 
 - **From the directory:** **Settings → Lists → More lists** shows lists other people have published. Press **Subscribe** on one.
 - **From the web:** **Subscribe** on the [Lists directory](../lists.md) page, or a subscribe link on a list's own page, opens Anubis's settings with the list filled in. Check it's the list you expected, and press **Subscribe** there to add it.
-- **From its address:** paste the list's address into **Add a list** and press **Subscribe**. Links to a file's page on GitHub, GitLab or Codeberg, gist links and Brave Search Goggle links all work; Anubis finds the raw file.
+- **From its address:** paste the list's address into **Add a list** and press **Subscribe**. Links to a file's page on GitHub, GitLab, or Codeberg, gist links, and Brave Search Goggle links all work; Anubis finds the raw file.
 
 Lists hosted on GitHub or in a gist download straight away. For a list hosted anywhere else, your browser asks you to allow Anubis to read from that one site.
 
@@ -37,10 +39,10 @@ Each list in **Your lists** has a switch to turn it off for a while and a button
 
 ## Report a mistake in a list
 
-If a list hides, ranks or tags a site wrongly, open the ⇅ menu on the result. Under **Why**, "Wrong? Report it to *list name*" opens a pre-filled issue on the list's issue tracker, with the rule that matched and the result's address. Say what should change, then send it. Nothing is sent until you submit it yourself.
+If a list hides, ranks, or tags a site wrongly, open the ⚖ menu on the result. Under **Why**, "Wrong? Report it to *list name*" opens a pre-filled issue on the list's issue tracker, with the rule that matched and the result's address. Say what should change, then send it. Nothing is sent until you submit it yourself.
 
-This works for lists published in a GitHub, GitLab or Codeberg repository, and for lists that name their own issue tracker. To overrule a list straight away, rank the site yourself; a report gets the list fixed for everyone.
+This works for lists published in a GitHub, GitLab, or Codeberg repository, and for lists that name their own issue tracker. To overrule a list straight away, rank the site yourself; a report gets the list fixed for everyone.
 
 ## Suggest a site to a list
 
-Once you've ranked or tagged a site yourself, the ⇅ menu offers "Suggest it to *list name*" for lists that take suggestions and don't mention the site yet. It opens a pre-filled issue on GitHub, GitLab or Codeberg for you to check and send. Nothing is sent until you submit it yourself.
+Once you've ranked or tagged a site yourself, the ⚖ menu offers "Suggest it to *list name*" for lists that take suggestions and don't mention the site yet. It opens a pre-filled issue on GitHub, GitLab, or Codeberg for you to check and send. Nothing is sent until you submit it yourself.

@@ -1,6 +1,6 @@
 name: CI
 
-# Type-check, test, build both browsers and lint the Firefox build. The tests
+# Type-check, test, build both browsers, and lint the Firefox build. The tests
 # parse every file in lists/, so a pull request that adds a site to a list is
 # checked too.
 
@@ -11,18 +11,31 @@ on:
   # release.yml runs these same checks before it builds a release.
   workflow_call:
 
+permissions:
+  contents: read
+
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0 (Node 24)
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.1 (Node 24)
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      # No install scripts: npm worms spread through them. wxt prepare is the only one we need.
+      - run: npm ci --ignore-scripts
+      - run: npx wxt prepare
       - run: npm run compile
       - run: npm test
       - run: npm run build
+      - name: Check Firefox minimum version
+        run: node -e "if (require('./.output/firefox-mv2/manifest.json').browser_specific_settings.gecko.strict_min_version !== '142.0') process.exit(1)"
       - run: npm run build:chrome
+      - name: Install Chromium for responsive layout checks
+        run: npx playwright-core install --with-deps chromium
+      - name: Check Settings at phone widths
+        run: node e2e/run.mjs responsive
+      - name: Assert core search-page behavior
+        run: node e2e/run.mjs checks
       - run: npx web-ext lint --source-dir .output/firefox-mv2 --warnings-as-errors

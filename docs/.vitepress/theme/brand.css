@@ -50,66 +50,310 @@ html:not(.dark) .dark-only,
   color: var(--vp-c-text-2);
 }
 
-/* The homepage's before and after (before-after.ts), lined up with the heading
-   above and the features below: the same side padding and width. */
-.before-after {
+/* The homepage's demo (scroll-demo.ts), lined up with the heading above and the
+   features below: the same side padding and width. On wide screens the steps sit
+   on the left and the drawn results page stays beside them; on phones the page
+   stays at the top and the steps pass under it. */
+:root {
+  --demo-page: #ffffff;
+  --demo-link: #2a4fa8;
+  --demo-lowered: 0.5;
+}
+.dark {
+  --demo-page: #202124;
+  --demo-link: #8ab4f8;
+}
+.scroll-demo {
+  display: grid;
   max-width: 1152px;
-  margin: -1rem auto 3rem;
+  margin: 0 auto 4rem;
   padding: 0 24px;
   box-sizing: content-box;
 }
-.before-after .shots {
-  display: grid;
-  gap: 24px;
+.demo-stage {
+  position: sticky;
+  top: var(--vp-nav-height);
+  z-index: 1;
+  height: 62vh;
+  padding: 12px 0;
+  background: var(--vp-c-bg);
 }
-.before-after .label {
-  margin: 0 0 8px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--vp-c-text-2);
-}
-.before-after img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 8px;
-  /* The pictures are cut from longer pages: let them fade out, not stop. */
-  mask-image: linear-gradient(to bottom, #000 75%, transparent);
-}
-.before-after .after img {
-  border-color: var(--vp-c-brand-3);
-}
-.before-after figcaption {
-  max-width: 40rem;
+.demo-page {
+  height: 100%;
+  overflow: hidden;
+  padding: 16px 18px;
+  box-sizing: border-box;
+  border: 1px solid var(--vp-c-brand-3);
+  border-radius: 10px;
+  background: var(--demo-page);
+  color: var(--vp-c-text-1);
   font-size: 13px;
   line-height: 20px;
+  /* The page carries on below the frame: let it fade out, not stop. */
+  mask-image: linear-gradient(to bottom, #000 80%, transparent);
+}
+.demo-steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.demo-step {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 60vh;
+  max-width: 62ch;
+  opacity: 0.45;
+}
+.demo-step:last-child {
+  min-height: 80vh;
+}
+.demo-step.active {
+  opacity: 1;
+}
+.demo-step h2 {
+  margin: 0 0 8px;
+  font-size: 21px;
+  font-weight: 500;
+  line-height: 28px;
+}
+.demo-step p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 26px;
   color: var(--vp-c-text-2);
 }
-@media (min-width: 640px) {
-  .before-after {
-    padding: 0 48px;
+
+/* The drawn page: a search box, the summary Anubis adds, then results and panels. */
+.demo-page .searchbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 420px;
+  height: 36px;
+  margin-bottom: 12px;
+  padding: 0 14px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 999px;
+}
+.demo-page .lens {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--vp-c-text-2);
+  border-radius: 50%;
+}
+.demo-summary p {
+  margin: 0;
+  padding-bottom: 6px;
+  color: var(--vp-c-text-2);
+}
+.demo-summary .mark {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  transform: rotate(45deg);
+  background: var(--vp-c-brand-3);
+}
+.demo-link {
+  font-weight: 600;
+  color: var(--vp-c-brand-1);
+}
+.summary-tags .fold-inner,
+.chips .fold-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 14px;
+}
+.summary-tags .fold-inner {
+  padding-bottom: 8px;
+}
+.demo-tag {
+  font-size: 12.5px;
+  color: var(--vp-c-text-2);
+}
+.demo-tag .diamond {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 6px;
+  vertical-align: 1px;
+  transform: rotate(45deg);
+  background: var(--c);
+}
+.demo-results {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--vp-c-divider);
+}
+/* Results pass each other when they're ranked; the raised one slides over the rest. */
+.demo-item {
+  position: relative;
+  background: var(--demo-page);
+}
+.demo-item.lifted {
+  z-index: 1;
+}
+.demo-result > .full > .fold-inner,
+.demo-block > .fold-inner {
+  padding-top: 14px;
+}
+.demo-result .site {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+  line-height: 16px;
+}
+.demo-result .favicon {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 50%;
+  font: 600 11px Georgia, serif;
+}
+.demo-result .site-name {
+  flex: none;
+  white-space: nowrap;
+}
+.demo-result .url {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--vp-c-text-2);
+}
+.demo-result .title {
+  margin-top: 4px;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--demo-link);
+}
+.demo-result .snippet,
+.demo-block .snippet {
+  margin: 0;
+  color: var(--vp-c-text-2);
+}
+.demo-result .chip {
+  opacity: 0;
+}
+.demo-result .chip.on {
+  opacity: 1;
+}
+.demo-raised {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--vp-c-brand-1);
+}
+.demo-result.lowered {
+  opacity: var(--demo-lowered);
+}
+.hidden-line .fold-inner {
+  padding-top: 14px;
+  color: var(--vp-c-text-2);
+}
+.hidden-site {
+  font-weight: 600;
+  color: var(--vp-c-text-1);
+}
+.demo-block .block-heading {
+  margin-bottom: 6px;
+  font-size: 16px;
+}
+.demo-block .videos {
+  display: flex;
+  gap: 12px;
+}
+.demo-block .video {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+}
+.demo-block .thumb {
+  width: 112px;
+  height: 62px;
+  border-radius: 6px;
+  background: linear-gradient(160deg, #c8962e, #8c6a4f);
+}
+/* Phones show the titles without their snippets, so the whole page fits. */
+@media (max-width: 639px) {
+  .demo-result .snippet {
+    display: none;
   }
-  .before-after .shots {
-    grid-template-columns: 1fr 1fr;
+}
+.demo-block .question {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+
+/* A fold opens to its content's height and closes to none. */
+.fold {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+.fold.open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.fold-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+/* Padding would keep a closed fold open by that much. */
+.fold:not(.open) > .fold-inner {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .fold {
+    transition: grid-template-rows 0.5s ease, opacity 0.4s ease;
+  }
+  .fold-inner {
+    transition: padding 0.5s ease;
+  }
+  .demo-item {
+    transition: transform 0.6s ease;
+  }
+  .demo-result,
+  .demo-result .chip,
+  .demo-step {
+    transition: opacity 0.4s ease;
+  }
+}
+
+@media (min-width: 640px) {
+  .scroll-demo {
+    padding: 0 48px;
   }
 }
 @media (min-width: 960px) {
-  .before-after {
+  .scroll-demo {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 64px;
     padding: 0 64px;
   }
-  .before-after .shots {
-    gap: 32px;
+  .demo-stage {
+    grid-column: 2;
+    grid-row: 1;
+    top: calc(var(--vp-nav-height) + 32px);
+    height: min(640px, calc(100vh - var(--vp-nav-height) - 64px));
+    padding: 0;
   }
-}
-/* Below 960px the hero with its logo is centred; so are these. */
-@media (max-width: 959px) {
-  .before-after .label,
-  .before-after figcaption {
-    text-align: center;
+  .demo-steps {
+    grid-column: 1;
+    grid-row: 1;
   }
-  .before-after figcaption {
-    margin: 0 auto;
+  .demo-step {
+    min-height: 80vh;
+  }
+  .demo-step:first-child {
+    min-height: 60vh;
+    justify-content: flex-start;
+    padding-top: 48px;
   }
 }
 

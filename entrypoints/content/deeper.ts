@@ -1,12 +1,7 @@
 import type { EngineDef } from '@/utils/engines';
 import { findResults } from './results';
 
-// "Load more results": bring the next pages of results onto this one, so reranking
-// works across 20–30 results instead of 10. A site pinned or boosted on page 3
-// can then surface at the top, which is what Kagi and Brave Goggles do server-side.
-//
-// Nothing new leaves the browser: the requests go to the same engine, for the same
-// query, exactly as if you had clicked "Next".
+// Fetch more results from the same engine and query for reranking.
 
 export interface DeeperState {
   /** The results URL this state belongs to; reset when the search changes. */
@@ -40,7 +35,7 @@ export async function weighDeeper(engine: EngineDef, state: DeeperState, count: 
       if (added === 0) state.done = true;
       else state.pages++;
       changed();
-      // Be gentle with the engine: never fire page requests back to back.
+      // Space out requests to the search engine.
       if (i < count - 1) await wait(700);
     }
   } catch (error) {
@@ -62,7 +57,7 @@ async function clickMore(engine: EngineDef, selector: string): Promise<number> {
     await wait(150);
     const now = findResults(engine).length;
     if (now > before) {
-      // Give the rest of the batch a moment to render.
+      // Wait for the remaining results to render.
       await wait(250);
       return findResults(engine).length - before;
     }

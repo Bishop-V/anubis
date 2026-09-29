@@ -1,4 +1,4 @@
-import { normalizeDomain } from './domain';
+import { normalizeDomain, normalizeHostname } from './domain';
 
 // Parser for the list files Anubis can subscribe to. It reads:
 //
@@ -42,7 +42,7 @@ export interface Rule {
   site?: string;
   /** Matches exactly this host (uBlacklist `*://example.com/*`). */
   host?: string;
-  /** Tested against the target (URL, title or description). */
+  /** Tested against the target (URL, title, or description). */
   pattern?: RegExp;
   /** Tested against the URL's path + query (uBlacklist match pattern paths). */
   pathPattern?: RegExp;
@@ -208,7 +208,7 @@ export function detectFormat(lines: string[]): ListFormat {
       goggle++;
       if (/[$,](tag=|pin\b|allow\b)/.test(line)) anubis++;
     } else if (/^@?\d*(\*|https?|ftp|wss?):\/\//.test(line)) ublacklist++;
-    else if (normalizeDomain(line) === line.toLowerCase().replace(/^www\./, '')) domains++;
+    else if (normalizeDomain(line) === normalizeHostname(line)) domains++;
   }
   if (anubis) return 'anubis';
   if (goggle && goggle >= ublacklist) return 'goggle';
@@ -432,7 +432,7 @@ export function nestedRepeat(source: string): boolean {
       afterRepeatingGroup = inner;
       continue;
     } else {
-      // A quantifier: *, + and {n,} or {n,m} repeat; ? and {n} don't.
+      // A quantifier: *, +, and {n,} or {n,m} repeat; ? and {n} don't.
       const range = ch === '{' ? /^\{(\d+)(,(\d*))?\}/.exec(source.slice(i)) : null;
       const repeats = ch === '*' || ch === '+' || (!!range && range[2] !== undefined && (range[3] === '' || Number(range[3]) > Number(range[1])));
       if (repeats && afterRepeatingGroup) return true;

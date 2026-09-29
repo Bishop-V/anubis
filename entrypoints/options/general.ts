@@ -11,7 +11,9 @@ import {
   tagPrefsItem,
   updateSettings,
   DEFAULT_SETTINGS,
+  MAX_DEEPER,
   type HideStyle,
+  type Palette,
   type Settings,
 } from '@/utils/storage';
 import { applyData, collectData, readBackup, toBackup } from '@/utils/backup';
@@ -74,6 +76,16 @@ export async function renderAppearance(): Promise<HTMLElement> {
         ),
         themeSwitcher(settings.theme),
       ),
+      segRow<Palette>(
+        'Colours on search pages',
+        'Plain draws everything Anubis adds to search pages in grey, with no gold. Tags lose their colours and are told apart by their names. Settings and the toolbar popup stay gold.',
+        [
+          { value: 'gold', label: 'Gold' },
+          { value: 'plain', label: 'Plain' },
+        ],
+        settings.palette,
+        (palette) => void updateSettings({ palette }),
+      ),
       segRow<HideStyle>(
         'Hidden results',
         'Remove takes them off the page; the summary above the results counts them, and Show hidden brings them back. Collapse leaves one slim line for each run of hidden results. Dim fades them.',
@@ -86,16 +98,26 @@ export async function renderAppearance(): Promise<HTMLElement> {
         (hideStyle) => void updateSettings({ hideStyle }),
       ),
       toggleRow('Rerank results', 'Move raised and pinned results up and lowered ones down, like a Brave Goggle.', 'rerank', settings),
-      segRow<string>(
-        'Load more results automatically',
-        'Add the next pages of results to the first one and rank them together, so a site you pinned on page 3 rises to the top. “Load more results” above the results does the same when you ask.',
-        [
-          { value: '0', label: 'Off' },
-          { value: '1', label: '+1 page' },
-          { value: '2', label: '+2 pages' },
-        ],
-        String(settings.deeper),
-        (v) => void updateSettings({ deeper: Number(v) }),
+      h(
+        'div',
+        { class: 'setting' },
+        h(
+          'div',
+          null,
+          h('label', { attrs: { for: 'deeper' } }, h('b', null, 'Load more results automatically')),
+          h(
+            'span',
+            { class: 'muted' },
+            'Add the next pages of results to the first one and rank them together, so a site you pinned on page 3 rises to the top. “Load more results” above the results does the same when you ask. Each page is another request to the search engine, so a few is usually enough.',
+          ),
+        ),
+        h(
+          'select',
+          { id: 'deeper', on: { change: (e: Event) => void updateSettings({ deeper: Number((e.target as HTMLSelectElement).value) }) } },
+          ...Array.from({ length: MAX_DEEPER + 1 }, (_, n) =>
+            h('option', { value: String(n), selected: n === Math.min(settings.deeper, MAX_DEEPER) }, n === 0 ? 'Off' : n === 1 ? '1 more page' : `${n} more pages`),
+          ),
+        ),
       ),
       toggleRow('Tag chips', 'Show tags and rankings under each result title.', 'showChips', settings),
       toggleRow('Summary', 'Show a one-line summary of what Anubis changed above the results.', 'showSummary', settings),
@@ -154,12 +176,12 @@ export async function renderShare(): Promise<HTMLElement> {
     rerender();
   });
 
-  // Import from uBlacklist, HOHSER, a Goggle or a domain list
+  // Import from uBlacklist, HOHSER, a Goggle, or a domain list
   const importArea = h('textarea', {
     class: 'code',
     rows: 6,
     spellcheck: false,
-    placeholder: 'Paste uBlacklist rules, a HOHSER export, a Goggle or one domain per line',
+    placeholder: 'Paste uBlacklist rules, a HOHSER export, a Goggle, or one domain per line',
     style: 'min-height:0',
     attrs: { 'aria-label': 'Sites to import' },
   });
@@ -191,7 +213,7 @@ export async function renderShare(): Promise<HTMLElement> {
   };
 
   const reset = async () => {
-    if (!confirm('Reset all Anubis settings, tags and subscriptions? Your list is kept.')) return;
+    if (!confirm('Reset all Anubis settings, tags, and subscriptions? Your list is kept.')) return;
     await settingsItem.setValue(DEFAULT_SETTINGS);
     await tagPrefsItem.setValue({});
     // Absent, not empty: the default subscriptions come back.
@@ -203,7 +225,7 @@ export async function renderShare(): Promise<HTMLElement> {
   return h(
     'div',
     null,
-    pageTitle('Share and back up', 'Your list is a plain text file. Publish it and anyone can subscribe; keep a backup of everything else.'),
+    pageTitle('Back up, import, and share', 'Keep a copy of everything, bring your sites over from another tool, or publish your list for others to subscribe to.'),
     h(
       'div',
       { class: 'panel' },
@@ -212,7 +234,7 @@ export async function renderShare(): Promise<HTMLElement> {
       h(
         'ol',
         { class: 'steps' },
-        h('li', null, 'Download your list below. Set its ', h('code', null, '! name:'), ', ', h('code', null, '! description:'), ' and ', h('code', null, '! author:'), ' lines at the top.'),
+        h('li', null, 'Download your list below. Set its ', h('code', null, '! name:'), ', ', h('code', null, '! description:'), ', and ', h('code', null, '! author:'), ' lines at the top.'),
         h('li', null, 'Create a public GitHub repository (or a gist) and add the file, e.g. ', h('code', null, 'lists/my-list.anubis'), '.'),
         h('li', null, 'Add ', h('code', null, '! issues: https://github.com/you/repo/issues'), ' so people can suggest sites to your list from the menu on each result.'),
         h('li', null, 'Share the file’s link. People paste it into Lists → Add a list.'),
@@ -254,13 +276,13 @@ export async function renderShare(): Promise<HTMLElement> {
       'div',
       { class: 'panel' },
       h('h3', null, 'Backup'),
-      h('p', { class: 'muted' }, 'Everything in one file: settings, tag choices, subscriptions and your list.'),
+      h('p', { class: 'muted' }, 'Everything in one file: settings, tag choices, subscriptions, and your list.'),
       h(
         'div',
         { class: 'toolbar' },
         h('button', { class: 'btn', type: 'button', on: { click: () => void exportAll() } }, icon(ICON_DOWNLOAD), 'Export backup'),
         h('button', { class: 'btn', type: 'button', on: { click: () => file.click() } }, icon(ICON_UPLOAD), 'Restore backup'),
-        h('button', { class: 'btn ghost danger', type: 'button', on: { click: () => void reset() } }, 'Reset settings'),
+        h('button', { class: 'btn danger', type: 'button', on: { click: () => void reset() } }, 'Reset settings'),
         file,
       ),
       status,

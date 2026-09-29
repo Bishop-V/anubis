@@ -4,13 +4,14 @@
 //
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
-//                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options, welcome,
-//                               sync, webdav
+//                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options,
+//                               responsive, welcome, sync, webdav, checks (hostile, grouped, reveal, lifecycle, mobile assertions)
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slides
 //                               in docs/public/
 //
-// Needs a Chromium build (branded Chrome no longer loads unpacked extensions from
-// the command line). Point CHROMIUM_PATH at it, e.g. CHROMIUM_PATH=$(which chromium).
+// Needs Chromium (branded Chrome no longer loads unpacked extensions from the
+// command line). Playwright's installed build is used by default; on NixOS, point
+// CHROMIUM_PATH at the system binary.
 // The mock pages are modelled on each engine's markup; they are not the real thing.
 
 import { chromium } from 'playwright-core';
@@ -24,14 +25,15 @@ import { ANUBIS_PAGE2, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, brave, duckduc
 const EXT = fileURLToPath(new URL('../.output/chrome-mv3', import.meta.url));
 const SHOTS = fileURLToPath(new URL('./shots/', import.meta.url));
 const only = process.argv[2];
-const executablePath = process.env.CHROMIUM_PATH;
+const checks = only === 'checks';
+const executablePath = process.env.CHROMIUM_PATH || chromium.executablePath();
 
 if (!existsSync(join(EXT, 'manifest.json'))) {
   console.error('No Chrome build found. Run `npm run build:chrome` first (or `npm run e2e`).');
   process.exit(1);
 }
-if (!executablePath) {
-  console.error('Set CHROMIUM_PATH to a Chromium binary, e.g. CHROMIUM_PATH=$(which chromium) npm run e2e');
+if (!existsSync(executablePath)) {
+  console.error('Chromium is missing. Run `npx playwright-core install chromium` or set CHROMIUM_PATH to a system binary.');
   process.exit(1);
 }
 mkdirSync(SHOTS, { recursive: true });
@@ -78,6 +80,18 @@ async function launch(settings = {}, ext = EXT) {
   let [sw] = ctx.serviceWorkers();
   if (!sw) sw = await ctx.waitForEvent('serviceworker');
   const extId = new URL(sw.url()).host;
+  await sw.evaluate(
+    () =>
+      new Promise((resolve, reject) => {
+        const deadline = Date.now() + 5000;
+        const wait = () => {
+          if (typeof chrome !== 'undefined' && chrome.storage) return resolve();
+          if (Date.now() >= deadline) return reject(new Error('Extension storage API did not become ready'));
+          setTimeout(wait, 25);
+        };
+        wait();
+      }),
+  );
   await sw.evaluate(
     async ({ personal, settings }) => {
       await chrome.storage.sync.set({
@@ -157,6 +171,11 @@ async function report(page, label) {
   return info;
 }
 
+function assertChecks(label, checks) {
+  const failed = Object.entries(checks).filter(([, passed]) => !passed).map(([name]) => name);
+  if (failed.length) throw new Error(`${label}: failed checks: ${failed.join(', ')}`);
+}
+
 const { ctx, extId } = await launch();
 const page = await ctx.newPage();
 page.on('console', (m) => m.type() === 'error' && console.log('  console error:', m.text()));
@@ -232,7 +251,7 @@ if (!only || only === 'pages') {
   await shoot('https://www.bing.com/search?q=javascript+promises', 'bing');
   await shoot('https://search.brave.com/search?q=anubis', 'brave');
 
-  // DuckDuckGo: the ⇅ button sits beside each result's own ⋯ menu, centred on it,
+  // DuckDuckGo: the ⚖ button sits beside each result's own ⋯ menu, centred on it,
   // at its size and shape, in Anubis's colours.
   await page.goto('https://duckduckgo.com/?q=javascript+promises&dark=1');
   await page.waitForTimeout(600);
@@ -259,7 +278,7 @@ if (!only || only === 'pages') {
   await page.screenshot({ path: `${SHOTS}ddg-menu-pair.png`, clip: { x: box.x - 60, y: box.y - 14, width: 110, height: 56 } });
 }
 
-if (!only || only === 'hostile') {
+if (!only || only === 'hostile' || checks) {
   await page.goto('https://www.google.com/search?q=anubis&hostile=1');
   await page.waitForTimeout(700);
   const check = await page.evaluate(() => {
@@ -287,9 +306,15 @@ if (!only || only === 'hostile') {
   });
   console.log('\n== hostile google:', JSON.stringify(check));
   await page.screenshot({ path: `${SHOTS}google-hostile.png`, fullPage: true });
+  assertChecks('hostile google', {
+    resultsFound: check.results >= ANUBIS_RESULTS.length,
+    everyResultHasVisibleWeighButton: check.weighVisible === check.results,
+    chipsRemainUpright: check.chipsUpright.length > 0 && check.chipsUpright.every(Boolean),
+    summaryBeforeResults: check.summaryBeforeFirstResult,
+  });
 }
 
-if (!only || only === 'grouped') {
+if (!only || only === 'grouped' || checks) {
   await page.goto('https://www.google.com/search?q=anubis&grouped=1');
   await page.waitForTimeout(700);
   const check = await page.evaluate(() => {
@@ -308,32 +333,43 @@ if (!only || only === 'grouped') {
   });
   console.log('\n== grouped google:', JSON.stringify(check));
   await page.screenshot({ path: `${SHOTS}google-grouped.png`, fullPage: true });
+  assertChecks('grouped google', {
+    allExpectedResultsFound: check.results === ANUBIS_RESULTS.length,
+    sitelinksStayWithFirstResult: check.sitelinksInFirstResult,
+    resultsUseWholeContainers: check.containersAreResults,
+    summaryIsInResultsColumn: check.summaryInList,
+    summaryPrecedesFirstResult: check.summaryBeforeFirstResult,
+  });
 
   // Opaque /goto links everywhere, and a Reddit thread and a LinkedIn page with no
   // address shown: the site's name stands in for it. The first result's sitelinks,
   // also /goto with no address, stay part of it.
   await page.goto('https://www.google.com/search?q=anubis&forum=1');
   await page.waitForTimeout(700);
-  console.log(
-    '== google forum result:',
-    JSON.stringify(
-      await page.evaluate(() => {
-        const reddit = document.querySelector('.forum-meta:not(.social)')?.closest('.MjjYud');
-        const linkedin = document.querySelector('.forum-meta.social')?.closest('.MjjYud');
-        return {
-          results: document.querySelectorAll('[data-anubis-result]').length,
-          sitelinksInFirstResult: !!document.querySelector('.MjjYud[data-anubis-result] .sitelinks'),
-          linkedinFound: !!linkedin?.hasAttribute('data-anubis-result'),
-          redditFound: !!reddit?.hasAttribute('data-anubis-result'),
-          redditButton: !!reddit?.querySelector(':scope > anubis-weigh'),
-          redditTagged: !!reddit?.querySelector('anubis-chips'),
-        };
-      }),
-    ),
-  );
+  const forumCheck = await page.evaluate(() => {
+    const reddit = document.querySelector('.forum-meta:not(.social)')?.closest('.MjjYud');
+    const linkedin = document.querySelector('.forum-meta.social')?.closest('.MjjYud');
+    return {
+      results: document.querySelectorAll('[data-anubis-result]').length,
+      sitelinksInFirstResult: !!document.querySelector('.MjjYud[data-anubis-result] .sitelinks'),
+      linkedinFound: !!linkedin?.hasAttribute('data-anubis-result'),
+      redditFound: !!reddit?.hasAttribute('data-anubis-result'),
+      redditButton: !!reddit?.querySelector(':scope > anubis-weigh'),
+      redditTagged: !!reddit?.querySelector('anubis-chips'),
+    };
+  });
+  console.log('== google forum result:', JSON.stringify(forumCheck));
+  if (checks) {
+    assertChecks('google forum results', {
+      redditRecognized: forumCheck.redditFound,
+      linkedinRecognized: forumCheck.linkedinFound,
+      redditHasWeighButton: forumCheck.redditButton,
+      redditHasTags: forumCheck.redditTagged,
+    });
+  }
 }
 
-if (!only || only === 'reveal') {
+if (!only || only === 'reveal' || checks) {
   // Showing one hidden result has to survive the page changing afterwards: engines
   // rewrite parts of the page on hover, which runs another pass.
   await page.goto('https://www.google.com/search?q=anubis');
@@ -349,6 +385,39 @@ if (!only || only === 'reveal') {
   await page.waitForTimeout(300);
   const afterChange = await hidden.evaluate((el) => el.hasAttribute('data-anubis-reveal'));
   console.log('\n== reveal one result:', JSON.stringify({ afterClick, afterChange }));
+  assertChecks('reveal hidden result', { revealsAfterClick: afterClick, staysRevealedAfterPageChange: afterChange });
+}
+
+if (!only || checks) {
+  await page.goto('https://www.google.com/search?q=anubis');
+  await page.waitForSelector('anubis-summary');
+  const lifecycleResult = 'https://lifecycle-example.test/';
+  await page.evaluate((href) => {
+    window.dispatchEvent(new PageTransitionEvent('pagehide', { persisted: true }));
+    const row = document.createElement('div');
+    row.className = 'MjjYud';
+    const content = document.createElement('div');
+    const link = document.createElement('a');
+    link.href = href;
+    const title = document.createElement('h3');
+    title.textContent = 'Lifecycle restoration test';
+    link.append(title);
+    const address = document.createElement('cite');
+    address.textContent = 'lifecycle-example.test';
+    content.append(link, address);
+    row.append(content);
+    document.querySelector('#rso').append(row);
+  }, lifecycleResult);
+  await page.waitForTimeout(100);
+  const beforeRestore = await page.locator(`a[href="${lifecycleResult}"]`).evaluate((link) => !!link.closest('[data-anubis-result]'));
+  await page.evaluate(() => window.dispatchEvent(new PageTransitionEvent('pageshow', { persisted: true })));
+  await page.waitForFunction((href) => {
+    const link = [...document.querySelectorAll('a[href]')].find((a) => a.href === href);
+    return link?.closest('[data-anubis-result]');
+  }, lifecycleResult);
+  const restored = await page.locator(`a[href="${lifecycleResult}"]`).evaluate((link) => !!link.closest('[data-anubis-result]'));
+  console.log('\n== back-forward cache resume:', JSON.stringify({ beforeRestore, restored }));
+  assertChecks('resume after back-forward cache', { pausesWhileHidden: !beforeRestore, processesChangesOnRestore: restored });
 }
 
 if (!only || only === 'shortcuts') {
@@ -372,7 +441,7 @@ if (!only || only === 'shortcuts') {
   console.log('\n== shortcuts:', JSON.stringify({ keys: commands.map((c) => `${c.name} ${c.shortcut}`), before, shown, again }));
 }
 
-if (!only || only === 'mobile') {
+if (!only || only === 'mobile' || checks) {
   // Google's phone layout, as Firefox for Android gets it: the browser has to say
   // it's a phone before the page loads, since Anubis picks the layout at start.
   const phone = await ctx.newPage();
@@ -396,6 +465,14 @@ if (!only || only === 'mobile') {
   await report(phone, 'google-mobile');
   console.log('\n== google mobile:', JSON.stringify(check));
   await phone.screenshot({ path: `${SHOTS}google-mobile.png`, fullPage: true });
+  assertChecks('google mobile', {
+    allExpectedResultsFound: check.results === ANUBIS_RESULTS.length,
+    newsCardsNotTreatedAsResults: check.newsCardsAsResults === 0,
+    everyResultHasWeighButton: check.weighButtons === check.results,
+    namedRedirectGetsTagged: check.gotoLinkTagged === 'normal tagged',
+    summaryRendered: check.summary,
+    noHorizontalOverflow: !check.scrollsSideways,
+  });
   await phone.close();
 }
 
@@ -412,8 +489,35 @@ if (!only || only === 'off') {
   console.log('\n== toolbar title:', JSON.stringify({ off: await title(false), on: await title(true) }));
 }
 
-if (!only || only === 'cleanup') {
-  // Clean-up: AI Overview, videos and "People also ask" go; the side panel stays.
+if (!only || only === 'palette') {
+  // Plain colours: every host and the page say so, and the pinned frame loses its gold.
+  const [sw] = ctx.serviceWorkers();
+  const setPalette = (palette) =>
+    sw.evaluate(async (palette) => {
+      const { settings } = await chrome.storage.sync.get('settings');
+      await chrome.storage.sync.set({ settings: { ...settings, palette } });
+    }, palette);
+  const look = () =>
+    page.evaluate(() => {
+      const hosts = [...document.querySelectorAll('anubis-chips, anubis-weigh, anubis-bar, anubis-summary')];
+      const pinned = document.querySelector('[data-anubis-state~="pin"]');
+      return {
+        page: document.documentElement.dataset.anubisPalette,
+        hosts: [...new Set(hosts.map((el) => el.dataset.palette))],
+        pinFrame: pinned ? getComputedStyle(pinned).outlineColor : null,
+      };
+    });
+  for (const palette of ['plain', 'gold']) {
+    await setPalette(palette);
+    await page.goto('https://duckduckgo.com/?q=javascript+promises');
+    await page.waitForTimeout(600);
+    console.log(`\n== palette ${palette}:`, JSON.stringify(await look()));
+    await page.screenshot({ path: `${SHOTS}palette-${palette}.png`, fullPage: true });
+  }
+}
+
+if (!only || only === 'cleanup' || checks) {
+  // Clean-up: AI Overview, videos, and "People also ask" go; the side panel stays.
   const sw = ctx.serviceWorkers()[0];
   const setSettings = (patch) =>
     sw.evaluate(async (patch) => {
@@ -426,6 +530,16 @@ if (!only || only === 'cleanup') {
         const stats = await chrome.tabs.sendMessage(tab.id, { type: 'get-page-stats' }).catch(() => undefined);
         if (stats) return stats;
       }
+    });
+  const activeBadge = () =>
+    sw.evaluate(async () => {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      return tab ? chrome.action.getBadgeText({ tabId: tab.id }) : '';
+    });
+  const activeStats = () =>
+    sw.evaluate(async () => {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      return tab ? chrome.tabs.sendMessage(tab.id, { type: 'get-page-stats' }).catch(() => undefined) : undefined;
     });
   const all = { ai: true, videos: true, questions: true, news: true, images: true, related: true };
   await setSettings({ cleanup: all });
@@ -446,12 +560,25 @@ if (!only || only === 'cleanup') {
         results: document.querySelectorAll('[data-anubis-result]').length,
       };
     });
-  console.log('\n== clean-up on:', JSON.stringify(await shown()));
-  console.log('   removed:', JSON.stringify((await statsNow())?.removed));
+  const cleanupShown = await shown();
+  const cleanupRemoved = (await statsNow())?.removed ?? {};
+  console.log('\n== clean-up on:', JSON.stringify(cleanupShown));
+  console.log('   removed:', JSON.stringify(cleanupRemoved));
   await page.screenshot({ path: `${SHOTS}google-cleanup.png`, fullPage: true });
+  if (checks) {
+    assertChecks('Google cleanup selectors', {
+      removesAiOverview: !cleanupShown.aiOverview && cleanupRemoved.ai === 1,
+      removesVideos: !cleanupShown.videos && cleanupRemoved.videos === 1,
+      removesPeopleAlsoAsk: !cleanupShown.peopleAlsoAsk && cleanupRemoved.questions === 1,
+      keepsSidePanel: cleanupShown.sidePanel,
+      preservesExpectedResults: cleanupShown.results === ANUBIS_RESULTS.length,
+    });
+  }
   await clickShadowButton('anubis-summary', 'Show hidden');
   await page.waitForTimeout(300);
-  console.log('== after Show hidden:', JSON.stringify(await shown()));
+  const cleanupRestored = await shown();
+  console.log('== after Show hidden:', JSON.stringify(cleanupRestored));
+  if (checks) assertChecks('restore cleaned-up blocks', { restoresAiOverview: cleanupRestored.aiOverview, restoresVideos: cleanupRestored.videos });
 
   // The AI Overview when its label isn't a heading, and the block holds a follow-up box.
   await page.goto('https://www.google.com/search?q=anubis&ailabel=1');
@@ -498,16 +625,21 @@ if (!only || only === 'cleanup') {
       };
     });
     console.log(`== video panel (${layout}):`, JSON.stringify(check));
+    if (checks) {
+      assertChecks(`video panel ${layout}`, {
+        removesPanelHeader: !check.header,
+        removesVideoCards: !check.videos,
+        removesViewAll: !check.viewAll,
+        keepsSummaryAtTop: check.summaryOnTop,
+      });
+    }
   }
 
   // DuckDuckGo stays where it is, with your settings: the AI answer goes, and so do
   // the Duck.ai tab and button, which aren't counted.
   await page.goto('https://duckduckgo.com/?q=javascript+promises&ai=1');
   await page.waitForTimeout(800);
-  console.log(
-    '== DuckDuckGo with AI answers removed:',
-    JSON.stringify(
-      await page.evaluate(() => {
+  const duckduckgoCleanup = await page.evaluate(() => {
         const visible = (el) => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0;
         return {
           host: location.hostname,
@@ -517,9 +649,16 @@ if (!only || only === 'cleanup') {
           otherTabs: [...document.querySelectorAll('.tabs span')].filter(visible).length,
           results: [...document.querySelectorAll('[data-anubis-result]')].filter(visible).length,
         };
-      }),
-    ),
-  );
+      });
+  console.log('== DuckDuckGo with AI answers removed:', JSON.stringify(duckduckgoCleanup));
+  if (checks) {
+    assertChecks('DuckDuckGo cleanup selectors', {
+      removesAnswer: !duckduckgoCleanup.answer,
+      removesDuckAiTab: !duckduckgoCleanup.duckAiTab,
+      removesDuckAiButton: !duckduckgoCleanup.duckAiButton,
+      keepsOtherTabs: duckduckgoCleanup.otherTabs > 0,
+    });
+  }
   console.log('   removed:', JSON.stringify((await statsNow())?.removed));
   await page.screenshot({ path: `${SHOTS}ddg-cleanup.png`, fullPage: true });
 
@@ -535,7 +674,16 @@ if (!only || only === 'cleanup') {
       const visible = (el) => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0;
       return Object.fromEntries(Object.entries(selectors).map(([k, sel]) => [k, visible(document.querySelector(sel))]).concat([['results', [...document.querySelectorAll('[data-anubis-result]')].filter(visible).length]]));
     }, selectors);
-  console.log('== Brave panels:', JSON.stringify(await visibleIn({ videos: '.cluster-videos', discussions: '.cluster-discussions', relatedQueries: '.related-queries', videosTab: '.tabs a[href^="/videos"]' })));
+  const braveCleanup = await visibleIn({ videos: '.cluster-videos', discussions: '.cluster-discussions', relatedQueries: '.related-queries', videosTab: '.tabs a[href^="/videos"]' });
+  console.log('== Brave panels:', JSON.stringify(braveCleanup));
+  if (checks) {
+    assertChecks('Brave cleanup selectors', {
+      removesVideos: !braveCleanup.videos,
+      removesDiscussions: !braveCleanup.discussions,
+      removesRelatedQueries: !braveCleanup.relatedQueries,
+      keepsVideosTab: braveCleanup.videosTab,
+    });
+  }
   console.log('   removed:', JSON.stringify((await statsNow())?.removed));
   await page.goto('https://www.bing.com/search?q=javascript+promises&inline=1');
   await page.waitForTimeout(1200);
@@ -592,6 +740,24 @@ if (!only || only === 'cleanup') {
   await page.waitForURL(/udm=14/, { timeout: 3000 }).catch(() => {});
   console.log('== Google with the Web tab on:', page.url());
   await setSettings({ cleanup: { ai: false, videos: false, questions: false, discussions: false, news: false, images: false, related: false }, googleWebTab: false });
+
+  // The toolbar badge counts removed panels too, then clears when this tab leaves search.
+  await setSettings({ cleanup: all });
+  await page.goto('https://www.google.com/search?q=anubis&modules=1');
+  await page.waitForTimeout(800);
+  const badgeStats = await activeStats();
+  const removedCount = Object.values(badgeStats?.removed ?? {}).reduce((sum, count) => sum + (count ?? 0), 0);
+  const expectedBadge = String((badgeStats?.hidden ?? 0) + removedCount);
+  if (checks) {
+    assertChecks('toolbar badge counts hidden and removed items', {
+      includesRemovedPanels: expectedBadge !== '0' && (await activeBadge()) === expectedBadge,
+    });
+  }
+  await page.route('https://example.org/**', (route) => route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>Outside search</title>' }));
+  await page.goto('https://example.org/');
+  await page.waitForTimeout(200);
+  if (checks) assertChecks('toolbar badge clears away from search', { clearsOnNavigation: (await activeBadge()) === '' });
+  await setSettings({ cleanup: { ai: false, videos: false, questions: false, discussions: false, news: false, images: false, related: false } });
 }
 
 if (!only || only === 'runs') {
@@ -718,7 +884,94 @@ if (!only || only === 'popover') {
     rule: /```\n(.*)\n```/.exec(issue?.searchParams.get('body') ?? '')?.[1],
   }));
   await page.screenshot({ path: `${SHOTS}popover-report.png`, fullPage: false });
+  // The site name is text with the select unseen over it. Focus the select and
+  // choose the whole site with the keyboard.
+  {
+    const cdp = await page.context().newCDPSession(page);
+    const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+    const find = (node) => (node.nodeName === 'SELECT' ? node : [...(node.children ?? []), ...(node.shadowRoots ?? [])].map(find).find(Boolean));
+    const host = (function hostOf(node) {
+      return node.localName === 'anubis-popover' ? node : [...(node.children ?? []), ...(node.shadowRoots ?? [])].map(hostOf).find(Boolean);
+    })(root);
+    const select = host && find(host);
+    if (select) await cdp.send('DOM.focus', { nodeId: select.nodeId });
+    await cdp.detach();
+  }
+  await page.keyboard.press('ArrowDown');
+  await page.waitForTimeout(300);
+  const menu = await shadowText('anubis-popover');
+  const focused = await page.evaluate(() => document.activeElement?.localName);
+  console.log('== site name after choosing the whole site:', JSON.stringify(menu.split(' ')[0]), '| focus in the menu:', focused === 'anubis-popover');
+  await page.screenshot({ path: `${SHOTS}popover-site.png`, fullPage: false });
   await page.keyboard.press('Escape');
+}
+
+// What a screen reader hears, from the accessibility tree (it sees inside closed
+// shadow roots): each ⚖ button names its site, focus stays put when a click
+// re-renders or closes what was clicked, and a change is announced.
+async function axTree() {
+  const cdp = await page.context().newCDPSession(page);
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree');
+  await cdp.detach();
+  return nodes.filter((n) => !n.ignored).map((n) => ({
+    id: n.nodeId,
+    parent: n.parentId,
+    role: n.role?.value,
+    name: n.name?.value ?? '',
+    focused: !!n.properties?.find((p) => p.name === 'focused')?.value?.value,
+  }));
+}
+const focused = async () => {
+  // The page itself counts as focused too; the element is the last one.
+  const hit = (await axTree()).filter((n) => n.focused && n.role !== 'RootWebArea').pop();
+  return hit ? `${hit.role}: ${hit.name}` : 'nothing';
+};
+
+if (!only || only === 'a11y') {
+  await page.goto('https://duckduckgo.com/?q=javascript+promises');
+  await page.waitForTimeout(600);
+  const buttons = (await axTree()).filter((n) => n.role === 'button' && n.name.startsWith('Hide, rank, or tag'));
+  console.log('\n== ⚖ buttons:', JSON.stringify({ count: buttons.length, distinct: new Set(buttons.map((b) => b.name)).size, first: buttons[0]?.name }));
+
+  const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
+  await target.hover();
+  await target.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+  await page.waitForTimeout(300);
+  // Focus starts on the chosen ranking; back up to × and press it.
+  let steps = 0;
+  while (!(await focused()).startsWith('button: Close') && steps++ < 4) await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(200);
+  console.log('== focus after × closes the menu:', await focused());
+
+  // Pin it from the menu: the change is announced.
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(300);
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(900);
+  await page.keyboard.press('Escape');
+  const tree = await axTree();
+  const status = tree.find((n) => n.role === 'status');
+  const statusText = status && tree.filter((n) => n.parent === status.id).map((n) => n.name).join(' ');
+  console.log('== announced:', JSON.stringify(statusText ?? null));
+  // Undo goes with the click; focus stays in the summary.
+  await clickShadowButton('anubis-summary', 'Undo');
+  await page.waitForTimeout(600);
+  console.log('== focus after Undo:', await focused());
+
+  // A hidden result's Show line names the site, and hands focus to the result.
+  await page.goto('https://www.google.com/search?q=anubis');
+  await page.waitForSelector('anubis-bar');
+  await page.waitForTimeout(300);
+  const show = (await axTree()).find((n) => n.role === 'button' && /^Show \S+\.\S+/.test(n.name));
+  await clickShadowButton('anubis-bar', 'Show');
+  await page.waitForTimeout(300);
+  console.log('== hidden line:', JSON.stringify({ button: show?.name ?? null, focusAfter: await focused() }));
+  // Show hidden keeps focus on its own button, now Hide them again.
+  await clickShadowButton('anubis-summary', 'Show hidden');
+  await page.waitForTimeout(300);
+  console.log('== focus after Show hidden:', await focused());
 }
 
 if (!only || only === 'ddg-hide') {
@@ -824,7 +1077,7 @@ if (only === 'subscribe') {
 if (!only || only === 'subscribe-link') {
   // Subscribe on the lists directory: the subscribe page it leads to opens settings
   // with the list filled in, the directory's tab goes back, and nothing is added
-  // until Subscribe. The directory, the subscribe page and the list are mocks.
+  // until Subscribe. The directory, the subscribe page, and the list are mocks.
   const LIST = 'https://raw.githubusercontent.com/example/lists/main/e2e.anubis';
   const link = `https://bishop-v.github.io/anubis/subscribe?url=${encodeURIComponent(LIST)}&name=E2E+list`;
   await ctx.route(/^https:\/\/bishop-v\.github\.io\//, (route) =>
@@ -900,6 +1153,35 @@ if (!only || only === 'options') {
     await opt.close();
   }
   console.log('\n== options + popup screenshots done');
+}
+
+if (!only || only === 'responsive') {
+  const opt = await ctx.newPage();
+  for (const width of [320, 360, 390]) {
+    await opt.setViewportSize({ width, height: 900 });
+    for (const section of ['sites', 'tags', 'lists', 'cleanup', 'appearance', 'engines', 'sync', 'share']) {
+      await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
+      await opt.locator('main h2').waitFor();
+      const layout = await opt.evaluate(() => ({
+        document: document.documentElement.scrollWidth,
+        viewport: window.innerWidth,
+      }));
+      if (layout.document > layout.viewport) {
+        throw new Error(`Settings → ${section} overflows at ${width}px (${layout.document}px wide)`);
+      }
+      if (section === 'sites' && width < 390) {
+        const scrolls = await opt.locator('.sites-scroll').evaluate((el) => el.scrollWidth > el.clientWidth);
+        if (!scrolls) throw new Error(`Your sites table should scroll inside its wrapper at ${width}px`);
+      }
+      if (section === 'sites' && width === 390) {
+        const overflows = await opt.locator('.sites-scroll').evaluate((el) => el.scrollWidth > el.clientWidth);
+        if (overflows) throw new Error('Your sites table should fit at 390px');
+      }
+    }
+    console.log(`  Settings sections fit at ${width}px`);
+  }
+  await opt.close();
+  console.log('\n== responsive Settings checks passed');
 }
 
 if (!only || only === 'welcome') {
@@ -1103,8 +1385,9 @@ if (only === 'docs') {
     await clip(`cleanup-summary${suffix}`, ['anubis-summary']);
   }
 
-  // The homepage's before and after: the same search with Anubis off, then on with
-  // clean-up, cut to the same box (the logo, the search box and the results column).
+  // A before and after, for the style guide and the slides below: the same search
+  // with Anubis off, then on with clean-up, cut to the same box (the logo, the
+  // search box and the results column).
   // A wider window keeps the side panel clear of the box.
   const beforeAfter = async (name) => {
     for (const [, suffix, query] of SCHEMES) {
@@ -1143,7 +1426,7 @@ if (only === 'docs') {
         <div style="position:absolute;left:44px;right:48px;top:30px;display:flex;align-items:center;gap:12px">
           ${jackal}
           <span style="color:${c.name};font-size:34px;line-height:1">Anubis</span>
-          <span style="margin-left:14px;padding-left:18px;border-left:1px solid ${c.rule};font-size:19px;line-height:30px">Hide, rank and tag search results</span>
+          <span style="margin-left:14px;padding-left:18px;border-left:1px solid ${c.rule};font-size:19px;line-height:30px">Hide, rank, and tag search results</span>
           <span style="margin-left:auto;font-size:12px;color:${c.note}">Shown on a test page</span>
         </div>
         <div style="position:absolute;left:48px;right:48px;top:112px;display:grid;grid-template-columns:1fr 1fr;gap:32px">
@@ -1165,9 +1448,7 @@ if (only === 'docs') {
     await chrome.storage.local.set({ listCache });
   }, bundled);
   const opt = await ctx.newPage();
-  const pop = await ctx.newPage();
   await opt.setViewportSize({ width: 1100, height: 760 });
-  await pop.setViewportSize({ width: 364, height: 600 });
   for (const [colorScheme, suffix] of SCHEMES) {
     await opt.emulateMedia({ colorScheme });
     for (const section of ['sites', 'tags', 'lists', 'cleanup', 'sync']) {
@@ -1175,13 +1456,26 @@ if (only === 'docs') {
       await opt.waitForTimeout(500);
       await opt.screenshot({ path: `${DOCS_IMG}options-${section}${suffix}.png` });
     }
-    await pop.emulateMedia({ colorScheme });
-    await pop.goto(`chrome-extension://${extId}/popup.html`);
-    await pop.waitForTimeout(400);
-    await pop.screenshot({ path: `${DOCS_IMG}popup${suffix}.png` });
+    // The popup as it opens on an ordinary site. Opened as a page, its active tab
+    // would be itself, so it's told the site's tab is the active one.
+    const site = await ctx.newPage();
+    await site.route('https://en.wikipedia.org/**', (route) => route.fulfill({ contentType: 'text/html', body: '<title>Anubis</title><h1>Anubis</h1>' }));
+    await site.goto('https://en.wikipedia.org/wiki/Anubis');
+    const tabId = await sw.evaluate(async () => Math.max(...(await chrome.tabs.query({})).map((t) => t.id)));
+    const sitePop = await ctx.newPage();
+    await sitePop.setViewportSize({ width: 364, height: 600 });
+    await sitePop.emulateMedia({ colorScheme });
+    await sitePop.addInitScript((tab) => {
+      const query = chrome.tabs.query.bind(chrome.tabs);
+      chrome.tabs.query = async (q) => (q.active ? [tab] : query(q));
+    }, { id: tabId, url: 'https://en.wikipedia.org/wiki/Anubis' });
+    await sitePop.goto(`chrome-extension://${extId}/popup.html`);
+    await sitePop.waitForTimeout(900);
+    await sitePop.screenshot({ path: `${DOCS_IMG}popup${suffix}.png` });
+    await sitePop.close();
+    await site.close();
   }
   await opt.close();
-  await pop.close();
   console.log('\n== documentation screenshots saved to docs/img/');
 }
 
