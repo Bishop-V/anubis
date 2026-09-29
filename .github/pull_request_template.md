@@ -9,7 +9,7 @@
 - [ ] A change to the interface passes `node e2e/run.mjs responsive` (320px, 360px, and 390px)
 - [ ] A change to the interface works from the keyboard and makes sense to a screen reader (`ACCESSIBILITY.md`)
 - [ ] Existing storage formats, extension identity, permissions, public URLs, and browser behavior are preserved or have a tested migration
-- [ ] Relevant user and developer documentation (including privacy, store, or platform notes when affected) matches code behaviour and architectural changes
+- [ ] Relevant user and developer documentation (including privacy, store, or platform notes when affected) matches code behaviour and architectural changes; a feature added, renamed, or dropped is changed in both the README and the wiki's introduction
 - [ ] `docs/experiments.md` records what was tried; affected generated documentation screenshots have been regenerated in light and dark, and their captions/text match
 - [ ] Nothing personal, and no page captured from a live search, is committed
 
