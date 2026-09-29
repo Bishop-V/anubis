@@ -25,12 +25,19 @@ It asks for the `storage` and `activeTab` permissions (the second lets the toolb
 
 ## Setup
 
-You need **Node.js 20 or newer** — install the LTS from [nodejs.org](https://nodejs.org) if you don't have it.
+On Linux, use the pinned toolchain from the Nix flake:
 
 ```sh
-npm install          # installs WXT and sets up TypeScript types
+nix develop
+```
+
+The first time you enter the shell, it installs the project dependencies.
+
+If you aren't using Nix, install **Node.js 22.12 or newer** from [nodejs.org](https://nodejs.org), then run `npm install` in the repository. Run the commands below inside the Nix shell or with your Node installation:
+
+```sh
 npm run dev          # opens Firefox with the extension loaded, reloading on save
-npm run dev:chrome   # same, in Chrome
+npm run dev:chrome   # the same in Chrome
 ```
 
 Firefox is the default target; every `:chrome` variant overrides it.
@@ -44,7 +51,7 @@ npm run build        # production build into .output/firefox-mv2
 npm run build:chrome # production build into .output/chrome-mv3
 ```
 
-`npm run e2e` loads the Chrome build into Chromium against mock result pages and saves screenshots to `e2e/shots/`. Set `CHROMIUM_PATH` to a Chromium binary first. `node e2e/run.mjs subscribe` also downloads a real list from GitHub; behind a TLS-intercepting proxy, point `PROXY_CA_CERT` at its CA.
+`npm run e2e` loads the Chrome build into Chromium against mock result pages and saves screenshots to `e2e/shots/`. Install Playwright's Chromium with `npx playwright-core install chromium`, or set `CHROMIUM_PATH` to a system binary (on NixOS, use the system Chromium). `node e2e/run.mjs responsive` checks all Settings sections at 320px, 360px, and 390px; CI runs this check on every pull request. `node e2e/run.mjs subscribe` also downloads a real list from GitHub; behind a TLS-intercepting proxy, point `PROXY_CA_CERT` at its CA.
 
 ### Loading it by hand
 
@@ -53,13 +60,9 @@ If the dev browser doesn't open on its own, build and load the extension yoursel
 - **Firefox:** `about:debugging` → This Firefox → Load Temporary Add-on → pick `.output/firefox-mv2/manifest.json`. Temporary add-ons are removed when Firefox closes.
 - **Chrome:** `chrome://extensions` with Developer mode on → Load unpacked → pick `.output/chrome-mv3`.
 
-### With Nix
-
-`flake.nix` pins the whole toolchain. `nix develop` in this folder gives you Node and runs `npm install` on first entry; run the commands above inside that shell rather than installing anything globally. For one-offs, `nix develop -c npm test`.
-
 ### Building the store release
 
-These are the steps the release uses, and the ones for rebuilding the Firefox add-on from its source zip. Use **Node.js 22** and npm on Linux or macOS:
+These are the steps the release uses, and the ones for rebuilding the Firefox add-on from its source zip. Use the Nix shell on Linux, or **Node.js 22.12 or newer** on other platforms:
 
 ```sh
 npm ci               # installs the exact versions in package-lock.json
@@ -88,6 +91,7 @@ To publish a version, set `version` in `package.json`, merge it, then push a mat
 The wiki is at **[bishop-v.github.io/anubis](https://bishop-v.github.io/anubis/)**, built from [`docs/`](docs) (start with [the introduction](docs/guide/introduction.md)). `npm run docs:dev` previews it locally.
 
 - [Developing Anubis](DEVELOPMENT.md): how the extension is put together, how a build is made, and how to add an engine, a setting, or interface text.
+- [Agent instructions](AGENTS.md): compatibility contracts, regression checks, and safe working practices.
 - [Accessibility](ACCESSIBILITY.md): keeping Anubis usable with a screen reader and from the keyboard, and where it falls short today.
 - [The list format](docs/list-format.md): how to write and publish a list.
 - [Lists](lists/README.md): the lists that ship with Anubis and how to contribute one.
@@ -95,6 +99,7 @@ The wiki is at **[bishop-v.github.io/anubis](https://bishop-v.github.io/anubis/)
 - [Roadmap](ROADMAP.md): planned work.
 - [Security](SECURITY.md): how to report a vulnerability privately, and what counts as one.
 - [Publishing](store/README.md): store listings, privacy answers, and release steps.
+- [Browser and store platform watch](docs/platform-watch.md): current browser deadlines, API changes, and what to recheck before releases.
 
 ## Inspirations
 

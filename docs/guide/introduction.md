@@ -4,6 +4,8 @@ Anubis is a browser extension for Firefox and Chrome that changes search results
 
 It works on the search engine you already use. Your choices, and the lists you subscribe to, apply on every search.
 
+<!-- Maintainer: this generated screenshot comes from a mock page. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark images and their descriptions together. -->
+
 ![Anubis above a page of results: a one-line summary, tags under each title, and a hidden result](../img/summary.png)
 
 <p class="caption">Shown on a test page.</p>

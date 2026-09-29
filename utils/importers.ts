@@ -1,4 +1,5 @@
 import { colorForTag, parseList, type TagDef } from './listformat';
+import { normalizeHostname } from './domain';
 import { formatSiteLine, listSites, listTagDefs, setSites, upsertTagDef, type PersonalLevel } from './personal';
 
 // Bring sites over from the tools Anubis grew out of: uBlacklist rules, HOHSER's
@@ -84,7 +85,7 @@ export function importIntoPersonal(personalText: string, input: string): ImportR
       const highlightTags = new Set<string>();
       let skipped = 0;
       for (const e of data) {
-        const site = (e.domainName ?? '').trim().toLowerCase().replace(/^www\./, '');
+        const site = normalizeHostname((e.domainName ?? '').trim());
         if (!/^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(site)) {
           skipped++;
           continue;
@@ -127,7 +128,7 @@ export function importIntoPersonal(personalText: string, input: string): ImportR
             : rule.boost < 0
               ? 'lower'
               : 'normal';
-    into.merge(site.replace(/^www\./, ''), level, rule.tags);
+    into.merge(normalizeHostname(site), level, rule.tags);
   }
   return { text: into.text(), source: parsed.format, ...counts, skipped, highlightTags: [...highlightTags] };
 }

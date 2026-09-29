@@ -9,9 +9,9 @@ export default defineConfig({
   browser: 'firefox',
   // Firefox's add-on reviewers get a zip of the source to rebuild from. Leave out
   // what the build doesn't use: the documentation site (mostly screenshots), the
-  // end-to-end harness, the store listing assets, and the Claude skills.
+  // end-to-end harness, store listing assets, agent skills, and local agent notes.
   zip: {
-    excludeSources: ['docs/**', 'e2e/**', 'store/**', '.claude/**'],
+    excludeSources: ['docs/**', 'e2e/**', 'store/**', '.claude/**', 'CLAUDE.local.md'],
   },
   manifest: ({ browser, manifestVersion }) => ({
     name: 'Anubis',
@@ -55,6 +55,7 @@ export default defineConfig({
       browser_specific_settings: {
         gecko: {
           id: '{9ab93008-4ecd-4923-8a62-d81099997d39}',
+          strict_min_version: '142.0',
           data_collection_permissions: { required: ['none'], optional: ['browsingActivity'] },
         },
       },

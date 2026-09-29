@@ -4,16 +4,17 @@ Work that's planned but not started, or started and not finished. Each item says
 
 ## Before the first store release
 
+- **Verify store declarations.** The Firefox manifest now sets `gecko.strict_min_version` to 142 so WebDAV can use built-in data consent and the AMO linter accepts the minimum. Before submission, verify the declaration in the generated manifest and check Chrome Web Store API V2 credentials.
 - **Check live pages.** Everything on search pages was built against mocks. Work through "Still unverified" in `docs/experiments.md`. Done on 2026-09-29 for DuckDuckGo (all three versions), Bing, Brave, Startpage, Ecosia, and Yahoo. Left: Kagi, Yandex, and Mojeek (they showed automated Chromium a human check), Load more results on Bing, Ecosia, and Yahoo in an everyday browser, Google's phone layout, and DuckDuckGo's AI answer and Duck.ai buttons, which are now removed on the page (their selectors come from EasyList's AI list). From the reports of 2026-09-29 ("Reported from live pages" in `docs/experiments.md`): that Brave's Videos, Discussions, and Related queries panels and Bing's "People also search for" box are removed, and that Google's `/goto` results shown by name ("Reddit · …", "LinkedIn · …") get their ⚖ button.
 - **Fix what the live check found** (details in `docs/experiments.md`, 2026-09-29). For each, model the live markup in `e2e/fixtures.mjs` and confirm the check fails before fixing:
   - *Load more results stops without saying why.* On Bing, Ecosia, and Yahoo the fetched page came back as a bot check, and Bing's (status 200) reads as a last page with no results. In `fetchNext` (`entrypoints/content/deeper.ts`), recognise a page with no results, or a challenge, and set an error the summary shows ("Bing asked to confirm you're not a robot. Open the next page instead.").
-  - *Bing's AI answer stays.* It's `li.b_ans.b_top` with `.cht_container`, labelled only by `aria-label="AI Overview"`. Read `aria-label` as a label, or add `.cht_container` to Bing in `CLEANUP_SELECTORS` (`utils/cleanup.ts`).
+  - *Bing's AI answer stays.* It's `li.b_ans.b_top` with `.cht_container`, labelled only by `aria-label="AI Overview"`. Read `aria-label` as a label, or add `.cht_container` to Bing's `cleanupSelectors` (`utils/engines.ts`).
   - *Bing's video panel stays.* Its heading is "Videos of <search>": add `Videos of ` to the videos kind's `prefixes`.
   - *Brave's AI selector is out of date.* The block is `#llm-snippet`, not `#summarizer`. It's removed anyway through its disclaimer, so this is only a backup; update the selector.
-- **Try syncing between browsers** with a real WebDAV service (Koofr, InfiniCLOUD, and Nextcloud at least) in Firefox and Chrome: connect both, change a site in each, and check Firefox's consent prompt on Connect. Record what each service needed in `docs/guide/sync.md`.
+- **Try syncing between browsers** with a real WebDAV service (Koofr, InfiniCLOUD, and Nextcloud at least) in Firefox and Chrome: connect both, change a site in each, and check Firefox 142+'s consent prompt on Connect. Record what each service needed in `docs/guide/sync.md`.
 - **Try sync between two computers**, in Firefox and in Chrome: change a site's ranking on one and wait for it on the other. Also check that a change from a Firefox search page's result menu is saved compressed (`encoding: 'deflate'` in `sync:personal`, visible in `about:debugging` → Inspect → Storage): `CompressionStream` in Firefox content scripts is unverified (`docs/experiments.md`, Storage).
 - **Take real screenshots** for the listings, following the shot list in `store/README.md`.
-- **Turn on GitHub Pages** (Settings → Pages → Source: GitHub Actions), so the privacy policy link in the listings loads and subscribe links have a page to land on. Then try a subscribe link in Firefox, where it hasn't been run yet.
+- **Recheck GitHub Pages before submission.** The docs site and privacy-policy URL loaded on 2026-09-29; confirm Pages still publishes from GitHub Actions before the first listing upload. Then try a subscribe link in Firefox, where it hasn't been run yet.
 
 ## Releases
 
@@ -25,7 +26,7 @@ Work that's planned but not started, or started and not finished. Each item says
 
 ## Testing
 
-- **Make e2e fail when something's wrong.** `e2e/run.mjs` prints each part's findings but only fails when a button is missing. Give each part expected values, exit non-zero on a mismatch, then run it in CI (headless Chromium works) and upload `e2e/shots/` when it fails. `hostile`'s `containersAreResults` reads `false` today because the off-screen "Sponsored offer" heading counts as a result; decide whether it should before turning that into an assertion.
+- **Expand asserted e2e coverage.** The `checks` part now fails on regressions in hostile/grouped Google results, reveal state, forum links, and Google's phone layout; CI runs it on every pull request. Most other parts still only report findings. Add assertions for the remaining user-facing behavior, then consider uploading `e2e/shots/` when CI fails. Don't assert `hostile`'s `containersAreResults` yet: its off-screen "Sponsored offer" heading currently counts as a result, and that needs a deliberate fixture/finder decision first.
 
 ## Performance
 

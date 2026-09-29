@@ -5,6 +5,7 @@ import paywalls from '@/lists/paywalls.anubis?raw';
 import reference from '@/lists/reference.anubis?raw';
 import { storage } from '#imports';
 import { andList } from './dom';
+import { normalizeHostname } from './domain';
 import { parseList, safeWebUrl, type ParsedList } from './listformat';
 import {
   editListCache,
@@ -355,7 +356,7 @@ export function reportUrl(
   } catch {
     return undefined;
   }
-  const site = url.hostname.replace(/^www\./, '');
+  const site = normalizeHostname(url.hostname);
   const rules = reasons.flatMap((r) => (r.rule ? [r.rule] : []));
   const lines = [`Result: ${plainAddress(url)}`, '', `**${list}** ${andList([...new Set(reasons.map((r) => r.text))])}, and I think that’s wrong.`];
   if (rules.length) {

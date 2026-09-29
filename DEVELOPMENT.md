@@ -19,6 +19,10 @@ Two import aliases come from WXT: `#imports` (`browser`, `storage`, `defineConte
 
 ### Commands
 
+On Linux, enter `nix develop` first; it provides Node 22 and installs dependencies on first entry.
+
+Outside Nix, use Node 22.12 or newer and run `npm install` once before these commands.
+
 ```sh
 npm run dev            # Firefox with the extension loaded, reloading on save
 npm run dev:chrome     # the same in Chrome
@@ -27,7 +31,8 @@ npm test               # unit tests
 npm run build          # .output/firefox-mv2/
 npm run build:chrome   # .output/chrome-mv3/
 npx web-ext lint -s .output/firefox-mv2
-npm run e2e            # Chrome build, then every end-to-end check (needs CHROMIUM_PATH)
+npm run e2e            # Chrome build, then every end-to-end check (needs Chromium)
+node e2e/run.mjs responsive # Settings layout at 320px, 360px, and 390px
 npm run docs:dev       # the wiki, with live reload
 npm run docs:build     # the wiki; fails on a broken link
 npm run zip            # store packages (see "Releasing")
@@ -57,6 +62,8 @@ Things that differ between the two builds:
 
 `utils/engines.ts` is imported by `wxt.config.ts` at build time to write the content script's `matches`, so it must never touch a browser API. `utils/links.ts` is imported by the config and by the docs site, for the same reason.
 
+Before changing existing behavior, check [`AGENTS.md`](AGENTS.md) for compatibility contracts and reproduce the old behavior with a regression test. Before changing browser APIs, permissions, manifest targets, or release steps, check [`docs/platform-watch.md`](docs/platform-watch.md) and verify the current vendor requirements.
+
 Two builds of the same commit are identical file for file. Firefox's reviewers rebuild the extension from `anubis-<version>-sources.zip`, which leaves out `docs/`, `e2e/`, `store/` and `.claude/` (`zip.excludeSources` in `wxt.config.ts`).
 
 ## How it works
@@ -83,7 +90,7 @@ Two builds of the same commit are identical file for file. Firefox's reviewers r
 
 Browser sync needs nothing from Anubis beyond using `storage.sync`. Sharing between browsers is optional: the user connects a WebDAV server in Settings → Sync, and each browser reads and writes one file there, `anubis-sync.json`, in the backup format (`utils/backup.ts`). A sync (`utils/webdav.ts`, run only by the background script) reads the file, merges it with what this browser has, saves the result here and there, and keeps it as `local:webdavBase`. The merge is three-way (`utils/merge.ts`): against that base, so a change from either side since the last sync survives. Settings and tag choices merge key by key, subscriptions per list, and the personal list line by line, per site where it can. When both sides changed the same thing, this browser wins, except on its first sync, which starts from what a fresh install has and lets the server win. Writing sends `If-Match` with the file's ETag, so a browser that saved in between makes the server refuse, and the sync merges again.
 
-The background script syncs a few seconds after a change here (unless everything still matches the base), on startup, and when a search page asks, at most every 5 minutes; that needs no `alarms` permission. Connecting asks for the server's host (`optional_host_permissions`) and, in Firefox 140 and later, for the `browsingActivity` data permission, straight from the click.
+The background script syncs a few seconds after a change here (unless everything still matches the base), on startup, and when a search page asks, at most every 5 minutes; that needs no `alarms` permission. Connecting asks for the server's host (`optional_host_permissions`) and in Firefox for the `browsingActivity` data permission, straight from the click. Anubis requires Firefox 142 or later.
 
 Every change reads the stored value, changes it and writes it back, so writes go through a queue per item (`writeQueue` in `utils/storage.ts`): `editPersonal`, `updateSettings`, `setTagPref`, `editSubscriptions` and `editListCache`. Use them rather than `setValue` whenever the new value depends on the old one. Pass `updateSettings` a function when the change depends on the current settings (turning one engine off among several).
 
@@ -105,7 +112,7 @@ a result's URL, title, snippet ──evaluate(result, lists, prefs)──► Ver
 
 ### One pass over a search page
 
-`entrypoints/content/index.ts` runs a *pass* when the page loads, whenever the page changes (a `MutationObserver`, batched to one pass per frame) and whenever storage changes (`watchRuleSet`):
+`entrypoints/content/index.ts` runs a *pass* when the page loads, whenever the page changes (a `MutationObserver`, batched to one pass per frame) and whenever storage changes (`watchRuleSet`). On `pagehide` it disconnects the observer and cancels a queued frame; on a persisted `pageshow` it observes and scans again:
 
 1. **Find the results** (`findResults` in `results.ts`). Engines with headings for titles are found by structure: each title heading, the link around it, then the smallest ancestor that holds only that result. Others use selectors from the engine's definition. Redirect links (Bing's `/ck/a`, Yahoo's `/RU=`…) are resolved to the real address. An opaque one (Google's `/goto`) falls back to the address the engine shows, another direct link in the result, and then a forum's name ("Reddit · r/…") where the address would be.
 2. **Find what clean-up removes** (`findClutter` in `cleanup.ts`): blocks recognised by their heading, a marker text, or a selector, widened to the whole block in the results column. Nothing that holds a result, the search box, or the links to later pages is removed. Related searches and "People also ask" can also be a panel inside a result (the box Bing and Google add under a result you came back to); only that panel goes.
@@ -144,7 +151,7 @@ The popup, settings, and welcome page are plain DOM, built with `h()` from `util
 ### Add or fix a search engine
 
 1. Add or edit its entry in `ENGINES` (`utils/engines.ts`). Prefer structural detection (`heading`, with a `boundary` the climb must not pass) when titles are headings; otherwise give `item`, `link` and `title` selectors, taking them from [uBlacklist's rules](https://github.com/ublacklist/builtin) (`serpinfo/*.yml`). `matches` becomes the manifest's content script matches. Add `more` if the engine can load another page of results, and `mobile` for its phone layout's differences.
-2. If uBlacklist has a file for it, add the file to `WATCHED` in `.github/scripts/watch-engines.mjs`, so the weekly engine watch reports changes to it.
+2. Add its display name to `.github/engine-watch.json` under the matching `serpinfo/*.yml` file, or document why there is no upstream file under `unwatched`. `tests/engine-watch.test.ts` checks that every engine is accounted for exactly once.
 3. Model the engine's page as a mock in `e2e/fixtures.mjs`, serve it from the `pages` map in `e2e/run.mjs` at the engine's real address, and add a check. For a fix, first confirm the check fails on the current build.
 4. Update the engine table in `docs/guide/search-engines.md`, the engine lists in the README, and `store/README.md`, and `docs/guide/more-results.md` if it loads more results.
 5. Load it on the live engine and record what you confirmed, with the date, in `docs/experiments.md`.
@@ -154,11 +161,15 @@ The popup, settings, and welcome page are plain DOM, built with `h()` from `util
 Clean-up kinds live in `utils/cleanup.ts`:
 
 - **A heading in another language:** add it to the kind's `headings` (matched whole, ignoring case) or `prefixes` (for "Images for …").
-- **A block without a heading:** a disclaimer only that kind has goes in `markers`; a selector goes in `CLEANUP_SELECTORS` under the engine's id. Selectors are the last resort: engines rename classes without notice.
+- **A block without a heading:** a disclaimer only that kind has goes in `markers`; a selector goes in that engine's `cleanupSelectors` in `utils/engines.ts`. Selectors are the last resort: engines rename classes without notice.
 - **A tab or button that opens an AI chat:** `AI_ENTRY_POINTS`. These go with AI answers but aren't counted in the summary.
 - **A new kind:** add it to `CleanupKind`, `NO_CLEANUP` and `CLEANUP` (`label` and `hint` for settings, `one` and `many` for the summary). Settings shows it automatically, and `getSettings` switches it off for people who saved settings before it existed. Add it to the table in `docs/guide/clean-up.md`.
 
 `tests/cleanup.test.ts` covers headings and the summary's wording; the `cleanup` e2e part covers finding blocks on mock pages.
+
+### Keep engine definitions in view
+
+The weekly workflow compares changes in mapped files from [uBlacklist's SERPINFO repository](https://github.com/ublacklist/builtin/tree/main/serpinfo) and opens an issue as an early warning. `.github/engine-watch.json` maps those files to supported engines; CI checks that mapping against `utils/engines.ts`. This is a review signal, not an automatic selector update: Anubis's structural detection, cleanup, and paging can differ from uBlacklist, so verify proposed changes against a mock and a live results page.
 
 ### Add a setting
 
@@ -221,11 +232,13 @@ Not everything is converted yet: `ROADMAP.md` lists what's left. Wording follows
 | `engines.test.ts` | Picking an engine's phone layout |
 | `i18n.test.ts` | Message keys, plural forms, and placeholders, the undo line's wording |
 
-**End-to-end checks** (`npm run e2e`, or `node e2e/run.mjs <part>` after `npm run build:chrome`) load the Chrome build into Chromium. `CHROMIUM_PATH` has to point at a Chromium binary: branded Chrome no longer loads unpacked extensions from the command line. The harness answers the real engines' addresses with the mock pages in `e2e/fixtures.mjs` (Google, DuckDuckGo, Bing, Brave, and Google's phone layout), seeds storage with a test personal list and settings, prints what Anubis decided, and saves screenshots to `e2e/shots/`. Each part is a block in `e2e/run.mjs`: `pages`, `hostile`, `grouped`, `reveal`, `runs`, `shortcuts`, `mobile`, `off`, `palette`, `cleanup`, `pins`, `popover`, `a11y`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `subscribe-link`, `options`, `welcome`, `sync`, and `webdav`. `webdav` connects a mock WebDAV server in Settings; a script can't answer the browser's permission prompt, so it runs a copy of the build whose manifest already allows the mock's host, and Playwright only reaches the background script's requests with `PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1`, which the part sets.
+**End-to-end checks** (`npm run e2e`, or `node e2e/run.mjs <part>` after `npm run build:chrome`) load the Chrome build into Chromium. Install Playwright's Chromium with `npx playwright-core install chromium`; on NixOS, set `CHROMIUM_PATH` to the system Chromium because Playwright's downloaded browser doesn't run there. Branded Chrome no longer loads unpacked extensions from the command line. The harness answers the real engines' addresses with the mock pages in `e2e/fixtures.mjs` (Google, DuckDuckGo, Bing, Brave, and Google's phone layout), seeds storage with a test personal list and settings, prints what Anubis decided, and saves screenshots to `e2e/shots/`. Each part is a block in `e2e/run.mjs`: `pages`, `hostile`, `grouped`, `reveal`, `runs`, `shortcuts`, `mobile`, `off`, `palette`, `cleanup`, `pins`, `popover`, `a11y`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `subscribe-link`, `options`, `responsive`, `welcome`, `sync`, `webdav`, and `checks`. `responsive` checks every Settings section at 320px, 360px, and 390px, and confines narrow-screen scrolling to the Your sites table. `checks` asserts hostile and grouped Google results, forum links, reveal state, back-forward-cache restoration, the phone layout, and AI/video cleanup on Google, DuckDuckGo, and Brave; CI runs it alongside `responsive` on every pull request. `webdav` connects a mock WebDAV server in Settings; a script can't answer the browser's permission prompt, so it runs a copy of the build whose manifest already allows the mock's host, and Playwright only reaches the background script's requests with `PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1`, which the part sets.
 
-Parts print their findings rather than failing on them (turning them into assertions is on the roadmap), so read the output: a check that should say `false` and says `true` is a failure. Mock pages are models of the engines' markup, not copies of it; when an engine breaks, model the markup that broke as a variant of its mock (Google's `hostile` and `grouped` are examples) and never commit a page saved from a live search.
+Most parts print their findings rather than failing on them, so read the output: a check that should say `false` and says `true` is a failure. `checks` is the asserted group; when converting a reported value into an assertion, prefer user-visible behavior and stable thresholds over incidental markup. Mock pages are models of the engines' markup, not copies of it; when an engine breaks, model the markup that broke as a variant of its mock (Google's `hostile` and `grouped` are examples) and never commit a page saved from a live search.
 
 `node e2e/run.mjs docs` redraws the wiki's screenshots in `docs/img/`, each in light and dark, a before and after of one search, and the same pair as slides in `docs/public/`. Rendering differs slightly between runs, so commit only the images your change affects. The homepage's scroll-driven demo (`docs/.vitepress/theme/scroll-demo.ts`) is drawn in HTML rather than screenshots: update its wording by hand when the summary, tags, or hidden line change.
+
+When a feature or code area is changed or overhauled, update the documentation that explains its behaviour, implementation, data flow, or user-facing promises—not only the guide page. Check related references such as `DEVELOPMENT.md`, `CLAUDE.md`, the privacy guide, store listing notes, and platform notes as applicable. Pages with generated screenshots have source comments pointing maintainers to the regeneration command; update the affected light and dark images and the nearby captions/text together.
 
 ## Checking live pages
 

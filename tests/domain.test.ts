@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { decodeBingRedirect, displayedDomainToUrl, domainChoices, normalizeDomain, siteNameToUrl, siteOf } from '@/utils/domain';
+import { decodeBingRedirect, displayedDomainToUrl, domainChoices, normalizeDomain, normalizeHostname, siteNameToUrl, siteOf } from '@/utils/domain';
 import { existsSync } from 'node:fs';
 import { DOCS_URL, readSubscribeLink, SUBSCRIBE_PAGE, subscribeLink } from '@/utils/links';
 import { issueUrl, originPermissionFor, reportTracker, reportUrl, suggestionUrl, toRawUrl } from '@/utils/subscriptions';
@@ -16,6 +16,11 @@ describe('domains', () => {
     expect(domainChoices('www.a.b.example.com')).toEqual(['a.b.example.com', 'b.example.com', 'example.com']);
     expect(domainChoices('news.bbc.co.uk')).toEqual(['news.bbc.co.uk', 'bbc.co.uk']);
     expect(siteOf('docs.github.com')).toBe('github.com');
+  });
+
+  it('normalizes parsed hostnames without parsing user input', () => {
+    expect(normalizeHostname('WWW.Example.COM')).toBe('example.com');
+    expect(normalizeHostname('sub.example.com')).toBe('sub.example.com');
   });
 
   it('decodes Bing redirects', () => {

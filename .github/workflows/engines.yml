@@ -28,10 +28,10 @@ jobs:
       # already reported are skipped.
       DAYS: ${{ inputs.days || '10' }}
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0 (Node 24)
       - run: git clone --filter=blob:none --no-checkout https://github.com/ublacklist/builtin "$RUNNER_TEMP/builtin"
       - name: Collect the issues already opened
-        run: gh issue list --label engines --state all --limit 50 --json body --jq '.[].body' > "$RUNNER_TEMP/reported.txt" || true
+        run: gh issue list --label engines --state all --limit 1000 --json body --jq '.[].body' > "$RUNNER_TEMP/reported.txt"
       - id: watch
         run: node .github/scripts/watch-engines.mjs "$RUNNER_TEMP/builtin" "$RUNNER_TEMP/reported.txt" "$DAYS" "$RUNNER_TEMP/issue.md"
       - if: steps.watch.outputs.title

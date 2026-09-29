@@ -277,7 +277,12 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
     // requires; a host already allowed doesn't ask again.
     const origin = originPermissionFor(sub.url);
     const asked = origin ? browser.permissions.request({ origins: [origin] }).catch(() => false) : Promise.resolve(true);
-    void asked.then(async () => {
+    void asked.then(async (granted) => {
+      if (!granted) {
+        flash('lists', 'error', t('listPermissionDenied', new URL(sub.url).hostname));
+        rerender();
+        return;
+      }
       const entry = await refreshList(sub);
       if (entry.error) flash('lists', 'error', `${name}: ${entry.error}`);
       else flash('lists', 'ok', `${name} is up to date.`);

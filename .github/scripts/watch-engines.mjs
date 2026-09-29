@@ -12,24 +12,23 @@
 import { execFileSync } from 'node:child_process';
 import { appendFileSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 
-// serpinfo file → the engines in utils/engines.ts it covers. Keep in step when an
-// engine is added. Yahoo and Mojeek have no file upstream.
-const WATCHED = {
-  'serpinfo/google.yml': ['Google'],
-  'serpinfo/duckduckgo.yml': ['DuckDuckGo', 'DuckDuckGo (HTML)', 'DuckDuckGo (Lite)'],
-  'serpinfo/bing.yml': ['Bing'],
-  'serpinfo/brave.yml': ['Brave Search'],
-  'serpinfo/startpage.yml': ['Startpage'],
-  'serpinfo/ecosia.yml': ['Ecosia'],
-  'serpinfo/kagi.yml': ['Kagi'],
-  'serpinfo/yandex.yml': ['Yandex'],
-};
+// CI checks this manifest against utils/engines.ts so new engines cannot go unwatched.
+const { watched: WATCHED } = JSON.parse(readFileSync(new URL('../engine-watch.json', import.meta.url), 'utf8'));
 const UPSTREAM = 'https://github.com/ublacklist/builtin';
 
 const [repo, reportedFile, days = '10', out = 'issue.md'] = process.argv.slice(2);
 if (!repo) {
   console.error('Usage: node .github/scripts/watch-engines.mjs <builtin clone> <reported.txt> [days] [issue.md]');
   process.exit(1);
+}
+const upstreamFiles = new Set(
+  execFileSync('git', ['-C', repo, 'ls-tree', '-r', '--name-only', 'HEAD', '--', 'serpinfo/'], { encoding: 'utf8' })
+    .split('\n')
+    .filter(Boolean),
+);
+const missingFiles = Object.keys(WATCHED).filter((file) => !upstreamFiles.has(file));
+if (missingFiles.length) {
+  throw new Error(`Mapped SERPINFO file(s) missing upstream: ${missingFiles.join(', ')}`);
 }
 const reported = reportedFile && existsSync(reportedFile) ? readFileSync(reportedFile, 'utf8') : '';
 // Commit subjects are someone else's text: keep them from pinging people or making links.

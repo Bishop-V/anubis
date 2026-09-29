@@ -2,11 +2,11 @@
 
 What the Chrome Web Store and Firefox Add-ons (AMO) ask for, with the answers ready to paste. Neither listing exists yet. Do the first upload to each store by hand in its dashboard; the APIs update listings that already exist.
 
-## Chrome's publishing API changes on 15 October 2026
+## Chrome Web Store publishing API
 
-Chrome Web Store API v1.1, and the OAuth refresh tokens it uses, stop working on **15 October 2026**. Anything that publishes from a script or CI has to use API v2, which signs in with a Google Cloud **service account** instead.
+The Chrome Web Store API V2 is current and supports Google Cloud **service accounts**. The older V1.1 API and its refresh tokens are scheduled to stop working on **15 October 2026**; the current [API overview](https://developer.chrome.com/docs/webstore/api) now marks V1 as archived. Recheck the publisher dashboard and current Google documentation before the first automated submission and before that date.
 
-`wxt submit` (the publishing tool that comes with WXT, `publish-browser-extension` 6.1.1 in WXT 0.21) speaks v2 but **still defaults to v1.1**. When publishing is automated, set:
+`wxt submit` (the publishing tool that comes with WXT, `publish-browser-extension` 6.1.1 in WXT 0.21) supports v2 but **still defaults to v1.1**. The release workflow sets `CHROME_API_VERSION=v2`; keep it explicit:
 
 ```sh
 CHROME_API_VERSION=v2
@@ -26,6 +26,8 @@ Setting it up: create a Google Cloud project, turn on the Chrome Web Store API, 
 4. `npm run zip:chrome` for Chrome. `npm run zip` for Firefox, which also makes `anubis-<version>-sources.zip` for AMO's reviewers.
 5. The privacy policy link below has to load: GitHub Pages must be publishing the docs site.
 6. Merge, then push a matching tag (`git tag v<version> && git push origin v<version>`). [`release.yml`](../.github/workflows/release.yml) builds the zips, creates the GitHub Release and, once approved, submits to Chrome, Firefox, and Edge.
+
+The release workflow rejects tags whose commit is not already on `main`, as well as tags that do not match `package.json`. Before the first submission, create the store listings manually, verify their permanent IDs and privacy answers, confirm the docs site is publishing on GitHub Pages, and configure the protected `release` environment with the store credentials. Do not test publishing against production store credentials from a pull request.
 
 ## Chrome Web Store
 
@@ -67,7 +69,7 @@ Setting it up: create a Google Cloud project, turn on the Chrome Web Store API, 
 
 > All JavaScript ships in the package. Subscribed lists are plain-text data (site names and patterns) that Anubis parses; nothing in them is run.
 
-**Data usage:** leave every category unticked. Anubis reads search results and the current tab's address only inside the browser and sends none of it to the developer or anyone else; settings sync through the browser's own account sync, which Anubis doesn't operate. The one exception is optional and chosen by the user: syncing between browsers through a WebDAV server they connect themselves sends their list and settings to that server, and nowhere else. Check at submission whether the store counts that as collection; if so, tick "Web history" for it. If a reviewer disagrees, the cautious fallback is ticking "Web history" and "Website content" with the same explanation, which the certifications below still cover.
+**Data usage (decision required before submission):** Anubis reads search results and the current tab's address only inside the browser and sends none of it to the developer; settings sync through the browser's own account sync, which Anubis doesn't operate. The optional, user-chosen WebDAV sync sends ranked sites, settings, tag choices, and subscriptions to the server the user connects, and nowhere else. Decide against the store's current policy whether that user-directed transfer counts as collection; declare the applicable categories and explain that the user chooses the server if required. Do not submit until this classification is resolved.
 
 **Certifications:** tick all three (no selling or transferring data, no use unrelated to the single purpose, no use for credit decisions).
 
@@ -86,14 +88,15 @@ Public, all regions.
 - **License:** GNU Affero General Public License v3.0 (the project is AGPL-3.0 or later; the lists in `lists/` are CC0).
 - **Homepage and support site:** as for Chrome.
 - **Privacy policy:** `https://bishop-v.github.io/anubis/guide/privacy`. The manifest declares no required data collection (`required: ['none']`), which Firefox shows on the listing and at install, and one optional category, `browsingActivity`, which Settings requests only when the user connects a WebDAV server to sync between browsers (their list is a set of sites). AMO requires the declaration of every add-on from 2026.
-- **Manifest version:** stays on MV2 for Firefox. Mozilla has no plans to drop it, and MV3 in Firefox changes how host permissions are granted for no gain here.
+- **Consent policy check:** the Firefox manifest requires 142.0 or later and declares optional `browsingActivity` for the built-in data-consent flow. Before submission, verify the generated manifest and test Firefox's prompt on WebDAV Connect against [AMO's current consent policy](https://extensionworkshop.com/documentation/publish/add-on-policies/).
+- **Manifest version:** stays on MV2 for Firefox. No MV2 retirement date was found in Mozilla's current documentation; check [`docs/platform-watch.md`](../docs/platform-watch.md) again before each release. MV3 in Firefox changes how host permissions are granted, so migrate only for a concrete Firefox requirement.
 - **Source code:** yes, the build bundles and minifies. Upload `.output/anubis-<version>-sources.zip`.
 
 **Notes to reviewer**
 
 > Built with WXT (Vite and TypeScript). To reproduce the uploaded package:
 >
-> 1. Node.js 22 with npm 10, on Linux or macOS.
+> 1. Node.js 22.12 or newer with npm 10, on Linux or macOS.
 > 2. `npm ci`
 > 3. `npm run build`
 >
@@ -116,7 +119,7 @@ Lists anyone can publish. Subscribe to lists hosted on GitHub, GitLab, Codeberg,
 
 Load more results. Bring the next pages of results onto the first one and rank them together, so a site you pinned on page 3 rises to the top.
 
-Clean up pages. Remove AI answers, video panels, "People also ask", top stories, image rows, and related searches.
+Clean up pages. Remove AI answers, video panels, "People also ask", top stories, image rows, and related searches. Bing's AI answer and video panel aren't recognized yet.
 
 Nothing disappears without a trace. A one-line summary says what Anubis changed, and "Show hidden" brings it back. Keyboard shortcuts turn Anubis on or off (Alt+Shift+O) and show hidden results (Alt+Shift+H).
 

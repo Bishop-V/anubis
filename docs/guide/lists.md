@@ -4,6 +4,8 @@ A list tags, raises, lowers, or hides sites for you. Anyone can publish one: it'
 
 Anubis starts subscribed to four small lists that ship with it: **Official docs**, **Discussions**, **Reference**, and **Paywalls**. They mostly add tags.
 
+<!-- Maintainer: this generated screenshot comes from the mock Settings page. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark image and its description together. -->
+
 ![Settings, Lists](../img/options-lists.png)
 
 ## Subscribe

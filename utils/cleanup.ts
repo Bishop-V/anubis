@@ -7,6 +7,7 @@
 // APIs: the options page and the content script both use it.
 
 import { tJoin, tn, type PluralKey } from './i18n';
+import { ENGINES } from './engines';
 
 export type CleanupKind = 'ai' | 'videos' | 'questions' | 'discussions' | 'news' | 'images' | 'related';
 
@@ -113,19 +114,6 @@ export const CLEANUP: CleanupDef[] = [
     prefixes: ['Searches related to '],
   },
 ];
-
-/**
- * Selectors for blocks a heading can't identify, per engine. The block is the
- * element itself, or the results-column block around it. These come from
- * community filter lists (DuckDuckGo's from EasyList's AI list). Google's
- * `.M8OgIe` and `.YzCcne` were seen on live pages (2026-09-29); the rest haven't
- * been checked.
- */
-export const CLEANUP_SELECTORS: Record<string, Partial<Record<CleanupKind, string>>> = {
-  google: { ai: '[data-attrid="AIOverview"], .M8OgIe, .YzCcne', questions: '.related-question-pair' },
-  duckduckgo: { ai: '[data-testid="duckassist-answer-content"], [data-react-module-id="wikinlp"]' },
-  brave: { ai: '#summarizer' },
-};
 
 /**
  * Tabs, links, and buttons that open an engine's AI chat: Google's AI Mode,

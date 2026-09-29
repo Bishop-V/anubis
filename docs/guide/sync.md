@@ -38,10 +38,12 @@ Other services and your own server work too, if they offer WebDAV over `https://
 
 ### Connect
 
+<!-- Maintainer: this generated screenshot comes from the mock Settings page. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark image and its description together. -->
+
 ![Settings, Sync](../img/options-sync.png)
 
 1. Open **Settings → Sync**, and under **Between browsers** enter the address, your user name, and the password.
-2. Press **Connect**. The browser asks you to let Anubis reach that server; Firefox also asks whether Anubis may send your list there.
+2. Press **Connect**. The browser asks you to let Anubis reach that server. Firefox also asks whether Anubis may send your list there.
 3. Do the same in your other browser.
 
 **Settings → Sync** then shows when Anubis last synced, or what went wrong. **Sync now** syncs straight away.

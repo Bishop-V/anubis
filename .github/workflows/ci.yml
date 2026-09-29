@@ -18,8 +18,8 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0 (Node 24)
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.1 (Node 24)
         with:
           node-version: 22
           cache: npm
@@ -29,5 +29,13 @@ jobs:
       - run: npm run compile
       - run: npm test
       - run: npm run build
+      - name: Check Firefox minimum version
+        run: node -e "if (require('./.output/firefox-mv2/manifest.json').browser_specific_settings.gecko.strict_min_version !== '142.0') process.exit(1)"
       - run: npm run build:chrome
+      - name: Install Chromium for responsive layout checks
+        run: npx playwright-core install --with-deps chromium
+      - name: Check Settings at phone widths
+        run: node e2e/run.mjs responsive
+      - name: Assert core search-page behavior
+        run: node e2e/run.mjs checks
       - run: npx web-ext lint --source-dir .output/firefox-mv2 --warnings-as-errors

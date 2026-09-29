@@ -6,7 +6,7 @@ How Anubis looks and reads on every surface it has: the popup, settings, the wel
 - [`ACCESSIBILITY.md`](ACCESSIBILITY.md) covers the keyboard and screen readers. This guide only repeats what's visual (contrast, sizes, the focus ring).
 - `docs/experiments.md` records why things are the way they are, including what was tried and dropped.
 
-The screenshots below come from the wiki (`docs/img/`, regenerated with `node e2e/run.mjs docs`), so they show the current build.
+The screenshots below come from the wiki (`docs/img/`, regenerated with `node e2e/run.mjs docs`), so they show the current build. When an interface change affects one, regenerate the affected light and dark screenshots and update their nearby descriptions together; don't include unrelated generated files.
 
 ## Principles
 
@@ -99,7 +99,7 @@ One palette, defined twice: `assets/theme.css` for extension pages and `entrypoi
 | Welcome page | The same idea in 1040px: section titles in a 220px column, what to do beside them, lists two across. Below 900px, one column. |
 | Search pages | The summary sits above the results, lined up with them. Tags go under each title. The result menu opens under its ⚖ button, 312px wide. |
 
-Every page works at phone width (390px) without scrolling sideways; the `welcome` and `mobile` e2e parts check this.
+Every page works at phone width (390px) without scrolling sideways. Settings are also checked at 320px and 360px: only the Your sites table may scroll inside its own wrapper below 390px. `node e2e/run.mjs responsive` checks all settings sections at 320px, 360px, and 390px; the `welcome` and `mobile` e2e parts cover their respective pages.
 
 <img src="docs/img/popup.png" alt="The popup on wikipedia.org: the site in the cartouche over the balance, the five rankings, tags, and your sites" width="340">
 
@@ -224,4 +224,5 @@ The one place with character. In order:
 - Looks right in light and dark, at phone width, and (for search pages) on a light and a dark engine page: `npm run e2e` saves screenshots of each to `e2e/shots/`.
 - Works from the keyboard and makes sense to a screen reader (`ACCESSIBILITY.md`).
 - Wording follows the list above, and the text is in `messages.json`.
-- The wiki's screenshots are regenerated (`node e2e/run.mjs docs`) if they show what changed.
+- The relevant user and developer documentation describes the changed behaviour; update privacy, store, or platform references too when their claims are affected.
+- The wiki's generated screenshots are refreshed with `node e2e/run.mjs docs` when they show what changed, and the affected light/dark images and page captions are committed together.

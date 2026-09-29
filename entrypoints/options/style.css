@@ -585,3 +585,28 @@ textarea.code {
     grid-column: 2 / -1;
   }
 }
+
+@media (max-width: 360px) {
+  main {
+    min-width: 0;
+  }
+  .page-title {
+    flex-wrap: wrap;
+  }
+  .toolbar {
+    min-width: 0;
+  }
+  .inline-form .levels.labelled {
+    display: grid;
+    grid-template-columns: repeat(3, max-content);
+    gap: 2px 10px;
+    flex-basis: 100%;
+  }
+  .sites-scroll {
+    overflow-x: auto;
+  }
+  table.sites {
+    width: 100%;
+    min-width: 390px;
+  }
+}

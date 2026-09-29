@@ -10,6 +10,16 @@ import { useEnglish } from './english';
 const engine = (id: string) => ENGINES.find((e) => e.id === id)!;
 
 describe('clean-up headings', () => {
+  it('keeps engine-specific cleanup selectors with their engine definitions', () => {
+    expect(engine('google').cleanupSelectors).toEqual({
+      ai: '[data-attrid="AIOverview"], .M8OgIe, .YzCcne',
+      questions: '.related-question-pair',
+    });
+    expect(engine('duckduckgo').cleanupSelectors?.ai).toBe('[data-testid="duckassist-answer-content"], [data-react-module-id="wikinlp"]');
+    expect(engine('brave').cleanupSelectors?.ai).toBe('#summarizer');
+    expect(engine('bing').cleanupSelectors).toBeUndefined();
+  });
+
   it('recognises whole headings, ignoring case and spacing', () => {
     expect(cleanupKindFor('AI Overview')).toBe('ai');
     expect(cleanupKindFor('  ai   overview ')).toBe('ai');

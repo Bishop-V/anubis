@@ -41,15 +41,11 @@ import {
   type SummaryPlace,
 } from './ui';
 
-// Runs on search result pages. Each pass: find the results, weigh each one against
-// the personal list and subscriptions, then tag, hide, highlight, and rerank them.
 export default defineContentScript({
   matches: ENGINE_MATCHES,
-  // Start early so results are weighed as they stream in, before they paint.
   runAt: 'document_start',
 
   async main() {
-    // Phones get a different layout from some engines (Firefox for Android).
     const engine = engineFor(location.hostname, isMobileAgent(navigator.userAgent));
     if (!engine) return;
 
@@ -74,7 +70,7 @@ export default defineContentScript({
     if (redirected()) return;
     if (engine.id === 'google') watchAllTab();
 
-    // Light or dark as the popup sees it, for the result menu on "auto".
+    // Match the result menu's auto theme to the popup.
     let scheme = await colorSchemeItem.getValue().catch(() => null);
     const menuTheme = (setting: Theme): PageTheme =>
       setting !== 'auto' ? setting : (scheme ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
@@ -419,9 +415,9 @@ export default defineContentScript({
     // Re-run when the page adds results (infinite scroll, "More results", SPA
     // navigation). Batched to one pass per frame, and the observer is detached
     // while we write so our own elements don't trigger another pass.
-    let queued = false;
+    let queuedFrame: number | undefined;
     const observer = new MutationObserver((mutations) => {
-      if (queued) return;
+      if (queuedFrame !== undefined) return;
       const relevant = mutations.some((m) =>
         [...m.addedNodes, ...m.removedNodes].some((n) => !(n instanceof HTMLElement && OWN_TAGS.has(n.tagName))),
       );
@@ -430,10 +426,9 @@ export default defineContentScript({
     });
     const observe = () => observer.observe(document.documentElement, { childList: true, subtree: true });
     function schedule() {
-      if (queued) return;
-      queued = true;
-      requestAnimationFrame(() => {
-        queued = false;
+      if (queuedFrame !== undefined) return;
+      queuedFrame = requestAnimationFrame(() => {
+        queuedFrame = undefined;
         observer.disconnect();
         try {
           pass();
@@ -442,6 +437,19 @@ export default defineContentScript({
         }
       });
     }
+
+    window.addEventListener('pagehide', () => {
+      observer.disconnect();
+      if (queuedFrame !== undefined) {
+        cancelAnimationFrame(queuedFrame);
+        queuedFrame = undefined;
+      }
+    });
+    window.addEventListener('pageshow', (event) => {
+      if (!event.persisted) return;
+      observe();
+      schedule();
+    });
 
     pass();
     // One early pass may run before the results exist; the observer catches the rest.
@@ -452,14 +460,18 @@ export default defineContentScript({
       refreshOpenPopover();
     });
 
-    watchRuleSet(async () => {
-      rules = await loadRuleSet();
-      verdicts = new Map();
-      // Changed elsewhere since (settings, another tab): there's nothing to undo here.
-      if (change && !changeHolds(change, rules.personalText)) change = undefined;
-      schedule();
-      // After the pass, so the menu sees fresh verdicts.
-      requestAnimationFrame(refreshOpenPopover);
+    watchRuleSet(() => {
+      void loadRuleSet()
+        .then((nextRules) => {
+          rules = nextRules;
+          verdicts = new Map();
+          // Changed elsewhere since (settings, another tab): there's nothing to undo here.
+          if (change && !changeHolds(change, rules.personalText)) change = undefined;
+          schedule();
+          // After the pass, so the menu sees fresh verdicts.
+          requestAnimationFrame(refreshOpenPopover);
+        })
+        .catch((error: unknown) => console.warn('[anubis] could not reload lists', error));
     });
 
     // Keep lists fresh; the background decides whether anything is due.

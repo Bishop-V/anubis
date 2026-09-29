@@ -2,7 +2,7 @@
 
 ## Install
 
-Anubis isn't in the Firefox or Chrome stores yet. To try it, build it from the source code. You need [Node.js](https://nodejs.org) 20 or newer.
+Anubis isn't in the Firefox or Chrome stores yet. To try it, build it from the source code. You need [Node.js](https://nodejs.org) 22.12 or newer.
 
 ```sh
 git clone https://github.com/Bishop-V/anubis.git
@@ -30,6 +30,8 @@ Browsers put new extensions behind the Extensions button (a puzzle piece) next t
 Search on any [supported engine](./search-engines.md). Anubis starts with a few lists that tag official documentation, discussions, reference sites, and paywalls, so you'll see tags under some results straight away.
 
 A one-line summary above the results says what Anubis did: which results it raised, lowered, or hid, and which tags are on the page.
+
+<!-- Maintainer: the generated screenshots on this page come from mock pages. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark images and their descriptions together. -->
 
 ![The summary line above the results](../img/summary.png)
 

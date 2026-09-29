@@ -206,10 +206,14 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
             null,
             h('div', { class: 'inline-form', style: 'margin-bottom:12px' }, search),
             h(
-              'table',
-              { class: 'sites' },
-              h('thead', null, h('tr', null, h('th', null, 'Site'), h('th', null, 'Ranking'), h('th', null, 'Tags'), h('th'))),
-              body,
+              'div',
+              { class: 'sites-scroll' },
+              h(
+                'table',
+                { class: 'sites' },
+                h('thead', null, h('tr', null, h('th', null, 'Site'), h('th', null, 'Ranking'), h('th', null, 'Tags'), h('th'))),
+                body,
+              ),
             ),
             entries.length > 500 ? h('p', { class: 'muted' }, 'Showing the first 500. Filter to find the rest.') : null,
           )
