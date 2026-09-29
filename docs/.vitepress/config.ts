@@ -1,4 +1,6 @@
-import { defineConfig } from 'vitepress';
+import { existsSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { defineConfig, type MarkdownEnv } from 'vitepress';
 
 // The documentation site, built from the Markdown in docs/ with VitePress and
 // published to GitHub Pages by .github/workflows/docs.yml. The pages read fine on
@@ -8,6 +10,17 @@ const repo = 'https://github.com/Bishop-V/anubis';
 // GitHub Pages serves a project site under /<repo>/. DOCS_BASE overrides it, for a
 // custom domain ("/") or a fork.
 const base = process.env.DOCS_BASE ?? '/anubis/';
+
+// Screenshots come in light and dark: result.png and result-dark.png, made by
+// `node e2e/run.mjs docs`. Pages link to the light one, which is what GitHub shows;
+// here every image with a dark twin next to it gets both, and brand.css shows the
+// one that matches the site's mode.
+const withDark = (html: string, env: MarkdownEnv) =>
+  html.replace(/<img\b([^>]*?)\bsrc="([^":]+)\.png"([^>]*)>/g, (img, before: string, src: string, after: string) =>
+    existsSync(resolve(dirname(env.realPath ?? env.path), `${src}-dark.png`))
+      ? `<img class="light-only"${before}src="${src}.png"${after}><img class="dark-only"${before}src="${src}-dark.png"${after}>`
+      : img,
+  );
 
 export default defineConfig({
   title: 'Anubis',
@@ -67,6 +80,14 @@ export default defineConfig({
     search: { provider: 'local' },
     outline: { level: [2, 3], label: 'On this page' },
     footer: { message: 'Released under the GNU AGPL v3.' },
+  },
+  markdown: {
+    config(md) {
+      for (const rule of ['image', 'html_block', 'html_inline'] as const) {
+        const render = md.renderer.rules[rule]!;
+        md.renderer.rules[rule] = (tokens, idx, options, env, self) => withDark(render(tokens, idx, options, env, self), env);
+      }
+    },
   },
   vite: {
     // The lists page reads lists/directory.json from outside docs/.

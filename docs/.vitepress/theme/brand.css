@@ -33,10 +33,16 @@
   --vp-home-hero-name-color: #d4a637;
 }
 
-/* Screenshots: a hairline, so light images don't melt into the page. */
+/* Screenshots: a hairline, so they don't melt into the page. */
 .vp-doc img {
   border: 1px solid var(--vp-c-divider);
   border-radius: 8px;
+}
+/* Each screenshot comes in light and dark (config.ts pairs them); show the one
+   that matches the site's mode. */
+html:not(.dark) .dark-only,
+.dark .light-only {
+  display: none;
 }
 .vp-doc .caption {
   margin-top: -8px;
@@ -73,14 +79,6 @@
 }
 .before-after .after img {
   border-color: var(--vp-c-brand-3);
-}
-/* Each picture comes in light and dark, following the site's mode. */
-.before-after .dark-only,
-.dark .before-after .light-only {
-  display: none;
-}
-.dark .before-after .dark-only {
-  display: block;
 }
 .before-after figcaption {
   max-width: 40rem;
