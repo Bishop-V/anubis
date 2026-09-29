@@ -33,7 +33,7 @@ Anubis runs on no other sites.
 
 Anubis may also ask, at the moment you subscribe, to **read from one website** that hosts a list. That's needed for lists hosted anywhere other than GitHub or a gist. It asks the same for a sync server, at the moment you connect one. You can take either back in your browser's extension settings.
 
-In Firefox, Anubis declares that it collects no data. If you connect a sync server, Firefox also asks whether Anubis may send your list to it: Firefox counts the sites in it as browsing activity. **Disconnect** takes that back.
+In Firefox, Anubis declares that it collects no data. If you connect a sync server on Firefox 140 or later, Firefox asks whether Anubis may send your list to it: Firefox counts the sites in it as browsing activity. **Disconnect** takes that consent back. Older Firefox versions have no built-in data-consent prompt; the Sync settings explain what is sent before you connect.
 
 ## Questions
 
