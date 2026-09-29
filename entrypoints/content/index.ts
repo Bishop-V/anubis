@@ -190,6 +190,8 @@ export default defineContentScript({
       }
 
       rerank(results, scores, rules.settings.rerank && !engine.table);
+      const pinned = results.filter((r) => verdictFor(r).level === 'pin' && !verdictFor(r).hidden).map((r) => r.container);
+      makeRoomForPins(new Set(engine.table ? [] : pinned));
 
       if (rules.settings.showSummary && !engine.table) {
         const changed = change && changeSentence(change, (id) => rules.tags.get(id)?.label ?? id);
@@ -398,6 +400,7 @@ export default defineContentScript({
       removed = new Set();
       document.querySelectorAll<HTMLElement>('[data-anubis-result], [data-anubis-row]').forEach(forget);
       rerank([], new Map(), false);
+      makeRoomForPins(new Set());
       lastResults = [];
       if (lastStats) void send({ type: 'stats', stats: { ...lastStats, total: 0, hidden: 0 } });
       lastStats = undefined;
@@ -508,6 +511,52 @@ function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enable
     ranked.forEach(({ child }, order) => {
       if (child.style.order !== String(order)) child.style.setProperty('order', String(order));
     });
+  }
+}
+
+// A pinned result's frame is an outline 8px outside it (page.css), which moves
+// nothing. Where results sit closer than that, frames cross each other or the next
+// result's text: on Google the space between results is a margin inside each one,
+// which stays inside once reranking makes the list a flex column, so results touch.
+// Push whatever follows a pinned result down until there's room.
+const FRAME = 8;
+const ROOM = 8;
+const ownMarginTop = new WeakMap<HTMLElement, number>();
+
+function makeRoomForPins(pinned: Set<HTMLElement>) {
+  const push = new Map<HTMLElement, number>();
+  for (const parent of new Set([...pinned].map((el) => el.parentElement))) {
+    if (!parent) continue;
+    // In the order they're drawn: CSS `order` when reranked, then the page's.
+    const shown = [...parent.children]
+      .filter((el): el is HTMLElement => el instanceof HTMLElement && el.getClientRects().length > 0)
+      .map((el, index) => ({ el, index, order: Number(el.style.order) || 0 }))
+      .sort((a, b) => a.order - b.order || a.index - b.index)
+      .map(({ el }) => el);
+    const adds = /flex|grid/.test(getComputedStyle(parent).display);
+    for (let i = 1; i < shown.length; i++) {
+      const [above, below] = [shown[i - 1]!, shown[i]!];
+      const frames = Number(pinned.has(above)) + Number(pinned.has(below));
+      if (!frames || OWN_TAGS.has(below.tagName)) continue;
+      const need = frames * FRAME + ROOM;
+      const pushed = below.hasAttribute('data-anubis-pin-room');
+      const margin = parseFloat(getComputedStyle(below).marginTop) || 0;
+      if (!pushed) ownMarginTop.set(below, margin);
+      const own = ownMarginTop.get(below) ?? margin;
+      const gap = below.getBoundingClientRect().top - above.getBoundingClientRect().bottom;
+      // In a flex column the margins add up; in a block they collapse, so the larger counts.
+      const want = adds ? Math.round(margin + need - gap) : pushed || gap < need ? need : own;
+      if (want > own) push.set(below, want);
+    }
+  }
+  for (const el of document.querySelectorAll<HTMLElement>('[data-anubis-pin-room]')) {
+    if (push.has(el)) continue;
+    el.removeAttribute('data-anubis-pin-room');
+    el.style.removeProperty('--anubis-pin-room');
+  }
+  for (const [el, px] of push) {
+    if (el.style.getPropertyValue('--anubis-pin-room') !== `${px}px`) el.style.setProperty('--anubis-pin-room', `${px}px`);
+    if (!el.hasAttribute('data-anubis-pin-room')) el.setAttribute('data-anubis-pin-room', '');
   }
 }
 

@@ -207,7 +207,7 @@ Not everything is converted yet: `ROADMAP.md` lists what's left. Wording follows
 | `engines.test.ts` | Picking an engine's phone layout |
 | `i18n.test.ts` | Message keys, plural forms and placeholders, the undo line's wording |
 
-**End-to-end checks** (`npm run e2e`, or `node e2e/run.mjs <part>` after `npm run build:chrome`) load the Chrome build into Chromium. `CHROMIUM_PATH` has to point at a Chromium binary: branded Chrome no longer loads unpacked extensions from the command line. The harness answers the real engines' addresses with the mock pages in `e2e/fixtures.mjs` (Google, DuckDuckGo, Bing, Brave, and Google's phone layout), seeds storage with a test personal list and settings, prints what Anubis decided and saves screenshots to `e2e/shots/`. Each part is a block in `e2e/run.mjs`: `pages`, `hostile`, `grouped`, `reveal`, `runs`, `shortcuts`, `mobile`, `off`, `cleanup`, `popover`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `subscribe-link`, `options` and `welcome`.
+**End-to-end checks** (`npm run e2e`, or `node e2e/run.mjs <part>` after `npm run build:chrome`) load the Chrome build into Chromium. `CHROMIUM_PATH` has to point at a Chromium binary: branded Chrome no longer loads unpacked extensions from the command line. The harness answers the real engines' addresses with the mock pages in `e2e/fixtures.mjs` (Google, DuckDuckGo, Bing, Brave, and Google's phone layout), seeds storage with a test personal list and settings, prints what Anubis decided and saves screenshots to `e2e/shots/`. Each part is a block in `e2e/run.mjs`: `pages`, `hostile`, `grouped`, `reveal`, `runs`, `shortcuts`, `mobile`, `off`, `cleanup`, `pins`, `popover`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `subscribe-link`, `options` and `welcome`.
 
 Parts print their findings rather than failing on them (turning them into assertions is on the roadmap), so read the output: a check that should say `false` and says `true` is a failure. Mock pages are models of the engines' markup, not copies of it; when an engine breaks, model the markup that broke as a variant of its mock (Google's `hostile` and `grouped` are examples) and never commit a page saved from a live search.
 
@@ -231,6 +231,7 @@ The steps are in the README ([Building the store release](README.md#building-the
 Mistakes that have been made once already. `docs/experiments.md` has the details of each.
 
 - **Never move the engine's result nodes.** Its scripts own them. Reranking uses CSS `order`.
+- **Reranked results can touch.** In the flex column, margins inside a result stop collapsing through it, so the space between results moves inside them (on Google). Anything drawn outside a result, like the pinned frame, needs room made for it: `makeRoomForPins` in `index.ts`.
 - **Page CSS can reach a shadow host** and hide, fade or flip it. `makeHost` pins the host's styles with `!important`.
 - **`:scope` matches nothing inside a shadow root.** Keep references to what you rendered.
 - **Add every new custom element to `OWN_TAGS`**, or the mutation observer and result finder treat it as the page's content.

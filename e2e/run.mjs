@@ -4,7 +4,7 @@
 //
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
-//                               popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options, welcome
+//                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options, welcome
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slides
 //                               in docs/public/
 //
@@ -119,6 +119,16 @@ async function launch(settings = {}) {
       ['https://roblox.fandom.com/', 'Roblox Wiki', 'The Roblox wiki.'],
     ]),
     'https://www.google.com/search?q=anubis&udm=14': google('anubis', ANUBIS_RESULTS),
+    // Several results from a pinned site, which reranking brings together at the top.
+    'https://www.google.com/search?q=promise+mdn&inner=1': google('promise mdn', [
+      JS_RESULTS[0],
+      JS_RESULTS[1],
+      ['https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Promises', 'How to use promises - MDN', 'Promises are the foundation of asynchronous programming in modern JavaScript.'],
+      JS_RESULTS[4],
+      ['https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises', 'Using promises - JavaScript | MDN', 'A Promise is an object representing the eventual completion or failure of an asynchronous operation.'],
+      ['https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then', 'Promise.prototype.then() - MDN', 'The then() method of Promise instances takes up to two arguments.'],
+    ], { inner: true }),
+    'https://www.google.com/search?q=anubis&mobile=1': googleMobile('anubis', ANUBIS_RESULTS),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
   };
@@ -486,6 +496,32 @@ if (!only || only === 'runs') {
   await page.waitForTimeout(300);
   console.log('\n== hidden runs:', JSON.stringify({ before, afterShow: await count() }));
   await page.screenshot({ path: `${SHOTS}google-runs.png`, fullPage: true });
+}
+
+if (!only || only === 'pins') {
+  // Each pinned result has a frame drawn 8px outside it, so two pinned results in a
+  // row need 16px between them, or their frames cross.
+  const measure = () =>
+    page.evaluate(() => {
+      const pinned = [...document.querySelectorAll('[data-anubis-state~="pin"]')].map((el) => el.getBoundingClientRect()).sort((a, b) => a.top - b.top);
+      const gaps = pinned.slice(1).map((r, i) => Math.round(r.top - pinned[i].bottom));
+      return { pinned: pinned.length, gaps, framesApart: gaps.every((g) => g >= 16), pushed: document.querySelectorAll('[data-anubis-pin-room]').length };
+    });
+  await page.goto('https://www.google.com/search?q=promise+mdn&inner=1');
+  await page.waitForTimeout(700);
+  console.log('\n== pinned results in a row:', JSON.stringify(await measure()));
+  await page.screenshot({ path: `${SHOTS}google-pins.png`, fullPage: true });
+  // The same after passes that change which results are shown: no creeping or leftovers.
+  await clickShadowButton('anubis-summary', 'Official docs4');
+  await page.waitForTimeout(300);
+  console.log('   only Official docs:', JSON.stringify(await measure()));
+  await clickShadowButton('anubis-summary', 'Show all');
+  await page.waitForTimeout(300);
+  console.log('   all again:', JSON.stringify(await measure()));
+  // Where results already have room (the usual mock, spaced by margins outside them), nothing moves.
+  await page.goto('https://duckduckgo.com/?q=javascript+promises');
+  await page.waitForTimeout(700);
+  console.log('   DuckDuckGo:', JSON.stringify(await measure()));
 }
 
 if (!only || only === 'popover') {
