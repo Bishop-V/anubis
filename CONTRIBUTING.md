@@ -14,10 +14,11 @@ Thanks for helping. Everything happens on GitHub: issues for reports and ideas, 
 
 ## Getting set up
 
-You need Node.js 20 or newer, or run `nix develop` for the pinned toolchain. Then:
+On Linux, run `nix develop` for the pinned toolchain. It installs the project dependencies the first time you enter the shell.
+
+If you aren't using Nix, install Node.js 20 or newer and run `npm install` in the repository. Then run these commands inside the Nix shell or with your Node installation:
 
 ```sh
-npm install
 npm run dev          # opens Firefox with the extension loaded, reloading on save
 npm run dev:chrome   # the same in Chrome
 ```

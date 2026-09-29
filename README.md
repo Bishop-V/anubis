@@ -25,12 +25,19 @@ It asks for the `storage` and `activeTab` permissions (the second lets the toolb
 
 ## Setup
 
-You need **Node.js 20 or newer** — install the LTS from [nodejs.org](https://nodejs.org) if you don't have it.
+On Linux, use the pinned toolchain from the Nix flake:
 
 ```sh
-npm install          # installs WXT and sets up TypeScript types
+nix develop
+```
+
+The first time you enter the shell, it installs the project dependencies.
+
+If you aren't using Nix, install **Node.js 20 or newer** from [nodejs.org](https://nodejs.org), then run `npm install` in the repository. Run the commands below inside the Nix shell or with your Node installation:
+
+```sh
 npm run dev          # opens Firefox with the extension loaded, reloading on save
-npm run dev:chrome   # same, in Chrome
+npm run dev:chrome   # the same in Chrome
 ```
 
 Firefox is the default target; every `:chrome` variant overrides it.
@@ -53,13 +60,9 @@ If the dev browser doesn't open on its own, build and load the extension yoursel
 - **Firefox:** `about:debugging` → This Firefox → Load Temporary Add-on → pick `.output/firefox-mv2/manifest.json`. Temporary add-ons are removed when Firefox closes.
 - **Chrome:** `chrome://extensions` with Developer mode on → Load unpacked → pick `.output/chrome-mv3`.
 
-### With Nix
-
-`flake.nix` pins the whole toolchain. `nix develop` in this folder gives you Node and runs `npm install` on first entry; run the commands above inside that shell rather than installing anything globally. For one-offs, `nix develop -c npm test`.
-
 ### Building the store release
 
-These are the steps the release uses, and the ones for rebuilding the Firefox add-on from its source zip. Use **Node.js 22** and npm on Linux or macOS:
+These are the steps the release uses, and the ones for rebuilding the Firefox add-on from its source zip. Use the Nix shell on Linux, or **Node.js 22** on other platforms:
 
 ```sh
 npm ci               # installs the exact versions in package-lock.json
