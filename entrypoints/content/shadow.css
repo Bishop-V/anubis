@@ -274,6 +274,24 @@ button {
   flex: 1;
   min-width: 12em;
 }
+/* On phones the summary says it in a few words (.short), and Details shows the rest:
+   the full sentence, Load more results, settings, and the tags. Wider, there's room
+   for all of it, so the short form and Details aren't shown. */
+@media (min-width: 601px) {
+  .summary .short,
+  .summary .details {
+    display: none;
+  }
+}
+@media (max-width: 600px) {
+  .summary.compact:not(.open) .long,
+  .summary.compact:not(.open) .deeper,
+  .summary.compact:not(.open) > .icon-btn,
+  .summary.compact:not(.open) .filters,
+  .summary.open .short {
+    display: none;
+  }
+}
 /* What the last change from the result menu did, and Undo. */
 .change {
   flex-basis: 100%;

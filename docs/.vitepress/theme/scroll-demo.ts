@@ -54,6 +54,17 @@ const SUMMARY = [
 ];
 
 // The steps after the heading; the heading is step 1, the page before Anubis.
+// The same in a few words, as the extension says it on phones (shortSummary), with
+// Details for the rest.
+const SHORT = [
+  '',
+  '',
+  'Anubis cleaned up the page.',
+  'Anubis changed 1 of 5 results and cleaned up the page.',
+  'Anubis changed 4 of 5 results and cleaned up the page.',
+  'Anubis changed 4 of 5 results and cleaned up the page.',
+];
+
 const STEPS: { title: string; text: string }[] = [
   { title: 'Clutter out', text: 'Anubis strips AI answers, video panels, and question lists. You pick which.' },
   { title: 'Done with a site?', text: 'Hide it from the scales beside any result. It stays hidden on every search, folded to one line in case you want it back.' },
@@ -68,7 +79,8 @@ const STEPS: { title: string; text: string }[] = [
 //   module needs the extension's APIs;
 // - the summary's wording: utils/summary.ts and the summary… messages in
 //   public/_locales/en/messages.json; its mark and layout: .summary in
-//   entrypoints/content/shadow.css;
+//   entrypoints/content/shadow.css. On phones (600px or less) it's the short form
+//   (shortSummary) with Show hidden and Details, and the tags wait behind Details;
 // - the labels under a title: .chips and .verdict in shadow.css (Pinned and Raised in
 //   gold, Pinned bold, Lowered muted, each with its icon);
 // - the hidden line: renderHiddenBar in entrypoints/content/ui.ts and .gone in
@@ -164,7 +176,17 @@ function renderPage(step: number): VNode {
   return h('div', { class: 'demo-page', 'aria-hidden': 'true' }, [
     h('div', { class: 'searchbar' }, [h('span', 'anubis'), h('span', { class: 'lens' })]),
     fold(step >= 2, 'demo-summary', [
-      h('p', [h('span', { class: 'mark', innerHTML: MARK }), h('span', [SUMMARY[step], ' ', h('span', { class: 'demo-link' }, 'Show hidden')])]),
+      h('p', [
+        h('span', { class: 'mark', innerHTML: MARK }),
+        h('span', { class: 'long' }, [SUMMARY[step], ' ', h('span', { class: 'demo-link' }, 'Show hidden')]),
+        h('span', { class: 'short' }, [
+          SHORT[step],
+          ' ',
+          h('span', { class: 'demo-link' }, 'Show hidden'),
+          ' ',
+          h('span', { class: 'demo-link' }, 'Details'),
+        ]),
+      ]),
       fold(step >= 5, 'summary-tags', [tag(REFERENCE, 3), tag(PAYWALL, 1)]),
     ]),
     h(

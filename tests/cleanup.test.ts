@@ -4,7 +4,7 @@ import { AI_ENTRY_POINTS, cleanupKindFor, cleanupMarkerFor, describeRemoved, NO_
 import { ENGINES } from '@/utils/engines';
 import type { PageStats } from '@/utils/messages';
 import { getSettings, settingsItem } from '@/utils/storage';
-import { summarySentence } from '@/utils/summary';
+import { shortSummary, summarySentence } from '@/utils/summary';
 import { useEnglish } from './english';
 
 const engine = (id: string) => ENGINES.find((e) => e.id === id)!;
@@ -82,6 +82,16 @@ describe('summary with clean-up', () => {
     expect(summarySentence(stats({ total: 20, pages: 2 }))).toBe('Anubis left all 20 results from 2 pages as they were.');
     expect(summarySentence(stats({ total: 20, pages: 2, pinned: 1, raised: 2, hidden: 3 }))).toBe('Anubis pinned 1, raised 2, and hid 3 of 20 results from 2 pages.');
     expect(summarySentence(stats({ total: 1, lowered: 1 }))).toBe('Anubis lowered 1 of 1 result.');
+  });
+
+  it('says it in a few words for phones', () => {
+    expect(shortSummary(stats({ pinned: 1, raised: 1, lowered: 1, hidden: 1 }))).toBe('Anubis changed 4 of 9 results.');
+    expect(shortSummary(stats({ hidden: 2, removed: { ai: 1, videos: 1 } }))).toBe('Anubis changed 2 of 9 results and cleaned up the page.');
+    expect(shortSummary(stats({ removed: { questions: 1 } }))).toBe('Anubis cleaned up the page.');
+    expect(shortSummary(stats({ total: 20, pages: 2, raised: 1 }))).toBe('Anubis changed 1 of 20 results from 2 pages.');
+    // Short already: the full sentence stands.
+    expect(shortSummary(stats({}))).toBeUndefined();
+    expect(shortSummary(stats({ hidden: 1, filter: 'ref', tags: [{ id: 'ref', label: 'Reference', color: '#2b9aa0', count: 2 }] }))).toBeUndefined();
   });
 
   it('says which tag it shows', () => {

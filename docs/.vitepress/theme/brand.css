@@ -324,6 +324,20 @@ body .VPContent .VPHome {
   padding-bottom: 6px;
   color: var(--vp-c-text-2);
 }
+/* On phones the summary is one short line with Details, as the extension's is at
+   600px or less; the full sentence and the tags wait behind Details. */
+.demo-summary .short {
+  display: none;
+}
+@media (max-width: 600px) {
+  .demo-summary .short {
+    display: inline;
+  }
+  .demo-summary .long,
+  .demo-summary .summary-tags {
+    display: none;
+  }
+}
 /* The Anubis head in gold, as the extension's summary starts. */
 .demo-summary .mark {
   display: flex;

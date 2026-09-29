@@ -9,7 +9,7 @@ import { t, tList, tn } from '@/utils/i18n';
 import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, PERSONAL_NAME, type PersonalLevel } from '@/utils/personal';
 import type { Palette } from '@/utils/storage';
-import { summarySentence } from '@/utils/summary';
+import { shortSummary, summarySentence } from '@/utils/summary';
 import { OWN_TAGS, type FoundResult } from './results';
 import shadowCss from './shadow.css?inline';
 
@@ -610,6 +610,8 @@ let summaryTitles: HTMLElement[] = [];
 const misplaced = new WeakSet<HTMLElement>();
 const misplacedInside = new WeakSet<HTMLElement>();
 let realignOnResize = false;
+/** Details is open in the summary on phones. Kept here, so the next pass keeps it open. */
+let summaryDetails = false;
 
 /**
  * Where the summary goes: just before `before`. When that's outside the results
@@ -666,12 +668,19 @@ export function renderSummary(
   keepUpright(summaryHost);
   summaryHost.dataset.theme = theme;
 
-  render(summaryHost, JSON.stringify([stats, change]), () =>
+  // On phones the full sentence runs to several lines, so the summary says it in a
+  // few words and keeps the rest (the sentence, Load more results, settings, and the
+  // tags) behind Details. shadow.css shows the short form only on narrow screens.
+  const short = shortSummary(stats);
+  const compact = !!short || stats.tags.length > 0 || stats.canGoDeeper || stats.loading;
+  const host = summaryHost;
+  const build = () =>
     h(
       'div',
-      { class: 'summary' },
+      { class: `summary${compact ? ' compact' : ''}${summaryDetails ? ' open' : ''}` },
       h('span', { class: 'mark' }, icon(ICON_ANUBIS)),
-      h('span', { class: 'sentence' }, summarySentence(stats)),
+      short ? h('span', { class: 'sentence short' }, short) : null,
+      h('span', { class: short ? 'sentence long' : 'sentence' }, summarySentence(stats)),
       stats.filter
         ? h('button', { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'show-all' }, on: { click: () => actions.filter(undefined) } }, t('summaryShowAll'))
         : null,
@@ -686,7 +695,7 @@ export function renderSummary(
         ? h(
             'button',
             {
-              class: 'text-btn',
+              class: 'text-btn deeper',
               type: 'button',
               disabled: stats.loading,
               title: t('loadMoreTitle'),
@@ -697,6 +706,23 @@ export function renderSummary(
           )
         : null,
       settingsButton(actions.settings, 'settings'),
+      compact
+        ? h(
+            'button',
+            {
+              class: 'text-btn details',
+              type: 'button',
+              attrs: { 'aria-expanded': String(summaryDetails), 'data-focus-key': 'details' },
+              on: {
+                click: () => {
+                  summaryDetails = !summaryDetails;
+                  render(host, JSON.stringify([stats, change, summaryDetails]), build);
+                },
+              },
+            },
+            summaryDetails ? t('summaryFewerDetails') : t('summaryDetails'),
+          )
+        : null,
       change
         ? h(
             'div',
@@ -727,8 +753,8 @@ export function renderSummary(
             ),
           )
         : null,
-    ),
-  );
+    );
+  render(summaryHost, JSON.stringify([stats, change, summaryDetails]), build);
 
   announce(summaryHost, change ?? '');
 

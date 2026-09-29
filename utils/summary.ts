@@ -29,6 +29,22 @@ export function summarySentence(stats: PageStats): string {
 }
 
 /**
+ * The summary in a few words, for phones, where the full sentence runs to several
+ * lines: "Anubis changed 4 of 9 results and cleaned up the page." Details shows the
+ * full sentence. Undefined when the full sentence is short already (only one tag's
+ * results shown, or nothing changed).
+ */
+export function shortSummary(stats: PageStats): string | undefined {
+  if (stats.filter) return undefined;
+  const { total, pages } = stats;
+  const changed = stats.pinned + stats.raised + stats.lowered + stats.hidden;
+  const removed = !!describeRemoved(stats.removed ?? {});
+  if (!changed) return removed ? t('summaryShortRemoved') : undefined;
+  const of = pages > 1 ? tn('summaryResultsPages', total, pages) : tn('summaryResults', total);
+  return t(removed ? 'summaryShortActedRemoved' : 'summaryShortActed', changed, of);
+}
+
+/**
  * What a change from the result menu did, for the summary's undo line: "Hid
  * fandom.com.", "Tagged fandom.com “AI slop”." `label` names a tag by its id.
  */

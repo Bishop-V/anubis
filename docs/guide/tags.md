@@ -58,7 +58,7 @@ A ranking you gave a site yourself beats any tag. If you raised a site, a tag se
 
 ## Show only one tag
 
-The summary above the results lists the tags on the page and how many results have each. Press one to show only those results; press **Show all** to go back.
+The summary above the results lists the tags on the page and how many results have each. Press one to show only those results; press **Show all** to go back. On a phone, press **Details** in the summary to see them.
 
 ## Shared tags
 

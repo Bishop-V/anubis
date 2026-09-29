@@ -489,6 +489,54 @@ if (!only || only === 'mobile' || checks) {
   await report(phone, 'google-mobile');
   console.log('\n== google mobile:', JSON.stringify(check));
   await phone.screenshot({ path: `${SHOTS}google-mobile.png`, fullPage: true });
+
+  // On a phone the summary says it in a few words, and Details shows the rest: the
+  // full sentence and the tags. Which parts show is read from the closed shadow root
+  // through the DevTools protocol: a part that isn't shown has no box.
+  const summaryLook = async () => {
+    const cdp = await ctx.newCDPSession(phone);
+    const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+    const all = (node) => [node, ...[...(node.children ?? []), ...(node.shadowRoots ?? [])].flatMap(all)];
+    const host = all(root).find((n) => n.localName === 'anubis-summary');
+    const nodes = host ? all(host) : [];
+    const classes = (n) => {
+      const attrs = n.attributes ?? [];
+      const i = attrs.indexOf('class');
+      return i >= 0 && i % 2 === 0 ? attrs[i + 1].split(' ') : [];
+    };
+    const textOf = (n) => (n.nodeType === 3 ? n.nodeValue : (n.children ?? []).map(textOf).join(''));
+    const box = async (n) => {
+      try {
+        const { model } = await cdp.send('DOM.getBoxModel', { nodeId: n.nodeId });
+        return model.content;
+      } catch {
+        return undefined;
+      }
+    };
+    const look = {};
+    for (const part of ['short', 'long', 'details', 'filters']) {
+      const n = nodes.find((node) => classes(node).includes(part));
+      look[part] = n ? !!(await box(n)) : null;
+      if (part === 'details' && n) {
+        look.detailsText = textOf(n).trim();
+        const content = await box(n);
+        look.detailsAt = content && [(content[0] + content[4]) / 2, (content[1] + content[5]) / 2];
+      }
+    }
+    await cdp.detach();
+    return look;
+  };
+  const folded = await summaryLook();
+  await phone.screenshot({ path: `${SHOTS}google-mobile-summary.png` });
+  if (folded.detailsAt) await phone.mouse.click(...folded.detailsAt);
+  await phone.waitForTimeout(200);
+  const opened = await summaryLook();
+  await phone.screenshot({ path: `${SHOTS}google-mobile-details.png` });
+  await phone.setViewportSize({ width: 1280, height: 900 });
+  await phone.waitForTimeout(200);
+  const wide = await summaryLook();
+  console.log('\n== google mobile summary:', JSON.stringify({ folded, opened, wide }));
+
   assertChecks('google mobile', {
     allExpectedResultsFound: check.results === ANUBIS_RESULTS.length,
     newsCardsNotTreatedAsResults: check.newsCardsAsResults === 0,
@@ -496,6 +544,11 @@ if (!only || only === 'mobile' || checks) {
     namedRedirectGetsTagged: check.gotoLinkTagged === 'normal tagged',
     summaryRendered: check.summary,
     noHorizontalOverflow: !check.scrollsSideways,
+    phoneSummaryIsShort: folded.short === true && folded.long === false && folded.details === true && folded.detailsText === 'Details',
+    phoneTagsWaitForDetails: folded.filters !== true,
+    detailsShowsFullSentence: opened.short === false && opened.long === true && opened.detailsText === 'Fewer details',
+    detailsShowsTags: opened.filters !== false,
+    wideSummaryIsFull: wide.long === true && wide.short === false && wide.details === false,
   });
   await phone.close();
 }
