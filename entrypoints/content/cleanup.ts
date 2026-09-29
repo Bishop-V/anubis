@@ -88,14 +88,15 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
   // holds little more than the tab.
   const entry = AI_ENTRY_POINTS[engine.id];
   if (wanted.ai && entry) {
-    const named = (el: HTMLElement) =>
-      entry.labels.test(el.title.trim()) ||
+    // Attributes, not properties: SVG icons carry titles too, and have no `title` property.
+    const named = (el: Element) =>
+      entry.labels.test(el.getAttribute('title')?.trim() ?? '') ||
       entry.labels.test(el.getAttribute('aria-label')?.trim() ?? '') ||
       (el.matches(CONTROL) && entry.labels.test((el.textContent ?? '').trim()));
-    for (const el of document.querySelectorAll<HTMLElement>(`${CONTROL}, [title], [aria-label]`)) {
+    for (const el of document.querySelectorAll(`${CONTROL}, [title], [aria-label]`)) {
       if (!(entry.selector && el.matches(entry.selector)) && !named(el)) continue;
-      if (el.closest('[data-anubis-result], anubis-summary')) continue;
-      const control = el.closest<HTMLElement>(CONTROL) ?? el;
+      const control = el.closest<HTMLElement>(CONTROL) ?? (el instanceof HTMLElement ? el : undefined);
+      if (!control || control.closest('[data-anubis-result], anubis-summary')) continue;
       const item = control.parentElement?.closest<HTMLElement>(ROW_ITEM);
       add(item && textLength(item) <= textLength(control) + 12 ? item : control, 'ai', true);
     }
