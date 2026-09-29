@@ -1289,7 +1289,13 @@ if (!only || only === 'responsive') {
         throw new Error(`Settings → ${section} overflows at ${width}px (${layout.document}px wide)`);
       }
       if (section === 'sites' && width < 390) {
-        const scrolls = await opt.locator('.sites-scroll').evaluate((el) => el.scrollWidth > el.clientWidth);
+        // The table fills in after the heading shows, so wait for it to overflow.
+        const scrolls = await opt
+          .waitForFunction(() => {
+            const el = document.querySelector('.sites-scroll');
+            return !!el && el.scrollWidth > el.clientWidth;
+          }, null, { timeout: 3000 })
+          .then(() => true, () => false);
         if (!scrolls) throw new Error(`Your sites table should scroll inside its wrapper at ${width}px`);
       }
       if (section === 'sites' && width === 390) {
