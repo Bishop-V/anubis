@@ -187,12 +187,18 @@ body .VPContent .VPHome {
   justify-content: center;
   min-height: 38vh;
   max-width: 62ch;
-  opacity: 0.45;
 }
 .demo-step:last-child {
   min-height: 60vh;
 }
-.demo-step.active {
+/* Steps other than the current one are dimmed: only their words, so the diamond
+   stays solid and covers the line that runs behind it. */
+.demo-step-title,
+.demo-step p {
+  opacity: 0.45;
+}
+.demo-step.active .demo-step-title,
+.demo-step.active p {
   opacity: 1;
 }
 .demo-marker {
@@ -583,7 +589,8 @@ body .VPContent .VPHome {
   }
   .demo-result,
   .demo-result .chip,
-  .demo-step {
+  .demo-step-title,
+  .demo-step p {
     transition: opacity 0.4s ease;
   }
 }
@@ -637,11 +644,15 @@ body .VPContent .VPHome {
   }
 }
 @media (min-width: 960px) {
+  /* The drawn page, and the heading beside it, sit in the middle of the window below
+     the top bar: as much room above as below, at least 32px. The page sticks at that
+     same place as you scroll, so it doesn't move when scrolling starts. */
   .scroll-demo {
     --demo-stage-height: min(640px, calc(100vh - var(--vp-nav-height) - 64px));
+    --demo-stage-gap: max(32px, calc((100vh - var(--vp-nav-height) - var(--demo-stage-height)) / 2));
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     column-gap: 64px;
-    padding: 32px 64px 0;
+    padding: var(--demo-stage-gap) 64px 0;
   }
   .demo-intro {
     grid-column: 1;
@@ -666,7 +677,7 @@ body .VPContent .VPHome {
     grid-column: 2;
     grid-row: 1 / span 2;
     align-self: start;
-    top: calc(var(--vp-nav-height) + 32px);
+    top: calc(var(--vp-nav-height) + var(--demo-stage-gap));
     height: var(--demo-stage-height);
     margin: 0;
     padding: 0;

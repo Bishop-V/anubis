@@ -295,7 +295,7 @@ export default defineComponent({
                   class: ['demo-step', { active: step.value === i + 2, reached: step.value >= i + 2 }],
                   'aria-current': step.value === i + 2 ? 'step' : undefined,
                 },
-                [h('h2', [h('span', { class: 'demo-marker', 'aria-hidden': 'true' }), s.title]), h('p', s.text)],
+                [h('h2', [h('span', { class: 'demo-marker', 'aria-hidden': 'true' }), h('span', { class: 'demo-step-title' }, s.title)]), h('p', s.text)],
               ),
             ),
           ),

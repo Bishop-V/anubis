@@ -50,8 +50,10 @@ const url = `http://127.0.0.1:${server.address().port}${BASE}`;
 const browser = await chromium.launch({ executablePath: findChromium() });
 const failures = [];
 
-// Wide windows: the heading's block (title to the scroll hint) is centred on the
-// drawn page and stays within its height, short windows and tall ones alike.
+// Wide windows, short and tall alike: the heading's block (title to the scroll
+// hint) is centred on the drawn page and stays within its height; the two sit in
+// the middle of the window below the top bar, not high with a gap under them; and
+// the page stays where it is once scrolling starts, since it sticks at that place.
 for (const [width, height] of [
   [1024, 768],
   [1280, 720],
@@ -68,12 +70,43 @@ for (const [width, height] of [
     const title = rect('.home-title');
     const cue = rect('.demo-cue');
     const stage = rect('.demo-page');
-    return { top: title.top, bottom: cue.bottom, stageTop: stage.top, stageBottom: stage.bottom };
+    // The top bar's height, resolved to pixels whatever unit the theme gives it in.
+    const probe = document.body.appendChild(document.createElement('div'));
+    probe.style.height = 'var(--vp-nav-height)';
+    const nav = probe.getBoundingClientRect().height;
+    probe.remove();
+    return { top: title.top, bottom: cue.bottom, stageTop: stage.top, stageBottom: stage.bottom, nav };
   });
   const offCentre = Math.round((box.top + box.bottom) / 2 - (box.stageTop + box.stageBottom) / 2);
   const inside = box.top >= box.stageTop - 1 && box.bottom <= box.stageBottom + 1;
-  console.log(`${width}×${height}: heading ${offCentre}px from the page's centre${inside ? '' : ', and runs past it'}`);
+  const offWindow = Math.round((box.stageTop + box.stageBottom) / 2 - (box.nav + height) / 2);
+  await page.evaluate(() => scrollTo(0, 400));
+  await page.waitForTimeout(150);
+  const moved = Math.round((await page.evaluate(() => document.querySelector('.demo-page').getBoundingClientRect().top)) - box.stageTop);
+  console.log(
+    `${width}×${height}: heading ${offCentre}px from the page's centre${inside ? '' : ', and runs past it'}; ` +
+      `page ${offWindow}px from the window's middle; moves ${moved}px when scrolling starts`,
+  );
   if (Math.abs(offCentre) > 8 || !inside) failures.push(`${width}×${height}: the heading isn't centred beside the page`);
+  if (Math.abs(offWindow) > 8) failures.push(`${width}×${height}: the page and heading aren't in the middle of the window`);
+  if (Math.abs(moved) > 1) failures.push(`${width}×${height}: the page jumps when scrolling starts`);
+  await page.close();
+}
+
+// The line beside the steps runs behind their diamonds, so each diamond has to be
+// solid, dimmed step or not: at any opacity the line shows through it.
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto(url, { waitUntil: 'networkidle' });
+  const seeThrough = await page.evaluate(() =>
+    [...document.querySelectorAll('.demo-marker')].filter((marker) => {
+      let opacity = 1;
+      for (let el = marker; el; el = el.parentElement) opacity *= Number(getComputedStyle(el).opacity);
+      return opacity < 1;
+    }).length,
+  );
+  console.log(`Step diamonds you can see the line through: ${seeThrough}`);
+  if (seeThrough) failures.push(`${seeThrough} of the steps' diamonds let the line show through`);
   await page.close();
 }
 
