@@ -57,6 +57,16 @@ Google's phone layout (for Firefox for Android) is modelled on uBlacklist's "Web
 - **Store icon:** Chrome wants the logo at 96×96 inside 128×128 of transparent padding; the toolbar icon fills the square, so `store/icon-128.png` is rendered separately (`store/render.mjs`), as is the 440×280 promo tile.
 - **Screenshots:** not made from the e2e mocks. They look like the engines but aren't them, and a listing has to show the real thing.
 
+## Welcome page
+
+Asked for: pinning and the starter lists were only explained in the user guide, which people rarely open before their first search.
+
+- **Shipped:** `entrypoints/welcome/`, opened by the background script when `runtime.onInstalled` says `install` (never on updates, and it needs no permission). It gives this browser's steps to pin the toolbar button, a search to try on four engines, and the lists you're subscribed to with the tags each adds. The search is "python list comprehension", which brings up official docs, forums and Wikipedia, so three of the four starter lists show a tag. The lists come from storage rather than the directory, so a reinstall that syncs other subscriptions shows those.
+- **Pinned or not:** Chromium browsers answer `action.getUserSettings()` with `isOnToolbar`, and newer Chrome fires `onUserSettingsChanged`. The page checks on load, on that event and when the window regains focus, and says "Anubis is in your toolbar." instead of the steps once it is. Where the browser doesn't say, the steps stay. The e2e browser can't pin, so only the unpinned state is tested.
+- **Not done:** `browser_action.default_area: "navbar"` for Firefox, which would put the button on the toolbar straight away. Firefox's own default keeps new buttons in the Extensions panel, and the steps cover it.
+- **Firefox for Android** has no toolbar for extensions; the page still shows Firefox's desktop steps there. Fix that when Android is checked (`ROADMAP.md`).
+- `npm run dev` starts with a fresh browser profile, so it opens the welcome tab each time.
+
 ## Keyboard shortcuts
 
 - Two `commands`: Alt+Shift+O turns Anubis on or off, Alt+Shift+H shows hidden results and hides them again. They need no permission. On a Mac they use Control, because Option+Shift types characters (Ø, Ó) and would be taken from text fields.

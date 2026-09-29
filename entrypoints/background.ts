@@ -4,9 +4,9 @@ import { getSettings, migrateLegacy, migrateSettings, settingsItem, updateSettin
 import { refreshStale } from '@/utils/subscriptions';
 
 // The background script keeps subscribed lists fresh, shows the hidden-result
-// count on the toolbar icon and greys the icon out while Anubis is off. Updates run
-// when the browser starts and when a search page asks, at most every 30 minutes,
-// so no "alarms" permission is needed.
+// count on the toolbar icon, greys the icon out while Anubis is off, and opens the
+// welcome page on first install. Updates run when the browser starts and when a
+// search page asks, at most every 30 minutes, so no "alarms" permission is needed.
 
 const LAST_CHECK = 'local:lastUpdateCheck' as const;
 const CHECK_EVERY_MS = 30 * 60 * 1000;
@@ -45,7 +45,9 @@ export default defineBackground(() => {
     await refresh();
   };
 
-  browser.runtime.onInstalled.addListener(async () => {
+  browser.runtime.onInstalled.addListener(async ({ reason }) => {
+    // First install only: how to keep Anubis in the toolbar, and a search to try.
+    if (reason === 'install') void browser.tabs.create({ url: browser.runtime.getURL('/welcome.html') });
     await migrateLegacy();
     await migrateSettings();
     await refresh();
