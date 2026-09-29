@@ -14,6 +14,8 @@ Every site has a *ranking*, which you choose from the ⇅ button on any of its r
 
 Your choice always beats your lists. If a list lowers a site and you raise it, it's raised.
 
+After a change from the menu, the summary above the results says what you did ("Hid fandom.com.") with an **Undo** button. Undo puts the site back as it was before you opened its menu, tags included, even after several changes. It stays until your next search, or until you change another site.
+
 ## How much of the site
 
 A ranking covers a site and all of its subdomains. The name at the top of the menu chooses the level: choosing `wikipedia.org` covers every language's Wikipedia, and `en.wikipedia.org` only the English one. The most specific choice wins, so you can hide `fandom.com` and still raise `minecraft.fandom.com`.

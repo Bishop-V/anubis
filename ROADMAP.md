@@ -25,7 +25,7 @@ Work that's planned but not started, or started and not finished. Each item says
 - **`ci.yml` has no `permissions:` block.** Add `contents: read`, as `docs.yml` has.
 - **Dependabot** for npm and GitHub Actions: weekly, grouped, with a 7-day cooldown (the default is 3). Pin actions to commit SHAs and let Dependabot move them.
 - **Install without scripts** in CI and releases: `npm ci --ignore-scripts`, then `npx wxt prepare`. npm worms spread through install scripts. Compile, tests, both builds and the docs build all work this way.
-- **`SECURITY.md`**, and turn on GitHub's private vulnerability reporting.
+- **Turn on private vulnerability reporting** (Settings → Code security → Private vulnerability reporting). [`SECURITY.md`](SECURITY.md) sends reports there, and its form doesn't exist until it's on.
 
 ## Testing
 
@@ -60,7 +60,6 @@ Started: interface text is moving into `public/_locales/<language>/messages.json
 
 ## Features
 
-- **Undo** after a change from the result menu ("Hid fandom.com. Undo") in the summary line, in keeping with nothing being hidden without a trace.
 - **Engine definitions fetched from the repo,** like uBlacklist's SERPINFO, so a selector fix doesn't need a store release. Chrome forbids downloading code, so they have to be data: `isResultsPage` is a function today and would need a declarative form.
 - **Image, video and news results.** uBlacklist's SERPINFO has the selectors.
 

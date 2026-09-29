@@ -393,14 +393,24 @@ export function renderHiddenBar(
 
 let summaryHost: HTMLElement | undefined;
 
+export interface SummaryActions {
+  toggleReveal: () => void;
+  settings: () => void;
+  deeper: () => void;
+  filter: (tag?: string) => void;
+  undo: () => void;
+}
+
+/** `change` says what the last change from the result menu did ("Hid fandom.com."), with Undo after it. */
 export function renderSummary(
   before: HTMLElement | undefined,
   stats: PageStats,
   theme: PageTheme,
-  actions: { toggleReveal: () => void; settings: () => void; deeper: () => void; filter: (tag?: string) => void },
+  actions: SummaryActions,
+  change?: string,
 ): void {
   const worthShowing =
-    hiddenCount(stats) || stats.pinned || stats.raised || stats.lowered || stats.tagged || stats.canGoDeeper || stats.pages > 1;
+    hiddenCount(stats) || stats.pinned || stats.raised || stats.lowered || stats.tagged || stats.canGoDeeper || stats.pages > 1 || change;
   if (!before?.parentElement || !worthShowing) {
     summaryHost?.remove();
     return;
@@ -410,7 +420,7 @@ export function renderSummary(
   keepUpright(summaryHost);
   summaryHost.dataset.theme = theme;
 
-  render(summaryHost, JSON.stringify(stats), () =>
+  render(summaryHost, JSON.stringify([stats, change]), () =>
     h(
       'div',
       { class: 'summary' },
@@ -440,6 +450,14 @@ export function renderSummary(
           )
         : null,
       settingsButton(actions.settings),
+      change
+        ? h(
+            'div',
+            { class: 'change' },
+            h('span', null, change),
+            h('button', { class: 'text-btn', type: 'button', on: { click: actions.undo } }, t('summaryUndo')),
+          )
+        : null,
       // The tags on this page, as a legend you can click to show only that tag.
       stats.tags.length
         ? h(

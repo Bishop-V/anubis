@@ -2,6 +2,8 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { fakeBrowser } from 'wxt/testing/fake-browser';
 import { t, tList, tn } from '@/utils/i18n';
+import type { SiteChange } from '@/utils/personal';
+import { changeSentence } from '@/utils/summary';
 
 // Translations live in public/_locales/<language>/messages.json; English is the source.
 type Messages = Record<string, { message: string; description?: string }>;
@@ -69,5 +71,20 @@ describe('t and tn', () => {
     const b = { name: 'B' };
     expect(tList('menuReport', [a], 'disjunction')).toEqual(['Wrong? Report it to ', a, '.']);
     expect(tList('menuReport', [a, b], 'disjunction')).toEqual(['Wrong? Report it to ', a, ' or ', b, '.']);
+  });
+
+  it('says what a change from the result menu did', () => {
+    const change = (before: Partial<SiteChange['before']>, after: Partial<SiteChange['after']>): SiteChange => ({
+      site: 'fandom.com',
+      before: { level: 'normal', tags: [], ...before },
+      after: { level: 'normal', tags: [], ...after },
+      newTags: [],
+    });
+    const label = (id: string) => ({ slop: 'AI slop' })[id] ?? id;
+    expect(changeSentence(change({}, { level: 'hide' }), label)).toBe('Hid fandom.com.');
+    expect(changeSentence(change({ level: 'pin' }, {}), label)).toBe('Cleared your ranking of fandom.com.');
+    expect(changeSentence(change({}, { tags: ['slop'] }), label)).toBe('Tagged fandom.com “AI slop”.');
+    expect(changeSentence(change({ level: 'hide', tags: ['slop'] }, { level: 'hide' }), label)).toBe('Removed the tag “AI slop” from fandom.com.');
+    expect(changeSentence(change({}, { level: 'lower', tags: ['slop'] }), label)).toBe('Changed fandom.com in your list.');
   });
 });

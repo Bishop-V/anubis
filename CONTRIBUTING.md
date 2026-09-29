@@ -7,6 +7,7 @@ Thanks for helping. Everything happens on GitHub: issues for reports and ideas, 
 - **Suggest a site for one of the built-in lists.** Use "Suggest it to…" in the ⇅ menu on a search result, which opens a pre-filled issue, or the [Suggest a site for a list](https://github.com/Bishop-V/anubis/issues/new?template=suggest-a-site.md) template. You can also open a pull request that edits the list in [`lists/`](lists).
 - **Add your own list to the directory**, so everyone sees it under Settings → Lists → More lists. See [Publish a list](docs/guide/publish-a-list.md) and [`lists/README.md`](lists/README.md).
 - **Report a search engine that broke.** Name the engine and its country domain (`google.de`), give a search that shows the problem, and add a screenshot. For panels that don't go away, add the output of the snippet in [Troubleshooting](docs/guide/troubleshooting.md), which copies the page's structure without its text. Never attach a saved search page: it holds your account, your location and more.
+- **Report a security problem** privately, not in an issue. [SECURITY.md](SECURITY.md) says how.
 - **Fix a bug or build a feature.** For anything bigger than a small fix, open an issue first so the approach can be agreed before you spend time on it. [`ROADMAP.md`](ROADMAP.md) lists planned work.
 - **Improve the user guide** in [`docs/`](docs), which is published at [bishop-v.github.io/anubis](https://bishop-v.github.io/anubis/).
 - **Translate.** Not open yet; the Translation section of [`ROADMAP.md`](ROADMAP.md) says what's left before it is.

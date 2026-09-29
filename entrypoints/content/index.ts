@@ -3,10 +3,22 @@ import { engineFor, ENGINE_MATCHES, isMobileAgent, type EngineDef } from '@/util
 import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { evaluate, type Verdict } from '@/utils/matcher';
 import { send, type Message, type PageStats } from '@/utils/messages';
-import { formatSiteLine, getSite, setSiteLevel, toggleSiteTag, upsertTagDef, type PersonalLevel } from '@/utils/personal';
+import {
+  changeHolds,
+  formatSiteLine,
+  getSite,
+  recordChange,
+  setSiteLevel,
+  toggleSiteTag,
+  undoChange,
+  upsertTagDef,
+  type PersonalLevel,
+  type SiteChange,
+} from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal, type Theme } from '@/utils/storage';
 import { reportUrl, suggestionUrl } from '@/utils/subscriptions';
+import { changeSentence } from '@/utils/summary';
 import { findClutter, mainColumn, redirectFor, watchAllTab } from './cleanup';
 import { freshState, weighDeeper } from './deeper';
 import './page.css';
@@ -70,6 +82,8 @@ export default defineContentScript({
     let verdicts = new Map<string, Verdict>();
     let lastResults: FoundResult[] = [];
     let lastStats: PageStats | undefined;
+    // The last change from the result menu, which the summary offers to undo until the next search.
+    let change: SiteChange | undefined;
 
     const verdictFor = (r: FoundResult) => {
       const key = `${r.url}\n${r.title}`;
@@ -101,6 +115,7 @@ export default defineContentScript({
         deeper = freshState(engine);
         filter = undefined;
         shown = new Set();
+        change = undefined;
       }
 
       const results = findResults(engine);
@@ -175,8 +190,11 @@ export default defineContentScript({
       }
 
       rerank(results, scores, rules.settings.rerank && !engine.table);
+      const pinned = results.filter((r) => verdictFor(r).level === 'pin' && !verdictFor(r).hidden).map((r) => r.container);
+      makeRoomForPins(new Set(engine.table ? [] : pinned));
 
       if (rules.settings.showSummary && !engine.table) {
+        const changed = change && changeSentence(change, (id) => rules.tags.get(id)?.label ?? id);
         renderSummary(summaryAnchor(results, engine), stats, theme, {
           toggleReveal: () => {
             reveal = !reveal;
@@ -189,8 +207,19 @@ export default defineContentScript({
             filter = tag;
             pass();
           },
-        });
-      } else renderSummary(undefined, stats, theme, { toggleReveal() {}, settings() {}, deeper() {}, filter() {} });
+          undo: () => {
+            const undone = change;
+            if (!undone) return;
+            change = undefined;
+            pass();
+            editPersonal((t) => undoChange(t, undone)).catch((error: unknown) => {
+              change = undone;
+              schedule();
+              console.warn('[anubis] could not save your list', error);
+            });
+          },
+        }, changed);
+      } else renderSummary(undefined, stats, theme, { toggleReveal() {}, settings() {}, deeper() {}, filter() {}, undo() {} });
 
       // "Load more results automatically": once per search.
       if (rules.settings.deeper > 0 && stats.canGoDeeper && deeper.pages === 1 && !deeper.auto) {
@@ -278,6 +307,20 @@ export default defineContentScript({
 
     // ------------------------------------------------------------ weigh menu
 
+    // Edits a site from the menu and remembers the change, so the summary can offer
+    // to undo it. Recorded inside the edit, as edits run one after another.
+    const editSite = (site: string, edit: (text: string) => string) => {
+      const prev = change;
+      editPersonal((text) => {
+        const next = edit(text);
+        change = recordChange(change, site, text, next);
+        return next;
+      }).catch((error: unknown) => {
+        change = prev;
+        console.warn('[anubis] could not save your list', error);
+      });
+    };
+
     const openWeigh = (anchor: HTMLElement, result: FoundResult) => {
       if (popoverAnchor() === anchor && !anchor.isConnected) return closePopover();
       const verdict = verdictFor(result);
@@ -305,12 +348,12 @@ export default defineContentScript({
           theme: pageTheme(rules.settings.theme),
         },
         {
-          setLevel: (domain, level: PersonalLevel) => void editPersonal((t) => setSiteLevel(t, domain, level)),
-          toggleTag: (domain, tag) => void editPersonal((t) => toggleSiteTag(t, domain, tag)),
+          setLevel: (domain, level: PersonalLevel) => editSite(domain, (t) => setSiteLevel(t, domain, level)),
+          toggleTag: (domain, tag) => editSite(domain, (t) => toggleSiteTag(t, domain, tag)),
           createTag: (domain, label) => {
             const id = slugifyTag(label);
             if (!id) return;
-            void editPersonal((t) => {
+            editSite(domain, (t) => {
               const withTag = rules.tags.has(id) ? t : upsertTagDef(t, { id, label, color: colorForTag(id) });
               return toggleSiteTag(withTag, domain, id, true);
             });
@@ -357,6 +400,7 @@ export default defineContentScript({
       removed = new Set();
       document.querySelectorAll<HTMLElement>('[data-anubis-result], [data-anubis-row]').forEach(forget);
       rerank([], new Map(), false);
+      makeRoomForPins(new Set());
       lastResults = [];
       if (lastStats) void send({ type: 'stats', stats: { ...lastStats, total: 0, hidden: 0 } });
       lastStats = undefined;
@@ -396,6 +440,8 @@ export default defineContentScript({
     watchRuleSet(async () => {
       rules = await loadRuleSet();
       verdicts = new Map();
+      // Changed elsewhere since (settings, another tab): there's nothing to undo here.
+      if (change && !changeHolds(change, rules.personalText)) change = undefined;
       schedule();
       // After the pass, so the menu sees fresh verdicts.
       requestAnimationFrame(refreshOpenPopover);
@@ -465,6 +511,52 @@ function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enable
     ranked.forEach(({ child }, order) => {
       if (child.style.order !== String(order)) child.style.setProperty('order', String(order));
     });
+  }
+}
+
+// A pinned result's frame is an outline 8px outside it (page.css), which moves
+// nothing. Where results sit closer than that, frames cross each other or the next
+// result's text: on Google the space between results is a margin inside each one,
+// which stays inside once reranking makes the list a flex column, so results touch.
+// Push whatever follows a pinned result down until there's room.
+const FRAME = 8;
+const ROOM = 8;
+const ownMarginTop = new WeakMap<HTMLElement, number>();
+
+function makeRoomForPins(pinned: Set<HTMLElement>) {
+  const push = new Map<HTMLElement, number>();
+  for (const parent of new Set([...pinned].map((el) => el.parentElement))) {
+    if (!parent) continue;
+    // In the order they're drawn: CSS `order` when reranked, then the page's.
+    const shown = [...parent.children]
+      .filter((el): el is HTMLElement => el instanceof HTMLElement && el.getClientRects().length > 0)
+      .map((el, index) => ({ el, index, order: Number(el.style.order) || 0 }))
+      .sort((a, b) => a.order - b.order || a.index - b.index)
+      .map(({ el }) => el);
+    const adds = /flex|grid/.test(getComputedStyle(parent).display);
+    for (let i = 1; i < shown.length; i++) {
+      const [above, below] = [shown[i - 1]!, shown[i]!];
+      const frames = Number(pinned.has(above)) + Number(pinned.has(below));
+      if (!frames || OWN_TAGS.has(below.tagName)) continue;
+      const need = frames * FRAME + ROOM;
+      const pushed = below.hasAttribute('data-anubis-pin-room');
+      const margin = parseFloat(getComputedStyle(below).marginTop) || 0;
+      if (!pushed) ownMarginTop.set(below, margin);
+      const own = ownMarginTop.get(below) ?? margin;
+      const gap = below.getBoundingClientRect().top - above.getBoundingClientRect().bottom;
+      // In a flex column the margins add up; in a block they collapse, so the larger counts.
+      const want = adds ? Math.round(margin + need - gap) : pushed || gap < need ? need : own;
+      if (want > own) push.set(below, want);
+    }
+  }
+  for (const el of document.querySelectorAll<HTMLElement>('[data-anubis-pin-room]')) {
+    if (push.has(el)) continue;
+    el.removeAttribute('data-anubis-pin-room');
+    el.style.removeProperty('--anubis-pin-room');
+  }
+  for (const [el, px] of push) {
+    if (el.style.getPropertyValue('--anubis-pin-room') !== `${px}px`) el.style.setProperty('--anubis-pin-room', `${px}px`);
+    if (!el.hasAttribute('data-anubis-pin-room')) el.setAttribute('data-anubis-pin-room', '');
   }
 }
 
