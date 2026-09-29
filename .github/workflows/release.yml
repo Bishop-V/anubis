@@ -1,0 +1,96 @@
+name: Release
+
+# Push a tag like v0.3.0 to release that version. The tag has to match the
+# version in package.json. This runs the CI checks, builds the store zips,
+# creates a GitHub Release with them, then submits to the Chrome Web Store,
+# Firefox Add-ons (AMO) and Edge Add-ons.
+#
+# The store keys live in the "release" environment, which waits for approval
+# and only accepts v* tags, so no pull request or branch can read them.
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the tag matches package.json
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME doesn't match package.json version $version (expected v$version)"
+            exit 1
+          fi
+
+  check:
+    needs: version
+    uses: ./.github/workflows/ci.yml
+
+  build:
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      # AMO reviewers rebuild from the sources zip; store/README.md says to use Node 22.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Firefox zip plus the sources zip, then the Chrome zip (Edge takes it too).
+      - run: npm run zip
+      - run: npm run zip:chrome
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zips
+          path: .output/*.zip
+          if-no-files-found: error
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" .output/*.zip --title "$GITHUB_REF_NAME" --generate-notes --verify-tag
+
+  submit:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: zips
+          path: .output
+      - name: Submit to the stores
+        env:
+          CHROME_API_VERSION: v2
+          CHROME_EXTENSION_ID: ${{ vars.CHROME_EXTENSION_ID }}
+          CHROME_PUBLISHER_ID: ${{ vars.CHROME_PUBLISHER_ID }}
+          CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL: ${{ secrets.CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL }}
+          CHROME_SERVICE_ACCOUNT_PRIVATE_KEY: ${{ secrets.CHROME_SERVICE_ACCOUNT_PRIVATE_KEY }}
+          # The permanent add-on ID from wxt.config.ts.
+          FIREFOX_EXTENSION_ID: '{9ab93008-4ecd-4923-8a62-d81099997d39}'
+          FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
+          FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
+          EDGE_PRODUCT_ID: ${{ vars.EDGE_PRODUCT_ID }}
+          EDGE_CLIENT_ID: ${{ secrets.EDGE_CLIENT_ID }}
+          EDGE_API_KEY: ${{ secrets.EDGE_API_KEY }}
+        run: |
+          version=${GITHUB_REF_NAME#v}
+          npx wxt submit \
+            --chrome-zip ".output/anubis-$version-chrome.zip" \
+            --firefox-zip ".output/anubis-$version-firefox.zip" \
+            --firefox-sources-zip ".output/anubis-$version-sources.zip" \
+            --edge-zip ".output/anubis-$version-chrome.zip"

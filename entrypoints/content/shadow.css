@@ -1,0 +1,524 @@
+/* Anubis UI inside shadow roots on search pages. It's a guest on someone else's
+   page, so it stays quiet: the page's own font, muted text, no fills. The one
+   flourish is the weigh menu's cartouche and balance. Hosts carry data-theme. */
+
+:host {
+  --gold: #d4a637;
+  --gold-ink: #8d6716;
+  --night: #1b1a16;
+  --ink: #23201a;
+  --muted: #6f695e;
+  --panel: #fbfaf8;
+  --line: #e2dfd8;
+  --danger: #b4492f;
+  --shadow: 0 14px 40px rgb(35 30 20 / 0.16), 0 1px 3px rgb(35 30 20 / 0.12);
+  all: initial;
+  font-family: inherit;
+  color: var(--ink);
+}
+:host([data-theme='dark']) {
+  --gold-ink: #e0b54e;
+  --ink: #ece6da;
+  --muted: #a39b8c;
+  --panel: #1f1d18;
+  --line: #36322b;
+  --danger: #e2735b;
+  --shadow: 0 14px 40px rgb(0 0 0 / 0.5), 0 1px 3px rgb(0 0 0 / 0.4);
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+svg {
+  display: block;
+  flex: none;
+}
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+.text-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--gold-ink);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.text-btn:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.text-btn:disabled {
+  color: var(--muted);
+  cursor: progress;
+  text-decoration: none;
+}
+
+/* A tag's mark: a small diamond, like an inlaid stone. */
+.gem {
+  width: 6px;
+  height: 6px;
+  margin: 0 1px;
+  transform: rotate(45deg);
+  background: var(--c);
+}
+.gem.hollow {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.25px var(--c);
+}
+
+/* ------------------------------------------------------------- chips row */
+:host(anubis-chips) {
+  display: block;
+  margin: 3px 0 2px;
+  flex-basis: 100%;
+  grid-column: 1 / -1;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 14px;
+  font-size: 12.5px;
+  line-height: 18px;
+  color: var(--muted);
+}
+.tag,
+.verdict {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.verdict svg {
+  width: 13px;
+  height: 13px;
+}
+.verdict.pin,
+.verdict.raise {
+  color: var(--gold-ink);
+}
+.verdict.pin {
+  font-weight: 600;
+}
+.page-note {
+  opacity: 0.8;
+}
+
+/* ------------------------------------------------------------ weigh button */
+:host(anubis-weigh) {
+  position: absolute;
+  z-index: 5;
+  display: block;
+}
+.weigh {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: var(--muted);
+  background: transparent;
+  opacity: var(--anubis-weigh-opacity, 0.35);
+  transition:
+    opacity 0.15s,
+    color 0.15s,
+    background 0.15s;
+}
+.weigh:hover,
+.weigh:focus-visible,
+.weigh[aria-expanded='true'] {
+  opacity: 1;
+  color: var(--gold-ink);
+  background: color-mix(in srgb, var(--gold) 14%, transparent);
+}
+.weigh svg {
+  width: 15px;
+  height: 15px;
+}
+@media (hover: none) {
+  .weigh {
+    opacity: 0.7;
+  }
+}
+/* A finger needs a bigger target than a pointer. */
+@media (pointer: coarse) {
+  .weigh {
+    width: 32px;
+    height: 32px;
+  }
+  .weigh svg {
+    width: 17px;
+    height: 17px;
+  }
+}
+
+/* ------------------------------------------------------------ hidden line */
+:host(anubis-bar) {
+  display: block;
+  margin: 2px 0;
+  grid-column: 1 / -1;
+  flex-basis: 100%;
+}
+.gone {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* Clear of the ⇅ button in the result's corner, which a long line would reach on a phone. */
+  padding-right: 28px;
+  font-size: 12.5px;
+  line-height: 20px;
+  color: var(--muted);
+}
+@media (pointer: coarse) {
+  .gone {
+    padding-right: 40px;
+  }
+}
+.gone svg {
+  width: 14px;
+  height: 14px;
+  opacity: 0.8;
+}
+.gone .why {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gone b {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* ---------------------------------------------------------------- summary */
+:host(anubis-summary) {
+  display: block;
+  margin: 0 0 16px;
+  order: -100000;
+  flex-basis: 100%;
+}
+/* Phone layouts run results edge to edge, each with its own inset. */
+@media (max-width: 600px) {
+  :host(anubis-summary) {
+    padding-inline: 12px;
+  }
+}
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--muted);
+}
+.summary .mark {
+  color: var(--gold);
+}
+.summary .mark svg {
+  width: 15px;
+  height: 15px;
+}
+.summary .sentence {
+  flex: 1;
+  min-width: 12em;
+}
+.filters {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  font-size: 12.5px;
+}
+.filters button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 1px 0;
+  border: 0;
+  border-bottom: 1.5px solid transparent;
+  background: none;
+  color: var(--muted);
+}
+.filters button:hover {
+  color: var(--ink);
+}
+.filters button[aria-pressed='true'] {
+  color: var(--ink);
+  border-bottom-color: var(--c);
+}
+.filters .count {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.7;
+}
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+}
+.icon-btn:hover {
+  color: var(--gold-ink);
+}
+.icon-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ------------------------------------------------------------- weigh menu */
+:host(anubis-popover) {
+  position: absolute;
+  z-index: 2147483600;
+  display: block;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+.pop {
+  width: 312px;
+  max-width: calc(100vw - 16px);
+  border-radius: 10px;
+  background: var(--panel);
+  color: var(--ink);
+  box-shadow:
+    var(--shadow),
+    0 0 0 1px var(--line);
+  font-size: 13px;
+  line-height: 1.45;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .pop.opening {
+    animation: open 0.12s ease-out;
+  }
+}
+@keyframes open {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+}
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 16px 12px 0 18px;
+}
+
+/* The cartouche: an oval ring with a bar at its end, which in hieroglyphs marks a
+   name. Here it holds the site being weighed. */
+.cartouche {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  max-width: 250px;
+  margin-right: 8px;
+  padding: 3px 16px 4px;
+  border: 1.5px solid var(--gold);
+  border-radius: 999px;
+}
+.cartouche::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  right: -6px;
+  width: 1.5px;
+  border-radius: 1px;
+  background: var(--gold);
+}
+select.domain {
+  max-width: 100%;
+  padding: 0 14px 0 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: 500 16px/1.3 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 6px) 55%,
+    calc(100% - 2px) 55%;
+  background-size: 4px 4px;
+  background-repeat: no-repeat;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+select.domain:disabled {
+  background-image: none;
+  padding-right: 0;
+  cursor: default;
+}
+select.domain option {
+  color: #000;
+  background: #fff;
+  font-family: system-ui, sans-serif;
+}
+
+/* The balance: the site's pan on the left, the feather's on the right. */
+.balance {
+  display: block;
+  width: 132px;
+  height: 40px;
+  margin: 10px auto 2px;
+  color: var(--gold);
+  overflow: visible;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .balance .beam,
+  .balance .pan {
+    transition: transform 0.45s cubic-bezier(0.34, 1.45, 0.5, 1);
+  }
+}
+
+.levels {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  margin: 4px 12px 0;
+}
+.level {
+  padding: 7px 0 6px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+.level:hover {
+  color: var(--ink);
+}
+.level[aria-pressed='true'] {
+  color: var(--ink);
+  font-weight: 600;
+  border-bottom-color: var(--gold);
+}
+.level.hide[aria-pressed='true'] {
+  border-bottom-color: var(--danger);
+}
+.level.from-list:not([aria-pressed='true']) {
+  color: var(--gold-ink);
+}
+.hint {
+  margin: 8px 18px 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.section {
+  margin: 14px 0 0;
+  padding: 12px 18px 0;
+  border-top: 1px solid var(--line);
+}
+.section h3 {
+  margin: 0 0 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.tags button,
+.tags span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  font-size: 13px;
+  color: var(--muted);
+}
+.tags button:hover {
+  color: var(--ink);
+}
+.tags [aria-pressed='true'] {
+  color: var(--ink);
+}
+.tags .fixed {
+  color: var(--ink);
+  cursor: default;
+}
+.new-tag {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 8px;
+}
+.new-tag input {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+}
+.new-tag input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.reasons {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12.5px;
+}
+.reasons li {
+  padding: 1px 0;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.reasons b {
+  font-weight: 600;
+  color: var(--ink);
+}
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 10px 18px 12px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--muted);
+}
+.suggest {
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.suggest a {
+  color: var(--gold-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+.suggest a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.close {
+  margin: -4px -2px 0 0;
+}

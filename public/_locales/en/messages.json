@@ -1,0 +1,65 @@
+{
+  "langCode": {
+    "message": "en",
+    "description": "This translation's language code (en, de, pt_BR…), used as the page's lang attribute."
+  },
+  "extDescription": {
+    "message": "Weighs your search results: tag, rerank and hide sites, with lists anyone can publish.",
+    "description": "Shown in the stores and the browser's add-ons page. At most 132 characters."
+  },
+  "commandToggleEnabled": {
+    "message": "Turn Anubis on or off",
+    "description": "Keyboard shortcut, listed in the browser's shortcut settings."
+  },
+  "commandToggleHidden": {
+    "message": "Show hidden results, or hide them again",
+    "description": "Keyboard shortcut, listed in the browser's shortcut settings."
+  },
+
+  "levelHide": { "message": "Hide", "description": "A site's ranking. The five rankings are Hide, Lower, Normal, Raise and Pin." },
+  "levelLower": { "message": "Lower", "description": "A site's ranking." },
+  "levelNormal": { "message": "Normal", "description": "A site's ranking." },
+  "levelRaise": { "message": "Raise", "description": "A site's ranking." },
+  "levelPin": { "message": "Pin", "description": "A site's ranking: always at the top." },
+  "chipHidden": { "message": "Hidden", "description": "Label under a result's title." },
+  "chipLowered": { "message": "Lowered", "description": "Label under a result's title." },
+  "chipRaised": { "message": "Raised", "description": "Label under a result's title." },
+  "chipPinned": { "message": "Pinned", "description": "Label under a result's title." },
+
+  "popupOn": { "message": "On for your searches" },
+  "popupOff": { "message": "Off. Search pages are left as they are." },
+  "popupOnLabel": { "message": "Anubis on", "description": "Screen reader label of the on/off switch." },
+  "popupAddSite": { "message": "Add a site" },
+  "popupRanking": { "message": "Ranking", "description": "Screen reader label of the ranking menu next to Add a site." },
+  "popupAdd": { "message": "Add" },
+  "popupYourSites": { "message": "Your sites" },
+  "popupNoSites": { "message": "Nothing yet. Use the ⇅ button on any search result, or add a site above." },
+  "popupKeptNormal": { "message": "Kept at normal", "description": "A site set to Normal on purpose, overriding lists." },
+  "popupForget": { "message": "Forget $1", "description": "$1 is a site, e.g. fandom.com." },
+  "popupListsAndTags": { "message": "$1, $2", "description": "$1 is the number of lists (popupListCount), $2 the number of tags (popupTagCount)." },
+  "popupListCount_one": { "message": "$1 list" },
+  "popupListCount_other": { "message": "$1 lists" },
+  "popupTagCount_one": { "message": "$1 tag" },
+  "popupTagCount_other": { "message": "$1 tags" },
+  "popupThisSite": { "message": "This site" },
+  "popupRankingFor": { "message": "Ranking for $1", "description": "Screen reader label; $1 is a site." },
+  "popupRankHide": { "message": "Hide $1 in search results", "description": "$1 is a site." },
+  "popupRankLower": { "message": "Lower $1 in search results", "description": "$1 is a site." },
+  "popupRankNormal": { "message": "Rank $1 normally in search results", "description": "$1 is a site." },
+  "popupRankRaise": { "message": "Raise $1 in search results", "description": "$1 is a site." },
+  "popupRankPin": { "message": "Pin $1 to the top of search results", "description": "$1 is a site." },
+  "popupThisPage": { "message": "This page" },
+  "popupThisPageOn": { "message": "This page on $1", "description": "$1 is a search engine, e.g. Google." },
+  "popupNotSearch": { "message": "Search on Google, DuckDuckGo, Bing, Brave or another supported engine to see what Anubis changes." },
+  "showHidden": { "message": "Show hidden" },
+  "hideAgain": { "message": "Hide them again", "description": "Hides the results Show hidden brought back." },
+  "loadMore": { "message": "Load more results" },
+  "loadMoreTitle": { "message": "Add the next page of results to the page and rank them together" },
+  "loading": { "message": "Loading…" },
+  "popupSettings": { "message": "Anubis settings", "description": "Label of the cog button in the toolbar popup." },
+  "help": { "message": "Help" },
+  "helpTitle": { "message": "Open the user guide" },
+  "withShortcut": { "message": "$1 ($2)", "description": "A button's description followed by its keyboard shortcut, e.g. Show hidden (Alt+Shift+H)." },
+  "hiddenMore_one": { "message": "and $1 more", "description": "After a site's name on the one line standing for several hidden results in a row, e.g. “fandom.com and 1 more hidden by your list”." },
+  "hiddenMore_other": { "message": "and $1 more" }
+}

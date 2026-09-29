@@ -1,0 +1,28 @@
+name: CI
+
+# Type-check, test, build both browsers and lint the Firefox build. The tests
+# parse every file in lists/, so a pull request that adds a site to a list is
+# checked too.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # release.yml runs these same checks before it builds a release.
+  workflow_call:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run compile
+      - run: npm test
+      - run: npm run build
+      - run: npm run build:chrome
+      - run: npx web-ext lint --source-dir .output/firefox-mv2 --warnings-as-errors
