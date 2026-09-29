@@ -8,7 +8,7 @@ import { listSites, setSite, type SiteEntry } from '@/utils/personal';
 import { loadRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal, personalIsLocal, savePersonal } from '@/utils/storage';
 import { rerender } from './flash';
-import { pageTitle } from './parts';
+import { helpLink, pageTitle } from './parts';
 
 let editingText = false;
 let filter = '';
@@ -85,7 +85,14 @@ function addForm(): HTMLElement {
     input.blur();
     await editPersonal((t) => setSite(t, domain, level, []));
   });
-  return h('div', { class: 'panel' }, h('h3', null, 'Add a site'), h('p', { class: 'muted' }, 'It applies to the site and all its subdomains.'), form, error);
+  return h(
+    'div',
+    { class: 'panel' },
+    h('h3', null, 'Add a site'),
+    h('p', { class: 'muted' }, 'It applies to the site and all its subdomains.', ' ', helpLink('guide/ranking#how-much-of-the-site', 'Choosing how much of a site')),
+    form,
+    error,
+  );
 }
 
 function levelSeg(current: Level | undefined, onPick: (l: Level) => void, compact = true): HTMLElement {

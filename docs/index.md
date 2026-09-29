@@ -1,32 +1,44 @@
 ---
 layout: home
+title: Anubis
+titleTemplate: Hide, rank, and tag search results
 
-hero:
-  name: Anubis
-  text: Hide, rank, and tag search results
-  tagline: On the search engine you already use, with lists anyone can publish.
-  image:
-    src: /anubis.svg
-    alt: The Anubis logo, a jackal's head in gold
+# The homepage is drawn by docs/.vitepress/theme/home.ts from what's below: the
+# heading and buttons open the scroll-driven demo, and the highlights and the
+# closing section follow it.
+intro:
+  title: Hide, rank, and tag search results
+  lead: On the search engine you already use, with lists anyone can publish.
   actions:
-    - theme: brand
-      text: Get started
+    - text: Get started
       link: /guide/getting-started
-    - theme: alt
-      text: What it does
-      link: /guide/introduction
+      brand: true
+    - text: Browse lists
+      link: /lists
 
-features:
+highlights:
   - title: Rank any site from the results
-    details: Hide, lower, raise, or pin a site with the button on any result. Your choice holds on every search.
+    details: Hide, lower, raise, or pin a site with the button beside any result. Your choice holds on every search.
     link: /guide/ranking
+    linkText: How ranking works
   - title: Tags you can act on
     details: Results carry labels like “Official docs” or “Paywall”. Decide what each tag does, from just a label to hiding every result that has it.
     link: /guide/tags
+    linkText: About tags
   - title: Lists anyone can publish
     details: A list is a text file in a Git repository. Brave Goggles and uBlacklist rulesets work unchanged.
     link: /guide/lists
+    linkText: Subscribing to lists
   - title: Clean up pages
-    details: Remove AI answers, video panels, and “People also ask” on every search.
+    details: Remove AI answers, video panels, and “People also ask” on every search. You choose which.
     link: /guide/clean-up
+    linkText: What clean-up removes
+
+closing:
+  title: Nothing to sign up for
+  details:
+    - Anubis has no server and collects nothing. Your choices stay in your browser, unless you connect a storage server of your own to sync between browsers.
+    - It works on Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex, and Mojeek, in Firefox, Chrome, and Edge.
+  link: /guide/privacy
+  linkText: Privacy and permissions
 ---

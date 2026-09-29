@@ -10,7 +10,7 @@ import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, PERSONAL_NAME, type PersonalLevel } from '@/utils/personal';
 import { ruleParts } from '@/utils/ruletext';
 import type { Palette } from '@/utils/storage';
-import { summarySentence } from '@/utils/summary';
+import { shortSummary, summarySentence } from '@/utils/summary';
 import { OWN_TAGS, type FoundResult } from './results';
 import shadowCss from './shadow.css?inline';
 
@@ -310,10 +310,8 @@ export function ensureWeighButton(
   const { top, right, besideMenu } = engine.button ?? { top: '2px', right: '2px' };
   host.style.setProperty('position', 'absolute', 'important');
   const menu = besideMenu && !result.card ? resultMenuOf(container) : undefined;
-  // While the engine's own menu is open, it's drawn over the result; the button
-  // would sit on top of it (DuckDuckGo's opens beside it).
-  const menuOpen = !!menu && (menu.getAttribute('aria-expanded') === 'true' || [...container.querySelectorAll('[role="menu"], [role="dialog"]')].some((el) => el.getClientRects().length > 0));
-  host.style.setProperty('visibility', menuOpen ? 'hidden' : 'visible', 'important');
+  // Not hidden while the engine's menu is open: a menu closes without adding or
+  // removing nodes, so no pass would show the button again. It sits under the menu instead.
   if (menu) placeBesideMenu(host, container, menu);
   else {
     for (const prop of MENU_LOOK) host.style.removeProperty(prop);
@@ -614,6 +612,8 @@ let summaryTitles: HTMLElement[] = [];
 const misplaced = new WeakSet<HTMLElement>();
 const misplacedInside = new WeakSet<HTMLElement>();
 let realignOnResize = false;
+/** Details is open in the summary on phones. Kept here, so the next pass keeps it open. */
+let summaryDetails = false;
 
 /**
  * Where the summary goes: just before `before`. When that's outside the results
@@ -670,37 +670,68 @@ export function renderSummary(
   keepUpright(summaryHost);
   summaryHost.dataset.theme = theme;
 
-  render(summaryHost, JSON.stringify([stats, change]), () =>
+  // On phones the full sentence runs to several lines, so the summary says it in a
+  // few words and keeps the rest (the sentence, Load more results, settings, and the
+  // tags) behind Details. shadow.css shows the short form only on narrow screens.
+  const short = shortSummary(stats);
+  const compact = !!short || stats.tags.length > 0 || stats.canGoDeeper || stats.loading;
+  const host = summaryHost;
+  const build = () =>
     h(
       'div',
-      { class: 'summary' },
+      { class: `summary${compact ? ' compact' : ''}${summaryDetails ? ' open' : ''}` },
       h('span', { class: 'mark' }, icon(ICON_ANUBIS)),
-      h('span', { class: 'sentence' }, summarySentence(stats)),
-      stats.filter
-        ? h('button', { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'show-all' }, on: { click: () => actions.filter(undefined) } }, t('summaryShowAll'))
-        : null,
-      hiddenCount(stats) && !stats.filter
-        ? h(
-            'button',
-            { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'reveal' }, on: { click: actions.toggleReveal } },
-            stats.revealed ? t('hideAgain') : t('showHidden'),
-          )
-        : null,
-      stats.canGoDeeper || stats.loading
-        ? h(
-            'button',
-            {
-              class: 'text-btn',
-              type: 'button',
-              disabled: stats.loading,
-              title: t('loadMoreTitle'),
-              attrs: { 'data-focus-key': 'deeper' },
-              on: { click: actions.deeper },
-            },
-            stats.loading ? t('loading') : t('loadMore'),
-          )
-        : null,
-      settingsButton(actions.settings, 'settings'),
+      // The sentence and its buttons: on phones they run on as one paragraph, so the
+      // buttons follow the words and wrap with them; wider, the line steps aside
+      // (display: contents) and each is laid out on its own.
+      h(
+        'span',
+        { class: 'line' },
+        short ? h('span', { class: 'sentence short' }, short) : null,
+        h('span', { class: short ? 'sentence long' : 'sentence' }, summarySentence(stats)),
+        stats.filter
+          ? h('button', { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'show-all' }, on: { click: () => actions.filter(undefined) } }, t('summaryShowAll'))
+          : null,
+        hiddenCount(stats) && !stats.filter
+          ? h(
+              'button',
+              { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'reveal' }, on: { click: actions.toggleReveal } },
+              stats.revealed ? t('hideAgain') : t('showHidden'),
+            )
+          : null,
+        stats.canGoDeeper || stats.loading
+          ? h(
+              'button',
+              {
+                class: 'text-btn deeper',
+                type: 'button',
+                disabled: stats.loading,
+                title: t('loadMoreTitle'),
+                attrs: { 'data-focus-key': 'deeper' },
+                on: { click: actions.deeper },
+              },
+              stats.loading ? t('loading') : t('loadMore'),
+            )
+          : null,
+        settingsButton(actions.settings, 'settings'),
+        compact
+          ? h(
+              'button',
+              {
+                class: 'text-btn details',
+                type: 'button',
+                attrs: { 'aria-expanded': String(summaryDetails), 'data-focus-key': 'details' },
+                on: {
+                  click: () => {
+                    summaryDetails = !summaryDetails;
+                    render(host, JSON.stringify([stats, change, summaryDetails]), build);
+                  },
+                },
+              },
+              summaryDetails ? t('summaryFewerDetails') : t('summaryDetails'),
+            )
+          : null,
+      ),
       change
         ? h(
             'div',
@@ -731,8 +762,8 @@ export function renderSummary(
             ),
           )
         : null,
-    ),
-  );
+    );
+  render(summaryHost, JSON.stringify([stats, change, summaryDetails]), build);
 
   announce(summaryHost, change ?? '');
 

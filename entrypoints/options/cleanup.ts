@@ -1,7 +1,7 @@
 import { CLEANUP, type CleanupKind } from '@/utils/cleanup';
 import { h } from '@/utils/dom';
 import { getSettings, updateSettings } from '@/utils/storage';
-import { pageTitle, switchRow } from './parts';
+import { helpLink, pageTitle, switchRow } from './parts';
 
 // "Clean up": parts of search pages that aren't results, removed on every search.
 
@@ -19,7 +19,13 @@ export async function renderCleanup(): Promise<HTMLElement> {
       'div',
       { class: 'panel' },
       h('h3', null, 'Remove from every search'),
-      h('p', { class: 'muted' }, 'On means Anubis removes it. Off leaves it on the page.'),
+      h(
+        'p',
+        { class: 'muted' },
+        'On means Anubis removes it. Off leaves it on the page.',
+        ' ',
+        helpLink('guide/troubleshooting#ai-answers-or-panels-still-show', 'If a panel still shows'),
+      ),
       CLEANUP.map((def) => switchRow(def.label, def.hint, settings.cleanup[def.id], (on) => void setKind(def.id, on))),
     ),
     h(
