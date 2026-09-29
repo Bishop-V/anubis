@@ -86,6 +86,7 @@ To publish a version, set `version` in `package.json`, merge it, then push a mat
 
 The user guide is at **[bishop-v.github.io/anubis](https://bishop-v.github.io/anubis/)**, built from [`docs/`](docs) (start with [the introduction](docs/guide/introduction.md)). `npm run docs:dev` previews it locally.
 
+- [Developing Anubis](DEVELOPMENT.md): how the extension is put together, how a build is made, and how to add an engine, a setting or interface text.
 - [The list format](docs/list-format.md): how to write and publish a list.
 - [Lists](lists/README.md): the lists that ship with Anubis and how to contribute one.
 - [Experiments and decisions](docs/experiments.md): what was tried, what failed, and what still needs checking on live pages.

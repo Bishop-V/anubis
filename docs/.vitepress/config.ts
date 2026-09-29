@@ -72,6 +72,7 @@ export default defineConfig({
           { text: 'Troubleshooting', link: '/guide/troubleshooting' },
           { text: 'Experiments and decisions', link: '/experiments' },
           { text: 'Contributing', link: `${repo}/blob/main/CONTRIBUTING.md` },
+          { text: 'Developing Anubis', link: `${repo}/blob/main/DEVELOPMENT.md` },
         ],
       },
     ],

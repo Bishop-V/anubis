@@ -36,7 +36,7 @@ Keep each pull request to one topic. The project's conventions, briefly:
 - **Update the guide** in `docs/guide/` when behaviour changes. Keep page paths as they are: the extension links to them.
 - **Keep committed files neutral.** No captured search pages, and nothing personal: names, emails, locations or machine details.
 
-[`CLAUDE.md`](CLAUDE.md) has the fuller notes on the layout of the code and the mistakes that have already been made once.
+[`DEVELOPMENT.md`](DEVELOPMENT.md) explains how the code fits together, has step-by-step recipes for the usual changes (an engine, a clean-up panel, a setting, interface text) and lists the mistakes that have already been made once.
 
 ## Checks
 
