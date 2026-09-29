@@ -1,4 +1,5 @@
 import { browser, defineBackground, storage } from '#imports';
+import { readSubscribeLink, subscribeQuery } from '@/utils/links';
 import { sendToActiveTab, type Message } from '@/utils/messages';
 import { getSettings, migrateLegacy, migrateSettings, settingsItem, updateSettings } from '@/utils/storage';
 import { refreshStale } from '@/utils/subscriptions';
@@ -89,6 +90,20 @@ export default defineBackground(() => {
         if (message.tab) void browser.tabs.create({ url: `${browser.runtime.getURL('/options.html')}#${message.tab}` });
         else void browser.runtime.openOptionsPage();
         return;
+      case 'open-subscribe': {
+        // Settings open in a new tab next to the subscribe page, which goes back to
+        // where the link was (the directory, a README), or closes if it was opened
+        // on its own. That leaves no page in the history that opens settings again.
+        const tab = sender.tab;
+        const link = readSubscribeLink(subscribeQuery(message.link));
+        if (tab?.id === undefined || !link) return;
+        const tabId = tab.id;
+        const url = `${browser.runtime.getURL('/options.html')}?${subscribeQuery(link)}#lists`;
+        void browser.tabs.create({ url, index: tab.index + 1, active: tab.active, openerTabId: tabId }).then(() =>
+          message.back ? browser.tabs.goBack(tabId).catch(() => browser.tabs.remove(tabId)) : browser.tabs.remove(tabId),
+        );
+        return;
+      }
     }
   });
 });

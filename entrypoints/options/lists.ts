@@ -1,6 +1,8 @@
 import { browser } from '#imports';
 import { h, icon, plural, timeAgo } from '@/utils/dom';
+import { t } from '@/utils/i18n';
 import { ICON_EXTERNAL, ICON_REFRESH, ICON_TRASH } from '@/utils/icons';
+import { readSubscribeLink, type SubscribeLink } from '@/utils/links';
 import { colorForTag, parseList, type ListFormat, type ParsedList } from '@/utils/listformat';
 import { send } from '@/utils/messages';
 import { flash, flashed, rerender } from './flash';
@@ -37,13 +39,28 @@ function kindOf(format: string | undefined, lens?: boolean, builtin?: boolean): 
 let directory: DirectoryEntry[] | undefined;
 const busy = new Set<string>();
 
+/** The list a subscribe link opened settings for, until you subscribe or cancel. */
+let offer = readSubscribeLink(location.search);
+
+function dropOffer(): void {
+  offer = undefined;
+  history.replaceState(null, '', location.pathname + location.hash);
+}
+
+/** What subscribing to the offered list means: its address, directory entry, id and name. */
+function offered(link: SubscribeLink) {
+  const url = toRawUrl(link.url);
+  const entry = directory?.find((d) => d.url === url);
+  const id = entry?.builtin ? builtinId(entry) : subscriptionId(url);
+  return { url, entry, id, name: entry?.name ?? link.name ?? displayName({ url }) };
+}
 
 /**
  * Subscribe to a URL. Must be called straight from a click: Firefox only allows
  * permission prompts during the user gesture, so the permission request comes
  * before any other await.
  */
-async function subscribe(input: string, entry?: DirectoryEntry): Promise<void> {
+async function subscribe(input: string, entry?: DirectoryEntry, name = entry?.name): Promise<void> {
   const url = toRawUrl(input);
   if (!/^https:\/\//.test(url)) {
     flash('lists', 'error', 'Lists must be served over https.');
@@ -66,12 +83,13 @@ async function subscribe(input: string, entry?: DirectoryEntry): Promise<void> {
     const existing = subs.find((s) => s.id === id || s.url === url);
     const next: Subscription[] = existing
       ? subs.map((s) => (s === existing ? { ...s, enabled: true } : s))
-      : [...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: entry?.builtin || undefined, name: entry?.name }];
+      : [...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: entry?.builtin || undefined, name }];
     const cache = await listCacheItem.getValue();
     await listCacheItem.setValue({ ...cache, [existing?.id ?? id]: { text, fetchedAt: Date.now() } });
     await saveSubscriptions(next);
     const parsed = parseList(text);
-    flash('lists', 'ok', `Subscribed to ${displayName({ url, name: entry?.name }, parsed.meta)}: ${plural(parsed.rules.length, 'instruction')}, ${plural(parsed.tags.length, 'tag')}.`);
+    flash('lists', 'ok', `Subscribed to ${displayName({ url, name }, parsed.meta)}: ${plural(parsed.rules.length, 'instruction')}, ${plural(parsed.tags.length, 'tag')}.`);
+    if (offer && offered(offer).url === url) dropOffer();
   } catch (error) {
     // Built-in lists still work from their bundled copy when the download fails.
     if (entry?.builtin) {
@@ -80,6 +98,7 @@ async function subscribe(input: string, entry?: DirectoryEntry): Promise<void> {
         await saveSubscriptions([...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: true, name: entry.name }]);
       }
       flash('lists', 'ok', `Subscribed to ${entry.name} (using the copy bundled with Anubis until it can update).`);
+      if (offer && offered(offer).url === url) dropOffer();
     } else {
       flash('lists', 'error', `Couldn’t subscribe: ${error instanceof Error ? error.message : String(error)}`);
     }
@@ -104,6 +123,13 @@ export async function renderLists(): Promise<HTMLElement> {
     if (urlInput.value.trim()) void subscribe(urlInput.value.trim());
   });
 
+  if (offer) {
+    const { url, id, name } = offered(offer);
+    if (!busy.has(id) && subs.some((s) => (s.id === id || s.url === url) && s.enabled)) {
+      flash('lists', 'ok', t('offerAlready', name));
+      dropOffer();
+    }
+  }
   const notice = flashed('lists');
 
   const cards = subs.map((sub) => listCard(sub, listText(sub, cache), cache[sub.id]));
@@ -151,13 +177,14 @@ export async function renderLists(): Promise<HTMLElement> {
         ),
       ),
     ),
+    offer ? offerPanel(offer, notice) : null,
     h(
       'div',
       { class: 'panel' },
       h('h3', null, 'Add a list'),
       h('p', { class: 'muted' }, 'Paste a link to the file. Links to a GitHub page, a gist or a Brave Goggle work too.'),
       form,
-      notice,
+      offer ? null : notice,
     ),
     h(
       'div',
@@ -199,6 +226,47 @@ export async function renderLists(): Promise<HTMLElement> {
       h('a', { href: 'https://github.com/Bishop-V/anubis/blob/main/lists/directory.json', target: '_blank', rel: 'noopener noreferrer' }, 'lists/directory.json'),
       '.',
     ),
+  );
+}
+
+/** "Subscribe to …?", for the list a subscribe link asked for. */
+function offerPanel(link: SubscribeLink, notice: HTMLElement | null): HTMLElement {
+  const { url, entry, id, name } = offered(link);
+  // Lists outside GitHub need a host permission, which the browser asks for on Subscribe.
+  const host = originPermissionFor(url) ? new URL(url).hostname : undefined;
+  return h(
+    'div',
+    { class: 'panel offer' },
+    h('h3', null, t('offerTitle', name)),
+    entry ? h('p', { class: 'muted' }, entry.description, h('span', { class: 'kind' }, kindOf(entry.format, entry.lens))) : null,
+    h('p', { class: 'address' }, h('a', { href: url, target: '_blank', rel: 'noopener noreferrer' }, url)),
+    // Directory lists have been looked at; a link can come from anyone.
+    entry && !host ? null : h('p', { class: 'muted' }, [entry ? null : t('offerTrust'), host ? t('offerPermission', host) : null].filter(Boolean).join(' ')),
+    h(
+      'div',
+      { class: 'inline-form' },
+      h(
+        'button',
+        { class: 'btn primary', type: 'button', disabled: busy.has(id), on: { click: () => void subscribe(url, entry, name) } },
+        busy.has(id) ? t('offerSubscribing') : t('offerSubscribe'),
+      ),
+      h(
+        'button',
+        {
+          class: 'btn',
+          type: 'button',
+          disabled: busy.has(id),
+          on: {
+            click: () => {
+              dropOffer();
+              rerender();
+            },
+          },
+        },
+        t('offerCancel'),
+      ),
+    ),
+    notice,
   );
 }
 

@@ -8,8 +8,9 @@ Anubis starts subscribed to four small lists that ship with it: **Official docs*
 
 ## Subscribe
 
-- **From the directory:** **Settings → Lists → More lists** shows lists other people have published. Press **Subscribe** on one. The same directory is on the [Lists directory](../lists.md) page.
-- **From a link:** paste the list's address into **Add a list** and press **Subscribe**. Links to a file's page on GitHub, GitLab or Codeberg, gist links and Brave Search Goggle links all work; Anubis finds the raw file.
+- **From the directory:** **Settings → Lists → More lists** shows lists other people have published. Press **Subscribe** on one.
+- **From the web:** **Subscribe** on the [Lists directory](../lists.md) page, or a subscribe link on a list's own page, opens Anubis's settings with the list filled in. Check it's the list you expected, and press **Subscribe** there to add it.
+- **From its address:** paste the list's address into **Add a list** and press **Subscribe**. Links to a file's page on GitHub, GitLab or Codeberg, gist links and Brave Search Goggle links all work; Anubis finds the raw file.
 
 Lists hosted on GitHub or in a gist download straight away. For a list hosted anywhere else, your browser asks you to allow Anubis to read from that one site.
 
