@@ -78,6 +78,15 @@ html[data-anubis-hide='dim'] [data-anubis-state~='hide'] > anubis-bar {
   box-shadow: 0 0 0 7px color-mix(in srgb, var(--anubis-hl) 7%, transparent);
 }
 
+/* The plain palette: the pinned frame and highlights in the page's own text colour. */
+html[data-anubis-palette='plain'] [data-anubis-state~='pin'] {
+  outline-color: color-mix(in srgb, currentColor 35%, transparent);
+}
+html[data-anubis-palette='plain'] [data-anubis-highlight] {
+  background-color: color-mix(in srgb, currentColor 5%, transparent) !important;
+  box-shadow: 0 0 0 7px color-mix(in srgb, currentColor 5%, transparent);
+}
+
 /* Filtering by a tag from the summary: results without it step aside. */
 [data-anubis-filtered] {
   display: none !important;

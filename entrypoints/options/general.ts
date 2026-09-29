@@ -12,6 +12,7 @@ import {
   updateSettings,
   DEFAULT_SETTINGS,
   type HideStyle,
+  type Palette,
   type Settings,
 } from '@/utils/storage';
 import { applyData, collectData, readBackup, toBackup } from '@/utils/backup';
@@ -73,6 +74,16 @@ export async function renderAppearance(): Promise<HTMLElement> {
           h('span', { class: 'muted' }, 'Auto follows your browser here and in the menu on each result, and each search engine’s own light or dark mode for the rest of what Anubis adds to its pages.'),
         ),
         themeSwitcher(settings.theme),
+      ),
+      segRow<Palette>(
+        'Colours on search pages',
+        'Plain draws everything Anubis adds to search pages in grey, with no gold. Tags lose their colours and are told apart by their names. Settings and the toolbar popup stay gold.',
+        [
+          { value: 'gold', label: 'Gold' },
+          { value: 'plain', label: 'Plain' },
+        ],
+        settings.palette,
+        (palette) => void updateSettings({ palette }),
       ),
       segRow<HideStyle>(
         'Hidden results',

@@ -8,6 +8,7 @@ import { LEVELS, TAG_CHOICES, type Level, type TagPref, type Verdict } from '@/u
 import { t, tList, tn } from '@/utils/i18n';
 import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, PERSONAL_NAME, type PersonalLevel } from '@/utils/personal';
+import type { Palette } from '@/utils/storage';
 import { summarySentence } from '@/utils/summary';
 import { OWN_TAGS, type FoundResult } from './results';
 import shadowCss from './shadow.css?inline';
@@ -49,11 +50,15 @@ function guard(host: HTMLElement, display: string): void {
   host.style.setProperty('display', display, 'important');
 }
 
+/** The palette every host is drawn in; `applyPalette` changes it. */
+let palette: Palette = 'gold';
+
 function makeHost(tag: string, theme: PageTheme, display = 'block'): { host: HTMLElement; root: ShadowRoot } {
   const host = document.createElement(tag);
   const root = host.attachShadow({ mode: 'closed' });
   root.append(h('style', null, shadowCss));
   host.dataset.theme = theme;
+  host.dataset.palette = palette;
   guard(host, display);
   roots.set(host, root);
   return { host, root };
@@ -150,6 +155,14 @@ function render(host: HTMLElement, key: string, build: () => Node): void {
     const target = [...next.querySelectorAll<HTMLElement>('[data-focus-key]')];
     (target.find((el) => el.dataset.focusKey === focusKey) ?? target[0])?.focus({ preventScroll: true });
   }
+}
+
+/** Gold or plain, for everything Anubis adds to the page, the result menu included. */
+export function applyPalette(next: Palette): void {
+  if (next === palette && document.documentElement.dataset.anubisPalette === next) return;
+  palette = next;
+  document.documentElement.dataset.anubisPalette = next;
+  for (const el of document.querySelectorAll<HTMLElement>(HOST_TAGS)) el.dataset.palette = next;
 }
 
 /** The theme of everything on the page but the result menu, which has its own (`PopoverData.theme`). */

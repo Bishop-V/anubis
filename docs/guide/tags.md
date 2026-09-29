@@ -24,7 +24,7 @@ A list decides which sites get a tag. You decide what the tag does, in **Setting
 
 Under each tag's name, one line says which sites carry it and what happens to them, for example "Marks 23 sites from Paywalls. Only a label: their ranking stays the same." The Paywalls list only labels; to lower paywalled sites, choose **Lower** for the tag.
 
-Turn off **Shown** to keep a tag working without showing its label under results. Press a tag's colour to change it.
+Turn off **Shown** to keep a tag working without showing its label under results. Press a tag's colour to change it. To see every tag in grey on search pages, choose **Plain** in **Settings → Appearance → Colours on search pages**. Tags are then told apart by their names.
 
 ## Tag sites yourself
 

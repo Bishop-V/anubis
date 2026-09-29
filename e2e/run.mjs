@@ -411,6 +411,33 @@ if (!only || only === 'off') {
   console.log('\n== toolbar title:', JSON.stringify({ off: await title(false), on: await title(true) }));
 }
 
+if (!only || only === 'palette') {
+  // Plain colours: every host and the page say so, and the pinned frame loses its gold.
+  const [sw] = ctx.serviceWorkers();
+  const setPalette = (palette) =>
+    sw.evaluate(async (palette) => {
+      const { settings } = await chrome.storage.sync.get('settings');
+      await chrome.storage.sync.set({ settings: { ...settings, palette } });
+    }, palette);
+  const look = () =>
+    page.evaluate(() => {
+      const hosts = [...document.querySelectorAll('anubis-chips, anubis-weigh, anubis-bar, anubis-summary')];
+      const pinned = document.querySelector('[data-anubis-state~="pin"]');
+      return {
+        page: document.documentElement.dataset.anubisPalette,
+        hosts: [...new Set(hosts.map((el) => el.dataset.palette))],
+        pinFrame: pinned ? getComputedStyle(pinned).outlineColor : null,
+      };
+    });
+  for (const palette of ['plain', 'gold']) {
+    await setPalette(palette);
+    await page.goto('https://duckduckgo.com/?q=javascript+promises');
+    await page.waitForTimeout(600);
+    console.log(`\n== palette ${palette}:`, JSON.stringify(await look()));
+    await page.screenshot({ path: `${SHOTS}palette-${palette}.png`, fullPage: true });
+  }
+}
+
 if (!only || only === 'cleanup') {
   // Clean-up: AI Overview, videos, and "People also ask" go; the side panel stays.
   const sw = ctx.serviceWorkers()[0];

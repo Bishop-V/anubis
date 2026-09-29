@@ -42,6 +42,7 @@ One palette, defined twice: `assets/theme.css` for extension pages and `entrypoi
 - The light scheme is cool museum stone, not cream or paper.
 - Use `--gold` for anything filled or stroked and `--gold-ink` for anything read. Gold text in `--gold` fails contrast on light backgrounds.
 - Tags carry their own colour (`--c`), from the list or from `TAG_PALETTE` in `utils/listformat.ts`: muted Egyptian pigments (ochres, malachite, Egyptian blue, amethyst, turquoise, papyrus, umber) that sit quietly on light and dark pages.
+- On search pages, **Settings → Appearance → Colours on search pages** can switch to *Plain*. Hosts then carry `data-palette="plain"` and `<html>` carries `data-anubis-palette="plain"`: `--gold` becomes `--muted`, `--gold-ink` becomes `--text` and `--danger` becomes `--muted`. Tag marks are grey, and the pinned frame and highlights take the page's text colour. So a new colour on search pages goes through these tokens, never `--c` or a hex value alone, or it stays coloured in Plain. What you can press keeps its weight (600), so it still reads as a button. Extension pages stay gold.
 - Every surface follows the theme setting (Auto, Light, Dark). On search pages, "Auto" follows the page's background for what sits on the page, and the browser's scheme for the result menu, which matches the popup.
 
 ```css
