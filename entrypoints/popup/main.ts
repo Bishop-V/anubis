@@ -16,6 +16,11 @@ import { editPersonal, updateSettings } from '@/utils/storage';
 import { summarySentence } from '@/utils/summary';
 import { initTheme } from '@/utils/theme';
 
+// The toolbar popup changes with the tab. On a search page: what Anubis did there,
+// and the tags to show only. On any other site: that site, to rank or tag for future
+// searches, with the result menu's cartouche and balance. Elsewhere: adding a site
+// by hand. The last few sites in your list are always underneath.
+
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
 const input = $<HTMLInputElement>('#domain');
 const list = $<HTMLUListElement>('#list');

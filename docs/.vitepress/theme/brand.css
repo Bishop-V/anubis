@@ -111,6 +111,15 @@ html:not(.dark) .dark-only,
 .demo-step.active {
   opacity: 1;
 }
+.demo-cue {
+  margin-top: 24px !important;
+  font-size: 14px !important;
+  font-weight: 500;
+  color: var(--vp-c-brand-1) !important;
+}
+.demo-cue .arrow {
+  display: inline-block;
+}
 .demo-step h2 {
   margin: 0 0 8px;
   font-size: 21px;
@@ -251,8 +260,32 @@ html:not(.dark) .dark-only,
   opacity: var(--demo-lowered);
 }
 .hidden-line .fold-inner {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   padding-top: 14px;
   color: var(--vp-c-text-2);
+}
+/* The button on each result: muted at Normal, gold once the site is ranked. */
+.demo-weigh {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin-left: auto;
+  flex: none;
+  color: var(--vp-c-text-2);
+  opacity: 0.6;
+}
+.demo-weigh:not(.normal) {
+  color: var(--vp-c-brand-1);
+  opacity: 1;
+}
+.demo-result.pinned {
+  margin: 8px -10px 0;
+  padding: 0 10px 12px;
+  border: 1px solid var(--vp-c-brand-3);
+  border-radius: 10px;
 }
 .hidden-site {
   font-weight: 600;
@@ -309,6 +342,12 @@ html:not(.dark) .dark-only,
   padding-bottom: 0 !important;
 }
 @media (prefers-reduced-motion: no-preference) {
+  .demo-weigh {
+    animation: demo-tip 0.5s ease;
+  }
+  .demo-cue .arrow {
+    animation: demo-nudge 1.6s ease-in-out infinite;
+  }
   .fold {
     transition: grid-template-rows 0.5s ease, opacity 0.4s ease;
   }
@@ -322,6 +361,32 @@ html:not(.dark) .dark-only,
   .demo-result .chip,
   .demo-step {
     transition: opacity 0.4s ease;
+  }
+}
+
+@keyframes demo-tip {
+  from {
+    opacity: 0;
+    transform: rotate(-20deg);
+  }
+}
+@keyframes demo-nudge {
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+/* The search button in the top bar: bigger than VitePress's, so it reads as a box to
+   type in. */
+@media (min-width: 768px) {
+  .VPNavBarSearchButton {
+    width: 260px;
+    height: 40px !important;
+    padding: 0 12px !important;
+    border: 1px solid var(--vp-c-divider);
+  }
+  .VPNavBarSearchButton .keys {
+    margin-left: auto;
   }
 }
 
