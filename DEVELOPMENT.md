@@ -206,7 +206,7 @@ Not everything is converted yet: `ROADMAP.md` lists what's left. Wording follows
 - Keep a reference to what you rendered instead of querying for it: `:scope` matches nothing inside a shadow root.
 - Styles for inside the shadow roots go in `shadow.css`; page-level treatments keyed off `data-anubis-*` attributes go in `page.css`.
 - On search pages, stay quiet: the page's own font, muted text, no fills. The result menu's cartouche and balance are the one flourish (`.claude/skills/frontend-design`).
-- Colours, sizes, and controls come from [`STYLEGUIDE.md`](STYLEGUIDE.md). The palette is defined in `assets/theme.css` for extension pages and again in `shadow.css` for search pages, under the same names; change both together.
+- Colours, sizes, and controls come from [`STYLEGUIDE.md`](STYLEGUIDE.md). The palette is defined in `assets/theme.css` for extension pages and again in `shadow.css` for search pages, under the same names; change both together. `tests/palette.test.ts` checks they match.
 
 ### Add a list to the extension
 
