@@ -21,11 +21,11 @@ import { importIntoPersonal } from '@/utils/importers';
 import { guide, REPO_URL } from '@/utils/links';
 import { themeSwitcher } from '@/utils/theme';
 import { flash, flashed, rerender } from './flash';
-import { pageTitle, switchRow } from './parts';
+import { helpLink, pageTitle, switchRow } from './parts';
 import { download } from './sites';
 
-function toggleRow(label: string, hint: string, key: keyof Settings, settings: Settings): HTMLElement {
-  return switchRow(label, hint, Boolean(settings[key]), (on) => void updateSettings({ [key]: on }));
+function toggleRow(label: string, hint: string, key: keyof Settings, settings: Settings, help?: HTMLElement): HTMLElement {
+  return switchRow(label, hint, Boolean(settings[key]), (on) => void updateSettings({ [key]: on }), help);
 }
 
 function segRow<T extends string>(
@@ -97,7 +97,13 @@ export async function renderAppearance(): Promise<HTMLElement> {
         settings.hideStyle,
         (hideStyle) => void updateSettings({ hideStyle }),
       ),
-      toggleRow('Rerank results', 'Move raised and pinned results up and lowered ones down, like a Brave Goggle.', 'rerank', settings),
+      toggleRow(
+        'Rerank results',
+        'Move raised and pinned results up and lowered ones down, like a Brave Goggle.',
+        'rerank',
+        settings,
+        helpLink('guide/ranking#reranking', 'How reranking works'),
+      ),
       h(
         'div',
         { class: 'setting' },
@@ -109,6 +115,8 @@ export async function renderAppearance(): Promise<HTMLElement> {
             'span',
             { class: 'muted' },
             'Add the next pages of results to the first one and rank them together, so a site you pinned on page 3 rises to the top. “Load more results” above the results does the same when you ask. Each page is another request to the search engine, so a few is usually enough.',
+            ' ',
+            helpLink('guide/more-results', 'How loading more works'),
           ),
         ),
         h(
@@ -148,6 +156,13 @@ export async function renderEngines(): Promise<HTMLElement> {
           });
           return h('label', { class: 'engine' }, h('span', null, engine.name), h('span', { class: 'switch' }, input, h('span')));
         }),
+      ),
+      h(
+        'p',
+        { class: 'muted', style: 'margin:14px 0 0;font-size:13px' },
+        'Anubis doing nothing on a search page?',
+        ' ',
+        helpLink('guide/troubleshooting#anubis-does-nothing-on-a-search-page', 'What to check'),
       ),
     ),
   );
@@ -230,7 +245,13 @@ export async function renderShare(): Promise<HTMLElement> {
       'div',
       { class: 'panel' },
       h('h3', null, 'Publish your list'),
-      h('p', { class: 'muted' }, 'No server needed: a public git repository is the database, and pull requests are how people contribute.'),
+      h(
+        'p',
+        { class: 'muted' },
+        'No server needed: a public git repository is the database, and pull requests are how people contribute.',
+        ' ',
+        helpLink('guide/publish-a-list', 'How to publish a list'),
+      ),
       h(
         'ol',
         { class: 'steps' },
@@ -261,6 +282,8 @@ export async function renderShare(): Promise<HTMLElement> {
         'p',
         { class: 'muted' },
         'Coming from uBlacklist or HOHSER? Paste your rules or export here and the sites join your list. Hidden stays hidden, HOHSER’s partial hide becomes Lower, and highlight colours become tags that highlight.',
+        ' ',
+        helpLink('guide/import-and-backup#import-sites', 'What each tool’s rules become'),
       ),
       importArea,
       h(

@@ -11,6 +11,7 @@ import { initTheme, themeSwitcher } from '@/utils/theme';
 import { renderCleanup } from './cleanup';
 import { renderAppearance, renderEngines, renderShare } from './general';
 import { renderLists } from './lists';
+import { helpLink } from './parts';
 import { renderSites } from './sites';
 import { renderSync, watchSync } from './sync';
 import { renderTags } from './tags';
@@ -37,8 +38,8 @@ const SECTIONS: Section[] = [
   { id: 'share', label: 'Backup', render: renderShare, help: ['guide/import-and-backup', 'Moving from other tools'] },
 ];
 
-function external(href: string, text: string, className?: string): HTMLElement {
-  return h('a', { class: className, href, target: '_blank', rel: 'noopener noreferrer' }, text, icon(ICON_EXTERNAL));
+function external(href: string, text: string): HTMLElement {
+  return h('a', { href, target: '_blank', rel: 'noopener noreferrer' }, text, icon(ICON_EXTERNAL));
 }
 
 const nav = document.querySelector<HTMLElement>('#nav')!;
@@ -88,7 +89,7 @@ async function renderMain() {
   const scroll = window.scrollY;
   const el = await section.render();
   if (ticket !== rendering) return;
-  if (section.help) el.querySelector('.page-title p')?.append(' ', external(guide(section.help[0]), section.help[1], 'help-link'));
+  if (section.help) el.querySelector('.page-title p')?.append(' ', helpLink(...section.help));
   main.replaceChildren(el);
   document.title = `${section.label} – Anubis`;
   window.scrollTo(0, scroll);
