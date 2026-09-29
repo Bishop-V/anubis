@@ -204,11 +204,12 @@ export interface ChipContext {
 export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipContext, revealed: boolean): void {
   const { container, titleBlock } = result;
   const level = verdict.level !== 'normal' && (verdict.level !== 'hide' || revealed) ? verdict.level : undefined;
+  const chipLevel = level === 'pin' || level === 'hide' ? undefined : level;
   const tags = verdict.tags.filter((id) => !ctx.prefs[id]?.muted && ctx.tags.has(id));
   const page = result.page;
 
   let host = chipsHosts.get(container);
-  if (!level && !tags.length && !page) {
+  if (!chipLevel && !tags.length && !page) {
     host?.remove();
     return;
   }
@@ -222,17 +223,17 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
   keepUpright(host);
   host.dataset.theme = ctx.theme;
 
-  const key = JSON.stringify([level, tags.map((id) => ctx.tags.get(id)), page]);
+  const key = JSON.stringify([chipLevel, tags.map((id) => ctx.tags.get(id)), page]);
   render(host, key, () =>
     h(
       'div',
       { class: 'chips' },
-      level &&
+      chipLevel &&
         h(
           'span',
-          { class: `verdict ${level}`, title: verdict.reasons.map((r) => `${r.list}: ${r.text}`).join('\n') },
-          icon(LEVEL_ICONS[level]),
-          LEVEL_CHIPS[level],
+          { class: `verdict ${chipLevel}`, title: verdict.reasons.map((r) => `${r.list}: ${r.text}`).join('\n') },
+          icon(LEVEL_ICONS[chipLevel]),
+          LEVEL_CHIPS[chipLevel],
         ),
       tags.map((id) => {
         const tag = ctx.tags.get(id)!;
@@ -311,6 +312,7 @@ export function ensureWeighButton(
   if (menu) placeBesideMenu(host, container, menu);
   else {
     for (const prop of MENU_LOOK) host.style.removeProperty(prop);
+    host.style.removeProperty('--anubis-weigh-color');
     host.style.setProperty('top', top, 'important');
     host.style.setProperty('right', clearOfPictures(container, right), 'important');
   }
@@ -376,6 +378,7 @@ function placeBesideMenu(host: HTMLElement, container: HTMLElement, menu: HTMLEl
   const size = Math.round(Math.min(44, Math.max(20, m.width, m.height)));
   const top = m.top + m.height / 2 - size / 2 - box.top - parseFloat(cs.borderTopWidth);
   const right = box.right - parseFloat(cs.borderRightWidth) - m.left + 4;
+  host.style.setProperty('--anubis-weigh-color', ms.color);
   host.style.setProperty('top', `${Math.round(top)}px`, 'important');
   host.style.setProperty('right', `${Math.round(right)}px`, 'important');
   host.style.setProperty('--anubis-weigh-size', `${size}px`);

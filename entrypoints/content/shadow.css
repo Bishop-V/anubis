@@ -121,12 +121,8 @@ button {
   width: 13px;
   height: 13px;
 }
-.verdict.pin,
 .verdict.raise {
   color: var(--gold-ink);
-}
-.verdict.pin {
-  font-weight: 600;
 }
 .page-note {
   opacity: 0.8;
@@ -148,7 +144,7 @@ button {
   padding: 0;
   border: 0;
   border-radius: var(--anubis-weigh-radius, 50%);
-  color: var(--muted);
+  color: var(--anubis-weigh-color, var(--muted));
   background: transparent;
   opacity: var(--anubis-weigh-opacity, 0.35);
   transition:
@@ -162,6 +158,10 @@ button {
   opacity: 1;
   color: var(--gold-ink);
   background: color-mix(in srgb, var(--gold) 14%, transparent);
+}
+.weigh[data-level='pin'] {
+  color: var(--gold-ink);
+  opacity: 1;
 }
 .weigh svg {
   width: 15px;
