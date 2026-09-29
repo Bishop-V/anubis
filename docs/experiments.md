@@ -50,6 +50,17 @@ Still to check for clean-up:
 
 Google's phone layout (for Firefox for Android) is modelled on uBlacklist's "Web (mobile)" rules only. To check on a phone: that titles are `role="heading"` elements with `aria-level="3"` inside the result's link, that the address is in `.ob9lvb`, that top stories cards carry `data-news-cluster-id`, and how the phone layout loads more results.
 
+## Reporting mistakes to lists
+
+Asked for: a way to report a wrong result, like SponsorBlock's feedback loop but without a backend. Lists already live in Git repositories, so a report can be an issue there.
+
+- **Shipped:** under **Why** in the result menu, "Wrong? Report it to *list*" for each list that weighed the result. It opens a pre-filled issue: the result's address without its query or fragment (which can carry session details), what the list does with it, the rules that matched with their line numbers, and a "What should change:" prompt. The issue is in English whatever the interface language, since it's for the list's maintainers. Line numbers come from the copy Anubis has, which can be older than the repository's, so the rules' text goes in too.
+- **Where it goes:** the list's `! issues:`, else the repository its `! homepage:` or its own address points into (`raw.githubusercontent.com/<owner>/<repo>/…`, GitLab's `…/-/raw/…`, Codeberg's `…/raw/…`). Gists and other hosts have no tracker to derive, so they get no link. None of the seven third-party lists in the directory sets `! issues:` or `! homepage:` (checked 2026-09-29), so without deriving it the feature would reach only Anubis's own lists.
+- **Suggestions stay opt-in.** "Suggest it to…" still needs `! issues:`: a report of a mistake is an ordinary bug report for any repository, but unsolicited additions aren't. Suggestions now skip lists that already weigh the result, since for those the report is the right link; before, such a list could be offered a suggestion.
+- **Considered:** a "Report" link on each line under Why. Rejected because one list can give several reasons for one result; one link per list, named, also says where the report goes.
+- The report and suggestion lines are the first of the menu's text in `messages.json`. `tList` in `utils/i18n.ts` puts the links in place of `$1`, joined with `Intl.ListFormat` ("A or B").
+- **Unverified:** what GitHub does when a repository has issues turned off (it should show the repository), or has issue forms with blank issues turned off (it may show the template chooser and drop the pre-filled text).
+
 ## Store listings
 
 - **Chrome's publishing API:** v1.1 and its refresh tokens stop working on 15 October 2026. `wxt submit` (publish-browser-extension 6.1.1 in WXT 0.21) can use v2 with a service account but still defaults to v1.1, so `CHROME_API_VERSION=v2` has to be set. Found by reading the installed package, not its documentation.

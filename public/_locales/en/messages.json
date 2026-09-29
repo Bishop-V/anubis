@@ -61,5 +61,10 @@
   "helpTitle": { "message": "Open the user guide" },
   "withShortcut": { "message": "$1 ($2)", "description": "A button's description followed by its keyboard shortcut, e.g. Show hidden (Alt+Shift+H)." },
   "hiddenMore_one": { "message": "and $1 more", "description": "After a site's name on the one line standing for several hidden results in a row, e.g. “fandom.com and 1 more hidden by your list”." },
-  "hiddenMore_other": { "message": "and $1 more" }
+  "hiddenMore_other": { "message": "and $1 more" },
+
+  "menuSuggest": { "message": "Should a list include it? Suggest it to $1.", "description": "In the menu on a result, once you've ranked or tagged the site yourself. $1 is one or two list names, each a link that opens a pre-filled issue on that list's issue tracker, joined like “A or B”." },
+  "menuSuggestTitle": { "message": "Propose $1 to $2 on its issue tracker", "description": "Tooltip of a list's name in menuSuggest. $1 is a site, $2 the list's name." },
+  "menuReport": { "message": "Wrong? Report it to $1.", "description": "In the menu on a result, under the lines saying what each list does with it. $1 is those lists' names, each a link that opens a pre-filled issue on that list's issue tracker, joined like “A or B”." },
+  "menuReportTitle": { "message": "Tell $1 it’s wrong about this result, on its issue tracker", "description": "Tooltip of a list's name in menuReport. $1 is the list's name." }
 }

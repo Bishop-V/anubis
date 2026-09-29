@@ -173,6 +173,22 @@ async function clickShadowButton(hostSelector, text, index = 0) {
   await cdp.detach();
 }
 
+// The links inside the closed shadow roots of hosts with this tag, read the same way.
+async function shadowLinks(hostTag) {
+  const cdp = await page.context().newCDPSession(page);
+  const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+  const textOf = (node) => (node.nodeType === 3 ? node.nodeValue : (node.children ?? []).map(textOf).join(''));
+  const within = (node, inside) => [
+    ...(inside && node.nodeName === 'A' ? [node] : []),
+    ...[...(node.children ?? []), ...(node.shadowRoots ?? [])].flatMap((c) => within(c, inside || node.localName === hostTag)),
+  ];
+  await cdp.detach();
+  return within(root, false).map((a) => {
+    const attrs = Object.fromEntries((a.attributes ?? []).flatMap((v, i, all) => (i % 2 ? [] : [[v, all[i + 1]]])));
+    return { text: textOf(a).trim(), href: attrs.href ?? '', title: attrs.title ?? '' };
+  });
+}
+
 async function shoot(url, name, opts = {}) {
   await page.goto(url);
   await page.waitForTimeout(700);
@@ -465,6 +481,25 @@ if (!only || only === 'popover') {
     }
     await page.keyboard.press('Escape');
   }
+
+  // A result a subscribed list weighs (Official docs tags MDN) offers to report it
+  // to that list, as a pre-filled issue with the rule that matched.
+  await page.goto('https://duckduckgo.com/?q=javascript+promises');
+  await page.waitForTimeout(600);
+  const mdn = page.locator('[data-anubis-result]', { hasText: 'Promise - JavaScript | MDN' });
+  await mdn.hover();
+  await mdn.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+  await page.waitForTimeout(300);
+  const reportLink = (await shadowLinks('anubis-popover')).find((a) => a.href.includes('/issues/new'));
+  const issue = reportLink && new URL(reportLink.href);
+  console.log('\n== report a wrong result:', JSON.stringify({
+    link: reportLink?.text,
+    tracker: issue && issue.origin + issue.pathname,
+    title: issue?.searchParams.get('title'),
+    rule: /```\n(.*)\n```/.exec(issue?.searchParams.get('body') ?? '')?.[1],
+  }));
+  await page.screenshot({ path: `${SHOTS}popover-report.png`, fullPage: false });
+  await page.keyboard.press('Escape');
 }
 
 if (!only || only === 'ddg-hide') {

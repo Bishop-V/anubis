@@ -34,6 +34,12 @@ Anubis checks for new versions of your lists when the browser starts and while y
 
 Each list in **Your lists** has a switch to turn it off for a while and a button to unsubscribe. Your own rankings always beat any list, so to overrule one list about one site, rank that site yourself.
 
+## Report a mistake in a list
+
+If a list hides, ranks or tags a site wrongly, open the ⇅ menu on the result. Under **Why**, "Wrong? Report it to *list name*" opens a pre-filled issue on the list's issue tracker, with the rule that matched and the result's address. Say what should change, then send it. Nothing is sent until you submit it yourself.
+
+This works for lists published in a GitHub, GitLab or Codeberg repository, and for lists that name their own issue tracker. To overrule a list straight away, rank the site yourself; a report gets the list fixed for everyone.
+
 ## Suggest a site to a list
 
-When a list has an issue tracker, the ⇅ menu on a result offers "Suggest it to *list name*". It opens a pre-filled issue on GitHub, GitLab or Codeberg for you to check and send. Nothing is sent until you submit it yourself.
+Once you've ranked or tagged a site yourself, the ⇅ menu offers "Suggest it to *list name*" for lists that take suggestions and don't mention the site yet. It opens a pre-filled issue on GitHub, GitLab or Codeberg for you to check and send. Nothing is sent until you submit it yourself.
