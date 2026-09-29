@@ -37,6 +37,7 @@ npm run docs:dev       # the wiki, with live reload
 npm run docs:build     # the wiki; fails on a broken link
 npm run zip            # store packages (see "Releasing")
 npm run zip:chrome
+npm run release:prep -- 0.3.0 # set the version, run every check above, make the Firefox zips
 ```
 
 ## How a build is made
@@ -251,7 +252,7 @@ The mocks can't prove a live engine still works. With the extension loaded (`npm
 
 ## Releasing
 
-The steps are in the README ([Building the store release](README.md#building-the-store-release)) and `store/README.md`: set `version` in `package.json`, merge, and push a matching `v…` tag. `.github/workflows/release.yml` checks the tag, runs CI, builds the zips, creates a GitHub Release and, once approved, submits to the Chrome, Firefox, and Edge stores.
+The steps are in the README ([Building the store release](README.md#building-the-store-release)) and `store/README.md`: run `npm run release:prep -- <version>` (`scripts/release-prep.mjs`: it sets `version` in `package.json` and `package-lock.json`, then runs the type-check, unit tests, Firefox build and zips, the add-on linter, and the end-to-end checks, stopping at the first failure), merge, and push a matching `v…` tag. `.github/workflows/release.yml` checks the tag, runs CI, builds the zips, creates a GitHub Release and, once approved, submits to each of the Chrome, Firefox, and Edge stores whose keys are set in the `release` environment. A store with no keys is skipped, so Firefox can ship before the others. A store with only some of its keys fails the release.
 
 ## Pitfalls
 

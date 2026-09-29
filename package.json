@@ -15,6 +15,7 @@
     "build:chrome": "wxt build -b chrome",
     "zip": "wxt zip",
     "zip:chrome": "wxt zip -b chrome",
+    "release:prep": "node scripts/release-prep.mjs",
     "compile": "tsc --noEmit",
     "postinstall": "wxt prepare",
     "test": "vitest run",

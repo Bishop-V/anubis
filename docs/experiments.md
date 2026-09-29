@@ -2,6 +2,12 @@
 
 What was tried while building the tagging and lists release, what failed, and what is still unverified. Newest notes go at the top of each section.
 
+## Firefox first, and one command before a release (2026-09-29)
+
+- **Found:** the release workflow passed the Chrome, Firefox, and Edge zips to one `wxt submit`, so a release needed every store's keys, even with only the Firefox listing ready.
+- **Changed:** the submit step now passes only the stores whose keys are all set in the `release` environment and notes the ones it skips. A store with only some of its keys fails the release, since that is a setup mistake rather than a store that isn't ready. The branches were run locally with each combination of keys and a stand-in `npx`; the real submission is still untried.
+- **Added:** `npm run release:prep -- <version>` sets the version, then runs the type-check, unit tests, Firefox zips, `web-ext lint`, and the full end-to-end run, stopping at the first failure. It passed in full on 0.2.0.
+
 ## Final runtime and listing review (2026-09-29)
 
 - **Found:** the toolbar badge counted hidden results but not clean-up removals, and its last count could remain after a tab left search. "Update now" also proceeded when a list's host permission was denied. Storage changes could trigger rejected list reloads without a handler in the content script and popup.

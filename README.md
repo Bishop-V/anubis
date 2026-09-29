@@ -72,7 +72,7 @@ npm run zip:chrome   # .output/anubis-<version>-chrome.zip, also used for Edge
 
 The extension itself is in `.output/firefox-mv2/` (and `.output/chrome-mv3/`) after the zips are made.
 
-To publish a version, set `version` in `package.json`, merge it, then push a matching tag (`git tag v0.3.0 && git push origin v0.3.0`). `.github/workflows/release.yml` checks the tag against `package.json`, runs CI, builds the zips, creates a GitHub Release and, once approved in the `release` environment, submits to the Chrome Web Store, Firefox Add-ons, and Edge Add-ons.
+To publish a version, run `npm run release:prep -- 0.3.0` (or `patch`, `minor`, or `major`). It sets the version, runs every check, and makes the Firefox zips. Merge the change, then push a matching tag (`git tag v0.3.0 && git push origin v0.3.0`). `.github/workflows/release.yml` checks the tag against `package.json`, runs CI, builds the zips, and creates a GitHub Release. Once approved in the `release` environment, it submits to each of the Chrome Web Store, Firefox Add-ons, and Edge Add-ons whose keys are set there.
 
 ### Before opening a pull request
 
