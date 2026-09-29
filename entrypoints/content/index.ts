@@ -639,7 +639,8 @@ function summaryPlace(results: FoundResult[], engine: EngineDef, clutter: Clutte
     .map((c) => c.block)
     .filter((b) => b.isConnected && !b.contains(before) && before.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_PRECEDING && !b.closest('aside, [role="complementary"], #rhs'))
     .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
-  return ai[0] ? { before: ai[0], area, column, fallback: before } : { before, area, column };
+  const titles = results.slice(0, 5).map((r) => r.titleBlock);
+  return ai[0] ? { before: ai[0], area, column, titles, fallback: before } : { before, area, column, titles };
 }
 
 /** The next result in the page after this one, skipping Anubis's own elements and blocks clean-up removed. */

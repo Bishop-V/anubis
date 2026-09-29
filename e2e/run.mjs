@@ -770,6 +770,20 @@ if (!only || only === 'cleanup' || checks) {
   });
   console.log('== summary on a results area wider than the results:', JSON.stringify(wide));
 
+  // Where results are cards, the summary lines up with their text.
+  await page.goto('https://search.brave.com/search?q=anubis');
+  await page.waitForTimeout(800);
+  const cards = await page.evaluate(() => {
+    const host = document.querySelector('anubis-summary');
+    const title = document.querySelector('.snippet[data-type="web"] .title');
+    if (!host || !title) return { found: false };
+    const box = host.getBoundingClientRect();
+    const cs = getComputedStyle(host);
+    return { found: true, left: Math.round(box.left + parseFloat(cs.paddingLeft)), titleLeft: Math.round(title.getBoundingClientRect().left) };
+  });
+  console.log('== summary over result cards:', JSON.stringify(cards));
+  if (checks) assertChecks('summary lined up with result cards', { found: cards.found, linedUp: cards.found && Math.abs(cards.left - cards.titleLeft) <= 1 });
+
   // The ⚖ button sits beside a result's first row, never over its text.
   const covering = {};
   for (const url of [

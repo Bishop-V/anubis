@@ -553,6 +553,8 @@ let summaryHost: HTMLElement | undefined;
 let summaryArea: HTMLElement | undefined;
 /** The list of results, which the summary also lines up with where the area is wider (DuckDuckGo's spans the side panel). */
 let summaryColumn: HTMLElement | undefined;
+/** The first few results' titles, for how far in from the results' edges their text starts. */
+let summaryTitles: HTMLElement[] = [];
 /** Places that didn't put the summary above the results once the page had loaded, so aren't tried again. */
 const misplaced = new WeakSet<HTMLElement>();
 const misplacedInside = new WeakSet<HTMLElement>();
@@ -569,6 +571,7 @@ export interface SummaryPlace {
   before: HTMLElement;
   area?: HTMLElement;
   column?: HTMLElement;
+  titles?: HTMLElement[];
   fallback?: HTMLElement;
 }
 
@@ -679,6 +682,7 @@ export function renderSummary(
   announce(summaryHost, change ?? '');
 
   summaryColumn = place.column;
+  summaryTitles = place.titles ?? [];
   summaryArea = place.area && !place.area.contains(summaryHost) ? place.area : undefined;
   alignSummary();
   // While the page is still loading, its layout may not be final: a place that
@@ -736,7 +740,8 @@ function announce(host: HTMLElement, text: string): void {
 
 /**
  * Inset the summary so it lines up with the results: with the results area when
- * it sits outside it, and with the list of results when that's narrower. Only the
+ * it sits outside it, with the list of results when that's narrower, and with the
+ * results' text where they're cards. Only the
  * host's padding changes, so its own box stays where the page lays it out.
  */
 function alignSummary(): void {
@@ -748,18 +753,28 @@ function alignSummary(): void {
   if (summaryArea && !summaryArea.contains(host)) host.style.setProperty('margin-top', '16px', 'important');
   const box = host.getBoundingClientRect();
   if (!box.width) return;
-  const target = [summaryArea, summaryColumn]
-    .filter((el): el is HTMLElement => !!el?.isConnected && !el.contains(host))
-    .map((el) => el.getBoundingClientRect())
-    .filter((r) => r.width)
-    .sort((a, b) => a.width - b.width)[0];
-  if (!target) return;
-  const area = target;
-  const left = Math.max(0, Math.round(area.left - box.left));
-  const right = Math.max(0, Math.round(box.right - area.right));
+  let left = box.left;
+  let right = box.right;
+  for (const el of [summaryArea, summaryColumn]) {
+    if (!el?.isConnected || el.contains(host)) continue;
+    const r = el.getBoundingClientRect();
+    if (!r.width) continue;
+    left = Math.max(left, r.left);
+    right = Math.min(right, r.right);
+  }
+  // Where results are cards (Brave's), in from their edges as far as their text is.
+  const title = summaryTitles.map((el) => el.getBoundingClientRect()).find((r) => r.width);
+  const inset = title ? title.left - left : 0;
+  if (inset > 0 && inset <= 48) {
+    left += inset;
+    right -= inset;
+  }
+  const padLeft = Math.max(0, Math.round(left - box.left));
+  const padRight = Math.max(0, Math.round(box.right - right));
+  if (!padLeft && !padRight) return;
   host.style.setProperty('box-sizing', 'border-box', 'important');
-  if (left) host.style.setProperty('padding-left', `${left}px`, 'important');
-  if (right) host.style.setProperty('padding-right', `${right}px`, 'important');
+  if (padLeft) host.style.setProperty('padding-left', `${padLeft}px`, 'important');
+  if (padRight) host.style.setProperty('padding-right', `${padRight}px`, 'important');
 }
 
 /**
@@ -798,6 +813,7 @@ export function removeAllUi(): void {
   document.querySelectorAll(HOST_TAGS).forEach((el) => el.remove());
   summaryHost = undefined;
   summaryColumn = undefined;
+  summaryTitles = [];
   summaryArea = undefined;
 }
 
