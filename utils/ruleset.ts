@@ -10,6 +10,7 @@ import {
   watchPersonal,
   settingsItem,
   type Settings,
+  type Subscription,
 } from './storage';
 import { displayName, getSubscriptions, listText, reportTracker } from './subscriptions';
 
@@ -23,6 +24,36 @@ export interface RuleSet {
   /** Where each subscribed list takes reports of its mistakes, when it has somewhere. */
   trackers: Record<string, string>;
   tags: Map<string, TagDef>;
+}
+
+interface CompiledSubscription {
+  text: string;
+  name?: string;
+  url: string;
+  compiled: CompiledList;
+  meta: ListMeta;
+  tracker?: string;
+}
+
+// Subscribed lists as last compiled, by subscription. Any change (one click in the
+// result menu) reloads the rule set in every open search tab, and parsing every
+// subscribed list again each time was most of that work.
+const compiled = new Map<string, CompiledSubscription>();
+
+function compiledSubscription(sub: Subscription, text: string): CompiledSubscription {
+  const known = compiled.get(sub.id);
+  if (known && known.text === text && known.name === sub.name && known.url === sub.url) return known;
+  const parsed = parseList(text);
+  const list = {
+    text,
+    name: sub.name,
+    url: sub.url,
+    compiled: compileList(sub.id, parsed, false, displayName(sub, parsed.meta)),
+    meta: parsed.meta,
+    tracker: reportTracker(sub.url, parsed.meta),
+  };
+  compiled.set(sub.id, list);
+  return list;
 }
 
 export async function loadRuleSet(): Promise<RuleSet> {
@@ -39,16 +70,18 @@ export async function loadRuleSet(): Promise<RuleSet> {
   const meta: Record<string, ListMeta> = { [PERSONAL_ID]: personal.meta };
   const trackers: Record<string, string> = {};
 
+  const seen = new Set<string>();
   for (const sub of subs) {
     if (!sub.enabled) continue;
     const text = listText(sub, cache);
     if (!text) continue;
-    const parsed = parseList(text);
-    lists.push(compileList(sub.id, parsed, false, displayName(sub, parsed.meta)));
-    meta[sub.id] = parsed.meta;
-    const tracker = reportTracker(sub.url, parsed.meta);
-    if (tracker) trackers[sub.id] = tracker;
+    const list = compiledSubscription(sub, text);
+    seen.add(sub.id);
+    lists.push(list.compiled);
+    meta[sub.id] = list.meta;
+    if (list.tracker) trackers[sub.id] = list.tracker;
   }
+  for (const id of compiled.keys()) if (!seen.has(id)) compiled.delete(id);
 
   return { settings, prefs, personalText, lists, meta, trackers, tags: collectTags(lists, prefs) };
 }

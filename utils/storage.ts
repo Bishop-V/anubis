@@ -128,6 +128,8 @@ export interface Subscription {
 export interface CachedList {
   text: string;
   fetchedAt: number;
+  /** The list's own `! expires:`, in hours, read when it was downloaded; 0 when it has none. */
+  expiresHours?: number;
   error?: string;
   /** When the last failed attempt happened, so we don't hammer a dead URL. */
   errorAt?: number;
