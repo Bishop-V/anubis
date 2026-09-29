@@ -100,10 +100,10 @@ a result's URL, title, snippet ──evaluate(result, lists, prefs)──► Ver
 2. **Find what clean-up removes** (`findClutter` in `cleanup.ts`): blocks recognised by their heading, a marker text or a selector, widened to the whole block in the results column. Nothing that holds a result or the search box is removed.
 3. **Weigh each result** (`evaluate`) and write the decision onto the page as attributes: `data-anubis-result`, `data-anubis-state` (the ranking, plus `tagged`), `data-anubis-reveal`, `data-anubis-highlight`. `page.css` does the hiding, fading and outlining from those attributes. Each result also gets its tags under the title and its ⇅ button (`ui.ts`), and in the Collapse style each run of hidden results gets one line.
 4. **Rerank** by setting CSS `order` on the results inside a flex column. The engine's nodes never move: its scripts own them.
-5. **Draw the summary** above the results: what Anubis did, Show hidden, Load more results and the tags on the page.
+5. **Draw the summary** above the results: what Anubis did, Show hidden, Load more results, the tags on the page, and Undo for the last change from the result menu.
 6. **Send the page's numbers** to the background script, which shows the hidden count on the toolbar button, and to the popup when it asks.
 
-State that a click sets on the page (a result shown with its own Show button, a tag filter, Show hidden) lives in the content script's variables, because the next pass rewrites every attribute from them.
+State that a click sets on the page (a result shown with its own Show button, a tag filter, Show hidden, the change Undo would take back) lives in the content script's variables, because the next pass rewrites every attribute from them.
 
 Every piece of Anubis on the page is a custom element (`anubis-chips`, `anubis-weigh`, `anubis-bar`, `anubis-summary`, `anubis-popover`) with a closed shadow root, so the page's CSS and scripts can't reach inside. Hosts are made with `makeHost`, which pins their own styles inline, since page CSS can still reach the host element itself.
 
@@ -198,14 +198,14 @@ Not everything is converted yet: `ROADMAP.md` lists what's left. Wording follows
 | --- | --- |
 | `listformat.test.ts` | Parsing each format, the header, tags, slow patterns |
 | `matcher.test.ts` | Which rule wins, tag choices, lenses, reasons |
-| `personal.test.ts` | Line-level edits to the personal list |
+| `personal.test.ts` | Line-level edits to the personal list, and undoing them |
 | `importers.test.ts` | Importing uBlacklist, HOHSER, Goggles and domain lists |
 | `storage.test.ts` | Chunking the personal list, migrations, default subscriptions |
 | `lists.test.ts` | Every bundled list, and the directory |
 | `cleanup.test.ts` | Clean-up headings and markers, the summary sentence, redirects |
 | `domain.test.ts` | Domains, redirect links, raw list addresses, issue links, subscribe links |
 | `engines.test.ts` | Picking an engine's phone layout |
-| `i18n.test.ts` | Message keys, plural forms and placeholders |
+| `i18n.test.ts` | Message keys, plural forms and placeholders, the undo line's wording |
 
 **End-to-end checks** (`npm run e2e`, or `node e2e/run.mjs <part>` after `npm run build:chrome`) load the Chrome build into Chromium. `CHROMIUM_PATH` has to point at a Chromium binary: branded Chrome no longer loads unpacked extensions from the command line. The harness answers the real engines' addresses with the mock pages in `e2e/fixtures.mjs` (Google, DuckDuckGo, Bing, Brave, and Google's phone layout), seeds storage with a test personal list and settings, prints what Anubis decided and saves screenshots to `e2e/shots/`. Each part is a block in `e2e/run.mjs`: `pages`, `hostile`, `grouped`, `reveal`, `runs`, `shortcuts`, `mobile`, `off`, `cleanup`, `popover`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `subscribe-link`, `options` and `welcome`.
 

@@ -119,7 +119,6 @@ async function launch(settings = {}) {
       ['https://roblox.fandom.com/', 'Roblox Wiki', 'The Roblox wiki.'],
     ]),
     'https://www.google.com/search?q=anubis&udm=14': google('anubis', ANUBIS_RESULTS),
-    'https://www.google.com/search?q=anubis&mobile=1': googleMobile('anubis', ANUBIS_RESULTS),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
   };
@@ -189,6 +188,18 @@ async function shadowLinks(hostTag) {
     const attrs = Object.fromEntries((a.attributes ?? []).flatMap((v, i, all) => (i % 2 ? [] : [[v, all[i + 1]]])));
     return { text: textOf(a).trim(), href: attrs.href ?? '', title: attrs.title ?? '' };
   });
+}
+
+// The text inside the closed shadow root of the first host with this tag.
+async function shadowText(hostTag) {
+  const cdp = await page.context().newCDPSession(page);
+  const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+  await cdp.detach();
+  const textOf = (node) =>
+    node.nodeType === 3 ? node.nodeValue : node.nodeName === 'STYLE' ? '' : [...(node.children ?? []), ...(node.shadowRoots ?? [])].map(textOf).join(' ');
+  const find = (node) => (node.localName === hostTag ? node : [...(node.children ?? []), ...(node.shadowRoots ?? [])].map(find).find(Boolean));
+  const host = find(root);
+  return host ? textOf(host).replace(/\s+/g, ' ').trim() : '';
 }
 
 async function shoot(url, name, opts = {}) {
@@ -497,9 +508,17 @@ if (!only || only === 'popover') {
       await page.waitForTimeout(900);
       await page.screenshot({ path: `${SHOTS}popover-after-pin.png`, fullPage: false });
       await report(page, 'after pinning javascript.info from the menu');
-      // Put it back.
-      await page.keyboard.press('Enter');
+      // The summary says what changed and offers to undo it.
+      console.log('\n== summary after pinning:', JSON.stringify(await shadowText('anubis-summary')));
+      await page.keyboard.press('Escape');
+      await page.screenshot({ path: `${SHOTS}summary-undo.png`, fullPage: false });
+      await clickShadowButton('anubis-summary', 'Undo');
       await page.waitForTimeout(600);
+      const after = await report(page, 'after Undo: javascript.info raised again');
+      console.log('== undo:', JSON.stringify({
+        raised: after.find((r) => r.text.includes('Modern JavaScript'))?.state,
+        summary: await shadowText('anubis-summary'),
+      }));
     }
     await page.keyboard.press('Escape');
   }

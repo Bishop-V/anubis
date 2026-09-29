@@ -240,6 +240,16 @@ Subscribe on the lists directory, and links list authors share, lead to the guid
 - **First pass (rejected by the project owner as loud and "a bit like Discord"):** filled pill badges with coloured dots, gradient gold buttons and segmented controls, ALL-CAPS section labels, rounded cards everywhere, a bordered summary with stat counters.
 - **Second pass**, following Anthropic's `frontend-design` skill (now in `.claude/skills/`): on search pages Anubis uses the page's own font and muted text; tags are a small diamond and a name; the summary is one sentence; hidden results are one line. The one flourish is the weigh menu: the site's name in a cartouche (the oval that encloses names in hieroglyphs) over a small balance that tilts with the chosen weight. Settings use rows and hairlines; the light theme is a cool stone grey instead of cream; tag colours are muted Egyptian pigments.
 
+## Undo (2026-09-29)
+
+A change from the result menu shows in the summary above the results, "Hid fandom.com." with **Undo**, in keeping with nothing being hidden without a trace. With the Remove style the result disappears under the menu, and pressing the ranking again doesn't undo it: it clears your ranking, which for a raised site you then pinned means Normal, not Raise.
+
+- **What it restores:** the site's line in your list as it was (ranking and tags), not the whole list, so a change made meanwhile in settings or another tab survives. A tag defined by the change goes too, unless another site uses it.
+- **Changes in a row to one site merge:** Hide then Lower undoes to how the site was before Hide. Back where it started, the line goes away. A change to another site replaces it; there's one level of undo.
+- **When it goes:** at the next search, or when the site changes elsewhere (checked when the list reloads; the site still reading as before the change means the reload is from before it, not that it's stale).
+- **Where:** a line of its own in the summary, under the sentence and above the tags, in the text colour rather than muted, since it's the one thing on the line you just caused. It needs the summary: with the summary turned off, or on DuckDuckGo Lite, which has none, there's no Undo; the menu still shows the site's ranking.
+- **Wording:** past-tense verbs, as in the summary sentence ("Hid", "Lowered", "Raised", "Pinned"). Pressing the ranking a site already had says "Cleared your ranking of fandom.com." rather than "back to normal", since a list may still rank it. Several changes to one site say "Changed fandom.com in your list."
+
 ## Filtering by tag
 
 - **Shipped:** the summary lists the tags on the page's visible results with their counts, a legend you can click to show only one tag ("Showing only “Discussion”: 2 of 9 results"). It's the lightest version of Kagi's lenses: nothing is fetched, and a new search clears it. Filtered-out results get `data-anubis-filtered` and `display: none`, so they keep their place for when the filter is lifted.

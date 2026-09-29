@@ -15,7 +15,7 @@ It works on the search engine you already use. Your choices, and the lists you s
 - **Lists anyone can publish.** Subscribe to lists that tag and rank sites for you. A list is a text file in a Git repository, so anyone can publish one and suggest changes to one. Brave Goggles, uBlacklist rulesets and plain domain lists work unchanged. [Subscribing to lists](./lists.md)
 - **Clean up pages.** Remove AI answers, video panels, "People also ask" and more on every search. [Cleaning up pages](./clean-up.md)
 - **More than one page of results.** Bring the next pages onto the first and rank them together, so a site you pinned on page 3 rises to the top. [Loading more results](./more-results.md)
-- **Easy to undo.** A one-line summary above the results says what Anubis changed, and "Show hidden" brings everything back on that page.
+- **Easy to undo.** A one-line summary above the results says what Anubis changed, "Show hidden" brings everything back on that page, and "Undo" takes back your last change.
 
 It works on Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex and Mojeek. See [Search engines](./search-engines.md) for details.
 

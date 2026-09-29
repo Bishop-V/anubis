@@ -1,14 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import {
+  changeHolds,
   fromBlockedSites,
   getSite,
   listSites,
   listTagDefs,
   PERSONAL_HEADER,
+  recordChange,
   removeTag,
   setSite,
   setSiteLevel,
   toggleSiteTag,
+  undoChange,
   upsertTagDef,
 } from '@/utils/personal';
 import { parseList } from '@/utils/listformat';
@@ -75,5 +78,45 @@ describe('personal list edits', () => {
       ['fandom.com', 'hide'],
       ['pinterest.com', 'hide'],
     ]);
+  });
+});
+
+describe('undoing a change from the result menu', () => {
+  it('puts a site back as it was', () => {
+    const hid = setSiteLevel(base, 'mdn.dev', 'hide');
+    const change = recordChange(undefined, 'mdn.dev', base, hid)!;
+    expect(change).toMatchObject({ site: 'mdn.dev', before: { level: 'normal', tags: [] }, after: { level: 'hide', tags: [] } });
+    expect(undoChange(hid, change)).toBe(base);
+  });
+
+  it('merges changes in a row to one site, and forgets them once the site is back where it started', () => {
+    const lowered = setSiteLevel(base, 'fandom.com', 'lower');
+    let change = recordChange(undefined, 'fandom.com', base, lowered);
+    const pinned = setSiteLevel(lowered, 'fandom.com', 'pin');
+    change = recordChange(change, 'fandom.com', lowered, pinned);
+    expect(change).toMatchObject({ before: { level: 'hide' }, after: { level: 'pin' } });
+    expect(getSite(undoChange(pinned, change!), 'fandom.com')?.level).toBe('hide');
+    expect(recordChange(change, 'fandom.com', pinned, base)).toBeUndefined();
+    // A change to another site starts again.
+    const other = setSiteLevel(pinned, 'mdn.dev', 'raise');
+    expect(recordChange(change, 'mdn.dev', pinned, other)?.before.level).toBe('normal');
+  });
+
+  it('takes out a tag the change defined, unless another site uses it', () => {
+    const tagged = toggleSiteTag(upsertTagDef(base, { id: 'wiki', label: 'Wiki', color: '#4a86d8' }), 'fandom.com', 'wiki', true);
+    const change = recordChange(undefined, 'fandom.com', base, tagged)!;
+    expect(change.newTags).toEqual(['wiki']);
+    expect(undoChange(tagged, change)).toBe(base);
+    const shared = toggleSiteTag(tagged, 'wiki.dev', 'wiki', true);
+    expect(listTagDefs(undoChange(shared, change)).map((t) => t.id)).toEqual(['wiki']);
+  });
+
+  it('holds until the site is changed elsewhere', () => {
+    const hid = setSiteLevel(base, 'mdn.dev', 'hide');
+    const change = recordChange(undefined, 'mdn.dev', base, hid)!;
+    expect(changeHolds(change, hid)).toBe(true);
+    // The list not reloaded yet.
+    expect(changeHolds(change, base)).toBe(true);
+    expect(changeHolds(change, setSiteLevel(hid, 'mdn.dev', 'pin'))).toBe(false);
   });
 });

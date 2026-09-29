@@ -145,6 +145,71 @@ export function toggleSiteTag(text: string, site: string, tag: string, on?: bool
 }
 
 // ---------------------------------------------------------------------------
+// Undoing a change from the result menu
+
+/** A site's ranking and tags in the personal list, as the result menu sets them. */
+export interface SiteState {
+  level: PersonalLevel;
+  tags: string[];
+}
+
+export function siteState(text: string, site: string): SiteState {
+  const entry = getSite(text, site);
+  return { level: entry?.level ?? 'normal', tags: entry?.tags ?? [] };
+}
+
+export function sameSiteState(a: SiteState, b: SiteState): boolean {
+  return a.level === b.level && a.tags.length === b.tags.length && a.tags.every((t) => b.tags.includes(t));
+}
+
+/** A change to one site that can be undone. */
+export interface SiteChange {
+  site: string;
+  before: SiteState;
+  after: SiteState;
+  /** Tags the change defined, taken out again on undo if no site uses them. */
+  newTags: string[];
+}
+
+/**
+ * The change an edit made to `site`, from the list's text before and after it.
+ * Changes in a row to the same site merge, so undo puts the site back as it was
+ * before the first. Undefined when the site ends up as it started.
+ */
+export function recordChange(prev: SiteChange | undefined, site: string, before: string, after: string): SiteChange | undefined {
+  const known = new Set(listTagDefs(before).map((t) => t.id));
+  const newTags = listTagDefs(after)
+    .map((t) => t.id)
+    .filter((id) => !known.has(id));
+  const merge = prev?.site === site;
+  const change: SiteChange = {
+    site,
+    before: merge ? prev.before : siteState(before, site),
+    after: siteState(after, site),
+    newTags: [...new Set([...(merge ? prev.newTags : []), ...newTags])],
+  };
+  return sameSiteState(change.before, change.after) ? undefined : change;
+}
+
+/**
+ * Whether a change still describes the site. It doesn't once the site was changed
+ * elsewhere (settings, another tab); before the list is reloaded it still reads
+ * as it was before the change.
+ */
+export function changeHolds(change: SiteChange, text: string): boolean {
+  const now = siteState(text, change.site);
+  return sameSiteState(now, change.after) || sameSiteState(now, change.before);
+}
+
+/** Put the site back as it was before the change. */
+export function undoChange(text: string, change: SiteChange): string {
+  let next = setSite(text, change.site, change.before.level, change.before.tags);
+  const used = new Set(listSites(next).flatMap((e) => e.tags));
+  for (const id of change.newTags) if (!used.has(id)) next = removeTag(next, id);
+  return next;
+}
+
+// ---------------------------------------------------------------------------
 // Tag definitions (`! tag:` lines)
 
 export function listTagDefs(text: string): TagDef[] {

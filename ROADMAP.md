@@ -58,7 +58,6 @@ Started: interface text is moving into `public/_locales/<language>/messages.json
 
 ## Features
 
-- **Undo** after a change from the result menu ("Hid fandom.com. Undo") in the summary line, in keeping with nothing being hidden without a trace.
 - **Engine definitions fetched from the repo,** like uBlacklist's SERPINFO, so a selector fix doesn't need a store release. Chrome forbids downloading code, so they have to be data: `isResultsPage` is a function today and would need a declarative form.
 - **Image, video and news results.** uBlacklist's SERPINFO has the selectors.
 
