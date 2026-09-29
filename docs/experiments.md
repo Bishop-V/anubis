@@ -2,6 +2,13 @@
 
 What was tried while building the tagging and lists release, what failed, and what is still unverified. Newest notes go at the top of each section.
 
+## Settings on narrow screens (2026-09-29)
+
+- **Found:** at 320px, the Your sites table forced the whole Settings page wider than the screen. The labelled ranking choices in the Add a site form also wrapped as an accidental run of buttons.
+- **Rejected:** changing the table to `display: block` stopped the page overflow, but made site names wrap one character at a time and separated the table columns.
+- **Shipped:** keep the table semantic and scroll it horizontally inside its own wrapper on screens up to 360px; keep its columns together, wrap the labelled ranking choices in a small grid, and put Add on its own line.
+- **Checked:** every Settings section stays within the viewport at 320px, 360px and 390px in Chromium. At 390px the sites table fits without scrolling; below that only the table can scroll.
+
 ## Keeping engine definitions in sync (2026-09-29)
 
 - **Starting point:** the weekly workflow already watched eight uBlacklist `serpinfo/*.yml` files, but its file-to-engine mapping lived only in `watch-engines.mjs`. It could silently fall behind when an engine was added, and fetching the 50 most recent engine issues could miss a previously reported commit.
