@@ -48,10 +48,13 @@ export default defineContentScript({
   // Start early so results are weighed as they stream in, before they paint.
   runAt: 'document_start',
 
-  async main() {
+  async main(ctx) {
     // Phones get a different layout from some engines (Firefox for Android).
     const engine = engineFor(location.hostname, isMobileAgent(navigator.userAgent));
     if (!engine) return;
+    // When the extension reloads or updates while this page is open, Firefox runs
+    // the new copy in the same page, and the old copy's summary and tags stay behind.
+    clearPreviousCopy();
 
     let rules: RuleSet;
     try {
@@ -429,8 +432,22 @@ export default defineContentScript({
       schedule();
     });
     const observe = () => observer.observe(document.documentElement, { childList: true, subtree: true });
+    // An old copy that keeps running (Chrome leaves it in open tabs) stops and
+    // clears up, so it doesn't redraw its summary beside the new copy's.
+    let stopped = false;
+    ctx.onInvalidated(() => {
+      stopped = true;
+      observer.disconnect();
+      if (queuedFrame !== undefined) cancelAnimationFrame(queuedFrame);
+      queuedFrame = undefined;
+      try {
+        reset();
+      } catch {
+        // Telling the toolbar fails once the extension is gone; the page is clear by then.
+      }
+    });
     function schedule() {
-      if (queuedFrame !== undefined) return;
+      if (queuedFrame !== undefined || stopped) return;
       queuedFrame = requestAnimationFrame(() => {
         queuedFrame = undefined;
         observer.disconnect();
@@ -450,7 +467,7 @@ export default defineContentScript({
       }
     });
     window.addEventListener('pageshow', (event) => {
-      if (!event.persisted) return;
+      if (!event.persisted || stopped) return;
       observe();
       schedule();
     });
@@ -597,14 +614,14 @@ function makeRoomForPins(pinned: Set<HTMLElement>) {
  * most web results, widened to the engine's boundary (Google's #rso) when it has
  * one. Results that show their address count; videos in a panel don't.
  */
-function summaryAnchor(results: FoundResult[], engine: EngineDef): { before?: HTMLElement; area?: HTMLElement } {
+function summaryAnchor(results: FoundResult[], engine: EngineDef): { before?: HTMLElement; area?: HTMLElement; column?: HTMLElement } {
   const main = mainColumn(results, engine).list;
   if (!main) return { before: results[0]?.container };
   const area = (engine.boundary && main.closest<HTMLElement>(engine.boundary)) || main;
   for (const child of area.children) {
-    if (child instanceof HTMLElement && !/^(ANUBIS-SUMMARY|SCRIPT|STYLE|TEMPLATE|LINK|META)$/.test(child.tagName)) return { before: child, area };
+    if (child instanceof HTMLElement && !/^(ANUBIS-SUMMARY|SCRIPT|STYLE|TEMPLATE|LINK|META)$/.test(child.tagName)) return { before: child, area, column: main };
   }
-  return { before: results[0]?.container, area };
+  return { before: results[0]?.container, area, column: main };
 }
 
 /**
@@ -615,14 +632,15 @@ function summaryAnchor(results: FoundResult[], engine: EngineDef): { before?: HT
  * somewhere else.
  */
 function summaryPlace(results: FoundResult[], engine: EngineDef, clutter: Clutter[]): SummaryPlace | undefined {
-  const { before, area } = summaryAnchor(results, engine);
+  const { before, area, column } = summaryAnchor(results, engine);
   if (!before) return undefined;
   const ai = clutter
     .filter((c) => c.kind === 'ai' && !c.uncounted)
     .map((c) => c.block)
     .filter((b) => b.isConnected && !b.contains(before) && before.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_PRECEDING && !b.closest('aside, [role="complementary"], #rhs'))
     .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
-  return ai[0] ? { before: ai[0], area, fallback: before } : { before, area };
+  const titles = results.slice(0, 5).map((r) => r.titleBlock);
+  return ai[0] ? { before: ai[0], area, column, titles, fallback: before } : { before, area, column, titles };
 }
 
 /** The next result in the page after this one, skipping Anubis's own elements and blocks clean-up removed. */
@@ -647,4 +665,12 @@ function pageTheme(setting: Theme): PageTheme {
     return 0.2126 * r + 0.7152 * g + 0.0722 * b < 128 ? 'dark' : 'light';
   }
   return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+/** Anubis's elements and attributes left on the page by an earlier copy of the extension. */
+function clearPreviousCopy(): void {
+  removeAllUi();
+  for (const el of document.querySelectorAll<HTMLElement>('[data-anubis-result], [data-anubis-row], [data-anubis-removed], [data-anubis-rerank]')) {
+    for (const name of el.getAttributeNames()) if (name.startsWith('data-anubis-')) el.removeAttribute(name);
+  }
 }

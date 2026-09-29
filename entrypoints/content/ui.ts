@@ -308,11 +308,15 @@ export function ensureWeighButton(
   const { top, right, besideMenu } = engine.button ?? { top: '2px', right: '2px' };
   host.style.setProperty('position', 'absolute', 'important');
   const menu = besideMenu ? resultMenuOf(container) : undefined;
+  // While the engine's own menu is open, it's drawn over the result; the button
+  // would sit on top of it (DuckDuckGo's opens beside it).
+  const menuOpen = !!menu && (menu.getAttribute('aria-expanded') === 'true' || [...container.querySelectorAll('[role="menu"], [role="dialog"]')].some((el) => el.getClientRects().length > 0));
+  host.style.setProperty('visibility', menuOpen ? 'hidden' : 'visible', 'important');
   if (menu) placeBesideMenu(host, container, menu);
   else {
     for (const prop of MENU_LOOK) host.style.removeProperty(prop);
     host.style.setProperty('top', top, 'important');
-    host.style.setProperty('right', clearOfPictures(container, right), 'important');
+    host.style.setProperty('right', right, 'important');
   }
   host.style.setProperty('left', 'auto', 'important');
   host.style.setProperty('bottom', 'auto', 'important');
@@ -325,23 +329,134 @@ export function ensureWeighButton(
     positioned.add(container);
     if (getComputedStyle(container).position === 'static') container.style.position = 'relative';
   }
+  if (!menu) {
+    lineUpWithHeader(host, container, result.titleBlock);
+    clearOfPictures(host, container);
+  }
+  if (coversText(host, container)) moveOffText(host, container, menu);
 }
 
 /**
- * How far from the right edge the button sits. Some results show a thumbnail in
- * their top-right corner (Google does beside many results); the button moves to
- * its left instead of covering it. Favicons are too small to count.
+ * Centred on the result's first row: the lines above its title (the site's name
+ * and address, on most engines), or else the title's first line. A result often
+ * starts with some space, and the engine's `top` alone leaves the button in it.
  */
-function clearOfPictures(container: HTMLElement, right: string): string {
+function lineUpWithHeader(host: HTMLElement, container: HTMLElement, titleBlock: HTMLElement): void {
+  // Google's title link also holds the site's name and address, above its heading.
+  const title = titleBlock.querySelector<HTMLElement>('h1, h2, h3, h4, [role="heading"]') ?? titleBlock;
+  const b = host.getBoundingClientRect();
+  const t = title.getBoundingClientRect();
+  if (!b.height || !t.height) return;
+  let top = Infinity;
+  let bottom = -Infinity;
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+  const range = document.createRange();
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    if (!node.textContent?.trim() || title.contains(node)) continue;
+    range.selectNodeContents(node);
+    for (const r of range.getClientRects()) {
+      if (!r.width || r.bottom > t.top + 1 || r.top < t.top - 60) continue;
+      top = Math.min(top, r.top);
+      bottom = Math.max(bottom, r.bottom);
+    }
+  }
+  if (top === Infinity) {
+    range.selectNodeContents(title);
+    const first = range.getClientRects()[0];
+    if (!first) return;
+    ({ top, bottom } = first);
+  }
   const box = container.getBoundingClientRect();
-  if (!box.width) return right;
+  const y = (top + bottom) / 2 - b.height / 2 - box.top - parseFloat(getComputedStyle(container).borderTopWidth);
+  host.style.setProperty('top', `${Math.round(y)}px`, 'important');
+}
+
+/** Whether the button sits over any of the result's text (a long address, a title). */
+function coversText(host: HTMLElement, container: HTMLElement): boolean {
+  const b = host.getBoundingClientRect();
+  if (!b.width) return false;
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+  const range = document.createRange();
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    const parent = node.parentElement;
+    if (!parent || !node.textContent?.trim()) continue;
+    const p = parent.getBoundingClientRect();
+    if (p.bottom <= b.top || p.top >= b.bottom || p.right <= b.left || p.left >= b.right) continue;
+    range.selectNodeContents(node);
+    for (const r of range.getClientRects()) {
+      if (r.bottom > b.top + 1 && r.top < b.bottom - 1 && r.right > b.left + 1 && r.left < b.right - 1) return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Off the text it covers: under the engine's menu button when there is one,
+ * otherwise out past the result's right edge if the window has room, otherwise
+ * down the result's right edge until it's clear.
+ */
+function moveOffText(host: HTMLElement, container: HTMLElement, menu: HTMLElement | undefined): void {
+  const box = container.getBoundingClientRect();
+  const b = host.getBoundingClientRect();
+  const top = parseFloat(host.style.top) || 0;
+  if (menu) {
+    const m = menu.getBoundingClientRect();
+    host.style.setProperty('top', `${Math.round(top + m.bottom + 2 - b.top)}px`, 'important');
+    host.style.setProperty('right', `${Math.round(box.right - m.right + (m.width - b.width) / 2)}px`, 'important');
+    if (!coversText(host, container)) return;
+    host.style.setProperty('top', `${Math.round(top)}px`, 'important');
+  }
+  if (box.right + b.width + 8 <= document.documentElement.clientWidth) {
+    host.style.setProperty('right', `${-Math.round(b.width + 4)}px`, 'important');
+    return;
+  }
+  for (let step = 1; step <= 4 && coversText(host, container); step++) {
+    host.style.setProperty('top', `${Math.round(top + step * (b.height + 2))}px`, 'important');
+  }
+}
+
+/** Once a result's picture pushes a button out past the results, they all go there, in one column. */
+let buttonsInGutter = false;
+
+/**
+ * Clear of a thumbnail beside the result's first row (Google and Brave show them
+ * in the top-right corner). The button goes just past the result's right edge,
+ * where the other results' buttons follow it so they stay in one column, or,
+ * where something else is there, to the thumbnail's left. Favicons are too small
+ * to count.
+ */
+function clearOfPictures(host: HTMLElement, container: HTMLElement): void {
+  const box = container.getBoundingClientRect();
+  const b = host.getBoundingClientRect();
+  if (!box.width || !b.width) return;
   let edge = box.right;
   for (const pic of container.querySelectorAll<HTMLElement>('img, video, canvas, [role="img"]')) {
     const r = pic.getBoundingClientRect();
-    if (r.width < 40 || r.height < 40 || r.right < box.right - 80 || r.top > box.top + 60) continue;
+    if (r.width < 40 || r.height < 40 || r.right < box.right - 80 || r.bottom <= b.top || r.top >= b.bottom) continue;
     edge = Math.min(edge, r.left);
   }
-  return edge === box.right ? right : `${Math.round(box.right - edge + 6)}px`;
+  const blocked = edge < b.right;
+  if (!blocked && !buttonsInGutter) return;
+  const outside = { left: box.right + 4, right: box.right + 4 + b.width, top: b.top, bottom: b.bottom };
+  if (gutterIsFree(container, outside)) {
+    buttonsInGutter = true;
+    host.style.setProperty('right', `${-Math.round(b.width + 4)}px`, 'important');
+  } else if (blocked) {
+    host.style.setProperty('right', `${Math.round(box.right - edge + 6)}px`, 'important');
+  }
+}
+
+/** Whether nothing but the result's own ancestors is in this spot beside it, and it's in the window. */
+function gutterIsFree(container: HTMLElement, spot: { left: number; right: number; top: number; bottom: number }): boolean {
+  if (spot.right + 4 > document.documentElement.clientWidth) return false;
+  for (let el: HTMLElement | null = container; el && el !== document.body; el = el.parentElement) {
+    for (const sibling of el.parentElement?.children ?? []) {
+      if (sibling === el || OWN_TAGS.has(sibling.tagName)) continue;
+      const r = sibling.getBoundingClientRect();
+      if (r.width && r.height && r.left < spot.right && r.right > spot.left && r.top < spot.bottom && r.bottom > spot.top) return false;
+    }
+  }
+  return true;
 }
 
 /** The engine's own menu button on a result: the right-most small button in its top-right corner. */
@@ -470,18 +585,27 @@ export function renderHiddenBar(
 let summaryHost: HTMLElement | undefined;
 /** The results area, while the summary sits outside it and lines up with it. */
 let summaryArea: HTMLElement | undefined;
+/** The list of results, which the summary also lines up with where the area is wider (DuckDuckGo's spans the side panel). */
+let summaryColumn: HTMLElement | undefined;
+/** The first few results' titles, for how far in from the results' edges their text starts. */
+let summaryTitles: HTMLElement[] = [];
 /** Places that didn't put the summary above the results once the page had loaded, so aren't tried again. */
 const misplaced = new WeakSet<HTMLElement>();
+const misplacedInside = new WeakSet<HTMLElement>();
 let realignOnResize = false;
 
 /**
  * Where the summary goes: just before `before`. When that's outside the results
- * `area` (above an AI answer), the summary lines up with the area, and goes before
- * `fallback` instead if the page's layout puts it anywhere but above the results.
+ * `area` (above an AI answer), the summary lines up with the area. If the page's
+ * layout puts it anywhere but above the results (the AI answer is one cell of a
+ * grid, and the summary would get a cell of its own), it goes at the top of the AI
+ * answer instead, and failing that before `fallback`.
  */
 export interface SummaryPlace {
   before: HTMLElement;
   area?: HTMLElement;
+  column?: HTMLElement;
+  titles?: HTMLElement[];
   fallback?: HTMLElement;
 }
 
@@ -506,12 +630,22 @@ export function renderSummary(
   if (!place?.before.parentElement || !worthShowing) {
     summaryHost?.remove();
     summaryArea = undefined;
+    summaryColumn = undefined;
     return;
   }
   summaryHost ??= makeHost('anubis-summary', theme).host;
+  // One summary: another is left over from an earlier copy of the extension.
+  for (const other of document.querySelectorAll('anubis-summary')) if (other !== summaryHost) other.remove();
   const tryFirst = !!place.fallback && !misplaced.has(place.before);
-  const before = tryFirst || !place.fallback ? place.before : place.fallback;
-  if (summaryHost.nextElementSibling !== before) before.before(summaryHost);
+  const inside = place.fallback && !misplacedInside.has(place.before) ? topOf(place.before) : undefined;
+  if (tryFirst) {
+    if (summaryHost.nextElementSibling !== place.before) place.before.before(summaryHost);
+  } else if (inside) {
+    if (summaryHost.parentElement !== inside || summaryHost.previousElementSibling) inside.prepend(summaryHost);
+  } else {
+    const before = place.fallback ?? place.before;
+    if (summaryHost.nextElementSibling !== before) before.before(summaryHost);
+  }
   keepUpright(summaryHost);
   summaryHost.dataset.theme = theme;
 
@@ -581,21 +715,37 @@ export function renderSummary(
 
   announce(summaryHost, change ?? '');
 
+  summaryColumn = place.column;
+  summaryTitles = place.titles ?? [];
   summaryArea = place.area && !place.area.contains(summaryHost) ? place.area : undefined;
   alignSummary();
+  // While the page is still loading, its layout may not be final: a place that
+  // fails is only given up once it has loaded, and tried again next pass until then.
+  const loaded = document.readyState === 'complete';
+  let tryInside = !tryFirst && !!inside;
   if (tryFirst && summaryArea && !aboveResults(summaryHost, place.before, summaryArea)) {
-    // While the page is still loading, its layout may not be final: try again next pass.
-    if (document.readyState === 'complete') misplaced.add(place.before);
+    if (loaded) misplaced.add(place.before);
+    if (inside) {
+      inside.prepend(summaryHost);
+      tryInside = true;
+    } else place.fallback!.before(summaryHost);
+    keepUpright(summaryHost);
+    summaryArea = place.area && !place.area.contains(summaryHost) ? place.area : undefined;
+    alignSummary();
+  }
+  if (tryInside && summaryArea && !aboveResults(summaryHost, summaryHost.nextElementSibling ?? place.before, summaryArea)) {
+    // A removed AI answer hides the summary with it; it's tried again once it's shown.
+    if (loaded && summaryHost.getBoundingClientRect().width) misplacedInside.add(place.before);
     place.fallback!.before(summaryHost);
     keepUpright(summaryHost);
     summaryArea = place.area && !place.area.contains(summaryHost) ? place.area : undefined;
     alignSummary();
   }
-  if (summaryArea && !realignOnResize) {
+  if ((summaryArea || summaryColumn) && !realignOnResize) {
     realignOnResize = true;
     let queued = false;
     addEventListener('resize', () => {
-      if (queued || !summaryArea) return;
+      if (queued || !(summaryArea || summaryColumn)) return;
       queued = true;
       requestAnimationFrame(() => {
         queued = false;
@@ -623,27 +773,61 @@ function announce(host: HTMLElement, text: string): void {
 }
 
 /**
- * Outside the results area, inset the summary so its text lines up with the
- * results. Only the host's padding changes, so its own box stays where the page
- * lays it out.
+ * Inset the summary so it lines up with the results: with the results area when
+ * it sits outside it, with the list of results when that's narrower, and with the
+ * results' text where they're cards. Only the
+ * host's padding changes, so its own box stays where the page lays it out.
  */
 function alignSummary(): void {
   const host = summaryHost;
   if (!host) return;
-  for (const prop of ['padding-left', 'padding-right', 'box-sizing']) host.style.removeProperty(prop);
-  if (!summaryArea?.isConnected || !host.isConnected) return;
+  for (const prop of ['padding-left', 'padding-right', 'box-sizing', 'margin-top']) host.style.removeProperty(prop);
+  if (!host.isConnected) return;
+  // Above an AI answer, nothing on the page spaces the summary from the tabs above it.
+  if (summaryArea && !summaryArea.contains(host)) host.style.setProperty('margin-top', '16px', 'important');
   const box = host.getBoundingClientRect();
-  const area = summaryArea.getBoundingClientRect();
-  if (!box.width || !area.width) return;
-  const left = Math.max(0, Math.round(area.left - box.left));
-  const right = Math.max(0, Math.round(box.right - area.right));
+  if (!box.width) return;
+  let left = box.left;
+  let right = box.right;
+  for (const el of [summaryArea, summaryColumn]) {
+    if (!el?.isConnected || el.contains(host)) continue;
+    const r = el.getBoundingClientRect();
+    if (!r.width) continue;
+    left = Math.max(left, r.left);
+    right = Math.min(right, r.right);
+  }
+  // Where results are cards (Brave's), in from their edges as far as their text is.
+  const title = summaryTitles.map((el) => el.getBoundingClientRect()).find((r) => r.width);
+  const inset = title ? title.left - left : 0;
+  if (inset > 0 && inset <= 48) {
+    left += inset;
+    right -= inset;
+  }
+  const padLeft = Math.max(0, Math.round(left - box.left));
+  const padRight = Math.max(0, Math.round(box.right - right));
+  if (!padLeft && !padRight) return;
   host.style.setProperty('box-sizing', 'border-box', 'important');
-  if (left) host.style.setProperty('padding-left', `${left}px`, 'important');
-  if (right) host.style.setProperty('padding-right', `${right}px`, 'important');
+  if (padLeft) host.style.setProperty('padding-left', `${padLeft}px`, 'important');
+  if (padRight) host.style.setProperty('padding-right', `${padRight}px`, 'important');
+}
+
+/**
+ * Where the summary goes at the top of a block: the block itself, or, where the
+ * block lays out its children in a row or grid, its first child that doesn't.
+ */
+function topOf(block: HTMLElement): HTMLElement | undefined {
+  let el: Element | null = block;
+  for (let depth = 0; el instanceof HTMLElement && depth < 6; depth++) {
+    if (!/(^|-)(flex|grid)$/.test(getComputedStyle(el).display)) return el;
+    // The summary itself may already be the first child.
+    el = el.firstElementChild;
+    while (el && OWN_TAGS.has(el.tagName)) el = el.nextElementSibling;
+  }
+  return undefined;
 }
 
 /** Above the results area and across it, and above `next` when that's showing. */
-function aboveResults(host: HTMLElement, next: HTMLElement, area: HTMLElement): boolean {
+function aboveResults(host: HTMLElement, next: Element, area: HTMLElement): boolean {
   const box = host.getBoundingClientRect();
   const results = area.getBoundingClientRect();
   const after = next.getBoundingClientRect();
@@ -662,6 +846,9 @@ function settingsButton(open: () => void, focusKey?: string): HTMLButtonElement 
 export function removeAllUi(): void {
   document.querySelectorAll(HOST_TAGS).forEach((el) => el.remove());
   summaryHost = undefined;
+  buttonsInGutter = false;
+  summaryColumn = undefined;
+  summaryTitles = [];
   summaryArea = undefined;
 }
 

@@ -144,11 +144,16 @@ async function launch(settings = {}, ext = EXT) {
       ['https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then', 'Promise.prototype.then() - MDN', 'The then() method of Promise instances takes up to two arguments.'],
     ], { inner: true }),
     'https://www.google.com/search?q=anubis&mobile=1': googleMobile('anubis', ANUBIS_RESULTS),
+    // What an earlier copy of the extension leaves on the page when it reloads or
+    // updates while the page is open (Firefox then runs the new copy in the same page).
+    'https://www.google.com/search?q=anubis&leftover=1': google('anubis', ANUBIS_RESULTS).replace('<div id="rcnt">', '<anubis-summary style="display:block">old summary</anubis-summary><div id="rcnt">'),
     'https://www.google.com/search?q=anubis&forum=1': google('anubis', ANUBIS_RESULTS, { forum: true, grouped: true, aiAbove: true, related: true, next: '/search?q=anubis&start=10' }),
+    'https://www.google.com/search?q=anubis&aigrid=1': google('anubis', ANUBIS_RESULTS, { forum: true, grouped: true, aiAbove: 'grid', related: true, next: '/search?q=anubis&start=10' }),
     'https://www.bing.com/search?q=javascript+promises&inline=1': bing('javascript promises', JS_RESULTS, { inline: true }),
     'https://search.brave.com/search?q=anubis&panels=1': brave('anubis', ANUBIS_RESULTS, { panels: true }),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
+    'https://duckduckgo.com/?q=javascript+promises&wide=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { wide: true }),
   };
   await ctx.route(/^https:\/\/((noai\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com)\//, (route) => {
     const body = pages[route.request().url()];
@@ -540,7 +545,7 @@ if (!only || only === 'cleanup' || checks) {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       return tab ? chrome.tabs.sendMessage(tab.id, { type: 'get-page-stats' }).catch(() => undefined) : undefined;
     });
-  const all = { ai: true, videos: true, questions: true, news: true, images: true, related: true };
+  const all = { ai: true, videos: true, questions: true, news: true, images: true, related: true, elsewhere: true };
   await setSettings({ cleanup: all });
   await page.goto('https://www.google.com/search?q=anubis&modules=1');
   await page.waitForTimeout(800);
@@ -673,13 +678,28 @@ if (!only || only === 'cleanup' || checks) {
       const visible = (el) => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0;
       return Object.fromEntries(Object.entries(selectors).map(([k, sel]) => [k, visible(document.querySelector(sel))]).concat([['results', [...document.querySelectorAll('[data-anubis-result]')].filter(visible).length]]));
     }, selectors);
-  const braveCleanup = await visibleIn({ videos: '.cluster-videos', discussions: '.cluster-discussions', relatedQueries: '.related-queries', videosTab: '.tabs a[href^="/videos"]' });
+  const braveCleanup = await visibleIn({ videos: '.cluster-videos', discussions: '.cluster-discussions', relatedQueries: '.related-queries', elsewhere: '.find-elsewhere', videosTab: '.tabs a[href^="/videos"]' });
   console.log('== Brave panels:', JSON.stringify(braveCleanup));
+  // A thumbnail in a result's corner: the buttons stay in one column, clear of it.
+  const braveButtons = await page.evaluate(() => {
+    const thumb = document.querySelector('.thumb img')?.getBoundingClientRect();
+    const boxes = [...document.querySelectorAll('anubis-weigh')].map((el) => el.getBoundingClientRect()).filter((r) => r.width);
+    return {
+      buttons: boxes.length,
+      lefts: [...new Set(boxes.map((r) => Math.round(r.left)))],
+      clearOfThumb: !!thumb && boxes.every((r) => r.right <= thumb.left || r.left >= thumb.right || r.bottom <= thumb.top || r.top >= thumb.bottom),
+    };
+  });
+  console.log('   buttons beside a thumbnail:', JSON.stringify(braveButtons));
+  await page.screenshot({ path: `${SHOTS}brave-thumbnail.png`, clip: { x: 0, y: 80, width: 1000, height: 520 } });
   if (checks) {
     assertChecks('Brave cleanup selectors', {
       removesVideos: !braveCleanup.videos,
       removesDiscussions: !braveCleanup.discussions,
       removesRelatedQueries: !braveCleanup.relatedQueries,
+      removesFindElsewhere: !braveCleanup.elsewhere,
+      buttonsInOneColumn: braveButtons.buttons > 0 && braveButtons.lefts.length === 1,
+      buttonsClearOfThumbnail: braveButtons.clearOfThumb,
       keepsVideosTab: braveCleanup.videosTab,
     });
   }
@@ -704,7 +724,7 @@ if (!only || only === 'cleanup' || checks) {
       const s = summary.getBoundingClientRect();
       const inset = parseFloat(getComputedStyle(summary).paddingLeft);
       return {
-        aboveAi: summary.nextElementSibling === ai,
+        aboveAi: (summary.nextElementSibling === ai || ai.firstElementChild === summary) && (!ai.getClientRects().length || s.bottom <= ai.querySelector('.YzCcne').getBoundingClientRect().top + 1),
         aboveResults: s.bottom <= rso.getBoundingClientRect().top + 1,
         linedUp: Math.abs(s.left + inset - rso.getBoundingClientRect().left) < 2,
         top: Math.round(s.top),
@@ -719,6 +739,119 @@ if (!only || only === 'cleanup' || checks) {
   await page.goto('https://www.google.com/search?q=anubis&forum=1');
   await page.waitForTimeout(800);
   console.log('   with clean-up of AI answers off:', JSON.stringify(await summaryPlace()));
+  // Where the page lays the row out as a grid, the summary can't go before the
+  // Overview (it would land in a cell beside the results), so it goes at the top
+  // of the Overview instead.
+  await page.goto('https://www.google.com/search?q=anubis&aigrid=1');
+  await page.waitForTimeout(800);
+  const gridKept = await summaryPlace();
+  await page.screenshot({ path: `${SHOTS}google-ai-grid.png`, clip: { x: 0, y: 0, width: 1280, height: 900 } });
+  console.log('   in a grid, AI answers kept:', JSON.stringify(gridKept));
+  await setSettings({ cleanup: { ...all, ai: true } });
+  await page.goto('https://www.google.com/search?q=anubis&aigrid=1');
+  await page.waitForTimeout(800);
+  console.log('   in a grid, AI answer removed:', JSON.stringify(await summaryPlace()));
+  await clickShadowButton('anubis-summary', 'Show hidden');
+  await page.waitForTimeout(300);
+  const gridShown = await summaryPlace();
+  console.log('   in a grid, after Show hidden:', JSON.stringify(gridShown));
+  if (checks) {
+    assertChecks('summary above an AI Overview in a grid', {
+      aboveWhenKept: gridKept.aboveAi && gridKept.aboveResults && gridKept.linedUp,
+      aboveAfterShowHidden: gridShown.aboveAi && gridShown.aboveResults && gridShown.linedUp,
+    });
+  }
+
+  // An earlier copy's summary is cleared, so the page shows one.
+  await page.goto('https://www.google.com/search?q=anubis&leftover=1');
+  await page.waitForTimeout(800);
+  const summaries = await page.evaluate(() => document.querySelectorAll('anubis-summary').length);
+  console.log('== summaries after a reload of the extension:', summaries);
+  if (checks) assertChecks('one summary after a reload of the extension', { oneSummary: summaries === 1 });
+
+  // Where the results area also holds a side panel, the summary still spans only the results.
+  await page.goto('https://duckduckgo.com/?q=javascript+promises&wide=1');
+  await page.waitForTimeout(800);
+  const wide = await page.evaluate(() => {
+    const host = document.querySelector('anubis-summary');
+    const list = document.querySelector('.react-results--main');
+    if (!host || !list) return { found: false };
+    const box = host.getBoundingClientRect();
+    const cs = getComputedStyle(host);
+    const left = box.left + parseFloat(cs.paddingLeft);
+    const right = box.right - parseFloat(cs.paddingRight);
+    const col = list.getBoundingClientRect();
+    return { found: true, left: Math.round(left), right: Math.round(right), colLeft: Math.round(col.left), colRight: Math.round(col.right) };
+  });
+  console.log('== summary on a results area wider than the results:', JSON.stringify(wide));
+
+  // Where results are cards, the summary lines up with their text.
+  await page.goto('https://search.brave.com/search?q=anubis');
+  await page.waitForTimeout(800);
+  const cards = await page.evaluate(() => {
+    const host = document.querySelector('anubis-summary');
+    const title = document.querySelector('.snippet[data-type="web"] .title');
+    if (!host || !title) return { found: false };
+    const box = host.getBoundingClientRect();
+    const cs = getComputedStyle(host);
+    return { found: true, left: Math.round(box.left + parseFloat(cs.paddingLeft)), titleLeft: Math.round(title.getBoundingClientRect().left) };
+  });
+  console.log('== summary over result cards:', JSON.stringify(cards));
+  if (checks) assertChecks('summary lined up with result cards', { found: cards.found, linedUp: cards.found && Math.abs(cards.left - cards.titleLeft) <= 1 });
+
+  // The ⚖ button sits beside a result's first row, never over its text.
+  const covering = {};
+  for (const url of [
+    'https://duckduckgo.com/?q=javascript+promises&wide=1',
+    'https://duckduckgo.com/?q=javascript+promises',
+    'https://www.google.com/search?q=anubis',
+    'https://www.bing.com/search?q=javascript+promises',
+    'https://search.brave.com/search?q=anubis',
+  ]) {
+    await page.goto(url);
+    await page.waitForTimeout(800);
+    covering[url] = await page.evaluate(() => {
+      let buttons = 0;
+      const over = [];
+      const above = [];
+      for (const host of document.querySelectorAll('anubis-weigh')) {
+        const b = host.getBoundingClientRect();
+        if (!b.width) continue;
+        buttons++;
+        const walker = document.createTreeWalker(host.parentElement, NodeFilter.SHOW_TEXT);
+        const range = document.createRange();
+        // Not up in the space above the result's first line (the topmost text; Google
+        // draws its heading below the address that follows it).
+        const first = document.createTreeWalker(host.parentElement, NodeFilter.SHOW_TEXT);
+        let topmost = Infinity;
+        for (let node = first.nextNode(); node; node = first.nextNode()) {
+          if (!node.textContent.trim()) continue;
+          range.selectNodeContents(node);
+          for (const r of range.getClientRects()) if (r.width) topmost = Math.min(topmost, r.top);
+        }
+        if (topmost < Infinity && (b.top + b.bottom) / 2 < topmost) above.push(host.parentElement.textContent.trim().slice(0, 40));
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          if (!node.textContent.trim()) continue;
+          range.selectNodeContents(node);
+          if ([...range.getClientRects()].some((r) => r.bottom > b.top + 1 && r.top < b.bottom - 1 && r.right > b.left + 1 && r.left < b.right - 1)) {
+            over.push(node.textContent.trim().slice(0, 40));
+            break;
+          }
+        }
+      }
+      return { buttons, over, above };
+    });
+  }
+  console.log('== buttons over text:', JSON.stringify(covering));
+  if (checks) {
+    assertChecks('the ⚖ button on the first row, never over text', Object.fromEntries(Object.entries(covering).map(([url, c]) => [url, c.buttons > 0 && c.over.length === 0 && c.above.length === 0])));
+  }
+  if (checks) {
+    assertChecks('summary as wide as the results', {
+      found: wide.found,
+      linedUp: wide.found && Math.abs(wide.left - wide.colLeft) <= 1 && Math.abs(wide.right - wide.colRight) <= 1,
+    });
+  }
 
   // Forcing it on Google: the Web tab.
   await setSettings({ cleanup: { ...all, ai: false } , googleWebTab: true });
@@ -1156,7 +1289,13 @@ if (!only || only === 'responsive') {
         throw new Error(`Settings → ${section} overflows at ${width}px (${layout.document}px wide)`);
       }
       if (section === 'sites' && width < 390) {
-        const scrolls = await opt.locator('.sites-scroll').evaluate((el) => el.scrollWidth > el.clientWidth);
+        // The table fills in after the heading shows, so wait for it to overflow.
+        const scrolls = await opt
+          .waitForFunction(() => {
+            const el = document.querySelector('.sites-scroll');
+            return !!el && el.scrollWidth > el.clientWidth;
+          }, null, { timeout: 3000 })
+          .then(() => true, () => false);
         if (!scrolls) throw new Error(`Your sites table should scroll inside its wrapper at ${width}px`);
       }
       if (section === 'sites' && width === 390) {
