@@ -2,6 +2,11 @@
 
 What was tried while building the tagging and lists release, what failed, and what is still unverified. Newest notes go at the top of each section.
 
+## Show hidden after a new search, and tag choices from files (2026-09-29)
+
+- **Found:** Show hidden stayed on after a new search that Google or DuckDuckGo made without loading a page, so the next search opened with its hidden results showing, while results shown one at a time were already forgotten there. It now ends with the search, like those. The `reveal` e2e part presses Show hidden, starts a search with `history.pushState`, and checks nothing is revealed; it failed on the previous build.
+- **Found:** a backup or sync file's tag choices went into storage unchecked. A choice that wasn't an object (`null`) stopped search pages at `collectTags`, and a colour that wasn't one went into a result's style. Reading a file now keeps only what Settings saves: a known action, a `#rgb` or `#rrggbb` colour, a text label, and a true-or-false `muted`. Unit tests in `tests/storage.test.ts` failed before the change.
+
 ## Finishing touches (2026-09-29)
 
 - **Asked for:** the project owner wanted the extension to look better, with small, tasteful additions rather than anything loud. Ten were mocked up beside the current build, in both schemes. The mockups aren't in the repository.
