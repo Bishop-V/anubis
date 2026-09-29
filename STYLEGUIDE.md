@@ -122,7 +122,7 @@ All shared controls are in `assets/theme.css`; the search-page versions in `shad
 | Switch | `.switch` | 30×17px pill, gold when on | Settings that take effect at once; no Save button |
 | Choice row | `.seg`, `.levels` | Plain words in `--muted`; the chosen one `--text`, 600, with a 2px underline in gold (`--danger` for Hide, the tag's colour for a tag filter) | Choosing one of a few: the rankings, Appearance's options |
 | Tag | `.tag` + `.gem` | A 6px diamond in the tag's colour, then its name; hollow for a tag you could add | Tags everywhere. Never pills or chips with fills. |
-| Ranking note | `.level-note`, `.verdict` | The ranking's icon and name: Pin and Raise in `--gold-ink` (Pin in 600), Hide in `--danger`, Lower and Normal in `--muted` | Saying a site's ranking in a list or under a result: "Pinned", "Raised" |
+| Ranking note | `.level-note`, `.verdict` | Pin and Raise in `--gold-ink`, Hide in `--danger`, Lower and Normal in `--muted`; pinned and hidden results use their selector icon instead of a redundant chip, while Raised and Lowered chips remain | Naming a site's ranking |
 
 ```ts
 // A form: one primary button, the rest plain or text buttons.

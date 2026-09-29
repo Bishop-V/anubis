@@ -43,10 +43,27 @@ Other services and your own server work too, if they offer WebDAV over `https://
 ![Settings, Sync](../img/options-sync.png)
 
 1. Open **Settings → Sync**, and under **Between browsers** enter the address, your user name, and the password.
-2. Press **Connect**. The browser asks you to let Anubis reach that server. Firefox also asks whether Anubis may send your list there.
-3. Do the same in your other browser.
+2. Leave **Encrypt the sync file end to end** on, and choose a long, unique passphrase of at least 12 characters. Use the same passphrase in every browser. Anubis saves it in that browser's local extension storage so background sync can run; it is never sent to the server or copied by browser sync. Do not use your WebDAV login password.
+3. Press **Connect**. The browser asks you to let Anubis reach that server. Firefox also asks whether Anubis may send your list there.
+4. Do the same in your other browser with the same encryption passphrase.
 
 **Settings → Sync** then shows when Anubis last synced, or what went wrong. **Sync now** syncs straight away.
+
+### Why this encryption
+
+Anubis uses **AES-256-GCM**, a widely supported authenticated-encryption mode built into browsers' Web Crypto API. AES encrypts the sync file; GCM also checks that ciphertext has not been altered, and uses a fresh random nonce for each write. The 256-bit key is derived from your passphrase with **PBKDF2-SHA-256** and a random salt, so Anubis does not send or store a separate key file. Using the browser's built-in cryptography avoids shipping a third-party crypto library.
+
+This protects the file's contents, not the fact that you connect to the server. The server operator can still see connection metadata and can delete or replace the file; encryption does not prevent withholding or replaying an older encrypted copy. If you forget the passphrase, the server copy cannot be recovered; your data in each browser remains available. Choose a long, unique passphrase and keep a separate backup.
+
+Anubis keeps the passphrase in that browser's local extension storage to sync automatically. It is not protected from someone who can access your browser profile or run code as you. WebDAV credentials are also saved locally and sent to the server to sign in.
+
+### Change the passphrase
+
+In **Settings → Sync**, use **Change encryption passphrase**. Enter and confirm a new passphrase of at least 12 characters. Anubis first checks that the current passphrase decrypts the server file, then replaces it only if the server confirms nobody changed it in between. If that check or write fails, Anubis keeps the current passphrase and does not overwrite the file. Sync first and retry if the file changed during the operation.
+
+After a successful change, enter the new passphrase in every other browser before it syncs. A browser still using the old passphrase cannot read or change the encrypted file; it will report the passphrase error and leave the file alone.
+
+New connections use encryption by default. To turn it off, uncheck the option when connecting; the server operator will then be able to read the file. Existing connections remain unencrypted until you enter and confirm a passphrase in Settings → Sync and choose **Save passphrase and sync**. An encrypted file requires the passphrase in every browser; Anubis will not overwrite it if a passphrase is missing or wrong. Plain backups exported from Settings are not encrypted by this feature.
 
 ### When it syncs
 
@@ -78,4 +95,4 @@ The first time a browser connects, it takes everything from the file. Sites and 
 
 Browser sync goes through your browser account, like your bookmarks. Anubis never sees it.
 
-When you connect a server, your list, settings, tag choices, and subscriptions go to that server and nowhere else. The user name and password are kept in that browser only, never in browser sync. See [Privacy and permissions](./privacy.md).
+When you connect a server, your list, settings, tag choices, and subscriptions go to that server and nowhere else. With end-to-end encryption enabled, the server cannot read the sync file; without it, the server operator can. Your WebDAV user name and password are saved in that browser, sent to the server to sign in, and never put in browser sync or the sync file. The encryption passphrase is saved locally in each browser where you set it, and is never sent to the server. See [Privacy and permissions](./privacy.md).
