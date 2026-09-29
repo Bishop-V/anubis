@@ -132,7 +132,7 @@ From real search pages, not the e2e mocks: a listing has to show the product as 
 
 Take them in a fresh browser profile that isn't signed in, so no account picture, history or location shows. In Chrome: DevTools → device toolbar → Responsive, 1280 × 800, device pixel ratio 1 → ⋮ → Capture screenshot. Save them in `store/screenshots/`. Don't save page HTML here; it carries the account and location.
 
-1. Google results for a programming question: tags under titles, a pinned documentation result at the top, a hidden result as one line, and the summary.
+1. Google results for a programming question: tags under titles, a pinned documentation result at the top, and the summary counting a hidden result.
 2. The ⇅ menu open on a result: the site's name, the five rankings and its tags.
 3. A results page after clean-up, with the summary saying an AI answer was removed.
 4. The toolbar popup over a results page.

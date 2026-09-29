@@ -39,7 +39,7 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      # AMO reviewers rebuild from the sources zip; README.md says to use Node 22.
+      # AMO reviewers rebuild from the sources zip; store/README.md says to use Node 22.
       - uses: actions/setup-node@v4
         with:
           node-version: 22

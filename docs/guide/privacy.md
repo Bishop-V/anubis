@@ -11,7 +11,7 @@ Anubis has no server and collects nothing. Everything it knows about you stays i
 
 Only these:
 
-- **The lists you subscribe to**, from wherever they're hosted, to check for new versions about once a day. This starts when you install Anubis, because it subscribes you to four lists of its own, hosted on GitHub. You can turn them off under **Settings → Lists**.
+- **The lists you subscribe to**, from wherever they're hosted, to check for new versions once a day, or less often when a list says so (Anubis's own lists: once a week). This starts when you install Anubis, because it subscribes you to four lists of its own, hosted on GitHub. You can turn them off under **Settings → Lists**.
 - **The directory of lists** on GitHub, when you open **Settings → Lists**, so **More lists** shows the newest ones.
 - **The search engine you're on**, for [Load more results](./more-results.md), which loads its next page like the "Next" link would.
 - **`noai.duckduckgo.com`**, if [AI answers](./clean-up.md) are removed, because DuckDuckGo searches open there. On Google, the Web tab option adds `udm=14` to the search's address.

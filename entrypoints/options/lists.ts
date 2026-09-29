@@ -4,16 +4,17 @@ import { ICON_EXTERNAL, ICON_REFRESH, ICON_TRASH } from '@/utils/icons';
 import { colorForTag, parseList, type ListFormat, type ParsedList } from '@/utils/listformat';
 import { send } from '@/utils/messages';
 import { flash, flashed, rerender } from './flash';
-import { getSubscriptions, saveSubscriptions } from '@/utils/ruleset';
 import { listCacheItem, type CachedList, type Subscription } from '@/utils/storage';
 import {
   builtinId,
   displayName,
   downloadList,
   fetchDirectory,
+  getSubscriptions,
   listText,
   originPermissionFor,
   refreshList,
+  saveSubscriptions,
   subscriptionId,
   toRawUrl,
   type DirectoryEntry,

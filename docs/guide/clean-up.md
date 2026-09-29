@@ -6,7 +6,7 @@ Search pages carry a lot that isn't results: AI answers, video panels, "People a
 
 | Switch | What it removes |
 | --- | --- |
-| **AI answers** | Google's AI Overview and its AI Mode tab, Bing's Copilot answers, Brave's AI answers. On DuckDuckGo, searches open in its no-AI version instead (see below). |
+| **AI answers** | Google's AI Overview and its AI Mode tab, Brave's AI answers. On DuckDuckGo, searches open in its no-AI version instead (see below). |
 | **Videos** | Video and short-video panels between the results. |
 | **People also ask** | Lists of other people's questions with expandable answers. |
 | **Top stories** | News panels between the results. |
@@ -14,6 +14,8 @@ Search pages carry a lot that isn't results: AI answers, video panels, "People a
 | **Related searches** | Lists of other searches, usually at the bottom of the page. |
 
 All of them start off.
+
+On Bing, the AI answer and the "Videos of…" panel aren't removed yet.
 
 ## What was removed
 

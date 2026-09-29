@@ -12,8 +12,6 @@ import {
 } from './storage';
 import { displayName, getSubscriptions, listText } from './subscriptions';
 
-export { getSubscriptions, saveSubscriptions } from './subscriptions';
-
 export const PERSONAL_ID = 'personal';
 export const PERSONAL_NAME = 'Your list';
 
