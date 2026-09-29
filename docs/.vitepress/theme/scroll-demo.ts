@@ -52,7 +52,7 @@ const SUMMARY = [
 ];
 
 const STEPS: { title: string; text: string }[] = [
-  { title: 'The usual search', text: 'An AI answer, some videos, and “People also ask”, all before the first real link.' },
+  { title: 'Before Anubis', text: 'Your results are in there somewhere, under an AI answer, videos, and a list of questions.' },
   { title: 'Clutter out', text: 'Anubis strips AI answers, video panels, and question lists. You pick which.' },
   { title: 'Done with a site?', text: 'Hide it from the scales beside any result. It stays hidden on every search, folded to one line in case you want it back.' },
   { title: 'Your sites first', text: 'Pin or raise the sites you trust. Lower the ones you put up with. The scales tip to show where each one stands.' },
