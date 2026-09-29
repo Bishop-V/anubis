@@ -91,7 +91,7 @@ a result's URL, title, snippet ──evaluate(result, lists, prefs)──► Ver
 - `parseList` detects the format (Anubis, Goggle, uBlacklist, plain domains), reads the `! key: value` header and turns each line into a `Rule`, or a line error.
 - `compileList` indexes rules by site and by host, so matching a result is a few map lookups.
 - `loadRuleSet` puts the personal list first, then every enabled subscription (the downloaded copy, or the bundled copy of a built-in list).
-- `evaluate` returns a `Verdict`: the result's ranking (`level`), how far it moves (`score`), whether it's hidden and why (`hiddenBy`), its tags, and one `Reason` per rule that matched, which the result menu shows under **Why**. The personal list beats tag choices, which beat the lists; `docs/list-format.md` has the rules.
+- `evaluate` returns a `Verdict`: the result's ranking (`level`), how far it moves (`score`), whether it's hidden and why (`hiddenBy`), its tags, and one `Reason` per rule that matched, which the result menu shows under **Why**. The personal list beats tag choices, which beat the lists; `docs/list-format.md` has the rules. Tag choices count once per tag and add up (five places per Raise or Lower), and one more `Reason` (`TAG_CHOICES`) explains them.
 
 ### One pass over a search page
 

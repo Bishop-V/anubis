@@ -7,7 +7,10 @@ import { PERSONAL_NAME } from './personal';
 //
 // Precedence, from strongest to weakest:
 //   1. The personal list (pin / raise / lower / hide / allow for a site).
-//   2. The user's per-tag choices ("hide everything tagged ai-slop").
+//   2. The user's per-tag choices ("hide everything tagged ai-slop"). Each tag counts
+//      once, however many lists give it; Hide hides, and Raise and Lower add up, five
+//      places each, so two raises and a lower make one raise. A rule carrying a tag
+//      with a choice leaves the ranking to the choices.
 //   3. The subscribed lists' own instructions. Within one list, Goggles precedence
 //      applies: discard > boost > downrank. Across lists, boosts and downranks add up.
 
@@ -25,8 +28,10 @@ export interface TagPref {
   muted?: boolean;
 }
 
-/** How far the personal "raise"/"lower" levels move a result, in list positions. */
+/** How far the personal "raise"/"lower" levels move a result, in list positions. Also each Raise or Lower tag's pull. */
 export const PERSONAL_STRENGTH = 5;
+/** The `listId` of the reason that explains your tag choices, in the result menu's Why. */
+export const TAG_CHOICES = 'tag-choices';
 const PIN_SCORE = 1000;
 /** Subscribed lists can't pin; a `pin` from one is treated as the strongest boost. */
 const MAX_LIST_BOOST = MAX_STRENGTH;
@@ -158,37 +163,6 @@ function describe(rule: Rule, tagLabel: (id: string) => string): string {
   return parts.length ? andList(parts) : 'mentions it';
 }
 
-type Effect = { discard: boolean; boost: number; highlight?: string; tag?: string };
-
-const TAG_ACTION_RANK: Record<TagAction, number> = { list: 0, label: 1, highlight: 2, raise: 3, lower: 4, hide: 5 };
-
-/** Apply the user's per-tag choices to a rule. Returns undefined when the rule's own action stands. */
-function tagOverride(rule: Rule, prefs: Record<string, TagPref>): Effect | undefined {
-  let best: TagAction = 'list';
-  let tag: string | undefined;
-  for (const id of rule.tags) {
-    const action = prefs[id]?.action ?? 'list';
-    if (TAG_ACTION_RANK[action] > TAG_ACTION_RANK[best]) {
-      best = action;
-      tag = id;
-    }
-  }
-  switch (best) {
-    case 'list':
-      return undefined;
-    case 'label':
-      return { discard: false, boost: 0 };
-    case 'highlight':
-      return { discard: false, boost: 0, highlight: tag };
-    case 'raise':
-      return { discard: false, boost: PERSONAL_STRENGTH };
-    case 'lower':
-      return { discard: false, boost: -PERSONAL_STRENGTH };
-    case 'hide':
-      return { discard: true, boost: 0, tag };
-  }
-}
-
 function personalLevel(rules: Rule[]): Level | 'allow' | undefined {
   // Rules arrive most-specific first; the first rule with an action decides.
   for (const rule of rules) {
@@ -226,6 +200,25 @@ export function evaluate(
     verdict.hiddenBy ??= by;
   };
 
+  // Your tag choices, each tag once however many lists give it. Returns whether the
+  // rule carries a tag with a choice, which then decides instead of the rule.
+  const chosen = new Map<string, TagAction>();
+  const applyChoices = (rule: Rule): boolean => {
+    let decides = false;
+    for (const id of rule.tags) {
+      const action = prefs[id]?.action ?? 'list';
+      if (action === 'list') continue;
+      decides = true;
+      if (chosen.has(id)) continue;
+      chosen.set(id, action);
+      if (action === 'hide') hide({ kind: 'tag', name: id });
+      else if (action === 'raise') score += PERSONAL_STRENGTH;
+      else if (action === 'lower') score -= PERSONAL_STRENGTH;
+      else if (action === 'highlight') highlight ??= id;
+    }
+    return decides;
+  };
+
   for (const list of lists) {
     const matched = matchList(list, t);
     const reason = (text: string, rule?: Rule) =>
@@ -252,28 +245,23 @@ export function evaluate(
       verdict.personal = personalLevel(matched);
       for (const rule of matched) reason(describe(rule, label), rule);
       // Personal tags still carry the user's tag choices.
-      for (const rule of matched) {
-        const eff = tagOverride(rule, prefs);
-        if (eff?.discard) hide({ kind: 'tag', name: eff.tag ?? '' });
-        if (eff) score += eff.boost;
-        if (eff?.highlight) highlight ??= eff.highlight;
-      }
+      for (const rule of matched) applyChoices(rule);
       continue;
     }
 
     // Goggles precedence inside one list: discard > boost > downrank.
-    let listDiscard: NonNullable<Verdict['hiddenBy']> | undefined;
+    let listDiscard = false;
     let up = 0;
     let down = 0;
     for (const rule of matched) {
-      const eff = tagOverride(rule, prefs) ?? { discard: rule.discard, boost: rule.pin ? MAX_LIST_BOOST : rule.boost };
-      if (eff.highlight) highlight ??= eff.highlight;
-      if (eff.discard) listDiscard ??= eff.tag ? { kind: 'tag', name: eff.tag } : { kind: 'list', name: list.name };
-      else if (eff.boost > 0) up = Math.max(up, eff.boost);
-      else if (eff.boost < 0) down = Math.min(down, eff.boost);
       reason(describe(rule, label), rule);
+      if (applyChoices(rule)) continue;
+      const boost = rule.pin ? MAX_LIST_BOOST : rule.boost;
+      if (rule.discard) listDiscard = true;
+      else if (boost > 0) up = Math.max(up, boost);
+      else if (boost < 0) down = Math.min(down, boost);
     }
-    if (listDiscard) hide(listDiscard);
+    if (listDiscard) hide({ kind: 'list', name: list.name });
     else score += up > 0 ? up : down;
   }
 
@@ -289,11 +277,45 @@ export function evaluate(
     return verdict;
   }
 
+  const choices = describeChoices(chosen, (id) => prefs[id]?.label ?? tagLabel(lists, id));
+  if (choices) verdict.reasons.push({ list: 'Your tag settings', listId: TAG_CHOICES, personal: true, text: choices });
   verdict.hidden = discard;
   if (!discard) verdict.hiddenBy = undefined;
   verdict.score = discard ? 0 : score;
   verdict.level = discard ? 'hide' : score > 0 ? 'raise' : score < 0 ? 'lower' : 'normal';
   return verdict;
+}
+
+/** A tag's name from the first list that declares one; a list that only uses the tag names it by its id. */
+function tagLabel(lists: CompiledList[], id: string): string {
+  for (const list of lists) {
+    const tag = list.tags.find((t) => t.id === id && t.label !== id);
+    if (tag) return tag.label;
+  }
+  return id;
+}
+
+/**
+ * Your tag choices as a sentence fragment, for the result menu's Why: "raise it by
+ * 5 for “Official docs” and “Reference” and lower it by 5 for “Paywall”, so it
+ * moves 5 places up". Undefined when no choice moves or hides the result.
+ */
+function describeChoices(chosen: Map<string, TagAction>, label: (id: string) => string): string | undefined {
+  const ids = (action: TagAction) => [...chosen].filter(([, a]) => a === action).map(([id]) => `“${label(id)}”`);
+  const hide = ids('hide');
+  if (hide.length) return `hide it for ${andList(hide)}`;
+  const move = (verb: string, tags: string[]) => `${verb} it by ${PERSONAL_STRENGTH}${tags.length > 1 ? ' each' : ''} for ${andList(tags)}`;
+  const raise = ids('raise');
+  const lower = ids('lower');
+  const parts: string[] = [];
+  if (raise.length) parts.push(move('raise', raise));
+  if (lower.length) parts.push(move('lower', lower));
+  if (!parts.length) return undefined;
+  const moves = [...chosen.values()].filter((a) => a === 'raise' || a === 'lower');
+  if (moves.length < 2) return parts[0];
+  const net = moves.reduce((sum, a) => sum + (a === 'raise' ? PERSONAL_STRENGTH : -PERSONAL_STRENGTH), 0);
+  const total = net > 0 ? `so it moves ${net} places up` : net < 0 ? `so it moves ${-net} places down` : 'so it stays where it was';
+  return `${andList(parts)}, ${total}`;
 }
 
 function personalName(lists: CompiledList[]): string {

@@ -19,12 +19,25 @@ A list decides which sites get a tag. You decide what the tag does, in **Setting
 | **Follow the lists** | Whatever the list says (the default). Most lists only label. |
 | **Label only** | Show the label, never change the ranking. |
 | **Highlight** | Give the result a faint background in the tag's colour. |
-| **Raise** / **Lower** | Move the result up or down. |
+| **Raise** / **Lower** | Move the result five places up or down. |
 | **Hide** | Hide the result, whichever list tagged it. |
 
 Turn off **Shown** to keep a tag working without showing its label under results. You can also rename a tag or change its colour there.
 
 ![Settings, Tags](../img/options-tags.png)
+
+### Several tags on one result
+
+When a result carries several tags you've set to **Raise** or **Lower**, Anubis weighs them together: each Raise moves it five places up and each Lower five places down.
+
+| Tags on the result | Where it goes |
+| --- | --- |
+| One Raise | Five places up |
+| Three Raise | Fifteen places up |
+| Two Raise and one Lower | Five places up, as if it had one Raise |
+| One Raise and one Lower | Where the search engine put it |
+
+A tag counts once, however many of your lists give it. A tag set to **Hide** still hides the result, whatever the others say. **Why** in the result's ⇅ menu shows each tag's part and where the result ends up ("raise it by 5 each for “Official docs” and “Reference” and lower it by 5 for “Paywall”, so it moves 5 places up").
 
 A ranking you gave a site yourself beats any tag. If you raised a site, a tag set to Hide won't hide it.
 

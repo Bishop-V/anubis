@@ -68,6 +68,29 @@ describe('evaluate', () => {
     expect(hl.highlight).toBe('paywall');
   });
 
+  it('adds up Raise and Lower tags, counting each tag once', () => {
+    const a = list('A', '! tag: docs | Official docs\n! tag: reference | Reference\n$site=x.com,tag=docs,tag=reference,boost=1');
+    const b = list('B', '! tag: tutorial | Great tutorial\n! tag: paywall | Paywall\n$site=x.com,tag=docs,tag=tutorial\n$site=y.com,tag=docs,tag=reference,tag=paywall');
+    const up = { docs: { action: 'raise' }, reference: { action: 'raise' }, tutorial: { action: 'raise' } } as const;
+    // Three raises (docs from both lists counts once): 15 places; the lists' own boost gives way.
+    expect(weigh('https://x.com/', [a, b], up)).toMatchObject({ level: 'raise', score: 3 * PERSONAL_STRENGTH });
+    // Two raises and a lower make one raise.
+    const mixed = weigh('https://y.com/', [b, a], { ...up, paywall: { action: 'lower' } });
+    expect(mixed).toMatchObject({ level: 'raise', score: PERSONAL_STRENGTH });
+    expect(mixed.reasons.at(-1)).toMatchObject({
+      list: 'Your tag settings',
+      text: 'raise it by 5 each for “Official docs” and “Reference” and lower it by 5 for “Paywall”, so it moves 5 places up',
+    });
+    // One raise and one lower cancel out; a Hide tag still hides.
+    expect(weigh('https://y.com/', [b], { docs: { action: 'raise' }, paywall: { action: 'lower' } })).toMatchObject({ level: 'normal', score: 0 });
+    expect(weigh('https://y.com/', [b], { ...up, paywall: { action: 'hide' } })).toMatchObject({ hidden: true, hiddenBy: { kind: 'tag', name: 'paywall' } });
+    // Your own ranking for the site still decides, and the tags aren't given as a reason.
+    const me = list('me', '$site=y.com,downrank=5', true);
+    const own = weigh('https://y.com/', [me, b], up);
+    expect(own).toMatchObject({ level: 'lower', score: -PERSONAL_STRENGTH });
+    expect(own.reasons.some((r) => r.list === 'Your tag settings')).toBe(false);
+  });
+
   it('applies tag preferences to the user’s own tags too', () => {
     const me = list('me', '! tag: meh | Meh\n$site=x.com,tag=meh', true);
     expect(weigh('https://x.com/', [me], { meh: { action: 'hide' } }).hidden).toBe(true);

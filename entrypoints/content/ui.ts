@@ -3,7 +3,7 @@ import { h, icon } from '@/utils/dom';
 import type { EngineDef } from '@/utils/engines';
 import { ICON_ANUBIS, ICON_CLOSE, ICON_GEAR, ICON_HIDE, ICON_RANK, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
-import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
+import { LEVELS, TAG_CHOICES, type Level, type TagPref, type Verdict } from '@/utils/matcher';
 import { t, tList, tn } from '@/utils/i18n';
 import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, PERSONAL_NAME, type PersonalLevel } from '@/utils/personal';
@@ -811,7 +811,9 @@ function buildPopover(
   if (personal === 'allow') hint = 'Normal, whatever your lists say.';
   else if (pressed) hint = `Your choice for ${domain}, on every search.`;
   else if (fromLists !== 'normal') {
-    const lists = [...new Set(data.baseline.reasons.map((r) => r.list))].join(', ');
+    const names = [...new Set(data.baseline.reasons.filter((r) => r.listId !== TAG_CHOICES).map((r) => r.list))];
+    if (data.baseline.reasons.some((r) => r.listId === TAG_CHOICES)) names.push('your tag settings');
+    const lists = names.join(', ');
     hint = `${LEVEL_CHIPS[fromLists]} by ${lists}. Choose one to decide yourself.`;
   } else hint = 'Your choice applies on every search.';
 
