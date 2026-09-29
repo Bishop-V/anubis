@@ -65,6 +65,11 @@ html[data-anubis-hide='dim'] [data-anubis-state~='hide'] > anubis-bar {
   outline: 1px solid rgb(212 166 55 / 0.55);
   outline-offset: 7px;
 }
+/* Unless results sit too close for the frame: the content script then pushes the
+   next one down (makeRoomForPins). */
+[data-anubis-pin-room] {
+  margin-top: var(--anubis-pin-room) !important;
+}
 
 /* Tag highlight (HOHSER-style): a faint wash of the tag's colour. */
 [data-anubis-highlight] {

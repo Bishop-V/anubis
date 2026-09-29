@@ -202,6 +202,7 @@ Reported from real use: on Google in Firefox the "Reference" tag and "Hidden" re
 - **Tried:** moving result nodes in the DOM. **Rejected before building:** DuckDuckGo and Google render results with their own scripts (React on DuckDuckGo), which own those nodes; moving them risks breaking "More results", keyboard navigation and hydration.
 - **Shipped:** the results' parent becomes a flex column and each result gets a CSS `order`. Nothing moves in the DOM. Caveats: vertical margins no longer collapse between results (slightly larger gaps on some layouts), and keyboard navigation (DuckDuckGo's j/k) follows DOM order, not visual order.
 - **Bug found:** ties between a boosted result and its neighbour went to the original order, so `boost=1` never moved anything. Ties now go to the higher score.
+- **Bug found (2026-09-29): pinned frames crossed on Google.** A pinned result's frame is an outline 7px outside it, chosen because it moves nothing. On a live Google page with several reddit.com results pinned, the frames of neighbouring pins crossed, and the last one cut through the next result. The flex column is the cause: Google spaces results with a margin inside each one, which collapses through the result in Google's own layout but stays inside it once the result is a flex item, so the boxes touch. The `inner` Google mock models it (the `pins` e2e part: gaps of 0 on the previous build). **Fixed:** after reranking, `makeRoomForPins` measures the space between each pinned result and what's drawn next to it, and gives the lower one a larger `margin-top` until there's room for each frame (8px) plus 8px between: 24px between two pinned results, 16px between a pinned result and any other. It measures rather than adding a fixed margin, so layouts that already have room (the DuckDuckGo mock, 26px) don't move. In a flex column the margin needed doesn't depend on the margin already set, so it doesn't creep from pass to pass. Also tried, on paper: one frame around a run of pins, which needs a partial outline that CSS can't draw, or an element of Anubis's own inside each result, which an `overflow: hidden` result would clip.
 
 ## Load more results (more than one page of results)
 
@@ -254,6 +255,16 @@ Subscribe on the lists directory, and links list authors share, lead to the guid
 
 - **First pass (rejected by the project owner as loud and "a bit like Discord"):** filled pill badges with coloured dots, gradient gold buttons and segmented controls, ALL-CAPS section labels, rounded cards everywhere, a bordered summary with stat counters.
 - **Second pass**, following Anthropic's `frontend-design` skill (now in `.claude/skills/`): on search pages Anubis uses the page's own font and muted text; tags are a small diamond and a name; the summary is one sentence; hidden results are one line. The one flourish is the weigh menu: the site's name in a cartouche (the oval that encloses names in hieroglyphs) over a small balance that tilts with the chosen weight. Settings use rows and hairlines; the light theme is a cool stone grey instead of cream; tag colours are muted Egyptian pigments.
+
+## Undo (2026-09-29)
+
+A change from the result menu shows in the summary above the results, "Hid fandom.com." with **Undo**, in keeping with nothing being hidden without a trace. With the Remove style the result disappears under the menu, and pressing the ranking again doesn't undo it: it clears your ranking, which for a raised site you then pinned means Normal, not Raise.
+
+- **What it restores:** the site's line in your list as it was (ranking and tags), not the whole list, so a change made meanwhile in settings or another tab survives. A tag defined by the change goes too, unless another site uses it.
+- **Changes in a row to one site merge:** Hide then Lower undoes to how the site was before Hide. Back where it started, the line goes away. A change to another site replaces it; there's one level of undo.
+- **When it goes:** at the next search, or when the site changes elsewhere (checked when the list reloads; the site still reading as before the change means the reload is from before it, not that it's stale).
+- **Where:** a line of its own in the summary, under the sentence and above the tags, in the text colour rather than muted, since it's the one thing on the line you just caused. It needs the summary: with the summary turned off, or on DuckDuckGo Lite, which has none, there's no Undo; the menu still shows the site's ranking.
+- **Wording:** past-tense verbs, as in the summary sentence ("Hid", "Lowered", "Raised", "Pinned"). Pressing the ranking a site already had says "Cleared your ranking of fandom.com." rather than "back to normal", since a list may still rank it. Several changes to one site say "Changed fandom.com in your list."
 
 ## Filtering by tag
 
