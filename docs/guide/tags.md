@@ -22,7 +22,20 @@ A list decides which sites get a tag. You decide what the tag does, in **Setting
 | **Raise** / **Lower** | Move the result five places up or down. |
 | **Hide** | Hide the result, whichever list tagged it. |
 
-Turn off **Shown** to keep a tag working without showing its label under results. You can also rename a tag or change its colour there.
+Under each tag's name, one line says which sites carry it and what happens to them, for example "Marks 23 sites from Paywalls. Only a label: their ranking stays the same." The Paywalls list only labels; to lower paywalled sites, choose **Lower** for the tag.
+
+Turn off **Shown** to keep a tag working without showing its label under results. Press a tag's colour to change it.
+
+## Tag sites yourself
+
+Press **Edit** beside a tag to open it. There you can:
+
+- rename it, and give your own tags a description;
+- see your sites with the tag, and press × to untag one;
+- tag more sites: type one, or several separated by spaces or commas, and press **Add site**. This works for any tag, including tags from lists;
+- see the first sites each of your lists gives the tag.
+
+The ⇅ button on a search result tags that result's site the same way.
 
 ![Settings, Tags](../img/options-tags.png)
 
