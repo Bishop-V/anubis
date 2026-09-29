@@ -21,10 +21,6 @@ Work that's planned but not started, or started and not finished. Each item says
 
 ## Security
 
-- **The 5 MB limit is checked after the download.** `fetchText` in `utils/subscriptions.ts` reads the whole body first. Check `Content-Length`, or stop reading at the limit.
-- **`ci.yml` has no `permissions:` block.** Add `contents: read`, as `docs.yml` has.
-- **Dependabot** for npm and GitHub Actions: weekly, grouped, with a 7-day cooldown (the default is 3). Pin actions to commit SHAs and let Dependabot move them.
-- **Install without scripts** in CI and releases: `npm ci --ignore-scripts`, then `npx wxt prepare`. npm worms spread through install scripts. Compile, tests, both builds and the docs build all work this way.
 - **Turn on private vulnerability reporting** (Settings → Code security → Private vulnerability reporting). [`SECURITY.md`](SECURITY.md) sends reports there, and its form doesn't exist until it's on.
 
 ## Testing
