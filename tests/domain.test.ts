@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { decodeBingRedirect, displayedDomainToUrl, domainChoices, normalizeDomain, siteOf } from '@/utils/domain';
+import { existsSync } from 'node:fs';
+import { DOCS_URL, readSubscribeLink, SUBSCRIBE_PAGE, subscribeLink } from '@/utils/links';
 import { originPermissionFor, suggestionUrl, toRawUrl } from '@/utils/subscriptions';
 
 describe('domains', () => {
@@ -59,5 +61,39 @@ describe('subscription URLs', () => {
 
   it('never builds a link from a non-web address', () => {
     expect(suggestionUrl('javascript:alert(1)', 't', 'b')).toBeUndefined();
+  });
+});
+
+describe('subscribe links', () => {
+  const list = 'https://raw.githubusercontent.com/o/r/main/my list.anubis';
+
+  it('round-trips a list address and name', () => {
+    const link = new URL(subscribeLink({ url: list, name: 'Tech & more' }));
+    expect(link.origin + link.pathname).toBe(SUBSCRIBE_PAGE);
+    expect(readSubscribeLink(link.search)).toEqual({ url: list, name: 'Tech & more' });
+    expect(readSubscribeLink(new URL(subscribeLink({ url: list })).search)).toEqual({ url: list });
+  });
+
+  it('reads links written by hand, as uBlacklist users write them', () => {
+    expect(readSubscribeLink(`?name=Huge+AI+Blocklist&url=${encodeURIComponent(list)}`)).toEqual({ url: list, name: 'Huge AI Blocklist' });
+  });
+
+  it('only takes https addresses', () => {
+    expect(readSubscribeLink('?url=http%3A%2F%2Fexample.org%2Flist.txt')).toBeUndefined();
+    expect(readSubscribeLink('?url=javascript%3Aalert(1)')).toBeUndefined();
+    expect(readSubscribeLink('?url=not+a+url')).toBeUndefined();
+    expect(readSubscribeLink('?name=Nothing')).toBeUndefined();
+  });
+
+  it('keeps the name to one short line', () => {
+    const name = readSubscribeLink(`?url=${encodeURIComponent(list)}&name=${encodeURIComponent('Evil\u202e\nlist' + 'x'.repeat(200))}`)?.name;
+    expect(name).toMatch(/^Evil listx+$/);
+    expect(name!.length).toBe(80);
+    expect(readSubscribeLink(`?url=${encodeURIComponent(list)}&name=+++`)).toEqual({ url: list });
+  });
+
+  it('points at a page the guide has', () => {
+    expect(SUBSCRIBE_PAGE.startsWith(DOCS_URL)).toBe(true);
+    expect(existsSync(`docs/${SUBSCRIBE_PAGE.slice(DOCS_URL.length)}.md`)).toBe(true);
   });
 });

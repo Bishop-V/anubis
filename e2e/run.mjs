@@ -4,7 +4,7 @@
 //
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, off, cleanup, popover, ddg-hide,
-//                               filter, deeper, import, subscribe, options
+//                               filter, deeper, import, subscribe, subscribe-link, options
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/
 //
 // Needs a Chromium build (branded Chrome no longer loads unpacked extensions from
@@ -565,6 +565,64 @@ if (only === 'subscribe') {
   console.log('\n== subscribe:', await opt.locator('.notice').first().textContent({ timeout: 3000 }).catch(() => 'no notice'));
   await opt.screenshot({ path: `${SHOTS}options-subscribed.png`, fullPage: true });
   await opt.close();
+}
+
+if (!only || only === 'subscribe-link') {
+  // Subscribe on the lists directory: the subscribe page it leads to opens settings
+  // with the list filled in, the directory's tab goes back, and nothing is added
+  // until Subscribe. The directory, the subscribe page and the list are mocks.
+  const LIST = 'https://raw.githubusercontent.com/example/lists/main/e2e.anubis';
+  const link = `https://bishop-v.github.io/anubis/subscribe?url=${encodeURIComponent(LIST)}&name=E2E+list`;
+  await ctx.route(/^https:\/\/bishop-v\.github\.io\//, (route) =>
+    route.fulfill({
+      contentType: 'text/html; charset=utf-8',
+      body: route.request().url().endsWith('/lists')
+        ? `<!doctype html><title>Lists directory</title><a id="subscribe" href="${link}">Subscribe</a> <a id="new-tab" href="${link}" target="_blank">In a new tab</a>`
+        : '<!doctype html><title>Subscribe to a list</title><h1>Subscribe to a list</h1>',
+    }),
+  );
+  await ctx.route(LIST, (route) =>
+    route.fulfill({ contentType: 'text/plain', body: '! name: E2E list\n! tag: e2e | E2E | #3fa37a\n\n$site=example.org,tag=e2e\n' }),
+  );
+  const sw = ctx.serviceWorkers()[0];
+  const subscribed = () => sw.evaluate(async (url) => !!(await chrome.storage.sync.get('subscriptions')).subscriptions?.some((s) => s.url === url), LIST);
+  const nextPage = () => ctx.waitForEvent('page', { timeout: 4000 }).catch(() => undefined);
+
+  const dir = await ctx.newPage();
+  await dir.goto('https://bishop-v.github.io/anubis/lists');
+  let opened = nextPage();
+  await dir.click('#subscribe');
+  const opt = await opened;
+  await opt?.waitForSelector('.panel.offer', { timeout: 4000 }).catch(() => {});
+  await dir.waitForTimeout(300);
+  console.log('\n== subscribe-link');
+  console.log('  settings opened:', opt?.url().replace(/^chrome-extension:\/\/[^/]+/, ''));
+  console.log('  offer:', await opt?.locator('.panel.offer h3').textContent().catch(() => 'none'));
+  console.log('  directory tab back on:', dir.url());
+  console.log('  subscribed before Subscribe:', await subscribed());
+  await opt?.screenshot({ path: `${SHOTS}subscribe-link.png`, fullPage: true });
+  await opt?.locator('.panel.offer .btn.primary').click();
+  await opt?.waitForTimeout(800);
+  console.log('  after Subscribe:', await opt?.locator('.notice').first().textContent().catch(() => 'no notice'));
+  console.log('  subscribed:', await subscribed(), '| offer left:', await opt?.locator('.panel.offer').count(), '| address:', opt?.url().replace(/^chrome-extension:\/\/[^/]+/, ''));
+
+  // Forward onto the subscribe page again: no second settings tab.
+  opened = nextPage();
+  await dir.goForward();
+  console.log('  Forward onto the subscribe page opened settings:', !!(await opened));
+
+  // Opened in a new tab: that tab gives way to settings, which says it's already there.
+  await dir.goto('https://bishop-v.github.io/anubis/lists');
+  const tabs = [];
+  const collect = (p) => tabs.push(p);
+  ctx.on('page', collect);
+  await dir.click('#new-tab');
+  await dir.waitForTimeout(1500);
+  ctx.off('page', collect);
+  const [lone, again] = tabs;
+  await again?.waitForSelector('.notice', { timeout: 4000 }).catch(() => {});
+  console.log('  new tab:', lone?.isClosed() ? 'closed' : lone?.url(), '| settings says:', await again?.locator('.notice').first().textContent().catch(() => 'no notice'));
+  for (const p of [dir, opt, lone, again]) await p?.close().catch(() => {});
 }
 
 if (!only || only === 'options') {

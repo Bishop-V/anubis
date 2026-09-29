@@ -1,5 +1,6 @@
 import { browser } from '#imports';
 import type { CleanupKind } from './cleanup';
+import type { SubscribeLink } from './links';
 
 // Messages between the content script, popup, options page and background.
 
@@ -36,6 +37,8 @@ export type Message =
   | { type: 'refresh-stale' }
   | { type: 'refresh-all' }
   | { type: 'open-options'; tab?: string }
+  /** From the subscribe page: open settings with this list filled in. `back`: the tab has a page to go back to. */
+  | { type: 'open-subscribe'; link: SubscribeLink; back: boolean }
   | { type: 'get-page-stats' }
   | { type: 'set-reveal'; on: boolean }
   | { type: 'toggle-reveal' }

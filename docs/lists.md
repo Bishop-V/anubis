@@ -3,24 +3,29 @@ outline: false
 ---
 
 <script setup>
+import { withBase } from 'vitepress';
 import directory from '../lists/directory.json';
 
 const kinds = { anubis: 'Anubis list', goggle: 'Brave Goggle', ublacklist: 'uBlacklist ruleset', domains: 'Domain list' };
+// A subscribe link (see subscribe.md). It needs a full page load for Anubis to
+// see it, so the links carry target="_self", which keeps VitePress's router off.
+const subscribe = (list) => withBase(`/subscribe?${new URLSearchParams({ url: list.url, name: list.name })}`);
 </script>
 
 # Lists directory
 
-Lists Anubis offers under **Settings → Lists → More lists**. Subscribe from there, or copy a list's link into **Add a list**.
+Lists Anubis offers under **Settings → Lists → More lists**. With Anubis installed, **Subscribe** here opens its settings with the list filled in.
 
 <table>
   <thead>
-    <tr><th>List</th><th>What it does</th><th>Format</th></tr>
+    <tr><th>List</th><th>What it does</th><th>Format</th><th><span class="visually-hidden">Subscribe</span></th></tr>
   </thead>
   <tbody>
     <tr v-for="list in directory.lists" :key="list.id">
       <td><a :href="list.homepage ?? list.url" target="_blank" rel="noopener noreferrer">{{ list.name }}</a></td>
       <td>{{ list.description }}<span v-if="list.default"> Subscribed from the start.</span><span v-if="list.lens"> A lens: hides every result it doesn't mention.</span></td>
       <td>{{ kinds[list.format] ?? list.format }}</td>
+      <td><a class="subscribe-link" :href="subscribe(list)" target="_self" :aria-label="`Subscribe to ${list.name}`">Subscribe</a></td>
     </tr>
   </tbody>
 </table>
@@ -41,3 +46,5 @@ Host your list anywhere public (see [Publish a list](./guide/publish-a-list.md))
 ```
 
 `format` is `anubis`, `goggle`, `ublacklist` or `domains`. Add `"lens": true` for a list that hides everything it doesn't mention.
+
+To link to your list from anywhere else, such as your repository's README, use a [subscribe link](./subscribe.md#make-a-subscribe-link).

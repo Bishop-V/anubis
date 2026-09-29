@@ -43,3 +43,21 @@
   font-size: 13px;
   color: var(--vp-c-text-2);
 }
+
+/* Subscribe on the lists directory: a small outlined button. */
+.vp-doc a.subscribe-link {
+  display: inline-block;
+  padding: 2px 10px;
+  border: 1px solid var(--vp-c-brand-3);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.vp-doc a.subscribe-link:hover {
+  background: var(--vp-c-brand-soft);
+}
+.vp-doc .list-address {
+  overflow-wrap: anywhere;
+}

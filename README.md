@@ -10,7 +10,7 @@ In Egyptian myth, Anubis weighed each heart against a feather. This extension we
 - **Rank any site from the results.** Hover a result and press its ⇅ button to hide, lower, raise or pin that site, and to tag it. Your choices apply on every search and beat every list.
 - **Tags.** Results carry small labels ("Official docs", "Discussion", "Paywall"…) from your own tags and from lists you subscribe to. For each tag you decide what it does: just show it, highlight results, or raise, lower or hide them.
 - **Reranking.** Raised, lowered and pinned sites move up or down the page. **Load more results** brings the next pages of results onto the first one and reranks them together, so a pinned site on page 3 rises to the top.
-- **Lists anyone can publish.** A list is a text file on GitHub, GitLab, Codeberg or a gist; there is no server. Anubis reads its own list format, Brave Goggles, uBlacklist rulesets and plain domain lists, so existing community lists work unchanged. The menu on each result can open a pre-filled issue to suggest a site to a list.
+- **Lists anyone can publish.** A list is a text file on GitHub, GitLab, Codeberg or a gist; there is no server. Anubis reads its own list format, Brave Goggles, uBlacklist rulesets and plain domain lists, so existing community lists work unchanged. Subscribe links (on the [lists directory](https://bishop-v.github.io/anubis/lists), or any list's own page) open Anubis with the list filled in. The menu on each result can open a pre-filled issue to suggest a site to a list.
 - **Your list is a list too.** Every site you rank is stored in the same format, so you can download it and publish it for others.
 - **Bring your old lists.** Paste uBlacklist rules, a HOHSER export or a Goggle into Settings → Share and back up to move your sites over.
 - **Filter by tag.** The summary above the results lists the tags on the page; click one to see only those results.
@@ -20,7 +20,7 @@ In Egyptian myth, Anubis weighed each heart against a feather. This extension we
 
 Works on Google (every country domain), DuckDuckGo (including the HTML and Lite versions), Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex and Mojeek.
 
-It asks for the `storage` permission and runs on search result pages only. Lists hosted on GitHub download without any extra permission; lists hosted elsewhere ask for access to that one host when you subscribe. Nothing is sent anywhere else.
+It asks for the `storage` permission and runs on search result pages, plus the user guide's subscribe page so subscribe links work. Lists hosted on GitHub download without any extra permission; lists hosted elsewhere ask for access to that one host when you subscribe. Nothing is sent anywhere else.
 
 ## Setup
 
