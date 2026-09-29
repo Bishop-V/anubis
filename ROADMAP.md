@@ -10,10 +10,7 @@ Work that's planned but not started, or started and not finished. Each item says
 
 ## Releases
 
-- **One `release.yml`, run on a `v*` tag.** It runs the CI checks, fails if the tag doesn't match `version` in `package.json`, runs `npm run zip` and `npm run zip:chrome`, creates a GitHub Release with generated notes, then `wxt submit` for Chrome, Firefox and Edge. Put the store keys in a GitHub environment that needs approval. Chrome needs API v2 and a service account: see `store/README.md`.
-- **A smaller sources zip for AMO.** 1.2 MB of its 1.75 MB is docs screenshots. Add `zip.excludeSources` for `docs/**`, `e2e/**`, `store/**` and `.claude/**` in `wxt.config.ts`.
-- **Edge Add-ons** takes the Chrome zip as it is (`wxt submit --edge-zip`).
-- **Optional:** a build provenance attestation on each release (`actions/attest-build-provenance`). The build is deterministic (two builds give identical files), so anyone can rebuild a tag and compare.
+- **Build provenance (optional):** an attestation on each release (`actions/attest-build-provenance`). The build is deterministic (two builds give identical files), so anyone can rebuild a tag and compare.
 
 ## Security
 

@@ -7,6 +7,12 @@ import { DOCS_URL } from './utils/links';
 export default defineConfig({
   // Default target for every command. Override per-run with `-b chrome`.
   browser: 'firefox',
+  // Firefox's add-on reviewers get a zip of the source to rebuild from. Leave out
+  // what the build doesn't use: the documentation site (mostly screenshots), the
+  // end-to-end harness, the store listing assets and the Claude skills.
+  zip: {
+    excludeSources: ['docs/**', 'e2e/**', 'store/**', '.claude/**'],
+  },
   manifest: ({ browser, manifestVersion }) => ({
     name: 'Anubis',
     // Text in the manifest comes from public/_locales/<language>/messages.json.

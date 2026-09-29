@@ -16,7 +16,7 @@ CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL=…
 CHROME_SERVICE_ACCOUNT_PRIVATE_KEY=…
 ```
 
-Setting it up: create a Google Cloud project, turn on the Chrome Web Store API, create a service account with a key, and add that account to the publisher in the developer dashboard ([Chrome's API guide](https://developer.chrome.com/docs/webstore/using-api)). Keep the key in a GitHub environment that needs approval, never in a workflow that runs on pull requests. The release workflow itself is on the backlog in [`ROADMAP.md`](../ROADMAP.md).
+Setting it up: create a Google Cloud project, turn on the Chrome Web Store API, create a service account with a key, and add that account to the publisher in the developer dashboard ([Chrome's API guide](https://developer.chrome.com/docs/webstore/using-api)). Keep the key in a GitHub environment that needs approval, never in a workflow that runs on pull requests. [`release.yml`](../.github/workflows/release.yml) reads these from the `release` environment.
 
 ## Before each release
 
@@ -25,6 +25,7 @@ Setting it up: create a Google Cloud project, turn on the Chrome Web Store API, 
 3. Load the build and check the engines listed under "Still unverified" in [`docs/experiments.md`](../docs/experiments.md).
 4. `npm run zip:chrome` for Chrome. `npm run zip` for Firefox, which also makes `anubis-<version>-sources.zip` for AMO's reviewers.
 5. The privacy policy link below has to load: GitHub Pages must be publishing the docs site.
+6. Merge, then push a matching tag (`git tag v<version> && git push origin v<version>`). [`release.yml`](../.github/workflows/release.yml) builds the zips, creates the GitHub Release and, once approved, submits to Chrome, Firefox and Edge.
 
 ## Chrome Web Store
 
