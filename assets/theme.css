@@ -179,6 +179,7 @@ svg {
 input[type='text'],
 input[type='url'],
 input[type='search'],
+input[type='password'],
 select,
 textarea {
   height: 30px;

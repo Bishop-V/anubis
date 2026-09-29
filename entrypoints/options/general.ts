@@ -1,27 +1,20 @@
 import { h, icon } from '@/utils/dom';
-import { t } from '@/utils/i18n';
 import { ENGINES } from '@/utils/engines';
 import { ICON_DOWNLOAD, ICON_UPLOAD } from '@/utils/icons';
-import type { TagPref } from '@/utils/matcher';
 import { loadRuleSet } from '@/utils/ruleset';
-import { getSubscriptions, saveSubscriptions } from '@/utils/subscriptions';
 import {
   editPersonal,
   getSettings,
-  personalIsLocal,
-  savePersonal,
   setTagPref,
   settingsItem,
   subscriptionsItem,
-  syncBytesInUse,
   tagPrefsItem,
   updateSettings,
   DEFAULT_SETTINGS,
-  SYNC_QUOTA_BYTES,
   type HideStyle,
   type Settings,
-  type Subscription,
 } from '@/utils/storage';
+import { applyData, collectData, readBackup, toBackup } from '@/utils/backup';
 import { importIntoPersonal } from '@/utils/importers';
 import { guide, REPO_URL } from '@/utils/links';
 import { themeSwitcher } from '@/utils/theme';
@@ -138,49 +131,12 @@ export async function renderEngines(): Promise<HTMLElement> {
   );
 }
 
-interface Backup {
-  anubis: 1;
-  exportedAt: string;
-  settings: Settings;
-  tagPrefs: Record<string, TagPref>;
-  subscriptions: Subscription[];
-  personal: string;
-}
-
-/** Where the browser syncs Anubis's data, how much room it takes, and how to move to another browser. */
-async function syncPanel(): Promise<HTMLElement> {
-  const android = import.meta.env.FIREFOX && /Android/.test(navigator.userAgent);
-  const [local, bytes] = await Promise.all([personalIsLocal(), syncBytesInUse()]);
-  const kb = (n: number) => Math.ceil(n / 1024);
-  return h(
-    'div',
-    { class: 'panel' },
-    h('h3', null, t('syncHeading')),
-    h('p', { class: 'muted' }, t(android ? 'syncFirefoxAndroid' : import.meta.env.FIREFOX ? 'syncFirefox' : 'syncChrome')),
-    android ? null : local ? h('div', { class: 'notice' }, t('syncTooBig')) : h('p', { class: 'muted' }, t('syncUsage', kb(bytes), kb(SYNC_QUOTA_BYTES))),
-    h(
-      'p',
-      { class: 'muted' },
-      t('syncOtherBrowser'),
-      ' ',
-      h('a', { href: guide('guide/sync'), target: '_blank', rel: 'noopener noreferrer' }, t('syncHelp')),
-    ),
-  );
-}
-
 export async function renderShare(): Promise<HTMLElement> {
   const rules = await loadRuleSet();
   const status = h('div', null, flashed('backup'));
 
   const exportAll = async () => {
-    const backup: Backup = {
-      anubis: 1,
-      exportedAt: new Date().toISOString(),
-      settings: rules.settings,
-      tagPrefs: rules.prefs,
-      subscriptions: await getSubscriptions(),
-      personal: rules.personalText,
-    };
+    const backup = toBackup(await collectData());
     download(`anubis-backup-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(backup, null, 2), 'application/json');
   };
 
@@ -189,12 +145,7 @@ export async function renderShare(): Promise<HTMLElement> {
     const f = file.files?.[0];
     if (!f) return;
     try {
-      const data = JSON.parse(await f.text()) as Partial<Backup>;
-      if (data.anubis !== 1) throw new Error('This isn’t an Anubis backup.');
-      if (data.settings) await settingsItem.setValue({ ...DEFAULT_SETTINGS, ...data.settings });
-      if (data.tagPrefs) await tagPrefsItem.setValue(data.tagPrefs);
-      if (Array.isArray(data.subscriptions)) await saveSubscriptions(data.subscriptions);
-      if (typeof data.personal === 'string') await savePersonal(data.personal);
+      await applyData(readBackup(await f.text()));
       flash('backup', 'ok', 'Backup restored.');
     } catch (error) {
       flash('backup', 'error', `Couldn’t restore: ${error instanceof Error ? error.message : String(error)}`);
@@ -299,7 +250,6 @@ export async function renderShare(): Promise<HTMLElement> {
       ),
       importStatus,
     ),
-    await syncPanel(),
     h(
       'div',
       { class: 'panel' },

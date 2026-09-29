@@ -268,13 +268,20 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
     void editSubscriptions((subs) => subs.map((s) => (s.id === sub.id ? { ...s, enabled: toggle.checked } : s)));
   });
 
-  const update = async (e: Event) => {
+  const update = (e: Event) => {
     const b = e.currentTarget as HTMLButtonElement;
     b.disabled = true;
-    const entry = await refreshList(sub);
-    if (entry.error) flash('lists', 'error', `${name}: ${entry.error}`);
-    else flash('lists', 'ok', `${name} is up to date.`);
-    rerender();
+    // A list that came from another browser (through sync or a backup) may not
+    // have its host allowed here yet. Ask straight from the click, as Firefox
+    // requires; a host already allowed doesn't ask again.
+    const origin = originPermissionFor(sub.url);
+    const asked = origin ? browser.permissions.request({ origins: [origin] }).catch(() => false) : Promise.resolve(true);
+    void asked.then(async () => {
+      const entry = await refreshList(sub);
+      if (entry.error) flash('lists', 'error', `${name}: ${entry.error}`);
+      else flash('lists', 'ok', `${name} is up to date.`);
+      rerender();
+    });
   };
 
   const remove = async () => {

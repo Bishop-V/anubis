@@ -43,7 +43,9 @@ export type Message =
   | { type: 'set-reveal'; on: boolean }
   | { type: 'toggle-reveal' }
   | { type: 'go-deeper' }
-  | { type: 'set-filter'; tag?: string };
+  | { type: 'set-filter'; tag?: string }
+  /** From settings: sync with the WebDAV server now. Replies with its `SyncStatus`. */
+  | { type: 'sync-server' };
 
 export function send<T = unknown>(message: Message): Promise<T | undefined> {
   return browser.runtime.sendMessage(message).catch(() => undefined) as Promise<T | undefined>;

@@ -27,7 +27,7 @@ export interface SiteEntry {
 // pattern is treated as hand-written and never rewritten.
 const SIMPLE_SITE_LINE = /^\$([a-z_]+(?:=[^,\s]*)?(?:,[a-z_]+(?:=[^,\s]*)?)*)$/i;
 
-function parseSimpleLine(line: string): { site: string; level: PersonalLevel; tags: string[] } | undefined {
+export function parseSimpleLine(line: string): { site: string; level: PersonalLevel; tags: string[] } | undefined {
   const m = SIMPLE_SITE_LINE.exec(line.trim());
   if (!m) return undefined;
   let site = '';

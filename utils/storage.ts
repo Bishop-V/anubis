@@ -76,10 +76,14 @@ export function writeQueue(): <T>(change: () => Promise<T>) => Promise<T> {
 
 export const settingsItem = storage.defineItem<Settings>('sync:settings', { fallback: DEFAULT_SETTINGS });
 
-export async function getSettings(): Promise<Settings> {
-  const stored = await settingsItem.getValue();
+/** Stored settings with defaults for anything missing. */
+export function normalizeSettings(stored: Partial<Settings> | null | undefined): Settings {
   // Merge one level down too, so a clean-up kind added later starts off.
   return { ...DEFAULT_SETTINGS, ...stored, cleanup: { ...NO_CLEANUP, ...stored?.cleanup } };
+}
+
+export async function getSettings(): Promise<Settings> {
+  return normalizeSettings(await settingsItem.getValue());
 }
 
 const settingsQueue = writeQueue();
