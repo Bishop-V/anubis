@@ -41,7 +41,7 @@ Other services and your own server work too, if they offer WebDAV over `https://
 ![Settings, Sync](../img/options-sync.png)
 
 1. Open **Settings → Sync**, and under **Between browsers** enter the address, your user name, and the password.
-2. Press **Connect**. The browser asks you to let Anubis reach that server. Firefox 140 and later also asks whether Anubis may send your list there; older versions have no built-in data-consent prompt.
+2. Press **Connect**. The browser asks you to let Anubis reach that server. Firefox also asks whether Anubis may send your list there.
 3. Do the same in your other browser.
 
 **Settings → Sync** then shows when Anubis last synced, or what went wrong. **Sync now** syncs straight away.

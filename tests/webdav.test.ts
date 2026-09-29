@@ -79,7 +79,7 @@ beforeEach(async () => {
   vi.stubGlobal('fetch', server.fetch);
   browsers.clear();
   current = undefined;
-  firefoxVersion = '140.0';
+  firefoxVersion = '142.0';
   await use('firefox');
 });
 afterEach(() => vi.unstubAllGlobals());
@@ -90,7 +90,7 @@ describe('syncing through a WebDAV server', () => {
     expect(server.requests).toEqual([]);
   });
 
-  it('requires Firefox 140 data consent before syncing', async () => {
+  it('requires Firefox data consent before syncing', async () => {
     await connect(ACCOUNT);
     const contains = vi.fn(async () => false);
     Object.assign(fakeBrowser.permissions, { contains });
@@ -103,7 +103,7 @@ describe('syncing through a WebDAV server', () => {
     expect(server.requests).toEqual([]);
   });
 
-  it('does not fall back to host-only access if checking Firefox 140 consent fails', async () => {
+  it('does not fall back to host-only access if checking Firefox consent fails', async () => {
     await connect(ACCOUNT);
     Object.assign(fakeBrowser.permissions, { contains: async () => { throw new Error('consent check failed'); } });
 
@@ -111,9 +111,9 @@ describe('syncing through a WebDAV server', () => {
     expect(server.requests).toEqual([]);
   });
 
-  it('checks only the server permission on older Firefox', async () => {
-    firefoxVersion = '139.0';
+  it('checks only the server permission in Chrome', async () => {
     await connect(ACCOUNT);
+    Object.assign(fakeBrowser.runtime, { getBrowserInfo: async () => ({ name: 'Chrome', version: '148.0' }) });
     const contains = vi.fn(async () => true);
     Object.assign(fakeBrowser.permissions, { contains });
 

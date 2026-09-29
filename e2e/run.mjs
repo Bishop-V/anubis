@@ -471,7 +471,7 @@ if (!only || only === 'palette') {
   }
 }
 
-if (!only || only === 'cleanup') {
+if (!only || only === 'cleanup' || checks) {
   // Clean-up: AI Overview, videos, and "People also ask" go; the side panel stays.
   const sw = ctx.serviceWorkers()[0];
   const setSettings = (patch) =>
@@ -505,12 +505,25 @@ if (!only || only === 'cleanup') {
         results: document.querySelectorAll('[data-anubis-result]').length,
       };
     });
-  console.log('\n== clean-up on:', JSON.stringify(await shown()));
-  console.log('   removed:', JSON.stringify((await statsNow())?.removed));
+  const cleanupShown = await shown();
+  const cleanupRemoved = (await statsNow())?.removed ?? {};
+  console.log('\n== clean-up on:', JSON.stringify(cleanupShown));
+  console.log('   removed:', JSON.stringify(cleanupRemoved));
   await page.screenshot({ path: `${SHOTS}google-cleanup.png`, fullPage: true });
+  if (checks) {
+    assertChecks('Google cleanup selectors', {
+      removesAiOverview: !cleanupShown.aiOverview && cleanupRemoved.ai === 1,
+      removesVideos: !cleanupShown.videos && cleanupRemoved.videos === 1,
+      removesPeopleAlsoAsk: !cleanupShown.peopleAlsoAsk && cleanupRemoved.questions === 1,
+      keepsSidePanel: cleanupShown.sidePanel,
+      preservesExpectedResults: cleanupShown.results === ANUBIS_RESULTS.length,
+    });
+  }
   await clickShadowButton('anubis-summary', 'Show hidden');
   await page.waitForTimeout(300);
-  console.log('== after Show hidden:', JSON.stringify(await shown()));
+  const cleanupRestored = await shown();
+  console.log('== after Show hidden:', JSON.stringify(cleanupRestored));
+  if (checks) assertChecks('restore cleaned-up blocks', { restoresAiOverview: cleanupRestored.aiOverview, restoresVideos: cleanupRestored.videos });
 
   // The AI Overview when its label isn't a heading, and the block holds a follow-up box.
   await page.goto('https://www.google.com/search?q=anubis&ailabel=1');
@@ -557,16 +570,21 @@ if (!only || only === 'cleanup') {
       };
     });
     console.log(`== video panel (${layout}):`, JSON.stringify(check));
+    if (checks) {
+      assertChecks(`video panel ${layout}`, {
+        removesPanelHeader: !check.header,
+        removesVideoCards: !check.videos,
+        removesViewAll: !check.viewAll,
+        keepsSummaryAtTop: check.summaryOnTop,
+      });
+    }
   }
 
   // DuckDuckGo stays where it is, with your settings: the AI answer goes, and so do
   // the Duck.ai tab and button, which aren't counted.
   await page.goto('https://duckduckgo.com/?q=javascript+promises&ai=1');
   await page.waitForTimeout(800);
-  console.log(
-    '== DuckDuckGo with AI answers removed:',
-    JSON.stringify(
-      await page.evaluate(() => {
+  const duckduckgoCleanup = await page.evaluate(() => {
         const visible = (el) => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0;
         return {
           host: location.hostname,
@@ -576,9 +594,16 @@ if (!only || only === 'cleanup') {
           otherTabs: [...document.querySelectorAll('.tabs span')].filter(visible).length,
           results: [...document.querySelectorAll('[data-anubis-result]')].filter(visible).length,
         };
-      }),
-    ),
-  );
+      });
+  console.log('== DuckDuckGo with AI answers removed:', JSON.stringify(duckduckgoCleanup));
+  if (checks) {
+    assertChecks('DuckDuckGo cleanup selectors', {
+      removesAnswer: !duckduckgoCleanup.answer,
+      removesDuckAiTab: !duckduckgoCleanup.duckAiTab,
+      removesDuckAiButton: !duckduckgoCleanup.duckAiButton,
+      keepsOtherTabs: duckduckgoCleanup.otherTabs > 0,
+    });
+  }
   console.log('   removed:', JSON.stringify((await statsNow())?.removed));
   await page.screenshot({ path: `${SHOTS}ddg-cleanup.png`, fullPage: true });
 
@@ -594,7 +619,16 @@ if (!only || only === 'cleanup') {
       const visible = (el) => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0;
       return Object.fromEntries(Object.entries(selectors).map(([k, sel]) => [k, visible(document.querySelector(sel))]).concat([['results', [...document.querySelectorAll('[data-anubis-result]')].filter(visible).length]]));
     }, selectors);
-  console.log('== Brave panels:', JSON.stringify(await visibleIn({ videos: '.cluster-videos', discussions: '.cluster-discussions', relatedQueries: '.related-queries', videosTab: '.tabs a[href^="/videos"]' })));
+  const braveCleanup = await visibleIn({ videos: '.cluster-videos', discussions: '.cluster-discussions', relatedQueries: '.related-queries', videosTab: '.tabs a[href^="/videos"]' });
+  console.log('== Brave panels:', JSON.stringify(braveCleanup));
+  if (checks) {
+    assertChecks('Brave cleanup selectors', {
+      removesVideos: !braveCleanup.videos,
+      removesDiscussions: !braveCleanup.discussions,
+      removesRelatedQueries: !braveCleanup.relatedQueries,
+      keepsVideosTab: braveCleanup.videosTab,
+    });
+  }
   console.log('   removed:', JSON.stringify((await statsNow())?.removed));
   await page.goto('https://www.bing.com/search?q=javascript+promises&inline=1');
   await page.waitForTimeout(1200);
