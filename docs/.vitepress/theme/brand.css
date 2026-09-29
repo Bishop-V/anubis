@@ -511,6 +511,249 @@ body .VPContent .VPHome {
   margin-bottom: 6px;
   font-size: 16px;
 }
+/* The Introduction's demo (hide-demo.ts): a pointer hides a site from the button
+   beside its result. It shares the homepage demo's page, results, and summary, and
+   draws the result menu as the extension does. */
+:root {
+  --demo-danger: #b4492f;
+}
+.dark {
+  --demo-danger: #e2735b;
+}
+.hide-demo {
+  margin: 20px 0;
+}
+.hide-demo p {
+  line-height: inherit;
+}
+.hd-stage {
+  position: relative;
+}
+.hide-demo .hd-page {
+  height: auto;
+  padding: 16px 18px 20px;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+/* With the space before each, about the extension's gap between buttons. */
+.hd-summary .demo-link {
+  margin-left: 8px;
+}
+.hd-gear {
+  display: inline-flex;
+  margin-left: 6px;
+  vertical-align: -2px;
+  color: var(--vp-c-text-2);
+}
+.hd-change .fold-inner {
+  padding-bottom: 6px;
+  color: var(--vp-c-text-1);
+}
+.hd-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  padding-bottom: 10px;
+}
+.hd-chips {
+  display: flex;
+  gap: 2px 14px;
+  margin-top: 2px;
+  font-size: 12.5px;
+}
+.hd-weigh {
+  border-radius: 50%;
+}
+.hd-weigh.active {
+  color: var(--vp-c-brand-1);
+  opacity: 1;
+  background: rgb(212 166 55 / 0.14);
+}
+.hd-menu {
+  position: absolute;
+  z-index: 2;
+  padding-bottom: 14px;
+  border-radius: 10px;
+  background: var(--vp-c-bg-elv);
+  box-shadow:
+    0 10px 30px rgb(0 0 0 / 0.16),
+    0 0 0 1px var(--vp-c-divider);
+  color: var(--vp-c-text-1);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.hd-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 12px 0 18px;
+}
+/* The cartouche: the site in a doubled gold ring, with the caret that offers the
+   rest of the address. */
+.hd-cartouche {
+  position: relative;
+  display: inline-flex;
+  padding: 5px 19px 6px;
+  border: 1.5px solid var(--vp-c-brand-3);
+  border-radius: 999px;
+}
+.hd-cartouche::after {
+  content: '';
+  position: absolute;
+  inset: 2.5px;
+  border: 0.75px solid var(--vp-c-brand-3);
+  border-radius: 999px;
+  opacity: 0.55;
+}
+.hd-name {
+  padding-right: 14px;
+  font: 500 16px/1.3 var(--home-serif);
+  background:
+    linear-gradient(45deg, transparent 50%, var(--vp-c-text-2) 50%) calc(100% - 4px) 55% / 4px 4px no-repeat,
+    linear-gradient(135deg, var(--vp-c-text-2) 50%, transparent 50%) 100% 55% / 4px 4px no-repeat;
+}
+.hd-close {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: var(--vp-c-text-2);
+}
+.hd-balance {
+  display: block;
+  width: 132px;
+  height: 40px;
+  margin: 10px auto 2px;
+  overflow: visible;
+  color: var(--vp-c-brand-3);
+}
+.hd-levels {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  margin: 4px 12px 0;
+}
+.hd-level {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 5px 0 6px;
+  border-bottom: 2px solid transparent;
+  color: var(--vp-c-text-2);
+  font-size: 12.5px;
+}
+.hd-level-icon {
+  display: flex;
+}
+.hd-level.pressed {
+  border-bottom-color: var(--vp-c-brand-3);
+  color: var(--vp-c-text-1);
+  font-weight: 600;
+}
+.hd-level.hide.pressed {
+  border-bottom-color: var(--demo-danger);
+}
+.hd-level.hide.pressed .hd-level-icon {
+  color: var(--demo-danger);
+}
+.hide-demo .hd-hint {
+  margin: 8px 18px 0;
+  font-size: 12.5px;
+  color: var(--vp-c-text-2);
+}
+/* The pointer: its tip on the point it moves to, a ring where it clicks. */
+.hd-pointer {
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+}
+.hd-pointer.shown {
+  opacity: 1;
+}
+.hd-pointer svg {
+  display: block;
+  transform-origin: 1px 1px;
+}
+.hd-ripple {
+  position: absolute;
+  top: -9px;
+  left: -9px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--vp-c-brand-3);
+  border-radius: 50%;
+  opacity: 0;
+}
+.hd-caption {
+  margin-top: 8px !important;
+}
+.hd-replay {
+  margin-left: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--vp-c-brand-1);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.hd-replay:hover:not(:disabled) {
+  text-decoration: underline;
+}
+.hd-replay:disabled {
+  color: var(--vp-c-text-3);
+  cursor: default;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hd-menu {
+    animation: hd-open 0.12s ease-out;
+  }
+  .hd-tilt {
+    transition: transform 0.45s cubic-bezier(0.34, 1.45, 0.5, 1);
+  }
+  .hd-weigh {
+    transition: background 0.15s, color 0.15s, opacity 0.15s;
+  }
+  .hd-pointer {
+    transition:
+      opacity 0.3s ease,
+      transform 0.85s cubic-bezier(0.45, 0, 0.2, 1);
+  }
+  .hd-pointer svg {
+    transition: transform 0.12s ease;
+  }
+  .hd-pointer.pressing svg {
+    transform: scale(0.85);
+  }
+  .hd-ripple.on {
+    animation: hd-ripple 0.5s ease-out;
+  }
+}
+@keyframes hd-open {
+  from {
+    opacity: 0;
+    transform: translateY(-3px);
+  }
+}
+@keyframes hd-ripple {
+  from {
+    opacity: 0.9;
+    transform: scale(0.3);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+/* The Markdown's own picture, for reading the page on GitHub; the site shows the
+   demo instead. */
+.vp-doc .github-only {
+  display: none;
+}
+
 /* The panels: rows that run off the page's edge, as a carousel's do, and lists. */
 .demo-block .sources {
   display: flex;

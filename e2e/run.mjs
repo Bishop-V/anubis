@@ -1880,11 +1880,21 @@ if (only === 'docs') {
     ['light', '', ''],
     ['dark', '-dark', '&dark=1'],
   ];
+  // The summary as most people see it: with Remove, the default, a hidden site leaves
+  // the page and the summary counts it. The rest keep the test settings' Collapse,
+  // which the hidden line's picture shows.
+  await setSettings({ hideStyle: 'remove' });
   for (const [scheme, suffix, query] of SCHEMES) {
     await browserScheme(scheme);
     await page.goto(`https://www.google.com/search?q=anubis${query}`);
     await page.waitForTimeout(700);
-    await clip(`summary${suffix}`, ['anubis-summary', '#rso > .MjjYud:nth-of-type(2)']);
+    await clip(`summary${suffix}`, ['anubis-summary', '[data-anubis-result]:has(a[href*="worldhistory"])']);
+  }
+  await setSettings({ hideStyle: 'collapse' });
+  for (const [scheme, suffix, query] of SCHEMES) {
+    await browserScheme(scheme);
+    await page.goto(`https://www.google.com/search?q=anubis${query}`);
+    await page.waitForTimeout(700);
     const wiki = page.locator('[data-anubis-result]', { hasText: 'Anubis - Wikipedia' });
     await wiki.hover();
     await page.waitForTimeout(200);
