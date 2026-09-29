@@ -5,101 +5,45 @@ In Egyptian myth, Anubis weighed each heart against a feather. This extension we
 
 **[Read the wiki →](https://bishop-v.github.io/anubis/)**
 
+<!-- Keep this README short: the wiki (docs/) explains how Anubis works, and this page points to it. Each feature below is one line that links to its wiki page, the same pages the wiki's introduction lists under Features; tests/readme.test.ts checks that the two lists match and that every link works. -->
+
 ## What it does
 
-- **Rank any site from the results.** Hover a result and press its ⚖ button to hide, lower, raise, or pin that site, and to tag it. Your choices apply on every search and beat every list.
-- **Tags.** Results carry small labels ("Official docs", "Discussion", "Paywall"…) from your own tags and from lists you subscribe to. For each tag you decide what it does: just show it, highlight results, or raise, lower, or hide them.
-- **Reranking.** Raised, lowered, and pinned sites move up or down the page. **Load more results** brings the next pages of results onto the first one and reranks them together, so a pinned site on page 3 rises to the top.
-- **Lists anyone can publish.** A list is a text file on GitHub, GitLab, Codeberg, or a gist; there is no server. Anubis reads its own list format, Brave Goggles, uBlacklist rulesets, and plain domain lists, so existing community lists work unchanged. Subscribe links (on the [lists directory](https://bishop-v.github.io/anubis/lists), or any list's own page) open Anubis with the list filled in. The menu on each result can open a pre-filled issue on a list's tracker, to report a site the list got wrong or suggest one it's missing.
-- **Your list is a list too.** Every site you rank is stored in the same format, so you can download it and publish it for others.
-- **Sync.** Your list and settings follow you to your other computers through the browser's own sync. To share between Firefox and Chrome too, connect a WebDAV storage service (Koofr, InfiniCLOUD, Nextcloud…) in Settings → Sync; changes from each browser are combined.
-- **Bring your old lists.** Paste uBlacklist rules, a HOHSER export, or a Goggle into Settings → Backup to move your sites over.
-- **Filter by tag.** The summary above the results lists the tags on the page; click one to see only those results.
-- **Clean up pages.** Remove AI answers (Google's AI Overview and AI Mode tab, DuckDuckGo's AI-assisted answers and Duck.ai buttons, and Brave's AI answers), video panels, "People also ask", top stories, image rows, and related searches, on every search (Bing's AI answer and video panel aren't recognised yet). Google can also always open its plain Web tab. "Show hidden" brings removed parts back on that page.
-- **Quiet on the page.** Hidden results leave the page (or collapse to one line, if you prefer); the summary above the results is one sentence. Light and dark themes follow your browser and the search engine, or your choice.
-- **Keyboard shortcuts.** Alt+Shift+O turns Anubis on or off, and Alt+Shift+H shows hidden results (Control instead of Alt on a Mac).
+- **[Rank any site from the results](https://bishop-v.github.io/anubis/guide/ranking)**: hide, lower, raise, or pin a site from the ⚖ button on any result.
+- **[Tags](https://bishop-v.github.io/anubis/guide/tags)**: labels like "Official docs" or "Paywall" under each title, which can highlight, raise, lower, or hide results.
+- **[Lists anyone can publish](https://bishop-v.github.io/anubis/guide/lists)**: subscribe to Anubis lists, Brave Goggles, uBlacklist rulesets, and plain domain lists, or [publish your own](https://bishop-v.github.io/anubis/guide/publish-a-list).
+- **[Clean up pages](https://bishop-v.github.io/anubis/guide/clean-up)**: remove AI answers, video panels, "People also ask", and more.
+- **[More than one page of results](https://bishop-v.github.io/anubis/guide/more-results)**: bring later pages onto the first and rank them together.
+- **[Sync](https://bishop-v.github.io/anubis/guide/sync)**: your sites and settings follow you through your browser's own sync, and between Firefox and Chrome through a WebDAV server.
+- **[Bring your old lists](https://bishop-v.github.io/anubis/guide/import-and-backup)**: move your sites over from uBlacklist, HOHSER, or a Brave Goggle.
+- **Easy to undo**: a one-line summary above the results says what Anubis changed, and "Show hidden" brings it back.
 
-Works on Google (every country domain), DuckDuckGo (including the HTML and Lite versions), Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex, and Mojeek.
+It works on Google, DuckDuckGo, Bing, and [more search engines](https://bishop-v.github.io/anubis/guide/search-engines). It has no server and collects nothing; [Privacy and permissions](https://bishop-v.github.io/anubis/guide/privacy) says what it stores, what it connects to, and why it asks for each permission.
 
-It asks for the `storage` and `activeTab` permissions (the second lets the toolbar popup read the address of the tab you're on, only when you open it) and runs on search result pages, plus the wiki's subscribe page so subscribe links work. Lists hosted on GitHub download without any extra permission; lists hosted elsewhere ask for access to that one host when you subscribe. Nothing is sent anywhere else.
+## Install
 
-## Setup
+Anubis isn't in the browser stores yet. [Getting started](https://bishop-v.github.io/anubis/guide/getting-started) explains how to build it and load it into Firefox or Chrome.
 
-On Linux, use the pinned toolchain from the Nix flake:
+## Develop
 
-```sh
-nix develop
-```
-
-The first time you enter the shell, it installs the project dependencies.
-
-If you aren't using Nix, install **Node.js 22.12 or newer** from [nodejs.org](https://nodejs.org), then run `npm install` in the repository. Run the commands below inside the Nix shell or with your Node installation:
+On Linux, `nix develop` gives you the pinned toolchain. Otherwise, install Node.js 22.12 or newer and run `npm install`. Then:
 
 ```sh
 npm run dev          # opens Firefox with the extension loaded, reloading on save
 npm run dev:chrome   # the same in Chrome
 ```
 
-Firefox is the default target; every `:chrome` variant overrides it.
-
-### Building and testing
-
-```sh
-npm run compile      # type-check; run it after every change
-npm test             # unit tests in tests/
-npm run build        # production build into .output/firefox-mv2
-npm run build:chrome # production build into .output/chrome-mv3
-```
-
-`npm run e2e` loads the Chrome build into Chromium against mock result pages and saves screenshots to `e2e/shots/`. Install Playwright's Chromium with `npx playwright-core install chromium`, or set `CHROMIUM_PATH` to a system binary (on NixOS, use the system Chromium). `node e2e/run.mjs responsive` checks all Settings sections at 320px, 360px, and 390px; CI runs this check on every pull request. `node e2e/run.mjs subscribe` also downloads a real list from GitHub; behind a TLS-intercepting proxy, point `PROXY_CA_CERT` at its CA.
-
-### Loading it by hand
-
-If the dev browser doesn't open on its own, build and load the extension yourself:
-
-- **Firefox:** `about:debugging` → This Firefox → Load Temporary Add-on → pick `.output/firefox-mv2/manifest.json`. Temporary add-ons are removed when Firefox closes.
-- **Chrome:** `chrome://extensions` with Developer mode on → Load unpacked → pick `.output/chrome-mv3`.
-
-### Building the store release
-
-These are the steps the release uses, and the ones for rebuilding the Firefox add-on from its source zip. Use the Nix shell on Linux, or **Node.js 22.12 or newer** on other platforms:
-
-```sh
-npm ci               # installs the exact versions in package-lock.json
-npm run zip          # .output/anubis-<version>-firefox.zip and -sources.zip
-npm run zip:chrome   # .output/anubis-<version>-chrome.zip, also used for Edge
-```
-
-The extension itself is in `.output/firefox-mv2/` (and `.output/chrome-mv3/`) after the zips are made.
-
-To publish a version, run `npm run release:prep -- 0.3.0` (or `patch`, `minor`, or `major`). It sets the version, runs every check, and makes the Firefox zips. Merge the change, then push a matching tag (`git tag v0.3.0 && git push origin v0.3.0`). `.github/workflows/release.yml` checks the tag against `package.json`, runs CI, builds the zips, and creates a GitHub Release. Once approved in the `release` environment, it submits to each of the Chrome Web Store, Firefox Add-ons, and Edge Add-ons whose keys are set there.
-
-### Before opening a pull request
-
-[CONTRIBUTING.md](CONTRIBUTING.md) covers how to contribute and how changes are merged. In short: `npm run compile` and `npm test` should pass, both builds should succeed, and `npx web-ext lint -s .output/firefox-mv2` should be at zero warnings (CI treats warnings as errors). Changes reach `main` only through pull requests, once CI's `check` job has passed.
-
-### Worth knowing
-
-- **Search pages can only be verified for real in a browser.** The unit tests and `npm run e2e` cover the logic against mock pages; neither proves a live engine still works.
-- **Engines break when they change their markup.** `utils/engines.ts` holds the definitions. When one stops working, diff it against [ublacklist/builtin](https://github.com/ublacklist/builtin) (`serpinfo/*.yml`), which tracks these layouts continuously.
-- **`utils/engines.ts` is imported at build time** to generate the manifest's `matches`, so it must stay free of browser APIs.
-- **The Firefox extension ID lives in `wxt.config.ts`** and has to stay put. It is the add-on's permanent identity, so changing it makes an existing install read as a different extension and orphans its stored settings.
-- **Keep permissions minimal.** Only add one a feature actually needs; hosts for non-GitHub lists are requested at subscribe time, not up front.
-
-## Documentation
-
-The wiki is at **[bishop-v.github.io/anubis](https://bishop-v.github.io/anubis/)**, built from [`docs/`](docs) (start with [the introduction](docs/guide/introduction.md)). `npm run docs:dev` previews it locally.
-
-- [Developing Anubis](DEVELOPMENT.md): how the extension is put together, how a build is made, and how to add an engine, a setting, or interface text.
+- [Developing Anubis](DEVELOPMENT.md): every command, how the extension is put together, recipes for common changes, testing, and releasing.
+- [Contributing](CONTRIBUTING.md): ways to help, the project's conventions, and how pull requests are merged.
 - [Agent instructions](AGENTS.md): compatibility contracts, regression checks, and safe working practices.
-- [Accessibility](ACCESSIBILITY.md): keeping Anubis usable with a screen reader and from the keyboard, and where it falls short today.
-- [The list format](docs/list-format.md): how to write and publish a list.
-- [Lists](lists/README.md): the lists that ship with Anubis and how to contribute one.
+- [Style guide](STYLEGUIDE.md) and [accessibility](ACCESSIBILITY.md): how the interface looks, and how it works with a screen reader and the keyboard.
 - [Experiments and decisions](docs/experiments.md): what was tried, what failed, and what still needs checking on live pages.
 - [Roadmap](ROADMAP.md): planned work.
-- [Security](SECURITY.md): how to report a vulnerability privately, and what counts as one.
-- [Publishing](store/README.md): store listings, privacy answers, and release steps.
-- [Browser and store platform watch](docs/platform-watch.md): current browser deadlines, API changes, and what to recheck before releases.
+- [Lists](lists/README.md): the lists that ship with Anubis, and how to contribute one.
+- [Publishing](store/README.md) and the [platform watch](docs/platform-watch.md): store listings, release steps, and browser deadlines.
+- [Security](SECURITY.md): how to report a vulnerability privately.
+
+The wiki is built from [`docs/`](docs); `npm run docs:dev` previews it.
 
 ## Inspirations
 

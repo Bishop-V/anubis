@@ -1,6 +1,6 @@
 # Developing Anubis
 
-How the extension is put together, and how to make the changes that come up most often. The [README](README.md#setup) gets you set up, [CONTRIBUTING.md](CONTRIBUTING.md) covers how changes are proposed and merged, and [`docs/experiments.md`](docs/experiments.md) records why things are the way they are, including what was tried and didn't work. Read the relevant part of that record before redoing something that looks odd: it's usually odd on purpose.
+How the extension is put together, and how to make the changes that come up most often. [Commands](#commands) gets you set up, [CONTRIBUTING.md](CONTRIBUTING.md) covers how changes are proposed and merged, and [`docs/experiments.md`](docs/experiments.md) records why things are the way they are, including what was tried and didn't work. Read the relevant part of that record before redoing something that looks odd: it's usually odd on purpose.
 
 ## The toolchain
 
@@ -39,6 +39,8 @@ npm run zip            # store packages (see "Releasing")
 npm run zip:chrome
 npm run release:prep -- 0.3.0 # set the version, run every check above, make the Firefox zips
 ```
+
+Firefox is the default target; every `:chrome` variant overrides it. If the dev browser doesn't open on its own, build and load the extension by hand, as [Getting started](docs/guide/getting-started.md#install) describes.
 
 ## How a build is made
 
@@ -154,7 +156,7 @@ The popup, settings, and welcome page are plain DOM, built with `h()` from `util
 1. Add or edit its entry in `ENGINES` (`utils/engines.ts`). Prefer structural detection (`heading`, with a `boundary` the climb must not pass) when titles are headings; otherwise give `item`, `link` and `title` selectors, taking them from [uBlacklist's rules](https://github.com/ublacklist/builtin) (`serpinfo/*.yml`). `matches` becomes the manifest's content script matches. Add `more` if the engine can load another page of results, and `mobile` for its phone layout's differences.
 2. Add its display name to `.github/engine-watch.json` under the matching `serpinfo/*.yml` file, or document why there is no upstream file under `unwatched`. `tests/engine-watch.test.ts` checks that every engine is accounted for exactly once. For a watched engine, run `node .github/scripts/sync-serpinfo.mjs <a clone of ublacklist/builtin>` to add its file to `upstream/serpinfo/`.
 3. Model the engine's page as a mock in `e2e/fixtures.mjs`, serve it from the `pages` map in `e2e/run.mjs` at the engine's real address, and add a check. For a fix, first confirm the check fails on the current build.
-4. Update the engine table in `docs/guide/search-engines.md`, the engine lists in the README, and `store/README.md`, and `docs/guide/more-results.md` if it loads more results.
+4. Update the engine table in `docs/guide/search-engines.md`, the engine list in `docs/guide/introduction.md`, and `store/README.md`. If it loads more results, add it to `docs/guide/more-results.md` too.
 5. Load it on the live engine and record what you confirmed, with the date, in `docs/experiments.md`.
 
 ### Recognise another clean-up panel or language
@@ -232,6 +234,7 @@ Not everything is converted yet: `ROADMAP.md` lists what's left. Wording follows
 | `domain.test.ts` | Domains, redirect links, raw list addresses, issue links, subscribe links |
 | `engines.test.ts` | Picking an engine's phone layout |
 | `i18n.test.ts` | Message keys, plural forms, and placeholders, the undo line's wording |
+| `readme.test.ts` | The README's features against the wiki's introduction, and its links |
 
 **End-to-end checks** (`npm run e2e`, or `node e2e/run.mjs <part>` after `npm run build:chrome`) load the Chrome build into Chromium. Install Playwright's Chromium with `npx playwright-core install chromium`; on NixOS, set `CHROMIUM_PATH` to the system Chromium because Playwright's downloaded browser doesn't run there. Branded Chrome no longer loads unpacked extensions from the command line. The harness answers the real engines' addresses with the mock pages in `e2e/fixtures.mjs` (Google, DuckDuckGo, Bing, Brave, and Google's phone layout), seeds storage with a test personal list and settings, prints what Anubis decided, and saves screenshots to `e2e/shots/`. Each part is a block in `e2e/run.mjs`: `pages`, `hostile`, `grouped`, `reveal`, `runs`, `shortcuts`, `mobile`, `off`, `palette`, `cleanup`, `pins`, `popover`, `a11y`, `ddg-hide`, `filter`, `deeper`, `import`, `subscribe`, `subscribe-link`, `options`, `responsive`, `welcome`, `sync`, `webdav`, and `checks`. `responsive` checks every Settings section at 320px, 360px, and 390px, and confines narrow-screen scrolling to the Your sites table. `checks` asserts hostile and grouped Google results, forum links, reveal state, back-forward-cache restoration, the phone layout, and AI/video cleanup on Google, DuckDuckGo, and Brave; CI runs it alongside `responsive` on every pull request. `webdav` connects a mock WebDAV server in Settings; a script can't answer the browser's permission prompt, so it runs a copy of the build whose manifest already allows the mock's host, and Playwright only reaches the background script's requests with `PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1`, which the part sets.
 
@@ -239,11 +242,24 @@ Most parts print their findings rather than failing on them, so read the output:
 
 `node e2e/run.mjs docs` redraws the wiki's screenshots in `docs/img/`, each in light and dark, a before and after of one search, and the same pair as slides in `docs/public/`. Rendering differs slightly between runs, so commit only the images your change affects. The homepage's scroll-driven demo (`docs/.vitepress/theme/scroll-demo.ts`) is drawn in HTML rather than screenshots: update its wording by hand when the summary, tags, or hidden line change.
 
-When a feature or code area is changed or overhauled, update the documentation that explains its behaviour, implementation, data flow, or user-facing promises—not only the guide page. Check related references such as `DEVELOPMENT.md`, `CLAUDE.md`, the privacy guide, store listing notes, and platform notes as applicable. Pages with generated screenshots have source comments pointing maintainers to the regeneration command; update the affected light and dark images and the nearby captions/text together.
+## Documentation
+
+Each thing is explained in one place, and everything else links to it:
+
+| Where | For | What it holds |
+| --- | --- | --- |
+| The wiki, [`docs/`](docs) | People who use Anubis | How every feature works, installing, search engines, privacy and permissions, troubleshooting, and the list format. The extension links to its pages. |
+| [`README.md`](README.md) | Anyone landing on the repository | What Anubis is, one line per feature linking to its wiki page, the few commands to start developing, and links to everything below. Nothing it could link to instead. |
+| `DEVELOPMENT.md` (this file), [`CONTRIBUTING.md`](CONTRIBUTING.md), [`AGENTS.md`](AGENTS.md), [`CLAUDE.md`](CLAUDE.md) | People and agents changing the code | How it's built and tested, the conventions, and releasing. `CLAUDE.md` is the condensed version for agents. |
+| [`store/README.md`](store/README.md) | Releasing | The store listings, privacy answers, and the checklist before each release. |
+
+When a feature or code area is changed or overhauled, update the documentation that explains its behaviour, implementation, data flow, or user-facing promises, not only the guide page. Check related references such as this file, `CLAUDE.md`, the privacy guide, store listing notes, and platform notes as applicable. Pages with generated screenshots have source comments pointing maintainers to the regeneration command; update the affected light and dark images and the nearby captions and text together.
+
+The README's "What it does" and the Features in `docs/guide/introduction.md` list the same features under the same names, linking the same wiki pages. When you add, rename, or drop a feature, change both; `tests/readme.test.ts` fails until they match, and also checks that every link in the README leads somewhere. Details (engine names, permissions, install steps, settings) go in the wiki only, and the README links to them. `npm run docs:build` catches broken links inside the wiki.
 
 ## Checking live pages
 
-The mocks can't prove a live engine still works. With the extension loaded (`npm run dev`, or a build loaded by hand as the README describes), open a results page and look at:
+The mocks can't prove a live engine still works. With the extension loaded (`npm run dev`, or a build loaded by hand as [Getting started](docs/guide/getting-started.md#install) describes), open a results page and look at:
 
 - **What Anubis decided:** each result it found carries `data-anubis-result` and `data-anubis-state`; a reranked list carries `data-anubis-rerank`. Anubis's own elements show in DevTools with their shadow roots.
 - **Logs:** the content script logs to the tab's console, the background script to its own (`about:debugging` → Inspect in Firefox, the service worker link on `chrome://extensions` in Chrome). Anubis's messages start with `[anubis]`.
@@ -252,7 +268,17 @@ The mocks can't prove a live engine still works. With the extension loaded (`npm
 
 ## Releasing
 
-The steps are in the README ([Building the store release](README.md#building-the-store-release)) and `store/README.md`: run `npm run release:prep -- <version>` (`scripts/release-prep.mjs`: it sets `version` in `package.json` and `package-lock.json`, then runs the type-check, unit tests, Firefox build and zips, the add-on linter, and the end-to-end checks, stopping at the first failure), merge, and push a matching `v…` tag. `.github/workflows/release.yml` checks the tag, runs CI, builds the zips, creates a GitHub Release and, once approved, submits to each of the Chrome, Firefox, and Edge stores whose keys are set in the `release` environment. A store with no keys is skipped, so Firefox can ship before the others. A store with only some of its keys fails the release.
+These are the steps the release uses, and the ones for rebuilding the Firefox add-on from its source zip. Use the Nix shell on Linux, or Node.js 22.12 or newer on other platforms:
+
+```sh
+npm ci               # installs the exact versions in package-lock.json
+npm run zip          # .output/anubis-<version>-firefox.zip and -sources.zip
+npm run zip:chrome   # .output/anubis-<version>-chrome.zip, also used for Edge
+```
+
+The extension itself is in `.output/firefox-mv2/` (and `.output/chrome-mv3/`) after the zips are made.
+
+To publish a version, run `npm run release:prep -- 0.3.0` (or `patch`, `minor`, or `major`; `scripts/release-prep.mjs`). It sets `version` in `package.json` and `package-lock.json`, then runs the type-check, unit tests, Firefox build and zips, the add-on linter, and the end-to-end checks, stopping at the first failure. Merge the change, then push a matching tag (`git tag v0.3.0 && git push origin v0.3.0`). `.github/workflows/release.yml` checks the tag against `package.json`, runs CI, builds the zips, and creates a GitHub Release. Once approved in the `release` environment, it submits to each of the Chrome Web Store, Firefox Add-ons, and Edge Add-ons whose keys are set there. A store with no keys is skipped, so Firefox can ship before the others; a store with only some of its keys fails the release. [`store/README.md`](store/README.md) has the checklist before each release, the listings, and the privacy answers.
 
 ## Pitfalls
 

@@ -12,6 +12,7 @@ Before changing code, read the relevant section of [`DEVELOPMENT.md`](DEVELOPMEN
 - Test interface changes in light and dark themes and at 320px, 360px, and 390px. Keep page-level horizontal overflow at zero; if a table needs more room, confine scrolling to that table.
 - Keep DOM text as text nodes; do not use `innerHTML`. Keep permissions minimal and explain any new permission in the user-facing privacy and store documentation.
 - Keep documentation in step with the code: when changing or overhauling a feature, component, data flow, or user-visible behaviour, update every relevant user guide, developer reference, and privacy/store/platform note. Record experiments and rejected approaches in `docs/experiments.md`.
+- Explain each thing in one place and link to it. User-facing detail belongs in the wiki (`docs/`); the README only summarises and links there. Its feature list and the Features of `docs/guide/introduction.md` must match (`tests/readme.test.ts`), so change them together.
 - Keep generated documentation screenshots in step with the interface. If a UI change affects what a screenshot shows, run `node e2e/run.mjs docs`, review the light and dark outputs, and commit the affected images with the text/captions that describe them. Don't commit unrelated regenerated images.
 - Never add local agent notes (for example, `CLAUDE.local.md`) to version control or store source archives.
 
