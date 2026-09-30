@@ -45,6 +45,10 @@ npm run dev:chrome   # the same in Chrome
 
 The wiki is built from [`docs/`](docs); `npm run docs:dev` previews it.
 
+## How it's made
+
+Anubis is almost entirely written by AI. Nearly all of its code, tests, and documentation were written by AI coding assistants (mostly [Claude Code](https://claude.ai/code)), directed, reviewed, and tried out on real search pages by the maintainer. The instructions they work from are in [`CLAUDE.md`](CLAUDE.md) and [`AGENTS.md`](AGENTS.md), and what was tried and what failed is in [`docs/experiments.md`](docs/experiments.md). Every change goes through the same checks before it lands: type-checking, unit tests, the end-to-end run against mock search pages, and the Firefox add-on linter.
+
 ## Inspirations
 
 **[uBlacklist](https://github.com/iorate/ublacklist)** is the closest existing project and the main influence. The interaction model comes from it: a block icon on each search result, so you curate the list while searching instead of opening settings. Anubis follows the same idea of hiding blocked results in place, with a summary of what was hidden. Anubis also reads uBlacklist rulesets, so its subscriptions work here.
