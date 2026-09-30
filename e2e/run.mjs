@@ -11,7 +11,8 @@
 //
 // Needs Chromium (branded Chrome no longer loads unpacked extensions from the
 // command line). It uses CHROMIUM_PATH if set, then Playwright's installed build,
-// then a chromium on PATH (NixOS, where Playwright's build doesn't run).
+// then a chromium on PATH, and failing those, with Nix installed (NixOS, where
+// Playwright's build doesn't run), fetches nixpkgs' Chromium itself.
 // The mock pages are modelled on each engine's markup; they are not the real thing.
 
 import { chromium } from 'playwright-core';
@@ -31,9 +32,23 @@ function findChromium() {
   if (process.env.CHROMIUM_PATH) return process.env.CHROMIUM_PATH;
   const playwrights = chromium.executablePath();
   if (existsSync(playwrights)) return playwrights;
-  for (const dir of (process.env.PATH ?? '').split(delimiter)) {
-    for (const name of ['chromium', 'chromium-browser']) {
-      if (dir && existsSync(join(dir, name))) return join(dir, name);
+  const onPath = (name) => (process.env.PATH ?? '').split(delimiter).map((dir) => dir && join(dir, name)).find((p) => p && existsSync(p));
+  const system = onPath('chromium') ?? onPath('chromium-browser');
+  if (system) return system;
+  // The same Chromium `nix shell nixpkgs#chromium` gives, from the nixpkgs flake.lock
+  // pins, so it stays in the Nix store between runs and the dev shell doesn't carry it.
+  if (onPath('nix')) {
+    console.log('No Chromium found; getting nixpkgs#chromium with Nix (the first time takes a while)…');
+    try {
+      const root = fileURLToPath(new URL('..', import.meta.url));
+      const out = execFileSync('nix', ['build', '--inputs-from', root, 'nixpkgs#chromium', '--no-link', '--print-out-paths'], {
+        cwd: root,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'inherit'],
+      }).trim().split('\n')[0];
+      if (out && existsSync(join(out, 'bin', 'chromium'))) return join(out, 'bin', 'chromium');
+    } catch {
+      // Falls through to the message below.
     }
   }
   return playwrights;
@@ -46,7 +61,7 @@ if (!existsSync(join(EXT, 'manifest.json'))) {
 }
 if (!existsSync(executablePath)) {
   console.error(
-    'Chromium is missing. Install Playwright\'s (`npx playwright-core install chromium`), put a system `chromium` on PATH (on NixOS: `nix shell nixpkgs#chromium`), or set CHROMIUM_PATH to its binary.',
+    'Chromium is missing. Install Playwright\'s (`npx playwright-core install chromium`), put a system `chromium` on PATH, install Nix (the run then fetches nixpkgs#chromium itself), or set CHROMIUM_PATH to its binary.',
   );
   process.exit(1);
 }
