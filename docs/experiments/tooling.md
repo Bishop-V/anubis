@@ -4,6 +4,8 @@ Builds, tests, the end-to-end run, stores, and releases. Part of [Experiments an
 
 ## Finding Chromium for the end-to-end run (2026-09-29)
 
+- **Nix fetches it (2026-09-30):** the owner asked not to need `nix shell nixpkgs#chromium -c npm run release:prep` each time. Adding Chromium to the dev shell was still left out, for the reason below; instead, when there's no Chromium and `nix` is on PATH, `e2e/run.mjs` runs `nix build --inputs-from . nixpkgs#chromium --no-link --print-out-paths` and uses its `bin/chromium`. It's the nixpkgs the flake pins, stays in the Nix store after the first time, and works in or out of `nix develop`. Checked with a stand-in `nix` that returns a store path (the `responsive` part passed) and with no Nix (the message now says Nix will do).
+
 - **Found:** `npm run release:prep` on NixOS stopped at the end-to-end step with "Chromium is missing". Playwright's downloaded Chromium doesn't run there, and the harness only looked at `CHROMIUM_PATH` and Playwright's own path.
 - **Changed:** `e2e/run.mjs` now tries `CHROMIUM_PATH`, then Playwright's build, then `chromium` or `chromium-browser` on PATH. Playwright's build still comes before PATH so CI keeps using it. The error names all three ways, including `nix shell nixpkgs#chromium`.
 - **Kept out:** adding Chromium to the Nix dev shell. `flake.nix` deliberately takes browsers from the system, and it would make every `nix develop` fetch Chromium.
