@@ -35,7 +35,7 @@ Anubis works in two places, and they need different care:
 
 **Focus is always visible.** The focus ring is the 2px gold outline on `:focus-visible` (`assets/theme.css`, `shadow.css`). Never remove an outline without replacing it, and where a native control sits invisibly over a styled one (the cartouche's site picker), draw the ring on what can be seen.
 
-**Focus goes somewhere sensible, and comes back.** When a control opens something, focus moves into it; when it closes, focus returns to what opened it. The result menu is the model: it opens with focus on the chosen ranking, Escape closes it and puts focus back on the ⚖ button, and Enter in the new tag field adds the tag.
+**Focus goes somewhere sensible, and comes back.** When a control opens something, focus moves into it; when it closes, focus returns to what opened it. The result menu is the model: it opens with focus on the chosen ranking, Escape closes it and puts focus back on the ⚖ button (pressing the button again closes it too), and Enter in the new tag field adds the tag.
 
 **Re-rendering mustn't drop focus.** Replacing the focused element sends focus back to the top of the page, and a keyboard or screen reader user loses their place. The result menu and the summary survive their own re-renders by giving controls a `data-focus-key` and focusing the same key in the new content (`openPopover` and `render` in `entrypoints/content/ui.ts`); when that control is gone (Undo), focus goes to the first one. Do the same, or update the existing nodes, wherever a click re-renders the thing that was clicked.
 

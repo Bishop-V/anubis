@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { engineFor, isMobileAgent } from '@/utils/engines';
+import { engineFor, isMobileAgent, sameSearch } from '@/utils/engines';
 
 describe('engines', () => {
   it('tells phones from computers by their user agent', () => {
@@ -20,5 +20,18 @@ describe('engines', () => {
     expect(phone.more).toBeUndefined();
     // Engines without a phone layout are the same either way.
     expect(engineFor('duckduckgo.com', true)).toBe(engineFor('duckduckgo.com'));
+  });
+});
+
+describe('sameSearch', () => {
+  it('ignores details an engine adds to its address after loading', () => {
+    expect(sameSearch('https://www.google.com/search?q=anubis', 'https://www.google.com/search?q=anubis&sei=abc&ved=2ah')).toBe(true);
+  });
+
+  it('tells a new query, tab, or page apart', () => {
+    expect(sameSearch('https://duckduckgo.com/?q=anubis', 'https://duckduckgo.com/?q=jackal')).toBe(false);
+    expect(sameSearch('https://duckduckgo.com/?q=anubis&ia=web', 'https://duckduckgo.com/?q=anubis&ia=images')).toBe(false);
+    expect(sameSearch('https://www.google.com/search?q=anubis', 'https://www.google.com/search?q=anubis&start=10')).toBe(false);
+    expect(sameSearch('https://www.google.com/search?q=anubis', 'https://www.google.com/webhp?q=anubis')).toBe(false);
   });
 });

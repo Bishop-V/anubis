@@ -155,15 +155,18 @@ async function fetchNext(engine: EngineDef, state: DeeperState): Promise<number>
   }
 
   let doc: Document | undefined;
+  let failed: Stop | undefined;
   try {
     doc = await fetchPage(target.href);
   } catch (error) {
+    failed = error instanceof Stop ? error : new Stop('failed', target.href);
     // An engine that asked to slow down or refused wouldn't answer a frame either.
-    if (error instanceof Stop && (error.reason === 'busy' || error.reason === 'refused')) throw error;
+    if (failed.reason === 'busy' || failed.reason === 'refused') throw failed;
   }
   if (!doc || !findResults(engine, doc).length) {
     const framed = await framePage(engine, target.href);
-    if (!framed) throw new Stop(doc ? 'empty' : 'slow', target.href);
+    // Why the request failed, when it did, says more than the frame's silence.
+    if (!framed) throw failed ?? new Stop('empty', target.href);
     doc = framed.doc;
     try {
       return importResults(engine, state, doc, target.href);
@@ -254,7 +257,12 @@ async function fetchPage(url: string): Promise<Document> {
     const text = await withTimeout(res.text(), FETCH_TIMEOUT).catch(() => {
       throw new Stop('slow', url);
     });
-    return new DOMParser().parseFromString(text, 'text/html');
+    const doc = new DOMParser().parseFromString(text, 'text/html');
+    // Its links resolve against the page it came from, not wherever the parser
+    // thinks it is (in Firefox's content scripts, not this page).
+    const base = doc.querySelector('base[href]') ?? doc.head.appendChild(doc.createElement('base'));
+    base.setAttribute('href', new URL(base.getAttribute('href') ?? '', url).href);
+    return doc;
   }
 }
 

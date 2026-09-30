@@ -248,19 +248,23 @@ export async function renderShare(): Promise<HTMLElement> {
     if (!importArea.value.trim()) return;
     let summary = '';
     let highlight: string[] = [];
-    await editPersonal((t) => {
-      const r = importIntoPersonal(t, importArea.value);
-      highlight = r.highlightTags;
-      const names = { hohser: 'HOHSER export', ublacklist: 'uBlacklist rules', goggle: 'Goggle', anubis: 'Anubis list', domains: 'domain list' };
-      summary =
-        `Read as a ${names[r.source]}: ${r.added} site${r.added === 1 ? '' : 's'} added, ${r.updated} updated.` +
-        (r.skipped
-          ? ` ${r.skipped} rule${r.skipped === 1 ? '' : 's'} with URL patterns or unsupported syntax left out; subscribe to the original list to keep them.`
-          : '');
-      return r.text;
-    });
-    for (const id of highlight) await setTagPref(id, { action: 'highlight' });
-    flash('import', 'ok', summary);
+    try {
+      await editPersonal((t) => {
+        const r = importIntoPersonal(t, importArea.value);
+        highlight = r.highlightTags;
+        const names = { hohser: 'a HOHSER export', ublacklist: 'uBlacklist rules', goggle: 'a Goggle', anubis: 'an Anubis list', domains: 'a list of domains' };
+        summary =
+          `Read as ${names[r.source]}: ${plural(r.added, 'site')} added and ${r.updated} updated.` +
+          (r.skipped
+            ? ` ${plural(r.skipped, 'rule')} with address patterns or unsupported syntax left out; subscribe to the original list to keep them.`
+            : '');
+        return r.text;
+      });
+      for (const id of highlight) await setTagPref(id, { action: 'highlight' });
+      flash('import', 'ok', summary);
+    } catch (error) {
+      flash('import', 'error', `Couldn’t import: ${error instanceof Error ? error.message : String(error)}`);
+    }
     rerender();
   };
 

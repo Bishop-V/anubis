@@ -8,7 +8,7 @@ import { bugReportLink, describeBrowser, guide } from '@/utils/links';
 import { LEVELS, TAG_CHOICES, evaluate, type Level } from '@/utils/matcher';
 import { h, icon, siteName } from '@/utils/dom';
 import { ICON_GEAR, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
-import { localizePage, t, tn, type MessageKey } from '@/utils/i18n';
+import { localizePage, t, tJoin, tn, type MessageKey } from '@/utils/i18n';
 import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/messages';
 import { PERSONAL_NAME, getSite, listSites, setSiteLevel, toggleSiteTag, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
@@ -171,7 +171,7 @@ function renderHere(rules: RuleSet) {
   else if (fromLists !== 'normal') {
     const names = [...new Set(baseline.reasons.filter((r) => r.listId !== TAG_CHOICES).map((r) => r.list))];
     if (baseline.reasons.some((r) => r.listId === TAG_CHOICES)) names.push(t('popupYourTagSettings'));
-    hint = t('popupHintLists', LEVEL_CHIPS[fromLists], names.join(', '));
+    hint = t('popupHintLists', LEVEL_CHIPS[fromLists], tJoin(names));
   } else hint = t('popupHintNone');
 
   // Tags you set toggle; tags from lists are shown but fixed.
@@ -188,7 +188,7 @@ function renderHere(rules: RuleSet) {
     if (!on && fromList.has(id)) {
       return h(
         'span',
-        { class: 'tag', style: `--c: ${tag.color}`, title: t('popupTagFrom', (verdict.tagSources[id] ?? []).join(', ')) },
+        { class: 'tag', style: `--c: ${tag.color}`, title: t('popupTagFrom', tJoin(verdict.tagSources[id] ?? [])) },
         h('i', { class: 'gem' }),
         tag.label,
       );
@@ -235,8 +235,14 @@ function renderPage(next: PageStats | undefined) {
   }
   const current = stats;
 
-  const refreshSoon = () =>
-    setTimeout(async () => renderPage(await sendToActiveTab<PageStats>({ type: 'get-page-stats' })), 2500);
+  // Loading a page can take a while (a slow engine, a second try out of sight), so
+  // keep asking until it's done.
+  const refreshSoon = (tries = 20) =>
+    setTimeout(async () => {
+      const next = await sendToActiveTab<PageStats>({ type: 'get-page-stats' });
+      renderPage(next);
+      if (next?.loading && tries > 1) refreshSoon(tries - 1);
+    }, 1500);
   const actions = [
     hiddenCount(current)
       ? h(

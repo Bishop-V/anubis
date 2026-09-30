@@ -143,9 +143,8 @@ function sitesPanel(tag: TagDef, mine: boolean, sites: SiteEntry[], lists: Compi
     .filter((l) => !l.personal && l.tags.some((t) => t.id === tag.id))
     .map((l) => {
       const all = listSitesWith(l, tag.id);
-      const shown = all.slice(0, LIST_PREVIEW).join(', ');
-      const more = all.length > LIST_PREVIEW ? ` and ${all.length - LIST_PREVIEW} more` : '';
-      return all.length ? h('p', { class: 'from-list' }, h('b', null, l.name), `: ${shown}${more}.`) : null;
+      const sites = all.length > LIST_PREVIEW ? [...all.slice(0, LIST_PREVIEW), `${all.length - LIST_PREVIEW} more`] : all;
+      return all.length ? h('p', { class: 'from-list' }, h('b', null, l.name), `: ${andList(sites)}.`) : null;
     });
 
   const name = h('input', { type: 'text', value: tag.label, maxLength: 40, attrs: { 'aria-label': 'Tag name' } });

@@ -91,7 +91,7 @@ async function subscribe(input: string, entry?: DirectoryEntry, name = entry?.na
         : [...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: entry?.builtin || undefined, name }],
     );
     const { parsed } = download;
-    flash('lists', 'ok', `Subscribed to ${displayName({ url, name }, parsed.meta)}: ${plural(parsed.rules.length, 'instruction')}, ${plural(parsed.tags.length, 'tag')}.`);
+    flash('lists', 'ok', `Subscribed to ${displayName({ url, name }, parsed.meta)}: ${plural(parsed.rules.length, 'instruction')} and ${plural(parsed.tags.length, 'tag')}.`);
     if (offer && offered(offer).url === url) dropOffer();
   } catch (error) {
     // Built-in lists still work from their bundled copy when the download fails.

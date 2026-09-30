@@ -278,3 +278,24 @@ export function engineFor(hostname: string, mobile = false): EngineDef | undefin
 
 /** Whether a user agent is a phone's, the way engines decide which layout to send. */
 export const isMobileAgent = (userAgent: string): boolean => /\bMobi/.test(userAgent);
+
+/**
+ * What says which search a results address is: the query and the tab or filters
+ * picked for it. Engines add other details (Google's tracking parameters) after
+ * the page loads, which don't make a new search.
+ */
+const SEARCH_PARAMS = ['q', 'p', 'text', 'query', 'udm', 'tbm', 'tbs', 'ia', 'iax', 'df', 'kl', 'filters', 'tf', 'offset', 'first', 'start'];
+
+/** Whether two results addresses are the same search. */
+export function sameSearch(a: string, b: string): boolean {
+  let x: URL;
+  let y: URL;
+  try {
+    x = new URL(a);
+    y = new URL(b);
+  } catch {
+    return false;
+  }
+  if (x.origin !== y.origin || x.pathname !== y.pathname) return false;
+  return SEARCH_PARAMS.every((key) => x.searchParams.get(key) === y.searchParams.get(key));
+}

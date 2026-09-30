@@ -1,6 +1,6 @@
 import { browser, defineContentScript } from '#imports';
 import { NO_CLEANUP } from '@/utils/cleanup';
-import { engineFor, ENGINE_MATCHES, isMobileAgent, type EngineDef } from '@/utils/engines';
+import { engineFor, ENGINE_MATCHES, isMobileAgent, sameSearch, type EngineDef } from '@/utils/engines';
 import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { evaluate, type Verdict } from '@/utils/matcher';
 import { send, type Message, type PageStats } from '@/utils/messages';
@@ -122,7 +122,10 @@ export default defineContentScript({
       applyTheme(theme);
       applyPalette(rules.settings.palette);
 
-      // A new search (Google and DuckDuckGo change the URL without reloading).
+      // A new search (Google and DuckDuckGo change the URL without reloading). An
+      // engine that only tidies its own address (Google adds tracking details after
+      // loading) is still on the same search, with the pages loaded so far.
+      if (deeper.url !== location.href && !deeper.busy && sameSearch(deeper.url, location.href)) deeper.url = location.href;
       if (deeper.url !== location.href && !deeper.busy) {
         deeper = freshState(engine);
         filter = undefined;
@@ -424,7 +427,8 @@ export default defineContentScript({
       rerank([], new Map(), false);
       makeRoomForPins(new Set());
       lastResults = [];
-      if (lastStats) void send({ type: 'stats', stats: { ...lastStats, total: 0, hidden: 0 } });
+      // Nothing hidden or removed any more, so the toolbar's count goes too.
+      if (lastStats) void send({ type: 'stats', stats: { ...lastStats, total: 0, hidden: 0, removed: {} } });
       lastStats = undefined;
     };
 
@@ -700,7 +704,8 @@ function pageTheme(setting: Theme): PageTheme {
 /** Anubis's elements and attributes left on the page by an earlier copy of the extension. */
 function clearPreviousCopy(): void {
   removeAllUi();
-  for (const el of document.querySelectorAll<HTMLElement>('[data-anubis-result], [data-anubis-row], [data-anubis-removed], [data-anubis-rerank]')) {
+  for (const el of document.querySelectorAll<HTMLElement>('[data-anubis-result], [data-anubis-row], [data-anubis-removed], [data-anubis-rerank], [data-anubis-pin-room]')) {
     for (const name of el.getAttributeNames()) if (name.startsWith('data-anubis-')) el.removeAttribute(name);
   }
 }
+
