@@ -1,9 +1,10 @@
 import '@/assets/theme.css';
 import './style.css';
+import { browser } from '#imports';
 import { h, icon } from '@/utils/dom';
 import { ICON_EXTERNAL } from '@/utils/icons';
 import { t } from '@/utils/i18n';
-import { guide, REPO_URL } from '@/utils/links';
+import { bugReportLink, describeBrowser, guide, REPO_URL } from '@/utils/links';
 import { listSites } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet } from '@/utils/ruleset';
 import { getSubscriptions } from '@/utils/subscriptions';
@@ -38,8 +39,8 @@ const SECTIONS: Section[] = [
   { id: 'share', label: 'Backup', render: renderShare, help: ['guide/import-and-backup', 'Moving from other tools'] },
 ];
 
-function external(href: string, text: string): HTMLElement {
-  return h('a', { href, target: '_blank', rel: 'noopener noreferrer' }, text, icon(ICON_EXTERNAL));
+function external(href: string, text: string, title?: string): HTMLElement {
+  return h('a', { href, target: '_blank', rel: 'noopener noreferrer', title }, text, icon(ICON_EXTERNAL));
 }
 
 const nav = document.querySelector<HTMLElement>('#nav')!;
@@ -78,7 +79,13 @@ async function renderNav() {
       'div',
       { class: 'foot' },
       themeSwitcher(rules.settings.theme),
-      h('div', { class: 'links' }, external(guide(), 'Wiki'), external(REPO_URL, 'Source on GitHub')),
+      h(
+        'div',
+        { class: 'links' },
+        external(guide(), 'Wiki'),
+        external(bugReportLink({ version: browser.runtime.getManifest().version, browser: describeBrowser(navigator.userAgent) }), t('reportProblem'), t('reportProblemTitle')),
+        external(REPO_URL, 'Source on GitHub'),
+      ),
     ),
   );
 }

@@ -150,6 +150,7 @@ export default defineContentScript({
         pages: deeper.pages,
         canGoDeeper: results.length > 0 && nextPageReady(engine, deeper),
         loading: deeper.busy,
+        stopped: deeper.stopped,
         tags: [],
         removed: {},
       };
@@ -553,6 +554,7 @@ export default defineContentScript({
 // result up one position; pins go to the top.
 function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enabled: boolean) {
   const parents = new Set<HTMLElement>();
+  const containers = new Set<Element>(results.map((r) => r.container));
   for (const r of results) if (r.container.parentElement) parents.add(r.container.parentElement);
   for (const el of document.querySelectorAll<HTMLElement>('[data-anubis-rerank]')) parents.add(el);
 
@@ -567,11 +569,17 @@ function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enable
       continue;
     }
     if (!parent.hasAttribute('data-anubis-rerank')) parent.setAttribute('data-anubis-rerank', '');
+    // What follows the last result (the engine's pager, related searches) stays
+    // below them all, however far a result is lowered.
+    let lastResult = -1;
+    children.forEach((child, index) => {
+      if (containers.has(child)) lastResult = index;
+    });
     const ranked = children
       .map((child, index) => ({
         child,
         index,
-        key: child.tagName === 'ANUBIS-SUMMARY' ? -Infinity : index - (scores.get(child) ?? 0),
+        key: child.tagName === 'ANUBIS-SUMMARY' ? -Infinity : index > lastResult ? Infinity : index - (scores.get(child) ?? 0),
       }))
       // On a tie the higher score wins, so boost=1 really moves a result past its neighbour.
       .sort((a, b) => a.key - b.key || (scores.get(b.child) ?? 0) - (scores.get(a.child) ?? 0) || a.index - b.index);

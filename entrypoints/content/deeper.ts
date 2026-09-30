@@ -1,4 +1,5 @@
 import type { EngineDef } from '@/utils/engines';
+import type { DeeperStop } from '@/utils/messages';
 import { findResults } from './results';
 
 // "Load more results": bring the next pages of results onto this one, so reranking
@@ -13,10 +14,11 @@ export interface DeeperState {
   url: string;
   pages: number;
   busy: boolean;
-  /** No further pages (no next link, no button, or an empty page). */
+  /** No further pages (no next link, no button, or a page of results already here). */
   done: boolean;
   next?: string;
-  error?: string;
+  /** Why the last load stopped before bringing in a page, shown in the summary until the next load. */
+  stopped?: DeeperStop;
   /** "Load more results automatically" already ran for this search. */
   auto?: boolean;
   /** How many results there were when you pressed the engine's own "More results" button yourself. */
@@ -28,6 +30,18 @@ export function freshState(engine: EngineDef): DeeperState {
 }
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * How long a page may take to arrive, by request and then in a hidden frame, and
+ * how long a frame's page may sit without results once it has loaded (a robot
+ * check that passes by itself loads the results page after it).
+ */
+const FETCH_TIMEOUT = 15_000;
+const FRAME_TIMEOUT = 15_000;
+const FRAME_SETTLE = 8_000;
+/** The pause between pages, and the longest wait an engine that asks to slow down gets. */
+const PAUSE = 700;
+const MAX_RETRY_WAIT = 10_000;
 
 /**
  * Whether there's a next page to load yet. The content script starts while the page is
@@ -42,25 +56,37 @@ export function nextPageReady(engine: EngineDef, state: DeeperState): boolean {
   return true;
 }
 
+/** Why a page didn't arrive. */
+class Stop extends Error {
+  constructor(
+    readonly reason: DeeperStop['reason'],
+    readonly url?: string,
+  ) {
+    super(reason);
+  }
+}
+
 /** Load `count` more pages. Calls `changed` as progress is made so the page can re-weigh. */
 export async function weighDeeper(engine: EngineDef, state: DeeperState, count: number, changed: () => void): Promise<void> {
   const more = engine.more;
   if (!more || state.busy || state.done) return;
   state.busy = true;
-  state.error = undefined;
+  state.stopped = undefined;
   changed();
   try {
     for (let i = 0; i < count && !state.done; i++) {
       const added = more.kind === 'click' ? await clickMore(engine, more.button) : await fetchNext(engine, state);
-      if (added === 0) state.done = true;
-      else state.pages++;
+      if (added === 0) break;
+      state.pages++;
       changed();
       // Be gentle with the engine: never fire page requests back to back.
-      if (i < count - 1) await wait(700);
+      if (i < count - 1 && !state.done) await wait(PAUSE);
     }
   } catch (error) {
-    state.error = error instanceof Error ? error.message : String(error);
-    state.done = true;
+    state.stopped =
+      error instanceof Stop ? { reason: error.reason, page: state.pages + 1, url: error.url } : { reason: 'failed', page: state.pages + 1 };
+    // The same results again means the engine has no more to give.
+    if (state.stopped.reason === 'repeat') state.done = true;
   } finally {
     state.busy = false;
     changed();
@@ -82,14 +108,21 @@ async function clickMore(engine: EngineDef, selector: string): Promise<number> {
       return findResults(engine).length - before;
     }
   }
-  return 0;
+  throw new Stop('empty');
 }
 
-function nextUrl(engine: EngineDef, state: DeeperState, doc: Document): string | undefined {
+function nextUrl(engine: EngineDef, state: DeeperState, doc: Document, base: string): string | undefined {
   const more = engine.more!;
   if (more.kind === 'link') {
-    const a = doc.querySelector<HTMLAnchorElement>(more.next);
-    return a?.href || undefined;
+    // The attribute, against the page it came from: a parsed page's links don't
+    // always resolve against the right address (Firefox's content scripts).
+    const href = doc.querySelector<HTMLAnchorElement>(more.next)?.getAttribute('href');
+    if (!href) return undefined;
+    try {
+      return new URL(href, base).href;
+    } catch {
+      return undefined;
+    }
   }
   if (more.kind === 'param') {
     // Count from the page the user is on, which isn't always the first.
@@ -102,39 +135,166 @@ function nextUrl(engine: EngineDef, state: DeeperState, doc: Document): string |
   return undefined;
 }
 
-/** Fetch the next results page, parse it, and append its results after the last one here. */
+/**
+ * Fetch the next results page, parse it, and put its results after the last one
+ * here. A page that comes back without results (a robot check that needs its
+ * scripts, or a page the engine only finishes in a browser) is tried once more in
+ * a hidden frame, where the engine's own scripts run as if you had opened it.
+ */
 async function fetchNext(engine: EngineDef, state: DeeperState): Promise<number> {
-  const url = state.next ?? nextUrl(engine, state, document);
-  if (!url) return 0;
+  const url = state.next ?? nextUrl(engine, state, document, location.href);
+  if (!url) {
+    state.done = true;
+    return 0;
+  }
   const target = new URL(url, location.href);
   // Only ever the same engine, same site.
-  if (target.origin !== location.origin) return 0;
+  if (target.origin !== location.origin) {
+    state.done = true;
+    return 0;
+  }
 
-  const res = await fetch(target, { credentials: 'include' });
-  if (!res.ok) throw new Error(`The engine answered ${res.status}`);
-  const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+  let doc: Document | undefined;
+  try {
+    doc = await fetchPage(target.href);
+  } catch (error) {
+    // An engine that asked to slow down or refused wouldn't answer a frame either.
+    if (error instanceof Stop && (error.reason === 'busy' || error.reason === 'refused')) throw error;
+  }
+  if (!doc || !findResults(engine, doc).length) {
+    const framed = await framePage(engine, target.href);
+    if (!framed) throw new Stop(doc ? 'empty' : 'slow', target.href);
+    doc = framed.doc;
+    try {
+      return importResults(engine, state, doc, target.href);
+    } finally {
+      framed.close();
+    }
+  }
+  return importResults(engine, state, doc, target.href);
+}
+
+function importResults(engine: EngineDef, state: DeeperState, doc: Document, url: string): number {
+  const found = findResults(engine, doc);
+  if (!found.length) throw new Stop('empty', url);
 
   const here = findResults(engine);
   const last = here[here.length - 1]?.container;
-  if (!last?.parentElement) return 0;
+  if (!last?.parentElement) throw new Stop('failed', url);
   const seen = new Set(here.map((r) => r.url));
 
+  // Right after the last result, not at the end of its list: the engine's own
+  // pager is often the list's last item, and it belongs below every page.
+  let after: Element = last;
   let added = 0;
-  for (const result of findResults(engine, doc)) {
+  for (const result of found) {
     if (seen.has(result.url)) continue;
     seen.add(result.url);
     const node = document.importNode(result.container, true);
     sanitize(node);
     node.setAttribute('data-anubis-page', String(state.pages + 1));
-    last.parentElement.append(node);
+    after.after(node);
+    after = node;
     added++;
   }
   // For link-based paging, the fetched page tells us where page N+1 is.
   if (engine.more?.kind === 'link') {
-    state.next = nextUrl(engine, state, doc);
+    state.next = nextUrl(engine, state, doc, url);
     if (!state.next) state.done = true;
   }
+  if (!added) throw new Stop('repeat', url);
   return added;
+}
+
+/**
+ * Firefox sends a content script's own requests as the extension, without the
+ * page's address and some of its cookies; `content.fetch` sends them as the page
+ * would. Other browsers already do.
+ */
+function pageFetch(url: string): Promise<Response> {
+  const page = (globalThis as { content?: { fetch?: typeof fetch } }).content;
+  const own = () => fetch(url, { credentials: 'include' });
+  if (typeof page?.fetch !== 'function') return own();
+  try {
+    return page.fetch(url).catch(own);
+  } catch {
+    return own();
+  }
+}
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Stop('slow')), ms);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error: unknown) => {
+        clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
+}
+
+/** The page at `url`, parsed. An engine that asks to slow down gets one more try after the wait it asks for. */
+async function fetchPage(url: string): Promise<Document> {
+  for (let attempt = 0; ; attempt++) {
+    const res = await withTimeout(pageFetch(url), FETCH_TIMEOUT).catch((error: unknown) => {
+      throw error instanceof Stop ? new Stop(error.reason, url) : new Stop('failed', url);
+    });
+    if (res.status === 429 || res.status === 503) {
+      if (attempt > 0) throw new Stop('busy', url);
+      const seconds = Number(res.headers.get('Retry-After'));
+      await wait(Math.min(MAX_RETRY_WAIT, Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : 3000));
+      continue;
+    }
+    if (!res.ok) throw new Stop('refused', url);
+    const text = await withTimeout(res.text(), FETCH_TIMEOUT).catch(() => {
+      throw new Stop('slow', url);
+    });
+    return new DOMParser().parseFromString(text, 'text/html');
+  }
+}
+
+/**
+ * The page at `url` in a hidden frame, once its results are there. The frame may
+ * not navigate the tab. It's wrapped in an element of Anubis's own, so adding it
+ * doesn't set off a pass.
+ */
+async function framePage(engine: EngineDef, url: string): Promise<{ doc: Document; close: () => void } | undefined> {
+  const holder = document.createElement('anubis-frame');
+  holder.setAttribute('aria-hidden', 'true');
+  holder.style.cssText = 'position:fixed!important;left:-10000px!important;top:0!important;width:1024px!important;height:800px!important;visibility:hidden!important;pointer-events:none!important';
+  const frame = document.createElement('iframe');
+  frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms');
+  frame.setAttribute('tabindex', '-1');
+  frame.style.cssText = 'width:100%;height:100%;border:0';
+  frame.src = url;
+  holder.append(frame);
+  let loaded = 0;
+  frame.addEventListener('load', () => (loaded = Date.now()));
+  (document.body ?? document.documentElement).append(holder);
+  const close = () => holder.remove();
+  const deadline = Date.now() + FRAME_TIMEOUT;
+  while (Date.now() < deadline && !(loaded && Date.now() - loaded > FRAME_SETTLE)) {
+    await wait(300);
+    let doc: Document | null = null;
+    try {
+      doc = frame.contentDocument;
+    } catch {
+      // Another origin: not the engine's own page any more.
+      break;
+    }
+    if (doc && doc.readyState !== 'loading' && findResults(engine, doc).length) {
+      // Give the rest of the page a moment to render.
+      await wait(250);
+      return { doc, close };
+    }
+  }
+  close();
+  return undefined;
 }
 
 /** Imported markup is the engine's own, but it arrives without its scripts; drop anything that would expect them. */

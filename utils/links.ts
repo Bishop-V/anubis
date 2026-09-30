@@ -4,6 +4,53 @@
 export const REPO_URL = 'https://github.com/Bishop-V/anubis';
 export const DOCS_URL = 'https://bishop-v.github.io/anubis/';
 
+/** What a bug report starts with. Nothing from the page itself: no address, no search. */
+export interface BugDetails {
+  version: string;
+  /** From the user agent, e.g. "Firefox 143 on Linux". */
+  browser?: string;
+  /** The search engine of the tab it was reported from. */
+  engine?: string;
+}
+
+/**
+ * A new issue from the "Report a problem" form, with what Anubis knows filled in.
+ * Nothing is sent until you submit it on GitHub.
+ */
+export function bugReportLink({ version, browser, engine }: BugDetails): string {
+  const params = new URLSearchParams({ template: 'bug-report.yml', version });
+  if (browser) params.set('browser', browser);
+  if (engine) params.set('engine', engine);
+  return `${REPO_URL}/issues/new?${params.toString()}`;
+}
+
+const BROWSERS: [string, RegExp][] = [
+  ['Edge', /\bEdg(?:e|A|iOS)?\/(\d+)/],
+  ['Opera', /\bOPR\/(\d+)/],
+  ['Firefox', /\b(?:Firefox|FxiOS)\/(\d+)/],
+  ['Chrome', /\b(?:Chrome|CriOS)\/(\d+)/],
+  ['Safari', /\bVersion\/(\d+).*Safari\//],
+];
+const SYSTEMS: [string, RegExp][] = [
+  ['Android', /Android/],
+  ['iOS', /iPhone|iPad/],
+  ['Windows', /Windows/],
+  ['macOS', /Mac OS X/],
+  ['ChromeOS', /CrOS/],
+  ['Linux', /Linux/],
+];
+
+/** "Firefox 143 on Windows", from a user agent; undefined for one it doesn't know. */
+export function describeBrowser(userAgent: string): string | undefined {
+  for (const [name, re] of BROWSERS) {
+    const version = re.exec(userAgent)?.[1];
+    if (!version) continue;
+    const os = SYSTEMS.find(([, test]) => test.test(userAgent))?.[0];
+    return os ? `${name} ${version} on ${os}` : `${name} ${version}`;
+  }
+  return undefined;
+}
+
 /** A page of the wiki, e.g. `guide('guide/lists')`. */
 export const guide = (path = ''): string => `${DOCS_URL}${path}`;
 

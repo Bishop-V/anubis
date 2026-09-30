@@ -20,7 +20,7 @@ import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync
 import { tmpdir } from 'node:os';
 import { delimiter, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ANUBIS_PAGE2, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, brave, duckduckgo, google, googleMobile } from './fixtures.mjs';
+import { ANUBIS_PAGE2, ANUBIS_PAGE3, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, bingChallenge, brave, duckduckgo, google, googleMobile } from './fixtures.mjs';
 
 const EXT = fileURLToPath(new URL('../.output/chrome-mv3', import.meta.url));
 const SHOTS = fileURLToPath(new URL('./shots/', import.meta.url));
@@ -165,14 +165,27 @@ async function launch(settings = {}, ext = EXT) {
     'https://www.google.com/search?q=anubis&aigrid=1': google('anubis', ANUBIS_RESULTS, { forum: true, grouped: true, aiAbove: 'grid', related: true, next: '/search?q=anubis&start=10' }),
     'https://www.bing.com/search?q=javascript+promises&inline=1': bing('javascript promises', JS_RESULTS, { inline: true }),
     'https://search.brave.com/search?q=anubis&panels=1': brave('anubis', ANUBIS_RESULTS, { panels: true }),
+    // Load more results with the engine's pager inside the results list.
+    'https://search.brave.com/search?q=anubis&paged=1': brave('anubis', ANUBIS_RESULTS, { pager: '/search?q=anubis&paged=1&offset=1' }),
+    'https://search.brave.com/search?q=anubis&paged=1&offset=1': brave('anubis', ANUBIS_PAGE2, { pager: '/search?q=anubis&paged=1&offset=2' }),
+    'https://search.brave.com/search?q=anubis&paged=1&offset=2': brave('anubis', ANUBIS_PAGE3, { pager: '/search?q=anubis&paged=1&offset=3' }),
+    'https://www.bing.com/search?q=javascript+promises&paged=1': bing('javascript promises', JS_RESULTS, { next: '/search?q=javascript+promises&paged=1&first=11' }),
+    // Page 2 answers with Bing's robot check however it's asked for.
+    'https://www.bing.com/search?q=javascript+promises&paged=2': bing('javascript promises', JS_RESULTS, { next: '/search?q=javascript+promises&paged=2&first=11' }),
+    'https://www.bing.com/search?q=javascript+promises&paged=2&first=11': bingChallenge(),
+    // Page 2 answers a request with Bing's robot check, and a page load with results.
+    'https://www.bing.com/search?q=javascript+promises&paged=1&first=11': (request) =>
+      request.resourceType() === 'document' ? bing('javascript promises', JS_MORE) : bingChallenge(),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
     'https://duckduckgo.com/?q=javascript+promises&iax=videos&ia=videos': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'videos' }),
     'https://duckduckgo.com/?q=javascript+promises&iax=images&ia=images': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'images' }),
     'https://duckduckgo.com/?q=javascript+promises&wide=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { wide: true }),
+    'https://duckduckgo.com/?q=javascript+promises&unseen=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { unseen: true }),
   };
   await ctx.route(/^https:\/\/((noai\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com)\//, (route) => {
-    const body = pages[route.request().url()];
+    const page = pages[route.request().url()];
+    const body = typeof page === 'function' ? page(route.request()) : page;
     return body ? route.fulfill({ contentType: 'text/html; charset=utf-8', body }) : route.fulfill({ status: 204, body: '' });
   });
   return { ctx, extId };
@@ -336,6 +349,12 @@ if (!only || only === 'pages') {
   console.log('\n== ddg button beside its menu:', JSON.stringify({ results: pairs.length, all: pairs.every((p) => p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6), failing: pairs.filter((p) => !(p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6)) }));
   // An address cut off with an ellipsis before the menu doesn't push the button away.
   assertChecks('DuckDuckGo button beside its menu', { everyResult: pairs.length > 0 && pairs.every((p) => p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6) });
+  // Nor does text beside the menu that doesn't show.
+  await page.goto('https://duckduckgo.com/?q=javascript+promises&unseen=1');
+  await page.waitForTimeout(600);
+  const unseenPairs = await pair();
+  console.log('== ddg button beside its menu, unseen text there:', JSON.stringify({ results: unseenPairs.length, failing: unseenPairs.filter((p) => !(p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6)).length }));
+  assertChecks('DuckDuckGo button beside its menu past unseen text', { everyResult: unseenPairs.length > 0 && unseenPairs.every((p) => p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6) });
   // DuckDuckGo's open ⋯ menu is a role="menu" layer inside the result at z-index 1
   // (read from the live page): it must cover the button, not the other way round.
   const underMenu = await page.evaluate(() => {
@@ -1545,7 +1564,53 @@ if (!only || only === 'deeper' || checks) {
     return 'no answer';
   });
 
-  console.log('\n== load more results:', JSON.stringify({ googleByHand, googleAuto, ddgAuto, ddgByHandPages }));
+  // Brave: two pages, automatically, with its pager at the end of the results list.
+  // The pager must end up below every page, and each page must be a new one.
+  await setDeeper(2);
+  await page.goto('https://search.brave.com/search?q=anubis&paged=1');
+  await page.waitForTimeout(4000);
+  await setDeeper(0);
+  await report(page, 'brave-deeper-auto');
+  const pagerBelow = () =>
+    page.evaluate(() => {
+      const pager = document.querySelector('#pagination, li.b_pag');
+      const results = [...document.querySelectorAll('[data-anubis-result]')];
+      if (!pager || !results.length) return false;
+      const top = pager.getBoundingClientRect().top;
+      return results.every((r) => r.getBoundingClientRect().bottom <= top + 1);
+    });
+  const braveAuto = await page.evaluate(() => [...new Set([...document.querySelectorAll('[data-anubis-page]')].map((el) => el.dataset.anubisPage))].sort().join(','));
+  const bravePagerBelow = await pagerBelow();
+  await page.screenshot({ path: `${SHOTS}brave-deeper.png`, fullPage: true });
+
+  // Bing: the request for page 2 gets a robot check, so it loads in a hidden frame instead.
+  await page.goto('https://www.bing.com/search?q=javascript+promises&paged=1');
+  await page.waitForTimeout(800);
+  await sw.evaluate(async () => {
+    for (const tab of await chrome.tabs.query({})) await chrome.tabs.sendMessage(tab.id, { type: 'go-deeper' }).catch(() => {});
+  });
+  await page.waitForTimeout(3500);
+  await report(page, 'bing-deeper');
+  const bingPages = await loadedPages();
+  const bingPagerBelow = await pagerBelow();
+  const bingFrameGone = await page.evaluate(() => !document.querySelector('anubis-frame'));
+
+  // Bing: a robot check however page 2 is asked for. The summary says so, links to
+  // the page, and keeps offering to load it.
+  await page.goto('https://www.bing.com/search?q=javascript+promises&paged=2');
+  await page.waitForTimeout(800);
+  await clickShadowButton('anubis-summary', 'Load more results');
+  await page.waitForTimeout(10500);
+  const bingStoppedText = await shadowText('anubis-summary');
+  const bingStoppedLink = (await shadowLinks('anubis-summary')).find((a) => a.text === 'Open page 2');
+  const bingStopped = {
+    said: bingStoppedText.includes('Bing sent no results for page 2'),
+    linked: bingStoppedLink?.href === 'https://www.bing.com/search?q=javascript+promises&paged=2&first=11',
+    offeredAgain: bingStoppedText.includes('Load more results'),
+  };
+  await page.screenshot({ path: `${SHOTS}bing-deeper-stopped.png`, fullPage: false });
+
+  console.log('\n== load more results:', JSON.stringify({ googleByHand, googleAuto, ddgAuto, ddgByHandPages, braveAuto, bravePagerBelow, bingPages, bingPagerBelow, bingFrameGone, bingStopped }));
   if (checks) {
     assertChecks('load more results', {
       googleByHand: googleByHand === 1,
@@ -1553,6 +1618,12 @@ if (!only || only === 'deeper' || checks) {
       // The mock starts with 9 results and its More results button adds 3.
       duckDuckGoAutomatic: ddgAuto > 9,
       duckDuckGoOwnButtonCounted: ddgByHandPages === 2,
+      bravePagesTwoAndThree: braveAuto === '2,3',
+      bravePagerBelowResults: bravePagerBelow,
+      bingPageBehindRobotCheck: bingPages === 1,
+      bingPagerBelowResults: bingPagerBelow,
+      bingFrameRemoved: bingFrameGone,
+      bingSaysWhyItStopped: bingStopped.said && bingStopped.linked && bingStopped.offeredAgain,
     });
   }
 }

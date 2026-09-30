@@ -263,11 +263,19 @@ li .level-note {
 
 footer {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 14px;
+  gap: 6px 12px;
   padding-top: 10px;
   border-top: 1px solid var(--line);
   font-size: 12.5px;
+}
+footer > * {
+  white-space: nowrap;
+}
+/* When the footer runs to two lines, Report a problem and Help go right, under the cog. */
+#report {
+  margin-left: auto;
 }
 .spacer {
   flex: 1;
