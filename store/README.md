@@ -21,7 +21,7 @@ Setting it up: create a Google Cloud project, turn on the Chrome Web Store API, 
 ## Before each release
 
 1. `npm run release:prep -- <version>` (or `patch`, `minor`, or `major`). It sets `version` in `package.json` and `package-lock.json` (WXT copies it into the manifest), then runs the type-check, unit tests, `npm run zip`, `npx web-ext lint`, and `npm run e2e`, stopping at the first failure. Both stores reject a version they've already seen. Run it without a version to repeat the checks. `npm run zip` makes the Firefox zip and `anubis-<version>-sources.zip` for AMO's reviewers; run `npm run zip:chrome` too when Chrome is ready.
-2. Load the build and check the engines listed under "Still unverified" in [`docs/experiments.md`](../docs/experiments.md).
+2. Load the build and check the engines listed under "Still unverified" in [`docs/experiments/live-pages.md`](../docs/experiments/live-pages.md).
 3. The privacy policy link below has to load: GitHub Pages must be publishing the docs site.
 4. Merge, then push a matching tag (`git tag v<version> && git push origin v<version>`). [`release.yml`](../.github/workflows/release.yml) builds the zips, creates the GitHub Release and, once approved, submits to each store whose keys are in the `release` environment.
 
