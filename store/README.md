@@ -38,8 +38,9 @@ The release workflow rejects tags whose commit is not already on `main`, as well
 - **Store icon:** [`icon-128.png`](icon-128.png). The logo at 96×96 inside transparent padding, as the store asks; the toolbar icons in `public/icon/` fill the whole square.
 - **Screenshots:** at least one, at most five, 1280×800. See [Screenshots](#screenshots).
 - **Small promo tile:** [`promo-440x280.png`](promo-440x280.png).
-- **Marquee tile (1400×560) and video:** optional; skipped.
+- **Marquee promo tile:** [`marquee-1400x560.png`](marquee-1400x560.png), optional and shown only if the store features Anubis. **Video:** skipped.
 - **Homepage:** `https://bishop-v.github.io/anubis/`. **Support:** `https://github.com/Bishop-V/anubis/issues`.
+- **Official URL:** `https://bishop-v.github.io/anubis/`, verified in Google Search Console as a URL-prefix property with the file [`docs/public/googleccef4dde1509753c.html`](../docs/public/googleccef4dde1509753c.html). Keep that file: Google checks it again from time to time, and the listing loses its verified link without it.
 
 ### Privacy practices tab
 
