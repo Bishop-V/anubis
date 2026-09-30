@@ -508,8 +508,14 @@ body .VPContent .VPHome {
   border-radius: 10px;
 }
 .demo-block .block-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-bottom: 6px;
   font-size: 16px;
+}
+.demo-block .sparkle {
+  display: flex;
 }
 /* The Introduction's demo (hide-demo.ts): a pointer hides a site from the button
    beside its result. It shares the homepage demo's page, results, and summary, and
@@ -961,8 +967,8 @@ body .VPContent .VPHome {
 }
 @media (min-width: 960px) {
   /* The drawn page, and the heading beside it, sit in the middle of the window below
-     the top bar: as much room above as below, at least 32px. The page sticks at that
-     same place as you scroll, so it doesn't move when scrolling starts. */
+     the top bar: as much room above as below, at least 32px. As you scroll, the page
+     rises with the heading until it's 24px under the top bar, then sticks there. */
   .scroll-demo {
     --demo-stage-height: min(640px, calc(100vh - var(--vp-nav-height) - 64px));
     --demo-stage-gap: max(32px, calc((100vh - var(--vp-nav-height) - var(--demo-stage-height)) / 2));
@@ -993,7 +999,7 @@ body .VPContent .VPHome {
     grid-column: 2;
     grid-row: 1 / span 2;
     align-self: start;
-    top: calc(var(--vp-nav-height) + var(--demo-stage-gap));
+    top: calc(var(--vp-nav-height) + 24px);
     height: var(--demo-stage-height);
     margin: 0;
     padding: 0;
