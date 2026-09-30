@@ -24,6 +24,7 @@ import {
   updateSettings,
 } from '@/utils/storage';
 import { getSubscriptions, saveSubscriptions } from '@/utils/subscriptions';
+import { clampDeeper, MAX_DEEPER } from '@/utils/storage';
 
 beforeEach(() => fakeBrowser.reset());
 
@@ -177,5 +178,18 @@ describe('tag choices from a backup or sync file', () => {
     expect(prefs).toEqual({ docs: {} });
     const list = compileList('a', parseList('! tag: reference | Reference\nexample.com$tag=reference\n'));
     expect(collectTags([list], read({ reference: null })).get('reference')?.label).toBe('Reference');
+  });
+});
+
+describe('extra pages to load automatically', () => {
+  it('keeps a typed or stored amount to a whole number from 0 to the limit', () => {
+    expect(clampDeeper(3)).toBe(3);
+    expect(clampDeeper('7')).toBe(7);
+    expect(clampDeeper(2.6)).toBe(3);
+    expect(clampDeeper(-4)).toBe(0);
+    expect(clampDeeper(500)).toBe(MAX_DEEPER);
+    expect(clampDeeper('')).toBe(0);
+    expect(clampDeeper('lots')).toBe(0);
+    expect(clampDeeper(undefined)).toBe(0);
   });
 });

@@ -181,6 +181,7 @@ svg {
 
 /* ----------------------------------------------------------------- inputs */
 input[type='text'],
+input[type='number'],
 input[type='url'],
 input[type='search'],
 input[type='password'],
@@ -324,8 +325,9 @@ input[type='color']::-moz-color-swatch {
   font-weight: 600;
   border-bottom-color: var(--gold);
 }
+/* Hide is grey, not red: hiding a site is a choice like any other, not an error. */
 .seg button.hide[aria-pressed='true'] {
-  border-bottom-color: var(--danger);
+  border-bottom-color: var(--muted);
 }
 .seg button svg {
   width: 14px;
@@ -386,7 +388,7 @@ button.tag:hover {
   font-weight: 600;
 }
 .level-note.hide {
-  color: var(--danger);
+  color: var(--muted);
 }
 
 /* A site's name with the ending it shares with other sites (.org, .co.uk) muted, so the name stands out. */

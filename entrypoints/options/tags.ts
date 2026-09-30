@@ -256,6 +256,7 @@ export async function renderTags(): Promise<HTMLElement> {
           { class: 'controls' },
           action,
           h('label', { class: 'show', title: 'Show this tag under results' }, h('span', { class: 'switch' }, show, h('span')), 'Shown'),
+          toggle,
         ),
         mine
           ? h(
@@ -279,7 +280,7 @@ export async function renderTags(): Promise<HTMLElement> {
         h(
           'div',
           { class: 'meta' },
-          h('p', { class: 'effect' }, effectSentence(tag, pref.action ?? 'list', rules.lists, personalCount), ' ', toggle),
+          h('p', { class: 'effect' }, effectSentence(tag, pref.action ?? 'list', rules.lists, personalCount)),
           tag.description ? h('p', null, tag.description) : null,
         ),
         panel,

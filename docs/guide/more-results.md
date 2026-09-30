@@ -6,7 +6,7 @@ Results from later pages are marked "from page 2" and so on under their titles.
 
 ## Automatically
 
-**Settings → Appearance → Load more results automatically** loads up to five extra pages on every search, six pages in all. It's off by default: each extra page is another request to the search engine, and engines may show a CAPTCHA or slow down if they get too many. It starts once the engine's own "Next" link or "More results" button has arrived at the foot of the page, and the button in the summary shows from then on too.
+**Settings → Appearance → Load more results automatically** loads the number of extra pages you type, from 0 (off) to 20, on every search. It's off by default. Each extra page is another request to the search engine and adds about a second to the search. Engines may show a CAPTCHA or slow down if they get too many, and most stop sending pages before 20. The setting says what the amount you type will cost. It starts once the engine's own "Next" link or "More results" button has arrived at the foot of the page, and the button in the summary shows from then on too.
 
 ## How it works
 

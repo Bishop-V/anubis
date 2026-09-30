@@ -42,16 +42,17 @@ export function setBalance(svg: Element, level: Level): void {
 
 /**
  * Swing the balance from a tilt (in degrees, as in TILT) back to level, overshooting
- * less each time, like a real balance coming to rest. Used on the welcome page only.
+ * less each time, like a real balance coming to rest. The welcome page's balance does
+ * this when clicked.
  */
-export function swingBalance(svg: Element, from: number, delay = 0): void {
+export function swingBalance(svg: Element, from: number): void {
   const steps: [deg: number, offset: number][] = [
     [from, 0],
     [-from * 0.32, 0.42],
     [from * 0.1, 0.72],
     [0, 1],
   ];
-  const timing: KeyframeAnimationOptions = { duration: 1600, delay, fill: 'backwards' };
+  const timing: KeyframeAnimationOptions = { duration: 1600 };
   const animate = (el: Element | null, transform: (deg: number) => string) =>
     el?.animate(
       steps.map(([deg, offset]) => ({ transform: transform(deg), offset, easing: 'ease-in-out' })),
