@@ -82,7 +82,7 @@ export const DEFAULT_SETTINGS: Settings = {
  * Runs read-modify-write changes to one stored item one after another, so two
  * quick changes from this page can't read the same value and overwrite each
  * other. Each page (a search tab, the popup, settings) has its own queues; see
- * "Storage" in docs/experiments.md.
+ * "Storage" in docs/experiments/storage-and-lists.md.
  */
 export function writeQueue(): <T>(change: () => Promise<T>) => Promise<T> {
   let tail: Promise<unknown> = Promise.resolve();

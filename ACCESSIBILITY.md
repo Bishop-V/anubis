@@ -44,7 +44,7 @@ Anubis works in two places, and they need different care:
 - Don't listen for keys on search pages. Engines have their own (DuckDuckGo's j and k), and screen readers use single letters to move around a page; a key Anubis takes is a key someone else loses.
 - Name keys by what the browser reports (`commands.getAll()`, as the popup's tooltips do), never by the suggested defaults.
 - A shortcut is a way to reach a feature that already has a button, never the only way. Chrome allows four suggested keys per extension, so save them for things people do from anywhere, often.
-- Mac shortcuts use Control, because Option+Shift types characters and would take them from text fields (`docs/experiments.md`, Keyboard shortcuts).
+- Mac shortcuts use Control, because Option+Shift types characters and would take them from text fields (`docs/experiments/search-pages.md`, Keyboard shortcuts).
 
 ## Everything else
 

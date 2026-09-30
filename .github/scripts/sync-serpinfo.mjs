@@ -93,7 +93,7 @@ const body = [
   '- [ ] Compare each change with the engine in `utils/engines.ts` (and `cleanupSelectors` for panels and AI answers).',
   '- [ ] Load the extension on a live results page for that engine.',
   '- [ ] If something broke, model the new markup in `e2e/fixtures.mjs`, confirm the check fails, then fix it on this branch.',
-  '- [ ] Note what was confirmed, with the date, in `docs/experiments.md`.',
+  '- [ ] Note what was confirmed, with the date, in `docs/experiments/engines.md`.',
   '',
   '_Opened by the weekly engine sync (`.github/workflows/engines.yml`)._',
 ].join('\n');
