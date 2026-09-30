@@ -119,7 +119,7 @@ Lists anyone can publish. Subscribe to lists hosted on GitHub, GitLab, Codeberg,
 
 Load more results. Bring the next pages of results onto the first one and rank them together, so a site you pinned on page 3 rises to the top.
 
-Remove panels. Take AI answers, video panels, "People also ask", top stories, image rows, and related searches off search pages. Bing's AI answer and video panel aren't recognized yet.
+Remove panels. Take AI answers, video panels, "People also ask", top stories, image rows, and related searches off search pages.
 
 Nothing disappears without a trace. A one-line summary says what Anubis changed, and "Show hidden" brings it back. Keyboard shortcuts turn Anubis on or off (Alt+Shift+O) and show hidden results (Alt+Shift+H).
 

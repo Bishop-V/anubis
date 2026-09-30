@@ -309,12 +309,12 @@ export function ensureWeighButton(
     keepUpright(host);
     return;
   }
-  const { top, right, besideMenu } = engine.button ?? { top: '2px', right: '2px' };
+  const { top, right, underMenu } = engine.button ?? { top: '2px', right: '2px' };
   host.style.setProperty('position', 'absolute', 'important');
-  const menu = besideMenu && !result.card ? resultMenuOf(container) : undefined;
+  const menu = underMenu && !result.card ? resultMenuOf(container) : undefined;
   // Not hidden while the engine's menu is open: a menu closes without adding or
   // removing nodes, so no pass would show the button again. It sits under the menu instead.
-  if (menu) placeBesideMenu(host, container, menu);
+  if (menu) placeUnderMenu(host, container, menu);
   else {
     for (const prop of MENU_LOOK) host.style.removeProperty(prop);
     host.style.removeProperty('--anubis-weigh-color');
@@ -346,7 +346,8 @@ export function ensureWeighButton(
     lineUpWithHeader(host, container, result.titleBlock);
     clearOfPictures(host, container);
   }
-  if (coversText(host, container)) moveOffText(host, container, menu);
+  // Under an engine's menu it stays put: the engine cuts its address off before the menu.
+  if (!menu && coversText(host, container)) moveOffText(host, container);
 }
 
 /**
@@ -435,25 +436,13 @@ function clipOf(el: HTMLElement, container: HTMLElement): { left: number; right:
 }
 
 /**
- * Off the text it covers: under the engine's menu button when there is one, and
- * otherwise back beside it, since it belongs with the menu and the engine cuts
- * its text off before the menu anyway. Without a menu, out past the result's right
- * edge if the window has room, otherwise down the result's right edge until it's clear.
+ * Off the text it covers: out past the result's right edge if the window has
+ * room, otherwise down the result's right edge until it's clear.
  */
-function moveOffText(host: HTMLElement, container: HTMLElement, menu: HTMLElement | undefined): void {
+function moveOffText(host: HTMLElement, container: HTMLElement): void {
   const box = container.getBoundingClientRect();
   const b = host.getBoundingClientRect();
   const top = parseFloat(host.style.top) || 0;
-  if (menu) {
-    const right = host.style.getPropertyValue('right');
-    const m = menu.getBoundingClientRect();
-    host.style.setProperty('top', `${Math.round(top + m.bottom + 2 - b.top)}px`, 'important');
-    host.style.setProperty('right', `${Math.round(box.right - m.right + (m.width - b.width) / 2)}px`, 'important');
-    if (!coversText(host, container)) return;
-    host.style.setProperty('top', `${Math.round(top)}px`, 'important');
-    host.style.setProperty('right', right, 'important');
-    return;
-  }
   if (box.right + b.width + 8 <= document.documentElement.clientWidth) {
     host.style.setProperty('right', `${-Math.round(b.width + 4)}px`, 'important');
     return;
@@ -528,29 +517,30 @@ function resultMenuOf(container: HTMLElement): HTMLElement | undefined {
 const MENU_LOOK = ['--anubis-weigh-size', '--anubis-weigh-radius', '--anubis-weigh-color', '--anubis-weigh-opacity'];
 
 /**
- * Just left of the engine's menu button and centred on it, at its size, shape, and
- * colour, so the two read as a pair of options.
+ * Just under the engine's menu button and centred on it, at its size, shape, and
+ * colour, so the two read as a pair of options. The engine cuts a long address off
+ * before the menu, so the spot under it is free on every result. Faint until the
+ * result is hovered, like the button everywhere else.
  */
-function placeBesideMenu(host: HTMLElement, container: HTMLElement, menu: HTMLElement): void {
+function placeUnderMenu(host: HTMLElement, container: HTMLElement, menu: HTMLElement): void {
   const box = container.getBoundingClientRect();
   const m = menu.getBoundingClientRect();
   const cs = getComputedStyle(container);
   const ms = getComputedStyle(menu);
   const size = Math.round(Math.min(44, Math.max(20, m.width, m.height)));
-  const top = m.top + m.height / 2 - size / 2 - box.top - parseFloat(cs.borderTopWidth);
-  const right = box.right - parseFloat(cs.borderRightWidth) - m.left + 4;
-  host.style.setProperty('--anubis-weigh-color', ms.color);
+  const top = m.bottom + 2 - box.top - parseFloat(cs.borderTopWidth);
+  const right = box.right - parseFloat(cs.borderRightWidth) - m.right + (m.width - size) / 2;
   host.style.setProperty('top', `${Math.round(top)}px`, 'important');
   host.style.setProperty('right', `${Math.round(right)}px`, 'important');
   host.style.setProperty('--anubis-weigh-size', `${size}px`);
   host.style.setProperty('--anubis-weigh-radius', parseFloat(ms.borderTopLeftRadius) ? ms.borderTopLeftRadius : '50%');
-  // At rest, in the menu button's own colour (its icon's fill, or its text colour),
-  // so the pair match in light and dark; hovering still turns it gold.
+  // In the menu button's own colour (its icon's fill, or its text colour), so the
+  // pair match in light and dark; hovering still turns it gold.
   const icon = menu.querySelector('path, svg');
   const fill = icon ? getComputedStyle(icon).fill : '';
   const color = /^rgba?\(/.test(fill) && !/,\s*0\)$/.test(fill) ? fill : ms.color;
   host.style.setProperty('--anubis-weigh-color', color);
-  host.style.setProperty('--anubis-weigh-opacity', '1');
+  host.style.removeProperty('--anubis-weigh-opacity');
 }
 
 export function weighButtonOf(container: HTMLElement): HTMLButtonElement | undefined {

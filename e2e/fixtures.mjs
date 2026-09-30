@@ -468,7 +468,14 @@ export function googleMobile(query, results) {
 // it moves into that result is inferred, not seen: here it moves after a moment.
 // `next`: Bing's pager, an li.b_pag at the end of #b_results with the Next link
 // (a.sb_pagN), after the results as on the live page.
-export function bing(query, results, { inline = false, next } = {}) {
+// `copilot`: Bing's AI answer across the top of the page, above #b_results, with a
+// video, related concepts and "Community support" beside it and follow-up chips
+// under it (from a screenshot, 2026-09-30; the summary landed under it). Its markup
+// is a guess built on what a live page showed on 2026-09-29: the answer in
+// .cht_container, a .cht_disclaimer, and no label but aria-label="AI Overview".
+// Also "Related searches based on your browsing" beside the results, and "Related
+// searches for …" with the query in bold at the bottom.
+export function bing(query, results, { inline = false, next, copilot = false } = {}) {
   const b64 = (s) => Buffer.from(s).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const box = `
       <li class="b_ans" data-tag=""><div id="inline_rs" class="b_hide" data-priority=""><div class="rslist_head"><span class="rslist_title b_strong">People also search for</span><button type="button" aria-label="Close">×</button></div>
@@ -490,6 +497,8 @@ export function bing(query, results, { inline = false, next } = {}) {
     .blogo{font:700 22px/1 "Segoe UI";color:#00809d}
     .q{flex:0 1 560px;height:40px;border-radius:24px;border:1px solid #ddd;padding:0 18px;display:flex;align-items:center}
     #b_content{padding:16px 0 60px 160px;max-width:640px}
+    #b_topw{margin:0 0 24px;width:1000px}.b_topgrid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:16px}.cht_container{padding:16px;border-radius:16px;background:#f3f6fc}.cht_chips{grid-column:1/-1;display:flex;gap:10px}.cht_chips a,.tp_rel a{display:block;color:#111}.vthumb{height:120px;border-radius:14px;background:#222}
+    #b_context{position:absolute;left:840px;top:420px;width:280px;list-style:none}
     #b_results{list-style:none;margin:0;padding:0}
     .b_algo{position:relative;margin:0 0 28px}
     .tilk{display:flex;gap:8px;align-items:center;text-decoration:none;color:#444}
@@ -504,7 +513,16 @@ export function bing(query, results, { inline = false, next } = {}) {
     #inline_rs ul{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;padding:0;list-style:none}#inline_rs li a{display:block;padding:8px 14px;border:1px solid #ddd;border-radius:20px;color:#111;text-decoration:none}
   </style></head><body>
   <div class="hdr"><span class="blogo">Bing</span><div class="q">${esc(query)}</div></div>
-  <div id="b_content"><main><ol id="b_results">${items}</ol></main></div>
+  <div id="b_content"><main>${copilot ? `
+    <div id="b_topw" class="b_topw"><div class="b_ans b_top b_topgrid" aria-label="AI Overview">
+      <div class="cht_container"><h2>Comprehensions in Python</h2><p>Comprehensions in Python provide a concise way to create new sequences by applying an expression to each item in an iterable.</p><button type="button">See more</button><div class="cht_disclaimer" hidden></div></div>
+      <div class="tp_vid"><a href="https://www.youtube.com/watch?v=1"><div class="vthumb"></div>Learn Python LIST COMPREHENSIONS</a></div>
+      <div class="tp_rel"><h3>Related concepts</h3><a href="/search?q=map+function">Map Function</a><a href="/search?q=filter+function">Filter Function</a></div>
+      <div class="tp_comm"><h3>Community support</h3><a href="https://www.geeksforgeeks.org/python-list-comprehension/">Python List Comprehension Syntax, Examples, and Use Cases</a></div>
+      <div class="cht_chips"><a href="/search?q=examples">Python list comprehension examples</a><a href="/search?q=loops">List comprehension vs loops</a></div>
+    </div></div>` : ''}<ol id="b_results">${items}${copilot ? `
+      <li class="b_ans"><div id="brsv3"><h2>Related searches for <strong>${esc(query)}</strong></h2><ul class="b_vList">${['promise all', 'async await'].map((q) => `<li><a href="/search?q=${encodeURIComponent(q)}">${q}</a></li>`).join('')}</ul></div></li>` : ''}</ol>${copilot ? `
+    <aside id="b_context"><li class="b_ans"><h2>Related searches based on your browsing</h2><ul>${['javascript closures', 'python generators'].map((q) => `<li><a href="/search?q=${encodeURIComponent(q)}">${q}</a></li>`).join('')}</ul></li></aside>` : ''}</main></div>
   ${inline ? `<script>setTimeout(() => { const rs = document.getElementById('inline_rs'); document.querySelectorAll('#b_results > li.b_algo')[1].append(rs); rs.classList.remove('b_hide'); }, 500);</script>` : ''}</body></html>`;
 }
 
