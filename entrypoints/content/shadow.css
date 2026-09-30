@@ -60,6 +60,7 @@ button {
   color: var(--gold-ink);
   font-weight: 600;
   white-space: nowrap;
+  text-decoration: none;
 }
 .text-btn:hover {
   text-decoration: underline;

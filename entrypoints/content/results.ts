@@ -21,7 +21,7 @@ export interface FoundResult {
 }
 
 /** Our own elements, which must never be mistaken for page content. */
-export const OWN_TAGS = new Set(['ANUBIS-CHIPS', 'ANUBIS-WEIGH', 'ANUBIS-BAR', 'ANUBIS-SUMMARY', 'ANUBIS-POPOVER']);
+export const OWN_TAGS = new Set(['ANUBIS-CHIPS', 'ANUBIS-WEIGH', 'ANUBIS-BAR', 'ANUBIS-SUMMARY', 'ANUBIS-POPOVER', 'ANUBIS-FRAME']);
 
 /** Results in the live page, or in a fetched results page parsed with DOMParser. */
 export function findResults(engine: EngineDef, root: Document = document): FoundResult[] {

@@ -2,6 +2,10 @@
 
 The look, the wording, and Anubis's own pages. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Report a problem (2026-09-30)
+
+- The owner asked for a bug report button people can find easily. **Report a problem** is in the toolbar popup's footer, beside Help, and in the Settings sidebar's links; the troubleshooting guide starts with it. It opens GitHub's issue form (`.github/ISSUE_TEMPLATE/bug-report.yml`) with the fields filled in by id from the link: Anubis's version, the browser and system from the user agent ("Firefox 143 on Linux"), and, from the popup on a search page, the engine's name. Nothing from the page goes in (no address, no search), and nothing is sent until the issue is submitted. Not put on search pages: the summary stays quiet, and the popup is one click away. `tests/bug-report.test.ts` checks the link only names fields the form has.
+
 ## Finishing touches (2026-09-29)
 
 - **Second follow-up (2026-09-30):** red for a ranking is now a written rule, not only a fix: `STYLEGUIDE.md`'s principles, `CLAUDE.md`, and `CONTRIBUTING.md` say `--danger` is only for errors and deleting, and `tests/palette.test.ts` fails when a CSS rule for Hide uses it. "Clean up" in Settings read as housekeeping rather than what the page does; it's now **Remove panels** everywhere people see it (the settings section, the README and wiki features, the guide's title, the homepage, and the store listing), with `#cleanup` and `guide/clean-up` kept so links still work. The tag switch lost its "Shown" label, which only repeated what a switch in that place does (its tooltip and label for screen readers stay). Tags describe a result, so the Paywalls list's tag is now "Paywalled" (its id stays `paywall`, so tag choices carry over), and `lists/README.md` asks list authors to name tags that way. The name and logo at the top of Settings open the wiki.

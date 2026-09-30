@@ -19,12 +19,25 @@ export interface PageStats {
   canGoDeeper: boolean;
   /** A deeper load is running. */
   loading: boolean;
+  /** Why the last "Load more results" stopped before bringing in a page. */
+  stopped?: DeeperStop;
   /** Tags on the page's visible results, most common first. */
   tags: { id: string; label: string; color: string; count: number }[];
   /** Only results with this tag are shown. */
   filter?: string;
   /** Blocks removed by clean-up (AI answers, video panels…), by kind. */
   removed: Partial<Record<CleanupKind, number>>;
+}
+
+/**
+ * Why "Load more results" didn't bring in a page: the engine sent a page without
+ * results (often a robot check), only results already here, asked to slow down,
+ * refused, took too long, or the request failed. `url` is the page it tried.
+ */
+export interface DeeperStop {
+  reason: 'empty' | 'repeat' | 'busy' | 'refused' | 'slow' | 'failed';
+  page: number;
+  url?: string;
 }
 
 /** Hidden results plus removed blocks: what "Show hidden" brings back. */

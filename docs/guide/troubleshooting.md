@@ -1,5 +1,9 @@
 # Troubleshooting
 
+## Reporting a problem
+
+**Report a problem**, at the bottom of the toolbar popup and in the Settings sidebar, opens a new issue on GitHub with Anubis's version, your browser, and the search engine you're on filled in. Say what you did, what you saw, and what you expected, and add a screenshot. Nothing is sent until you submit it. You need a GitHub account to submit.
+
 ## Anubis does nothing on a search page
 
 - **Is it on?** A grey toolbar icon means Anubis is off. Turn it on with the switch in the toolbar popup.
@@ -9,7 +13,7 @@
 
 ## Some results have no tags or ⚖ button
 
-Search engines change their pages without notice, and a new layout can hide results from Anubis. Please [open an issue](https://github.com/Bishop-V/anubis/issues) with:
+Search engines change their pages without notice, and a new layout can hide results from Anubis. Please [report it](#reporting-a-problem) with:
 
 - the search engine and your country's version of it (for example `google.de`),
 - a search that shows the problem,
@@ -40,6 +44,10 @@ copy([...document.querySelectorAll('body *')].filter((el) => [...el.childNodes].
 ```
 
 It copies the structure around those panels' headings: element names, classes, and roles, no text from the page. Paste it into [a new issue](https://github.com/Bishop-V/anubis/issues).
+
+## Load more results loads nothing
+
+The summary says why under its first line, with a link to the page Anubis tried. Most often the engine wants you to confirm you're not a robot: open the page, do that, and press **Load more results** again. See [When it stops](./more-results.md#when-it-stops).
 
 ## Google always opens the Web tab
 

@@ -102,7 +102,7 @@ Public, all regions.
 >
 > The unpacked build is in `.output/firefox-mv2`. The build is deterministic, so it should match the uploaded package file for file; `npm run zip` makes the same package.
 >
-> Anubis downloads plain-text list files the user subscribes to and parses them as data (`utils/listformat.ts`); nothing downloaded is run. "Load more results" fetches the search engine's next results page from the same origin, parses it with `DOMParser`, and removes scripts and event handlers before bringing the results into the page (`entrypoints/content/deeper.ts`). No `innerHTML` is used.
+> Anubis downloads plain-text list files the user subscribes to and parses them as data (`utils/listformat.ts`); nothing downloaded is run. "Load more results" fetches the search engine's next results page from the same origin, parses it with `DOMParser`, and removes scripts and event handlers before bringing the results into the page (`entrypoints/content/deeper.ts`). When the fetched copy has no results (a robot check), it loads the same same-origin page once in a hidden iframe, sandboxed without top navigation, and imports from it the same way. No `innerHTML` is used.
 
 ## Description (both stores)
 

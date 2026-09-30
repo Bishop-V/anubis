@@ -33,6 +33,12 @@ export const ANUBIS_PAGE2 = [
   ['https://en.wikipedia.org/wiki/Anubis', 'Anubis - Wikipedia', 'Duplicate of a first-page result, which must not be added twice.'],
 ];
 
+export const ANUBIS_PAGE3 = [
+  ['https://www.britishmuseum.org/collection/term/BIOG145', 'Anubis | British Museum', 'Objects in the collection showing the jackal-headed god of embalming.'],
+  ['https://www.ancient.eu/Anubis/', 'Anubis - World History Encyclopedia', 'Anubis is the Egyptian god of mummification and the afterlife.'],
+  ['https://www.nationalgeographic.com/history/article/anubis', 'Who was Anubis? | National Geographic', 'The jackal god guided souls to the hall of judgement.'],
+];
+
 export const JS_MORE = [
   ['https://tc39.es/ecma262/#sec-promise-objects', 'ECMAScript® 2027 Language Specification: Promise Objects', 'A Promise is an object that is used as a placeholder for the eventual results of a deferred computation.'],
   ['https://ai-answers-example.net/promise-vs-async', 'Promise vs Async: Everything You Need to Know - AI Answers', 'In this article we will explore everything you need to know about promises vs async.'],
@@ -75,7 +81,10 @@ const siteIcon = (svg) =>
 // whole address, long enough to run under the result's buttons.
 // `tab`: 'videos' or 'images', that tab's grid of cards instead of web results,
 // in the markup uBlacklist's rules describe.
-export function duckduckgo(query, results, dark = false, more = [], { ai = false, wide = false, tab } = {}) {
+// `unseen`: text beside the ⋯ menu that doesn't show (a see-through layer). Reported
+// on a live page (2026-09-30): the button left the result for its right edge
+// although nothing showed beside the menu; what's there is a guess.
+export function duckduckgo(query, results, dark = false, more = [], { ai = false, wide = false, tab, unseen = false } = {}) {
   if (tab) return duckduckgoTab(query, results, tab);
   const item = ([url, title, snippet], i) => `
       <li data-layout="organic" class="wLL07_0Xnd1QZpzpfR4W">
@@ -85,7 +94,8 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
           </div>
           <h2 class="LnpumSThxEWMIsDdAT17 CXMyPcQ6nDv47DKFeywM"><a href="${url}" rel="noopener" data-testid="result-title-a" class="eVNpHGjtxRBq_gLOfGDr LQNqh2U1kzYxREs65IJu"><span class="EKtkFWMYpwzMKOYr0GYm LQVY1Jpkk8nyJ6HBWKAk">${esc(title)}</span></a></h2>
           <div data-result="snippet" class="OgdwYG6KE2qthn9XQWFC"><div><span class="kY2IgmnCmOGjharHErah">${esc(snippet)}</span></div></div>
-          <button class="menu" aria-label="Result options">⋯</button>
+          <button class="menu" aria-label="Result options">⋯</button>${unseen ? `
+          <div class="unseen" style="position:absolute;top:-6px;right:30px;opacity:0;pointer-events:none;white-space:nowrap"><div>Only include results from this site</div><div>Hide site from these results</div></div>` : ''}
         </article>
       </li>`;
   const items = results.map(item).join('');
@@ -456,7 +466,9 @@ export function googleMobile(query, results) {
 // div#inline_rs.b_hide, hidden, in an li.b_ans of its own in #b_results, and it
 // shows with a close button under a result you went to and came back from. That
 // it moves into that result is inferred, not seen: here it moves after a moment.
-export function bing(query, results, { inline = false } = {}) {
+// `next`: Bing's pager, an li.b_pag at the end of #b_results with the Next link
+// (a.sb_pagN), after the results as on the live page.
+export function bing(query, results, { inline = false, next } = {}) {
   const b64 = (s) => Buffer.from(s).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const box = `
       <li class="b_ans" data-tag=""><div id="inline_rs" class="b_hide" data-priority=""><div class="rslist_head"><span class="rslist_title b_strong">People also search for</span><button type="button" aria-label="Close">×</button></div>
@@ -468,7 +480,9 @@ export function bing(query, results, { inline = false } = {}) {
         <h2><a href="https://www.bing.com/ck/a?!&&p=abc&u=a1${b64(url)}&ntb=1">${esc(title)}</a></h2>
         <div class="b_caption"><p class="b_lineclamp2">${esc(snippet)}</p></div>
       </li>`)
-    .join('') + (inline ? box : '');
+    .join('') + (inline ? box : '') +
+    (next ? `
+      <li class="b_pag"><nav role="navigation" aria-label="More results"><ul class="sb_pagF"><li><a class="sb_pagS">1</a></li><li><a href="${next}">2</a></li><li><a class="sb_pagN" title="Next page" href="${next}">Next</a></li></ul></nav></li>` : '');
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(query)} - Search</title>
   <style>
     body{margin:0;font:14px/1.5 "Segoe UI",Arial,sans-serif;background:#fff;color:#444}
@@ -494,12 +508,22 @@ export function bing(query, results, { inline = false } = {}) {
   ${inline ? `<script>setTimeout(() => { const rs = document.getElementById('inline_rs'); document.querySelectorAll('#b_results > li.b_algo')[1].append(rs); rs.classList.remove('b_hide'); }, 500);</script>` : ''}</body></html>`;
 }
 
+// Bing's robot check: "One last step", status 200, with no results. On a live page
+// (2026-09-29) Anubis's request for page 2 got this; whether a page load gets it
+// too is unconfirmed.
+export function bingChallenge() {
+  return `<!doctype html><html><head><meta charset="utf-8"><title>One last step</title></head><body><main><h1>One last step</h1><p>Please solve the challenge below to continue.</p><div class="cf-turnstile"></div></main></body></html>`;
+}
+
 // ---------------------------------------------------------------- Brave
 // `panels`: Brave's Videos, Discussions and Related queries panels between the
 // results, with the structure reported from a live page (2026-09-29): each is a
 // div.snippet in section#mixed-main with its title in a <header>, and the page's
 // tabs (one of them "Videos") are links in nav.tabs. The contents are made up.
-export function brave(query, results, { panels = false } = {}) {
+// `pager`: the Next button at the end of section#mixed-main, after the results.
+// Reported on a live page (2026-09-30): results loaded by Load more results went
+// after it; its markup here is a guess.
+export function brave(query, results, { panels = false, pager } = {}) {
   const icon = '<svg width="16" height="16" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="2" fill="none" stroke="currentColor"/></svg>';
   const title = (t) => `${icon}<span class="desktop-heading-h4 t-secondary">${t}</span>`;
   const videos = `
@@ -561,7 +585,8 @@ export function brave(query, results, { panels = false } = {}) {
   </style></head><body>
   <div id="main"><header class="hdr"><div class="brlogo"></div><form class="q" role="search" action="/search"><input name="q" value="${esc(query)}"></form></header>
   <div id="nav-tabs"><div class="nav-tabs-content"><nav class="tabs"><ul id="primary-tabs">${['All', 'Images', 'Videos', 'News'].map((t) => `<li class="tab-item"><a href="/${t === 'All' ? 'search' : t.toLowerCase()}?q=anubis"><span>${t}</span></a></li>`).join('')}</ul></nav></div></div>
-  <main id="search-page"><div class="serp-layout"><div class="serp-columns"><div class="serp-columns-main"><main class="main-column"><section id="mixed-main">${items.join('')}</section></main></div></div></div></main></div></body></html>`;
+  <main id="search-page"><div class="serp-layout"><div class="serp-columns"><div class="serp-columns-main"><main class="main-column"><section id="mixed-main">${items.join('')}${pager ? `
+      <div id="pagination" class="pagination"><a class="btn" href="${pager}">Next</a></div>` : ''}</section></main></div></div></div></main></div></body></html>`;
 }
 
 function duckduckgoTab(query, results, tab) {

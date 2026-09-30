@@ -76,7 +76,7 @@ Two builds of the same commit are identical file for file. Firefox's reviewers r
   - `index.ts`: the pass loop (find results, weigh, render, rerank), the mutation observer, and messages.
   - `results.ts`: finding results, structurally (title heading → link → smallest single-result ancestor) or by selector, and resolving redirect links to the real URL.
   - `ui.ts` + `shadow.css`: tags under titles, the ⚖ button on each result and its menu, hidden-result lines, and the summary, all in closed shadow roots.
-  - `deeper.ts`: "Load more results", bringing later result pages onto the current one.
+  - `deeper.ts`: "Load more results", bringing later result pages onto the current one: fetched as the page would (`content.fetch` in Firefox), in a hidden sandboxed frame (`anubis-frame`) when the fetched copy has no results, and put right after the last result so the engine's pager stays below. Why a load stopped goes to the summary as `PageStats.stopped`.
   - `cleanup.ts`: finding the blocks that clean-up removes (AI answers, video panels…), and its redirect to Google's Web tab.
   - `page.css`: page-level treatments keyed off `data-anubis-*` attributes (hidden, lowered, pinned, highlight, rerank).
 - `entrypoints/subscribe.content.ts`: runs only on the wiki's subscribe page (`…/anubis/subscribe?url=…&name=…`, where subscribe links lead) and asks the background to open Settings → Lists with that list filled in. Settings asks before subscribing, because anyone can make a link.

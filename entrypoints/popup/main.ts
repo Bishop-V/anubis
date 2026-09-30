@@ -4,7 +4,7 @@ import { browser } from '#imports';
 import { balanceSvg, setBalance } from '@/utils/balance';
 import { domainChoices, normalizeDomain, siteOf } from '@/utils/domain';
 import { engineFor } from '@/utils/engines';
-import { guide } from '@/utils/links';
+import { bugReportLink, describeBrowser, guide } from '@/utils/links';
 import { LEVELS, TAG_CHOICES, evaluate, type Level } from '@/utils/matcher';
 import { h, icon, siteName } from '@/utils/dom';
 import { ICON_GEAR, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
@@ -13,7 +13,7 @@ import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/mess
 import { PERSONAL_NAME, getSite, listSites, setSiteLevel, toggleSiteTag, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal, updateSettings } from '@/utils/storage';
-import { summarySentence } from '@/utils/summary';
+import { stoppedSentence, summarySentence } from '@/utils/summary';
 import { initTheme } from '@/utils/theme';
 
 // The toolbar popup changes with the tab. On a search page: what Anubis did there,
@@ -221,6 +221,7 @@ function renderHere(rules: RuleSet) {
 }
 
 function renderPage(next: PageStats | undefined) {
+  setReportLink(next?.engine);
   stats = next;
   const page = $('#page');
   const nothingHere = !stats && $('#here').hidden;
@@ -293,6 +294,7 @@ function renderPage(next: PageStats | undefined) {
   page.replaceChildren(
     h('h2', null, t('popupThisPageOn', current.engine)),
     h('p', { class: 'sentence' }, summarySentence(current)),
+    ...(current.stopped ? [h('p', { class: 'sentence muted' }, stoppedSentence(current.stopped, current.engine))] : []),
     ...(actions.length ? [h('div', { class: 'page-actions' }, actions)] : []),
     ...(filters.length
       ? [
@@ -325,6 +327,11 @@ $('#add-toggle').addEventListener('click', () => {
 
 enabled.addEventListener('change', () => void updateSettings({ enabled: enabled.checked }));
 $<HTMLAnchorElement>('#help').href = guide();
+// Filled in with Anubis's version, the browser, and the search engine of this tab.
+const setReportLink = (engine?: string) => {
+  $<HTMLAnchorElement>('#report').href = bugReportLink({ version: browser.runtime.getManifest().version, browser: describeBrowser(navigator.userAgent), engine });
+};
+setReportLink();
 $('#settings').append(icon(ICON_GEAR));
 $('#settings').addEventListener('click', () => openSettings());
 $('#see-all').addEventListener('click', () => openSettings('sites'));

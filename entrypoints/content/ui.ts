@@ -10,7 +10,7 @@ import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, PERSONAL_NAME, type PersonalLevel } from '@/utils/personal';
 import { ruleParts } from '@/utils/ruletext';
 import type { Palette } from '@/utils/storage';
-import { shortSummary, summarySentence } from '@/utils/summary';
+import { shortSummary, stoppedSentence, summarySentence } from '@/utils/summary';
 import { OWN_TAGS, type FoundResult } from './results';
 import shadowCss from './shadow.css?inline';
 
@@ -393,6 +393,9 @@ function coversText(host: HTMLElement, container: HTMLElement): boolean {
     if (!parent || !node.textContent?.trim()) continue;
     const p = parent.getBoundingClientRect();
     if (p.bottom <= b.top || p.top >= b.bottom || p.right <= b.left || p.left >= b.right) continue;
+    // Text you can't see doesn't count: DuckDuckGo keeps its result menu's items
+    // in the result, invisible until the menu opens.
+    if (parent.checkVisibility?.({ opacityProperty: true, visibilityProperty: true }) === false) continue;
     // Text cut off with an ellipsis (DuckDuckGo's long addresses) still reports the
     // hidden part: only what's inside its clipping boxes counts.
     const clip = clipOf(parent, container);
@@ -430,20 +433,24 @@ function clipOf(el: HTMLElement, container: HTMLElement): { left: number; right:
 }
 
 /**
- * Off the text it covers: under the engine's menu button when there is one,
- * otherwise out past the result's right edge if the window has room, otherwise
- * down the result's right edge until it's clear.
+ * Off the text it covers: under the engine's menu button when there is one, and
+ * otherwise back beside it, since it belongs with the menu and the engine cuts
+ * its text off before the menu anyway. Without a menu, out past the result's right
+ * edge if the window has room, otherwise down the result's right edge until it's clear.
  */
 function moveOffText(host: HTMLElement, container: HTMLElement, menu: HTMLElement | undefined): void {
   const box = container.getBoundingClientRect();
   const b = host.getBoundingClientRect();
   const top = parseFloat(host.style.top) || 0;
   if (menu) {
+    const right = host.style.getPropertyValue('right');
     const m = menu.getBoundingClientRect();
     host.style.setProperty('top', `${Math.round(top + m.bottom + 2 - b.top)}px`, 'important');
     host.style.setProperty('right', `${Math.round(box.right - m.right + (m.width - b.width) / 2)}px`, 'important');
     if (!coversText(host, container)) return;
     host.style.setProperty('top', `${Math.round(top)}px`, 'important');
+    host.style.setProperty('right', right, 'important');
+    return;
   }
   if (box.right + b.width + 8 <= document.documentElement.clientWidth) {
     host.style.setProperty('right', `${-Math.round(b.width + 4)}px`, 'important');
@@ -675,7 +682,7 @@ export function renderSummary(
   change?: string,
 ): void {
   const worthShowing =
-    hiddenCount(stats) || stats.pinned || stats.raised || stats.lowered || stats.tagged || stats.canGoDeeper || stats.pages > 1 || change;
+    hiddenCount(stats) || stats.pinned || stats.raised || stats.lowered || stats.tagged || stats.canGoDeeper || stats.pages > 1 || stats.stopped || change;
   if (!place?.before.parentElement || !worthShowing) {
     summaryHost?.remove();
     summaryArea = undefined;
@@ -762,6 +769,28 @@ export function renderSummary(
             )
           : null,
       ),
+      // Why Load more results stopped, with the page it tried, to see for yourself.
+      stats.stopped
+        ? h(
+            'div',
+            { class: 'change stopped', attrs: { role: 'status' } },
+            h('span', null, stoppedSentence(stats.stopped, stats.engine)),
+            stats.stopped.url
+              ? h(
+                  'a',
+                  {
+                    class: 'text-btn',
+                    href: stats.stopped.url,
+                    target: '_blank',
+                    rel: 'noopener noreferrer',
+                    title: t('loadMoreOpenTitle', stats.engine),
+                    attrs: { 'data-focus-key': 'open-page' },
+                  },
+                  t('loadMoreOpen', stats.stopped.page),
+                )
+              : null,
+          )
+        : null,
       change
         ? h(
             'div',

@@ -55,6 +55,7 @@ Where things are stored, sync between browsers, and subscribing to lists.
 
 The look, the wording, and Anubis's own pages.
 
+- Report a problem (2026-09-30)
 - Finishing touches (2026-09-29)
 - Patterns from Dark Reader (2026-09-29)
 - Settings on narrow screens (2026-09-29)

@@ -1,6 +1,6 @@
 import { describeRemoved } from './cleanup';
 import { t, tJoin, tn, type MessageKey } from './i18n';
-import type { PageStats } from './messages';
+import type { DeeperStop, PageStats } from './messages';
 import type { PersonalLevel, SiteChange } from './personal';
 
 /**
@@ -26,6 +26,20 @@ export function summarySentence(stats: PageStats): string {
   }
   if (removed) return t('summaryRemovedOnly', removed);
   return pages > 1 && total > 1 ? t('summaryUnchangedPages', total, pages) : tn('summaryUnchanged', total);
+}
+
+const STOPPED: Record<DeeperStop['reason'], MessageKey> = {
+  empty: 'loadMoreEmpty',
+  repeat: 'loadMoreRepeat',
+  busy: 'loadMoreBusy',
+  refused: 'loadMoreRefused',
+  slow: 'loadMoreSlow',
+  failed: 'loadMoreFailed',
+};
+
+/** Why "Load more results" stopped: "Bing sent no results for page 3. It may want…" */
+export function stoppedSentence(stopped: DeeperStop, engine: string): string {
+  return t(STOPPED[stopped.reason], engine, stopped.page);
 }
 
 /**
