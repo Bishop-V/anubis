@@ -151,6 +151,9 @@ const MARK =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="26 14 82 108" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M39.5 19 L55 48 L101 63 Q105 66 100.5 70 L79 72.5 Q63 76 62 88 L62 97 L32 97 Z"/><path fill="currentColor" d="M31 105 L63 105 L65 118 L30 118 Z"/><ellipse cx="67" cy="58" rx="4.2" ry="2.7" transform="rotate(18 67 58)" fill="var(--demo-page)"/></svg>';
 const chip = (on: boolean, level: 'raise' | 'lower', text: string) =>
   h('span', { class: ['chip', 'demo-verdict', level, { on }] }, [h('span', { class: 'chip-icon', innerHTML: CHIP_ICONS[level] }), text]);
+// The AI answer's mark: a plain four-pointed star in blue and violet, a sketch of
+// the one engines put beside their AI answers rather than any engine's own logo.
+const SPARKLE = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><defs><linearGradient id="demo-sparkle" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f8df5"/><stop offset="1" stop-color="#9b72cb"/></linearGradient></defs><path fill="url(#demo-sparkle)" d="M8 0c.6 4.2 3.8 7.4 8 8-4.2.6-7.4 3.8-8 8-.6-4.2-3.8-7.4-8-8 4.2-.6 7.4-3.8 8-8z"/></svg>`;
 const weigh = (level: Level) => h('span', { key: level, class: ['demo-weigh', level], innerHTML: WEIGH[level] });
 
 const isBlock = (item: Item): item is Block => 'heading' in item;
@@ -202,7 +205,8 @@ function renderBlock(b: Block, step: number): VNode {
             : b.kind === 'discussions'
               ? h('div', b.lines.map((l, i) => h('div', { class: 'thread' }, [h('span', { class: 'forum' }, meta(i)), h('span', { class: 'thread-title' }, l)])))
               : h('div', { class: 'tiles' }, b.lines.map(() => h('span', { class: 'tile' })));
-  return fold(step < 2, 'demo-block', [h('div', { class: 'block-heading' }, b.heading), body].flat());
+  const heading = h('div', { class: 'block-heading' }, b.kind === 'ai' ? [h('span', { class: 'sparkle', innerHTML: SPARKLE }), b.heading] : b.heading);
+  return fold(step < 2, 'demo-block', [heading, body].flat());
 }
 
 function renderPage(step: number): VNode {

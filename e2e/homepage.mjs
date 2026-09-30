@@ -54,7 +54,7 @@ const failures = [];
 // Wide windows, short and tall alike: the heading's block (title to the scroll
 // hint) is centred on the drawn page and stays within its height; the two sit in
 // the middle of the window below the top bar, not high with a gap under them; and
-// the page stays where it is once scrolling starts, since it sticks at that place.
+// as scrolling starts the page rises until it's 24px under the top bar, then stops.
 for (const [width, height] of [
   [1024, 768],
   [1280, 720],
@@ -84,13 +84,14 @@ for (const [width, height] of [
   await page.evaluate(() => scrollTo(0, 400));
   await page.waitForTimeout(150);
   const moved = Math.round((await page.evaluate(() => document.querySelector('.demo-page').getBoundingClientRect().top)) - box.stageTop);
+  const rise = -Math.min(400, Math.max(0, box.stageTop - box.nav - 24));
   console.log(
     `${width}×${height}: heading ${offCentre}px from the page's centre${inside ? '' : ', and runs past it'}; ` +
-      `page ${offWindow}px from the window's middle; moves ${moved}px when scrolling starts`,
+      `page ${offWindow}px from the window's middle; moves ${moved}px when scrolling starts (expected ${Math.round(rise)}px)`,
   );
   if (Math.abs(offCentre) > 8 || !inside) failures.push(`${width}×${height}: the heading isn't centred beside the page`);
   if (Math.abs(offWindow) > 8) failures.push(`${width}×${height}: the page and heading aren't in the middle of the window`);
-  if (Math.abs(moved) > 1) failures.push(`${width}×${height}: the page jumps when scrolling starts`);
+  if (Math.abs(moved - rise) > 1) failures.push(`${width}×${height}: the page doesn't rise to the top bar as scrolling starts`);
   await page.close();
 }
 
