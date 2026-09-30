@@ -11,7 +11,7 @@ Coming from uBlacklist, HOHSER, or a Brave Goggle? Open **Settings â†’ Backup â†
 | **Brave Goggle** | Discards are hidden, boosts raised, downranks lowered. |
 | **A list of domains** | Every domain is hidden. |
 
-Anubis says what it read ("Read as a HOHSER export: 2 sites added, 0 updated."). Rules that need more than a site name, such as paths or uBlacklist's title expressions, are skipped and counted.
+Anubis says what it read ("Read as a HOHSER export: 2 sites added and 0 updated."). Rules that need more than a site name, such as paths or uBlacklist's title expressions, are skipped and counted.
 
 You don't have to import a list someone else publishes. [Subscribe to it](./lists.md) instead, and you'll get their updates.
 

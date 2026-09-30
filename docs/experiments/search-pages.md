@@ -2,6 +2,17 @@
 
 What Anubis draws and changes on search pages. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## A check for bugs (2026-09-30)
+
+The owner asked for a hard check for bugs and a polish. Read through the content script, the matching and list code, the background script, the popup, and Settings; each fix below has a check that failed before it.
+
+- **Google tidying its address counted as a new search.** Anubis took any change of address for a new search and started its page count again, so after Google rewrote its address the summary said one page, and an automatic load would fetch page 2 again, find only repeats, and now say so. A new search is now a change of path, query, tab, filter, or page (`sameSearch` in `utils/engines.ts`); other parameters don't count. The `deeper` part rewrites the address after loading a page: 1 page before, 2 after.
+- **The ⚖ button didn't close its own menu.** A press outside the menu closes it, and the button is inside a closed shadow root, so the page saw a press on its host, not on the button: the menu closed on the press and opened again on the click. The press on the host is now the button's, and a second press closes the menu. The `popover` part checks it.
+- **A number stayed on the toolbar icon after turning Anubis off** on a page where it had removed panels: the page sent its count with hidden results zeroed but removed panels kept.
+- **A site on two hand-written lines** was ranked by its first line on search pages but shown with its last line's ranking in the menu, the popup, and Settings. They now all take the first (`listSites`, with a test).
+- **Smaller things:** when loading a page fails and the second try in a hidden frame fails too, the summary gives the first reason (too slow, failed) rather than "no results"; parsed pages get a `<base>` so their links resolve against the page they came from; an earlier copy's room made for pinned results is cleared; the popup keeps checking while more results load instead of once after 2.5 s; import errors in Settings are shown instead of lost, and the import line reads as a sentence ("Read as an Anubis list", not "a Anubis list").
+- **Polish:** the result menu, the hidden-result line, and the "from page 2" note took their words from code; they're now in `messages.json`, sharing the popup's words where they say the same thing. Lists of names in the menu, the popup, a rule's tags, and Settings' tag panels use "a, b, and c".
+
 ## Show hidden after a new search, and tag choices from files (2026-09-29)
 
 - **Found:** Show hidden stayed on after a new search that Google or DuckDuckGo made without loading a page, so the next search opened with its hidden results showing, while results shown one at a time were already forgotten there. It now ends with the search, like those. The `reveal` e2e part presses Show hidden, starts a search with `history.pushState`, and checks nothing is revealed; it failed on the previous build.

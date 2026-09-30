@@ -1317,6 +1317,14 @@ if (!only || only === 'popover') {
     await page.waitForTimeout(300);
     await page.screenshot({ path: `${SHOTS}${name}.png`, fullPage: false });
     console.log(`\n== ${name}: popover open =`, await page.locator('anubis-popover').count());
+    if (name === 'popover-dark') {
+      // A second press on the button closes the menu it opened.
+      await target.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+      await page.waitForTimeout(300);
+      const closedBySecondPress = (await page.locator('anubis-popover').count()) === 0;
+      console.log('== second press closes the menu:', closedBySecondPress);
+      assertChecks('the ⚖ button toggles its menu', { closedBySecondPress });
+    }
     if (name === 'popover-light') {
       // Focus starts on the chosen weight (Raise); Tab to Pin and press it.
       await page.keyboard.press('Tab');
@@ -1533,6 +1541,21 @@ if (!only || only === 'deeper' || checks) {
   const googleByHand = await loadedPages();
   await page.screenshot({ path: `${SHOTS}google-deeper.png`, fullPage: true });
 
+  // Google tidies its address after loading. That's the same search: the page loaded
+  // stays counted, and nothing loads page 2 again (it would find only repeats).
+  await page.evaluate(() => {
+    history.replaceState(null, '', `${location.href}&sei=abc`);
+    document.body.append(document.createElement('div'));
+  });
+  await page.waitForTimeout(1500);
+  const afterRewrite = await sw.evaluate(async () => {
+    for (const tab of await chrome.tabs.query({})) {
+      const stats = await chrome.tabs.sendMessage(tab.id, { type: 'get-page-stats' }).catch(() => undefined);
+      if (stats?.engine === 'Google') return { pages: stats.pages, stopped: stats.stopped?.reason ?? null };
+    }
+    return 'no answer';
+  });
+
   // Google, automatic: the Next link arrives after the results, as on the live page,
   // where the first pass runs while the page is still streaming in.
   await setDeeper(2);
@@ -1610,10 +1633,11 @@ if (!only || only === 'deeper' || checks) {
   };
   await page.screenshot({ path: `${SHOTS}bing-deeper-stopped.png`, fullPage: false });
 
-  console.log('\n== load more results:', JSON.stringify({ googleByHand, googleAuto, ddgAuto, ddgByHandPages, braveAuto, bravePagerBelow, bingPages, bingPagerBelow, bingFrameGone, bingStopped }));
+  console.log('\n== load more results:', JSON.stringify({ googleByHand, afterRewrite, googleAuto, ddgAuto, ddgByHandPages, braveAuto, bravePagerBelow, bingPages, bingPagerBelow, bingFrameGone, bingStopped }));
   if (checks) {
     assertChecks('load more results', {
       googleByHand: googleByHand === 1,
+      googleAddressTidiedSameSearch: afterRewrite.pages === 2 && afterRewrite.stopped === null,
       googleAutomaticWithLatePager: googleAuto === 1,
       // The mock starts with 9 results and its More results button adds 3.
       duckDuckGoAutomatic: ddgAuto > 9,

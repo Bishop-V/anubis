@@ -15,6 +15,7 @@ import {
   upsertTagDef,
 } from '@/utils/personal';
 import { parseList } from '@/utils/listformat';
+import { compileList, evaluate } from '@/utils/matcher';
 
 const base = `${PERSONAL_HEADER}
 ! Keep this comment.
@@ -25,6 +26,13 @@ $site=fandom.com,discard
 describe('personal list edits', () => {
   it('lists simple site lines', () => {
     expect(listSites(base)).toEqual([{ site: 'fandom.com', level: 'hide', tags: [], line: 7 }]);
+  });
+
+  it('reads a site written on two lines the way search pages rank it: the first ranking wins', () => {
+    const text = `${PERSONAL_HEADER}$site=example.com,pin\n$site=example.com,tag=docs\n$site=example.com,discard\n`;
+    const ranked = evaluate({ url: 'https://example.com/' }, [compileList('personal', parseList(text), true)]);
+    expect(ranked.level).toBe('pin');
+    expect(getSite(text, 'example.com')).toMatchObject({ level: 'pin', tags: ['docs'] });
   });
 
   it('rewrites a site in place and keeps everything else', () => {

@@ -5,7 +5,7 @@ import type { EngineDef } from '@/utils/engines';
 import { ICON_ANUBIS, ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS, WEIGH_ICONS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
 import { LEVELS, TAG_CHOICES, type Level, type TagPref, type Verdict } from '@/utils/matcher';
-import { t, tList, tn } from '@/utils/i18n';
+import { t, tJoin, tList, tn } from '@/utils/i18n';
 import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, PERSONAL_NAME, type PersonalLevel } from '@/utils/personal';
 import { ruleParts } from '@/utils/ruletext';
@@ -244,13 +244,13 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
           {
             class: 'tag',
             style: `--c: ${tag.color}`,
-            title: [tag.description, `From ${sources.join(', ')}`].filter(Boolean).join('\n'),
+            title: [tag.description, t('popupTagFrom', tJoin(sources))].filter(Boolean).join('\n'),
           },
           h('i', { class: 'gem' }),
           tag.label,
         );
       }),
-      page ? h('span', { class: 'page-note', title: 'Added by “Load more results”' }, `from page ${page}`) : null,
+      page ? h('span', { class: 'page-note', title: t('chipFromPageTitle') }, t('chipFromPage', page)) : null,
     ),
   );
 }
@@ -274,7 +274,9 @@ export function ensureWeighButton(
     button.addEventListener('click', (e) => {
       // Keep the click from reaching the result link underneath.
       stop(e);
-      onOpen(button, weighResult.get(owner)!);
+      // A second press closes the menu it opened.
+      if (popover?.anchor === button) closePopover();
+      else onOpen(button, weighResult.get(owner)!);
     });
     made.root.append(button);
     rendered.set(owner, button);
@@ -559,14 +561,14 @@ export function weighButtonOf(container: HTMLElement): HTMLButtonElement | undef
 // ---------------------------------------------------------------------------
 // One quiet line in place of a hidden result
 
-/** "by your list", "because it's tagged “AI slop”", "by Copycats removal"… */
+/** "hidden by your list", "hidden because it’s tagged “AI slop”", "hidden by Copycats removal"… */
 export function hiddenReason(verdict: Verdict, tags: Map<string, TagDef>): string {
   const by = verdict.hiddenBy;
-  if (!by) return '';
-  if (by.kind === 'personal') return 'by your list';
-  if (by.kind === 'tag') return `because it’s tagged “${tags.get(by.name)?.label ?? by.name}”`;
-  if (by.kind === 'lens') return `because ${by.name} doesn’t include it`;
-  return `by ${by.name}`;
+  if (!by) return t('barHidden');
+  if (by.kind === 'personal') return t('barHiddenByYou');
+  if (by.kind === 'tag') return t('barHiddenByTag', tags.get(by.name)?.label ?? by.name);
+  if (by.kind === 'lens') return t('barHiddenByLens', by.name);
+  return t('barHiddenByList', by.name);
 }
 
 /**
@@ -610,7 +612,7 @@ export function renderHiddenBar(
         { class: 'why' },
         h('b', null, site),
         more.length ? ` ${tn('hiddenMore', more.length)}` : '',
-        sameWhy && why ? ` hidden ${why}` : ' hidden',
+        ` ${sameWhy ? why : t('barHidden')}`,
       ),
       h(
         'button',
@@ -1018,8 +1020,13 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
   if (!popover) {
     const { host } = makeHost('anubis-popover', data.theme);
     document.documentElement.append(host);
+    // The button is inside a closed shadow root, so a press on it reaches the page
+    // as a press on its host. That press is the button's to handle: it closes the menu.
+    const root = anchor.getRootNode();
+    const anchorHost = root instanceof ShadowRoot ? root.host : anchor;
     const onDown = (e: Event) => {
-      if (!e.composedPath().includes(host) && !e.composedPath().includes(anchor)) closePopover();
+      const path = e.composedPath();
+      if (!path.includes(host) && !path.includes(anchorHost)) closePopover();
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeAndReturn();
@@ -1116,7 +1123,7 @@ function buildPopover(
   if (choices.length > 1) {
     const select = h(
       'select',
-      { title: 'Choose how much of the site this applies to', attrs: { 'aria-label': 'Site', 'data-focus-key': 'site' } },
+      { title: t('popupSiteChoice'), attrs: { 'aria-label': t('popupSite'), 'data-focus-key': 'site' } },
       choices.map((d) => h('option', { value: d, selected: d === domain }, d)),
     );
     select.addEventListener('change', () => switchDomain(select.value));
@@ -1127,7 +1134,7 @@ function buildPopover(
 
   const levels = h(
     'div',
-    { class: 'levels', attrs: { role: 'group', 'aria-label': 'Ranking' } },
+    { class: 'levels', attrs: { role: 'group', 'aria-label': t('popupRankingFor', domain) } },
     LEVELS.map((level) =>
       h(
         'button',
@@ -1150,15 +1157,15 @@ function buildPopover(
     ),
   );
 
+  // The same words as the popup's This site.
   let hint: string;
-  if (personal === 'allow') hint = 'Normal, whatever your lists say.';
-  else if (pressed) hint = `Your choice for ${domain}, on every search.`;
+  if (personal === 'allow') hint = t('popupHintAllow');
+  else if (pressed) hint = t('popupHintMine', domain);
   else if (fromLists !== 'normal') {
     const names = [...new Set(data.baseline.reasons.filter((r) => r.listId !== TAG_CHOICES).map((r) => r.list))];
-    if (data.baseline.reasons.some((r) => r.listId === TAG_CHOICES)) names.push('your tag settings');
-    const lists = names.join(', ');
-    hint = `${LEVEL_CHIPS[fromLists]} by ${lists}. Choose one to decide yourself.`;
-  } else hint = 'Your choice applies on every search.';
+    if (data.baseline.reasons.some((r) => r.listId === TAG_CHOICES)) names.push(t('popupYourTagSettings'));
+    hint = t('popupHintLists', LEVEL_CHIPS[fromLists], tJoin(names));
+  } else hint = t('popupHintNone');
 
   // Tags you set toggle; tags from lists are shown but fixed.
   const mine = new Set(entry?.tags ?? []);
@@ -1173,7 +1180,7 @@ function buildPopover(
     if (!on && fromList.has(id)) {
       return h(
         'span',
-        { class: 'fixed', style: `--c: ${tag.color}`, title: `From ${(data.verdict.tagSources[id] ?? []).join(', ')}` },
+        { class: 'fixed', style: `--c: ${tag.color}`, title: t('popupTagFrom', tJoin(data.verdict.tagSources[id] ?? [])) },
         h('i', { class: 'gem' }),
         tag.label,
       );
@@ -1183,7 +1190,7 @@ function buildPopover(
       {
         type: 'button',
         style: `--c: ${tag.color}`,
-        title: tag.description ?? (on ? `Untag ${domain}` : `Tag ${domain} “${tag.label}”`),
+        title: tag.description ?? (on ? t('popupUntag', domain) : t('popupTagSite', domain, tag.label)),
         attrs: { 'aria-pressed': String(on), 'data-focus-key': `tag-${id}` },
         on: { click: () => actions.toggleTag(domain, id) },
       },
@@ -1194,9 +1201,9 @@ function buildPopover(
 
   const input = h('input', {
     type: 'text',
-    placeholder: 'New tag',
+    placeholder: t('menuNewTagPlaceholder'),
     maxLength: 32,
-    attrs: { 'aria-label': 'New tag name', 'data-focus-key': 'new-tag' },
+    attrs: { 'aria-label': t('menuNewTagLabel'), 'data-focus-key': 'new-tag' },
   });
   const create = () => {
     const label = input.value.trim();
@@ -1241,7 +1248,7 @@ function buildPopover(
       cartouche,
       h(
         'button',
-        { class: 'icon-btn close', type: 'button', title: 'Close', attrs: { 'aria-label': 'Close' }, on: { click: closeAndReturn } },
+        { class: 'icon-btn close', type: 'button', title: t('menuCloseLabel'), attrs: { 'aria-label': t('menuCloseLabel') }, on: { click: closeAndReturn } },
         icon(ICON_CLOSE),
       ),
     ),
@@ -1251,20 +1258,20 @@ function buildPopover(
     h(
       'div',
       { class: 'section' },
-      h('h3', null, 'Tags'),
+      h('h3', null, t('popupTags')),
       tagItems.length ? h('div', { class: 'tags' }, tagItems) : null,
       h(
         'div',
         { class: 'new-tag' },
         input,
-        h('button', { class: 'text-btn', type: 'button', on: { click: create } }, 'Add tag'),
+        h('button', { class: 'text-btn', type: 'button', on: { click: create } }, t('menuAddTagButton')),
       ),
     ),
     reasons.length || suggestLinks.length
       ? h(
           'div',
           { class: 'section' },
-          h('h3', null, 'Why'),
+          h('h3', null, t('menuWhyHeading')),
           reasons.length
             ? h(
                 'ul',
@@ -1288,7 +1295,7 @@ function buildPopover(
     h(
       'div',
       { class: 'foot' },
-      h('span', null, entry ? 'Saved in your list.' : ''),
+      h('span', null, entry ? t('menuSavedNote') : ''),
       settingsButton(actions.settings),
     ),
   );

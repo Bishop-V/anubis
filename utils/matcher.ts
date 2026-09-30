@@ -159,7 +159,7 @@ function describe(rule: Rule, tagLabel: (id: string) => string): string {
   if (rule.discard) parts.push('hides it');
   if (rule.boost > 0) parts.push(`raises it by ${rule.boost}`);
   if (rule.boost < 0) parts.push(`lowers it by ${-rule.boost}`);
-  if (rule.tags.length) parts.push(`tags it ${rule.tags.map((t) => `“${tagLabel(t)}”`).join(', ')}`);
+  if (rule.tags.length) parts.push(`tags it ${andList(rule.tags.map((t) => `“${tagLabel(t)}”`))}`);
   return parts.length ? andList(parts) : 'mentions it';
 }
 

@@ -74,7 +74,11 @@ export function formatSiteLine(site: string, level: PersonalLevel, tags: string[
   return `$${opts.join(',')}`;
 }
 
-/** Every simple site entry in the personal list, merged per site. */
+/**
+ * Every simple site entry in the personal list, merged per site. A site on
+ * several lines takes its tags from all of them and its ranking from the first
+ * that has one, as search pages rank it.
+ */
 export function listSites(text: string): SiteEntry[] {
   const bySite = new Map<string, SiteEntry>();
   text.split(/\r?\n/).forEach((line, i) => {
@@ -85,7 +89,7 @@ export function listSites(text: string): SiteEntry[] {
       bySite.set(parsed.site, { ...parsed, line: i + 1 });
       return;
     }
-    if (parsed.level !== 'normal') prev.level = parsed.level;
+    if (prev.level === 'normal') prev.level = parsed.level;
     for (const t of parsed.tags) if (!prev.tags.includes(t)) prev.tags.push(t);
   });
   return [...bySite.values()];

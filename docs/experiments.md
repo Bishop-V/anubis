@@ -25,6 +25,7 @@ Keeping engine definitions current, and engine bugs found while testing.
 
 What Anubis draws and changes on search pages.
 
+- A check for bugs (2026-09-30)
 - Show hidden after a new search, and tag choices from files (2026-09-29)
 - Result selector indicators (2026-09-29)
 - Screen readers and focus on search pages (2026-09-29)
