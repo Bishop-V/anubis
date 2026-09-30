@@ -100,6 +100,16 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
     else add(blockAround(el, engine, column), kind);
   }
 
+  // A block named only for screen readers: Bing's AI answer is aria-label="AI Overview".
+  // Controls (a tab named "Videos") and the page's navigation don't count.
+  for (const el of document.querySelectorAll<HTMLElement>('[aria-label]')) {
+    const kind = cleanupKindFor(el.getAttribute('aria-label') ?? '');
+    if (!kind || !wanted[kind] || el.matches(CONTROL) || el.closest(NOT_A_BLOCK) || inPageHeader(el)) continue;
+    const result = resultAround(el);
+    if (result) addInResult(el, result, kind);
+    else add(blockAround(el, engine, column), kind);
+  }
+
   for (const [kind, selector] of Object.entries(engine.cleanupSelectors ?? {}) as [CleanupKind, string][]) {
     if (!wanted[kind]) continue;
     for (const el of document.querySelectorAll<HTMLElement>(selector)) {

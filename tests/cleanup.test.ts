@@ -17,7 +17,7 @@ describe('clean-up headings', () => {
     });
     expect(engine('duckduckgo').cleanupSelectors?.ai).toBe('[data-testid="duckassist-answer-content"], [data-react-module-id="wikinlp"]');
     expect(engine('brave').cleanupSelectors?.ai).toBe('#summarizer');
-    expect(engine('bing').cleanupSelectors).toBeUndefined();
+    expect(engine('bing').cleanupSelectors?.ai).toBe('.cht_container, .cht_disclaimer');
   });
 
   it('recognises whole headings, ignoring case and spacing', () => {
@@ -26,6 +26,9 @@ describe('clean-up headings', () => {
     expect(cleanupKindFor('Aperçu IA')).toBe('ai');
     expect(cleanupKindFor('People also ask')).toBe('questions');
     expect(cleanupKindFor('Short videos')).toBe('videos');
+    expect(cleanupKindFor('Videos of how to bake sourdough bread')).toBe('videos');
+    expect(cleanupKindFor('Related searches for python list comprehension')).toBe('related');
+    expect(cleanupKindFor('Related searches based on your browsing')).toBe('related');
     expect(cleanupKindFor('Images for anubis')).toBe('images');
     expect(cleanupKindFor('Searches related to anubis')).toBe('related');
     expect(cleanupKindFor('Related queries')).toBe('related');

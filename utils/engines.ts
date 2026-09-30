@@ -49,11 +49,11 @@ export interface EngineDef {
   table?: boolean;
   /**
    * Where the weigh button sits in the top-right corner of each result. With
-   * `besideMenu`, it sits just left of the engine's own menu button on the result
+   * `underMenu`, it sits just under the engine's own menu button on the result
    * (DuckDuckGo's ⋯) instead, at its size and in its colour, like a second option;
    * `top` and `right` apply when a result has no such button.
    */
-  button?: { top: string; right: string; besideMenu?: boolean };
+  button?: { top: string; right: string; underMenu?: boolean };
   /**
    * Result cards on the engine's other tabs (images, videos, news), found by
    * selector, as uBlacklist's rules find them. They're hidden and tagged, but not
@@ -142,8 +142,8 @@ export const ENGINES: EngineDef[] = [
       { item: '[data-testid="news-vertical"] li:has(> article)', link: 'article > a', title: 'h2' },
     ],
     cleanupSelectors: { ai: '[data-testid="duckassist-answer-content"], [data-react-module-id="wikinlp"]' },
-    // Beside DuckDuckGo's own ⋯ menu on each result, as a second option.
-    button: { top: '6px', right: '36px', besideMenu: true },
+    // Under DuckDuckGo's own ⋯ menu on each result, as a second option.
+    button: { top: '6px', right: '36px', underMenu: true },
     more: { kind: 'click', button: '#more-results, button[data-testid="more-results"]' },
   },
   {
@@ -181,6 +181,9 @@ export const ENGINES: EngineDef[] = [
     link: 'h2 a',
     title: 'h2',
     displayed: '.b_attribution cite, cite',
+    // Bing's AI answer (seen on a live page, 2026-09-29): the answer is in
+    // .cht_container, with a .cht_disclaimer, and has no heading to go by.
+    cleanupSelectors: { ai: '.cht_container, .cht_disclaimer' },
     button: { top: '4px', right: '4px' },
     more: { kind: 'link', next: 'a.sb_pagN, a[title="Next page"]' },
   },

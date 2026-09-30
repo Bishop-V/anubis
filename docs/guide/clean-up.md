@@ -8,18 +8,16 @@ Search pages carry a lot that isn't results: AI answers, video panels, "People a
 
 | Switch | What it removes |
 | --- | --- |
-| **AI answers** | Google's AI Overview and its AI Mode tab, DuckDuckGo's AI-assisted answers and its Duck.ai tab and buttons, Brave's AI answers. |
-| **Video panels** | Video and short-video panels between the results. |
+| **AI answers** | Google's AI Overview and its AI Mode tab, DuckDuckGo's AI-assisted answers and its Duck.ai tab and buttons, Bing's AI answer across the top of the page (with the video and links beside it), and Brave's AI answers. |
+| **Video panels** | Video and short-video panels between the results, like Bing's "Videos of…". |
 | **People also ask** | Lists of other people's questions with expandable answers. |
 | **Discussion panels** | Panels of forum threads between the results, like Google's "Discussions and forums" and Brave's "Discussions". Forum pages among the results stay. |
 | **Top stories** | News panels between the results. |
 | **Image rows** | Rows of images between the results. The Images tab still works. |
-| **Related searches** | Lists of other searches, usually at the bottom of the page, and the "People also search for" box Bing and Google add under a result you went to and came back from. The links to later pages stay. |
+| **Related searches** | Lists of other searches, usually at the bottom of the page, Bing's "Related searches based on your browsing", and the "People also search for" box Bing and Google add under a result you went to and came back from. The links to later pages stay. |
 | **Other search engines** | Rows of buttons that repeat your search on another engine, like Brave's "Find elsewhere" with Google, Bing, and Mojeek. |
 
 All of them start off.
-
-On Bing, the AI answer and the "Videos of…" panel aren't removed yet.
 
 ## What was removed
 
