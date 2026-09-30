@@ -95,16 +95,15 @@ async function renderLists() {
 }
 
 /**
- * The heart and the feather: the balance settles level as the page opens, and a
- * click on either side presses that pan down to swing again. It's decoration, so
- * it's hidden from screen readers and holds still with reduced motion.
+ * The heart and the feather: a click on either side of the balance presses that pan
+ * down, and it swings back to level. It's decoration, so it's hidden from screen
+ * readers, and it holds still with reduced motion.
  */
 function renderScales() {
   const svg = balanceSvg();
   $('#scales').replaceChildren(svg);
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   $('#scales').classList.add('moving');
-  swingBalance(svg, -13, 350);
   svg.addEventListener('click', (e) => {
     const box = svg.getBoundingClientRect();
     swingBalance(svg, e.clientX < box.left + box.width / 2 ? -11 : 11);

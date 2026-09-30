@@ -514,12 +514,6 @@ body .VPContent .VPHome {
 /* The Introduction's demo (hide-demo.ts): a pointer hides a site from the button
    beside its result. It shares the homepage demo's page, results, and summary, and
    draws the result menu as the extension does. */
-:root {
-  --demo-danger: #b4492f;
-}
-.dark {
-  --demo-danger: #e2735b;
-}
 .hide-demo {
   margin: 20px 0;
 }
@@ -651,10 +645,7 @@ body .VPContent .VPHome {
   font-weight: 600;
 }
 .hd-level.hide.pressed {
-  border-bottom-color: var(--demo-danger);
-}
-.hd-level.hide.pressed .hd-level-icon {
-  color: var(--demo-danger);
+  border-bottom-color: var(--vp-c-text-2);
 }
 .hide-demo .hd-hint {
   margin: 8px 18px 0;

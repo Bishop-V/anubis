@@ -166,9 +166,6 @@ h2 .text-btn {
 .levels button.pin[aria-pressed='true'] .level-icon {
   color: var(--gold-ink);
 }
-.levels button.hide[aria-pressed='true'] .level-icon {
-  color: var(--danger);
-}
 .levels button.from-list:not([aria-pressed='true']) {
   color: var(--gold-ink);
 }

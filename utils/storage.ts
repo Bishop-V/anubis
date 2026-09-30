@@ -23,8 +23,18 @@ export type HideStyle = 'collapse' | 'remove' | 'dim';
 /** Colours on search pages: Anubis's gold and each tag's colour, or the page's own greys. */
 export type Palette = 'gold' | 'plain';
 
-/** The most extra pages Settings offers to load automatically: six pages in all. */
-export const MAX_DEEPER = 5;
+/**
+ * The most extra pages to load automatically. Anubis itself has no limit, but engines
+ * do: past about 20 pages they stop sending results or ask you to prove you're not a
+ * robot, and each page adds about a second to the search.
+ */
+export const MAX_DEEPER = 20;
+
+/** An amount of extra pages as typed or stored, as a whole number from 0 to `MAX_DEEPER`. */
+export function clampDeeper(pages: unknown): number {
+  const n = Math.round(Number(pages));
+  return Number.isFinite(n) ? Math.max(0, Math.min(MAX_DEEPER, n)) : 0;
+}
 
 export interface Settings {
   /** Master switch: when false the content script leaves pages alone. */

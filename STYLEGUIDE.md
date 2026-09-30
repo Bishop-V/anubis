@@ -35,7 +35,7 @@ One palette, defined twice: `assets/theme.css` for extension pages and `entrypoi
 | `--gold` | `#d4a637` | `#d4a637` | Fills and strokes: primary button, chosen underline, focus ring, cartouche, balance |
 | `--gold-ink` | `#e0b54e` | `#8d6716` | Gold text and icons, readable on the background: text buttons, links, Raise, and Pin |
 | `--on-gold` | `#1b1a16` | `#1b1a16` | Text on a gold fill |
-| `--danger` | `#e2735b` | `#b4492f` | Hide, errors, destructive actions |
+| `--danger` | `#e2735b` | `#b4492f` | Errors and destructive actions. Never a ranking: Hide is grey. |
 | `--ok` | `#7fb58f` | `#3a7a52` | Confirmations (settings only) |
 | `--shadow` | | | The result menu's shadow (search pages only), darker in the dark scheme |
 
@@ -118,12 +118,13 @@ All shared controls are in `assets/theme.css`; the search-page versions in `shad
 | Text button | `.text-btn` | No box, `--gold-ink`, 600, underline on hover; `.danger` for removing | Actions inside a sentence or row: "Show hidden", "Undo", "Add tag", "See all 9" |
 | Icon button | `.icon-btn` | 28px (24px and round on search pages), `--muted`, gold on hover; `.danger` turns red on hover | Only icons everyone knows: the cog, ×, and a list's update, view, and remove icons. Always with `aria-label` and `title`. |
 | Input | `input` | 30px, `--raised`, 1px `--line-strong` border, 6px radius, 13px; the border turns gold on focus | Placeholders in `--muted` give an example ("fandom.com"), not an instruction |
+| Amount | `.amount` + `.tip` | A 64px number input with its unit after it in `--muted`; a tip under the setting's description says what the amount costs, in `--muted`, or in `--text` when it warns | A number people choose: Load more results automatically |
 | Select | `select` | The same box as an input, with the one caret: a small `--muted` chevron drawn in CSS, 10px from the right edge | Never the browser's own arrow |
 | Switch | `.switch` | 30×17px pill, gold when on | Settings that take effect at once; no Save button |
-| Choice row | `.seg`, `.levels` | Plain words in `--muted`; the chosen one `--text`, 600, with a 2px underline in gold (`--danger` for Hide, the tag's colour for a tag filter). The rankings put each one's icon over its word: `--muted` at rest, and once chosen `--gold-ink` for Raise and Pin, `--danger` for Hide | Choosing one of a few: the rankings, Appearance's options |
+| Choice row | `.seg`, `.levels` | Plain words in `--muted`; the chosen one `--text`, 600, with a 2px underline in gold (`--muted` for Hide, the tag's colour for a tag filter). The rankings put each one's icon over its word: `--muted` at rest, and once chosen `--gold-ink` for Raise and Pin, `--text` for the rest | Choosing one of a few: the rankings, Appearance's options |
 | Tag | `.tag` + `.gem` | A 6px diamond in the tag's colour, then its name; hollow for a tag you could add | Tags everywhere. Never pills or chips with fills. |
 | Site name | `siteName()` + `.suffix` | The name in the row's colour, the ending it shares with other sites (`.org`, `.co.uk`) in `--muted` at 400 | A site as a row's subject: the popup's and Settings' Your sites |
-| Ranking note | `.level-note`, `.verdict` | Pin and Raise in `--gold-ink`, Hide in `--danger`, Lower and Normal in `--muted`; pinned and hidden results use their selector icon instead of a redundant chip, while Raised and Lowered chips remain | Naming a site's ranking |
+| Ranking note | `.level-note`, `.verdict` | Pin and Raise in `--gold-ink`, Hide, Lower, and Normal in `--muted`; pinned and hidden results use their selector icon instead of a redundant chip, while Raised and Lowered chips remain | Naming a site's ranking |
 
 ```ts
 // A form: one primary button, the rest plain or text buttons.
@@ -178,7 +179,7 @@ The one place with character. In order:
 1. **The cartouche**: the site's name, 16px serif, in a 1.5px gold oval, doubled by a 0.75px gold hairline 2.5px inside it at just over half strength, as carved cartouches are drawn. Where the rule can cover more or less of the site (`en.wikipedia.org` or `wikipedia.org`), a caret follows the name and the native select lies unseen over the whole oval, so the oval is exactly as wide as the name and it stays centred. There's no bar at the end of the oval: at this size it read as a text cursor.
 2. **The balance**: the site's pan on the left, the feather's on the right, tilting to the chosen ranking. It swings when the ranking changes, and holds still with reduced motion.
 3. **Rankings**: Hide, Lower, Normal, Raise, Pin as a choice row, each word under its icon, with a hint underneath that says whose choice it is ("Your choice for javascript.info, on every search.").
-4. **Tags**, **Why** (the rules that matched, and links to report or suggest changes to a list) and a footer, each under a hairline with a 12.5px label. Under Why, each rule follows "Matched rule, line 10" in the code face at 12.5px. It breaks only after a comma, with a hanging indent: option names in `--muted`, what they match in `--text`, and an option that raises (`boost`, `pin`) in `--gold-ink` or hides (`discard`) in `--danger`, both at 600. `ruleParts()` in `utils/ruletext.ts` splits it.
+4. **Tags**, **Why** (the rules that matched, and links to report or suggest changes to a list) and a footer, each under a hairline with a 12.5px label. Under Why, each rule follows "Matched rule, line 10" in the code face at 12.5px. It breaks only after a comma, with a hanging indent: option names in `--muted`, what they match in `--text`, an option that raises (`boost`, `pin`) in `--gold-ink` at 600, and one that hides (`discard`) in `--text` at 600. `ruleParts()` in `utils/ruletext.ts` splits it.
 
 ## Icons
 
@@ -192,7 +193,7 @@ The one place with character. In order:
 ## Motion
 
 - Motion answers an action: the menu opens with a 120ms fade and 3px drop, the balance swings, switches slide.
-- Nothing moves on its own, with one exception: the welcome page's balance, seen once, swings and settles level as the page opens, and a click on either side presses that pan down to swing again. It's decoration, hidden from screen readers.
+- Nothing moves on its own. The welcome page's balance swings only when clicked: a click on either side presses that pan down, and it settles level again. It's decoration, hidden from screen readers.
 - Movement (the menu's drop, the balance, switches, the welcome page's balance) stops under `prefers-reduced-motion`.
 
 ## Writing

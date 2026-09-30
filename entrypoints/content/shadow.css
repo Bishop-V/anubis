@@ -514,9 +514,6 @@ button {
 .level.pin[aria-pressed='true'] .level-icon {
   color: var(--gold-ink);
 }
-.level.hide[aria-pressed='true'] .level-icon {
-  color: var(--danger);
-}
 .level:hover {
   color: var(--text);
 }
@@ -525,8 +522,9 @@ button {
   font-weight: 600;
   border-bottom-color: var(--gold);
 }
+/* Hide is grey, not red: hiding a site is a choice like any other, not an error. */
 .level.hide[aria-pressed='true'] {
-  border-bottom-color: var(--danger);
+  border-bottom-color: var(--muted);
 }
 .level.from-list:not([aria-pressed='true']) {
   color: var(--gold-ink);
@@ -638,7 +636,7 @@ button {
   font-weight: 600;
 }
 .rule .hide {
-  color: var(--danger);
+  color: var(--text);
   font-weight: 600;
 }
 .foot {

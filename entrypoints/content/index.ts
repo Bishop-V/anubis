@@ -17,7 +17,7 @@ import {
   type SiteChange,
 } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
-import { colorSchemeItem, editPersonal, MAX_DEEPER, type Theme } from '@/utils/storage';
+import { clampDeeper, colorSchemeItem, editPersonal, type Theme } from '@/utils/storage';
 import { reportUrl, suggestionUrl } from '@/utils/subscriptions';
 import { changeSentence } from '@/utils/summary';
 import { findClutter, mainColumn, redirectFor, watchAllTab, type Clutter } from './cleanup';
@@ -236,9 +236,9 @@ export default defineContentScript({
       } else renderSummary(undefined, stats, theme, { toggleReveal() {}, settings() {}, deeper() {}, filter() {}, undo() {} });
 
       // "Load more results automatically": once per search.
-      if (rules.settings.deeper > 0 && stats.canGoDeeper && deeper.pages === 1 && !deeper.auto) {
+      if (clampDeeper(rules.settings.deeper) > 0 && stats.canGoDeeper && deeper.pages === 1 && !deeper.auto) {
         deeper.auto = true;
-        goDeeper(Math.min(rules.settings.deeper, MAX_DEEPER));
+        goDeeper(clampDeeper(rules.settings.deeper));
       }
 
       lastResults = results;

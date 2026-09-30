@@ -1,4 +1,4 @@
-import { h, icon } from '@/utils/dom';
+import { h, icon, plural } from '@/utils/dom';
 import { ENGINES } from '@/utils/engines';
 import { ICON_DOWNLOAD, ICON_UPLOAD } from '@/utils/icons';
 import { loadRuleSet } from '@/utils/ruleset';
@@ -12,6 +12,7 @@ import {
   updateSettings,
   DEFAULT_SETTINGS,
   MAX_DEEPER,
+  clampDeeper,
   type HideStyle,
   type Palette,
   type Settings,
@@ -23,6 +24,64 @@ import { themeSwitcher } from '@/utils/theme';
 import { flash, flashed, rerender } from './flash';
 import { helpLink, pageTitle, switchRow } from './parts';
 import { download } from './sites';
+
+/** What loading this many extra pages costs, said as the amount changes. */
+export function deeperTip(pages: number): { text: string; warn: boolean } {
+  if (pages === 0) return { text: 'Off: more results load only when you press “Load more results”.', warn: false };
+  // Each page waits 0.7 s after the last, plus the time to load it.
+  const seconds = Math.max(1, Math.round(pages * 1.2));
+  const time = `Adds about ${plural(seconds, 'second')} to each search.`;
+  if (pages <= 3) return { text: `${time} Engines rarely mind a few pages.`, warn: false };
+  if (pages < 10) return { text: `${time} Some engines may start asking you to confirm you’re not a robot.`, warn: true };
+  return {
+    text: `${time} Google and Bing often ask you to confirm you’re not a robot after this many. Some engines run out of pages before then.`,
+    warn: true,
+  };
+}
+
+function deeperRow(stored: number): HTMLElement {
+  const initial = clampDeeper(stored);
+  const tip = h('span', { class: 'tip', attrs: { id: 'deeper-tip', 'aria-live': 'polite' } });
+  const showTip = (pages: number) => {
+    const { text, warn } = deeperTip(pages);
+    tip.textContent = text;
+    tip.classList.toggle('warn', warn);
+  };
+  showTip(initial);
+  const input = h('input', {
+    id: 'deeper',
+    type: 'number',
+    value: String(initial),
+    attrs: { min: '0', max: String(MAX_DEEPER), step: '1', inputmode: 'numeric', 'aria-describedby': 'deeper-tip' },
+    on: {
+      input: () => showTip(clampDeeper(input.value)),
+      change: () => {
+        const pages = clampDeeper(input.value);
+        input.value = String(pages);
+        showTip(pages);
+        void updateSettings({ deeper: pages });
+      },
+    },
+  });
+  return h(
+    'div',
+    { class: 'setting' },
+    h(
+      'div',
+      null,
+      h('label', { attrs: { for: 'deeper' } }, h('b', null, 'Load more results automatically')),
+      h(
+        'span',
+        { class: 'muted' },
+        `Add the next pages of results to the first one and rank them together, so a site you pinned on page 3 rises to the top. “Load more results” above the results does the same when you ask. Type how many pages to add, from 0 (off) to ${MAX_DEEPER}.`,
+        ' ',
+        helpLink('guide/more-results', 'How loading more works'),
+      ),
+      tip,
+    ),
+    h('span', { class: 'amount' }, input, h('span', { attrs: { 'aria-hidden': 'true' } }, 'more pages')),
+  );
+}
 
 function toggleRow(label: string, hint: string, key: keyof Settings, settings: Settings, help?: HTMLElement): HTMLElement {
   return switchRow(label, hint, Boolean(settings[key]), (on) => void updateSettings({ [key]: on }), help);
@@ -104,29 +163,7 @@ export async function renderAppearance(): Promise<HTMLElement> {
         settings,
         helpLink('guide/ranking#reranking', 'How reranking works'),
       ),
-      h(
-        'div',
-        { class: 'setting' },
-        h(
-          'div',
-          null,
-          h('label', { attrs: { for: 'deeper' } }, h('b', null, 'Load more results automatically')),
-          h(
-            'span',
-            { class: 'muted' },
-            'Add the next pages of results to the first one and rank them together, so a site you pinned on page 3 rises to the top. “Load more results” above the results does the same when you ask. Each page is another request to the search engine, so a few is usually enough.',
-            ' ',
-            helpLink('guide/more-results', 'How loading more works'),
-          ),
-        ),
-        h(
-          'select',
-          { id: 'deeper', on: { change: (e: Event) => void updateSettings({ deeper: Number((e.target as HTMLSelectElement).value) }) } },
-          ...Array.from({ length: MAX_DEEPER + 1 }, (_, n) =>
-            h('option', { value: String(n), selected: n === Math.min(settings.deeper, MAX_DEEPER) }, n === 0 ? 'Off' : n === 1 ? '1 more page' : `${n} more pages`),
-          ),
-        ),
-      ),
+      deeperRow(settings.deeper),
       toggleRow('Tag chips', 'Show tags and rankings under each result title.', 'showChips', settings),
       toggleRow('Summary', 'Show a one-line summary of what Anubis changed above the results.', 'showSummary', settings),
       toggleRow('Anubis is on', 'Turn this off to leave search pages alone without uninstalling.', 'enabled', settings),
