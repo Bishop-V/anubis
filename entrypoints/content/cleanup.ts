@@ -261,10 +261,24 @@ function safeToRemove(block: HTMLElement, column: Column, searchBox: Element | n
     block !== document.body &&
     !column.results.some((r) => r.contains(block) || block.contains(r)) &&
     !(column.list && block.contains(column.list)) &&
-    !block.querySelector('anubis-summary') &&
+    summaryOnlyAtTop(block) &&
     !(searchBox && block.contains(searchBox)) &&
     !column.keep?.some((k) => block.contains(k))
   );
+}
+
+/**
+ * No summary in the block, or only at its very top, where it goes when an AI answer
+ * is shown in a grid (see `topOf` in ui.ts). The summary moves out when the block is
+ * removed, so it doesn't keep the answer on the page. Anywhere else in a block, the
+ * block holds the results area and stays.
+ */
+function summaryOnlyAtTop(block: HTMLElement): boolean {
+  const summary = block.querySelector('anubis-summary');
+  for (let el: Element | null = summary; el && el !== block; el = el.parentElement) {
+    if (el.previousElementSibling) return false;
+  }
+  return true;
 }
 
 /**

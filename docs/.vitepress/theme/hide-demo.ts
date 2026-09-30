@@ -222,7 +222,7 @@ export default defineComponent({
                 h('span', { class: 'short' }, [short, ' ', h('span', { class: 'demo-link' }, 'Show hidden'), ' ', h('span', { class: 'demo-link' }, 'Details')]),
               ]),
               fold(state.hidden, 'hd-change', [h('span', 'Hid fandom.com.'), ' ', h('span', { class: 'demo-link' }, 'Undo')]),
-              h('div', { class: 'summary-tags hd-tags' }, [tagMark('Reference', '#2b9aa0', 2), tagMark('Discussion', '#7a5aa6', 1), tagMark('Paywall', '#b5452e', 1)]),
+              h('div', { class: 'summary-tags hd-tags' }, [tagMark('Reference', '#2b9aa0', 2), tagMark('Discussion', '#7a5aa6', 1), tagMark('Paywalled', '#b5452e', 1)]),
             ]),
             h('div', { class: 'demo-results' }, RESULTS.map(result)),
           ]),

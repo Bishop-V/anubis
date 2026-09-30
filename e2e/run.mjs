@@ -974,10 +974,25 @@ if (!only || only === 'cleanup' || checks) {
   await page.waitForTimeout(300);
   const gridShown = await summaryPlace();
   console.log('   in a grid, after Show hidden:', JSON.stringify(gridShown));
+  // Hiding them again removes the answer again, though the summary sat at its top,
+  // and later passes (a site hidden from its menu) keep it removed.
+  await clickShadowButton('anubis-summary', 'Hide them again');
+  await page.waitForTimeout(300);
+  await sw.evaluate(async () => {
+    for (const tab of await chrome.tabs.query({})) await chrome.tabs.sendMessage(tab.id, { type: 'set-filter' }).catch(() => {});
+  });
+  await page.waitForTimeout(300);
+  const gridHiddenAgain = await page.evaluate(() => {
+    const ai = document.querySelector('.aiabove');
+    const summary = document.querySelector('anubis-summary');
+    return { aiShown: !!ai?.getClientRects().length, summaryShown: !!summary?.getClientRects().length, summaryInAi: !!ai?.contains(summary) };
+  });
+  console.log('   in a grid, after Hide them again:', JSON.stringify(gridHiddenAgain));
   if (checks) {
     assertChecks('summary above an AI Overview in a grid', {
       aboveWhenKept: gridKept.aboveAi && gridKept.aboveResults && gridKept.linedUp,
       aboveAfterShowHidden: gridShown.aboveAi && gridShown.aboveResults && gridShown.linedUp,
+      removedAgainAfterHideThemAgain: !gridHiddenAgain.aiShown && gridHiddenAgain.summaryShown && !gridHiddenAgain.summaryInAi,
     });
   }
 
@@ -1501,13 +1516,28 @@ if (!only || only === 'deeper' || checks) {
   await page.screenshot({ path: `${SHOTS}ddg-deeper.png`, fullPage: true });
   await setDeeper(0);
 
-  console.log('\n== load more results:', JSON.stringify({ googleByHand, googleAuto, ddgAuto }));
+  // DuckDuckGo: its own "More results" pressed by hand still counts as a page, so the
+  // summary and the next Load more results start from the pages that are there.
+  await page.goto('https://duckduckgo.com/?q=javascript+promises&more=1');
+  await page.waitForTimeout(800);
+  await page.click('#more-results');
+  await page.waitForTimeout(1200);
+  const ddgByHandPages = await sw.evaluate(async () => {
+    for (const tab of await chrome.tabs.query({})) {
+      const stats = await chrome.tabs.sendMessage(tab.id, { type: 'get-page-stats' }).catch(() => undefined);
+      if (stats?.engine === 'DuckDuckGo') return stats.pages;
+    }
+    return 'no answer';
+  });
+
+  console.log('\n== load more results:', JSON.stringify({ googleByHand, googleAuto, ddgAuto, ddgByHandPages }));
   if (checks) {
     assertChecks('load more results', {
       googleByHand: googleByHand === 1,
       googleAutomaticWithLatePager: googleAuto === 1,
       // The mock starts with 9 results and its More results button adds 3.
       duckDuckGoAutomatic: ddgAuto > 9,
+      duckDuckGoOwnButtonCounted: ddgByHandPages === 2,
     });
   }
 }

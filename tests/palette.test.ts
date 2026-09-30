@@ -45,3 +45,23 @@ describe('palette', () => {
     expect(background).toContain(`color: '${dark['--bg']}'`);
   });
 });
+
+describe('red is only for errors and deleting', () => {
+  // A ranking is a choice, not an error: a chosen Hide, a hidden note, or a rule that
+  // hides is grey. Red (`--danger`) stays for errors and actions that delete something.
+  const sheets = [
+    'assets/theme.css',
+    'entrypoints/content/shadow.css',
+    'entrypoints/popup/style.css',
+    'entrypoints/options/style.css',
+    'entrypoints/welcome/style.css',
+    'docs/.vitepress/theme/brand.css',
+  ];
+  it.each(sheets)('%s draws no Hide in red', (path) => {
+    const css = read(path).replace(/\/\*[\s\S]*?\*\//g, '');
+    const red = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+      .filter(([, selector, body]) => /\bhide\b/.test(selector!) && /--(demo-)?danger\b/.test(body!))
+      .map(([, selector]) => selector!.trim());
+    expect(red).toEqual([]);
+  });
+});

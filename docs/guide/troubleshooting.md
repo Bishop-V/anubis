@@ -31,7 +31,7 @@ Chrome hides new extensions behind the puzzle-piece icon in the toolbar. Open it
 
 ## AI answers or panels still show
 
-Check that the switch in **Settings → Clean up** is on; they all start off. If it is and an AI answer, a video panel, or another panel still shows (or only its heading goes), the search engine has probably changed how it's built. On Google, **Settings → Clean up → Always open the Web tab** removes all of them for certain in the meantime.
+Check that the switch in **Settings → Remove panels** is on; they all start off. If it is and an AI answer, a video panel, or another panel still shows (or only its heading goes), the search engine has probably changed how it's built. On Google, **Settings → Remove panels → Always open the Web tab** removes all of them for certain in the meantime.
 
 To help fix it, open the browser's console on that results page (<kbd>F12</kbd>, then **Console**), paste this and press <kbd>Enter</kbd>:
 
@@ -43,7 +43,7 @@ It copies the structure around those panels' headings: element names, classes, a
 
 ## Google always opens the Web tab
 
-That's **Settings → Clean up → Always open the Web tab**. Choose **All** above the results to see the usual page for one search, or turn the switch off.
+That's **Settings → Remove panels → Always open the Web tab**. Choose **All** above the results to see the usual page for one search, or turn the switch off.
 
 ## A list won't update or subscribe
 

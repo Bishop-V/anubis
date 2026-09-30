@@ -31,7 +31,7 @@ const SECTIONS: Section[] = [
   { id: 'sites', label: 'Your sites', render: renderSites, help: ['guide/ranking', 'How ranking works'] },
   { id: 'tags', label: 'Tags', render: renderTags, help: ['guide/tags', 'How tags work'] },
   { id: 'lists', label: 'Lists', render: renderLists, help: ['guide/lists', 'How lists work'] },
-  { id: 'cleanup', label: 'Clean up', render: renderCleanup, help: ['guide/clean-up', 'How clean-up works'] },
+  { id: 'cleanup', label: 'Remove panels', render: renderCleanup, help: ['guide/clean-up', 'How removing panels works'] },
   { id: 'appearance', label: 'Appearance', render: renderAppearance, help: ['guide/ranking#hidden-results', 'About hidden results'] },
   { id: 'engines', label: 'Search engines', render: renderEngines, help: ['guide/search-engines', 'Which engines work'] },
   { id: 'sync', label: t('syncHeading'), render: renderSync, help: ['guide/sync', 'How sync works'] },
@@ -59,9 +59,10 @@ async function renderNav() {
   };
   const active = current().id;
   nav.replaceChildren(
+    // The name opens the wiki, where everything here is explained.
     h(
-      'div',
-      { class: 'brand' },
+      'a',
+      { class: 'brand', href: guide(), target: '_blank', rel: 'noopener noreferrer', title: 'Open the Anubis wiki' },
       h('img', { src: '/anubis.svg', alt: '', width: 36, height: 36 }),
       h('div', null, h('h1', null, 'Anubis'), h('p', null, 'Hide, rank, and tag search results')),
     ),

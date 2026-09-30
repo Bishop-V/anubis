@@ -3,7 +3,8 @@ import { h } from '@/utils/dom';
 import { getSettings, updateSettings } from '@/utils/storage';
 import { helpLink, pageTitle, switchRow } from './parts';
 
-// "Clean up": parts of search pages that aren't results, removed on every search.
+// "Remove panels": parts of search pages that aren't results (AI answers, video
+// panels, "People also ask"), removed on every search.
 
 export async function renderCleanup(): Promise<HTMLElement> {
   const settings = await getSettings();
@@ -12,13 +13,13 @@ export async function renderCleanup(): Promise<HTMLElement> {
     'div',
     null,
     pageTitle(
-      'Clean up pages',
-      'Anubis can remove the parts of search pages that aren’t results. Turn on each one you’d rather not see. “Show hidden” above the results brings them back for that search.',
+      'Remove panels',
+      'Anubis can remove the panels on search pages that aren’t results. Turn on each one you’d rather not see. “Show hidden” above the results brings them back for that search.',
     ),
     h(
       'div',
       { class: 'panel' },
-      h('h3', null, 'Remove from every search'),
+      h('h3', null, 'On every search'),
       h(
         'p',
         { class: 'muted' },

@@ -22,17 +22,17 @@ highlights:
     link: /guide/ranking
     linkText: How ranking works
   - title: Tags you can act on
-    details: Results carry labels like “Official docs” or “Paywall”. Decide what each tag does, from just a label to hiding every result that has it.
+    details: Results carry labels like “Official docs” or “Paywalled”. Decide what each tag does, from just a label to hiding every result that has it.
     link: /guide/tags
     linkText: About tags
   - title: Lists anyone can publish
     details: A list is a text file in a Git repository. Brave Goggles and uBlacklist rulesets work unchanged.
     link: /guide/lists
     linkText: Subscribing to lists
-  - title: Clean up pages
+  - title: Remove panels
     details: Remove AI answers, video panels, and “People also ask” on every search. You choose which.
     link: /guide/clean-up
-    linkText: What clean-up removes
+    linkText: What it removes
 
 closing:
   title: Nothing to sign up for

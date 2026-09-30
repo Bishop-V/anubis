@@ -33,7 +33,7 @@ type Block = { id: string; kind: 'ai' | 'news' | 'questions' | 'videos' | 'discu
 type Item = Result | Block;
 
 const REFERENCE: Tag = { name: 'Reference', color: '#2b9aa0' };
-const PAYWALL: Tag = { name: 'Paywall', color: '#b5452e' };
+const PAYWALL: Tag = { name: 'Paywalled', color: '#b5452e' };
 
 const ITEMS: Item[] = [
   {

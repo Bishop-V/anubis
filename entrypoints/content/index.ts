@@ -132,6 +132,12 @@ export default defineContentScript({
       }
 
       const results = findResults(engine);
+      // A page you loaded with the engine's own button counts once its results arrive,
+      // so the summary's count and the next Load more results start from the pages here.
+      if (deeper.manualFrom !== undefined && !deeper.busy && results.length > deeper.manualFrom) {
+        deeper.pages++;
+        deeper.manualFrom = undefined;
+      }
       const stats: PageStats = {
         engine: engine.name,
         total: results.length,
@@ -477,6 +483,17 @@ export default defineContentScript({
     pass();
     // One early pass may run before the results exist; the observer catches the rest.
     document.addEventListener('DOMContentLoaded', () => schedule(), { once: true });
+    // Your own press of the engine's "More results" button (DuckDuckGo's), as opposed to
+    // Load more results pressing it, which happens while `deeper.busy` is set.
+    document.addEventListener(
+      'click',
+      (e) => {
+        const more = engine.more;
+        if (more?.kind !== 'click' || deeper.busy || !(e.target instanceof Element) || !e.target.closest(more.button)) return;
+        deeper.manualFrom = lastResults.length;
+      },
+      true,
+    );
 
     colorSchemeItem.watch((next) => {
       scheme = next;

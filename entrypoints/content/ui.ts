@@ -658,7 +658,9 @@ export function renderSummary(
   // One summary: another is left over from an earlier copy of the extension.
   for (const other of document.querySelectorAll('anubis-summary')) if (other !== summaryHost) other.remove();
   const tryFirst = !!place.fallback && !misplaced.has(place.before);
-  const inside = place.fallback && !misplacedInside.has(place.before) ? topOf(place.before) : undefined;
+  // Never inside an answer clean-up has removed: the summary would go with it.
+  const removed = place.before.hasAttribute('data-anubis-removed') && !place.before.hasAttribute('data-anubis-reveal');
+  const inside = place.fallback && !removed && !misplacedInside.has(place.before) ? topOf(place.before) : undefined;
   if (tryFirst) {
     if (summaryHost.nextElementSibling !== place.before) place.before.before(summaryHost);
   } else if (inside) {

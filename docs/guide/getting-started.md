@@ -79,4 +79,4 @@ On a Mac, press Control instead of Alt. To change them, open `chrome://extension
 - [Ranking sites](./ranking.md): what Lower, Raise, and Pin do.
 - [Tags](./tags.md): tag sites and decide what tags do.
 - [Subscribing to lists](./lists.md): let other people's lists do the work.
-- [Cleaning up pages](./clean-up.md): remove AI answers and other panels.
+- [Removing panels](./clean-up.md): take AI answers and other panels off search pages.

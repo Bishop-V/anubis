@@ -1,6 +1,6 @@
 # Tags
 
-Tags are small labels under a result's title: "Official docs", "Discussion", "Paywall". They come from the lists you subscribe to and from your own choices.
+Tags are small labels under a result's title: "Official docs", "Discussion", "Paywalled". They come from the lists you subscribe to and from your own choices.
 
 <!-- Maintainer: the generated screenshots on this page come from mock pages. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark images and their descriptions together. -->
 

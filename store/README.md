@@ -113,13 +113,13 @@ Anubis hides, ranks, and tags search results, on the search engine you already u
 
 Rank any site from the results. Press the ⚖ button on a result to hide, lower, raise, or pin that site, or to tag it. Your choices apply to every search.
 
-Tags. Results carry small labels such as "Official docs", "Discussion", or "Paywall", from your own tags and from lists you subscribe to. For each tag, choose whether it only shows, highlights results, or raises, lowers, or hides them.
+Tags. Results carry small labels such as "Official docs", "Discussion", or "Paywalled", from your own tags and from lists you subscribe to. For each tag, choose whether it only shows, highlights results, or raises, lowers, or hides them.
 
 Lists anyone can publish. Subscribe to lists hosted on GitHub, GitLab, Codeberg, or a gist. Anubis reads its own list format, Brave Goggles, uBlacklist rulesets, and plain lists of domains, so existing community lists work as they are.
 
 Load more results. Bring the next pages of results onto the first one and rank them together, so a site you pinned on page 3 rises to the top.
 
-Clean up pages. Remove AI answers, video panels, "People also ask", top stories, image rows, and related searches. Bing's AI answer and video panel aren't recognized yet.
+Remove panels. Take AI answers, video panels, "People also ask", top stories, image rows, and related searches off search pages. Bing's AI answer and video panel aren't recognized yet.
 
 Nothing disappears without a trace. A one-line summary says what Anubis changed, and "Show hidden" brings it back. Keyboard shortcuts turn Anubis on or off (Alt+Shift+O) and show hidden results (Alt+Shift+H).
 
