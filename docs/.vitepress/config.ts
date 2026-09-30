@@ -33,7 +33,8 @@ export default defineConfig({
   themeConfig: {
     logo: '/anubis.svg',
     nav: [
-      { text: 'Wiki', link: '/guide/introduction', activeMatch: '/guide/' },
+      // Privacy has its own item, so Wiki isn't lit up there too.
+      { text: 'Wiki', link: '/guide/introduction', activeMatch: '^/guide/(?!privacy)' },
       { text: 'Lists', link: '/lists' },
       { text: 'List format', link: '/list-format' },
       { text: 'Privacy', link: '/guide/privacy' },

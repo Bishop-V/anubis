@@ -53,6 +53,11 @@ Asked for: a global option to force-remove AI answers (Gemini's AI Overview, Duc
 - **Fixed from the live structure:** on the real page Anubis stopped at the video panel's header row (`div.UjLRDc`) instead of the panel. Google marks each block in the list with `data-rpos`, so engines can now declare a `blocks` selector: a recognised heading inside a marked block removes the whole block, up to the column, unless a real section of it is meant ("Images" in a panel keeps the panel). A "section" that is only its heading row no longer counts as one, and clickable cards (`[role=link]`, `[jsaction]`) count as items. The `videos=google` mock copies the reported structure; the previous build left the videos in place on it.
 - **Visible and undoable:** the summary names what was removed ("…and removed an AI answer and a video panel"), and "Show hidden" brings removed blocks back on that page, marked with a dashed outline. The AI Mode tab is removed but not counted, since it isn't content.
 
+## Lowered results and the button on DuckDuckGo (2026-09-30)
+
+- **Lowered results no longer fade.** They were at 58% opacity until hovered, which read as greyed out, as if they couldn't be used. A lowered site is still one you may want to read: it moves down, and its "Lowered" label says why. The Ranking sites guide and the homepage demo changed with it.
+- **The button left the result on DuckDuckGo.** It sits just left of each result's ⋯ menu, then moves away if it covers text: under the menu first, then past the result's right edge. DuckDuckGo cuts long addresses off with an ellipsis before the menu, but the cut-off text still reports its full width, so the button counted as covering it. It ended up under the menu on some results and outside the result (and outside a pinned result's frame) on others. Only text inside its clipping boxes counts now (`clipOf` in `ui.ts`). The DuckDuckGo mock's addresses are now long, cut-off breadcrumbs, as on the live page. The `pages` part asserts every button sits beside its menu: 3 of 7 didn't before the fix.
+
 ## Hidden results: removed by default
 
 Feedback from use, with a screenshot of a page where one site filled most results: the "Collapse" style's line per hidden result ("fandom.com hidden by your list · Show", fifteen times) clogged the page.

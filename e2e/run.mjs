@@ -334,6 +334,8 @@ if (!only || only === 'pages') {
     );
   const pairs = await pair();
   console.log('\n== ddg button beside its menu:', JSON.stringify({ results: pairs.length, all: pairs.every((p) => p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6), failing: pairs.filter((p) => !(p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6)) }));
+  // An address cut off with an ellipsis before the menu doesn't push the button away.
+  assertChecks('DuckDuckGo button beside its menu', { everyResult: pairs.length > 0 && pairs.every((p) => p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6) });
   // DuckDuckGo's open ⋯ menu is a role="menu" layer inside the result at z-index 1
   // (read from the live page): it must cover the button, not the other way round.
   const underMenu = await page.evaluate(() => {
@@ -1114,10 +1116,23 @@ if (!only || only === 'cleanup' || checks) {
           for (const r of range.getClientRects()) if (r.width) topmost = Math.min(topmost, r.top);
         }
         if (topmost < Infinity && (b.top + b.bottom) / 2 < topmost) above.push(host.parentElement.textContent.trim().slice(0, 40));
+        // What text shows: a long address cut off with an ellipsis doesn't reach the button.
+        const clip = (el) => {
+          const c = { left: -Infinity, right: Infinity, top: -Infinity, bottom: Infinity };
+          for (let a = el; a && a !== host.parentElement.parentElement; a = a.parentElement) {
+            const cs = getComputedStyle(a);
+            const r = a.getBoundingClientRect();
+            if (cs.overflowX !== 'visible') Object.assign(c, { left: Math.max(c.left, r.left), right: Math.min(c.right, r.right) });
+            if (cs.overflowY !== 'visible') Object.assign(c, { top: Math.max(c.top, r.top), bottom: Math.min(c.bottom, r.bottom) });
+          }
+          return c;
+        };
         for (let node = walker.nextNode(); node; node = walker.nextNode()) {
           if (!node.textContent.trim()) continue;
           range.selectNodeContents(node);
-          if ([...range.getClientRects()].some((r) => r.bottom > b.top + 1 && r.top < b.bottom - 1 && r.right > b.left + 1 && r.left < b.right - 1)) {
+          const c = clip(node.parentElement);
+          const shown = [...range.getClientRects()].map((r) => ({ left: Math.max(r.left, c.left), right: Math.min(r.right, c.right), top: Math.max(r.top, c.top), bottom: Math.min(r.bottom, c.bottom) }));
+          if (shown.some((r) => r.bottom > b.top + 1 && r.top < b.bottom - 1 && r.right > b.left + 1 && r.left < b.right - 1)) {
             over.push(node.textContent.trim().slice(0, 40));
             break;
           }

@@ -2,16 +2,22 @@
 
 Every site has a *ranking*, which you choose from the ⚖ button on any of its results, from the toolbar popup, or in **Settings → Your sites**.
 
-<!-- Maintainer: the generated screenshots on this page come from mock pages. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark images and their descriptions together. -->
+<!-- Maintainer: on the site, RankDemo (docs/.vitepress/theme/rank-demo.ts) draws a site being pinned and another lowered, and the picture below, for reading on GitHub, is hidden. The generated screenshots on this page come from mock pages. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark images and their descriptions together. -->
+
+<RankDemo />
+
+<div class="github-only">
 
 ![A result with its tags and the ⚖ button](../img/result.png)
+
+</div>
 
 The button's balance tips with the site's ranking: down on the left for a lowered site, up for a raised one, and level for the rest. A pinned site's button shows a gold pin instead of a redundant label; a hidden site's (once you show it) shows a crossed-out eye. The result has no separate "Pinned" or "Hidden" label because the selector already shows its ranking. "Raised" and "Lowered" labels remain beside the tags.
 
 | Ranking | What happens to the site's results |
 | --- | --- |
 | **Hide** | They disappear, or shrink to one line you can open (see [Hidden results](#hidden-results)). |
-| **Lower** | They move five places down and fade a little. |
+| **Lower** | They move five places down, with a "Lowered" label under the title. |
 | **Normal** | They stay where the engine put them, whatever your lists say. |
 | **Raise** | They move five places up. |
 | **Pin** | They go to the top, with a thin gold outline (grey with the Plain colours in **Settings → Appearance**). |

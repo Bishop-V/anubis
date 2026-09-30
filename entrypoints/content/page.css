@@ -52,14 +52,8 @@ html[data-anubis-hide='dim'] [data-anubis-state~='hide'] > anubis-bar {
   display: none !important;
 }
 
-/* Lowered: faded until hovered. */
-[data-anubis-state~='lower'] {
-  opacity: 0.58;
-  transition: opacity 0.15s;
-}
-[data-anubis-state~='lower']:hover {
-  opacity: 1;
-}
+/* Lowered results only move down: they aren't faded, since a lowered site is still
+   one you may want to read. The "Lowered" label under the title says why it moved. */
 
 /* Pinned: a thin gold frame drawn outside the box, so layout doesn't move. */
 [data-anubis-state~='pin'] {

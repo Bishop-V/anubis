@@ -143,6 +143,37 @@ for (const reducedMotion of ['no-preference', 'reduce']) {
   await page.close();
 }
 
+// Ranking sites' demo (rank-demo.ts): the last result is pinned and moves to the top
+// in its frame, then another is lowered and moves to the bottom with its label.
+for (const reducedMotion of ['no-preference', 'reduce']) {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion });
+  await page.goto(`${url}guide/ranking`, { waitUntil: 'networkidle' });
+  const staticShown = await page.evaluate(() => getComputedStyle(document.querySelector('.github-only')).display !== 'none');
+  await page.evaluate(() => document.querySelector('.rank-demo').scrollIntoView({ block: 'center' }));
+  let state;
+  let pointerSeen = false;
+  for (const end = Date.now() + 20000; Date.now() < end; ) {
+    state = await page.evaluate(() => ({
+      order: [...document.querySelectorAll('.rank-demo .rd-result .title')].map((t) => t.textContent),
+      pinnedFirst: !!document.querySelector('.rank-demo .rd-result:first-child.pinned'),
+      loweredLast: /Lowered/.test(document.querySelector('.rank-demo .rd-result:last-child')?.textContent ?? ''),
+      told: !!document.querySelector('.rank-demo .hd-change.open'),
+      menu: !!document.querySelector('.rank-demo .hd-menu'),
+      pointer: !!document.querySelector('.rank-demo .hd-pointer.shown'),
+      done: !document.querySelector('.rank-demo .hd-replay').disabled,
+    }));
+    pointerSeen ||= state.pointer;
+    if (state.done) break;
+    await page.waitForTimeout(100);
+  }
+  const label = `Ranking sites' demo (${reducedMotion} motion)`;
+  console.log(`${label}: ${JSON.stringify({ ...state, pointerSeen, staticShown })}`);
+  if (!state.done || !state.pinnedFirst || !state.loweredLast || !state.told || state.menu) failures.push(`${label}: doesn't end with the pinned site first and the lowered one last`);
+  if (pointerSeen !== (reducedMotion === 'no-preference')) failures.push(`${label}: the pointer ${pointerSeen ? 'shows' : "doesn't show"}`);
+  if (staticShown) failures.push(`${label}: the picture for GitHub shows on the site too`);
+  await page.close();
+}
+
 // Phones: nothing wider than the screen.
 for (const width of [320, 360, 390]) {
   const page = await browser.newPage({ viewport: { width, height: 844 } });

@@ -31,6 +31,7 @@ What Anubis draws and changes on search pages.
 - Keyboard shortcuts
 - Phone layouts (Firefox for Android)
 - Clean up pages
+- Lowered results and the button on DuckDuckGo (2026-09-30)
 - Hidden results: removed by default
 - Reranking
 - Load more results (more than one page of results)
