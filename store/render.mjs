@@ -1,6 +1,7 @@
 // Renders the store images that aren't screenshots: the Chrome Web Store icon
-// (the logo at 96×96 inside 128×128 of transparent padding, as the store asks)
-// and the 440×280 small promo tile. Run it after changing the logo:
+// (the logo at 96×96 inside 128×128 of transparent padding, as the store asks),
+// the 440×280 small promo tile, and the 1400×560 marquee tile. Run it after
+// changing the logo:
 //
 //   CHROMIUM_PATH=$(which chromium) node store/render.mjs
 
@@ -34,11 +35,25 @@ const tile = `<body style="margin:0;width:440px;height:280px;background:#1b1a16;
   </div>
 </body>`;
 
+// The 1400×560 marquee tile, shown only if the store features Anubis: the same
+// tile at full width, with the engines it works on under the tagline.
+const bigJackal = logo.replace(/<rect[^>]*\/>/, '').replace('<svg ', '<svg width="330" height="330" ');
+const marquee = `<body style="margin:0;width:1400px;height:560px;background:#1b1a16;font-family:${serif};overflow:hidden">
+  <div style="position:absolute;left:150px;top:115px">${bigJackal}</div>
+  <div style="position:absolute;left:560px;top:150px;right:80px">
+    <div style="color:#d4a637;font-size:120px;line-height:1;letter-spacing:0.01em">Anubis</div>
+    <div style="margin-top:30px;height:2px;background:#d4a637;opacity:0.45;width:380px"></div>
+    <div style="margin-top:28px;color:#e8e2d2;font-size:40px;line-height:1.3">Hide, rank, and tag search results</div>
+    <div style="margin-top:18px;color:#a8a293;font-size:24px;line-height:1.4">On Google, DuckDuckGo, Bing, Brave Search, and more</div>
+  </div>
+</body>`;
+
 const browser = await chromium.launch({ executablePath, headless: true });
 const page = await browser.newPage({ deviceScaleFactor: 1 });
 for (const [html, size, out] of [
   [icon, { width: 128, height: 128 }, 'icon-128.png'],
   [tile, { width: 440, height: 280 }, 'promo-440x280.png'],
+  [marquee, { width: 1400, height: 560 }, 'marquee-1400x560.png'],
 ]) {
   await page.setViewportSize(size);
   await page.setContent(`<!doctype html><meta charset="utf-8">${html}`);
