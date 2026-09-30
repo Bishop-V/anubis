@@ -40,6 +40,7 @@ The release workflow rejects tags whose commit is not already on `main`, as well
 - **Small promo tile:** [`promo-440x280.png`](promo-440x280.png).
 - **Marquee tile (1400×560) and video:** optional; skipped.
 - **Homepage:** `https://bishop-v.github.io/anubis/`. **Support:** `https://github.com/Bishop-V/anubis/issues`.
+- **Official URL:** `https://bishop-v.github.io/anubis/`, verified in Google Search Console as a URL-prefix property with the file [`docs/public/googleccef4dde1509753c.html`](../docs/public/googleccef4dde1509753c.html). Keep that file: Google checks it again from time to time, and the listing loses its verified link without it.
 
 ### Privacy practices tab
 
