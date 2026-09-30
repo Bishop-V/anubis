@@ -334,6 +334,8 @@ if (!only || only === 'pages') {
     );
   const pairs = await pair();
   console.log('\n== ddg button beside its menu:', JSON.stringify({ results: pairs.length, all: pairs.every((p) => p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6), failing: pairs.filter((p) => !(p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6)) }));
+  // An address cut off with an ellipsis before the menu doesn't push the button away.
+  assertChecks('DuckDuckGo button beside its menu', { everyResult: pairs.length > 0 && pairs.every((p) => p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6) });
   // DuckDuckGo's open ⋯ menu is a role="menu" layer inside the result at z-index 1
   // (read from the live page): it must cover the button, not the other way round.
   const underMenu = await page.evaluate(() => {
@@ -974,10 +976,25 @@ if (!only || only === 'cleanup' || checks) {
   await page.waitForTimeout(300);
   const gridShown = await summaryPlace();
   console.log('   in a grid, after Show hidden:', JSON.stringify(gridShown));
+  // Hiding them again removes the answer again, though the summary sat at its top,
+  // and later passes (a site hidden from its menu) keep it removed.
+  await clickShadowButton('anubis-summary', 'Hide them again');
+  await page.waitForTimeout(300);
+  await sw.evaluate(async () => {
+    for (const tab of await chrome.tabs.query({})) await chrome.tabs.sendMessage(tab.id, { type: 'set-filter' }).catch(() => {});
+  });
+  await page.waitForTimeout(300);
+  const gridHiddenAgain = await page.evaluate(() => {
+    const ai = document.querySelector('.aiabove');
+    const summary = document.querySelector('anubis-summary');
+    return { aiShown: !!ai?.getClientRects().length, summaryShown: !!summary?.getClientRects().length, summaryInAi: !!ai?.contains(summary) };
+  });
+  console.log('   in a grid, after Hide them again:', JSON.stringify(gridHiddenAgain));
   if (checks) {
     assertChecks('summary above an AI Overview in a grid', {
       aboveWhenKept: gridKept.aboveAi && gridKept.aboveResults && gridKept.linedUp,
       aboveAfterShowHidden: gridShown.aboveAi && gridShown.aboveResults && gridShown.linedUp,
+      removedAgainAfterHideThemAgain: !gridHiddenAgain.aiShown && gridHiddenAgain.summaryShown && !gridHiddenAgain.summaryInAi,
     });
   }
 
@@ -1099,10 +1116,23 @@ if (!only || only === 'cleanup' || checks) {
           for (const r of range.getClientRects()) if (r.width) topmost = Math.min(topmost, r.top);
         }
         if (topmost < Infinity && (b.top + b.bottom) / 2 < topmost) above.push(host.parentElement.textContent.trim().slice(0, 40));
+        // What text shows: a long address cut off with an ellipsis doesn't reach the button.
+        const clip = (el) => {
+          const c = { left: -Infinity, right: Infinity, top: -Infinity, bottom: Infinity };
+          for (let a = el; a && a !== host.parentElement.parentElement; a = a.parentElement) {
+            const cs = getComputedStyle(a);
+            const r = a.getBoundingClientRect();
+            if (cs.overflowX !== 'visible') Object.assign(c, { left: Math.max(c.left, r.left), right: Math.min(c.right, r.right) });
+            if (cs.overflowY !== 'visible') Object.assign(c, { top: Math.max(c.top, r.top), bottom: Math.min(c.bottom, r.bottom) });
+          }
+          return c;
+        };
         for (let node = walker.nextNode(); node; node = walker.nextNode()) {
           if (!node.textContent.trim()) continue;
           range.selectNodeContents(node);
-          if ([...range.getClientRects()].some((r) => r.bottom > b.top + 1 && r.top < b.bottom - 1 && r.right > b.left + 1 && r.left < b.right - 1)) {
+          const c = clip(node.parentElement);
+          const shown = [...range.getClientRects()].map((r) => ({ left: Math.max(r.left, c.left), right: Math.min(r.right, c.right), top: Math.max(r.top, c.top), bottom: Math.min(r.bottom, c.bottom) }));
+          if (shown.some((r) => r.bottom > b.top + 1 && r.top < b.bottom - 1 && r.right > b.left + 1 && r.left < b.right - 1)) {
             over.push(node.textContent.trim().slice(0, 40));
             break;
           }
@@ -1501,13 +1531,28 @@ if (!only || only === 'deeper' || checks) {
   await page.screenshot({ path: `${SHOTS}ddg-deeper.png`, fullPage: true });
   await setDeeper(0);
 
-  console.log('\n== load more results:', JSON.stringify({ googleByHand, googleAuto, ddgAuto }));
+  // DuckDuckGo: its own "More results" pressed by hand still counts as a page, so the
+  // summary and the next Load more results start from the pages that are there.
+  await page.goto('https://duckduckgo.com/?q=javascript+promises&more=1');
+  await page.waitForTimeout(800);
+  await page.click('#more-results');
+  await page.waitForTimeout(1200);
+  const ddgByHandPages = await sw.evaluate(async () => {
+    for (const tab of await chrome.tabs.query({})) {
+      const stats = await chrome.tabs.sendMessage(tab.id, { type: 'get-page-stats' }).catch(() => undefined);
+      if (stats?.engine === 'DuckDuckGo') return stats.pages;
+    }
+    return 'no answer';
+  });
+
+  console.log('\n== load more results:', JSON.stringify({ googleByHand, googleAuto, ddgAuto, ddgByHandPages }));
   if (checks) {
     assertChecks('load more results', {
       googleByHand: googleByHand === 1,
       googleAutomaticWithLatePager: googleAuto === 1,
       // The mock starts with 9 results and its More results button adds 3.
       duckDuckGoAutomatic: ddgAuto > 9,
+      duckDuckGoOwnButtonCounted: ddgByHandPages === 2,
     });
   }
 }

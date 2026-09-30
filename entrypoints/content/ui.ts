@@ -393,12 +393,40 @@ function coversText(host: HTMLElement, container: HTMLElement): boolean {
     if (!parent || !node.textContent?.trim()) continue;
     const p = parent.getBoundingClientRect();
     if (p.bottom <= b.top || p.top >= b.bottom || p.right <= b.left || p.left >= b.right) continue;
+    // Text cut off with an ellipsis (DuckDuckGo's long addresses) still reports the
+    // hidden part: only what's inside its clipping boxes counts.
+    const clip = clipOf(parent, container);
     range.selectNodeContents(node);
     for (const r of range.getClientRects()) {
-      if (r.bottom > b.top + 1 && r.top < b.bottom - 1 && r.right > b.left + 1 && r.left < b.right - 1) return true;
+      const left = Math.max(r.left, clip.left);
+      const right = Math.min(r.right, clip.right);
+      const top = Math.max(r.top, clip.top);
+      const bottom = Math.min(r.bottom, clip.bottom);
+      if (bottom > b.top + 1 && top < b.bottom - 1 && right > b.left + 1 && left < b.right - 1) return true;
     }
   }
   return false;
+}
+
+/** The part of the page `el` can show: its ancestors up to `container` that clip their overflow, intersected. */
+function clipOf(el: HTMLElement, container: HTMLElement): { left: number; right: number; top: number; bottom: number } {
+  const clip = { left: -Infinity, right: Infinity, top: -Infinity, bottom: Infinity };
+  for (let a: HTMLElement | null = el; a; a = a.parentElement) {
+    const cs = getComputedStyle(a);
+    if (cs.overflowX !== 'visible' || cs.overflowY !== 'visible') {
+      const r = a.getBoundingClientRect();
+      if (cs.overflowX !== 'visible') {
+        clip.left = Math.max(clip.left, r.left);
+        clip.right = Math.min(clip.right, r.right);
+      }
+      if (cs.overflowY !== 'visible') {
+        clip.top = Math.max(clip.top, r.top);
+        clip.bottom = Math.min(clip.bottom, r.bottom);
+      }
+    }
+    if (a === container) break;
+  }
+  return clip;
 }
 
 /**
@@ -658,7 +686,9 @@ export function renderSummary(
   // One summary: another is left over from an earlier copy of the extension.
   for (const other of document.querySelectorAll('anubis-summary')) if (other !== summaryHost) other.remove();
   const tryFirst = !!place.fallback && !misplaced.has(place.before);
-  const inside = place.fallback && !misplacedInside.has(place.before) ? topOf(place.before) : undefined;
+  // Never inside an answer clean-up has removed: the summary would go with it.
+  const removed = place.before.hasAttribute('data-anubis-removed') && !place.before.hasAttribute('data-anubis-reveal');
+  const inside = place.fallback && !removed && !misplacedInside.has(place.before) ? topOf(place.before) : undefined;
   if (tryFirst) {
     if (summaryHost.nextElementSibling !== place.before) place.before.before(summaryHost);
   } else if (inside) {

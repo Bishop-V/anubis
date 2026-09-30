@@ -297,7 +297,7 @@ function tagLabel(lists: CompiledList[], id: string): string {
 
 /**
  * Your tag choices as a sentence fragment, for the result menu's Why: "raise it by
- * 5 for “Official docs” and “Reference” and lower it by 5 for “Paywall”, so it
+ * 5 for “Official docs” and “Reference” and lower it by 5 for “Paywalled”, so it
  * moves 5 places up". Undefined when no choice moves or hides the result.
  */
 function describeChoices(chosen: Map<string, TagAction>, label: (id: string) => string): string | undefined {

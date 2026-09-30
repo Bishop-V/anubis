@@ -33,7 +33,7 @@ type Block = { id: string; kind: 'ai' | 'news' | 'questions' | 'videos' | 'discu
 type Item = Result | Block;
 
 const REFERENCE: Tag = { name: 'Reference', color: '#2b9aa0' };
-const PAYWALL: Tag = { name: 'Paywall', color: '#b5452e' };
+const PAYWALL: Tag = { name: 'Paywalled', color: '#b5452e' };
 
 const ITEMS: Item[] = [
   {
@@ -125,7 +125,7 @@ const STEPS: { title: string; text: string }[] = [
 //   in entrypoints/content/ui.ts, .gone in shadow.css) is only for Collapse;
 // - what clean-up removes: CLEANUP in utils/cleanup.ts. Only draw panels of those
 //   kinds, named in the summary in that order;
-// - lowered and pinned results: entrypoints/content/page.css (the fade, the frame).
+// - pinned results: entrypoints/content/page.css (the frame). Lowered results only move, unfaded.
 
 // The button on each result: the balance tipped to the ranking, or the pin.
 type Level = 'lower' | 'normal' | 'raise' | 'pin';

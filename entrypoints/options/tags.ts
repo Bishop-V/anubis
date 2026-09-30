@@ -255,7 +255,7 @@ export async function renderTags(): Promise<HTMLElement> {
           'div',
           { class: 'controls' },
           action,
-          h('label', { class: 'show', title: 'Show this tag under results' }, h('span', { class: 'switch' }, show, h('span')), 'Shown'),
+          h('label', { class: 'switch show', title: 'Show this tag under results' }, show, h('span')),
           toggle,
         ),
         mine

@@ -40,7 +40,7 @@ Read these only when the task touches them, and only the relevant section:
 
 ## Conventions
 
-- Use `STYLEGUIDE.md`'s tokens, sizes, and controls; don't add a colour, size, or radius without adding it there. Brand colours: background `#1b1a16`, gold `#d4a637`.
+- Use `STYLEGUIDE.md`'s tokens, sizes, and controls; don't add a colour, size, or radius without adding it there. Brand colours: background `#1b1a16`, gold `#d4a637`. Red (`--danger`) is only for errors and actions that delete something, never for a ranking or a state: a chosen Hide is grey (`tests/palette.test.ts` checks).
 - Design follows `.claude/skills/frontend-design`: on search pages stay quiet (the page's font, muted text, no fills); the result menu's cartouche and balance are the one flourish. Sentence case, no ALL-CAPS labels, no "·"-joined meta strings.
 - Write whole sentences in British spelling, with the serial comma in lists of three or more ("a, b, and c"); when a sentence needs a second "and", start another.
 - Wording follows `.claude/skills/ux-heuristics`: labels say what happens in plain words. The Anubis motif stays in the logo, the summary's mark, and the menu's balance, never in a function's name. One word per concept: a site's *ranking* is Hide, Lower, Normal, Raise, or Pin. Icons only where universally understood (`ICON_GEAR`, ×), and every icon-only button gets an `aria-label` and a tooltip.

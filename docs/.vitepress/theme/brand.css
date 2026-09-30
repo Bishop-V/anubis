@@ -59,7 +59,6 @@ html:not(.dark) .dark-only,
   --home-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
   --demo-page: #ffffff;
   --demo-link: #2a4fa8;
-  --demo-lowered: 0.58;
 }
 .dark {
   --demo-page: #202124;
@@ -480,9 +479,6 @@ body .VPContent .VPHome {
 .demo-verdict svg {
   width: 13px;
   height: 13px;
-}
-.demo-result.lowered {
-  opacity: var(--demo-lowered);
 }
 /* The button on each result, as the extension's .weigh: muted, its balance tipping
    with the ranking, and gold only for a pinned site. */

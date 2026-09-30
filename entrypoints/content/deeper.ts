@@ -19,6 +19,8 @@ export interface DeeperState {
   error?: string;
   /** "Load more results automatically" already ran for this search. */
   auto?: boolean;
+  /** How many results there were when you pressed the engine's own "More results" button yourself. */
+  manualFrom?: number;
 }
 
 export function freshState(engine: EngineDef): DeeperState {

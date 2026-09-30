@@ -33,7 +33,8 @@ export default defineConfig({
   themeConfig: {
     logo: '/anubis.svg',
     nav: [
-      { text: 'Wiki', link: '/guide/introduction', activeMatch: '/guide/' },
+      // Privacy has its own item, so Wiki isn't lit up there too.
+      { text: 'Wiki', link: '/guide/introduction', activeMatch: '^/guide/(?!privacy)' },
       { text: 'Lists', link: '/lists' },
       { text: 'List format', link: '/list-format' },
       { text: 'Privacy', link: '/guide/privacy' },
@@ -52,7 +53,7 @@ export default defineConfig({
           { text: 'Ranking sites', link: '/guide/ranking' },
           { text: 'Tags', link: '/guide/tags' },
           { text: 'Subscribing to lists', link: '/guide/lists' },
-          { text: 'Cleaning up pages', link: '/guide/clean-up' },
+          { text: 'Removing panels', link: '/guide/clean-up' },
           { text: 'Loading more results', link: '/guide/more-results' },
           { text: 'Moving from other tools', link: '/guide/import-and-backup' },
           { text: 'Syncing between computers', link: '/guide/sync' },
