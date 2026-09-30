@@ -5,8 +5,13 @@ import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, ref, type VNo
 // step, beside the page before Anubis. Each step after it changes the page:
 // clean-up removes the panels, a site is hidden, and the rest are ranked, then
 // tagged, while a line beside the steps fills as you go. The words match what the
-// extension says (the summary, the hidden line, the tags). Without JavaScript, or
-// before it loads, the page shows the first step.
+// extension says (the summary, the labels, the tags). Without JavaScript, or before
+// it loads, the page shows the first step.
+//
+// The page is a search engine's, but no one engine's: a plain search box and tabs,
+// no wordmark. Before Anubis it's as crowded as a real one gets, with panels between
+// the results, and only with kinds of panel clean-up can remove, so the demo doesn't
+// promise more than the extension does.
 
 type Tag = { name: string; color: string };
 type Result = {
@@ -22,28 +27,57 @@ type Result = {
   raised?: boolean;
   lowered?: boolean;
 };
-type Block = { id: string; heading: string; lines: string[] };
+// A panel between the results: `lines` are what it lists, `meta` a line of small
+// print for each (a source, a length, a count).
+type Block = { id: string; kind: 'ai' | 'news' | 'questions' | 'videos' | 'discussions' | 'images'; heading: string; lines: string[]; meta?: string[] };
 type Item = Result | Block;
 
 const REFERENCE: Tag = { name: 'Reference', color: '#2b9aa0' };
 const PAYWALL: Tag = { name: 'Paywall', color: '#b5452e' };
 
 const ITEMS: Item[] = [
-  { id: 'ai', heading: 'AI overview', lines: ['Anubis is the jackal-headed god of the dead in ancient Egyptian religion, linked with mummification and the protection of tombs.'] },
+  {
+    id: 'ai',
+    kind: 'ai',
+    heading: 'AI overview',
+    lines: ['Anubis is the jackal-headed god of the dead in ancient Egyptian religion, linked with mummification and the protection of tombs. He was said to weigh the hearts of the dead against a feather.'],
+    meta: ['Wikipedia', 'Britannica', '+4 sites'],
+  },
   { id: 'wiki', site: 'Wikipedia', url: 'en.wikipedia.org › wiki › Anubis', icon: ['#ffffff', '#000000', 'W'], title: 'Anubis - Wikipedia', snippet: 'Anubis is the god of funerary rites, protector of graves, and guide to the underworld.', tag: REFERENCE, pinned: true },
+  {
+    id: 'news',
+    kind: 'news',
+    heading: 'Top stories',
+    lines: ['Jackal mummies found in a Saqqara catacomb', 'Museum reopens its gallery of Anubis statues', 'What the weighing of the heart tells us'],
+    meta: ['Heritage Daily', 'The Museum Post', 'Ancient Review'],
+  },
   { id: 'fandom', site: 'Fandom', url: 'mythology.fandom.com › wiki › Anubis', icon: ['#fa005a', '#ffffff', 'F'], title: 'Anubis | Mythology Wiki | Fandom', snippet: 'Anubis is the Egyptian god of mummification and the afterlife.', hidden: true },
-  { id: 'videos', heading: 'Videos', lines: ['Anubis explained', 'Tomb of Anubis'] },
+  {
+    id: 'questions',
+    kind: 'questions',
+    heading: 'People also ask',
+    lines: ['Is Anubis good or evil?', 'Why does Anubis have a jackal head?', 'Who is the wife of Anubis?', 'What is Anubis the god of?'],
+  },
+  { id: 'videos', kind: 'videos', heading: 'Videos', lines: ['Anubis explained', 'Tomb of Anubis', 'The weighing of the heart'], meta: ['6:14', '12:03', '3:47'] },
   { id: 'brit', site: 'Britannica', url: 'www.britannica.com › topic › Anubis', icon: ['#0f4c81', '#ffffff', 'B'], title: 'Anubis | Egyptian God, Mythology, & Facts', snippet: 'Anubis, also called Anpu, ancient Egyptian god of the dead, represented by a jackal.', tag: REFERENCE },
+  {
+    id: 'discussions',
+    kind: 'discussions',
+    heading: 'Discussions and forums',
+    lines: ['Why is Anubis always shown as a jackal?', 'Best books on Anubis and the afterlife?'],
+    meta: ['Egyptology forum, 38 replies', 'History questions, 12 replies'],
+  },
   { id: 'nyt', site: 'The New York Times', url: 'www.nytimes.com › 2026 › 03', icon: ['#ffffff', '#000000', 'T'], title: 'Archaeologists Find a Shrine to Anubis', snippet: 'A newly excavated site near Saqqara suggests Anubis was worshipped there for centuries.', tag: PAYWALL, lowered: true },
-  { id: 'paa', heading: 'People also ask', lines: ['Is Anubis good or evil?', 'Why does Anubis have a jackal head?', 'Who is the wife of Anubis?'] },
+  { id: 'images', kind: 'images', heading: 'Images', lines: ['', '', '', '', '', ''] },
   { id: 'whe', site: 'World History Encyclopedia', url: 'www.worldhistory.org › Anubis', icon: ['#8b1c1c', '#ffffff', 'W'], title: 'Anubis - World History Encyclopedia', snippet: 'Anubis is the Egyptian god of mummification and the afterlife.', tag: REFERENCE, raised: true },
 ];
 
-// After the ranking step: pinned first, then raised, lowered last; hidden sites keep
-// their place.
+// After the ranking step: pinned first, then raised, lowered last. The hidden site
+// has left the page by then, so its place doesn't matter.
 const RANKED = ['wiki', 'whe', 'fandom', 'brit', 'nyt'];
 
-const REMOVED = 'an AI answer, a video panel, and a question list';
+// In the order the extension names them (CLEANUP in utils/cleanup.ts).
+const REMOVED = 'an AI answer, a video panel, a question list, a discussions panel, a news panel, and an image panel';
 const SUMMARY = [
   '',
   '',
@@ -66,8 +100,8 @@ const SHORT = [
 ];
 
 const STEPS: { title: string; text: string }[] = [
-  { title: 'Clutter out', text: 'Anubis strips AI answers, video panels, and question lists. You pick which.' },
-  { title: 'Done with a site?', text: 'Hide it from the scales beside any result. It stays hidden on every search, folded to one line in case you want it back.' },
+  { title: 'Clutter out', text: 'Anubis strips AI answers, question lists, and the panels in between. You pick which.' },
+  { title: 'Done with a site?', text: 'Hide it from the scales beside any result. It’s gone from every search after that, and Show hidden brings it back.' },
   { title: 'Your sites first', text: 'Pin or raise the sites you trust. Lower the ones you put up with. The scales tip to show where each one stands.' },
   { title: 'Know before you click', text: 'Tags from lists mark reference sites, paywalls, and more. The summary says what changed, and Show hidden undoes it.' },
 ];
@@ -86,15 +120,15 @@ const STEPS: { title: string; text: string }[] = [
 //   has no label, since its button shows the pin);
 // - the button on each result: .weigh in shadow.css (muted, and gold only for a
 //   pinned site);
-// - the hidden line: renderHiddenBar in entrypoints/content/ui.ts and .gone in
-//   shadow.css: the crossed-out eye, then the site and its reason on one line, cut
-//   short with an ellipsis when it doesn't fit (as it often doesn't on a phone), then
-//   Show;
+// - hidden results: gone from the page, as Remove (the default in Settings →
+//   Appearance) does, and counted in the summary. The one-line form (renderHiddenBar
+//   in entrypoints/content/ui.ts, .gone in shadow.css) is only for Collapse;
+// - what clean-up removes: CLEANUP in utils/cleanup.ts. Only draw panels of those
+//   kinds, named in the summary in that order;
 // - lowered and pinned results: entrypoints/content/page.css (the fade, the frame).
 
-// The button on each result: the balance tipped to the ranking, the pin, or the
-// crossed-out eye.
-type Level = 'hide' | 'lower' | 'normal' | 'raise' | 'pin';
+// The button on each result: the balance tipped to the ranking, or the pin.
+type Level = 'lower' | 'normal' | 'raise' | 'pin';
 const svg = (body: string) =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
 const balance = (left: number, right: number) =>
@@ -104,7 +138,6 @@ const balance = (left: number, right: number) =>
       `<path d="M1 ${left + 3.6}h3.2a1.6 1.6 0 0 1-3.2 0zM11.8 ${right + 3.6}H15a1.6 1.6 0 0 1-3.2 0z"/>`,
   );
 const WEIGH: Record<Level, string> = {
-  hide: svg('<path d="M2 8s2.2-4.5 6-4.5c1.3 0 2.4.5 3.3 1.1M14 8s-2.2 4.5-6 4.5c-1.3 0-2.4-.5-3.3-1.1"/><path d="M2.5 13.5l11-11"/>'),
   lower: balance(6.4, 3.6),
   normal: balance(5, 5),
   raise: balance(3.6, 6.4),
@@ -152,24 +185,24 @@ function renderResult(r: Result, step: number): VNode {
       ]),
       h('div', { class: 'snippet' }, r.snippet),
     ]),
-    fold(hidden, 'hidden-line', [
-      h('span', { class: 'gone-icon', innerHTML: WEIGH.hide }),
-      h('span', { class: 'why' }, [h('b', r.url.split(' ')[0]!.replace(/^www\./, '')), ' hidden by your list']),
-      h('span', { class: 'demo-link' }, 'Show'),
-      weigh('hide'),
-    ]),
   ]);
 }
 
 function renderBlock(b: Block, step: number): VNode {
-  return fold(step < 2, 'demo-block', [
-    h('div', { class: 'block-heading' }, b.heading),
-    b.id === 'videos'
-      ? h('div', { class: 'videos' }, b.lines.map((l) => h('div', { class: 'video' }, [h('span', { class: 'thumb' }), h('span', l)])))
-      : b.id === 'paa'
-        ? h('div', b.lines.map((l) => h('div', { class: 'question' }, l)))
-        : h('p', { class: 'snippet' }, b.lines[0]),
-  ]);
+  const meta = (i: number) => b.meta?.[i] ?? '';
+  const body =
+    b.kind === 'ai'
+      ? [h('p', { class: 'snippet' }, b.lines[0]), h('div', { class: 'sources' }, (b.meta ?? []).map((m) => h('span', { class: 'source' }, m)))]
+      : b.kind === 'news'
+        ? h('div', { class: 'cards' }, b.lines.map((l, i) => h('div', { class: 'card' }, [h('span', { class: 'card-image' }), h('span', { class: 'card-source' }, meta(i)), h('span', { class: 'card-title' }, l)])))
+        : b.kind === 'questions'
+          ? h('div', b.lines.map((l) => h('div', { class: 'question' }, l)))
+          : b.kind === 'videos'
+            ? h('div', { class: 'videos' }, b.lines.map((l, i) => h('div', { class: 'video' }, [h('span', { class: 'thumb' }, [h('span', { class: 'length' }, meta(i))]), h('span', l)])))
+            : b.kind === 'discussions'
+              ? h('div', b.lines.map((l, i) => h('div', { class: 'thread' }, [h('span', { class: 'forum' }, meta(i)), h('span', { class: 'thread-title' }, l)])))
+              : h('div', { class: 'tiles' }, b.lines.map(() => h('span', { class: 'tile' })));
+  return fold(step < 2, 'demo-block', [h('div', { class: 'block-heading' }, b.heading), body].flat());
 }
 
 function renderPage(step: number): VNode {
@@ -177,6 +210,7 @@ function renderPage(step: number): VNode {
   const order = (item: Item, i: number) => (step < 4 ? i : isBlock(item) ? -1 : RANKED.indexOf(item.id));
   return h('div', { class: 'demo-page', 'aria-hidden': 'true' }, [
     h('div', { class: 'searchbar' }, [h('span', 'anubis'), h('span', { class: 'lens' })]),
+    h('div', { class: 'tabs' }, ['All', 'Images', 'Videos', 'News', 'Maps', 'More'].map((t, i) => h('span', { class: { current: i === 0 } }, t))),
     fold(step >= 2, 'demo-summary', [
       h('p', [
         h('span', { class: 'mark', innerHTML: MARK }),
@@ -295,7 +329,7 @@ export default defineComponent({
                   class: ['demo-step', { active: step.value === i + 2, reached: step.value >= i + 2 }],
                   'aria-current': step.value === i + 2 ? 'step' : undefined,
                 },
-                [h('h2', [h('span', { class: 'demo-marker', 'aria-hidden': 'true' }), s.title]), h('p', s.text)],
+                [h('h2', [h('span', { class: 'demo-marker', 'aria-hidden': 'true' }), h('span', { class: 'demo-step-title' }, s.title)]), h('p', s.text)],
               ),
             ),
           ),

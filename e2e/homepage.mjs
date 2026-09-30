@@ -1,6 +1,7 @@
 // Checks the built documentation site's homepage layout: the heading and its
 // buttons sit centred beside the drawn results page, at any window height, and
-// phones don't scroll sideways. Run it after `npm run docs:build`:
+// phones don't scroll sideways. It also plays the Introduction's demo through.
+// Run it after `npm run docs:build`:
 //
 //   node e2e/homepage.mjs
 //
@@ -50,8 +51,10 @@ const url = `http://127.0.0.1:${server.address().port}${BASE}`;
 const browser = await chromium.launch({ executablePath: findChromium() });
 const failures = [];
 
-// Wide windows: the heading's block (title to the scroll hint) is centred on the
-// drawn page and stays within its height, short windows and tall ones alike.
+// Wide windows, short and tall alike: the heading's block (title to the scroll
+// hint) is centred on the drawn page and stays within its height; the two sit in
+// the middle of the window below the top bar, not high with a gap under them; and
+// the page stays where it is once scrolling starts, since it sticks at that place.
 for (const [width, height] of [
   [1024, 768],
   [1280, 720],
@@ -68,12 +71,74 @@ for (const [width, height] of [
     const title = rect('.home-title');
     const cue = rect('.demo-cue');
     const stage = rect('.demo-page');
-    return { top: title.top, bottom: cue.bottom, stageTop: stage.top, stageBottom: stage.bottom };
+    // The top bar's height, resolved to pixels whatever unit the theme gives it in.
+    const probe = document.body.appendChild(document.createElement('div'));
+    probe.style.height = 'var(--vp-nav-height)';
+    const nav = probe.getBoundingClientRect().height;
+    probe.remove();
+    return { top: title.top, bottom: cue.bottom, stageTop: stage.top, stageBottom: stage.bottom, nav };
   });
   const offCentre = Math.round((box.top + box.bottom) / 2 - (box.stageTop + box.stageBottom) / 2);
   const inside = box.top >= box.stageTop - 1 && box.bottom <= box.stageBottom + 1;
-  console.log(`${width}×${height}: heading ${offCentre}px from the page's centre${inside ? '' : ', and runs past it'}`);
+  const offWindow = Math.round((box.stageTop + box.stageBottom) / 2 - (box.nav + height) / 2);
+  await page.evaluate(() => scrollTo(0, 400));
+  await page.waitForTimeout(150);
+  const moved = Math.round((await page.evaluate(() => document.querySelector('.demo-page').getBoundingClientRect().top)) - box.stageTop);
+  console.log(
+    `${width}×${height}: heading ${offCentre}px from the page's centre${inside ? '' : ', and runs past it'}; ` +
+      `page ${offWindow}px from the window's middle; moves ${moved}px when scrolling starts`,
+  );
   if (Math.abs(offCentre) > 8 || !inside) failures.push(`${width}×${height}: the heading isn't centred beside the page`);
+  if (Math.abs(offWindow) > 8) failures.push(`${width}×${height}: the page and heading aren't in the middle of the window`);
+  if (Math.abs(moved) > 1) failures.push(`${width}×${height}: the page jumps when scrolling starts`);
+  await page.close();
+}
+
+// The line beside the steps runs behind their diamonds, so each diamond has to be
+// solid, dimmed step or not: at any opacity the line shows through it.
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto(url, { waitUntil: 'networkidle' });
+  const seeThrough = await page.evaluate(() =>
+    [...document.querySelectorAll('.demo-marker')].filter((marker) => {
+      let opacity = 1;
+      for (let el = marker; el; el = el.parentElement) opacity *= Number(getComputedStyle(el).opacity);
+      return opacity < 1;
+    }).length,
+  );
+  console.log(`Step diamonds you can see the line through: ${seeThrough}`);
+  if (seeThrough) failures.push(`${seeThrough} of the steps' diamonds let the line show through`);
+  await page.close();
+}
+
+// The Introduction's demo (hide-demo.ts) plays when it scrolls into view: the menu
+// opens, and it ends with the site gone, the summary saying so, and the menu closed.
+// With reduced motion it gets there too, without the pointer. The picture kept for
+// GitHub isn't shown on the site.
+for (const reducedMotion of ['no-preference', 'reduce']) {
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion });
+  await page.goto(`${url}guide/introduction`, { waitUntil: 'networkidle' });
+  const staticShown = await page.evaluate(() => getComputedStyle(document.querySelector('.github-only')).display !== 'none');
+  await page.evaluate(() => document.querySelector('.hide-demo').scrollIntoView({ block: 'center' }));
+  let seen = { pointer: false, menu: false };
+  let state;
+  for (const end = Date.now() + 10000; Date.now() < end; ) {
+    state = await page.evaluate(() => ({
+      pointer: !!document.querySelector('.hd-pointer.shown'),
+      menu: !!document.querySelector('.hd-menu'),
+      told: !!document.querySelector('.hd-change.open'),
+      gone: document.querySelectorAll('.hide-demo .demo-result > .fold.full:not(.open)').length === 1,
+      done: !document.querySelector('.hd-replay').disabled,
+    }));
+    seen = { pointer: seen.pointer || state.pointer, menu: seen.menu || state.menu };
+    if (state.done) break;
+    await page.waitForTimeout(100);
+  }
+  const label = `Introduction's demo (${reducedMotion} motion)`;
+  console.log(`${label}: ${JSON.stringify({ ...state, pointerSeen: seen.pointer, menuSeen: seen.menu, staticShown })}`);
+  if (!state.done || !state.told || !state.gone || state.menu || !seen.menu) failures.push(`${label}: doesn't end with the site hidden and the summary saying so`);
+  if (seen.pointer !== (reducedMotion === 'no-preference')) failures.push(`${label}: the pointer ${seen.pointer ? 'shows' : "doesn't show"}`);
+  if (staticShown) failures.push(`${label}: the picture for GitHub shows on the site too`);
   await page.close();
 }
 
