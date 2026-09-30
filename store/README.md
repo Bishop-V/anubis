@@ -107,7 +107,7 @@ Public, all regions.
 
 ## Description (both stores)
 
-Plain text, so it reads the same in both dashboards.
+Plain text, so it reads the same in both dashboards. Don't list the search engines by name: the Chrome Web Store rejected the first submission (2026-09-30) for keyword spam over the line naming all ten, so it links to the wiki's list instead. The host-permission justification can still name them; reviewers read it, and people searching the store don't.
 
 ```text
 Anubis hides, ranks, and tags search results, on the search engine you already use.
@@ -124,7 +124,7 @@ Remove panels. Take AI answers, video panels, "People also ask", top stories, im
 
 Nothing disappears without a trace. A one-line summary says what Anubis changed, and "Show hidden" brings it back. Keyboard shortcuts turn Anubis on or off (Alt+Shift+O) and show hidden results (Alt+Shift+H).
 
-Works on Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, Yandex, and Mojeek.
+Works on the major search engines. See which ones: https://bishop-v.github.io/anubis/guide/search-engines
 
 No Anubis server or account. Anubis does not send your searches or settings to the developer. If you connect your own WebDAV server, it sends your rankings, tags, settings, and lists there to sync between browsers; the sync file is encrypted by default for new connections, but you can turn encryption off.
 
