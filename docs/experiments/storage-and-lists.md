@@ -2,6 +2,12 @@
 
 Where things are stored, sync between browsers, and subscribing to lists. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## FOSS tools default list (2026-10-04)
+
+- **Added:** a separate bundled, default list labels LibreSpeed and cobalt.tools with the neutral **FOSS** tag, and makes **AI slop** available for manual tagging. Kept it separate from Reference rather than broadening that list's meaning; the rules do not change ranking or hide results.
+- **Compatibility:** default subscriptions remain a fallback only when none are stored. Existing users are not automatically resubscribed and can add **FOSS tools** from **Settings → Lists → More lists**.
+- **Not checked:** the live sites' source and licence pages. The list reflects the requested classification and does not claim anything about each hosted service's privacy practices.
+
 ## Passphrase changes that race or lose their answer (2026-09-29)
 
 - **Found:** a review of the passphrase change turned up three gaps. It ran in the Settings page, so the lock that keeps syncs from overlapping (which only works within one script) didn't hold back the background script's syncs; a sync's last attempt writes without `If-Match` and could put back a file under the old passphrase. When the server saved the new file but the answer was lost, the old passphrase stayed saved and the next sync failed. And a server disconnected during the change was connected again when it finished.

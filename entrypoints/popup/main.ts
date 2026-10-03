@@ -9,8 +9,9 @@ import { LEVELS, TAG_CHOICES, evaluate, type Level } from '@/utils/matcher';
 import { h, icon, siteName } from '@/utils/dom';
 import { ICON_GEAR, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
 import { localizePage, t, tJoin, tn, type MessageKey } from '@/utils/i18n';
+import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/messages';
-import { PERSONAL_NAME, getSite, listSites, setSiteLevel, toggleSiteTag, type PersonalLevel } from '@/utils/personal';
+import { PERSONAL_NAME, getSite, listSites, setSiteLevel, toggleSiteTag, upsertTagDef, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal, updateSettings } from '@/utils/storage';
 import { stoppedSentence, summarySentence } from '@/utils/summary';
@@ -50,6 +51,7 @@ let hereDomain: string | undefined;
 /** Kept across renders so it swings to a new ranking instead of jumping. */
 const balance = balanceSvg();
 let stats: PageStats | undefined;
+let hereFocusKey: string | undefined;
 
 const openSettings = (tab?: string) => {
   void send({ type: 'open-options', tab });
@@ -100,6 +102,9 @@ async function renderAll() {
 /** The site in the current tab, when it isn't a search page: rank it for future searches. */
 function renderHere(rules: RuleSet) {
   const here = $('#here');
+  const active = document.activeElement;
+  const focusKey = hereFocusKey ?? (here.contains(active) && active instanceof HTMLElement ? active.dataset.focusKey : undefined);
+  hereFocusKey = undefined;
   const host = tabUrl && !engineFor(tabUrl.hostname) ? tabUrl.hostname : '';
   const choices = host ? domainChoices(host) : [];
   const domain =
@@ -200,10 +205,11 @@ function renderHere(rules: RuleSet) {
         class: `tag${on ? '' : ' off'}`,
         style: `--c: ${tag.color}`,
         title: tag.description ?? (on ? t('popupUntag', domain) : t('popupTagSite', domain, tag.label)),
-        attrs: { 'aria-pressed': String(on) },
+        attrs: { 'aria-pressed': String(on), 'data-focus-key': `tag-${id}` },
         on: {
           click: () => {
             hereDomain = domain;
+            hereFocusKey = `tag-${id}`;
             void editPersonal((text) => toggleSiteTag(text, domain, id));
           },
         },
@@ -213,10 +219,55 @@ function renderHere(rules: RuleSet) {
     );
   });
 
+  const tagInput = h('input', {
+    type: 'text',
+    placeholder: t('menuNewTagPlaceholder'),
+    maxLength: 32,
+    attrs: { 'aria-label': t('menuNewTagLabel'), 'aria-describedby': 'new-tag-error', 'data-focus-key': 'new-tag' },
+  });
+  const tagError = h('p', { class: 'tag-error', hidden: true, attrs: { id: 'new-tag-error', role: 'status' } });
+  const tagForm = h(
+    'form',
+    { class: 'new-tag' },
+    tagInput,
+    h('button', { class: 'text-btn', type: 'submit' }, t('menuAddTagButton')),
+    tagError,
+  );
+  tagForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const label = tagInput.value.trim();
+    const id = slugifyTag(label);
+    if (!id) {
+      tagError.textContent = t('popupTagInvalid');
+      tagError.hidden = false;
+      tagInput.setAttribute('aria-invalid', 'true');
+      tagInput.focus();
+      return;
+    }
+    if (mine.has(id)) {
+      tagError.textContent = t('popupTagAlreadySet');
+      tagError.hidden = false;
+      tagInput.setAttribute('aria-invalid', 'true');
+      tagInput.focus();
+      return;
+    }
+    tagError.textContent = '';
+    tagError.hidden = true;
+    tagInput.removeAttribute('aria-invalid');
+    tagInput.value = '';
+    hereDomain = domain;
+    hereFocusKey = `tag-${id}`;
+    void editPersonal((text) => {
+      const withDefinition = rules.tags.has(id) ? text : upsertTagDef(text, { id, label, color: colorForTag(id) });
+      return toggleSiteTag(withDefinition, domain, id, true);
+    });
+  });
+
   here.replaceChildren(
     h('div', { class: 'weigh' }, cartouche, balance, levels, h('p', { class: 'hint' }, hint)),
-    ...(tagItems.length ? [h('div', { class: 'here-tags' }, h('h2', null, t('popupTags')), h('div', { class: 'tags' }, tagItems))] : []),
+    h('div', { class: 'here-tags' }, h('h2', null, t('popupTags')), tagItems.length ? h('div', { class: 'tags' }, tagItems) : null, tagForm),
   );
+  if (focusKey) requestAnimationFrame(() => here.querySelector<HTMLElement>(`[data-focus-key="${focusKey}"]`)?.focus());
   requestAnimationFrame(() => requestAnimationFrame(() => setBalance(balance, shown)));
 }
 

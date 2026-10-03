@@ -133,7 +133,9 @@ describe('edits and subscriptions', () => {
   });
 
   it('treats missing subscriptions as the defaults, and an empty list as empty', async () => {
-    expect((await getSubscriptions()).map((s) => s.id)).toContain('builtin:official-docs');
+    const subscriptions = await getSubscriptions();
+    expect(subscriptions.map((s) => s.id)).toContain('builtin:official-docs');
+    expect(subscriptions.map((s) => s.id)).toContain('builtin:foss-tools');
     await saveSubscriptions([]);
     expect(await getSubscriptions()).toEqual([]);
   });

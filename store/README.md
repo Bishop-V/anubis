@@ -116,7 +116,7 @@ Anubis hides, ranks, and tags search results, on the search engine you already u
 
 Rank any site from the results. Press the ⚖ button on a result to hide, lower, raise, or pin that site, or to tag it. Your choices apply to every search.
 
-Tags. Results carry small labels such as "Official docs", "Discussion", or "Paywalled", from your own tags and from lists you subscribe to. For each tag, choose whether it only shows, highlights results, or raises, lowers, or hides them.
+Tags. Results carry small labels such as "Official docs", "Discussion", "Paywalled", "FOSS", or "AI slop", from your own tags and from lists you subscribe to. For each tag, choose whether it only shows, highlights results, or raises, lowers, or hides them.
 
 Lists anyone can publish. Subscribe to lists hosted on GitHub, GitLab, Codeberg, or a gist. Anubis reads its own list format, Brave Goggles, uBlacklist rulesets, and plain lists of domains, so existing community lists work as they are.
 

@@ -1,0 +1,13 @@
+! name: FOSS tools
+! description: Tags selected FOSS tools and provides FOSS and AI slop labels for your sites.
+! author: Anubis contributors
+! homepage: https://github.com/Bishop-V/anubis/tree/main/lists
+! issues: https://github.com/Bishop-V/anubis/issues
+! license: CC0-1.0
+! avatar: #3f6d8a
+! expires: 7 days
+! tag: foss | FOSS | #3f6d8a | Free and open-source software.
+! tag: ai-slop | AI slop | #e0664f | Low-quality AI-generated content.
+
+$site=librespeed.org,tag=foss
+$site=cobalt.tools,tag=foss

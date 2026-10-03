@@ -5,7 +5,7 @@
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
 //                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options,
-//                               responsive, welcome, sync, webdav, checks (layout, lifecycle, pin/hidden chips, DDG icon colors)
+//                               responsive, welcome, sync, webdav, popup-tags, checks (layout, lifecycle, pin/hidden chips, DDG icon colors)
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slides
 //                               in docs/public/
 //
@@ -70,7 +70,7 @@ mkdirSync(SHOTS, { recursive: true });
 const PERSONAL = `! name: My list
 ! description: Sites I've weighed myself.
 ! author: me
-! tag: ai-slop | AI slop | #e0664f | Machine-written filler.
+! tag: ai-slop | AI slop | #e0664f | Low-quality AI-generated content.
 ! tag: tutorial | Great tutorial | #3fa37a | Explains things properly.
 
 $site=fandom.com,discard
@@ -2158,7 +2158,7 @@ if (only === 'docs') {
   // Downloads fail inside the test browser, which would put "Failed to fetch" under
   // every list. Store the bundled lists as if just downloaded, as a user sees them.
   const bundled = Object.fromEntries(
-    ['official-docs', 'discussions', 'reference', 'paywalls'].map((id) => [id, readFileSync(fileURLToPath(new URL(`../lists/${id}.anubis`, import.meta.url)), 'utf8')]),
+    ['official-docs', 'discussions', 'reference', 'paywalls', 'foss-tools'].map((id) => [id, readFileSync(fileURLToPath(new URL(`../lists/${id}.anubis`, import.meta.url)), 'utf8')]),
   );
   await sw.evaluate(async (bundled) => {
     const listCache = {};
@@ -2173,6 +2173,12 @@ if (only === 'docs') {
       await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
       await opt.waitForTimeout(500);
       await opt.screenshot({ path: `${DOCS_IMG}options-${section}${suffix}.png` });
+    }
+    if (colorScheme === SCHEMES[0][0]) {
+      await sw.evaluate(async () => {
+        const personal = (await chrome.storage.sync.get('personal.0'))['personal.0'];
+        await chrome.storage.sync.set({ 'personal.0': `${personal}\n! tag: reference | Reference | #2b9aa0\n$site=wikipedia.org,tag=reference\n` });
+      });
     }
     // The popup as it opens on an ordinary site. Opened as a page, its active tab
     // would be itself, so it's told the site's tab is the active one.
@@ -2195,6 +2201,89 @@ if (only === 'docs') {
   }
   await opt.close();
   console.log('\n== documentation screenshots saved to docs/img/');
+}
+
+if (only === 'popup-tags' || checks) {
+  const site = await ctx.newPage();
+  await site.route('https://tagging.example/**', (route) => route.fulfill({ contentType: 'text/html', body: '<title>Tagging</title>' }));
+  await site.goto('https://tagging.example/page');
+  const sw = ctx.serviceWorkers()[0];
+  if (!sw) throw new Error('Extension service worker is missing for popup tag checks.');
+  const tabId = await sw.evaluate(async () => Math.max(...(await chrome.tabs.query({})).map((t) => t.id)));
+  const popup = await ctx.newPage();
+  await popup.setViewportSize({ width: 364, height: 620 });
+  await popup.addInitScript(
+    (tab) => {
+      const query = chrome.tabs.query.bind(chrome.tabs);
+      chrome.tabs.query = async (q) => (q.active ? [tab] : query(q));
+    },
+    { id: tabId, url: 'https://tagging.example/page' },
+  );
+  await popup.goto(`chrome-extension://${extId}/popup.html`);
+  const tutorial = popup.locator('#here .tags button.tag').filter({ hasText: 'Great tutorial' });
+  await tutorial.waitFor();
+  const initiallyOff = await tutorial.getAttribute('aria-pressed') === 'false';
+  const unselectedStyle = await tutorial.evaluate((el) => getComputedStyle(el).boxShadow);
+  await tutorial.click();
+  await popup.waitForFunction(() => {
+    const button = [...document.querySelectorAll('#here .tags button[aria-pressed="true"]')].find((el) => el.textContent?.includes('Great tutorial'));
+    return button && document.activeElement === button;
+  });
+  const selectedStyles = {};
+  for (const scheme of ['light', 'dark']) {
+    await popup.emulateMedia({ colorScheme: scheme });
+    await popup.waitForFunction((theme) => document.documentElement.dataset.theme === theme, scheme);
+    selectedStyles[scheme] = await tutorial.evaluate((el) => {
+      const style = getComputedStyle(el);
+      return { weight: style.fontWeight, underline: style.boxShadow };
+    });
+  }
+  assertChecks('popup tag selection', {
+    startsUnselected: initiallyOff,
+    becomesSelected: (await tutorial.getAttribute('aria-pressed')) === 'true',
+    selectedHasDistinctStyleInBothThemes: ['light', 'dark'].every(
+      (scheme) =>
+        selectedStyles[scheme].weight === '600' &&
+        selectedStyles[scheme].underline !== 'none' &&
+        selectedStyles[scheme].underline !== unselectedStyle,
+    ),
+  });
+
+  const newTag = popup.getByRole('textbox', { name: 'New tag name' });
+  await newTag.fill('!!!');
+  await newTag.press('Enter');
+  assertChecks('popup invalid tag name', {
+    explained: (await popup.locator('#new-tag-error').textContent()) === 'Enter a tag name with at least one letter or number.',
+    markedInvalid: (await newTag.getAttribute('aria-invalid')) === 'true',
+  });
+  await newTag.fill('Research Notes');
+  await newTag.press('Enter');
+  const created = popup.locator('#here .tags button.tag').filter({ hasText: 'Research Notes' });
+  await created.waitFor();
+  await popup.waitForFunction(() => {
+    const button = [...document.querySelectorAll('#here .tags button[aria-pressed="true"]')].find((el) => el.textContent?.includes('Research Notes'));
+    return button && document.activeElement === button;
+  });
+  const noOverflow = {};
+  for (const width of [320, 360, 390]) {
+    await popup.setViewportSize({ width, height: 620 });
+    noOverflow[width] = await popup.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth);
+  }
+  assertChecks('popup tag creation', {
+    createdAndApplied: (await created.getAttribute('aria-pressed')) === 'true',
+    focusMovesToCreatedTag: await created.evaluate((el) => document.activeElement === el),
+    noHorizontalOverflow: Object.values(noOverflow).every(Boolean),
+  });
+  await popup.getByRole('textbox', { name: 'New tag name' }).fill('Research Notes');
+  await popup.getByRole('textbox', { name: 'New tag name' }).press('Enter');
+  assertChecks('popup duplicate tag name', {
+    explained: (await popup.locator('#new-tag-error').textContent()) === 'That tag is already on this site.',
+    markedInvalid: (await popup.getByRole('textbox', { name: 'New tag name' }).getAttribute('aria-invalid')) === 'true',
+  });
+
+  await popup.close();
+  await site.close();
+  console.log('\n== popup tag selection and creation passed');
 }
 
 await ctx.close();

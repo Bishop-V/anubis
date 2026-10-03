@@ -64,6 +64,6 @@ Anubis works in two places, and they need different care:
 What the code does today that falls short of the above, found while writing this (2026-09-29). Fix them as the code around them changes, and move each to `docs/experiments.md` once it's tried.
 
 - **Reranked order isn't the reading order**, as above. Needs an idea that doesn't move the engine's nodes.
-- **The popup drops focus.** It replaces its content after a click (`renderHere()` in `entrypoints/popup/main.ts` for "This site"), so the button that was pressed disappears with focus on it. The summary had the same gap; it now keeps focus with `data-focus-key`, as the result menu does.
+- **The popup drops focus on ranking changes.** It replaces its content after a click (`renderHere()` in `entrypoints/popup/main.ts` for "This site"), so ranking buttons can lose focus. Tag choices and the new-tag action keep focus with `data-focus-key`.
 - **Tab from the result menu's last control goes to the end of the page,** since the menu is added at the end of the page, rather than back to the result.
 - **Tag reasons are tooltip-only on the chips.** Covered in the menu's Why section, but that's one step further away.

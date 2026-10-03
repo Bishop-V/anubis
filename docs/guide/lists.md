@@ -2,7 +2,7 @@
 
 A list tags, raises, lowers, or hides sites for you. Anyone can publish one: it's a text file in a Git repository, a gist, or any public web address. There's no Anubis server in between.
 
-Anubis starts subscribed to four small lists that ship with it: **Official docs**, **Discussions**, **Reference**, and **Paywalls**. They mostly add tags.
+Anubis starts subscribed to five small lists that ship with it: **Official docs**, **Discussions**, **Reference**, **Paywalls**, and **FOSS tools**. They mostly add tags. **FOSS tools** labels LibreSpeed and cobalt.tools as FOSS, and makes the **AI slop** tag available for sites you choose to tag yourself. Existing installs keep their current subscriptions; add **FOSS tools** under **Settings → Lists → More lists**.
 
 <!-- Maintainer: this generated screenshot comes from the mock Settings page. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark image and its description together. -->
 
