@@ -2,7 +2,9 @@
 
 ## Install
 
-Anubis isn't in the Firefox or Chrome stores yet. To try it, build it from the source code. You need [Node.js](https://nodejs.org) 22.12 or newer.
+For the normal Firefox install, get [Anubis from Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/). A direct link to the latest Firefox build package will be available from the next [GitHub Release](https://github.com/Bishop-V/anubis/releases) at [anubis-firefox.zip](https://github.com/Bishop-V/anubis/releases/latest/download/anubis-firefox.zip); each release also includes versioned Firefox and Chrome packages. For Chrome, or to try a development build, build it from source. You need [Node.js](https://nodejs.org) 22.12 or newer.
+
+### Build from source
 
 ```sh
 git clone https://github.com/Bishop-V/anubis.git

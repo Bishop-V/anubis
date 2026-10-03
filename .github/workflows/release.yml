@@ -5,8 +5,8 @@ name: Release
 # creates a GitHub Release with them, then submits to each of the Chrome Web
 # Store, Firefox Add-ons (AMO), and Edge Add-ons that has its keys set.
 #
-# The store keys live in the "release" environment, which waits for approval
-# and only accepts v* tags, so no pull request or branch can read them.
+# Configure the "release" environment with required-reviewer protection for
+# v* tags and store keys. No pull request or branch should be able to read them.
 
 on:
   push:
@@ -59,6 +59,12 @@ jobs:
       # Firefox zip plus the sources zip, then the Chrome zip (Edge takes it too).
       - run: npm run zip
       - run: npm run zip:chrome
+      - name: Add stable download names
+        run: |
+          version=${GITHUB_REF_NAME#v}
+          cp ".output/anubis-$version-firefox.zip" .output/anubis-firefox.zip
+          cp ".output/anubis-$version-sources.zip" .output/anubis-sources.zip
+          cp ".output/anubis-$version-chrome.zip" .output/anubis-chrome.zip
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: zips
@@ -131,7 +137,7 @@ jobs:
             args+=(--edge-zip ".output/anubis-$version-chrome.zip")
           fi
           if [ "${#args[@]}" -eq 0 ]; then
-            echo "::error::No store has its keys in the release environment, so nothing was submitted."
-            exit 1
+            echo "::notice::No store credentials are configured; the GitHub Release packages were published without store submission."
+            exit 0
           fi
           npx wxt submit "${args[@]}"

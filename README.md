@@ -22,7 +22,7 @@ It works on Google, DuckDuckGo, Bing, and [more search engines](https://bishop-v
 
 ## Install
 
-Anubis isn't in the browser stores yet. [Getting started](https://bishop-v.github.io/anubis/guide/getting-started) explains how to build it and load it into Firefox or Chrome.
+**[Install Anubis for Firefox from Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/).** The next tagged [GitHub Release](https://github.com/Bishop-V/anubis/releases) will include a [direct Firefox build download](https://github.com/Bishop-V/anubis/releases/latest/download/anubis-firefox.zip), as well as versioned packages. [Getting started](https://bishop-v.github.io/anubis/guide/getting-started) explains how to build and load it in other browsers.
 
 ## Develop
 
