@@ -14,7 +14,7 @@ describe('bundled lists', () => {
     expect(list.meta.name).toBeTruthy();
     expect(list.meta.description).toBeTruthy();
     expect(list.meta.issues).toMatch(/^https:\/\//);
-    expect(list.rules.length).toBeGreaterThan(5);
+    expect(list.rules.length).toBeGreaterThan(file === 'foss-tools.anubis' ? 1 : 5);
     // Every tag a rule uses is defined with a label, not just generated.
     for (const tag of list.tags) expect(tag.label).not.toBe(tag.id);
   });
@@ -24,6 +24,25 @@ describe('bundled lists', () => {
       expect(BUILTIN_TEXT[`builtin:${entry.id}`]).toBeTruthy();
       expect(entry.url).toMatch(new RegExp(`/lists/${entry.id}\\.anubis$`));
     }
+  });
+
+  it('bundles FOSS and AI slop tags with the requested FOSS tools', () => {
+    const text = readFileSync('lists/foss-tools.anubis', 'utf8');
+    const list = parseList(text);
+    expect(list.tags).toContainEqual(expect.objectContaining({ id: 'foss', label: 'FOSS' }));
+    expect(list.tags).toContainEqual(
+      expect.objectContaining({ id: 'ai-slop', label: 'AI slop', description: 'Low-quality AI-generated content.' }),
+    );
+    expect(
+      list.rules.map(({ site, tags, boost, discard, pin }) => ({ site, tags, boost, discard, pin })),
+    ).toEqual([
+      { site: 'librespeed.org', tags: ['foss'], boost: 0, discard: false, pin: false },
+      { site: 'cobalt.tools', tags: ['foss'], boost: 0, discard: false, pin: false },
+    ]);
+    expect(BUNDLED_DIRECTORY.find((entry) => entry.id === 'foss-tools')).toMatchObject({ builtin: true, default: true });
+    const taggedSiteLines = text.split(/\r?\n/).filter((line) => line.startsWith('$site=') && line.includes(',tag='));
+    expect(taggedSiteLines).toHaveLength(2);
+    for (const line of taggedSiteLines) expect(line).toMatch(/\s+# .+\S/);
   });
 
   it('has unique directory ids and https URLs', () => {

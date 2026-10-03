@@ -18,7 +18,7 @@ This use complies with the Chrome Web Store User Data Policy, including its Limi
 
 Only these:
 
-- **The lists you subscribe to**, from wherever they're hosted, to check for new versions once a day, or less often when a list says so (Anubis's own lists: once a week). This starts when you install Anubis, because it subscribes you to four lists of its own, hosted on GitHub. You can turn them off under **Settings → Lists**.
+- **The lists you subscribe to**, from wherever they're hosted, to check for new versions once a day, or less often when a list says so (Anubis's own lists: once a week). This starts when you install Anubis, because it subscribes you to five lists of its own, hosted on GitHub. You can turn them off under **Settings → Lists**.
 - **The directory of lists** on GitHub, when you open **Settings → Lists**, so **More lists** shows the newest ones.
 - **The search engine you're on**, for [Load more results](./more-results.md), which loads its next page like the "Next" link would. If the engine sends a page without results, Anubis opens that page once more out of sight, which is the same as opening it yourself.
 - **The WebDAV server you connect for syncing between browsers**, if you do. Anubis sends your ranked sites, settings, tag choices, and subscriptions to the HTTPS address you provide, and nowhere else. End-to-end encryption is on by default for new connections: when enabled, the server receives an encrypted file it cannot read. You can turn it off when connecting; existing unencrypted connections stay unencrypted until you enable it. Without encryption, the server operator can read the file. See [Between browsers](./sync.md#between-browsers).

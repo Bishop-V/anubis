@@ -86,6 +86,14 @@ $site=example.com,tag=docs,tag=reference`);
     expect(list.rules[1]).toMatchObject({ tags: ['docs', 'reference'], boost: 0 });
   });
 
+  it('ignores trailing explanations on Anubis rules', () => {
+    const list = parseList(`! name: Docs
+! tag: docs | Official docs
+$site=developer.mozilla.org,tag=docs # The project publishes its first-party web documentation here.`);
+    expect(list.errors).toEqual([]);
+    expect(list.rules[0]).toMatchObject({ site: 'developer.mozilla.org', tags: ['docs'] });
+  });
+
   it('reads pin and allow', () => {
     const list = parseList('$site=a.com,pin\n$site=b.com,allow');
     expect(list.rules[0]!.pin).toBe(true);

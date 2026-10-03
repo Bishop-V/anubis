@@ -1,5 +1,6 @@
 import { normalizeDomain } from '@/utils/domain';
 import { andList, h, icon, plural } from '@/utils/dom';
+import { t } from '@/utils/i18n';
 import { ICON_CLOSE, ICON_TRASH, LEVEL_LABELS } from '@/utils/icons';
 import { colorForTag, normalizeColor, slugifyTag, TAG_PALETTE, type TagDef } from '@/utils/listformat';
 import type { CompiledList, TagAction } from '@/utils/matcher';
@@ -104,7 +105,7 @@ let refocus: string | undefined;
  * which can be untagged, a field to tag more, and the sites lists give it.
  */
 function sitesPanel(tag: TagDef, mine: boolean, sites: SiteEntry[], lists: CompiledList[], save: (patch: Partial<TagDef>) => void): HTMLElement {
-  const tagged = sites.filter((s) => s.tags.includes(tag.id)).map((s) => s.site);
+  const tagged = sites.filter((s) => s.tags.includes(tag.id));
 
   const input = h('input', {
     type: 'text',
@@ -113,8 +114,10 @@ function sitesPanel(tag: TagDef, mine: boolean, sites: SiteEntry[], lists: Compi
     spellcheck: false,
     attrs: { 'aria-label': `Sites to tag ${tag.label}` },
   });
+  const reasonInput = h('input', { type: 'text', maxLength: 120 });
+  const reasonField = h('label', { class: 'field' }, h('span', null, t('tagSiteReason', tag.label)), reasonInput);
   const error = h('p', { class: 'notice error', hidden: true });
-  const form = h('form', { class: 'inline-form' }, input, h('button', { class: 'btn small', type: 'submit' }, 'Add site'));
+  const form = h('form', { class: 'inline-form' }, input, reasonField, h('button', { class: 'btn small', type: 'submit' }, 'Add site'));
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     // Several at once, separated by spaces or commas.
@@ -129,9 +132,12 @@ function sitesPanel(tag: TagDef, mine: boolean, sites: SiteEntry[], lists: Compi
     }
     error.hidden = true;
     input.value = '';
+    const reason = reasonInput.value.trim();
+    reasonInput.value = '';
     refocus = tag.id;
     input.blur();
-    await editPersonal((text) => domains.reduce((t, d) => toggleSiteTag(t, d!, tag.id, true), text));
+    const note = reason ? `${tag.label}: ${reason}` : undefined;
+    await editPersonal((text) => domains.reduce((t, d) => toggleSiteTag(t, d!, tag.id, true, note), text));
   });
   if (refocus === tag.id) {
     refocus = undefined;
@@ -171,19 +177,19 @@ function sitesPanel(tag: TagDef, mine: boolean, sites: SiteEntry[], lists: Compi
       ? h(
           'ul',
           null,
-          tagged.map((site) =>
+          tagged.map((entry) =>
             h(
               'li',
-              null,
-              h('span', null, site),
+              { class: entry.description ? 'has-description' : '' },
+              h('div', { class: 'tagged-site' }, h('span', null, entry.site), entry.description ? h('span', { class: 'site-note' }, entry.description) : null),
               h(
                 'button',
                 {
                   class: 'icon-btn danger',
                   type: 'button',
-                  title: `Untag ${site}`,
-                  attrs: { 'aria-label': `Untag ${site}` },
-                  on: { click: () => void editPersonal((text) => toggleSiteTag(text, site, tag.id, false)) },
+                  title: `Untag ${entry.site}`,
+                  attrs: { 'aria-label': `Untag ${entry.site}` },
+                  on: { click: () => void editPersonal((text) => toggleSiteTag(text, entry.site, tag.id, false)) },
                 },
                 icon(ICON_CLOSE),
               ),

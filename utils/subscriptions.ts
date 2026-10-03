@@ -1,5 +1,6 @@
 import directoryJson from '@/lists/directory.json';
 import discussions from '@/lists/discussions.anubis?raw';
+import fossTools from '@/lists/foss-tools.anubis?raw';
 import officialDocs from '@/lists/official-docs.anubis?raw';
 import paywalls from '@/lists/paywalls.anubis?raw';
 import reference from '@/lists/reference.anubis?raw';
@@ -59,6 +60,7 @@ export const DIRECTORY_URL = 'https://raw.githubusercontent.com/Bishop-V/anubis/
 export const BUILTIN_TEXT: Record<string, string> = {
   'builtin:official-docs': officialDocs,
   'builtin:discussions': discussions,
+  'builtin:foss-tools': fossTools,
   'builtin:reference': reference,
   'builtin:paywalls': paywalls,
 };

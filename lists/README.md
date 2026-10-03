@@ -8,15 +8,16 @@ Lists that ship with Anubis, and the directory of lists it offers in **Settings 
 | [`discussions.anubis`](discussions.anubis) | Tags forums, Q&A sites and issue threads. |
 | [`reference.anubis`](reference.anubis) | Tags encyclopedias, archives and research papers. |
 | [`paywalls.anubis`](paywalls.anubis) | Labels sites that usually paywall their articles. Never changes the ranking. |
+| [`foss-tools.anubis`](foss-tools.anubis) | Tags selected FOSS tools and provides reusable FOSS and AI slop tags. |
 | [`directory.json`](directory.json) | The lists shown under "More lists", including community lists hosted elsewhere. |
 
-The four `.anubis` lists are bundled into the extension, so they work offline, and Anubis checks GitHub for newer versions of them and of this directory.
+The five `.anubis` lists are bundled into the extension, so they work offline, and Anubis checks GitHub for newer versions of them and of this directory.
 
 The format is described in [docs/list-format.md](../docs/list-format.md).
 
 ## Contributing
 
-- **Add a site to a list:** open a pull request that adds a line, or use "Suggest it to…" in the menu on a search result, which opens a pre-filled issue.
+- **Add a site to a list:** open a pull request that adds a line, or use "Suggest it to…" in the menu on a search result, which opens a pre-filled issue. Add a short trailing `#` comment to every new site rule that adds a tag, explaining why the site fits.
 - **Report a site a list gets wrong:** use "Wrong? Report it to…" under **Why** in the menu on that result, which opens a pre-filled issue with the rule that matched.
 - **Add a list to the directory:** host your list anywhere public and add an entry to `directory.json`:
 

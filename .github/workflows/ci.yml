@@ -38,6 +38,10 @@ jobs:
         run: npx playwright-core install --with-deps chromium
       - name: Check Settings at phone widths
         run: node e2e/run.mjs responsive
+      - name: Check popup tag selection and creation
+        run: node e2e/run.mjs popup-tags
+      - name: Check optional explanations on tagged sites
+        run: node e2e/run.mjs tag-notes
       - name: Assert core search-page behavior
         run: node e2e/run.mjs checks
       - run: npx web-ext lint --source-dir .output/firefox-mv2 --warnings-as-errors

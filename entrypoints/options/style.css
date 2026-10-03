@@ -406,6 +406,21 @@ textarea.code {
   gap: 2px;
   font-size: 13px;
 }
+.tag-sites li.has-description {
+  flex-basis: 100%;
+  max-width: 100%;
+}
+.tag-sites .tagged-site {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tag-sites .site-note {
+  color: var(--muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
 .tag-sites li .icon-btn {
   width: 24px;
   height: 24px;
@@ -414,8 +429,15 @@ textarea.code {
   margin: 0;
   font-size: 12.5px;
 }
-.tag-sites .inline-form input[type='text'] {
+.tag-sites .inline-form > input[type='text'] {
   flex: 0 1 260px;
+}
+.tag-sites .inline-form .field {
+  flex: 1 1 220px;
+}
+.tag-sites .inline-form .field input {
+  flex: 0 0 auto;
+  width: 100%;
 }
 .tag-sites .from-list {
   color: var(--muted);

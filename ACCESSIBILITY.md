@@ -29,6 +29,8 @@ Anubis works in two places, and they need different care:
 
 **Labels are interface text.** An `aria-label` is read to people just like visible text, so it goes in `messages.json` and through `t()` like the rest (static HTML uses `data-i18n-aria-label`). Many labels are still hard-coded English; move them when you touch the code around them.
 
+The optional reason field under **Settings → Tags** has a visible label that names the tag it applies to, and the saved note stays beside the site instead of only in a tooltip.
+
 ## Keyboard
 
 **Everything the pointer can do, the keyboard can do.** Use real `<button>`, `<a href>`, `<input>` and `<select>` elements: they get Tab, Enter, and Space for free. A `div` with a click handler gets none of that. Hover-only behaviour needs a focus equivalent: the ⚖ button brightens on `:focus-within` as well as `:hover`.
@@ -64,6 +66,6 @@ Anubis works in two places, and they need different care:
 What the code does today that falls short of the above, found while writing this (2026-09-29). Fix them as the code around them changes, and move each to `docs/experiments.md` once it's tried.
 
 - **Reranked order isn't the reading order**, as above. Needs an idea that doesn't move the engine's nodes.
-- **The popup drops focus.** It replaces its content after a click (`renderHere()` in `entrypoints/popup/main.ts` for "This site"), so the button that was pressed disappears with focus on it. The summary had the same gap; it now keeps focus with `data-focus-key`, as the result menu does.
+- **The popup drops focus on ranking changes.** It replaces its content after a click (`renderHere()` in `entrypoints/popup/main.ts` for "This site"), so ranking buttons can lose focus. Tag choices and the new-tag action keep focus with `data-focus-key`.
 - **Tab from the result menu's last control goes to the end of the page,** since the menu is added at the end of the page, rather than back to the result.
 - **Tag reasons are tooltip-only on the chips.** Covered in the menu's Why section, but that's one step further away.

@@ -19,9 +19,9 @@ Your own list, the one the button on each result edits, is stored in this format
 ! expires: 7 days
 ! tag: docs | Official docs | #2f5fae | Documentation published by the project or vendor itself.
 
-$site=developer.mozilla.org,tag=docs,boost=1
-$site=docs.python.org,tag=docs,boost=1
-/docs/$site=nodejs.org,tag=docs
+$site=developer.mozilla.org,tag=docs,boost=1 # MDN publishes first-party web platform documentation.
+$site=docs.python.org,tag=docs,boost=1 # This is Python's official documentation.
+/docs/$site=nodejs.org,tag=docs # Node.js publishes its documentation here.
 ```
 
 ## Header
@@ -41,6 +41,8 @@ Lines starting with `!` are comments. A comment of the form `! key: value` is me
 | `tag` | Defines a tag. See below. May appear many times. |
 
 `public` and `transferred_to` from Goggles are accepted and ignored.
+
+When adding a tagged site rule to an Anubis list, put an explanation after `#` saying why the site fits. It is kept as a comment, not read as an instruction.
 
 ## Tags
 
@@ -96,6 +98,8 @@ A pattern is matched anywhere in the result's URL, case-insensitively.
 | `indescription` / `incontent` | Match against the result's snippet. |
 
 An instruction with no action and no tag boosts by 1, as in Goggles. An instruction with only tags leaves the ranking alone.
+
+An Anubis rule can end with a comment after whitespace and `#`. For example, `$site=example.com,tag=docs # The project publishes its documentation here.` The comment explains why the site fits the tag and is ignored when Anubis reads the rule.
 
 ### Lenses
 

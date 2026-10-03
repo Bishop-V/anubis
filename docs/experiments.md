@@ -49,6 +49,7 @@ Where things are stored, sync between browsers, and subscribing to lists.
 - WebDAV passphrase changes and recovery (2026-09-29)
 - End-to-end WebDAV encryption (2026-09-29)
 - Reporting mistakes to lists
+- FOSS tools default list (2026-10-04)
 - Storage
 - Subscriptions and permissions
 - Importing from other tools
@@ -58,6 +59,8 @@ Where things are stored, sync between browsers, and subscribing to lists.
 The look, the wording, and Anubis's own pages.
 
 - Report a problem (2026-09-30)
+- Explanations on tagged sites (2026-10-04)
+- Tags in the site popup (2026-10-03)
 - Finishing touches (2026-09-29)
 - Patterns from Dark Reader (2026-09-29)
 - Settings on narrow screens (2026-09-29)

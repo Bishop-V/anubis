@@ -13,11 +13,11 @@ The quickest start is your own list. **Settings → Backup → Download my list*
 ! license: CC0-1.0
 ! tag: docs | Official docs | #2f5fae
 
-$site=developer.mozilla.org,tag=docs,boost=1
-$site=docs.python.org,tag=docs,boost=1
+$site=developer.mozilla.org,tag=docs,boost=1 # MDN publishes first-party web platform documentation.
+$site=docs.python.org,tag=docs,boost=1 # This is Python's official documentation.
 ```
 
-Every line after the header is one instruction: which sites, and what to do with them. The [list format](../list-format.md) has the details.
+Every line after the header is one instruction: which sites, and what to do with them. Add a short `#` comment to every tagged site rule you add, explaining why the site fits. The [list format](../list-format.md) has the details.
 
 Lists that only tag, and leave ranking to each subscriber, are the friendliest to publish: subscribers can decide in **Settings → Tags** whether your tag raises, highlights, or hides.
 

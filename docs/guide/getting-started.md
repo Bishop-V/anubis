@@ -29,7 +29,7 @@ Browsers put new extensions behind the Extensions button (a puzzle piece) next t
 
 ## Search as usual
 
-Search on any [supported engine](./search-engines.md). Anubis starts with a few lists that tag official documentation, discussions, reference sites, and paywalls, so you'll see tags under some results straight away.
+Search on any [supported engine](./search-engines.md). Anubis starts with lists that tag official documentation, discussions, reference sites, paywalls, and FOSS online tools. The **AI slop** tag is available for sites you choose to tag yourself.
 
 A one-line summary above the results says what Anubis did: which results it raised, lowered, or hid, and which tags are on the page. On a phone it says it in a few words ("Anubis changed 4 of 9 results."), and **Details** shows the rest.
 
@@ -55,11 +55,11 @@ Your choice applies to the whole site, including its subdomains. The name at the
 
 ## Rank the site you're on
 
-Press the Anubis icon in the toolbar while you're on any website. The popup shows the site's name over the balance: choose how its results should rank in future searches, and tag it if you like. When the site's address has more than one part, like `en.wikipedia.org`, press the name to choose how much of it your choice covers.
+Press the Anubis icon in the toolbar while you're on any website. The popup shows the site's name over the balance: choose how its results should rank in future searches, and add or create tags under **Tags**. When the site's address has more than one part, like `en.wikipedia.org`, press the name to choose how much of it your choice covers.
 
 On a search page the popup instead says what Anubis did to the results, with **Show hidden**, **Load more results**, and the page's tags, to show only the results with one of them. On any other page, **Add a site** takes a site's name and the ranking to give it.
 
-<img src="../img/popup.png" width="364" alt="The toolbar popup on wikipedia.org: the site's name over the balance, the five rankings, its tags, and your sites">
+<img src="../img/popup.png" width="364" alt="The toolbar popup on wikipedia.org: the Reference tag is selected and underlined among the site's tags">
 
 ## Turn Anubis off
 

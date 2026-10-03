@@ -95,8 +95,8 @@ One palette, defined twice: `assets/theme.css` for extension pages and `entrypoi
 
 | Surface | Layout |
 | --- | --- |
-| Popup | 340px wide. Header (logo, the status after a diamond that's gold while Anubis is on and hollow while it's off, on/off), then sections under hairlines with a muted label, then a footer. What shows depends on the tab: on a search page, what Anubis did there and its tags to show only; on any other site, that site in the cartouche over the balance, with the rankings and tags; elsewhere, Add a site. The last few of your sites always follow. |
-| Settings | Two columns in 1040px: a 210px navigation column and sections up to 760px. One row per thing you can change. Below 760px, one column with the navigation across the top. |
+| Popup | Up to 340px wide, shrinking to fit a narrower viewport. Header (logo, the status after a diamond that's gold while Anubis is on and hollow while it's off, on/off), then sections under hairlines with a muted label, then a footer. What shows depends on the tab: on a search page, what Anubis did there and its tags to show only; on any other site, that site in the cartouche over the balance, with the rankings, tag choices, and a field to add a tag; elsewhere, Add a site. The last few of your sites always follow. |
+| Settings | Two columns in 1040px: a 210px navigation column and sections up to 760px. One row per thing you can change. A tag's open panel has fields for its name and meaning, sites carrying it, and an optional note explaining why a site fits. Below 760px, one column with the navigation across the top. |
 | Welcome page | The same idea in 1040px: section titles in a 220px column, what to do beside them, lists two across. Below 900px, one column. |
 | Search pages | The summary sits above the results, lined up with them; on phones it's one short line, with Details for the rest. Tags go under each title. The result menu opens under its ⚖ button, 312px wide. |
 
@@ -104,7 +104,7 @@ Every page works at phone width (390px) without scrolling sideways. Settings are
 
 <img src="docs/img/popup.png" alt="The popup on wikipedia.org: the site in the cartouche over the balance, the five rankings, tags, and your sites" width="340">
 
-The popup on a site that isn't a search page: header, the site in the cartouche over the balance and rankings, tags as a choice of diamonds, your last few sites with their ranking in words (or their tag, when a site has only a tag), and a footer of small print and text buttons. No section is boxed; hairlines divide them.
+The popup on a site that isn't a search page: header, the site in the cartouche over the balance and rankings, tags as a choice of coloured diamonds, a field to create and apply a tag, your last few sites with their ranking in words (or their tag, when a site has only a tag), and a footer of small print and text buttons. No section is boxed; hairlines divide them.
 
 ## Controls
 
@@ -123,7 +123,7 @@ All shared controls are in `assets/theme.css`; the search-page versions in `shad
 | Select | `select` | The same box as an input, with the one caret: a small `--muted` chevron drawn in CSS, 10px from the right edge | Never the browser's own arrow |
 | Switch | `.switch` | 30×17px pill, gold when on | Settings that take effect at once; no Save button |
 | Choice row | `.seg`, `.levels` | Plain words in `--muted`; the chosen one `--text`, 600, with a 2px underline in gold (`--muted` for Hide, the tag's colour for a tag filter). The rankings put each one's icon over its word: `--muted` at rest, and once chosen `--gold-ink` for Raise and Pin, `--text` for the rest | Choosing one of a few: the rankings, Appearance's options |
-| Tag | `.tag` + `.gem` | A 6px diamond in the tag's colour, then its name; hollow for a tag you could add | Tags everywhere. Never pills or chips with fills. |
+| Tag | `.tag` + `.gem` | A 6px diamond in the tag's colour, then its name; hollow for a tag you could add. In the popup, a selected tag also has bold text and a 2px underline in its colour. | Tags everywhere. Never pills or chips with fills. |
 | Site name | `siteName()` + `.suffix` | The name in the row's colour, the ending it shares with other sites (`.org`, `.co.uk`) in `--muted` at 400 | A site as a row's subject: the popup's and Settings' Your sites |
 | Ranking note | `.level-note`, `.verdict` | Pin and Raise in `--gold-ink`, Hide, Lower, and Normal in `--muted`; pinned and hidden results use their selector icon instead of a redundant chip, while Raised and Lowered chips remain | Naming a site's ranking |
 
