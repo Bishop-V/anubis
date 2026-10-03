@@ -1,23 +1,26 @@
 # Getting started
 
-## Install
+## Install in Firefox
 
-For the normal Firefox install, get [Anubis from Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/). A direct link to the latest Firefox build package will be available from the next [GitHub Release](https://github.com/Bishop-V/anubis/releases) at [anubis-firefox.zip](https://github.com/Bishop-V/anubis/releases/latest/download/anubis-firefox.zip); each release also includes versioned Firefox and Chrome packages. For Chrome, or to try a development build, build it from source. You need [Node.js](https://nodejs.org) 22.12 or newer.
+For the normal install, get [Anubis from Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/). The latest [Firefox build package](https://github.com/Bishop-V/anubis/releases/latest/download/anubis-firefox.zip) and versioned packages are also available from [GitHub Releases](https://github.com/Bishop-V/anubis/releases).
 
-### Build from source
+## Other browsers
+
+Chrome and other Chromium browsers are not yet in their browser stores. Download and extract the [latest Chrome build](https://github.com/Bishop-V/anubis/releases/latest/download/anubis-chrome.zip) from GitHub Releases, or build it from source. To build from source, you need [Node.js](https://nodejs.org) 22.12 or newer:
 
 ```sh
 git clone https://github.com/Bishop-V/anubis.git
 cd anubis
 npm install
-npm run build          # for Firefox
+npm run build          # Firefox development build
 npm run build:chrome   # for Chrome, Edge, and other Chromium browsers
 ```
 
-Then load it:
+Load the development build or extracted package in your browser:
 
 - **Firefox:** open `about:debugging`, choose **This Firefox**, then **Load Temporary Add-on**, and pick `.output/firefox-mv2/manifest.json`. Firefox removes temporary add-ons when it closes.
-- **Chrome:** open `chrome://extensions`, turn on **Developer mode**, choose **Load unpacked**, and pick the `.output/chrome-mv3` folder.
+- **Chrome:** open `chrome://extensions`, turn on **Developer mode**, choose **Load unpacked**, and pick `.output/chrome-mv3` or the extracted release package.
+- **Edge:** open `edge://extensions`, turn on **Developer mode**, choose **Load unpacked**, and pick `.output/chrome-mv3` or the extracted release package.
 
 When Anubis is installed, it opens a welcome tab with the steps for your browser to keep its button in the toolbar, a search to try, and the lists you start with.
 
