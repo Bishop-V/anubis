@@ -85,12 +85,13 @@ function groupLines(text: string): Map<string, string[]> {
 
 /** A site changed on both sides: its ranking from whichever side changed it, and tags added on either side. */
 function mergeSite(site: string, base: string[] | undefined, local: string[] | undefined, remote: string[] | undefined, prefer: Side): string[] | undefined {
-  const entry = (lines?: string[]) => (lines && listSites(lines.join('\n'))[0]) || { level: 'normal' as const, tags: [] as string[] };
+  const entry = (lines?: string[]) => (lines && listSites(lines.join('\n'))[0]) || { level: 'normal' as const, tags: [] as string[], description: undefined };
   const [b, l, r] = [entry(base), entry(local), entry(remote)];
   const level = l.level === b.level ? r.level : r.level === b.level ? l.level : (prefer === 'local' ? l : r).level;
   // A tag stays if both sides have it, or one side added it; removing it on either side removes it.
   const tags = [...new Set([...l.tags, ...r.tags])].filter((t) => (l.tags.includes(t) && r.tags.includes(t)) || !b.tags.includes(t));
-  const line = formatSiteLine(site, level, tags);
+  const description = l.description === r.description ? l.description : l.description === b.description ? r.description : r.description === b.description ? l.description : prefer === 'local' ? l.description : r.description;
+  const line = formatSiteLine(site, level, tags, description);
   return line ? [line] : undefined;
 }
 

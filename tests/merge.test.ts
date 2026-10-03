@@ -29,6 +29,16 @@ describe('merging the personal list', () => {
     expect(sites(mergeLists(base, local, remote, 'local'))['b.com']).toBe('hide forum');
   });
 
+  it('keeps a site explanation when its other-device edit changes the ranking', () => {
+    const reason = 'FOSS: the source is published under a free licence';
+    const annotated = setSite(base, 'a.com', 'normal', ['foss'], reason);
+    const local = setSite(annotated, 'a.com', 'lower', ['foss']);
+    const remote = setSite(annotated, 'a.com', 'normal', ['foss', 'docs']);
+    const merged = mergeLists(annotated, local, remote, 'local');
+    expect(merged).toContain(`# ${reason}`);
+    expect(listSites(merged).find((site) => site.site === 'a.com')).toMatchObject({ level: 'lower', tags: ['foss', 'docs'], description: reason });
+  });
+
   it('lets the preferred side win when both change the same site’s ranking', () => {
     const local = setSite(base, 'a.com', 'pin', []);
     const remote = setSite(base, 'a.com', 'lower', []);

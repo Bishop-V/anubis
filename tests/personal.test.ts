@@ -68,6 +68,17 @@ describe('personal list edits', () => {
     expect(rules.find((r) => r.site === 'b.com')).toMatchObject({ allow: true });
   });
 
+  it('keeps an optional explanation on a tagged site through later edits', () => {
+    const reason = 'FOSS: the project publishes its source under a free licence';
+    const annotated = setSite(base, 'example.com', 'normal', ['foss'], reason);
+    expect(annotated).toContain(`$site=example.com,tag=foss # ${reason}`);
+    expect(getSite(annotated, 'example.com')).toMatchObject({ description: reason });
+    const reranked = setSiteLevel(annotated, 'example.com', 'raise');
+    expect(reranked).toContain(`# ${reason}`);
+    expect(parseList(reranked).errors).toEqual([]);
+    expect(parseList(reranked).rules.find((rule) => rule.site === 'example.com')).toMatchObject({ tags: ['foss'], boost: 5 });
+  });
+
   it('adds tag definitions after the header and removes them everywhere', () => {
     let t = upsertTagDef(base, { id: 'wiki', label: 'Wiki', color: '#4a86d8' });
     const lines = t.split('\n');

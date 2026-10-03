@@ -12,6 +12,14 @@ The look, the wording, and Anubis's own pages. Part of [Experiments and decision
 - **Changed:** selected tags now use their own colour for a 2px underline and bold text, without a fill. The popup always shows a compact **New tag** field, which adds a tag to the personal list and applies it to the current site; an existing shared tag is reused. Empty or duplicate names are explained beside the field. The action keeps keyboard focus on the selected tag after the popup redraws.
 - **Checked:** a new popup e2e part covers selecting, creating, styling, focus-safe redraws, and narrow viewports; it runs in CI.
 
+## Explanations on tagged sites (2026-10-04)
+
+- **Added:** every tagged site in the bundled FOSS tools list has an inline comment saying why it belongs. The Anubis list parser ignores trailing `#` comments, so these explanations do not change matching.
+- **Added:** Settings → Tags accepts an optional reason alongside a site. It is saved as a comment on the personal-list rule and shown under the site in the tag editor.
+- **Compatibility:** the note stays in the existing plain-text personal list and follows site edits and sync merges; old rules without notes remain unchanged.
+- **Layout fix:** the shared inline-form input rule also matched the reason nested inside its label, giving the text field a 260px flex basis on the column axis. The tag-note e2e check now asserts that it remains a single-line field.
+- **Not used:** the tag's definition description; that describes the label for every site, not why one site fits it.
+
 ## Finishing touches (2026-09-29)
 
 - **Second follow-up (2026-09-30):** red for a ranking is now a written rule, not only a fix: `STYLEGUIDE.md`'s principles, `CLAUDE.md`, and `CONTRIBUTING.md` say `--danger` is only for errors and deleting, and `tests/palette.test.ts` fails when a CSS rule for Hide uses it. "Clean up" in Settings read as housekeeping rather than what the page does; it's now **Remove panels** everywhere people see it (the settings section, the README and wiki features, the guide's title, the homepage, and the store listing), with `#cleanup` and `guide/clean-up` kept so links still work. The tag switch lost its "Shown" label, which only repeated what a switch in that place does (its tooltip and label for screen readers stay). Tags describe a result, so the Paywalls list's tag is now "Paywalled" (its id stays `paywall`, so tag choices carry over), and `lists/README.md` asks list authors to name tags that way. The name and logo at the top of Settings open the wiki.

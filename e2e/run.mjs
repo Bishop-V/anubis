@@ -5,7 +5,7 @@
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
 //                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options,
-//                               responsive, welcome, sync, webdav, popup-tags, checks (layout, lifecycle, pin/hidden chips, DDG icon colors)
+//                               responsive, welcome, sync, webdav, popup-tags, tag-notes, checks (layout, lifecycle, pin/hidden chips, DDG icon colors)
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slides
 //                               in docs/public/
 //
@@ -2172,6 +2172,7 @@ if (only === 'docs') {
     for (const section of ['sites', 'tags', 'lists', 'cleanup', 'sync']) {
       await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
       await opt.waitForTimeout(500);
+      if (section === 'tags') await opt.getByRole('button', { name: 'Edit AI slop and its sites' }).click();
       await opt.screenshot({ path: `${DOCS_IMG}options-${section}${suffix}.png` });
     }
     if (colorScheme === SCHEMES[0][0]) {
@@ -2284,6 +2285,47 @@ if (only === 'popup-tags' || checks) {
   await popup.close();
   await site.close();
   console.log('\n== popup tag selection and creation passed');
+}
+
+if (only === 'tag-notes') {
+  const options = await ctx.newPage();
+  await options.goto(`chrome-extension://${extId}/options.html#tags`);
+  await options.getByRole('button', { name: 'Edit Great tutorial and its sites' }).click();
+  const site = options.getByRole('textbox', { name: 'Sites to tag Great tutorial' });
+  const reason = options.getByRole('textbox', { name: 'Why this site fits the “Great tutorial” tag (optional)' });
+  const reasonBox = await reason.boundingBox();
+  const note = 'The project publishes its first-party tutorials here.';
+  await site.fill('tutorial-source.example.com');
+  await reason.fill(note);
+  await site.press('Enter');
+  await options.waitForFunction((value) => [...document.querySelectorAll('.site-note')].some((el) => el.textContent === value), `Great tutorial: ${note}`);
+  await site.fill('unannotated.example.com');
+  await site.press('Enter');
+  await options.waitForFunction(() => [...document.querySelectorAll('.tagged-site')].some((el) => el.textContent?.includes('unannotated.example.com')));
+  const worker = ctx.serviceWorkers()[0];
+  if (!worker) throw new Error('Extension service worker is missing for tag-note checks.');
+  const personal = await worker.evaluate(async () => (await chrome.storage.local.get('personalCopy')).personalCopy.text);
+  const overflow = {};
+  for (const scheme of ['light', 'dark']) {
+    await options.emulateMedia({ colorScheme: scheme });
+    await options.waitForFunction((theme) => document.documentElement.dataset.theme === theme, scheme);
+    for (const width of [320, 360, 390]) {
+      await options.setViewportSize({ width, height: 760 });
+      overflow[`${scheme}-${width}`] = await options.evaluate(
+        () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+      );
+    }
+  }
+  assertChecks('tag site explanation', {
+    optionalField: await reason.isVisible(),
+    reasonIsSingleLine: reasonBox !== null && reasonBox.height <= 40,
+    commentStoredWithRule: personal.includes('$site=tutorial-source.example.com,tag=tutorial # Great tutorial: The project publishes its first-party tutorials here.'),
+    descriptionIsOptional: personal.includes('$site=unannotated.example.com,tag=tutorial\n') && !personal.includes('$site=unannotated.example.com,tag=tutorial #'),
+    explanationShownUnderSite: await options.locator('.site-note').textContent() === `Great tutorial: ${note}`,
+    noHorizontalOverflow: Object.values(overflow).every(Boolean),
+  });
+  await options.close();
+  console.log('\n== tag-site explanations passed');
 }
 
 await ctx.close();

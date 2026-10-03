@@ -10,7 +10,7 @@ Tags are small labels under a result's title: "Official docs", "Discussion", "Pa
 
 On any website, open the Anubis toolbar popup. Under **Tags**, press a tag to add it to the site, or press it again to remove it. To make a new tag for the site, type its name in **New tag** and press **Add tag**. On search pages, the ⚖ menu on each result offers the same controls.
 
-Tags from lists appear in the menu too, but only the list can remove them.
+Tags from lists appear among your choices too, but only their lists can remove them.
 
 ## Decide what a tag does
 
@@ -34,12 +34,12 @@ Press **Edit** beside a tag to open it. There you can:
 
 - rename it, and give your own tags a description;
 - see your sites with the tag, and press × to untag one;
-- tag more sites: type one, or several separated by spaces or commas, and press **Add site**. This works for any tag, including tags from lists;
+- tag more sites: type one, or several separated by spaces or commas, and press **Add site**. You can optionally add one explanation for the site or sites; each note is saved with its site rule as a comment;
 - see the first sites each of your lists gives the tag.
 
 The ⚖ button on a search result tags that result's site the same way.
 
-![Settings, Tags](../img/options-tags.png)
+![Settings, Tags, with an expanded tag showing the optional explanation field for a site](../img/options-tags.png)
 
 ### Several tags on one result
 

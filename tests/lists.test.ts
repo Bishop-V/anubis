@@ -27,7 +27,8 @@ describe('bundled lists', () => {
   });
 
   it('bundles FOSS and AI slop tags with the requested FOSS tools', () => {
-    const list = parseList(readFileSync('lists/foss-tools.anubis', 'utf8'));
+    const text = readFileSync('lists/foss-tools.anubis', 'utf8');
+    const list = parseList(text);
     expect(list.tags).toContainEqual(expect.objectContaining({ id: 'foss', label: 'FOSS' }));
     expect(list.tags).toContainEqual(
       expect.objectContaining({ id: 'ai-slop', label: 'AI slop', description: 'Low-quality AI-generated content.' }),
@@ -39,6 +40,9 @@ describe('bundled lists', () => {
       { site: 'cobalt.tools', tags: ['foss'], boost: 0, discard: false, pin: false },
     ]);
     expect(BUNDLED_DIRECTORY.find((entry) => entry.id === 'foss-tools')).toMatchObject({ builtin: true, default: true });
+    const taggedSiteLines = text.split(/\r?\n/).filter((line) => line.startsWith('$site=') && line.includes(',tag='));
+    expect(taggedSiteLines).toHaveLength(2);
+    for (const line of taggedSiteLines) expect(line).toMatch(/\s+# .+\S/);
   });
 
   it('has unique directory ids and https URLs', () => {

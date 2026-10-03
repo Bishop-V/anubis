@@ -20,14 +20,15 @@ export interface SiteEntry {
   site: string;
   level: PersonalLevel;
   tags: string[];
+  description?: string;
   line: number;
 }
 
 // A "simple" site line: only options, one of which is site=. Anything with a URL
 // pattern is treated as hand-written and never rewritten.
-const SIMPLE_SITE_LINE = /^\$([a-z_]+(?:=[^,\s]*)?(?:,[a-z_]+(?:=[^,\s]*)?)*)$/i;
+const SIMPLE_SITE_LINE = /^\$([a-z_]+(?:=[^,\s]*)?(?:,[a-z_]+(?:=[^,\s]*)?)*)(?:\s+#\s*(.*))?$/i;
 
-export function parseSimpleLine(line: string): { site: string; level: PersonalLevel; tags: string[] } | undefined {
+export function parseSimpleLine(line: string): { site: string; level: PersonalLevel; tags: string[]; description?: string } | undefined {
   const m = SIMPLE_SITE_LINE.exec(line.trim());
   if (!m) return undefined;
   let site = '';
@@ -59,10 +60,11 @@ export function parseSimpleLine(line: string): { site: string; level: PersonalLe
         break;
     }
   }
-  return site ? { site, level, tags } : undefined;
+  const description = m[2]?.trim();
+  return site ? { site, level, tags, ...(description ? { description } : {}) } : undefined;
 }
 
-export function formatSiteLine(site: string, level: PersonalLevel, tags: string[]): string | undefined {
+export function formatSiteLine(site: string, level: PersonalLevel, tags: string[], description?: string): string | undefined {
   const opts = [`site=${site}`];
   if (level === 'hide') opts.push('discard');
   else if (level === 'pin') opts.push('pin');
@@ -71,7 +73,9 @@ export function formatSiteLine(site: string, level: PersonalLevel, tags: string[
   else if (level === 'lower') opts.push('downrank=5');
   for (const t of tags) opts.push(`tag=${t}`);
   if (level === 'normal' && !tags.length) return undefined;
-  return `$${opts.join(',')}`;
+  const line = `$${opts.join(',')}`;
+  const note = description?.replace(/[\r\n]+/g, ' ').trim();
+  return note ? `${line} # ${note}` : line;
 }
 
 /**
@@ -91,6 +95,9 @@ export function listSites(text: string): SiteEntry[] {
     }
     if (prev.level === 'normal') prev.level = parsed.level;
     for (const t of parsed.tags) if (!prev.tags.includes(t)) prev.tags.push(t);
+    if (parsed.description && parsed.description !== prev.description) {
+      prev.description = prev.description ? `${prev.description}; ${parsed.description}` : parsed.description;
+    }
   });
   return [...bySite.values()];
 }
@@ -100,8 +107,8 @@ export function getSite(text: string, site: string): SiteEntry | undefined {
 }
 
 /** Replace every simple line for `site` with one canonical line (or none). */
-export function setSite(text: string, site: string, level: PersonalLevel, tags: string[]): string {
-  return setSites(text, new Map([[site, { level, tags }]]));
+export function setSite(text: string, site: string, level: PersonalLevel, tags: string[], description?: string): string {
+  return setSites(text, new Map([[site, { level, tags, description }]]));
 }
 
 /**
@@ -109,15 +116,22 @@ export function setSite(text: string, site: string, level: PersonalLevel, tags: 
  * sites doesn't re-read the list once per site. A site's line goes where its first
  * line was; new sites go at the end, in the order given.
  */
-export function setSites(text: string, sites: Map<string, { level: PersonalLevel; tags: string[] }>): string {
+export function setSites(text: string, sites: Map<string, { level: PersonalLevel; tags: string[]; description?: string }>): string {
+  const descriptions = new Map<string, string>();
   const line = (site: string) => {
-    const { level, tags } = sites.get(site)!;
-    return formatSiteLine(site, level, [...new Set(tags)]);
+    const { level, tags, description } = sites.get(site)!;
+    return formatSiteLine(site, level, [...new Set(tags)], description ?? descriptions.get(site));
   };
   const placed = new Set<string>();
   const kept: string[] = [];
   for (const raw of text.split(/\r?\n/)) {
-    const site = parseSimpleLine(raw)?.site;
+    const parsed = parseSimpleLine(raw);
+    if (parsed?.description) {
+      const previous = descriptions.get(parsed.site);
+      if (!previous) descriptions.set(parsed.site, parsed.description);
+      else if (!previous.split('; ').includes(parsed.description)) descriptions.set(parsed.site, `${previous}; ${parsed.description}`);
+    }
+    const site = parsed?.site;
     if (site === undefined || !sites.has(site)) {
       kept.push(raw);
       continue;
@@ -136,16 +150,19 @@ export function setSites(text: string, sites: Map<string, { level: PersonalLevel
 }
 
 export function setSiteLevel(text: string, site: string, level: PersonalLevel): string {
-  return setSite(text, site, level, getSite(text, site)?.tags ?? []);
+  const entry = getSite(text, site);
+  return setSite(text, site, level, entry?.tags ?? [], entry?.description);
 }
 
-export function toggleSiteTag(text: string, site: string, tag: string, on?: boolean): string {
+export function toggleSiteTag(text: string, site: string, tag: string, on?: boolean, description?: string): string {
   const entry = getSite(text, site);
   const tags = entry?.tags ?? [];
   const has = tags.includes(tag);
   const want = on ?? !has;
-  if (want === has) return text;
-  return setSite(text, site, entry?.level ?? 'normal', want ? [...tags, tag] : tags.filter((t) => t !== tag));
+  const notes = [...new Set([entry?.description, description?.trim()].filter((note): note is string => !!note))];
+  const note = notes.length ? notes.join('; ') : undefined;
+  if (want === has && note === entry?.description) return text;
+  return setSite(text, site, entry?.level ?? 'normal', want ? [...tags, tag] : tags.filter((t) => t !== tag), note);
 }
 
 // ---------------------------------------------------------------------------
@@ -155,15 +172,16 @@ export function toggleSiteTag(text: string, site: string, tag: string, on?: bool
 export interface SiteState {
   level: PersonalLevel;
   tags: string[];
+  description?: string;
 }
 
 export function siteState(text: string, site: string): SiteState {
   const entry = getSite(text, site);
-  return { level: entry?.level ?? 'normal', tags: entry?.tags ?? [] };
+  return { level: entry?.level ?? 'normal', tags: entry?.tags ?? [], ...(entry?.description ? { description: entry.description } : {}) };
 }
 
 export function sameSiteState(a: SiteState, b: SiteState): boolean {
-  return a.level === b.level && a.tags.length === b.tags.length && a.tags.every((t) => b.tags.includes(t));
+  return a.level === b.level && a.tags.length === b.tags.length && a.tags.every((t) => b.tags.includes(t)) && a.description === b.description;
 }
 
 /** A change to one site that can be undone. */
@@ -207,7 +225,7 @@ export function changeHolds(change: SiteChange, text: string): boolean {
 
 /** Put the site back as it was before the change. */
 export function undoChange(text: string, change: SiteChange): string {
-  let next = setSite(text, change.site, change.before.level, change.before.tags);
+  let next = setSite(text, change.site, change.before.level, change.before.tags, change.before.description);
   const used = new Set(listSites(next).flatMap((e) => e.tags));
   for (const id of change.newTags) if (!used.has(id)) next = removeTag(next, id);
   return next;

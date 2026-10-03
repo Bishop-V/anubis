@@ -264,12 +264,13 @@ export function parseList(text: string): ParsedList {
     }
     if (line.startsWith('#')) return;
 
+    const instruction = format === 'anubis' ? line.replace(/\s+#.*$/, '').trim() : line;
     const result =
       format === 'ublacklist'
-        ? parseUblacklistLine(line, lineNo)
+        ? parseUblacklistLine(instruction, lineNo)
         : format === 'domains'
-          ? parseDomainLine(line, lineNo)
-          : parseGoggleLine(line, lineNo);
+          ? parseDomainLine(instruction, lineNo)
+          : parseGoggleLine(instruction, lineNo);
 
     if (result === 'lens') list.lens = true;
     else if (typeof result === 'string') list.errors.push({ line: lineNo, message: result });
