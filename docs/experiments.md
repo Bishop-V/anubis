@@ -78,6 +78,7 @@ The documentation site and its screenshots.
 Builds, tests, the end-to-end run, stores, and releases.
 
 - Finding Chromium for the end-to-end run (2026-09-29)
+- Firefox approval and automated release downloads (2026-10-03)
 - Firefox first, and one command before a release (2026-09-29)
 - Store privacy disclosure (2026-09-29)
 - Final runtime and listing review (2026-09-29)

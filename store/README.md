@@ -1,6 +1,6 @@
 # Publishing to the stores
 
-What the Chrome Web Store and Firefox Add-ons (AMO) ask for, with the answers ready to paste. Neither listing exists yet. Do the first upload to each store by hand in its dashboard; the APIs update listings that already exist.
+What the Chrome Web Store and Firefox Add-ons (AMO) ask for, with the answers ready to paste. The Firefox listing is live; create the Chrome and Edge listings manually in their dashboards before automating submissions there.
 
 ## Chrome Web Store publishing API
 
@@ -25,7 +25,9 @@ Setting it up: create a Google Cloud project, turn on the Chrome Web Store API, 
 3. The privacy policy link below has to load: GitHub Pages must be publishing the docs site.
 4. Merge, then push a matching tag (`git tag v<version> && git push origin v<version>`). [`release.yml`](../.github/workflows/release.yml) builds the zips, creates the GitHub Release and, once approved, submits to each store whose keys are in the `release` environment.
 
-The release workflow rejects tags whose commit is not already on `main`, as well as tags that do not match `package.json`. It submits only to stores whose keys are all set in the `release` environment and skips the rest, so Firefox ships first: add `FIREFOX_JWT_ISSUER` and `FIREFOX_JWT_SECRET` (AMO → Tools → Manage API Keys) and leave the Chrome and Edge keys out until those listings exist. A store with only some of its keys set fails the release rather than being skipped. Before the first submission, create the store listings manually, verify their permanent IDs and privacy answers, confirm the docs site is publishing on GitHub Pages, and configure the protected `release` environment with the store credentials. As of 2026-09-29, that environment was not configured. Do not test publishing against production store credentials from a pull request.
+The release workflow rejects tags whose commit is not already on `main`, as well as tags that do not match `package.json`. A matching tag automatically runs CI, builds the Firefox and Chrome packages, and creates a GitHub Release with both versioned assets and stable aliases. The latest Firefox package is available at `https://github.com/Bishop-V/anubis/releases/latest/download/anubis-firefox.zip`; the release page is https://github.com/Bishop-V/anubis/releases. It then submits to each store whose keys are all set in the `release` environment and skips the rest.
+
+The GitHub `release` environment is configured with required approval by Bishop-V, administrator bypass disabled, and a `v*` tag restriction. Before the next Firefox submission, add `FIREFOX_JWT_ISSUER` and `FIREFOX_JWT_SECRET` there (AMO → Tools → Manage API Keys); those secrets were not configured when checked on 2026-10-03. GitHub Release packages are published even when no store credentials are configured; the submission job skips stores with no keys and fails if a store has only some of its keys set. For Chrome or Edge, create the listing manually first, verify its permanent ID and privacy answers, and only then add its credentials. Confirm that the docs site is publishing on GitHub Pages. Do not test publishing against production store credentials from a pull request.
 
 ## Chrome Web Store
 

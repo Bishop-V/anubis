@@ -2,6 +2,15 @@
 
 Builds, tests, the end-to-end run, stores, and releases. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Firefox approval and automated release downloads (2026-10-03)
+
+- **Confirmed:** Anubis is live on [Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/). Updated the install guidance and status pages; Chrome and Edge listings are still pending.
+- **Changed:** the tag workflow now attaches stable `anubis-firefox.zip`, `anubis-chrome.zip`, and `anubis-sources.zip` aliases alongside the versioned packages. This makes `releases/latest/download/anubis-firefox.zip` a persistent link for the latest Firefox build.
+- **Configured:** the `release` environment requires approval by Bishop-V, disallows administrator bypass, and is restricted to `v*` tags. The Firefox AMO API secrets were not set at this check.
+- **Changed:** if no store credentials are configured, the release workflow now leaves the successful GitHub package release intact and skips store submissions with a notice. A partially configured store remains an error.
+- **Checked:** `.github/workflows/release.yml` builds packages and attaches them to GitHub Releases for matching tags, then submits to stores whose credentials are configured. The repository had no published release at this check.
+- **Next:** add Firefox AMO API secrets to the protected environment. The source archive and Firefox package are not published to GitHub until a matching release tag is pushed from `main`; no duplicate AMO version was tagged or submitted here.
+
 ## Finding Chromium for the end-to-end run (2026-09-29)
 
 - **Nix fetches it (2026-09-30):** the owner asked not to need `nix shell nixpkgs#chromium -c npm run release:prep` each time. Adding Chromium to the dev shell was still left out, for the reason below; instead, when there's no Chromium and `nix` is on PATH, `e2e/run.mjs` runs `nix build --inputs-from . nixpkgs#chromium --no-link --print-out-paths` and uses its `bin/chromium`. It's the nixpkgs the flake pins, stays in the Nix store after the first time, and works in or out of `nix develop`. Checked with a stand-in `nix` that returns a store path (the `responsive` part passed) and with no Nix (the message now says Nix will do).
