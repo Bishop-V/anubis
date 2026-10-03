@@ -42,8 +42,9 @@ The look, the wording, and Anubis's own pages. Part of [Experiments and decision
 
 - **Found:** at 320px, the Your sites table forced the whole Settings page wider than the screen. The labelled ranking choices in the Add a site form also wrapped as an accidental run of buttons.
 - **Rejected:** changing the table to `display: block` stopped the page overflow, but made site names wrap one character at a time and separated the table columns.
-- **Shipped:** keep the table semantic and scroll it horizontally inside its own wrapper on screens up to 360px; keep its columns together, wrap the labelled ranking choices in a small grid, and put Add on its own line.
-- **Checked:** every Settings section stays within the viewport at 320px, 360px and 390px in Chromium. At 390px the sites table fits without scrolling; below that only the table can scroll.
+- **Shipped:** keep the table semantic and scroll it horizontally inside its own wrapper below 390px; keep its columns together, wrap the labelled ranking choices in a small grid, and put Add on its own line.
+- **Follow-up:** the original breakpoint stopped at 360px while the table's minimum width remained 390px, leaving the 361–389px range unprotected. The Your sites header also stayed on one line there and could force the page to overflow. Extend the page-width guard, header wrapping, toolbar, table wrapper, and labelled-ranking layout through 389px.
+- **Checked:** every Settings section stays within the viewport at 320px, 360px, 375px, 389px, and 390px in light and dark schemes. At 390px the sites table fits without scrolling; below that only the table can scroll.
 
 ## Welcome page
 

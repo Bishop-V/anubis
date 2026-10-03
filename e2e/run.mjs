@@ -1812,34 +1812,76 @@ if (!only || only === 'options') {
 
 if (!only || only === 'responsive') {
   const opt = await ctx.newPage();
-  for (const width of [320, 360, 390]) {
-    await opt.setViewportSize({ width, height: 900 });
-    for (const section of ['sites', 'tags', 'lists', 'cleanup', 'appearance', 'engines', 'sync', 'share']) {
-      await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
-      await opt.locator('main h2').waitFor();
-      const layout = await opt.evaluate(() => ({
-        document: document.documentElement.scrollWidth,
-        viewport: window.innerWidth,
-      }));
-      if (layout.document > layout.viewport) {
-        throw new Error(`Settings → ${section} overflows at ${width}px (${layout.document}px wide)`);
+  for (const colorScheme of ['light', 'dark']) {
+    await opt.emulateMedia({ colorScheme });
+    for (const width of [320, 360, 375, 389, 390]) {
+      await opt.setViewportSize({ width, height: 900 });
+      for (const section of ['sites', 'tags', 'lists', 'cleanup', 'appearance', 'engines', 'sync', 'share']) {
+        await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
+        const heading = {
+          sites: 'Your sites',
+          tags: 'Tags',
+          lists: 'Lists',
+          cleanup: 'Remove panels',
+          appearance: 'Appearance',
+          engines: 'Search engines',
+          sync: 'Sync',
+          share: 'Back up, import, and share',
+        }[section];
+        await opt.waitForFunction((text) => document.querySelector('main h2')?.textContent === text, heading);
+        const layout = await opt.evaluate(() => ({
+          document: document.documentElement.scrollWidth,
+          viewport: window.innerWidth,
+          overflowing: [...document.querySelectorAll('body *')]
+            .filter((el) => el.getBoundingClientRect().right > window.innerWidth + 1)
+            .slice(0, 8)
+            .map((el) => `${el.tagName.toLowerCase()}.${String(el.className).replaceAll(' ', '.')}`),
+        }));
+        if (layout.document > layout.viewport) {
+          throw new Error(`Settings → ${section} overflows at ${width}px in ${colorScheme} mode (${layout.document}px wide): ${layout.overflowing.join(', ')}`);
+        }
+        if (section === 'sites' && width < 390) {
+          // The table fills in after the heading shows, so wait for it to overflow.
+          const scrolls = await opt
+            .waitForFunction(() => {
+              const el = document.querySelector('.sites-scroll');
+              return !!el && el.scrollWidth > el.clientWidth;
+            }, null, { timeout: 3000 })
+            .then(() => true, () => false);
+          if (!scrolls) throw new Error(`Your sites table should scroll inside its wrapper at ${width}px`);
+          await opt.waitForFunction(() => {
+            const levels = document.querySelector('main form.inline-form .levels.labelled');
+            return !!levels?.isConnected && getComputedStyle(levels).display === 'grid';
+          });
+          const addForm = await opt.evaluate(() => {
+            const levels = document.querySelector('main form.inline-form .levels.labelled');
+            if (!levels?.isConnected) return { compact: false, addOnNextLine: false, missing: true };
+            const add = levels.closest('form')?.querySelector('button[type="submit"]');
+            if (!add) return { compact: false, addOnNextLine: false, missing: true };
+            const style = getComputedStyle(levels);
+            const columns = style.gridTemplateColumns.trim().split(/\s+/).length;
+            const levelsBox = levels.getBoundingClientRect();
+            const addBox = add.getBoundingClientRect();
+            return {
+              compact: style.display === 'grid' && columns === 3,
+              addOnNextLine: addBox.top >= levelsBox.bottom,
+              display: style.display,
+              columns,
+              addTop: addBox.top,
+              levelsBottom: levelsBox.bottom,
+            };
+          });
+          if (!addForm.compact || !addForm.addOnNextLine) {
+            throw new Error(`Your sites ranking choices should use a compact grid with Add below at ${width}px in ${colorScheme} mode: ${JSON.stringify(addForm)}`);
+          }
+        }
+        if (section === 'sites' && width === 390) {
+          const overflows = await opt.locator('.sites-scroll').evaluate((el) => el.scrollWidth > el.clientWidth);
+          if (overflows) throw new Error('Your sites table should fit at 390px');
+        }
       }
-      if (section === 'sites' && width < 390) {
-        // The table fills in after the heading shows, so wait for it to overflow.
-        const scrolls = await opt
-          .waitForFunction(() => {
-            const el = document.querySelector('.sites-scroll');
-            return !!el && el.scrollWidth > el.clientWidth;
-          }, null, { timeout: 3000 })
-          .then(() => true, () => false);
-        if (!scrolls) throw new Error(`Your sites table should scroll inside its wrapper at ${width}px`);
-      }
-      if (section === 'sites' && width === 390) {
-        const overflows = await opt.locator('.sites-scroll').evaluate((el) => el.scrollWidth > el.clientWidth);
-        if (overflows) throw new Error('Your sites table should fit at 390px');
-      }
+      console.log(`  Settings sections fit at ${width}px in ${colorScheme} mode`);
     }
-    console.log(`  Settings sections fit at ${width}px`);
   }
   await opt.close();
   console.log('\n== responsive Settings checks passed');
