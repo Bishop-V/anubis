@@ -100,7 +100,7 @@ One palette, defined twice: `assets/theme.css` for extension pages and `entrypoi
 | Welcome page | The same idea in 1040px: section titles in a 220px column, what to do beside them, lists two across. Below 900px, one column. |
 | Search pages | The summary sits above the results, lined up with them; on phones it's one short line, with Details for the rest. Tags go under each title. The result menu opens under its ⚖ button, 312px wide. |
 
-Every page works at phone width (390px) without scrolling sideways. Settings are also checked at 320px and 360px: only the Your sites table may scroll inside its own wrapper below 390px. `node e2e/run.mjs responsive` checks all settings sections at 320px, 360px, and 390px; the `welcome` and `mobile` e2e parts cover their respective pages.
+Every page works at phone width (390px) without scrolling sideways. Settings are also checked at 320px, 360px, 375px, and 389px: only the Your sites table may scroll inside its own wrapper below 390px. `node e2e/run.mjs responsive` checks all settings sections at those widths and at 390px in light and dark schemes; the `welcome` and `mobile` e2e parts cover their respective pages.
 
 <img src="docs/img/popup.png" alt="The popup on wikipedia.org: the site in the cartouche over the balance, the five rankings, tags, and your sites" width="340">
 
