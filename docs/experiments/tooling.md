@@ -9,7 +9,7 @@ Builds, tests, the end-to-end run, stores, and releases. Part of [Experiments an
 - **Checked:** after the workflow fix merged, the retagged `v0.2.1` run passed version validation, CI, zip creation, and artifact upload; the GitHub Release was published with all six versioned and stable packages.
 - **Found:** AMO still returned `404 Not found` after both API credentials were refreshed. The release log confirmed both secrets were present. The submit library strips braces from `FIREFOX_EXTENSION_ID` before calling AMO; AMO's public API resolves the Anubis listing by slug (`anubis-search`), while the unbraced GUID lookup returns 404.
 - **Changed:** configure the submit tool with the AMO listing slug. Keep the braced permanent GUID in `wxt.config.ts`, where it identifies the Firefox add-on for browser storage; it is a different identifier use.
-- **Next:** rerun the unpublished AMO submission after this workflow fix is merged. The GitHub Release packages remain published.
+- **Next:** use the protected AMO-only retry workflow with a one-off `v<version>-amo-submit` tag after its workflow change is merged. It uploads the existing release package without moving the published release tag or rebuilding the GitHub Release.
 
 ## Firefox approval and automated release downloads (2026-10-03)
 
