@@ -109,8 +109,9 @@ jobs:
           CHROME_PUBLISHER_ID: ${{ vars.CHROME_PUBLISHER_ID }}
           CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL: ${{ secrets.CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL }}
           CHROME_SERVICE_ACCOUNT_PRIVATE_KEY: ${{ secrets.CHROME_SERVICE_ACCOUNT_PRIVATE_KEY }}
-          # The permanent add-on ID from wxt.config.ts.
-          FIREFOX_EXTENSION_ID: '{9ab93008-4ecd-4923-8a62-d81099997d39}'
+          # AMO's API resolves this listing by slug; the submit tool strips
+          # braces from GUIDs, which makes this add-on's GUID lookup return 404.
+          FIREFOX_EXTENSION_ID: anubis-search
           FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
           FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
           EDGE_PRODUCT_ID: ${{ vars.EDGE_PRODUCT_ID }}
