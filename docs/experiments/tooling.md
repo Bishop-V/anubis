@@ -6,7 +6,9 @@ Builds, tests, the end-to-end run, stores, and releases. Part of [Experiments an
 
 - **Found:** the release checks and zip builds passed, but `upload-artifact` failed with "No files were found" for `.output/*.zip`. The zip files existed; the action excludes hidden directories by default, and `.output` is hidden.
 - **Changed:** stage the six versioned and stable release archives in the visible `release-assets/` directory and upload from there. Explicit filenames prevent stale archives from being included. The submit job still downloads them to `.output/` for `wxt submit`.
-- **Next:** rerun the unpublished 0.2.1 release after this workflow fix is merged.
+- **Checked:** after the workflow fix merged, the retagged `v0.2.1` run passed version validation, CI, zip creation, and artifact upload; the GitHub Release was published with all six versioned and stable packages.
+- **Blocked:** Firefox submission failed when AMO returned `404 Not found` while fetching the add-on details. The configured GUID also resolves through AMO's public API, and the workflow confirms both credential variables are present without exposing their values. No 0.2.1 version was submitted to AMO.
+- **Next:** verify that `FIREFOX_JWT_ISSUER` is the API key (not an email or add-on ID), that `FIREFOX_JWT_SECRET` is its matching secret, and that the credentials belong to an AMO account with access to `anubis-search`. Keep both values in the GitHub `release` environment; never share them in chat or logs. Then rerun the submission.
 
 ## Firefox approval and automated release downloads (2026-10-03)
 
