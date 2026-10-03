@@ -65,10 +65,20 @@ jobs:
           cp ".output/anubis-$version-firefox.zip" .output/anubis-firefox.zip
           cp ".output/anubis-$version-sources.zip" .output/anubis-sources.zip
           cp ".output/anubis-$version-chrome.zip" .output/anubis-chrome.zip
+          # upload-artifact excludes hidden directories unless explicitly opted in.
+          mkdir -p release-assets
+          cp \
+            ".output/anubis-$version-firefox.zip" \
+            ".output/anubis-$version-sources.zip" \
+            ".output/anubis-$version-chrome.zip" \
+            .output/anubis-firefox.zip \
+            .output/anubis-sources.zip \
+            .output/anubis-chrome.zip \
+            release-assets/
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: zips
-          path: .output/*.zip
+          path: release-assets/*.zip
           if-no-files-found: error
       - name: Create the GitHub Release
         env:
