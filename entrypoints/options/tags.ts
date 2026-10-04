@@ -97,14 +97,26 @@ const LIST_PREVIEW = 8;
 
 /** Tags whose sites are open, kept so they stay open when the page renders again after a change. */
 const open = new Set<string>();
-/** The tag whose Add field was in use, to put the cursor back after the page renders again. */
-let refocus: string | undefined;
+/**
+ * The tag whose Add field was in use and the personal list it saved, to put the
+ * cursor back once the page shows that list. A render of an older list (one that
+ * was waiting for the field to lose focus) must not take it, or the field would
+ * hold focus and keep the saved list from showing.
+ */
+let refocus: { tag: string; text: string } | undefined;
 
 /**
  * Under a tag: its description (for your own tags), your sites with it, each of
  * which can be untagged, a field to tag more, and the sites lists give it.
  */
-function sitesPanel(tag: TagDef, mine: boolean, sites: SiteEntry[], lists: CompiledList[], save: (patch: Partial<TagDef>) => void): HTMLElement {
+function sitesPanel(
+  tag: TagDef,
+  mine: boolean,
+  personalText: string,
+  sites: SiteEntry[],
+  lists: CompiledList[],
+  save: (patch: Partial<TagDef>) => void,
+): HTMLElement {
   const tagged = sites.filter((s) => s.tags.includes(tag.id));
 
   const input = h('input', {
@@ -134,12 +146,12 @@ function sitesPanel(tag: TagDef, mine: boolean, sites: SiteEntry[], lists: Compi
     input.value = '';
     const reason = reasonInput.value.trim();
     reasonInput.value = '';
-    refocus = tag.id;
     input.blur();
     const note = reason ? `${tag.label}: ${reason}` : undefined;
-    await editPersonal((text) => domains.reduce((t, d) => toggleSiteTag(t, d!, tag.id, true, note), text));
+    const saved = await editPersonal((text) => domains.reduce((t, d) => toggleSiteTag(t, d!, tag.id, true, note), text));
+    refocus = { tag: tag.id, text: saved };
   });
-  if (refocus === tag.id) {
+  if (refocus?.tag === tag.id && refocus.text === personalText) {
     refocus = undefined;
     // After the page has replaced the old one.
     setTimeout(() => input.focus(), 0);
@@ -234,7 +246,7 @@ export async function renderTags(): Promise<HTMLElement> {
       const show = h('input', { type: 'checkbox', checked: !pref.muted, attrs: { 'aria-label': `Show ${tag.label} under results` } });
       show.addEventListener('change', () => void setTagPref(tag.id, { muted: show.checked ? undefined : true }));
 
-      const panel = sitesPanel(tag, mine, sites, rules.lists, save);
+      const panel = sitesPanel(tag, mine, rules.personalText, sites, rules.lists, save);
       const toggleLabel = () => (open.has(tag.id) ? 'Done' : 'Edit');
       const toggle = h(
         'button',
