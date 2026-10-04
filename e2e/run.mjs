@@ -2295,15 +2295,23 @@ if (only === 'tag-notes') {
   const reason = options.getByRole('textbox', { name: 'Why this site fits the “Great tutorial” tag (optional)' });
   const reasonBox = await reason.boundingBox();
   const note = 'The project publishes its first-party tutorials here.';
+  const worker = ctx.serviceWorkers()[0];
+  if (!worker) throw new Error('Extension service worker is missing for tag-note checks.');
   await site.fill('tutorial-source.example.com');
   await reason.fill(note);
+  // A change from elsewhere while typing makes Settings wait to render until the field loses
+  // focus; that late render of the older list must not keep the added site from showing.
+  await worker.evaluate(async () => {
+    const { tagPrefs } = await chrome.storage.sync.get('tagPrefs');
+    await chrome.storage.sync.set({ tagPrefs: { ...tagPrefs, 'e2e-pending': {} } });
+  });
+  await options.waitForTimeout(200);
   await site.press('Enter');
-  await options.waitForFunction((value) => [...document.querySelectorAll('.site-note')].some((el) => el.textContent === value), `Great tutorial: ${note}`);
+  await options.waitForFunction((value) => [...document.querySelectorAll('.site-note')].some((el) => el.textContent === value), `Great tutorial: ${note}`, { timeout: 5000 });
+  await options.waitForFunction(() => document.activeElement?.getAttribute('aria-label') === 'Sites to tag Great tutorial');
   await site.fill('unannotated.example.com');
   await site.press('Enter');
   await options.waitForFunction(() => [...document.querySelectorAll('.tagged-site')].some((el) => el.textContent?.includes('unannotated.example.com')));
-  const worker = ctx.serviceWorkers()[0];
-  if (!worker) throw new Error('Extension service worker is missing for tag-note checks.');
   const personal = await worker.evaluate(async () => (await chrome.storage.local.get('personalCopy')).personalCopy.text);
   const overflow = {};
   for (const scheme of ['light', 'dark']) {

@@ -14,6 +14,7 @@ The look, the wording, and Anubis's own pages. Part of [Experiments and decision
 
 ## Explanations on tagged sites (2026-10-04)
 
+- **Race fix:** the `tag-notes` e2e part failed about half the time, on `main` too. A change from elsewhere while typing makes Settings wait until the field loses focus before it renders again. Adding a site blurs the field, so that late render showed the older list and put the cursor back in the Add field. When the save landed, its render waited on the focused field, and the new site never appeared. The cursor now goes back only on a render that shows the saved list. The e2e part changes storage while the field is focused to force the race; it failed 2 of 3 runs before the fix and passed 10 of 10 after.
 - **Added:** every tagged site in the bundled FOSS tools list has an inline comment saying why it belongs. The Anubis list parser ignores trailing `#` comments, so these explanations do not change matching.
 - **Added:** Settings → Tags accepts an optional reason alongside a site. It is saved as a comment on the personal-list rule and shown under the site in the tag editor.
 - **Compatibility:** the note stays in the existing plain-text personal list and follows site edits and sync merges; old rules without notes remain unchanged.
