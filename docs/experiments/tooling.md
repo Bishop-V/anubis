@@ -2,6 +2,14 @@
 
 Builds, tests, the end-to-end run, stores, and releases. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## 0.2.2 release: first Chrome submission (2026-10-05)
+
+- **Listed:** the Chrome Web Store accepted Anubis (item `aninblefigadaigfppckanjgiijcmmhi`). The install guides, README, and store notes now link to it.
+- **Submitted:** `v0.2.2` sent Firefox to AMO for review; validation reported zero errors, warnings, or notices.
+- **Found:** Chrome failed with `SERVICE_DISABLED`, because the Chrome Web Store API wasn't turned on in the service account's Google Cloud project. Once it was on, Chrome failed again with `PERMISSION_DENIED` on `publishers/<id>/items/<id>`: the service account needs to be added under Account in the developer dashboard of the publisher that owns the item, and `CHROME_PUBLISHER_ID` must be that publisher's ID.
+- **Found:** the JSON key stores `private_key` with `\n` escapes. The submit tool passes the secret to Node's signer unchanged, so set the secret from `jq -r .private_key`, which gives real line breaks.
+- **Note:** re-running the submit job after Firefox succeeded fails Firefox with a duplicate version. The Chrome part still runs, because the tool submits to each store separately.
+
 ## 0.2.1 release: artifact upload path (2026-10-03)
 
 - **Found:** the release checks and zip builds passed, but `upload-artifact` failed with "No files were found" for `.output/*.zip`. The zip files existed; the action excludes hidden directories by default, and `.output` is hidden.

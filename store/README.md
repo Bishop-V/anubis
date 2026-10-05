@@ -1,6 +1,6 @@
 # Publishing to the stores
 
-What the Chrome Web Store and Firefox Add-ons (AMO) ask for, with the answers ready to paste. The Firefox listing is live; create the Chrome and Edge listings manually in their dashboards before automating submissions there.
+What the Chrome Web Store and Firefox Add-ons (AMO) ask for, with the answers ready to paste. The [Firefox](https://addons.mozilla.org/addon/anubis-search/) and [Chrome](https://chromewebstore.google.com/detail/aninblefigadaigfppckanjgiijcmmhi) listings are live; create the Edge listing manually in its dashboard before automating submissions there.
 
 ## Chrome Web Store publishing API
 
@@ -30,6 +30,8 @@ The release workflow rejects tags whose commit is not already on `main`, as well
 The GitHub `release` environment is configured with required approval by Bishop-V, administrator bypass disabled, and a `v*` tag restriction. `FIREFOX_JWT_ISSUER` and `FIREFOX_JWT_SECRET` were added to it before the 0.2.1 release attempt. GitHub Release packages are published even when no store credentials are configured; the submission job skips stores with no keys and fails if a store has only some of its keys set. For Chrome or Edge, create the listing manually first, verify its permanent ID and privacy answers, and only then add its credentials. Confirm that the docs site is publishing on GitHub Pages. Do not test publishing against production store credentials from a pull request.
 
 ## Chrome Web Store
+
+The listing is live at https://chromewebstore.google.com/detail/aninblefigadaigfppckanjgiijcmmhi. Its item ID, `aninblefigadaigfppckanjgiijcmmhi`, is the `CHROME_EXTENSION_ID` variable in the `release` environment.
 
 ### Store listing
 
