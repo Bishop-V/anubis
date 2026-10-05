@@ -15,241 +15,825 @@
     "message": "Show hidden results, or hide them again",
     "description": "Keyboard shortcut, listed in the browser's shortcut settings."
   },
-
-  "levelHide": { "message": "Hide", "description": "A site's ranking. The five rankings are Hide, Lower, Normal, Raise, and Pin." },
-  "levelLower": { "message": "Lower", "description": "A site's ranking." },
-  "levelNormal": { "message": "Normal", "description": "A site's ranking." },
-  "levelRaise": { "message": "Raise", "description": "A site's ranking." },
-  "levelPin": { "message": "Pin", "description": "A site's ranking: always at the top." },
-  "chipHidden": { "message": "Hidden", "description": "Label under a result's title." },
-  "chipLowered": { "message": "Lowered", "description": "Label under a result's title." },
-  "chipRaised": { "message": "Raised", "description": "Label under a result's title." },
-  "chipPinned": { "message": "Pinned", "description": "Label under a result's title." },
-
-  "popupOn": { "message": "On for your searches" },
-  "popupOff": { "message": "Off. Search pages are left as they are." },
-  "popupOnLabel": { "message": "Anubis on", "description": "Screen reader label of the on/off switch." },
-  "popupAddSite": { "message": "Add a site" },
-  "popupRanking": { "message": "Ranking", "description": "Screen reader label of the ranking menu next to Add a site." },
-  "popupNoSites": { "message": "Nothing yet. Use the ⚖ button on any search result to rank its site." },
-  "popupKeptNormal": { "message": "Kept at normal", "description": "A site set to Normal on purpose, overriding lists." },
-  "popupListsAndTags": { "message": "$1, $2", "description": "$1 is the number of lists (popupListCount), $2 the number of tags (popupTagCount)." },
-  "popupListCount_one": { "message": "$1 list" },
-  "popupListCount_other": { "message": "$1 lists" },
-  "popupTagCount_one": { "message": "$1 tag" },
-  "popupTagCount_other": { "message": "$1 tags" },
-  "popupRankingFor": { "message": "Ranking for $1", "description": "Screen reader label; $1 is a site." },
-  "popupRankHide": { "message": "Hide $1 in search results", "description": "$1 is a site." },
-  "popupRankLower": { "message": "Lower $1 in search results", "description": "$1 is a site." },
-  "popupRankNormal": { "message": "Rank $1 normally in search results", "description": "$1 is a site." },
-  "popupRankRaise": { "message": "Raise $1 in search results", "description": "$1 is a site." },
-  "popupRankPin": { "message": "Pin $1 to the top of search results", "description": "$1 is a site." },
-  "popupYourSites": { "message": "Your sites", "description": "Heading over the last few sites in your list, in the toolbar popup." },
-  "popupSeeAll": { "message": "See all $1", "description": "Opens Settings → Your sites. $1 is how many sites you've ranked." },
-  "popupOpenLists": { "message": "Open list settings" },
-  "popupShowOnly": { "message": "Show only", "description": "Heading over the tags on this page's results; choosing one shows only its results." },
-  "popupTags": { "message": "Tags" },
-  "popupSite": { "message": "Site", "description": "Screen reader label of the menu that picks how much of a site a ranking covers." },
-  "popupSiteChoice": { "message": "Choose how much of the site this applies to" },
-  "popupHintAllow": { "message": "Normal, whatever your lists say." },
-  "popupHintMine": { "message": "Your choice for $1, on every search.", "description": "$1 is a site." },
-  "popupHintLists": { "message": "$1 by $2. Choose one to decide yourself.", "description": "$1 is a ranking in the past tense (Hidden, Raised…), $2 the lists that chose it." },
-  "popupHintNone": { "message": "Your choice applies on every search." },
-  "popupYourTagSettings": { "message": "your tag settings", "description": "Stands in for a list's name in popupHintLists when a tag you chose to hide or raise decided the ranking." },
-  "popupTagFrom": { "message": "From $1", "description": "$1 is the lists that tag this site." },
-  "popupTagSite": { "message": "Tag $1 “$2”", "description": "$1 is a site, $2 a tag's name." },
-  "popupUntag": { "message": "Untag $1", "description": "$1 is a site." },
-  "popupTagInvalid": { "message": "Enter a tag name with at least one letter or number.", "description": "Shown under the new-tag field when its name cannot be used." },
-  "popupTagAlreadySet": { "message": "That tag is already on this site.", "description": "Shown when someone tries to add a tag that is already on the current site." },
-  "tagSiteReason": { "message": "Why this site fits the “$1” tag (optional)", "description": "Label for an optional explanation when someone adds a site to a tag in Settings." },
-  "popupThisPage": { "message": "This page" },
-  "popupThisPageOn": { "message": "This page on $1", "description": "$1 is a search engine, e.g. Google." },
-  "popupNotSearch": { "message": "Search on Google, DuckDuckGo, Bing, Brave, or another supported engine to see what Anubis changes." },
-  "showHidden": { "message": "Show hidden" },
-  "hideAgain": { "message": "Hide them again", "description": "Hides the results Show hidden brought back." },
-  "loadMore": { "message": "Load more results" },
-  "loadMoreTitle": { "message": "Add the next page of results to this page and rank them together" },
-  "loading": { "message": "Loading…" },
-  "loadMoreEmpty": { "message": "$1 sent no results for page $2. It may want you to confirm you’re not a robot first.", "description": "In the summary above the results, when Load more results got a page without results. $1 is the search engine, $2 the page number." },
-  "loadMoreRepeat": { "message": "$1 sent the same results again for page $2, so there are no more.", "description": "In the summary above the results. $1 is the search engine, $2 the page number." },
-  "loadMoreBusy": { "message": "$1 asked Anubis to slow down before page $2. Try again in a minute.", "description": "In the summary above the results, when the engine answered “too many requests”. $1 is the search engine, $2 the page number." },
-  "loadMoreRefused": { "message": "$1 refused to send page $2.", "description": "In the summary above the results. $1 is the search engine, $2 the page number." },
-  "loadMoreSlow": { "message": "$1 took too long to send page $2.", "description": "In the summary above the results. $1 is the search engine, $2 the page number." },
-  "loadMoreFailed": { "message": "Page $2 from $1 didn’t load.", "description": "In the summary above the results, when the request failed. $1 is the search engine, $2 the page number." },
-  "loadMoreOpen": { "message": "Open page $1", "description": "Link after loadMoreEmpty and the like: opens the page Anubis tried to load in a new tab. $1 is the page number." },
-  "loadMoreOpenTitle": { "message": "Open it in a new tab to see what $1 sent", "description": "Tooltip of loadMoreOpen. $1 is the search engine." },
-  "chipFromPage": { "message": "from page $1", "description": "Under a result's title when Load more results brought it in. $1 is the page number." },
-  "chipFromPageTitle": { "message": "Added by “Load more results”", "description": "Tooltip of chipFromPage." },
-  "barHidden": { "message": "hidden", "description": "In the line standing for a hidden result, after the site: “fandom.com hidden”." },
-  "barHiddenByYou": { "message": "hidden by your list", "description": "In the line standing for a hidden result, after the site." },
-  "barHiddenByTag": { "message": "hidden because it’s tagged “$1”", "description": "In the line standing for a hidden result, after the site. $1 is a tag's name." },
-  "barHiddenByLens": { "message": "hidden because $1 doesn’t include it", "description": "In the line standing for a hidden result, after the site. $1 is a list that only includes sites it names." },
-  "barHiddenByList": { "message": "hidden by $1", "description": "In the line standing for a hidden result, after the site. $1 is a list's name." },
-  "menuWhyHeading": { "message": "Why", "description": "Heading in the menu on a result, over the lists' reasons for its ranking." },
-  "menuNewTagPlaceholder": { "message": "New tag", "description": "Placeholder of the field in the menu on a result where you name a new tag." },
-  "menuNewTagLabel": { "message": "New tag name", "description": "Screen reader label of menuNewTagPlaceholder's field." },
-  "menuAddTagButton": { "message": "Add tag", "description": "Button after the new tag field in the menu on a result." },
-  "menuSavedNote": { "message": "Saved in your list.", "description": "At the foot of the menu on a result, once you've ranked or tagged its site." },
-  "menuCloseLabel": { "message": "Close", "description": "Label and tooltip of the × that closes the menu on a result." },
-  "anubisSettings": { "message": "Anubis settings", "description": "Label of the cog button that opens settings, in the toolbar popup, the summary above the results, and the menu on each result." },
-  "help": { "message": "Help" },
-  "helpTitle": { "message": "Open the wiki" },
-  "reportProblem": { "message": "Report a problem", "description": "Link in the toolbar popup and the settings sidebar that opens a bug report on GitHub." },
-  "reportProblemTitle": { "message": "Open a bug report on GitHub, with Anubis’s version and your browser filled in", "description": "Tooltip of reportProblem." },
-  "summaryShowAll": { "message": "Show all", "description": "In the summary above the results, while only results with one tag are shown." },
-  "summaryFilterLabel": { "message": "Show only results tagged", "description": "Screen reader label of the row of tags in the summary above the results." },
-  "summaryFilterOn": { "message": "Show only results tagged “$1”", "description": "Tooltip of a tag in the summary above the results. $1 is the tag's name." },
-  "summaryFilterOff": { "message": "Show all results", "description": "Tooltip of the tag whose results are the only ones shown." },
-  "summaryPinned": { "message": "pinned $1", "description": "One part of summaryActed: $1 results were pinned. The parts are joined into a list (“pinned 1, raised 2, and hid 2”)." },
-  "summaryRaised": { "message": "raised $1", "description": "Like summaryPinned, for results that were raised." },
-  "summaryLowered": { "message": "lowered $1", "description": "Like summaryPinned, for results that were lowered." },
-  "summaryHid": { "message": "hid $1", "description": "Like summaryPinned, for results that were hidden." },
-  "summaryActed": { "message": "Anubis $1 of $2.", "description": "The summary above the results. $1 is the list of summaryPinned, summaryRaised… parts, $2 is summaryResults or summaryResultsPages, e.g. “Anubis raised 1 and hid 2 of 7 results.”" },
-  "summaryResults_one": { "message": "$1 result", "description": "How many results the page has, for summaryActed." },
-  "summaryResults_other": { "message": "$1 results" },
-  "summaryResultsPages_one": { "message": "$1 result from $2 pages", "description": "Like summaryResults, after Load more results brought in more pages. $2 is the number of pages, always 2 or more." },
-  "summaryResultsPages_other": { "message": "$1 results from $2 pages" },
-  "summaryAlsoRemoved": { "message": "It also removed $1.", "description": "Second sentence of the summary, after summaryActed, when clean-up removed blocks from the page. $1 is the list of summaryRemoved… parts, e.g. “an AI answer and 2 video panels”." },
-  "summaryRemovedOnly": { "message": "Anubis removed $1.", "description": "The summary when clean-up removed blocks but no result was ranked. $1 is as in summaryAlsoRemoved." },
-  "summaryShortActed": { "message": "Anubis changed $1 of $2.", "description": "The summary on phones, where the full sentence (summaryActed) takes several lines; Details shows it. $1 is how many results were pinned, raised, lowered, or hidden, $2 is summaryResults or summaryResultsPages, e.g. “Anubis changed 4 of 9 results.”" },
-  "summaryShortActedRemoved": { "message": "Anubis changed $1 of $2 and cleaned up the page.", "description": "Like summaryShortActed, when clean-up also removed blocks from the page." },
-  "summaryShortRemoved": { "message": "Anubis cleaned up the page.", "description": "The summary on phones when clean-up removed blocks but no result was ranked; Details shows summaryRemovedOnly." },
-  "summaryDetails": { "message": "Details", "description": "Button in the summary on phones: shows the full summary, the page's tags, Load more results, and settings." },
-  "summaryFewerDetails": { "message": "Fewer details", "description": "Button in the summary on phones: folds away what summaryDetails showed." },
-  "summaryUnchanged_one": { "message": "Anubis left this result as it was.", "description": "The summary when Anubis changed nothing on a page with one result." },
-  "summaryUnchanged_other": { "message": "Anubis left all $1 results as they were.", "description": "The summary when Anubis changed nothing. $1 is the number of results." },
-  "summaryUnchangedPages": { "message": "Anubis left all $1 results from $2 pages as they were.", "description": "Like summaryUnchanged, after Load more results brought in more pages. $2 is the number of pages." },
-  "summaryFiltered_one": { "message": "Showing only “$2”: $3 of $1 result.", "description": "The summary while only results with one tag are shown. $1 is the number of results on the page, $2 the tag's name, $3 how many results have it." },
-  "summaryFiltered_other": { "message": "Showing only “$2”: $3 of $1 results." },
-  "summaryRemovedAi_one": { "message": "an AI answer", "description": "A part of summaryAlsoRemoved: blocks clean-up removed. $1 is how many." },
-  "summaryRemovedAi_other": { "message": "$1 AI answers" },
-  "summaryRemovedVideos_one": { "message": "a video panel" },
-  "summaryRemovedVideos_other": { "message": "$1 video panels" },
-  "summaryRemovedQuestions_one": { "message": "a question list", "description": "The “People also ask” block." },
-  "summaryRemovedQuestions_other": { "message": "$1 question lists" },
-  "summaryRemovedDiscussions_one": { "message": "a discussions panel" },
-  "summaryRemovedDiscussions_other": { "message": "$1 discussions panels" },
-  "summaryRemovedNews_one": { "message": "a news panel" },
-  "summaryRemovedNews_other": { "message": "$1 news panels" },
-  "summaryRemovedImages_one": { "message": "an image panel" },
-  "summaryRemovedImages_other": { "message": "$1 image panels" },
-  "summaryRemovedRelated_one": { "message": "a list of related searches" },
-  "summaryRemovedRelated_other": { "message": "$1 lists of related searches" },
-  "summaryRemovedElsewhere_one": { "message": "a row of other search engines" },
-  "summaryRemovedElsewhere_other": { "message": "$1 rows of other search engines" },
-  "withShortcut": { "message": "$1 ($2)", "description": "A button's description followed by its keyboard shortcut, e.g. Show hidden (Alt+Shift+H)." },
-  "toolbarOff": { "message": "Anubis is off", "description": "Tooltip of the toolbar button while Anubis is turned off." },
-  "weighLabel": { "message": "Hide, rank, or tag $1", "description": "Tooltip and screen reader label of the balance button on each result, and the name of the menu it opens. $1 is the result's site, e.g. fandom.com." },
-  "weighLabelRanked": { "message": "Hide, rank, or tag $1 ($2)", "description": "The same label for a site that isn't ranked Normal, whose button shows its ranking. Keep it starting with weighLabel's words. $1 is the site; $2 is chipHidden, chipLowered, chipRaised, or chipPinned in lower case, e.g. “Hide, rank, or tag fandom.com (lowered)”." },
-  "hiddenShow": { "message": "Show", "description": "Button on the line standing for a hidden result: shows that result." },
-  "hiddenShowSite": { "message": "Show $1", "description": "Screen reader label of hiddenShow, naming the site. Keep it starting with hiddenShow's word. $1 is the site, e.g. fandom.com." },
-  "hiddenMore_one": { "message": "and $1 more", "description": "After a site's name on the one line standing for several hidden results in a row, e.g. “fandom.com and 1 more hidden by your list”." },
-  "hiddenMore_other": { "message": "and $1 more" },
-  "summaryChangedHide": { "message": "Hid $1.", "description": "In the summary above the results, after you rank a site from the menu on a result, followed by an Undo button. $1 is the site, e.g. fandom.com." },
-  "summaryChangedLower": { "message": "Lowered $1.", "description": "Like summaryChangedHide, for Lower." },
-  "summaryChangedRaise": { "message": "Raised $1.", "description": "Like summaryChangedHide, for Raise." },
-  "summaryChangedPin": { "message": "Pinned $1.", "description": "Like summaryChangedHide, for Pin." },
-  "summaryChangedAllow": { "message": "Set $1 to Normal.", "description": "Like summaryChangedHide, for Normal when a subscribed list ranks the site: it's then ranked Normal whatever the lists say. Normal is the ranking's name, as on the menu's button." },
-  "summaryChangedNormal": { "message": "Cleared your ranking of $1.", "description": "Like summaryChangedHide, after you press the ranking a site already had, so your list no longer ranks it and the subscribed lists decide." },
-  "summaryChangedTagOn": { "message": "Tagged $1 “$2”.", "description": "Like summaryChangedHide, after you tag a site. $1 is the site, $2 the tag's name." },
-  "summaryChangedTagOff": { "message": "Removed the tag “$2” from $1.", "description": "Like summaryChangedHide, after you untag a site. $1 is the site, $2 the tag's name." },
-  "summaryChangedSite": { "message": "Changed $1 in your list.", "description": "Like summaryChangedHide, after several changes to one site's ranking and tags." },
-  "summaryUndo": { "message": "Undo", "description": "Button after summaryChangedHide and the like: puts the site back as it was before." },
-
-  "menuSuggest": { "message": "Should a list include it? Suggest it to $1.", "description": "In the menu on a result, once you've ranked or tagged the site yourself. $1 is one or two list names, each a link that opens a pre-filled issue on that list's issue tracker, joined like “A or B”." },
-  "menuSuggestTitle": { "message": "Propose $1 to $2 on its issue tracker", "description": "Tooltip of a list's name in menuSuggest. $1 is a site, $2 the list's name." },
-  "menuReport": { "message": "Wrong? Report it to $1.", "description": "In the menu on a result, under the lines saying what each list does with it. $1 is those lists' names, each a link that opens a pre-filled issue on that list's issue tracker, joined like “A or B”." },
-  "menuMatchedRule": { "message": "Matched rule, line $1", "description": "Shown below a list's explanation in the result menu, above the exact rule from the list. $1 is a line number." },
-  "menuReportTitle": { "message": "Tell $1 it’s wrong about this result, on its issue tracker", "description": "Tooltip of a list's name in menuReport. $1 is the list's name." },
-
-  "offerTitle": { "message": "Subscribe to $1?", "description": "Settings → Lists, after a subscribe link opened it. $1 is the list's name." },
-  "offerTrust": { "message": "A list can hide, rank, and tag sites in your results. Only subscribe to lists you trust." },
-  "offerPermission": { "message": "Your browser will then ask to let Anubis read from $1, the site the list is on.", "description": "$1 is a website, e.g. example.org." },
-  "offerAlready": { "message": "You already subscribe to $1.", "description": "$1 is a list's name." },
-  "offerSubscribe": { "message": "Subscribe" },
-  "offerSubscribing": { "message": "Subscribing…" },
-  "offerCancel": { "message": "Cancel" },
-
-  "welcomeTitle": { "message": "Welcome to Anubis", "description": "Tab title of the page that opens when Anubis is installed." },
-  "welcomeHeading": { "message": "Anubis is installed" },
-  "welcomeIntro": { "message": "It tags, reranks, and hides search results, following your own choices and the lists you subscribe to." },
-  "welcomePinHeading": { "message": "Keep it in the toolbar" },
-  "welcomePinWhy": { "message": "Its toolbar button shows what Anubis did on the page, turns it on or off, and ranks the site you're on." },
-  "welcomePinChrome": { "message": "Press the Extensions button (the puzzle piece) next to the address bar, then the pin beside Anubis." },
-  "welcomePinEdge": { "message": "Press the Extensions button (the puzzle piece) next to the address bar, then the eye beside Anubis." },
-  "welcomePinOpera": { "message": "Press the Extensions button (the cube) next to the address bar, then the pin beside Anubis." },
-  "welcomePinFirefox": { "message": "Press the Extensions button (the puzzle piece) next to the address bar, then the gear beside Anubis, and choose Pin to Toolbar." },
-  "welcomePinAndroid": { "message": "Anubis is in the browser's menu, under Extensions." },
-  "welcomePinned": { "message": "Anubis is in your toolbar.", "description": "Shown instead of the steps once the browser says the button is pinned." },
-  "welcomeSearchHeading": { "message": "Try a search" },
-  "welcomeSearchHow": { "message": "Search as you usually do. To hide, rank, or tag a site, point at one of its results and press the ⚖ button." },
-  "welcomeSearchFor": { "message": "Search for “$1” to see tags from your lists:", "description": "$1 is welcomeQuery. Followed by one link per search engine." },
-  "welcomeSearchOn": { "message": "Search for “$1” on $2", "description": "Tooltip of a search engine link. $1 is welcomeQuery, $2 a search engine, e.g. Google." },
-  "welcomeQuery": { "message": "python list comprehension", "description": "A search whose results include official documentation, forums, and Wikipedia, so the starter lists show their tags. Keep it technical." },
-  "welcomeListsHeading": { "message": "Your lists" },
-  "welcomeListsIntro": { "message": "Lists tag, raise, lower, or hide sites for you. You start with these:" },
-  "welcomeListsNone": { "message": "Lists tag, raise, lower, or hide sites for you. You aren't subscribed to any yet." },
-  "welcomeListsMore": { "message": "Turn these off, or find more lists, in the settings." },
-  "welcomeListsOpen": { "message": "Open list settings" },
-  "welcomeGuide": { "message": "Wiki" },
-  "welcomePrivacy": { "message": "Privacy" },
-  "syncHeading": { "message": "Sync" },
-  "syncIntro": { "message": "Your list and settings on your other computers, and in your other browsers." },
-  "syncBrowserHeading": { "message": "Browser sync" },
-  "syncFirefox": { "message": "Your list, settings, tag choices, and subscriptions are saved in Firefox's sync storage. Firefox copies them to your other computers when you're signed in to Firefox with Add-ons ticked in its sync settings. It syncs about every 10 minutes, or when you choose Sync Now." },
-  "syncFirefoxAndroid": { "message": "Firefox for Android doesn't sync add-on data, so your list, settings, tag choices, and subscriptions stay on this device. To sync them, connect a WebDAV server below." },
-  "syncChrome": { "message": "Your list, settings, tag choices, and subscriptions are saved in the browser's sync storage. The browser copies them to your other computers when you're signed in to it with extensions syncing." },
-  "syncBrowserHelp": { "message": "Which browser settings to check", "description": "Link to the wiki page that explains it." },
-  "syncUsage": { "message": "They take $1 KB of the $2 KB sync has room for.", "description": "$1 and $2 are numbers of kilobytes." },
-  "syncTooBig": { "message": "Your list is too big for sync, so it's saved on this device only. Your settings, tag choices, and subscriptions still sync." },
-  "webdavHeading": { "message": "Between browsers" },
-  "webdavIntro": { "message": "Firefox and Chrome don't sync with each other. To share between them, connect the same WebDAV storage in each: Koofr and InfiniCLOUD have free plans, and Nextcloud works too. Anubis keeps one file there, anubis-sync.json, and combines the changes from each browser." },
-  "webdavHelp": { "message": "Where to get an address and a password", "description": "Link to the wiki page that explains it." },
-  "webdavAddress": { "message": "Address" },
-  "webdavAddressHint": { "message": "The service's WebDAV address, starting with https://" },
-  "listPermissionDenied": { "message": "Anubis needs permission to read $1 to update this list.", "description": "$1 is the list host name, e.g. example.org." },
-  "webdavUser": { "message": "User name" },
-  "webdavPassword": { "message": "Password" },
-  "webdavPasswordHint": { "message": "Most services give you a separate password for apps. Use that one." },
-  "webdavConnect": { "message": "Connect" },
-  "webdavEncrypt": { "message": "Encrypt the sync file end to end (recommended)" },
-  "webdavEncryptionPassphrase": { "message": "Encryption passphrase" },
-  "webdavConfirmPassphrase": { "message": "Confirm passphrase" },
-  "webdavEncryptionHint": { "message": "Use a long, unique passphrase in every browser (at least 12 characters). It is saved in this browser only, never sent to the server. If you forget it, the server copy can't be recovered." },
-  "webdavCorrectPassphrase": { "message": "Enter the correct encryption passphrase" },
-  "webdavCorrectPassphraseHint": { "message": "Use the same passphrase you set in the other browser. It is saved here only and never sent to the server." },
-  "webdavSavePassphrase": { "message": "Save passphrase and sync" },
-  "webdavChangePassphrase": { "message": "Change encryption passphrase" },
-  "webdavChangePassphraseHint": { "message": "Anubis checks the current passphrase before changing the server file. Enter the new passphrase in every other browser before its next sync." },
-  "webdavChangePassphraseHelp": { "message": "What happens when you change it", "description": "Link to the wiki page that explains it." },
-  "webdavEncryptionShort": { "message": "Use an encryption passphrase of at least 12 characters." },
-  "webdavPassphraseMismatch": { "message": "The passphrases don't match." },
-  "webdavEncrypted": { "message": "The sync file is encrypted end to end. Its passphrase is saved in this browser only; the server cannot read the contents. Use the same passphrase in each browser. If you forget it, the server copy can't be recovered." },
-  "webdavEncryptionPending": { "message": "Encryption is set up here. The next successful sync will encrypt the server copy. Use the same passphrase in each browser." },
-  "webdavEncryptionMissing": { "message": "This browser has no encryption passphrase set. Use the same passphrase as the other browser to read an encrypted file. A plain sync file can be read by the server operator." },
-  "webdavPrivacy": { "message": "With encryption on, only encrypted data goes to this server; your passphrase is saved here and never sent. Without encryption, the server can read the sync file. Your WebDAV login is saved here and sent to this server to sign in." },
-  "webdavBadAddress": { "message": "Enter the service's WebDAV address, starting with https://" },
-  "webdavMissingLogin": { "message": "Enter the user name and password too." },
-  "webdavDenied": { "message": "Anubis needs your permission to send your list to $1.", "description": "$1 is the server's host name, e.g. app.koofr.net." },
-  "webdavConnected": { "message": "Syncing with $1 as $2.", "description": "$1 is the server's host name, $2 the user name." },
-  "webdavWhen": { "message": "Changes go to the server a few seconds after you make them. Changes from your other browsers come in when the browser starts and when you search, at most every 5 minutes." },
-  "webdavSyncing": { "message": "Syncing…" },
-  "webdavLastSync": { "message": "Last synced: $1.", "description": "$1 is a time, or a date and time." },
-  "webdavLastTried": { "message": "Last tried: $1.", "description": "$1 is a time, or a date and time." },
-  "webdavSyncNow": { "message": "Sync now" },
-  "webdavDisconnect": { "message": "Disconnect" },
-  "webdavDisconnected": { "message": "Disconnected. The file stays on the server, and your list and settings stay here." },
-  "webdavErrorAuth": { "message": "The server didn't accept the user name or password. Many services need an app password here, not your usual one." },
-  "webdavErrorForbidden": { "message": "The server doesn't let this account save files there." },
-  "webdavErrorFolder": { "message": "There's no folder at that address on the server. Check the address." },
-  "webdavErrorPermission": { "message": "Anubis no longer has permission to sync with $1. Press Sync now to allow it again.", "description": "$1 is the server's host name." },
-  "webdavErrorNetwork": { "message": "Couldn't reach $1. Check the address and your connection.", "description": "$1 is the server's host name." },
-  "webdavErrorFile": { "message": "The anubis-sync.json file there isn't one Anubis can read, so it was left alone. Use another folder." },
-  "webdavErrorNeedsPassphrase": { "message": "This sync file is encrypted. Enter its passphrase; nothing was changed." },
-  "webdavErrorWrongPassphrase": { "message": "That passphrase couldn't decrypt the sync file. Check it; the server file was left unchanged." },
-  "webdavErrorUnencrypted": { "message": "This connection was encrypted before, but the server now has a plain-text sync file. It was left unchanged. Check the server file before syncing again." },
-  "webdavErrorChanged": { "message": "The sync file changed during the passphrase change, or the server cannot protect it from concurrent edits. Nothing was overwritten. Sync again and retry." },
-  "webdavErrorUnconfirmed": { "message": "The connection to $1 dropped while it saved the file, so Anubis can't tell which passphrase it has now. The old passphrase is still saved here. If the next sync says it's wrong, enter the new one.", "description": "$1 is the server's host name." },
-  "webdavErrorServer": { "message": "The server answered with an error (HTTP $1). Try again later.", "description": "$1 is an HTTP status code, e.g. 500." },
-  "webdavErrorFailed": { "message": "Sync didn't finish. Try again." }
+  "levelHide": {
+    "message": "Hide",
+    "description": "A site's ranking. The five rankings are Hide, Lower, Normal, Raise, and Pin."
+  },
+  "levelLower": {
+    "message": "Lower",
+    "description": "A site's ranking."
+  },
+  "levelNormal": {
+    "message": "Normal",
+    "description": "A site's ranking."
+  },
+  "levelRaise": {
+    "message": "Raise",
+    "description": "A site's ranking."
+  },
+  "levelPin": {
+    "message": "Pin",
+    "description": "A site's ranking: always at the top."
+  },
+  "chipHidden": {
+    "message": "Hidden",
+    "description": "Label under a result's title."
+  },
+  "chipLowered": {
+    "message": "Lowered",
+    "description": "Label under a result's title."
+  },
+  "chipRaised": {
+    "message": "Raised",
+    "description": "Label under a result's title."
+  },
+  "chipPinned": {
+    "message": "Pinned",
+    "description": "Label under a result's title."
+  },
+  "popupOn": {
+    "message": "On for your searches"
+  },
+  "popupOff": {
+    "message": "Off. Search pages are left as they are."
+  },
+  "popupOnLabel": {
+    "message": "Anubis on",
+    "description": "Screen reader label of the on/off switch."
+  },
+  "popupAddSite": {
+    "message": "Add a site"
+  },
+  "popupRanking": {
+    "message": "Ranking",
+    "description": "Screen reader label of the ranking menu next to Add a site."
+  },
+  "popupNoSites": {
+    "message": "Nothing yet. Use the ⚖ button on any search result to rank its site."
+  },
+  "popupKeptNormal": {
+    "message": "Kept at normal",
+    "description": "A site set to Normal on purpose, overriding lists."
+  },
+  "popupListsAndTags": {
+    "message": "$1, $2",
+    "description": "$1 is the number of lists (popupListCount), $2 the number of tags (popupTagCount)."
+  },
+  "popupListCount_one": {
+    "message": "$1 list"
+  },
+  "popupListCount_other": {
+    "message": "$1 lists"
+  },
+  "popupTagCount_one": {
+    "message": "$1 tag"
+  },
+  "popupTagCount_other": {
+    "message": "$1 tags"
+  },
+  "popupRankingFor": {
+    "message": "Ranking for $1",
+    "description": "Screen reader label; $1 is a site."
+  },
+  "popupRankHide": {
+    "message": "Hide $1 in search results",
+    "description": "$1 is a site."
+  },
+  "popupRankLower": {
+    "message": "Lower $1 in search results",
+    "description": "$1 is a site."
+  },
+  "popupRankNormal": {
+    "message": "Rank $1 normally in search results",
+    "description": "$1 is a site."
+  },
+  "popupRankRaise": {
+    "message": "Raise $1 in search results",
+    "description": "$1 is a site."
+  },
+  "popupRankPin": {
+    "message": "Pin $1 to the top of search results",
+    "description": "$1 is a site."
+  },
+  "popupYourSites": {
+    "message": "Your sites",
+    "description": "Heading over the last few sites in your list, in the toolbar popup."
+  },
+  "popupSeeAll": {
+    "message": "See all $1",
+    "description": "Opens Settings → Your sites. $1 is how many sites you've ranked."
+  },
+  "popupOpenLists": {
+    "message": "Open list settings"
+  },
+  "popupShowOnly": {
+    "message": "Show only",
+    "description": "Heading over the tags on this page's results; choosing one shows only its results."
+  },
+  "popupTags": {
+    "message": "Tags"
+  },
+  "popupSite": {
+    "message": "Site",
+    "description": "Screen reader label of the menu that picks how much of a site a ranking covers."
+  },
+  "popupSiteChoice": {
+    "message": "Choose how much of the site this applies to"
+  },
+  "popupHintAllow": {
+    "message": "Normal, whatever your lists say."
+  },
+  "popupHintMine": {
+    "message": "Your choice for $1, on every search.",
+    "description": "$1 is a site."
+  },
+  "popupHintLists": {
+    "message": "$1 by $2. Choose one to decide yourself.",
+    "description": "$1 is a ranking in the past tense (Hidden, Raised…), $2 the lists that chose it."
+  },
+  "popupHintNone": {
+    "message": "Your choice applies on every search."
+  },
+  "popupYourTagSettings": {
+    "message": "your tag settings",
+    "description": "Stands in for a list's name in popupHintLists when a tag you chose to hide or raise decided the ranking."
+  },
+  "popupTagFrom": {
+    "message": "From $1",
+    "description": "$1 is the lists that tag this site."
+  },
+  "popupTagSite": {
+    "message": "Tag $1 “$2”",
+    "description": "$1 is a site, $2 a tag's name."
+  },
+  "popupUntag": {
+    "message": "Untag $1",
+    "description": "$1 is a site."
+  },
+  "popupTagInvalid": {
+    "message": "Enter a tag name with at least one letter or number.",
+    "description": "Shown under the new-tag field when its name cannot be used."
+  },
+  "popupTagAlreadySet": {
+    "message": "That tag is already on this site.",
+    "description": "Shown when someone tries to add a tag that is already on the current site."
+  },
+  "tagSiteReason": {
+    "message": "Why this site fits the “$1” tag (optional)",
+    "description": "Label for an optional explanation when someone adds a site to a tag in Settings."
+  },
+  "popupThisPage": {
+    "message": "This page"
+  },
+  "popupThisPageOn": {
+    "message": "This page on $1",
+    "description": "$1 is a search engine, e.g. Google."
+  },
+  "popupNotSearch": {
+    "message": "Search on Google, DuckDuckGo, Bing, Brave, or another supported engine to see what Anubis changes."
+  },
+  "showHidden": {
+    "message": "Show hidden"
+  },
+  "hideAgain": {
+    "message": "Hide them again",
+    "description": "Hides the results Show hidden brought back."
+  },
+  "loadMore": {
+    "message": "Load more results"
+  },
+  "loadMoreTitle": {
+    "message": "Add the next page of results to this page and rank them together"
+  },
+  "loading": {
+    "message": "Loading…"
+  },
+  "loadMoreEmpty": {
+    "message": "$1 sent no results for page $2. It may want you to confirm you’re not a robot first.",
+    "description": "In the summary above the results, when Load more results got a page without results. $1 is the search engine, $2 the page number."
+  },
+  "loadMoreRepeat": {
+    "message": "$1 sent the same results again for page $2, so there are no more.",
+    "description": "In the summary above the results. $1 is the search engine, $2 the page number."
+  },
+  "loadMoreBusy": {
+    "message": "$1 asked Anubis to slow down before page $2. Try again in a minute.",
+    "description": "In the summary above the results, when the engine answered “too many requests”. $1 is the search engine, $2 the page number."
+  },
+  "loadMoreRefused": {
+    "message": "$1 refused to send page $2.",
+    "description": "In the summary above the results. $1 is the search engine, $2 the page number."
+  },
+  "loadMoreSlow": {
+    "message": "$1 took too long to send page $2.",
+    "description": "In the summary above the results. $1 is the search engine, $2 the page number."
+  },
+  "loadMoreFailed": {
+    "message": "Page $2 from $1 didn’t load.",
+    "description": "In the summary above the results, when the request failed. $1 is the search engine, $2 the page number."
+  },
+  "loadMoreOpen": {
+    "message": "Open page $1",
+    "description": "Link after loadMoreEmpty and the like: opens the page Anubis tried to load in a new tab. $1 is the page number."
+  },
+  "loadMoreOpenTitle": {
+    "message": "Open it in a new tab to see what $1 sent",
+    "description": "Tooltip of loadMoreOpen. $1 is the search engine."
+  },
+  "chipFromPage": {
+    "message": "from page $1",
+    "description": "Under a result's title when Load more results brought it in. $1 is the page number."
+  },
+  "chipFromPageTitle": {
+    "message": "Added by “Load more results”",
+    "description": "Tooltip of chipFromPage."
+  },
+  "barHidden": {
+    "message": "hidden",
+    "description": "In the line standing for a hidden result, after the site: “fandom.com hidden”."
+  },
+  "barHiddenByYou": {
+    "message": "hidden by your list",
+    "description": "In the line standing for a hidden result, after the site."
+  },
+  "barHiddenByTag": {
+    "message": "hidden because it’s tagged “$1”",
+    "description": "In the line standing for a hidden result, after the site. $1 is a tag's name."
+  },
+  "barHiddenByLens": {
+    "message": "hidden because $1 doesn’t include it",
+    "description": "In the line standing for a hidden result, after the site. $1 is a list that only includes sites it names."
+  },
+  "barHiddenByList": {
+    "message": "hidden by $1",
+    "description": "In the line standing for a hidden result, after the site. $1 is a list's name."
+  },
+  "menuWhyHeading": {
+    "message": "Why",
+    "description": "Heading in the menu on a result, over the lists' reasons for its ranking."
+  },
+  "menuNewTagPlaceholder": {
+    "message": "New tag",
+    "description": "Placeholder of the field in the menu on a result where you name a new tag."
+  },
+  "menuNewTagLabel": {
+    "message": "New tag name",
+    "description": "Screen reader label of menuNewTagPlaceholder's field."
+  },
+  "menuAddTagButton": {
+    "message": "Add tag",
+    "description": "Button after the new tag field in the menu on a result."
+  },
+  "menuSavedNote": {
+    "message": "Saved in your list.",
+    "description": "At the foot of the menu on a result, once you've ranked or tagged its site."
+  },
+  "menuCloseLabel": {
+    "message": "Close",
+    "description": "Label and tooltip of the × that closes the menu on a result."
+  },
+  "anubisSettings": {
+    "message": "Anubis settings",
+    "description": "Label of the cog button that opens settings, in the toolbar popup, the summary above the results, and the menu on each result."
+  },
+  "help": {
+    "message": "Help"
+  },
+  "helpTitle": {
+    "message": "Open the wiki"
+  },
+  "reportProblem": {
+    "message": "Report a problem",
+    "description": "Link in the toolbar popup and the settings sidebar that opens a bug report on GitHub."
+  },
+  "reportProblemTitle": {
+    "message": "Open a bug report on GitHub, with Anubis’s version and your browser filled in",
+    "description": "Tooltip of reportProblem."
+  },
+  "summaryShowAll": {
+    "message": "Show all",
+    "description": "In the summary above the results, while only results with one tag are shown."
+  },
+  "summaryFilterLabel": {
+    "message": "Show only results tagged",
+    "description": "Screen reader label of the row of tags in the summary above the results."
+  },
+  "summaryFilterOn": {
+    "message": "Show only results tagged “$1”",
+    "description": "Tooltip of a tag in the summary above the results. $1 is the tag's name."
+  },
+  "summaryFilterOff": {
+    "message": "Show all results",
+    "description": "Tooltip of the tag whose results are the only ones shown."
+  },
+  "summaryPinned": {
+    "message": "pinned $1",
+    "description": "One part of summaryActed: $1 results were pinned. The parts are joined into a list (“pinned 1, raised 2, and hid 2”)."
+  },
+  "summaryRaised": {
+    "message": "raised $1",
+    "description": "Like summaryPinned, for results that were raised."
+  },
+  "summaryLowered": {
+    "message": "lowered $1",
+    "description": "Like summaryPinned, for results that were lowered."
+  },
+  "summaryHid": {
+    "message": "hid $1",
+    "description": "Like summaryPinned, for results that were hidden."
+  },
+  "summaryActed": {
+    "message": "Anubis $1 of $2.",
+    "description": "The summary above the results. $1 is the list of summaryPinned, summaryRaised… parts, $2 is summaryResults or summaryResultsPages, e.g. “Anubis raised 1 and hid 2 of 7 results.”"
+  },
+  "summaryResults_one": {
+    "message": "$1 result",
+    "description": "How many results the page has, for summaryActed."
+  },
+  "summaryResults_other": {
+    "message": "$1 results"
+  },
+  "summaryResultsPages_one": {
+    "message": "$1 result from $2 pages",
+    "description": "Like summaryResults, after Load more results brought in more pages. $2 is the number of pages, always 2 or more."
+  },
+  "summaryResultsPages_other": {
+    "message": "$1 results from $2 pages"
+  },
+  "summaryAlsoRemoved": {
+    "message": "It also removed $1.",
+    "description": "Second sentence of the summary, after summaryActed, when clean-up removed blocks from the page. $1 is the list of summaryRemoved… parts, e.g. “an AI answer and 2 video panels”."
+  },
+  "summaryRemovedOnly": {
+    "message": "Anubis removed $1.",
+    "description": "The summary when clean-up removed blocks but no result was ranked. $1 is as in summaryAlsoRemoved."
+  },
+  "summaryShortActed": {
+    "message": "Anubis changed $1 of $2.",
+    "description": "The summary on phones, where the full sentence (summaryActed) takes several lines; Details shows it. $1 is how many results were pinned, raised, lowered, or hidden, $2 is summaryResults or summaryResultsPages, e.g. “Anubis changed 4 of 9 results.”"
+  },
+  "summaryShortActedRemoved": {
+    "message": "Anubis changed $1 of $2 and cleaned up the page.",
+    "description": "Like summaryShortActed, when clean-up also removed blocks from the page."
+  },
+  "summaryShortRemoved": {
+    "message": "Anubis cleaned up the page.",
+    "description": "The summary on phones when clean-up removed blocks but no result was ranked; Details shows summaryRemovedOnly."
+  },
+  "summaryDetails": {
+    "message": "Details",
+    "description": "Button in the summary on phones: shows the full summary, the page's tags, Load more results, and settings."
+  },
+  "summaryFewerDetails": {
+    "message": "Fewer details",
+    "description": "Button in the summary on phones: folds away what summaryDetails showed."
+  },
+  "summaryUnchanged_one": {
+    "message": "Anubis left this result as it was.",
+    "description": "The summary when Anubis changed nothing on a page with one result."
+  },
+  "summaryUnchanged_other": {
+    "message": "Anubis left all $1 results as they were.",
+    "description": "The summary when Anubis changed nothing. $1 is the number of results."
+  },
+  "summaryUnchangedPages": {
+    "message": "Anubis left all $1 results from $2 pages as they were.",
+    "description": "Like summaryUnchanged, after Load more results brought in more pages. $2 is the number of pages."
+  },
+  "summaryFiltered_one": {
+    "message": "Showing only “$2”: $3 of $1 result.",
+    "description": "The summary while only results with one tag are shown. $1 is the number of results on the page, $2 the tag's name, $3 how many results have it."
+  },
+  "summaryFiltered_other": {
+    "message": "Showing only “$2”: $3 of $1 results."
+  },
+  "summaryRemovedAi_one": {
+    "message": "an AI answer",
+    "description": "A part of summaryAlsoRemoved: blocks clean-up removed. $1 is how many."
+  },
+  "summaryRemovedAi_other": {
+    "message": "$1 AI answers"
+  },
+  "summaryRemovedVideos_one": {
+    "message": "a video panel"
+  },
+  "summaryRemovedVideos_other": {
+    "message": "$1 video panels"
+  },
+  "summaryRemovedQuestions_one": {
+    "message": "a question list",
+    "description": "The “People also ask” block."
+  },
+  "summaryRemovedQuestions_other": {
+    "message": "$1 question lists"
+  },
+  "summaryRemovedDiscussions_one": {
+    "message": "a discussions panel"
+  },
+  "summaryRemovedDiscussions_other": {
+    "message": "$1 discussions panels"
+  },
+  "summaryRemovedNews_one": {
+    "message": "a news panel"
+  },
+  "summaryRemovedNews_other": {
+    "message": "$1 news panels"
+  },
+  "summaryRemovedImages_one": {
+    "message": "an image panel"
+  },
+  "summaryRemovedImages_other": {
+    "message": "$1 image panels"
+  },
+  "summaryRemovedRelated_one": {
+    "message": "a list of related searches"
+  },
+  "summaryRemovedRelated_other": {
+    "message": "$1 lists of related searches"
+  },
+  "summaryRemovedElsewhere_one": {
+    "message": "a row of other search engines"
+  },
+  "summaryRemovedElsewhere_other": {
+    "message": "$1 rows of other search engines"
+  },
+  "withShortcut": {
+    "message": "$1 ($2)",
+    "description": "A button's description followed by its keyboard shortcut, e.g. Show hidden (Alt+Shift+H)."
+  },
+  "toolbarOff": {
+    "message": "Anubis is off",
+    "description": "Tooltip of the toolbar button while Anubis is turned off."
+  },
+  "weighLabel": {
+    "message": "Hide, rank, or tag $1",
+    "description": "Tooltip and screen reader label of the balance button on each result, and the name of the menu it opens. $1 is the result's site, e.g. fandom.com."
+  },
+  "weighLabelRanked": {
+    "message": "Hide, rank, or tag $1 ($2)",
+    "description": "The same label for a site that isn't ranked Normal, whose button shows its ranking. Keep it starting with weighLabel's words. $1 is the site; $2 is chipHidden, chipLowered, chipRaised, or chipPinned in lower case, e.g. “Hide, rank, or tag fandom.com (lowered)”."
+  },
+  "hiddenShow": {
+    "message": "Show",
+    "description": "Button on the line standing for a hidden result: shows that result."
+  },
+  "hiddenShowSite": {
+    "message": "Show $1",
+    "description": "Screen reader label of hiddenShow, naming the site. Keep it starting with hiddenShow's word. $1 is the site, e.g. fandom.com."
+  },
+  "hiddenMore_one": {
+    "message": "and $1 more",
+    "description": "After a site's name on the one line standing for several hidden results in a row, e.g. “fandom.com and 1 more hidden by your list”."
+  },
+  "hiddenMore_other": {
+    "message": "and $1 more"
+  },
+  "summaryChangedHide": {
+    "message": "Hid $1.",
+    "description": "In the summary above the results, after you rank a site from the menu on a result, followed by an Undo button. $1 is the site, e.g. fandom.com."
+  },
+  "summaryChangedLower": {
+    "message": "Lowered $1.",
+    "description": "Like summaryChangedHide, for Lower."
+  },
+  "summaryChangedRaise": {
+    "message": "Raised $1.",
+    "description": "Like summaryChangedHide, for Raise."
+  },
+  "summaryChangedPin": {
+    "message": "Pinned $1.",
+    "description": "Like summaryChangedHide, for Pin."
+  },
+  "summaryChangedAllow": {
+    "message": "Set $1 to Normal.",
+    "description": "Like summaryChangedHide, for Normal when a subscribed list ranks the site: it's then ranked Normal whatever the lists say. Normal is the ranking's name, as on the menu's button."
+  },
+  "summaryChangedNormal": {
+    "message": "Cleared your ranking of $1.",
+    "description": "Like summaryChangedHide, after you press the ranking a site already had, so your list no longer ranks it and the subscribed lists decide."
+  },
+  "summaryChangedTagOn": {
+    "message": "Tagged $1 “$2”.",
+    "description": "Like summaryChangedHide, after you tag a site. $1 is the site, $2 the tag's name."
+  },
+  "summaryChangedTagOff": {
+    "message": "Removed the tag “$2” from $1.",
+    "description": "Like summaryChangedHide, after you untag a site. $1 is the site, $2 the tag's name."
+  },
+  "summaryChangedSite": {
+    "message": "Changed $1 in your list.",
+    "description": "Like summaryChangedHide, after several changes to one site's ranking and tags."
+  },
+  "summaryUndo": {
+    "message": "Undo",
+    "description": "Button after summaryChangedHide and the like: puts the site back as it was before."
+  },
+  "menuSuggest": {
+    "message": "Should a list include it? Suggest it to $1.",
+    "description": "In the menu on a result, once you've ranked or tagged the site yourself. $1 is one or two list names, each a link that opens a pre-filled issue on that list's issue tracker, joined like “A or B”."
+  },
+  "menuSuggestTitle": {
+    "message": "Propose $1 to $2 on its issue tracker",
+    "description": "Tooltip of a list's name in menuSuggest. $1 is a site, $2 the list's name."
+  },
+  "menuReport": {
+    "message": "Wrong? Report it to $1.",
+    "description": "In the menu on a result, under the lines saying what each list does with it. $1 is those lists' names, each a link that opens a pre-filled issue on that list's issue tracker, joined like “A or B”."
+  },
+  "menuMatchedRule": {
+    "message": "Matched rule, line $1",
+    "description": "Shown below a list's explanation in the result menu, above the exact rule from the list. $1 is a line number."
+  },
+  "menuReportTitle": {
+    "message": "Tell $1 it’s wrong about this result, on its issue tracker",
+    "description": "Tooltip of a list's name in menuReport. $1 is the list's name."
+  },
+  "offerTitle": {
+    "message": "Subscribe to $1?",
+    "description": "Settings → Lists, after a subscribe link opened it. $1 is the list's name."
+  },
+  "offerTrust": {
+    "message": "A list can hide, rank, and tag sites in your results. Only subscribe to lists you trust."
+  },
+  "offerPermission": {
+    "message": "Your browser will then ask to let Anubis read from $1, the site the list is on.",
+    "description": "$1 is a website, e.g. example.org."
+  },
+  "offerAlready": {
+    "message": "You already subscribe to $1.",
+    "description": "$1 is a list's name."
+  },
+  "offerSubscribe": {
+    "message": "Subscribe"
+  },
+  "offerSubscribing": {
+    "message": "Subscribing…"
+  },
+  "offerCancel": {
+    "message": "Cancel"
+  },
+  "welcomeTitle": {
+    "message": "Welcome to Anubis",
+    "description": "Tab title of the page that opens when Anubis is installed."
+  },
+  "welcomeHeading": {
+    "message": "Anubis is installed"
+  },
+  "welcomeIntro": {
+    "message": "It tags, reranks, and hides search results, following your own choices and the lists you subscribe to."
+  },
+  "welcomePinHeading": {
+    "message": "Keep it in the toolbar"
+  },
+  "welcomePinWhy": {
+    "message": "Its toolbar button shows what Anubis did on the page, turns it on or off, and ranks the site you're on."
+  },
+  "welcomePinChrome": {
+    "message": "Press the Extensions button (the puzzle piece) next to the address bar, then the pin beside Anubis."
+  },
+  "welcomePinEdge": {
+    "message": "Press the Extensions button (the puzzle piece) next to the address bar, then the eye beside Anubis."
+  },
+  "welcomePinOpera": {
+    "message": "Press the Extensions button (the cube) next to the address bar, then the pin beside Anubis."
+  },
+  "welcomePinFirefox": {
+    "message": "Press the Extensions button (the puzzle piece) next to the address bar, then the gear beside Anubis, and choose Pin to Toolbar."
+  },
+  "welcomePinAndroid": {
+    "message": "Anubis is in the browser's menu, under Extensions."
+  },
+  "welcomePinned": {
+    "message": "Anubis is in your toolbar.",
+    "description": "Shown instead of the steps once the browser says the button is pinned."
+  },
+  "welcomeSearchHeading": {
+    "message": "Try a search"
+  },
+  "welcomeSearchHow": {
+    "message": "Search as you usually do. To hide, rank, or tag a site, point at one of its results and press the ⚖ button."
+  },
+  "welcomeSearchFor": {
+    "message": "Search for “$1” to see tags from your lists:",
+    "description": "$1 is welcomeQuery. Followed by one link per search engine."
+  },
+  "welcomeSearchOn": {
+    "message": "Search for “$1” on $2",
+    "description": "Tooltip of a search engine link. $1 is welcomeQuery, $2 a search engine, e.g. Google."
+  },
+  "welcomeQuery": {
+    "message": "python list comprehension",
+    "description": "A search whose results include official documentation, forums, and Wikipedia, so the starter lists show their tags. Keep it technical."
+  },
+  "welcomeListsHeading": {
+    "message": "Your lists"
+  },
+  "welcomeListsIntro": {
+    "message": "Lists tag, raise, lower, or hide sites for you. You start with these:"
+  },
+  "welcomeListsNone": {
+    "message": "Lists tag, raise, lower, or hide sites for you. You aren't subscribed to any yet."
+  },
+  "welcomeListsMore": {
+    "message": "Turn these off, or find more lists, in the settings."
+  },
+  "welcomeListsOpen": {
+    "message": "Open list settings"
+  },
+  "welcomeGuide": {
+    "message": "Wiki"
+  },
+  "welcomePrivacy": {
+    "message": "Privacy"
+  },
+  "syncHeading": {
+    "message": "Sync"
+  },
+  "syncIntro": {
+    "message": "Your list and settings on your other computers, and in your other browsers."
+  },
+  "syncBrowserHeading": {
+    "message": "Browser sync"
+  },
+  "syncFirefox": {
+    "message": "Your list, settings, tag choices, and subscriptions are saved in Firefox's sync storage. Firefox copies them to your other computers when you're signed in to Firefox with Add-ons ticked in its sync settings. It syncs about every 10 minutes, or when you choose Sync Now."
+  },
+  "syncFirefoxAndroid": {
+    "message": "Firefox for Android doesn't sync add-on data, so your list, settings, tag choices, and subscriptions stay on this device. To sync them, connect a WebDAV server below."
+  },
+  "syncChrome": {
+    "message": "Your list, settings, tag choices, and subscriptions are saved in the browser's sync storage. The browser copies them to your other computers when you're signed in to it with extensions syncing."
+  },
+  "syncBrowserHelp": {
+    "message": "Which browser settings to check",
+    "description": "Link to the wiki page that explains it."
+  },
+  "syncUsage": {
+    "message": "They take $1 KB of the $2 KB sync has room for.",
+    "description": "$1 and $2 are numbers of kilobytes."
+  },
+  "syncTooBig": {
+    "message": "Your list is too big for sync, so it's saved on this device only. Your settings, tag choices, and subscriptions still sync."
+  },
+  "webdavHeading": {
+    "message": "Between browsers"
+  },
+  "webdavIntro": {
+    "message": "Firefox and Chrome don't natively sync with one another. To share between them, you can connect the same WebDAV storage in each. Koofr and InfiniCLOUD have free plans, and self-hosted options such as Nextcloud work as well. Anubis keeps one file there, anubis-sync.json, and combines the changes from each browser."
+  },
+  "webdavHelp": {
+    "message": "Where to get an address and a password",
+    "description": "Link to the wiki page that explains it."
+  },
+  "webdavAddress": {
+    "message": "Address"
+  },
+  "webdavAddressHint": {
+    "message": "The service's WebDAV address, starting with https://"
+  },
+  "listPermissionDenied": {
+    "message": "Anubis needs permission to read $1 to update this list.",
+    "description": "$1 is the list host name, e.g. example.org."
+  },
+  "webdavUser": {
+    "message": "User name"
+  },
+  "webdavPassword": {
+    "message": "Password"
+  },
+  "webdavPasswordHint": {
+    "message": "Most services give you a separate password for apps. Use that one."
+  },
+  "webdavConnect": {
+    "message": "Connect"
+  },
+  "webdavEncrypt": {
+    "message": "Encrypt the sync file end to end (recommended)"
+  },
+  "webdavEncryptionPassphrase": {
+    "message": "Encryption passphrase"
+  },
+  "webdavConfirmPassphrase": {
+    "message": "Confirm passphrase"
+  },
+  "webdavEncryptionHint": {
+    "message": "Use a long, unique passphrase in every browser (at least 12 characters). It is saved in this browser only, never sent to the server. If you forget it, the server copy can't be recovered."
+  },
+  "webdavCorrectPassphrase": {
+    "message": "Enter the correct encryption passphrase"
+  },
+  "webdavCorrectPassphraseHint": {
+    "message": "Use the same passphrase you set in the other browser. It is saved here only and never sent to the server."
+  },
+  "webdavSavePassphrase": {
+    "message": "Save passphrase and sync"
+  },
+  "webdavChangePassphrase": {
+    "message": "Change encryption passphrase"
+  },
+  "webdavChangePassphraseHint": {
+    "message": "Anubis checks the current passphrase before changing the server file. Enter the new passphrase in every other browser before its next sync."
+  },
+  "webdavChangePassphraseHelp": {
+    "message": "What happens when you change it",
+    "description": "Link to the wiki page that explains it."
+  },
+  "webdavEncryptionShort": {
+    "message": "Use an encryption passphrase of at least 12 characters."
+  },
+  "webdavPassphraseMismatch": {
+    "message": "The passphrases don't match."
+  },
+  "webdavEncrypted": {
+    "message": "The sync file is encrypted end to end. Its passphrase is saved in this browser only; the server cannot read the contents. Use the same passphrase in each browser. If you forget it, the server copy can't be recovered."
+  },
+  "webdavEncryptionPending": {
+    "message": "Encryption is set up here. The next successful sync will encrypt the server copy. Use the same passphrase in each browser."
+  },
+  "webdavEncryptionMissing": {
+    "message": "This browser has no encryption passphrase set. Use the same passphrase as the other browser to read an encrypted file. A plain sync file can be read by the server operator."
+  },
+  "webdavPrivacy": {
+    "message": "With encryption on, only encrypted data goes to this server; your passphrase is saved here and never sent. Without encryption, the server can read the sync file. Your WebDAV login is saved here and sent to this server to sign in."
+  },
+  "webdavBadAddress": {
+    "message": "Enter the service's WebDAV address, starting with https://"
+  },
+  "webdavMissingLogin": {
+    "message": "Enter the user name and password too."
+  },
+  "webdavDenied": {
+    "message": "Anubis needs your permission to send your list to $1.",
+    "description": "$1 is the server's host name, e.g. app.koofr.net."
+  },
+  "webdavConnected": {
+    "message": "Syncing with $1 as $2.",
+    "description": "$1 is the server's host name, $2 the user name."
+  },
+  "webdavWhen": {
+    "message": "Changes go to the server a few seconds after you make them. Changes from your other browsers come in when the browser starts and when you search, at most every 5 minutes."
+  },
+  "webdavSyncing": {
+    "message": "Syncing…"
+  },
+  "webdavLastSync": {
+    "message": "Last synced: $1.",
+    "description": "$1 is a time, or a date and time."
+  },
+  "webdavLastTried": {
+    "message": "Last tried: $1.",
+    "description": "$1 is a time, or a date and time."
+  },
+  "webdavSyncNow": {
+    "message": "Sync now"
+  },
+  "webdavDisconnect": {
+    "message": "Disconnect"
+  },
+  "webdavDisconnected": {
+    "message": "Disconnected. The file stays on the server, and your list and settings stay here."
+  },
+  "webdavErrorAuth": {
+    "message": "The server didn't accept the user name or password. Many services need an app password here, not your usual one."
+  },
+  "webdavErrorForbidden": {
+    "message": "The server doesn't let this account save files there."
+  },
+  "webdavErrorFolder": {
+    "message": "There's no folder at that address on the server. Check the address."
+  },
+  "webdavErrorPermission": {
+    "message": "Anubis no longer has permission to sync with $1. Press Sync now to allow it again.",
+    "description": "$1 is the server's host name."
+  },
+  "webdavErrorNetwork": {
+    "message": "Couldn't reach $1. Check the address and your connection.",
+    "description": "$1 is the server's host name."
+  },
+  "webdavErrorFile": {
+    "message": "The anubis-sync.json file there isn't one Anubis can read, so it was left alone. Use another folder."
+  },
+  "webdavErrorNeedsPassphrase": {
+    "message": "This sync file is encrypted. Enter its passphrase; nothing was changed."
+  },
+  "webdavErrorWrongPassphrase": {
+    "message": "That passphrase couldn't decrypt the sync file. Check it; the server file was left unchanged."
+  },
+  "webdavErrorUnencrypted": {
+    "message": "This connection was encrypted before, but the server now has a plain-text sync file. It was left unchanged. Check the server file before syncing again."
+  },
+  "webdavErrorChanged": {
+    "message": "The sync file changed during the passphrase change, or the server cannot protect it from concurrent edits. Nothing was overwritten. Sync again and retry."
+  },
+  "webdavErrorUnconfirmed": {
+    "message": "The connection to $1 dropped while it saved the file, so Anubis can't tell which passphrase it has now. The old passphrase is still saved here. If the next sync says it's wrong, enter the new one.",
+    "description": "$1 is the server's host name."
+  },
+  "webdavErrorServer": {
+    "message": "The server answered with an error (HTTP $1). Try again later.",
+    "description": "$1 is an HTTP status code, e.g. 500."
+  },
+  "webdavErrorFailed": {
+    "message": "Sync didn't finish. Try again."
+  }
 }
