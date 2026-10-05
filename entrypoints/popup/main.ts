@@ -52,6 +52,8 @@ let hereDomain: string | undefined;
 const balance = balanceSvg();
 let stats: PageStats | undefined;
 let hereFocusKey: string | undefined;
+/** Counts renders, so one that a newer render overtook doesn't draw older data over it. */
+let rendering = 0;
 
 const openSettings = (tab?: string) => {
   void send({ type: 'open-options', tab });
@@ -59,7 +61,9 @@ const openSettings = (tab?: string) => {
 };
 
 async function renderAll() {
+  const ticket = ++rendering;
   const rules = await loadRuleSet();
+  if (ticket !== rendering) return;
   enabled.checked = rules.settings.enabled;
   document.body.classList.toggle('paused', !rules.settings.enabled);
   $('#status').replaceChildren(
@@ -104,7 +108,6 @@ function renderHere(rules: RuleSet) {
   const here = $('#here');
   const active = document.activeElement;
   const focusKey = hereFocusKey ?? (here.contains(active) && active instanceof HTMLElement ? active.dataset.focusKey : undefined);
-  hereFocusKey = undefined;
   const host = tabUrl && !engineFor(tabUrl.hostname) ? tabUrl.hostname : '';
   const choices = host ? domainChoices(host) : [];
   const domain =
@@ -226,6 +229,15 @@ function renderHere(rules: RuleSet) {
     attrs: { 'aria-label': t('menuNewTagLabel'), 'aria-describedby': 'new-tag-error', 'data-focus-key': 'new-tag' },
   });
   const tagError = h('p', { class: 'tag-error', hidden: true, attrs: { id: 'new-tag-error', role: 'status' } });
+  // A change from elsewhere draws this again: keep what was typed for this site, and its error.
+  const typed = here.dataset.domain === domain ? here.querySelector<HTMLInputElement>('.new-tag input') : null;
+  const shownError = here.dataset.domain === domain ? here.querySelector<HTMLElement>('#new-tag-error') : null;
+  if (typed) tagInput.value = typed.value;
+  if (shownError && !shownError.hidden) {
+    tagError.textContent = shownError.textContent;
+    tagError.hidden = false;
+    tagInput.setAttribute('aria-invalid', 'true');
+  }
   const tagForm = h(
     'form',
     { class: 'new-tag' },
@@ -263,11 +275,16 @@ function renderHere(rules: RuleSet) {
     });
   });
 
+  here.dataset.domain = domain;
   here.replaceChildren(
     h('div', { class: 'weigh' }, cartouche, balance, levels, h('p', { class: 'hint' }, hint)),
     h('div', { class: 'here-tags' }, h('h2', null, t('popupTags')), tagItems.length ? h('div', { class: 'tags' }, tagItems) : null, tagForm),
   );
-  if (focusKey) requestAnimationFrame(() => here.querySelector<HTMLElement>(`[data-focus-key="${focusKey}"]`)?.focus());
+  // At once, not on the next frame: another render could come first and find nothing focused.
+  const target = focusKey ? here.querySelector<HTMLElement>(`[data-focus-key="${focusKey}"]`) : null;
+  target?.focus();
+  // A tag just created only appears once the change is saved: keep waiting for it.
+  if (target && focusKey === hereFocusKey) hereFocusKey = undefined;
   requestAnimationFrame(() => requestAnimationFrame(() => setBalance(balance, shown)));
 }
 

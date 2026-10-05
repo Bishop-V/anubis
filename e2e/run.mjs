@@ -2276,9 +2276,11 @@ if (only === 'popup-tags' || checks) {
   for (const scheme of ['light', 'dark']) {
     await popup.emulateMedia({ colorScheme: scheme });
     await popup.waitForFunction((theme) => document.documentElement.dataset.theme === theme, scheme);
-    selectedStyles[scheme] = await tutorial.evaluate((el) => {
-      const style = getComputedStyle(el);
-      return { weight: style.fontWeight, underline: style.boxShadow };
+    // The button on the page now: a re-render replaces it, and a replaced one has no computed style.
+    selectedStyles[scheme] = await popup.evaluate(() => {
+      const el = [...document.querySelectorAll('#here .tags button.tag')].find((b) => b.textContent?.includes('Great tutorial'));
+      const style = el ? getComputedStyle(el) : undefined;
+      return { weight: style?.fontWeight, underline: style?.boxShadow };
     });
   }
   assertChecks('popup tag selection', {
@@ -2300,6 +2302,13 @@ if (only === 'popup-tags' || checks) {
     markedInvalid: (await newTag.getAttribute('aria-invalid')) === 'true',
   });
   await newTag.fill('Research Notes');
+  // A change from elsewhere draws the popup again; what was typed has to survive it.
+  await sw.evaluate(async () => {
+    const { tagPrefs } = await chrome.storage.sync.get('tagPrefs');
+    await chrome.storage.sync.set({ tagPrefs: { ...tagPrefs, 'e2e-redraw': {} } });
+  });
+  await popup.waitForTimeout(300);
+  const typedSurvivesRedraw = (await newTag.inputValue()) === 'Research Notes';
   await newTag.press('Enter');
   const created = popup.locator('#here .tags button.tag').filter({ hasText: 'Research Notes' });
   await created.waitFor();
@@ -2313,8 +2322,9 @@ if (only === 'popup-tags' || checks) {
     noOverflow[width] = await popup.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth);
   }
   assertChecks('popup tag creation', {
+    typedSurvivesRedraw,
     createdAndApplied: (await created.getAttribute('aria-pressed')) === 'true',
-    focusMovesToCreatedTag: await created.evaluate((el) => document.activeElement === el),
+    focusMovesToCreatedTag: await popup.evaluate(() => document.activeElement?.matches('#here .tags button.tag') && document.activeElement.textContent?.includes('Research Notes')),
     noHorizontalOverflow: Object.values(noOverflow).every(Boolean),
   });
   await popup.getByRole('textbox', { name: 'New tag name' }).fill('Research Notes');

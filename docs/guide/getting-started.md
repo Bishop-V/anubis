@@ -4,9 +4,15 @@
 
 For the normal install, get [Anubis from Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/). The latest [Firefox build package](https://github.com/Bishop-V/anubis/releases/latest/download/anubis-firefox.zip) and versioned packages are also available from [GitHub Releases](https://github.com/Bishop-V/anubis/releases).
 
+## Install in Chrome
+
+For the normal install, get [Anubis from the Chrome Web Store](https://chromewebstore.google.com/detail/aninblefigadaigfppckanjgiijcmmhi). The latest [Chrome build package](https://github.com/Bishop-V/anubis/releases/latest/download/anubis-chrome.zip) is also available from [GitHub Releases](https://github.com/Bishop-V/anubis/releases).
+
 ## Other browsers
 
-Chrome and other Chromium browsers are not yet in their browser stores. Download and extract the [latest Chrome build](https://github.com/Bishop-V/anubis/releases/latest/download/anubis-chrome.zip) from GitHub Releases, or build it from source. To build from source, you need [Node.js](https://nodejs.org) 22.12 or newer:
+Most other Chromium browsers, like Brave, Vivaldi, and Opera, install from the [Chrome Web Store](https://chromewebstore.google.com/detail/aninblefigadaigfppckanjgiijcmmhi) too. In Edge, choose **Allow extensions from other stores** when the Chrome Web Store asks, then install it there. Anubis isn't in Edge Add-ons yet.
+
+To load a package by hand instead, download and extract the [latest Chrome build](https://github.com/Bishop-V/anubis/releases/latest/download/anubis-chrome.zip) from GitHub Releases, or build it from source. To build from source, you need [Node.js](https://nodejs.org) 22.12 or newer:
 
 ```sh
 git clone https://github.com/Bishop-V/anubis.git
