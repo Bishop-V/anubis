@@ -20,6 +20,8 @@ export interface TagDef {
   label: string;
   color: string;
   description?: string;
+  /** Made up for a tag a list uses but never defines; a real definition elsewhere takes its place. */
+  generated?: true;
 }
 
 export interface ListMeta {
@@ -282,7 +284,7 @@ export function parseList(text: string): ParsedList {
     for (const id of rule.tags) {
       if (tagIds.has(id)) continue;
       tagIds.add(id);
-      list.tags.push({ id, label: id, color: colorForTag(id) });
+      list.tags.push({ id, label: id, color: colorForTag(id), generated: true });
     }
   }
   return list;
