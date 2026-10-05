@@ -183,6 +183,15 @@ describe('tag choices from a backup or sync file', () => {
   });
 });
 
+describe('tag names', () => {
+  it('uses a list’s definition over the id a personal list falls back on', () => {
+    const mine = compileList('mine', parseList('example.com$tag=forum\n'));
+    const lists = compileList('a', parseList('! tag: forum | Discussion\nexample.org$tag=forum\n'));
+    expect(collectTags([mine, lists]).get('forum')).toEqual(expect.objectContaining({ label: 'Discussion' }));
+    expect(collectTags([mine]).get('forum')?.label).toBe('forum');
+  });
+});
+
 describe('extra pages to load automatically', () => {
   it('keeps a typed or stored amount to a whole number from 0 to the limit', () => {
     expect(clampDeeper(3)).toBe(3);

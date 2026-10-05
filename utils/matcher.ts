@@ -326,8 +326,13 @@ function personalName(lists: CompiledList[]): string {
 export function collectTags(lists: CompiledList[], prefs: Record<string, TagPref> = {}): Map<string, TagDef> {
   const out = new Map<string, TagDef>();
   for (const list of lists) {
-    for (const tag of list.tags) if (!out.has(tag.id)) out.set(tag.id, { ...tag });
+    for (const tag of list.tags) {
+      const known = out.get(tag.id);
+      // A defined tag beats a made-up one, whichever list comes first (yours is first).
+      if (!known || (known.generated && !tag.generated)) out.set(tag.id, { ...tag });
+    }
   }
+  for (const tag of out.values()) delete tag.generated;
   for (const [id, pref] of Object.entries(prefs)) {
     const tag = out.get(id);
     if (!tag) continue;
