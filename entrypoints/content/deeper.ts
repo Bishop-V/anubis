@@ -174,8 +174,9 @@ async function fetchNext(engine: EngineDef, state: DeeperState): Promise<number>
     doc = await fetchPage(target.href, request && { method: 'POST', body: request.body, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
   } catch (error) {
     failed = error instanceof Stop ? error : new Stop('failed', target.href);
-    // An engine that asked to slow down or refused wouldn't answer a frame either.
-    if (failed.reason === 'busy' || failed.reason === 'refused') throw failed;
+    // An engine that asked to slow down wouldn't answer a frame either. One that
+    // refused a script's request (Ecosia's 403 robot check) may let a page load in a frame through.
+    if (failed.reason === 'busy') throw failed;
   }
   if (request) {
     // A post can't be repeated in a frame, so a page that didn't arrive stops here.
