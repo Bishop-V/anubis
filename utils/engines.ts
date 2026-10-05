@@ -207,6 +207,10 @@ export const ENGINES: EngineDef[] = [
     matches: ['*://*.startpage.com/*'],
     host: /(^|\.)startpage\.com$/,
     isResultsPage: (url) => /^\/(do|rvd|sp)\//.test(url.pathname),
+    // The whole results column, so the summary goes above the ad notice and
+    // "Web results" label that come before the result list (class names there are
+    // generated; `section#main` is the stable part).
+    boundary: 'section#main',
     item: ':is(.w-gl, .w-bg) > .result',
     link: 'a.result-link',
     title: 'h2',
