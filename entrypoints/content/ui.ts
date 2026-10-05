@@ -311,7 +311,9 @@ export function ensureWeighButton(
     keepUpright(host);
     return;
   }
-  const { top, right, underMenu } = engine.button ?? { top: '2px', right: '2px' };
+  const { top, right, underMenu, popOut } = engine.button ?? { top: '2px', right: '2px' };
+  if (popOut) popOuts.set(host, popOut);
+  else popOuts.delete(host);
   host.style.setProperty('position', 'absolute', 'important');
   const menu = underMenu && !result.card ? resultMenuOf(container) : undefined;
   // Not hidden while the engine's menu is open: a menu closes without adding or
@@ -1089,9 +1091,24 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
   focusTarget?.focus({ preventScroll: true });
 }
 
+/** The weigh buttons whose menu opens beside the result's card, and the selector of that card. */
+const popOuts = new WeakMap<HTMLElement, string>();
+
 function position(host: HTMLElement, anchor: HTMLElement): void {
   const rect = anchor.getBoundingClientRect();
   const width = Math.min(312, window.innerWidth - 16);
+  // Beside the card, level with its top, when there's room: like the engine's own menu.
+  const weigh = anchor.getRootNode() instanceof ShadowRoot ? (anchor.getRootNode() as ShadowRoot).host : undefined;
+  const selector = weigh && popOuts.get(weigh as HTMLElement);
+  const card = selector ? weigh!.parentElement?.querySelector<HTMLElement>(selector) : undefined;
+  if (card) {
+    const c = card.getBoundingClientRect();
+    if (c.right + 12 + width <= window.innerWidth - 8) {
+      host.style.left = `${c.right + 12 + window.scrollX}px`;
+      host.style.top = `${Math.max(window.scrollY + 8, c.top + window.scrollY)}px`;
+      return;
+    }
+  }
   let left = rect.right - width + window.scrollX;
   left = Math.max(window.scrollX + 8, Math.min(left, window.scrollX + window.innerWidth - width - 8));
   host.style.left = `${left}px`;
