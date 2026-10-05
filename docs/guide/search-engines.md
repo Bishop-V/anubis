@@ -13,12 +13,12 @@ Anubis works on the web results of these engines. Turn any of them off in **Sett
 | Ecosia | Supported | Yes* | Yes |
 | Kagi | Experimental | No | Not yet |
 | Yahoo | Supported | Yes* | Yes |
-| Yandex | Experimental | No | Not yet |
+| Yandex | Supported | Yes* | Yes |
 | Mojeek | Experimental | No | Not yet |
 
 **Supported** means it has been tried on the live site. **Experimental** means it follows the layout other tools document but hasn't been tried on the live site yet, so some things may not work.
 
-\* Bing, Ecosia, and Yahoo sometimes answer the request for the next page with a "confirm you're not a robot" check. Load more results then stops without saying why. If that happens, use the engine's own Next link.
+\* Bing, Ecosia, Yahoo, and Yandex sometimes answer the request for the next page with a "confirm you're not a robot" check. Load more results then stops without saying why. If that happens, use the engine's own Next link.
 
 Only the main web results are changed. Image, video, news, and shopping tabs are left alone.
 

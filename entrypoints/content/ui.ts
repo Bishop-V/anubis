@@ -311,7 +311,9 @@ export function ensureWeighButton(
     keepUpright(host);
     return;
   }
-  const { top, right, underMenu } = engine.button ?? { top: '2px', right: '2px' };
+  const { top, right, underMenu, popOut } = engine.button ?? { top: '2px', right: '2px' };
+  if (popOut) popOuts.set(host, popOut);
+  else popOuts.delete(host);
   host.style.setProperty('position', 'absolute', 'important');
   const menu = underMenu && !result.card ? resultMenuOf(container) : undefined;
   // Not hidden while the engine's menu is open: a menu closes without adding or
@@ -498,7 +500,10 @@ function gutterIsFree(container: HTMLElement, spot: { left: number; right: numbe
   return true;
 }
 
-/** The engine's own menu button on a result: the right-most small button in its top-right corner. */
+/**
+ * The engine's own menu button on a result: the right-most small button near its
+ * top, in its right half (a result's box can be wider than the card it shows).
+ */
 function resultMenuOf(container: HTMLElement): HTMLElement | undefined {
   const box = container.getBoundingClientRect();
   if (!box.width) return undefined;
@@ -506,7 +511,7 @@ function resultMenuOf(container: HTMLElement): HTMLElement | undefined {
   let menuRight = -Infinity;
   for (const el of container.querySelectorAll<HTMLElement>('button, [role="button"]')) {
     const r = el.getBoundingClientRect();
-    if (!r.width || r.width > 48 || r.height > 48 || r.top > box.top + 64 || r.right < box.right - 64) continue;
+    if (!r.width || r.width > 48 || r.height > 48 || r.top > box.top + 64 || r.left < box.left + box.width / 2) continue;
     if (r.right > menuRight) {
       menu = el;
       menuRight = r.right;
@@ -538,11 +543,15 @@ function placeUnderMenu(host: HTMLElement, container: HTMLElement, menu: HTMLEle
   host.style.setProperty('--anubis-weigh-radius', parseFloat(ms.borderTopLeftRadius) ? ms.borderTopLeftRadius : '50%');
   // In the menu button's own colour (its icon's fill, or its text colour), so the
   // pair match in light and dark; hovering still turns it gold.
-  const icon = menu.querySelector('path, svg');
+  // The drawn shape first (Yandex's dots are circles); the svg's own fill is the page default.
+  const icon = menu.querySelector('path, circle, rect, polygon, ellipse') ?? menu.querySelector('svg');
   const fill = icon ? getComputedStyle(icon).fill : '';
   const color = /^rgba?\(/.test(fill) && !/,\s*0\)$/.test(fill) ? fill : ms.color;
   host.style.setProperty('--anubis-weigh-color', color);
-  host.style.removeProperty('--anubis-weigh-opacity');
+  // As bright as the menu button is, not the faint default: the pair should look alike.
+  const shown = (parseFloat(ms.opacity) || 1) * (icon ? parseFloat(getComputedStyle(icon).opacity) || 1 : 1);
+  if (shown > 0.35) host.style.setProperty('--anubis-weigh-opacity', String(Math.round(shown * 100) / 100));
+  else host.style.removeProperty('--anubis-weigh-opacity');
 }
 
 export function weighButtonOf(container: HTMLElement): HTMLButtonElement | undefined {
@@ -676,7 +685,7 @@ export function renderSummary(
   change?: string,
 ): void {
   const worthShowing =
-    hiddenCount(stats) || stats.pinned || stats.raised || stats.lowered || stats.tagged || stats.canGoDeeper || stats.pages > 1 || stats.stopped || change;
+    stats.total > 0 || hiddenCount(stats) || stats.pinned || stats.raised || stats.lowered || stats.tagged || stats.canGoDeeper || stats.pages > 1 || stats.stopped || change;
   if (!place?.before.parentElement || !worthShowing) {
     summaryHost?.remove();
     summaryArea = undefined;
@@ -1085,9 +1094,24 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
   focusTarget?.focus({ preventScroll: true });
 }
 
+/** The weigh buttons whose menu opens beside the result's card, and the selector of that card. */
+const popOuts = new WeakMap<HTMLElement, string>();
+
 function position(host: HTMLElement, anchor: HTMLElement): void {
   const rect = anchor.getBoundingClientRect();
   const width = Math.min(312, window.innerWidth - 16);
+  // Beside the card, level with its top, when there's room: like the engine's own menu.
+  const weigh = anchor.getRootNode() instanceof ShadowRoot ? (anchor.getRootNode() as ShadowRoot).host : undefined;
+  const selector = weigh && popOuts.get(weigh as HTMLElement);
+  const card = selector ? weigh!.parentElement?.querySelector<HTMLElement>(selector) : undefined;
+  if (card) {
+    const c = card.getBoundingClientRect();
+    if (c.right + 12 + width <= window.innerWidth - 8) {
+      host.style.left = `${c.right + 12 + window.scrollX}px`;
+      host.style.top = `${Math.max(window.scrollY + 8, c.top + window.scrollY)}px`;
+      return;
+    }
+  }
   let left = rect.right - width + window.scrollX;
   left = Math.max(window.scrollX + 8, Math.min(left, window.scrollX + window.innerWidth - width - 8));
   host.style.left = `${left}px`;

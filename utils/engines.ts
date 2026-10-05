@@ -64,9 +64,11 @@ export interface EngineDef {
    * Where the weigh button sits in the top-right corner of each result. With
    * `underMenu`, it sits just under the engine's own menu button on the result
    * (DuckDuckGo's ⋯) instead, at its size and in its colour, like a second option;
-   * `top` and `right` apply when a result has no such button.
+   * `top` and `right` apply when a result has no such button. `popOut` is the
+   * selector of the result's card: the result menu opens to the right of it, level
+   * with its top, as the engine's own menu does, rather than under the button.
    */
-  button?: { top: string; right: string; underMenu?: boolean };
+  button?: { top: string; right: string; underMenu?: boolean; popOut?: string };
   /**
    * Result cards on the engine's other tabs (images, videos, news), found by
    * selector, as uBlacklist's rules find them. They're hidden and tagged, but not
@@ -286,7 +288,13 @@ export const ENGINES: EngineDef[] = [
     item: 'li:has(> .Organic), .serp-item:has(.Organic)',
     link: '.Organic a',
     title: 'h2',
-    button: { top: '4px', right: '24px' },
+    // Yandex AI's answer: an `li` among the results named `neuro_answer`, with a `.FuturisSearch` card
+    // inside (reported on a live page, 2026-10).
+    cleanupSelectors: { ai: 'li[data-ilefbgq-name="neuro_answer"], .FuturisSearch' },
+    // Under Yandex's own ⋮ menu on each result, like DuckDuckGo's.
+    button: { top: '4px', right: '24px', underMenu: true, popOut: '.Organic' },
+    // Pages are `p=1`, `p=2`… (page 1 has none); seen in the pager's links on a live page.
+    more: { kind: 'param', name: 'p', first: 0, step: 1 },
   },
   {
     id: 'mojeek',
