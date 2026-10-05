@@ -541,7 +541,8 @@ function placeUnderMenu(host: HTMLElement, container: HTMLElement, menu: HTMLEle
   host.style.setProperty('--anubis-weigh-radius', parseFloat(ms.borderTopLeftRadius) ? ms.borderTopLeftRadius : '50%');
   // In the menu button's own colour (its icon's fill, or its text colour), so the
   // pair match in light and dark; hovering still turns it gold.
-  const icon = menu.querySelector('path, svg');
+  // The drawn shape first (Yandex's dots are circles); the svg's own fill is the page default.
+  const icon = menu.querySelector('path, circle, rect, polygon, ellipse') ?? menu.querySelector('svg');
   const fill = icon ? getComputedStyle(icon).fill : '';
   const color = /^rgba?\(/.test(fill) && !/,\s*0\)$/.test(fill) ? fill : ms.color;
   host.style.setProperty('--anubis-weigh-color', color);
