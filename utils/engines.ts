@@ -288,6 +288,9 @@ export const ENGINES: EngineDef[] = [
     item: 'li:has(> .Organic), .serp-item:has(.Organic)',
     link: '.Organic a',
     title: 'h2',
+    // Yandex AI's answer: an `li` among the results named `neuro_answer`, with a `.FuturisSearch` card
+    // inside (reported on a live page, 2026-10).
+    cleanupSelectors: { ai: 'li[data-ilefbgq-name="neuro_answer"], .FuturisSearch' },
     // Under Yandex's own ⋮ menu on each result, like DuckDuckGo's.
     button: { top: '4px', right: '24px', underMenu: true, popOut: '.Organic' },
     // Pages are `p=1`, `p=2`… (page 1 has none); seen in the pager's links on a live page.
