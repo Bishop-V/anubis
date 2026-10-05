@@ -163,6 +163,16 @@ function connectPanel(requestDataConsent: boolean): HTMLElement {
   );
 }
 
+/** Whether a new passphrase will do; if not, says why. */
+function passphraseOk(input: HTMLInputElement, confirmation: HTMLInputElement): boolean {
+  const error = input.value.length < 12 ? 'webdavEncryptionShort' : input.value !== confirmation.value ? 'webdavPassphraseMismatch' : undefined;
+  if (error) {
+    flash('sync', 'error', t(error));
+    rerender();
+  }
+  return !error;
+}
+
 function encryptionSetup(account: WebdavAccount, requestDataConsent: boolean, updateKey: boolean): HTMLElement {
   const input = h('input', { id: 'webdav-encryption-passphrase', type: 'password', autocomplete: 'new-password' });
   const confirmation = h('input', { id: 'webdav-encryption-confirmation', type: 'password', autocomplete: 'new-password' });
@@ -178,14 +188,7 @@ function encryptionSetup(account: WebdavAccount, requestDataConsent: boolean, up
   );
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    if (input.value.length < 12) {
-      flash('sync', 'error', t('webdavEncryptionShort'));
-      return rerender();
-    }
-    if (input.value !== confirmation.value) {
-      flash('sync', 'error', t('webdavPassphraseMismatch'));
-      return rerender();
-    }
+    if (!passphraseOk(input, confirmation)) return;
     const encryptedAccount = { ...account, encryptionPassphrase: input.value };
     syncNow(encryptedAccount, requestDataConsent, false, true);
   });
@@ -209,14 +212,7 @@ function changePassphrasePanel(): HTMLElement {
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     if (syncing) return;
-    if (input.value.length < 12) {
-      flash('sync', 'error', t('webdavEncryptionShort'));
-      return rerender();
-    }
-    if (input.value !== confirmation.value) {
-      flash('sync', 'error', t('webdavPassphraseMismatch'));
-      return rerender();
-    }
+    if (!passphraseOk(input, confirmation)) return;
     syncing = true;
     rerender();
     await send({ type: 'change-passphrase', passphrase: input.value });

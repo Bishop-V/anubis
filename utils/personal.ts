@@ -16,6 +16,11 @@ export const PERSONAL_HEADER = `! name: My list
 
 export type PersonalLevel = Level | 'allow';
 
+/** The ranking a personal level shows as: an allow is Normal that beats the lists. */
+export function displayLevel(level: PersonalLevel): Level {
+  return level === 'allow' ? 'normal' : level;
+}
+
 export interface SiteEntry {
   site: string;
   level: PersonalLevel;

@@ -11,10 +11,10 @@ import { ICON_GEAR, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons
 import { localizePage, t, tJoin, tn, type MessageKey } from '@/utils/i18n';
 import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/messages';
-import { PERSONAL_NAME, getSite, listSites, setSiteLevel, toggleSiteTag, upsertTagDef, type PersonalLevel } from '@/utils/personal';
+import { displayLevel, getSite, listSites, setSiteLevel, toggleSiteTag, upsertTagDef, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal, updateSettings } from '@/utils/storage';
-import { nextLevel, rankingHint, rankingOf, siteCartouche } from '@/utils/siteranking';
+import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder } from '@/utils/siteranking';
 import { stoppedSentence, summarySentence } from '@/utils/summary';
 import { initTheme } from '@/utils/theme';
 
@@ -79,7 +79,7 @@ async function renderAll() {
   list.replaceChildren(
     ...(sites.length
       ? sites.slice(0, RECENT).map((entry) => {
-          const level = entry.level === 'allow' ? 'normal' : entry.level;
+          const level = displayLevel(entry.level);
           const onlyTag = entry.tags.length === 1 ? rules.tags.get(entry.tags[0]!) : undefined;
           return h(
             'li',
@@ -124,7 +124,7 @@ function renderHere(rules: RuleSet) {
   const entry = getSite(rules.personalText, domain);
   const result = { url: tabUrl!.href, title: '', description: '' };
   const baseline = evaluate(result, rules.lists.filter((l) => !l.personal), rules.prefs);
-  const { personal, pressed, fromLists, shown } = rankingOf(entry, baseline);
+  const r = rankingOf(entry, baseline);
 
   const cartouche = siteCartouche(domain, choices, (d) => {
     hereDomain = d;
@@ -139,13 +139,13 @@ function renderHere(rules: RuleSet) {
         'button',
         {
           type: 'button',
-          class: `${level}${!pressed && level === fromLists && level !== 'normal' ? ' from-list' : ''}`,
+          class: `${level}${fromListsClass(level, r)}`,
           title: t(RANK_TITLES[level], domain),
-          attrs: { 'aria-pressed': String(pressed === level) },
+          attrs: { 'aria-pressed': String(r.pressed === level) },
           on: {
             click: () => {
               hereDomain = domain;
-              void editPersonal((text) => setSiteLevel(text, domain, nextLevel(level, pressed, fromLists)));
+              void editPersonal((text) => setSiteLevel(text, domain, nextLevel(level, r)));
             },
           },
         },
@@ -155,16 +155,11 @@ function renderHere(rules: RuleSet) {
     ),
   );
 
-  const hint = rankingHint(domain, baseline, { personal, pressed, fromLists, shown });
+  const hint = rankingHint(domain, baseline, r);
 
-  // Tags you set toggle; tags from lists are shown but fixed.
   const verdict = evaluate(result, rules.lists, rules.prefs);
-  const mine = new Set(entry?.tags ?? []);
-  const fromList = new Set(verdict.tags.filter((id) => (verdict.tagSources[id] ?? []).some((s) => s !== PERSONAL_NAME)));
-  const tagIds = [...rules.tags.keys()].sort((a, b) => {
-    const rank = (id: string) => (mine.has(id) ? 0 : fromList.has(id) ? 1 : 2);
-    return rank(a) - rank(b) || rules.tags.get(a)!.label.localeCompare(rules.tags.get(b)!.label);
-  });
+  const { mine, fromList, ids: tagIds } = tagOrder(rules.tags, entry, verdict);
+  // Tags you set toggle; tags from lists are shown but fixed.
   const tagItems = tagIds.map((id) => {
     const tag = rules.tags.get(id)!;
     const on = mine.has(id);
@@ -204,15 +199,17 @@ function renderHere(rules: RuleSet) {
     attrs: { 'aria-label': t('menuNewTagLabel'), 'aria-describedby': 'new-tag-error', 'data-focus-key': 'new-tag' },
   });
   const tagError = h('p', { class: 'tag-error', hidden: true, attrs: { id: 'new-tag-error', role: 'status' } });
+  const showTagError = (text: string | null) => {
+    tagError.textContent = text;
+    tagError.hidden = !text;
+    if (text) tagInput.setAttribute('aria-invalid', 'true');
+    else tagInput.removeAttribute('aria-invalid');
+  };
   // A change from elsewhere draws this again: keep what was typed for this site, and its error.
   const typed = here.dataset.domain === domain ? here.querySelector<HTMLInputElement>('.new-tag input') : null;
   const shownError = here.dataset.domain === domain ? here.querySelector<HTMLElement>('#new-tag-error') : null;
   if (typed) tagInput.value = typed.value;
-  if (shownError && !shownError.hidden) {
-    tagError.textContent = shownError.textContent;
-    tagError.hidden = false;
-    tagInput.setAttribute('aria-invalid', 'true');
-  }
+  if (shownError && !shownError.hidden) showTagError(shownError.textContent);
   const tagForm = h(
     'form',
     { class: 'new-tag' },
@@ -224,23 +221,12 @@ function renderHere(rules: RuleSet) {
     event.preventDefault();
     const label = tagInput.value.trim();
     const id = slugifyTag(label);
-    if (!id) {
-      tagError.textContent = t('popupTagInvalid');
-      tagError.hidden = false;
-      tagInput.setAttribute('aria-invalid', 'true');
+    if (!id || mine.has(id)) {
+      showTagError(t(id ? 'popupTagAlreadySet' : 'popupTagInvalid'));
       tagInput.focus();
       return;
     }
-    if (mine.has(id)) {
-      tagError.textContent = t('popupTagAlreadySet');
-      tagError.hidden = false;
-      tagInput.setAttribute('aria-invalid', 'true');
-      tagInput.focus();
-      return;
-    }
-    tagError.textContent = '';
-    tagError.hidden = true;
-    tagInput.removeAttribute('aria-invalid');
+    showTagError(null);
     tagInput.value = '';
     hereDomain = domain;
     hereFocusKey = `tag-${id}`;
@@ -260,7 +246,7 @@ function renderHere(rules: RuleSet) {
   target?.focus();
   // A tag just created only appears once the change is saved: keep waiting for it.
   if (target && focusKey === hereFocusKey) hereFocusKey = undefined;
-  requestAnimationFrame(() => requestAnimationFrame(() => setBalance(balance, shown)));
+  requestAnimationFrame(() => requestAnimationFrame(() => setBalance(balance, r.shown)));
 }
 
 function renderPage(next: PageStats | undefined) {

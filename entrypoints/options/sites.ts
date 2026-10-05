@@ -4,7 +4,7 @@ import { ICON_CLOSE, ICON_DOWNLOAD, ICON_EDIT, LEVEL_ICONS, LEVEL_LABELS } from 
 import { guide } from '@/utils/links';
 import { colorForTag, parseList } from '@/utils/listformat';
 import { LEVELS, type Level } from '@/utils/matcher';
-import { listSites, setSite, type SiteEntry } from '@/utils/personal';
+import { displayLevel, listSites, setSite, type SiteEntry } from '@/utils/personal';
 import { loadRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal, personalIsLocal, savePersonal } from '@/utils/storage';
 import { rerender } from './flash';
@@ -134,7 +134,7 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
       .slice(0, 500);
     body.replaceChildren(
       ...shown.map((entry) => {
-        const level: Level = entry.level === 'allow' ? 'normal' : entry.level;
+        const level = displayLevel(entry.level);
         const setLevel = (l: Level) => void editPersonal((t) => setSite(t, entry.site, l, entry.tags));
         const available = tagIds.filter((id) => !entry.tags.includes(id));
         const addTag = h(

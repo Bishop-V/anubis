@@ -1,7 +1,7 @@
 import { andList } from './dom';
 import { hostSuffixes, normalizeHostname } from './domain';
 import { MAX_STRENGTH, type ParsedList, type Rule, type TagDef } from './listformat';
-import { PERSONAL_NAME } from './personal';
+import { displayLevel, PERSONAL_NAME } from './personal';
 
 // Turns parsed lists into lookup tables and weighs search results against them.
 //
@@ -272,7 +272,7 @@ export function evaluate(
     const p = verdict.personal;
     verdict.hidden = p === 'hide';
     verdict.hiddenBy = p === 'hide' ? { kind: 'personal', name: personalName(lists) } : undefined;
-    verdict.level = p === 'allow' ? 'normal' : p;
+    verdict.level = displayLevel(p);
     verdict.score = p === 'pin' ? PIN_SCORE : p === 'raise' ? PERSONAL_STRENGTH : p === 'lower' ? -PERSONAL_STRENGTH : 0;
     return verdict;
   }

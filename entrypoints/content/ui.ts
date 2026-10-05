@@ -7,10 +7,10 @@ import type { TagDef } from '@/utils/listformat';
 import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
 import { t, tJoin, tList, tn } from '@/utils/i18n';
 import { hiddenCount, type PageStats } from '@/utils/messages';
-import { getSite, PERSONAL_NAME, type PersonalLevel } from '@/utils/personal';
+import { getSite, type PersonalLevel } from '@/utils/personal';
 import { ruleParts } from '@/utils/ruletext';
 import type { Palette } from '@/utils/storage';
-import { nextLevel, rankingHint, rankingOf, siteCartouche } from '@/utils/siteranking';
+import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder } from '@/utils/siteranking';
 import { shortSummary, stoppedSentence, summarySentence } from '@/utils/summary';
 import { OWN_TAGS, type FoundResult } from './results';
 import shadowCss from './shadow.css?inline';
@@ -1140,10 +1140,9 @@ function buildPopover(
   switchDomain: (d: string) => void,
 ): { pop: HTMLElement; level: Level } {
   const entry = getSite(data.personalText, domain);
-  const { personal, pressed, fromLists, shown } = rankingOf(entry, data.baseline);
+  const r = rankingOf(entry, data.baseline);
   const choices = domainChoices(data.result.host);
 
-  // A select lies unseen over the name: a select is as wide as its longest option, which put the name off centre.
   const cartouche = siteCartouche(domain, choices, switchDomain, 'site');
 
   const levels = h(
@@ -1153,12 +1152,10 @@ function buildPopover(
       h(
         'button',
         {
-          class: `level ${level}${!pressed && level === fromLists && level !== 'normal' ? ' from-list' : ''}`,
+          class: `level ${level}${fromListsClass(level, r)}`,
           type: 'button',
-          attrs: { 'aria-pressed': String(pressed === level), 'data-focus-key': `level-${level}` },
-          on: {
-            click: () => actions.setLevel(domain, nextLevel(level, pressed, fromLists)),
-          },
+          attrs: { 'aria-pressed': String(r.pressed === level), 'data-focus-key': `level-${level}` },
+          on: { click: () => actions.setLevel(domain, nextLevel(level, r)) },
         },
         h('span', { class: 'level-icon' }, icon(LEVEL_ICONS[level])),
         LEVEL_LABELS[level],
@@ -1167,15 +1164,10 @@ function buildPopover(
   );
 
   // The same words as the popup's This site.
-  const hint = rankingHint(domain, data.baseline, { personal, pressed, fromLists, shown });
+  const hint = rankingHint(domain, data.baseline, r);
 
+  const { mine, fromList, ids: tagIds } = tagOrder(data.tags, entry, data.verdict);
   // Tags you set toggle; tags from lists are shown but fixed.
-  const mine = new Set(entry?.tags ?? []);
-  const fromList = new Set(data.verdict.tags.filter((id) => (data.verdict.tagSources[id] ?? []).some((s) => s !== PERSONAL_NAME)));
-  const tagIds = [...data.tags.keys()].sort((a, b) => {
-    const rank = (id: string) => (mine.has(id) ? 0 : fromList.has(id) ? 1 : 2);
-    return rank(a) - rank(b) || data.tags.get(a)!.label.localeCompare(data.tags.get(b)!.label);
-  });
   const tagItems = tagIds.map((id) => {
     const tag = data.tags.get(id)!;
     const on = mine.has(id);
@@ -1301,5 +1293,5 @@ function buildPopover(
       settingsButton(actions.settings),
     ),
   );
-  return { pop, level: shown };
+  return { pop, level: r.shown };
 }

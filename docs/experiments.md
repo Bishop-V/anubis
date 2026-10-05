@@ -80,6 +80,7 @@ The documentation site and its screenshots.
 
 Builds, tests, the end-to-end run, stores, and releases.
 
+- Shared ranking code and trimming duplication (2026-10-05)
 - 0.2.2 release: first Chrome submission (2026-10-05)
 - Finding Chromium for the end-to-end run (2026-09-29)
 - Firefox approval and automated release downloads (2026-10-03)
