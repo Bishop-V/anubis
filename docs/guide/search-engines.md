@@ -2,19 +2,21 @@
 
 Anubis works on the web results of these engines. Turn any of them off in **Settings → Search engines**.
 
-| Engine | Load more results | Checked on the live site |
-| --- | --- | --- |
-| Google (every country's domain) | Yes | Yes, results and clean-up. The phone layout isn't yet. |
-| DuckDuckGo | Yes | Yes |
-| DuckDuckGo HTML and Lite | No | Yes |
-| Bing | Yes* | Yes |
-| Brave Search | Yes | Yes |
-| Startpage | Yes, not yet checked | Yes |
-| Ecosia | Yes* | Yes |
-| Kagi | No | Not yet |
-| Yahoo | Yes* | Yes |
-| Yandex | No | Not yet |
-| Mojeek | No | Not yet |
+| Engine | Support | Load more results | Checked on the live site |
+| --- | --- | --- | --- |
+| Google (every country's domain) | Supported | Yes | Yes, results and clean-up. The phone layout isn't yet. |
+| DuckDuckGo | Supported | Yes | Yes |
+| DuckDuckGo HTML and Lite | Supported | No | Yes |
+| Bing | Supported | Yes* | Yes |
+| Brave Search | Supported | Yes | Yes |
+| Startpage | Supported | Yes | Yes |
+| Ecosia | Supported | Yes* | Yes |
+| Kagi | Experimental | No | Not yet |
+| Yahoo | Supported | Yes* | Yes |
+| Yandex | Experimental | No | Not yet |
+| Mojeek | Experimental | No | Not yet |
+
+**Supported** means it has been tried on the live site. **Experimental** means it follows the layout other tools document but hasn't been tried on the live site yet, so some things may not work.
 
 \* Bing, Ecosia, and Yahoo sometimes answer the request for the next page with a "confirm you're not a robot" check. Load more results then stops without saying why. If that happens, use the engine's own Next link.
 
