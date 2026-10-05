@@ -1,13 +1,15 @@
-// Engines whose pager is a row of forms, one per page number (Startpage), carry the
-// page in a hidden field. The page you're on has no form of its own, so it's the
-// gap in the numbers, or the one before the first when there's no gap.
+// Engines whose pager is a row of forms (Startpage) carry each page number in a
+// hidden field. The row lists every page including the one shown, then a "Next" form
+// last, repeating the number of the page after this one (seen on a live page:
+// `1,2,3,4,5,2` on page 1, `1,1,2,3,4,5,3` on page 2).
 
-/** The page being shown, from the page numbers its pager links to. */
+/** The page being shown: one before the page "Next" asks for, or the last one listed when there's no "Next". */
 export function currentPage(pages: number[]): number {
-  const sorted = [...new Set(pages.filter(Number.isFinite))].sort((a, b) => a - b);
-  if (!sorted.length) return 1;
-  for (let i = 1; i < sorted.length; i++) if (sorted[i]! - sorted[i - 1]! > 1) return sorted[i - 1]! + 1;
-  return sorted[0]! - 1;
+  const numbers = pages.filter(Number.isFinite);
+  if (!numbers.length) return 1;
+  const last = pages[pages.length - 1]!;
+  if (Number.isFinite(last) && pages.slice(0, -1).includes(last)) return last - 1;
+  return Math.max(...numbers);
 }
 
 /** The index of the pager entry for the page after `current` (default: the one shown), or -1 at the last page. */
