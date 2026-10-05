@@ -236,7 +236,11 @@ export const ENGINES: EngineDef[] = [
     matches: ['*://www.ecosia.org/*'],
     host: /^www\.ecosia\.org$/,
     isResultsPage: (url) => url.pathname === '/search',
-    item: '.result',
+    // Each article sits alone in a wrapper, and the wrappers are what can be
+    // reordered (reported on a live page, 2026-10). The area is the column
+    // holding the definitions panel above them, so the summary goes above that.
+    boundary: '.mainline__content',
+    item: '.mainline__result-wrapper:has(a.result__link)',
     link: 'a.result__link',
     title: 'h2',
     button: { top: '4px', right: '20px' },
