@@ -1,6 +1,7 @@
 import type { EngineDef } from '@/utils/engines';
 import type { DeeperStop } from '@/utils/messages';
 import { nextPagerIndex } from '@/utils/pager';
+import { restyle, styleBook } from '@/utils/restyle';
 import { findResults } from './results';
 
 // "Load more results": bring the next pages of results onto this one, so reranking
@@ -227,6 +228,7 @@ function importResults(engine: EngineDef, state: DeeperState, doc: Document, url
   const last = here[here.length - 1]?.container;
   if (!last?.parentElement) throw new Stop('failed', url);
   const seen = new Set(here.map((r) => r.url));
+  const book = engine.restyle ? styleBook(here.map((r) => r.container)) : undefined;
 
   // Right after the last result, not at the end of its list: the engine's own
   // pager is often the list's last item, and it belongs below every page.
@@ -237,6 +239,7 @@ function importResults(engine: EngineDef, state: DeeperState, doc: Document, url
     seen.add(result.url);
     const node = document.importNode(result.container, true);
     sanitize(node);
+    if (engine.restyle) restyle(node, book);
     node.setAttribute('data-anubis-page', String(state.pages + 1));
     after.after(node);
     after = node;

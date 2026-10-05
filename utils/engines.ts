@@ -43,6 +43,13 @@ export interface EngineDef {
   blocks?: string;
   /** Engine-specific selectors for clean-up blocks that headings cannot identify. */
   cleanupSelectors?: Partial<Record<CleanupKind, string>>;
+  /**
+   * Results brought over by Load more results are drawn with the classes of the
+   * results already here. For engines that name their styles from a hash and render
+   * a fetched page in another theme (Startpage's light one), so the same title has
+   * a different class there and a different colour.
+   */
+  restyle?: boolean;
   /** Sibling rows that belong to the same result (table layouts). */
   extraRows?: number;
   /** Results are table rows: hide rows instead of collapsing, and don't rerank. */
@@ -221,6 +228,7 @@ export const ENGINES: EngineDef[] = [
     // One post form per page number, each with the page in a hidden `page` field
     // (reported on a live page, 2026-10; unverified against the fetch itself).
     more: { kind: 'form', form: 'nav.pagination form' },
+    restyle: true,
   },
   {
     id: 'ecosia',
