@@ -44,6 +44,12 @@ export interface EngineDef {
   /** Engine-specific selectors for clean-up blocks that headings cannot identify. */
   cleanupSelectors?: Partial<Record<CleanupKind, string>>;
   /**
+   * A class that results brought over by Load more results are given. For engines
+   * whose own script reveals each result as it scrolls into view (Ecosia hides a
+   * result until `--visible` is added), which never runs for results added this way.
+   */
+  loadedClass?: string;
+  /**
    * Results brought over by Load more results are drawn with the classes of the
    * results already here. For engines that name their styles from a hash and render
    * a fetched page in another theme (Startpage's light one), so the same title has
@@ -241,6 +247,7 @@ export const ENGINES: EngineDef[] = [
     // holding the definitions panel above them, so the summary goes above that.
     boundary: '.mainline__content',
     item: '.mainline__result-wrapper:has(a.result__link)',
+    loadedClass: 'mainline__result-wrapper--visible',
     link: 'a.result__link',
     title: 'h2',
     button: { top: '4px', right: '20px' },

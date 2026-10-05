@@ -241,6 +241,7 @@ function importResults(engine: EngineDef, state: DeeperState, doc: Document, url
     const node = document.importNode(result.container, true);
     sanitize(node);
     if (engine.restyle) restyle(node, book);
+    if (engine.loadedClass) node.classList.add(engine.loadedClass);
     node.setAttribute('data-anubis-page', String(state.pages + 1));
     after.after(node);
     after = node;
