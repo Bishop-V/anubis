@@ -5,7 +5,7 @@ import { balanceSvg, setBalance } from '@/utils/balance';
 import { domainChoices, normalizeDomain, siteOf } from '@/utils/domain';
 import { engineFor } from '@/utils/engines';
 import { bugReportLink, describeBrowser, guide } from '@/utils/links';
-import { LEVELS, TAG_CHOICES, evaluate, type Level } from '@/utils/matcher';
+import { LEVELS, evaluate, type Level } from '@/utils/matcher';
 import { h, icon, siteName } from '@/utils/dom';
 import { ICON_GEAR, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
 import { localizePage, t, tJoin, tn, type MessageKey } from '@/utils/i18n';
@@ -14,6 +14,7 @@ import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/mess
 import { PERSONAL_NAME, getSite, listSites, setSiteLevel, toggleSiteTag, upsertTagDef, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal, updateSettings } from '@/utils/storage';
+import { nextLevel, rankingHint, rankingOf, siteCartouche } from '@/utils/siteranking';
 import { stoppedSentence, summarySentence } from '@/utils/summary';
 import { initTheme } from '@/utils/theme';
 
@@ -121,30 +122,14 @@ function renderHere(rules: RuleSet) {
   here.hidden = false;
 
   const entry = getSite(rules.personalText, domain);
-  const personal = entry?.level;
-  const pressed: Level | undefined = personal === 'allow' ? 'normal' : personal && personal !== 'normal' ? personal : undefined;
   const result = { url: tabUrl!.href, title: '', description: '' };
   const baseline = evaluate(result, rules.lists.filter((l) => !l.personal), rules.prefs);
-  const fromLists = baseline.level;
-  const shown: Level = pressed ?? fromLists;
+  const { personal, pressed, fromLists, shown } = rankingOf(entry, baseline);
 
-  // As in the result menu, the name sits in the ring and a select lies unseen over it
-  // when the ranking can cover more or less of the site.
-  let cartouche: HTMLElement;
-  if (choices.length > 1) {
-    const select = h(
-      'select',
-      { title: t('popupSiteChoice'), attrs: { 'aria-label': t('popupSite') } },
-      choices.map((d) => h('option', { value: d, selected: d === domain }, d)),
-    );
-    select.addEventListener('change', () => {
-      hereDomain = select.value;
-      renderHere(rules);
-    });
-    cartouche = h('span', { class: 'cartouche choosable' }, h('span', { class: 'name', attrs: { 'aria-hidden': 'true' } }, domain), select);
-  } else {
-    cartouche = h('span', { class: 'cartouche' }, h('span', { class: 'name' }, domain));
-  }
+  const cartouche = siteCartouche(domain, choices, (d) => {
+    hereDomain = d;
+    renderHere(rules);
+  });
 
   const levels = h(
     'div',
@@ -160,10 +145,7 @@ function renderHere(rules: RuleSet) {
           on: {
             click: () => {
               hereDomain = domain;
-              // "Normal" has to beat the lists when they rank this site, so it becomes an explicit allow.
-              const next: PersonalLevel =
-                level === 'normal' ? (fromLists === 'normal' ? 'normal' : 'allow') : pressed === level ? 'normal' : level;
-              void editPersonal((text) => setSiteLevel(text, domain, next));
+              void editPersonal((text) => setSiteLevel(text, domain, nextLevel(level, pressed, fromLists)));
             },
           },
         },
@@ -173,14 +155,7 @@ function renderHere(rules: RuleSet) {
     ),
   );
 
-  let hint: string;
-  if (personal === 'allow') hint = t('popupHintAllow');
-  else if (pressed) hint = t('popupHintMine', domain);
-  else if (fromLists !== 'normal') {
-    const names = [...new Set(baseline.reasons.filter((r) => r.listId !== TAG_CHOICES).map((r) => r.list))];
-    if (baseline.reasons.some((r) => r.listId === TAG_CHOICES)) names.push(t('popupYourTagSettings'));
-    hint = t('popupHintLists', LEVEL_CHIPS[fromLists], tJoin(names));
-  } else hint = t('popupHintNone');
+  const hint = rankingHint(domain, baseline, { personal, pressed, fromLists, shown });
 
   // Tags you set toggle; tags from lists are shown but fixed.
   const verdict = evaluate(result, rules.lists, rules.prefs);

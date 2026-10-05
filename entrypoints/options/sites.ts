@@ -8,7 +8,7 @@ import { listSites, setSite, type SiteEntry } from '@/utils/personal';
 import { loadRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal, personalIsLocal, savePersonal } from '@/utils/storage';
 import { rerender } from './flash';
-import { helpLink, pageTitle } from './parts';
+import { download, helpLink, pageTitle } from './parts';
 
 let editingText = false;
 let filter = '';
@@ -288,13 +288,4 @@ function textEditor(rules: RuleSet): HTMLElement {
       h('a', { class: 'text-btn', href: guide('list-format'), target: '_blank', rel: 'noopener noreferrer' }, 'Format reference'),
     ),
   );
-}
-
-export function download(name: string, text: string, type = 'text/plain') {
-  const url = URL.createObjectURL(new Blob([text], { type }));
-  const a = h('a', { href: url, download: name });
-  document.body.append(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }

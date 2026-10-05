@@ -22,8 +22,7 @@ import { importIntoPersonal } from '@/utils/importers';
 import { guide, REPO_URL } from '@/utils/links';
 import { themeSwitcher } from '@/utils/theme';
 import { flash, flashed, rerender } from './flash';
-import { helpLink, pageTitle, switchRow } from './parts';
-import { download } from './sites';
+import { download, helpLink, pageTitle, switchRow } from './parts';
 
 /** What loading this many extra pages costs, said as the amount changes. */
 export function deeperTip(pages: number): { text: string; warn: boolean } {
