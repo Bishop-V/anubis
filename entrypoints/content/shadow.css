@@ -126,6 +126,10 @@ button {
   color: var(--gold-ink);
 }
 .page-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
   opacity: 0.8;
 }
 

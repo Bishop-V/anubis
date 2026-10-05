@@ -2,7 +2,7 @@
 
 Search engines send one page of results at a time, so Anubis can only rerank what's on that page. **Load more results**, in the summary above the results, brings the next page onto the current one and ranks everything together. A site you pinned that only appears on page 3 rises to the top after two presses. On a phone, it's under **Details** in the summary.
 
-Results from later pages are marked "from page 2" and so on under their titles. They go right after the last result, so the engine's own page links stay at the bottom.
+Results from later pages are marked "From page 2" and so on, with a small hollow mark, under their titles. They go right after the last result, so the engine's own page links stay at the bottom.
 
 ## Automatically
 

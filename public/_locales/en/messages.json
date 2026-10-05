@@ -78,7 +78,7 @@
   "loadMoreFailed": { "message": "Page $2 from $1 didn’t load.", "description": "In the summary above the results, when the request failed. $1 is the search engine, $2 the page number." },
   "loadMoreOpen": { "message": "Open page $1", "description": "Link after loadMoreEmpty and the like: opens the page Anubis tried to load in a new tab. $1 is the page number." },
   "loadMoreOpenTitle": { "message": "Open it in a new tab to see what $1 sent", "description": "Tooltip of loadMoreOpen. $1 is the search engine." },
-  "chipFromPage": { "message": "from page $1", "description": "Under a result's title when Load more results brought it in. $1 is the page number." },
+  "chipFromPage": { "message": "From page $1", "description": "Under a result's title when Load more results brought it in. $1 is the page number." },
   "chipFromPageTitle": { "message": "Added by “Load more results”", "description": "Tooltip of chipFromPage." },
   "barHidden": { "message": "hidden", "description": "In the line standing for a hidden result, after the site: “fandom.com hidden”." },
   "barHiddenByYou": { "message": "hidden by your list", "description": "In the line standing for a hidden result, after the site." },
