@@ -288,6 +288,8 @@ export const ENGINES: EngineDef[] = [
     title: 'h2',
     // Under Yandex's own ⋮ menu on each result, like DuckDuckGo's.
     button: { top: '4px', right: '24px', underMenu: true },
+    // Pages are `p=1`, `p=2`… (page 1 has none); seen in the pager's links on a live page.
+    more: { kind: 'param', name: 'p', first: 0, step: 1 },
   },
   {
     id: 'mojeek',

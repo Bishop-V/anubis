@@ -498,7 +498,10 @@ function gutterIsFree(container: HTMLElement, spot: { left: number; right: numbe
   return true;
 }
 
-/** The engine's own menu button on a result: the right-most small button in its top-right corner. */
+/**
+ * The engine's own menu button on a result: the right-most small button near its
+ * top, in its right half (a result's box can be wider than the card it shows).
+ */
 function resultMenuOf(container: HTMLElement): HTMLElement | undefined {
   const box = container.getBoundingClientRect();
   if (!box.width) return undefined;
@@ -506,7 +509,7 @@ function resultMenuOf(container: HTMLElement): HTMLElement | undefined {
   let menuRight = -Infinity;
   for (const el of container.querySelectorAll<HTMLElement>('button, [role="button"]')) {
     const r = el.getBoundingClientRect();
-    if (!r.width || r.width > 48 || r.height > 48 || r.top > box.top + 64 || r.right < box.right - 64) continue;
+    if (!r.width || r.width > 48 || r.height > 48 || r.top > box.top + 64 || r.left < box.left + box.width / 2) continue;
     if (r.right > menuRight) {
       menu = el;
       menuRight = r.right;
