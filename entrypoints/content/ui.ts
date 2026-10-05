@@ -676,7 +676,7 @@ export function renderSummary(
   change?: string,
 ): void {
   const worthShowing =
-    hiddenCount(stats) || stats.pinned || stats.raised || stats.lowered || stats.tagged || stats.canGoDeeper || stats.pages > 1 || stats.stopped || change;
+    stats.total > 0 || hiddenCount(stats) || stats.pinned || stats.raised || stats.lowered || stats.tagged || stats.canGoDeeper || stats.pages > 1 || stats.stopped || change;
   if (!place?.before.parentElement || !worthShowing) {
     summaryHost?.remove();
     summaryArea = undefined;

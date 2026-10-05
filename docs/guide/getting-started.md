@@ -52,7 +52,7 @@ Hover a result and press the ⚖ button at its top-right corner. In the menu, ch
 
 ![The menu on a result: Hide, Lower, Normal, Raise, and Pin, with tags below](../img/menu.png)
 
-The result disappears, and so will every result from that site, on every search. The summary above the results counts what was hidden and says "Hid fandom.com." with an **Undo** button, which puts the site back as it was.
+The result disappears, and so will every result from that site, on every search. The summary above the results is always there, and says "Anubis left all 10 results as they were" until it has done something. It counts what was hidden and says "Hid fandom.com." with an **Undo** button, which puts the site back as it was.
 
 - **Show hidden** in the summary shows every hidden result on the page, faded, until you press it again or search for something else.
 - To stop hiding the site, show it, open its menu, and choose **Normal**.

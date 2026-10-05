@@ -286,7 +286,8 @@ export const ENGINES: EngineDef[] = [
     item: 'li:has(> .Organic), .serp-item:has(.Organic)',
     link: '.Organic a',
     title: 'h2',
-    button: { top: '4px', right: '24px' },
+    // Under Yandex's own ⋮ menu on each result, like DuckDuckGo's.
+    button: { top: '4px', right: '24px', underMenu: true },
   },
   {
     id: 'mojeek',
