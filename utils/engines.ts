@@ -70,10 +70,13 @@ export interface EngineDef {
  * - `click`: press the engine's own "More results" button; the page loads them itself.
  * - `link`: fetch the page the "Next" link points to and bring its results over.
  * - `param`: same, building the next page's URL from a page-number parameter.
+ * - `form`: the pager is a form per page number (Startpage, which posts its searches,
+ *   so the address alone can't find page 2): post the one for the next page.
  */
 export type MoreResults =
   | { kind: 'click'; button: string }
   | { kind: 'link'; next: string }
+  | { kind: 'form'; form: string }
   | { kind: 'param'; name: string; first: number; step: number };
 
 const GOOGLE_TLDS = `ad ae al am as at az ba be bf bg bi bj bs bt by ca cat cd cf cg ch ci cl cm cn co.ao co.bw co.ck
@@ -215,6 +218,9 @@ export const ENGINES: EngineDef[] = [
     link: 'a.result-link',
     title: 'h2',
     button: { top: '4px', right: '4px' },
+    // One post form per page number, each with the page in a hidden `page` field
+    // (reported on a live page, 2026-10; unverified against the fetch itself).
+    more: { kind: 'form', form: 'nav.pagination form' },
   },
   {
     id: 'ecosia',

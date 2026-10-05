@@ -9,7 +9,7 @@ Anubis works on the web results of these engines. Turn any of them off in **Sett
 | DuckDuckGo HTML and Lite | No | Yes |
 | Bing | Yes* | Yes |
 | Brave Search | Yes | Yes |
-| Startpage | No | Yes |
+| Startpage | Yes, not yet checked | Yes |
 | Ecosia | Yes* | Yes |
 | Kagi | No | Not yet |
 | Yahoo | Yes* | Yes |
