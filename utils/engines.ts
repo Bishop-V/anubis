@@ -43,6 +43,19 @@ export interface EngineDef {
   blocks?: string;
   /** Engine-specific selectors for clean-up blocks that headings cannot identify. */
   cleanupSelectors?: Partial<Record<CleanupKind, string>>;
+  /**
+   * A class that results brought over by Load more results are given. For engines
+   * whose own script reveals each result as it scrolls into view (Ecosia hides a
+   * result until `--visible` is added), which never runs for results added this way.
+   */
+  loadedClass?: string;
+  /**
+   * Results brought over by Load more results are drawn with the classes of the
+   * results already here. For engines that name their styles from a hash and render
+   * a fetched page in another theme (Startpage's light one), so the same title has
+   * a different class there and a different colour.
+   */
+  restyle?: boolean;
   /** Sibling rows that belong to the same result (table layouts). */
   extraRows?: number;
   /** Results are table rows: hide rows instead of collapsing, and don't rerank. */
@@ -70,10 +83,13 @@ export interface EngineDef {
  * - `click`: press the engine's own "More results" button; the page loads them itself.
  * - `link`: fetch the page the "Next" link points to and bring its results over.
  * - `param`: same, building the next page's URL from a page-number parameter.
+ * - `form`: the pager is a form per page number (Startpage, which posts its searches,
+ *   so the address alone can't find page 2): post the one for the next page.
  */
 export type MoreResults =
   | { kind: 'click'; button: string }
   | { kind: 'link'; next: string }
+  | { kind: 'form'; form: string }
   | { kind: 'param'; name: string; first: number; step: number };
 
 const GOOGLE_TLDS = `ad ae al am as at az ba be bf bg bi bj bs bt by ca cat cd cf cg ch ci cl cm cn co.ao co.bw co.ck
@@ -207,10 +223,18 @@ export const ENGINES: EngineDef[] = [
     matches: ['*://*.startpage.com/*'],
     host: /(^|\.)startpage\.com$/,
     isResultsPage: (url) => /^\/(do|rvd|sp)\//.test(url.pathname),
+    // The whole results column, so the summary goes above the ad notice and
+    // "Web results" label that come before the result list (class names there are
+    // generated; `section#main` is the stable part).
+    boundary: 'section#main',
     item: ':is(.w-gl, .w-bg) > .result',
     link: 'a.result-link',
     title: 'h2',
     button: { top: '4px', right: '4px' },
+    // One post form per page number, each with the page in a hidden `page` field
+    // (reported on a live page, 2026-10; unverified against the fetch itself).
+    more: { kind: 'form', form: 'nav.pagination form' },
+    restyle: true,
   },
   {
     id: 'ecosia',
@@ -218,7 +242,12 @@ export const ENGINES: EngineDef[] = [
     matches: ['*://www.ecosia.org/*'],
     host: /^www\.ecosia\.org$/,
     isResultsPage: (url) => url.pathname === '/search',
-    item: '.result',
+    // Each article sits alone in a wrapper, and the wrappers are what can be
+    // reordered (reported on a live page, 2026-10). The area is the column
+    // holding the definitions panel above them, so the summary goes above that.
+    boundary: '.mainline__content',
+    item: '.mainline__result-wrapper:has(a.result__link)',
+    loadedClass: 'mainline__result-wrapper--visible',
     link: 'a.result__link',
     title: 'h2',
     button: { top: '4px', right: '20px' },

@@ -250,7 +250,9 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
           tag.label,
         );
       }),
-      page ? h('span', { class: 'page-note', title: t('chipFromPageTitle') }, t('chipFromPage', page)) : null,
+      page
+        ? h('span', { class: 'page-note', title: t('chipFromPageTitle') }, h('i', { class: 'gem hollow', style: '--c: currentColor' }), t('chipFromPage', page))
+        : null,
     ),
   );
 }
@@ -888,8 +890,20 @@ function alignSummary(): void {
   if (!host.isConnected) return;
   // Above an AI answer, nothing on the page spaces the summary from the tabs above it.
   if (summaryArea && !summaryArea.contains(host)) host.style.setProperty('margin-top', '16px', 'important');
-  const box = host.getBoundingClientRect();
+  let box = host.getBoundingClientRect();
   if (!box.width) return;
+  // First in a block that starts right where it does (Google's results sit flush
+  // under the tabs): keep it off the line above.
+  const parent = host.parentElement;
+  if (parent && !host.style.getPropertyValue('margin-top')) {
+    let before = host.previousElementSibling;
+    while (before && (OWN_TAGS.has(before.tagName) || !before.getBoundingClientRect().height)) before = before.previousElementSibling;
+    const top = parent.getBoundingClientRect().top + (parseFloat(getComputedStyle(parent).paddingTop) || 0);
+    if (!before && Math.abs(box.top - top) < 2 && parseFloat(getComputedStyle(host).marginTop) < 8) {
+      host.style.setProperty('margin-top', '4px', 'important');
+      box = host.getBoundingClientRect();
+    }
+  }
   let left = box.left;
   let right = box.right;
   for (const el of [summaryArea, summaryColumn]) {

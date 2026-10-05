@@ -1,5 +1,7 @@
 import type { EngineDef } from '@/utils/engines';
 import type { DeeperStop } from '@/utils/messages';
+import { nextPagerIndex } from '@/utils/pager';
+import { restyle, styleBook } from '@/utils/restyle';
 import { findResults } from './results';
 
 // "Load more results": bring the next pages of results onto this one, so reranking
@@ -17,12 +19,21 @@ export interface DeeperState {
   /** No further pages (no next link, no button, or a page of results already here). */
   done: boolean;
   next?: string;
+  /** The post that brings the next page, for engines whose pager is a form per page. */
+  request?: PagerRequest;
   /** Why the last load stopped before bringing in a page, shown in the summary until the next load. */
   stopped?: DeeperStop;
   /** "Load more results automatically" already ran for this search. */
   auto?: boolean;
   /** How many results there were when you pressed the engine's own "More results" button yourself. */
   manualFrom?: number;
+}
+
+/** A post of a pager form: where to, what it carries, and which page it asks for. */
+export interface PagerRequest {
+  url: string;
+  body: string;
+  page: number;
 }
 
 export function freshState(engine: EngineDef): DeeperState {
@@ -53,6 +64,7 @@ export function nextPageReady(engine: EngineDef, state: DeeperState): boolean {
   if (!more || state.done || state.busy) return false;
   if (more.kind === 'click') return !!document.querySelector(more.button);
   if (more.kind === 'link') return !!state.next || !!document.querySelector(more.next);
+  if (more.kind === 'form') return !!state.request || !!pagerRequest(document, more.form, location.href);
   return true;
 }
 
@@ -142,7 +154,9 @@ function nextUrl(engine: EngineDef, state: DeeperState, doc: Document, base: str
  * a hidden frame, where the engine's own scripts run as if you had opened it.
  */
 async function fetchNext(engine: EngineDef, state: DeeperState): Promise<number> {
-  const url = state.next ?? nextUrl(engine, state, document, location.href);
+  const form = engine.more?.kind === 'form' ? engine.more.form : undefined;
+  const request = form ? (state.request ?? pagerRequest(document, form, location.href)) : undefined;
+  const url = form ? request?.url : (state.next ?? nextUrl(engine, state, document, location.href));
   if (!url) {
     state.done = true;
     return 0;
@@ -157,11 +171,21 @@ async function fetchNext(engine: EngineDef, state: DeeperState): Promise<number>
   let doc: Document | undefined;
   let failed: Stop | undefined;
   try {
-    doc = await fetchPage(target.href);
+    doc = await fetchPage(target.href, request && { method: 'POST', body: request.body, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
   } catch (error) {
     failed = error instanceof Stop ? error : new Stop('failed', target.href);
-    // An engine that asked to slow down or refused wouldn't answer a frame either.
-    if (failed.reason === 'busy' || failed.reason === 'refused') throw failed;
+    // An engine that asked to slow down wouldn't answer a frame either. One that
+    // refused a script's request (Ecosia's 403 robot check) may let a page load in a frame through.
+    if (failed.reason === 'busy') throw failed;
+  }
+  if (request) {
+    // A post can't be repeated in a frame, so a page that didn't arrive stops here.
+    if (!doc || !findResults(engine, doc).length) throw failed ?? new Stop('empty', target.href);
+    const following = form ? pagerRequest(doc, form, target.href, request.page) : undefined;
+    const added = importResults(engine, state, doc, target.href);
+    state.request = following;
+    if (!following) state.done = true;
+    return added;
   }
   if (!doc || !findResults(engine, doc).length) {
     const framed = await framePage(engine, target.href);
@@ -177,6 +201,26 @@ async function fetchNext(engine: EngineDef, state: DeeperState): Promise<number>
   return importResults(engine, state, doc, target.href);
 }
 
+/** The post for the page after `current` (the one shown, by default), from a pager made of one form per page. */
+function pagerRequest(root: ParentNode, selector: string, base: string, current?: number): PagerRequest | undefined {
+  const forms = [...root.querySelectorAll<HTMLFormElement>(selector)];
+  const bodies = forms.map((f) => new FormData(f));
+  const pages = bodies.map((data) => Number(data.get('page')));
+  const index = nextPagerIndex(pages, current);
+  const data = bodies[index];
+  const form = forms[index];
+  if (!data || !form) return undefined;
+  const body = new URLSearchParams();
+  data.forEach((value, key) => {
+    if (typeof value === 'string') body.append(key, value);
+  });
+  try {
+    return { url: new URL(form.getAttribute('action') ?? '', base).href, body: body.toString(), page: pages[index]! };
+  } catch {
+    return undefined;
+  }
+}
+
 function importResults(engine: EngineDef, state: DeeperState, doc: Document, url: string): number {
   const found = findResults(engine, doc);
   if (!found.length) throw new Stop('empty', url);
@@ -185,6 +229,7 @@ function importResults(engine: EngineDef, state: DeeperState, doc: Document, url
   const last = here[here.length - 1]?.container;
   if (!last?.parentElement) throw new Stop('failed', url);
   const seen = new Set(here.map((r) => r.url));
+  const book = engine.restyle ? styleBook(here.map((r) => r.container)) : undefined;
 
   // Right after the last result, not at the end of its list: the engine's own
   // pager is often the list's last item, and it belongs below every page.
@@ -195,6 +240,8 @@ function importResults(engine: EngineDef, state: DeeperState, doc: Document, url
     seen.add(result.url);
     const node = document.importNode(result.container, true);
     sanitize(node);
+    if (engine.restyle) restyle(node, book);
+    if (engine.loadedClass) node.classList.add(engine.loadedClass);
     node.setAttribute('data-anubis-page', String(state.pages + 1));
     after.after(node);
     after = node;
@@ -214,12 +261,12 @@ function importResults(engine: EngineDef, state: DeeperState, doc: Document, url
  * page's address and some of its cookies; `content.fetch` sends them as the page
  * would. Other browsers already do.
  */
-function pageFetch(url: string): Promise<Response> {
+function pageFetch(url: string, init?: RequestInit): Promise<Response> {
   const page = (globalThis as { content?: { fetch?: typeof fetch } }).content;
-  const own = () => fetch(url, { credentials: 'include' });
+  const own = () => fetch(url, { ...init, credentials: 'include' });
   if (typeof page?.fetch !== 'function') return own();
   try {
-    return page.fetch(url).catch(own);
+    return page.fetch(url, init).catch(own);
   } catch {
     return own();
   }
@@ -242,9 +289,9 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 }
 
 /** The page at `url`, parsed. An engine that asks to slow down gets one more try after the wait it asks for. */
-async function fetchPage(url: string): Promise<Document> {
+async function fetchPage(url: string, init?: RequestInit): Promise<Document> {
   for (let attempt = 0; ; attempt++) {
-    const res = await withTimeout(pageFetch(url), FETCH_TIMEOUT).catch((error: unknown) => {
+    const res = await withTimeout(pageFetch(url, init), FETCH_TIMEOUT).catch((error: unknown) => {
       throw error instanceof Stop ? new Stop(error.reason, url) : new Stop('failed', url);
     });
     if (res.status === 429 || res.status === 503) {
