@@ -548,7 +548,10 @@ function placeUnderMenu(host: HTMLElement, container: HTMLElement, menu: HTMLEle
   const fill = icon ? getComputedStyle(icon).fill : '';
   const color = /^rgba?\(/.test(fill) && !/,\s*0\)$/.test(fill) ? fill : ms.color;
   host.style.setProperty('--anubis-weigh-color', color);
-  host.style.removeProperty('--anubis-weigh-opacity');
+  // As bright as the menu button is, not the faint default: the pair should look alike.
+  const shown = (parseFloat(ms.opacity) || 1) * (icon ? parseFloat(getComputedStyle(icon).opacity) || 1 : 1);
+  if (shown > 0.35) host.style.setProperty('--anubis-weigh-opacity', String(Math.round(shown * 100) / 100));
+  else host.style.removeProperty('--anubis-weigh-opacity');
 }
 
 export function weighButtonOf(container: HTMLElement): HTMLButtonElement | undefined {
