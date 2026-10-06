@@ -283,7 +283,7 @@ export default defineContentScript({
         container.style.removeProperty('--anubis-hl');
       }
 
-      const ctx = { tags: rules.tags, prefs: rules.prefs, theme };
+      const ctx = { tags: rules.tags, prefs: rules.prefs, theme, belowRow: engine.chipsBelowRow };
       if (rules.settings.showChips) renderChips(result, verdict, ctx, revealed);
       else renderChips(result, { ...verdict, level: 'normal', tags: [] }, ctx, false);
 
