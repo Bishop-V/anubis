@@ -31,9 +31,15 @@ describe('Kagi', () => {
     const { document } = parseHTML(`<body>
       <div class="_ext_ub_r search-result" id="web"></div>
       <div class="widget list-widget"><div class="_ext_ub_r widgetItem" id="past"></div></div>
-      <div class="_ext_ub_r widget" id="widget"></div></body>`);
+      <div class="_ext_ub_r widget" id="widget"></div>
+      <div class="widget-simple"><div><div class="_ext_ub_r" id="simple"></div></div></div>
+      <div class="inline-content"><div class="_ext_ub_r" id="inline"></div></div>
+      <div class="_ext_ub_r" id="row"><div class="widgetItemTitle"></div></div>
+      <div id="web_archive" class="list-widget inline-content"><div class="widget-simple"><div class="widgetItem _0_SRI flex-column _ext_ub_r" id="blast"></div></div></div>
+      <main id="main"><div class="new-user-onboarding-banner"></div><div id="page0"><div id="layout-v2"><div class="sri-group _ext_ub_r" id="group"></div></div></div></main></body>`);
+    expect(document.querySelector('#layout-v2')!.closest(kagi.boundary!)!.firstElementChild!.className).toBe('new-user-onboarding-banner');
     const found = [...document.querySelectorAll(kagi.item!)].map((el) => el.id);
-    expect(found).toEqual(['web']);
+    expect(found).toEqual(['web', 'group']);
   });
 
   it('puts tags under the title row and the button beside the menu', () => {
