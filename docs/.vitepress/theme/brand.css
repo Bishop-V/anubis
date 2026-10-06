@@ -168,6 +168,12 @@ body .VPContent .VPHome {
   width: 2px;
   background: var(--vp-c-divider);
 }
+/* Under the page, on narrow screens, the line's top fades in instead of stopping dead. */
+@media (max-width: 959px) {
+  .demo-rail {
+    mask-image: linear-gradient(to bottom, transparent, #000 48px);
+  }
+}
 .demo-rail-fill {
   display: block;
   width: 100%;
