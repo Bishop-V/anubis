@@ -2,6 +2,12 @@
 
 Builds, tests, the end-to-end run, stores, and releases. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Shared ranking code and trimming duplication (2026-10-05)
+
+- **Kept:** the result menu and the popup share their ranking, hint, cartouche, and tag order through `utils/siteranking.ts`, with unit tests; `displayLevel` in `utils/personal.ts` replaces four copies of "an allow shows as Normal".
+- **Checked and left:** `tsc --noUnusedLocals --noUnusedParameters` and a search for unused exports found nothing else dead. The few repeated lines left on search pages (the tree walkers in `ui.ts`, the climbs in `results.ts`) differ in what they stop at, and sharing them would make that harder to read.
+- **Tripped over:** WXT auto-imports every export of `utils/`. An export named `siteTags` matched a parameter in `utils/importers.ts`, so its unit test loaded `utils/icons.ts`, which translates as it loads, and failed. Renamed to `tagOrder`; a pitfall in `DEVELOPMENT.md` says so.
+
 ## 0.2.2 release: first Chrome submission (2026-10-05)
 
 - **Listed:** the Chrome Web Store accepted Anubis (item `aninblefigadaigfppckanjgiijcmmhi`). The install guides, README, and store notes now link to it.

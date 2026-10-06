@@ -4,12 +4,13 @@ import { h, icon } from '@/utils/dom';
 import type { EngineDef } from '@/utils/engines';
 import { ICON_ANUBIS, ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS, WEIGH_ICONS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
-import { LEVELS, TAG_CHOICES, type Level, type TagPref, type Verdict } from '@/utils/matcher';
+import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
 import { t, tJoin, tList, tn } from '@/utils/i18n';
 import { hiddenCount, type PageStats } from '@/utils/messages';
-import { getSite, PERSONAL_NAME, type PersonalLevel } from '@/utils/personal';
+import { getSite, type PersonalLevel } from '@/utils/personal';
 import { ruleParts } from '@/utils/ruletext';
 import type { Palette } from '@/utils/storage';
+import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder } from '@/utils/siteranking';
 import { shortSummary, stoppedSentence, summarySentence } from '@/utils/summary';
 import { OWN_TAGS, type FoundResult } from './results';
 import shadowCss from './shadow.css?inline';
@@ -1139,26 +1140,10 @@ function buildPopover(
   switchDomain: (d: string) => void,
 ): { pop: HTMLElement; level: Level } {
   const entry = getSite(data.personalText, domain);
-  const personal = entry?.level;
-  const pressed: Level | undefined = personal === 'allow' ? 'normal' : personal && personal !== 'normal' ? personal : undefined;
-  const fromLists = data.baseline.level;
-  const shown: Level = pressed ?? fromLists;
+  const r = rankingOf(entry, data.baseline);
   const choices = domainChoices(data.result.host);
 
-  // The cartouche shows the chosen site as text, with the native select laid over it
-  // unseen: a select is as wide as its longest option, which put the name off centre.
-  let cartouche: HTMLElement;
-  if (choices.length > 1) {
-    const select = h(
-      'select',
-      { title: t('popupSiteChoice'), attrs: { 'aria-label': t('popupSite'), 'data-focus-key': 'site' } },
-      choices.map((d) => h('option', { value: d, selected: d === domain }, d)),
-    );
-    select.addEventListener('change', () => switchDomain(select.value));
-    cartouche = h('span', { class: 'cartouche choosable' }, h('span', { class: 'name', attrs: { 'aria-hidden': 'true' } }, domain), select);
-  } else {
-    cartouche = h('span', { class: 'cartouche' }, h('span', { class: 'name' }, domain));
-  }
+  const cartouche = siteCartouche(domain, choices, switchDomain, 'site');
 
   const levels = h(
     'div',
@@ -1167,17 +1152,10 @@ function buildPopover(
       h(
         'button',
         {
-          class: `level ${level}${!pressed && level === fromLists && level !== 'normal' ? ' from-list' : ''}`,
+          class: `level ${level}${fromListsClass(level, r)}`,
           type: 'button',
-          attrs: { 'aria-pressed': String(pressed === level), 'data-focus-key': `level-${level}` },
-          on: {
-            click: () => {
-              if (level === 'normal') {
-                // "Normal" has to beat the lists when they rank this site, so it becomes an explicit allow.
-                actions.setLevel(domain, fromLists === 'normal' ? 'normal' : 'allow');
-              } else actions.setLevel(domain, pressed === level ? 'normal' : level);
-            },
-          },
+          attrs: { 'aria-pressed': String(r.pressed === level), 'data-focus-key': `level-${level}` },
+          on: { click: () => actions.setLevel(domain, nextLevel(level, r)) },
         },
         h('span', { class: 'level-icon' }, icon(LEVEL_ICONS[level])),
         LEVEL_LABELS[level],
@@ -1186,22 +1164,10 @@ function buildPopover(
   );
 
   // The same words as the popup's This site.
-  let hint: string;
-  if (personal === 'allow') hint = t('popupHintAllow');
-  else if (pressed) hint = t('popupHintMine', domain);
-  else if (fromLists !== 'normal') {
-    const names = [...new Set(data.baseline.reasons.filter((r) => r.listId !== TAG_CHOICES).map((r) => r.list))];
-    if (data.baseline.reasons.some((r) => r.listId === TAG_CHOICES)) names.push(t('popupYourTagSettings'));
-    hint = t('popupHintLists', LEVEL_CHIPS[fromLists], tJoin(names));
-  } else hint = t('popupHintNone');
+  const hint = rankingHint(domain, data.baseline, r);
 
+  const { mine, fromList, ids: tagIds } = tagOrder(data.tags, entry, data.verdict);
   // Tags you set toggle; tags from lists are shown but fixed.
-  const mine = new Set(entry?.tags ?? []);
-  const fromList = new Set(data.verdict.tags.filter((id) => (data.verdict.tagSources[id] ?? []).some((s) => s !== PERSONAL_NAME)));
-  const tagIds = [...data.tags.keys()].sort((a, b) => {
-    const rank = (id: string) => (mine.has(id) ? 0 : fromList.has(id) ? 1 : 2);
-    return rank(a) - rank(b) || data.tags.get(a)!.label.localeCompare(data.tags.get(b)!.label);
-  });
   const tagItems = tagIds.map((id) => {
     const tag = data.tags.get(id)!;
     const on = mine.has(id);
@@ -1327,5 +1293,5 @@ function buildPopover(
       settingsButton(actions.settings),
     ),
   );
-  return { pop, level: shown };
+  return { pop, level: r.shown };
 }

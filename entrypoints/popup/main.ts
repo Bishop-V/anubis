@@ -5,15 +5,16 @@ import { balanceSvg, setBalance } from '@/utils/balance';
 import { domainChoices, normalizeDomain, siteOf } from '@/utils/domain';
 import { engineFor } from '@/utils/engines';
 import { bugReportLink, describeBrowser, guide } from '@/utils/links';
-import { LEVELS, TAG_CHOICES, evaluate, type Level } from '@/utils/matcher';
+import { LEVELS, evaluate, type Level } from '@/utils/matcher';
 import { h, icon, siteName } from '@/utils/dom';
 import { ICON_GEAR, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
 import { localizePage, t, tJoin, tn, type MessageKey } from '@/utils/i18n';
 import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/messages';
-import { PERSONAL_NAME, getSite, listSites, setSiteLevel, toggleSiteTag, upsertTagDef, type PersonalLevel } from '@/utils/personal';
+import { displayLevel, getSite, listSites, setSiteLevel, toggleSiteTag, upsertTagDef, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal, updateSettings } from '@/utils/storage';
+import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder } from '@/utils/siteranking';
 import { stoppedSentence, summarySentence } from '@/utils/summary';
 import { initTheme } from '@/utils/theme';
 
@@ -78,7 +79,7 @@ async function renderAll() {
   list.replaceChildren(
     ...(sites.length
       ? sites.slice(0, RECENT).map((entry) => {
-          const level = entry.level === 'allow' ? 'normal' : entry.level;
+          const level = displayLevel(entry.level);
           const onlyTag = entry.tags.length === 1 ? rules.tags.get(entry.tags[0]!) : undefined;
           return h(
             'li',
@@ -121,30 +122,14 @@ function renderHere(rules: RuleSet) {
   here.hidden = false;
 
   const entry = getSite(rules.personalText, domain);
-  const personal = entry?.level;
-  const pressed: Level | undefined = personal === 'allow' ? 'normal' : personal && personal !== 'normal' ? personal : undefined;
   const result = { url: tabUrl!.href, title: '', description: '' };
   const baseline = evaluate(result, rules.lists.filter((l) => !l.personal), rules.prefs);
-  const fromLists = baseline.level;
-  const shown: Level = pressed ?? fromLists;
+  const r = rankingOf(entry, baseline);
 
-  // As in the result menu, the name sits in the ring and a select lies unseen over it
-  // when the ranking can cover more or less of the site.
-  let cartouche: HTMLElement;
-  if (choices.length > 1) {
-    const select = h(
-      'select',
-      { title: t('popupSiteChoice'), attrs: { 'aria-label': t('popupSite') } },
-      choices.map((d) => h('option', { value: d, selected: d === domain }, d)),
-    );
-    select.addEventListener('change', () => {
-      hereDomain = select.value;
-      renderHere(rules);
-    });
-    cartouche = h('span', { class: 'cartouche choosable' }, h('span', { class: 'name', attrs: { 'aria-hidden': 'true' } }, domain), select);
-  } else {
-    cartouche = h('span', { class: 'cartouche' }, h('span', { class: 'name' }, domain));
-  }
+  const cartouche = siteCartouche(domain, choices, (d) => {
+    hereDomain = d;
+    renderHere(rules);
+  });
 
   const levels = h(
     'div',
@@ -154,16 +139,13 @@ function renderHere(rules: RuleSet) {
         'button',
         {
           type: 'button',
-          class: `${level}${!pressed && level === fromLists && level !== 'normal' ? ' from-list' : ''}`,
+          class: `${level}${fromListsClass(level, r)}`,
           title: t(RANK_TITLES[level], domain),
-          attrs: { 'aria-pressed': String(pressed === level) },
+          attrs: { 'aria-pressed': String(r.pressed === level) },
           on: {
             click: () => {
               hereDomain = domain;
-              // "Normal" has to beat the lists when they rank this site, so it becomes an explicit allow.
-              const next: PersonalLevel =
-                level === 'normal' ? (fromLists === 'normal' ? 'normal' : 'allow') : pressed === level ? 'normal' : level;
-              void editPersonal((text) => setSiteLevel(text, domain, next));
+              void editPersonal((text) => setSiteLevel(text, domain, nextLevel(level, r)));
             },
           },
         },
@@ -173,23 +155,11 @@ function renderHere(rules: RuleSet) {
     ),
   );
 
-  let hint: string;
-  if (personal === 'allow') hint = t('popupHintAllow');
-  else if (pressed) hint = t('popupHintMine', domain);
-  else if (fromLists !== 'normal') {
-    const names = [...new Set(baseline.reasons.filter((r) => r.listId !== TAG_CHOICES).map((r) => r.list))];
-    if (baseline.reasons.some((r) => r.listId === TAG_CHOICES)) names.push(t('popupYourTagSettings'));
-    hint = t('popupHintLists', LEVEL_CHIPS[fromLists], tJoin(names));
-  } else hint = t('popupHintNone');
+  const hint = rankingHint(domain, baseline, r);
 
-  // Tags you set toggle; tags from lists are shown but fixed.
   const verdict = evaluate(result, rules.lists, rules.prefs);
-  const mine = new Set(entry?.tags ?? []);
-  const fromList = new Set(verdict.tags.filter((id) => (verdict.tagSources[id] ?? []).some((s) => s !== PERSONAL_NAME)));
-  const tagIds = [...rules.tags.keys()].sort((a, b) => {
-    const rank = (id: string) => (mine.has(id) ? 0 : fromList.has(id) ? 1 : 2);
-    return rank(a) - rank(b) || rules.tags.get(a)!.label.localeCompare(rules.tags.get(b)!.label);
-  });
+  const { mine, fromList, ids: tagIds } = tagOrder(rules.tags, entry, verdict);
+  // Tags you set toggle; tags from lists are shown but fixed.
   const tagItems = tagIds.map((id) => {
     const tag = rules.tags.get(id)!;
     const on = mine.has(id);
@@ -229,15 +199,17 @@ function renderHere(rules: RuleSet) {
     attrs: { 'aria-label': t('menuNewTagLabel'), 'aria-describedby': 'new-tag-error', 'data-focus-key': 'new-tag' },
   });
   const tagError = h('p', { class: 'tag-error', hidden: true, attrs: { id: 'new-tag-error', role: 'status' } });
+  const showTagError = (text: string | null) => {
+    tagError.textContent = text;
+    tagError.hidden = !text;
+    if (text) tagInput.setAttribute('aria-invalid', 'true');
+    else tagInput.removeAttribute('aria-invalid');
+  };
   // A change from elsewhere draws this again: keep what was typed for this site, and its error.
   const typed = here.dataset.domain === domain ? here.querySelector<HTMLInputElement>('.new-tag input') : null;
   const shownError = here.dataset.domain === domain ? here.querySelector<HTMLElement>('#new-tag-error') : null;
   if (typed) tagInput.value = typed.value;
-  if (shownError && !shownError.hidden) {
-    tagError.textContent = shownError.textContent;
-    tagError.hidden = false;
-    tagInput.setAttribute('aria-invalid', 'true');
-  }
+  if (shownError && !shownError.hidden) showTagError(shownError.textContent);
   const tagForm = h(
     'form',
     { class: 'new-tag' },
@@ -249,23 +221,12 @@ function renderHere(rules: RuleSet) {
     event.preventDefault();
     const label = tagInput.value.trim();
     const id = slugifyTag(label);
-    if (!id) {
-      tagError.textContent = t('popupTagInvalid');
-      tagError.hidden = false;
-      tagInput.setAttribute('aria-invalid', 'true');
+    if (!id || mine.has(id)) {
+      showTagError(t(id ? 'popupTagAlreadySet' : 'popupTagInvalid'));
       tagInput.focus();
       return;
     }
-    if (mine.has(id)) {
-      tagError.textContent = t('popupTagAlreadySet');
-      tagError.hidden = false;
-      tagInput.setAttribute('aria-invalid', 'true');
-      tagInput.focus();
-      return;
-    }
-    tagError.textContent = '';
-    tagError.hidden = true;
-    tagInput.removeAttribute('aria-invalid');
+    showTagError(null);
     tagInput.value = '';
     hereDomain = domain;
     hereFocusKey = `tag-${id}`;
@@ -285,7 +246,7 @@ function renderHere(rules: RuleSet) {
   target?.focus();
   // A tag just created only appears once the change is saved: keep waiting for it.
   if (target && focusKey === hereFocusKey) hereFocusKey = undefined;
-  requestAnimationFrame(() => requestAnimationFrame(() => setBalance(balance, shown)));
+  requestAnimationFrame(() => requestAnimationFrame(() => setBalance(balance, r.shown)));
 }
 
 function renderPage(next: PageStats | undefined) {

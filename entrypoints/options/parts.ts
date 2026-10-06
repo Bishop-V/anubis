@@ -33,3 +33,13 @@ export function switchRow(label: string, hint: string, checked: boolean, onChang
     h('label', { class: 'switch' }, input, h('span')),
   );
 }
+
+/** Hands text to the browser as a file to save. */
+export function download(name: string, text: string, type = 'text/plain') {
+  const url = URL.createObjectURL(new Blob([text], { type }));
+  const a = h('a', { href: url, download: name });
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}

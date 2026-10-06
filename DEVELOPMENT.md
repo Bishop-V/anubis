@@ -81,7 +81,7 @@ Two builds of the same commit are identical file for file. Firefox's reviewers r
   - `page.css`: page-level treatments keyed off `data-anubis-*` attributes (hidden, lowered, pinned, highlight, rerank).
 - `entrypoints/subscribe.content.ts`: runs only on the wiki's subscribe page (`…/anubis/subscribe?url=…&name=…`, where subscribe links lead) and asks the background to open Settings → Lists with that list filled in. Settings asks before subscribing, because anyone can make a link.
 - `entrypoints/background.ts`: list updates (on startup and when a search page asks, at most every 30 minutes), syncing with a WebDAV server when one is connected (a few seconds after a change, on startup, and when a search page asks, at most every 5 minutes), the toolbar badge, the grey icon while Anubis is off (`public/icon-off/`), and opening the welcome page on first install.
-- `entrypoints/popup/`: changes with the tab. It shows what Anubis did on a search page (and its tags to show only), the site you're on in the cartouche and balance (`utils/balance.ts`, shared with the result menu), or adding a site by hand; then the last few of your sites.
+- `entrypoints/popup/`: changes with the tab. It shows what Anubis did on a search page (and its tags to show only), the site you're on in the cartouche and balance (`utils/balance.ts`, and its ranking, hint, and tags from `utils/siteranking.ts`, both shared with the result menu), or adding a site by hand; then the last few of your sites.
 - `entrypoints/welcome/`: the page that opens on first install: how to pin the toolbar button in this browser, searches to try, and the lists you start with.
 - `entrypoints/options/`: settings sections (your sites, tags, lists, clean up, appearance, engines, sync, and backup).
 - `utils/engines.ts`: engine definitions. Also imported at build time for the manifest's matches, so keep it free of browser APIs. When an engine breaks, diff against uBlacklist's ruleset at <https://github.com/ublacklist/builtin> (`serpinfo/*.yml`), which tracks these layouts continuously. An engine's `mobile` holds its phone layout's differences, chosen by user agent when the content script starts.
@@ -176,7 +176,7 @@ A listener that answers calls `sendResponse`, and returns `true` if the answer c
 
 ### Extension pages
 
-The popup, settings, and welcome page are plain DOM, built with `h()` from `utils/dom.ts`: no framework and no `innerHTML`. Text from lists always goes in as text nodes. Settings sections live in `entrypoints/options/` and are listed in `SECTIONS` in `options/main.ts`; each renders from storage and renders again when storage changes, unless someone is typing in it. `options/parts.ts` has the pieces they share (a section's title, a setting with a switch) and `options/flash.ts` the messages shown after an action.
+The popup, settings, and welcome page are plain DOM, built with `h()` from `utils/dom.ts`: no framework and no `innerHTML`. Text from lists always goes in as text nodes. Settings sections live in `entrypoints/options/` and are listed in `SECTIONS` in `options/main.ts`; each renders from storage and renders again when storage changes, unless someone is typing in it. `options/parts.ts` has the pieces they share (a section's title, a setting with a switch, a file to save) and `options/flash.ts` the messages shown after an action.
 
 ## Recipes
 
@@ -255,6 +255,7 @@ Not everything is converted yet: `ROADMAP.md` lists what's left. Wording follows
 | `listformat.test.ts` | Parsing each format, the header, tags, slow patterns |
 | `matcher.test.ts` | Which rule wins, tag choices, lenses, reasons |
 | `personal.test.ts` | Line-level edits to the personal list, and undoing them |
+| `siteranking.test.ts` | What pressing a ranking stores, the hint, and the order of tags in the result menu and the popup |
 | `importers.test.ts` | Importing uBlacklist, HOHSER, Goggles, and domain lists |
 | `storage.test.ts` | Chunking and compressing the personal list, lists arriving from sync in pieces, migrations, default subscriptions |
 | `merge.test.ts` | Three-way merges of the personal list, settings, and subscriptions |
@@ -328,5 +329,6 @@ Mistakes that have been made once already. `docs/experiments.md` has the details
 - **Engines change their markup without notice.** Prefer structure (headings, links, nesting) to class names.
 - **The page is still arriving when the first pass runs.** The content script starts at `document_start` and engines stream their pages, so what sits below the results (a Next link, a More results button) may not be there yet. Don't treat its absence as final; wait for a later pass.
 - **Links to the wiki's subscribe page carry `target="_self"`**, or VitePress's router follows them without loading the page, and the subscribe content script never runs.
+- **WXT auto-imports every export of `utils/`.** A local name that matches one (a parameter, say) pulls that module in wherever the name appears (a `siteTags` export once broke `importers.test.ts`). Import explicitly, and give new exports names that locals won't share.
 - **Keep `utils/engines.ts` and `utils/links.ts` free of browser APIs.** The build and the docs site import them.
 - **Don't change the Firefox add-on ID** in `wxt.config.ts`: it's the add-on's permanent identity, and a new one orphans everyone's stored settings.

@@ -4,11 +4,11 @@ import { ICON_CLOSE, ICON_DOWNLOAD, ICON_EDIT, LEVEL_ICONS, LEVEL_LABELS } from 
 import { guide } from '@/utils/links';
 import { colorForTag, parseList } from '@/utils/listformat';
 import { LEVELS, type Level } from '@/utils/matcher';
-import { listSites, setSite, type SiteEntry } from '@/utils/personal';
+import { displayLevel, listSites, setSite, type SiteEntry } from '@/utils/personal';
 import { loadRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal, personalIsLocal, savePersonal } from '@/utils/storage';
 import { rerender } from './flash';
-import { helpLink, pageTitle } from './parts';
+import { download, helpLink, pageTitle } from './parts';
 
 let editingText = false;
 let filter = '';
@@ -134,7 +134,7 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
       .slice(0, 500);
     body.replaceChildren(
       ...shown.map((entry) => {
-        const level: Level = entry.level === 'allow' ? 'normal' : entry.level;
+        const level = displayLevel(entry.level);
         const setLevel = (l: Level) => void editPersonal((t) => setSite(t, entry.site, l, entry.tags));
         const available = tagIds.filter((id) => !entry.tags.includes(id));
         const addTag = h(
@@ -288,13 +288,4 @@ function textEditor(rules: RuleSet): HTMLElement {
       h('a', { class: 'text-btn', href: guide('list-format'), target: '_blank', rel: 'noopener noreferrer' }, 'Format reference'),
     ),
   );
-}
-
-export function download(name: string, text: string, type = 'text/plain') {
-  const url = URL.createObjectURL(new Blob([text], { type }));
-  const a = h('a', { href: url, download: name });
-  document.body.append(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
