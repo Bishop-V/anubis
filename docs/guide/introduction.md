@@ -29,7 +29,7 @@ It works on the search engine you already use. Your choices, and the lists you s
 - **Bring your old lists.** Move your sites over from uBlacklist, HOHSER, or a Brave Goggle. [Moving from other tools](./import-and-backup.md)
 - **Easy to undo.** A one-line summary above the results says what Anubis changed, "Show hidden" brings everything back on that page, and "Undo" takes back your last change.
 
-It works on Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Yahoo, and Yandex. Kagi and Mojeek are experimental: they haven't been tried on the live site yet. See [Search engines](./search-engines.md) for details.
+It works on Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, and Yandex. Mojeek is experimental: it hasn't been tried on the live site yet. See [Search engines](./search-engines.md) for details.
 
 ## Where the name comes from
 

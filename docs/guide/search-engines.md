@@ -11,7 +11,7 @@ Anubis works on the web results of these engines. Turn any of them off in **Sett
 | Brave Search | Supported | Yes | Yes |
 | Startpage | Supported | Yes | Yes |
 | Ecosia | Supported | Yes* | Yes |
-| Kagi | Experimental | No | Not yet |
+| Kagi | Supported | No | Yes |
 | Yahoo | Supported | Yes* | Yes |
 | Yandex | Supported | Yes* | Yes |
 | Mojeek | Experimental | No | Not yet |
