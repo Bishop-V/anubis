@@ -65,10 +65,17 @@ export interface EngineDef {
    * `underMenu`, it sits just under the engine's own menu button on the result
    * (DuckDuckGo's ⋯) instead, at its size and in its colour, like a second option;
    * `top` and `right` apply when a result has no such button. `popOut` is the
-   * selector of the result's card: the result menu opens to the right of it, level
-   * with its top, as the engine's own menu does, rather than under the button.
+   * selector of the result's card, when it is narrower than the result: the result
+   * menu opens to the right of the result (or the card), level with its top, and
+   * falls back to under the button when the window has no room. With `besideMenu`, it sits just right of the engine's
+   * menu button instead, level with it, at its size and in its colour.
    */
-  button?: { top: string; right: string; underMenu?: boolean; popOut?: string };
+  button?: { top: string; right: string; underMenu?: boolean; besideMenu?: boolean; popOut?: string };
+  /**
+   * Tags go on their own line under the title's row, not in it. For engines whose
+   * title row is a flex row that cuts the title off (with an ellipsis) to make room.
+   */
+  chipsBelowRow?: boolean;
   /**
    * Result cards on the engine's other tabs (images, videos, news), found by
    * selector, as uBlacklist's rules find them. They're hidden and tagged, but not
@@ -261,11 +268,15 @@ export const ENGINES: EngineDef[] = [
     matches: ['*://kagi.com/*'],
     host: /^kagi\.com$/,
     isResultsPage: (url) => url.pathname === '/search',
-    // Kagi publishes these classes specifically for extensions.
-    item: '._ext_ub_r',
+    // Kagi publishes these classes specifically for extensions. Its widgets (Blast
+    // from the Past, Videos) are `.widget`s whose rows carry them too, but aren't results.
+    item: '._ext_ub_r:not(.widget, .widget *)',
     link: '._ext_ub_u',
     title: '._ext_ub_t',
-    button: { top: '0', right: '0' },
+    chipsBelowRow: true,
+    cleanupSelectors: { videos: '.videos' },
+    // Just right of the ⊕ in the row of buttons on each result, with the menu opening beyond it.
+    button: { top: '0', right: '-28px', besideMenu: true },
   },
   {
     id: 'yahoo',

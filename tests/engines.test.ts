@@ -1,3 +1,4 @@
+import { parseHTML } from 'linkedom';
 import { describe, expect, it } from 'vitest';
 import { engineFor, isMobileAgent, sameSearch } from '@/utils/engines';
 
@@ -20,6 +21,24 @@ describe('engines', () => {
     expect(phone.more).toBeUndefined();
     // Engines without a phone layout are the same either way.
     expect(engineFor('duckduckgo.com', true)).toBe(engineFor('duckduckgo.com'));
+  });
+});
+
+describe('Kagi', () => {
+  const kagi = engineFor('kagi.com')!;
+
+  it('leaves out the widgets that carry result classes', () => {
+    const { document } = parseHTML(`<body>
+      <div class="_ext_ub_r search-result" id="web"></div>
+      <div class="widget list-widget"><div class="_ext_ub_r widgetItem" id="past"></div></div>
+      <div class="_ext_ub_r widget" id="widget"></div></body>`);
+    const found = [...document.querySelectorAll(kagi.item!)].map((el) => el.id);
+    expect(found).toEqual(['web']);
+  });
+
+  it('puts tags under the title row and the button beside the menu', () => {
+    expect(kagi.chipsBelowRow).toBe(true);
+    expect(kagi.button?.besideMenu).toBe(true);
   });
 });
 

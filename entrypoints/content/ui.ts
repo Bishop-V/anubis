@@ -120,6 +120,22 @@ function outsideTransforms(block: HTMLElement, container: HTMLElement): HTMLElem
   return anchor;
 }
 
+/**
+ * The block to put tags after so they aren't a flex or grid item beside the title:
+ * the outermost row (or column) holding it, below the result's own box. A flex row
+ * shrinks the title to make room for them, cutting it off with an ellipsis.
+ */
+function outsideRow(block: HTMLElement, container: HTMLElement): HTMLElement {
+  let anchor = block;
+  for (let el = block; el !== container; ) {
+    const parent = el.parentElement;
+    if (!parent) break;
+    if (/flex|grid/.test(getComputedStyle(parent).display)) anchor = parent === container ? el : parent;
+    el = parent;
+  }
+  return anchor;
+}
+
 export function keepUpright(host: HTMLElement): void {
   const parent = host.parentElement;
   if (uprightParent.get(host) === parent) return;
@@ -201,6 +217,8 @@ export interface ChipContext {
   tags: Map<string, TagDef>;
   prefs: Record<string, TagPref>;
   theme: PageTheme;
+  /** Tags go under the title's row, not in it (`chipsBelowRow`). */
+  belowRow?: boolean;
 }
 
 export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipContext, revealed: boolean): void {
@@ -220,7 +238,7 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
     chipsHosts.set(container, host);
   }
   // Keep it right after the title, even if the page re-rendered around it.
-  const anchor = outsideTransforms(titleBlock, container);
+  const anchor = ctx.belowRow ? outsideRow(outsideTransforms(titleBlock, container), container) : outsideTransforms(titleBlock, container);
   if (host.previousElementSibling !== anchor) anchor.after(host);
   keepUpright(host);
   host.dataset.theme = ctx.theme;
@@ -312,14 +330,14 @@ export function ensureWeighButton(
     keepUpright(host);
     return;
   }
-  const { top, right, underMenu, popOut } = engine.button ?? { top: '2px', right: '2px' };
-  if (popOut) popOuts.set(host, popOut);
-  else popOuts.delete(host);
+  const { top, right, underMenu, besideMenu, popOut } = engine.button ?? { top: '2px', right: '2px' };
+  // The menu opens beside the result unless the engine names a narrower card.
+  popOuts.set(host, popOut ?? ':scope');
   host.style.setProperty('position', 'absolute', 'important');
-  const menu = underMenu && !result.card ? resultMenuOf(container) : undefined;
+  const menu = (underMenu || besideMenu) && !result.card ? resultMenuOf(container) : undefined;
   // Not hidden while the engine's menu is open: a menu closes without adding or
   // removing nodes, so no pass would show the button again. It sits under the menu instead.
-  if (menu) placeUnderMenu(host, container, menu);
+  if (menu) placeNextToMenu(host, container, menu, besideMenu ? 'beside' : 'under');
   else {
     for (const prop of MENU_LOOK) host.style.removeProperty(prop);
     host.style.removeProperty('--anubis-weigh-color');
@@ -530,14 +548,16 @@ const MENU_LOOK = ['--anubis-weigh-size', '--anubis-weigh-radius', '--anubis-wei
  * before the menu, so the spot under it is free on every result. Faint until the
  * result is hovered, like the button everywhere else.
  */
-function placeUnderMenu(host: HTMLElement, container: HTMLElement, menu: HTMLElement): void {
+function placeNextToMenu(host: HTMLElement, container: HTMLElement, menu: HTMLElement, where: 'under' | 'beside'): void {
   const box = container.getBoundingClientRect();
   const m = menu.getBoundingClientRect();
   const cs = getComputedStyle(container);
   const ms = getComputedStyle(menu);
   const size = Math.round(Math.min(44, Math.max(20, m.width, m.height)));
-  const top = m.bottom + 2 - box.top - parseFloat(cs.borderTopWidth);
-  const right = box.right - parseFloat(cs.borderRightWidth) - m.right + (m.width - size) / 2;
+  const top =
+    (where === 'under' ? m.bottom + 2 : m.top + (m.height - size) / 2) - box.top - parseFloat(cs.borderTopWidth);
+  const right =
+    box.right - parseFloat(cs.borderRightWidth) - m.right + (where === 'under' ? (m.width - size) / 2 : -size - 4);
   host.style.setProperty('top', `${Math.round(top)}px`, 'important');
   host.style.setProperty('right', `${Math.round(right)}px`, 'important');
   host.style.setProperty('--anubis-weigh-size', `${size}px`);
@@ -1095,7 +1115,7 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
   focusTarget?.focus({ preventScroll: true });
 }
 
-/** The weigh buttons whose menu opens beside the result's card, and the selector of that card. */
+/** The weigh buttons whose menu opens beside the result's card, and the selector of that card (`:scope` is the result). */
 const popOuts = new WeakMap<HTMLElement, string>();
 
 function position(host: HTMLElement, anchor: HTMLElement): void {
@@ -1104,11 +1124,14 @@ function position(host: HTMLElement, anchor: HTMLElement): void {
   // Beside the card, level with its top, when there's room: like the engine's own menu.
   const weigh = anchor.getRootNode() instanceof ShadowRoot ? (anchor.getRootNode() as ShadowRoot).host : undefined;
   const selector = weigh && popOuts.get(weigh as HTMLElement);
-  const card = selector ? weigh!.parentElement?.querySelector<HTMLElement>(selector) : undefined;
+  const parent = selector ? weigh!.parentElement : undefined;
+  const card = parent && selector ? (parent.matches(selector) ? parent : parent.querySelector<HTMLElement>(selector)) ?? undefined : undefined;
   if (card) {
     const c = card.getBoundingClientRect();
-    if (c.right + 12 + width <= window.innerWidth - 8) {
-      host.style.left = `${c.right + 12 + window.scrollX}px`;
+    // Not over the button itself, when it sits out past the card's edge.
+    const left = Math.max(c.right + 12, rect.right + 8);
+    if (left + width <= window.innerWidth - 8) {
+      host.style.left = `${left + window.scrollX}px`;
       host.style.top = `${Math.max(window.scrollY + 8, c.top + window.scrollY)}px`;
       return;
     }
