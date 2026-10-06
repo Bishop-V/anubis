@@ -31,7 +31,10 @@ describe('Kagi', () => {
     const { document } = parseHTML(`<body>
       <div class="_ext_ub_r search-result" id="web"></div>
       <div class="widget list-widget"><div class="_ext_ub_r widgetItem" id="past"></div></div>
-      <div class="_ext_ub_r widget" id="widget"></div></body>`);
+      <div class="_ext_ub_r widget" id="widget"></div>
+      <div class="widget-simple"><div><div class="_ext_ub_r" id="simple"></div></div></div>
+      <div class="inline-content"><div class="_ext_ub_r" id="inline"></div></div>
+      <div class="_ext_ub_r" id="row"><div class="widgetItemTitle"></div></div></body>`);
     const found = [...document.querySelectorAll(kagi.item!)].map((el) => el.id);
     expect(found).toEqual(['web']);
   });

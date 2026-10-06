@@ -269,8 +269,9 @@ export const ENGINES: EngineDef[] = [
     host: /^kagi\.com$/,
     isResultsPage: (url) => url.pathname === '/search',
     // Kagi publishes these classes specifically for extensions. Its widgets (Blast
-    // from the Past, Videos) are `.widget`s whose rows carry them too, but aren't results.
-    item: '._ext_ub_r:not(.widget, .widget *)',
+    // from the Past, Videos) have rows that carry them too, but aren't results. Their
+    // class names come from a community stylesheet (unconfirmed against the live page).
+    item: '._ext_ub_r:not(:is(.widget, .widgetItem, .widget-simple, .list-widget, .inline-content, .videos, .podcast_result) , :is(.widget, .widget-simple, .list-widget, .inline-content, .videos) *, :has(.widgetItemTitle))',
     link: '._ext_ub_u',
     title: '._ext_ub_t',
     chipsBelowRow: true,
