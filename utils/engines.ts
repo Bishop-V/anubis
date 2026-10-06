@@ -274,6 +274,9 @@ export const ENGINES: EngineDef[] = [
     item: '._ext_ub_r:not(:is(.widget, .widgetItem, .widget-simple, .list-widget, .inline-content, .videos, .podcast_result) , :is(.widget, .widget-simple, .list-widget, .inline-content, .videos) *, :has(.widgetItemTitle))',
     link: '._ext_ub_u',
     title: '._ext_ub_t',
+    // `main#main` holds the onboarding banner above the results, so the summary goes above it
+    // (confirmed on a live page, 2026-10).
+    boundary: 'main#main',
     chipsBelowRow: true,
     cleanupSelectors: { videos: '.videos' },
     // Just right of the ⊕ in the row of buttons on each result, with the menu opening beyond it.
