@@ -42,6 +42,11 @@ describe('Kagi', () => {
     expect(found).toEqual(['web', 'group']);
   });
 
+  it('finds the video panel for clean-up', () => {
+    const { document } = parseHTML('<body><div class="headerVideos inline-content"><a class="inlineHeader">Videos</a></div></body>');
+    expect(document.querySelectorAll(kagi.cleanupSelectors!.videos!)).toHaveLength(1);
+  });
+
   it('puts tags under the title row and the button beside the menu', () => {
     expect(kagi.chipsBelowRow).toBe(true);
     expect(kagi.button?.besideMenu).toBe(true);

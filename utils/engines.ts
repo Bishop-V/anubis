@@ -278,7 +278,8 @@ export const ENGINES: EngineDef[] = [
     // (confirmed on a live page, 2026-10).
     boundary: 'main#main',
     chipsBelowRow: true,
-    cleanupSelectors: { videos: '.videos' },
+    // The video panel is `.headerVideos` (confirmed on a live page, 2026-10).
+    cleanupSelectors: { videos: '.headerVideos, .videos' },
     // Just right of the ⊕ in the row of buttons on each result, with the menu opening beyond it.
     button: { top: '0', right: '-28px', besideMenu: true },
   },
