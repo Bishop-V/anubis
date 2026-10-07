@@ -120,6 +120,10 @@ async function launch(settings = {}, ext = EXT) {
   const extId = new URL(sw.url()).host;
   await waitForWorker(sw, () => typeof chrome !== 'undefined' && !!chrome.storage, 'Extension storage API did not become ready');
   await waitForWorker(sw, async () => !!(await chrome.storage.sync.get('personal')).personal, 'Extension personal-list migration did not finish');
+  // On install the extension moves a stored "Collapse" to "Remove" once. Writing the
+  // settings below while that runs can land between its reads, so the tests would
+  // run with "Remove": wait until it has set its flag.
+  await waitForWorker(sw, async () => (await chrome.storage.sync.get('hideStyleMoved')).hideStyleMoved === true, 'Extension settings migration did not finish');
   await sw.evaluate(
     async ({ personal, settings }) => {
       await chrome.storage.sync.set({
@@ -468,11 +472,14 @@ if (!only || only === 'hostile' || checks) {
       }).length,
       chipsUpright: [...document.querySelectorAll('anubis-chips')].map(upright),
       summaryBeforeFirstResult: !!summary && summary.nextElementSibling === firstInList,
+      hideStyle: document.documentElement.dataset.anubisHide,
     };
   });
   console.log('\n== hostile google:', JSON.stringify(check));
   await page.screenshot({ path: `${SHOTS}google-hostile.png`, fullPage: true });
   assertChecks('hostile google', {
+    // Hidden results keep their button only in "Collapse", the style the tests set.
+    collapseStyleInEffect: check.hideStyle === 'collapse',
     resultsFound: check.results >= ANUBIS_RESULTS.length,
     everyResultHasVisibleWeighButton: check.weighVisible === check.results,
     chipsRemainUpright: check.chipsUpright.length > 0 && check.chipsUpright.every(Boolean),
