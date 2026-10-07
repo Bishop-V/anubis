@@ -142,6 +142,20 @@ body .VPContent .VPHome {
   padding: 12px 24px;
   background: var(--vp-c-bg);
 }
+/* Under the page, on narrow screens, the steps (words, diamonds, and line alike) fade
+   out as they pass beneath it instead of stopping dead at its edge. */
+@media (max-width: 959px) {
+  .demo-stage::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 48px;
+    background: linear-gradient(to bottom, var(--vp-c-bg), transparent);
+    pointer-events: none;
+  }
+}
 .demo-page {
   height: 100%;
   overflow: hidden;
@@ -167,12 +181,6 @@ body .VPContent .VPHome {
   left: 3.5px;
   width: 2px;
   background: var(--vp-c-divider);
-}
-/* Under the page, on narrow screens, the line's top fades in instead of stopping dead. */
-@media (max-width: 959px) {
-  .demo-rail {
-    mask-image: linear-gradient(to bottom, transparent, #000 48px);
-  }
 }
 .demo-rail-fill {
   display: block;
