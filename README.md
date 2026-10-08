@@ -10,7 +10,7 @@ In Egyptian myth, Anubis weighed each heart against a feather. This extension we
 ## What it does
 
 - **[Rank any site from the results](https://bishop-v.github.io/anubis/guide/ranking)**: hide, lower, raise, or pin a site from the ⚖ button on any result.
-- **[Tags](https://bishop-v.github.io/anubis/guide/tags)**: labels like "Official docs", "Paywalled", "AI-generated", or "Independent wiki" under each title, which can highlight, raise, lower, or hide results.
+- **[Tags](https://bishop-v.github.io/anubis/guide/tags)**: labels like "Official docs", "Paywalled", "AI-generated", or "Independent wiki" under each title, which can highlight, pin, raise, lower, or hide results.
 - **[Lists anyone can publish](https://bishop-v.github.io/anubis/guide/lists)**: subscribe to Anubis lists, Brave Goggles, uBlacklist rulesets, and plain domain lists, or [publish your own](https://bishop-v.github.io/anubis/guide/publish-a-list). Some are made every week from other projects' data, such as the HUGE AI Blocklist and Indie Wiki Buddy, and credit them.
 - **[Remove panels](https://bishop-v.github.io/anubis/guide/clean-up)**: take AI answers, video panels, "People also ask", and more off search pages.
 - **[More than one page of results](https://bishop-v.github.io/anubis/guide/more-results)**: bring later pages onto the first and rank them together.

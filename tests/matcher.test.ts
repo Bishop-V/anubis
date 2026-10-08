@@ -114,6 +114,21 @@ describe('evaluate', () => {
     expect(weigh('https://b.com/', [me, sub])).toMatchObject({ level: 'raise', score: PERSONAL_STRENGTH });
   });
 
+  it('pins a result carrying a tag set to Pin, with your own ranking and the other tags on top', () => {
+    const sub = list('Docs', '! tag: docs | Official docs\n! tag: paywall | Paywalled\n$site=a.com,tag=docs,tag=paywall,downrank=3\n$site=b.com,tag=docs');
+    const pin = { docs: { action: 'pin' } } as const;
+    const a = weigh('https://a.com/', [sub], { ...pin, paywall: { action: 'lower' } });
+    expect(a).toMatchObject({ level: 'pin', hidden: false, tagEffects: { docs: 'pin', paywall: 'lower' } });
+    // Among pinned results, the Lower tag still counts.
+    expect(a.score).toBeLessThan(weigh('https://b.com/', [sub], pin).score);
+    expect(a.reasons.at(-1)).toMatchObject({ list: 'Your tag settings', text: 'pin it for “Official docs” and lower it by 5 for “Paywalled”' });
+    // A Hide tag still hides it; your own ranking adds to the pin; your own Hide hides.
+    expect(weigh('https://a.com/', [sub], { ...pin, paywall: { action: 'hide' } })).toMatchObject({ level: 'hide', hidden: true });
+    const me = list('me', '$site=b.com,downrank=5\n$site=a.com,discard', true);
+    expect(weigh('https://b.com/', [me, sub], pin)).toMatchObject({ level: 'pin', tagEffects: { docs: 'pin' } });
+    expect(weigh('https://a.com/', [me, sub], pin)).toMatchObject({ level: 'hide', hiddenBy: { kind: 'personal' } });
+  });
+
   it('says what each tag does to the result', () => {
     const sub = list('Wikis', '$site=a.com,tag=indie,boost=2\n$site=a.com,tag=docs\n$site=b.com,tag=farm,tag=slop,downrank=2\n$site=c.com,tag=slop,discard');
     // Following the list: the rule's own effect. Your choice: the choice. A tag that does neither: nothing.
