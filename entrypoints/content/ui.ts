@@ -545,8 +545,8 @@ const MENU_LOOK = ['--anubis-weigh-size', '--anubis-weigh-radius', '--anubis-wei
 /**
  * Just under the engine's menu button and centred on it, at its size, shape, and
  * colour, so the two read as a pair of options. The engine cuts a long address off
- * before the menu, so the spot under it is free on every result. Faint until the
- * result is hovered, like the button everywhere else.
+ * before the menu, so the spot under it is free on every result. As bright as the
+ * menu button, so a faint menu makes a faint button.
  */
 function placeNextToMenu(host: HTMLElement, container: HTMLElement, menu: HTMLElement, where: 'under' | 'beside'): void {
   const box = container.getBoundingClientRect();

@@ -348,7 +348,7 @@ if (!only || only === 'pages') {
   await shoot('https://search.brave.com/search?q=anubis', 'brave');
 
   // DuckDuckGo: the ⚖ button sits under each result's own ⋯ menu, centred on it,
-  // at its size and shape, and faint until the result is hovered.
+  // at its size and shape, and as bright as the menu button (since 2026-10-05).
   await page.goto('https://duckduckgo.com/?q=javascript+promises&dark=1');
   await page.waitForTimeout(600);
   await page.mouse.move(1, 1);
@@ -364,11 +364,11 @@ if (!only || only === 'pages') {
           centred: Math.abs(a.left + a.width / 2 - (b.left + b.width / 2)) < 1,
           gap: Math.round(a.top - b.bottom),
           sameSize: Math.round(a.width) === Math.round(b.width) && Math.round(a.height) === Math.round(b.height),
-          faint: li.getAttribute('data-anubis-state')?.includes('pin') || getComputedStyle(host).getPropertyValue('--anubis-weigh-opacity').trim() !== '1',
+          asBright: Math.abs((parseFloat(getComputedStyle(host).getPropertyValue('--anubis-weigh-opacity')) || 0.35) - parseFloat(getComputedStyle(menu).opacity)) < 0.02,
         };
       }),
     );
-  const underItsMenu = (p) => p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6 && p.faint;
+  const underItsMenu = (p) => p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6 && p.asBright;
   const pairs = await pair();
   console.log('\n== ddg button under its menu:', JSON.stringify({ results: pairs.length, all: pairs.every(underItsMenu), failing: pairs.filter((p) => !underItsMenu(p)) }));
   // The engine cuts a long address off before the menu, so every result's button goes there.
