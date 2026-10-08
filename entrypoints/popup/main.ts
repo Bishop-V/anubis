@@ -110,7 +110,7 @@ function renderHere(rules: RuleSet) {
   const active = document.activeElement;
   const focusKey = hereFocusKey ?? (here.contains(active) && active instanceof HTMLElement ? active.dataset.focusKey : undefined);
   const host = tabUrl && !engineFor(tabUrl.hostname) ? tabUrl.hostname : '';
-  const choices = host ? domainChoices(host) : [];
+  const choices = host ? domainChoices(host, (d) => !!getSite(rules.personalText, d)) : [];
   const domain =
     hereDomain && choices.includes(hereDomain)
       ? hereDomain

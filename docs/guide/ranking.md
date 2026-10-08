@@ -30,6 +30,8 @@ After a change from the menu, the summary above the results says what you did ("
 
 A ranking covers a site and all of its subdomains. The name at the top of the menu chooses the level: choosing `wikipedia.org` covers every language's Wikipedia, and `en.wikipedia.org` only the English one. The most specific choice wins, so you can hide `fandom.com` and still raise `minecraft.fandom.com`.
 
+On services where anyone can publish their own site, such as `github.io` or `blogspot.com`, the choices stop at that person's site: `someone.github.io` doesn't offer all of `github.io`. If you had already ranked the whole service, it is still offered, so you can change it.
+
 ## Reranking
 
 Anubis reorders the results already on the page; it can't fetch results the engine didn't send. A raised result from the bottom of page 1 moves up, but a site that's only on page 3 needs [Load more results](./more-results.md) first.

@@ -36,16 +36,35 @@ export function hostSuffixes(hostname: string): string[] {
 // list, just enough to offer a sensible "whole site" choice in the weigh menu.
 const SECOND_LEVEL = new Set(['co', 'com', 'net', 'org', 'gov', 'edu', 'ac', 'or', 'ne', 'go', 'gv']);
 
-/** Choices for "apply to…" in the weigh menu: the full host down to the registrable domain. */
-export function domainChoices(hostname: string): string[] {
-  const all = hostSuffixes(hostname);
-  const parts = (all[0] ?? '').split('.');
+// Hosts that give each person a site of their own under them, from the private
+// section of the Public Suffix List: "someone.github.io" is one person's site, and
+// "github.io" would be everyone's. Only those common in search results; the whole
+// list would more than double the content script.
+const SHARED_HOSTS = new Set(
+  `github.io gitlab.io codeberg.page readthedocs.io gitbook.io netlify.app vercel.app pages.dev workers.dev deno.dev fly.dev
+onrender.com web.app firebaseapp.com appspot.com herokuapp.com azurewebsites.net surge.sh replit.app pythonanywhere.com
+blogspot.com bearblog.dev wixsite.com webflow.io carrd.co notion.site`.split(/\s+/),
+);
+
+/** How many labels at the end of a hostname every site under it shares: 2 for "co.uk" and "github.io", else 1. */
+function suffixLabels(parts: string[]): number {
   const [sld = '', tld = ''] = parts.slice(-2);
-  let minLabels = 2;
-  if (parts.length >= 3 && SECOND_LEVEL.has(sld) && tld.length === 2) {
-    minLabels = 3;
-  }
-  return all.filter((d) => d.split('.').length >= minLabels);
+  if (parts.length < 3) return 1;
+  return SHARED_HOSTS.has(`${sld}.${tld}`) || (SECOND_LEVEL.has(sld) && tld.length === 2) ? 2 : 1;
+}
+
+/**
+ * Choices for "apply to…" in the weigh menu: the full host down to the registrable
+ * domain, and any wider domain `ranked` says already has a ranking, so it can still
+ * be seen and undone.
+ */
+export function domainChoices(hostname: string, ranked: (domain: string) => boolean = () => false): string[] {
+  const all = hostSuffixes(hostname);
+  const minLabels = suffixLabels((all[0] ?? '').split('.')) + 1;
+  return all.filter((d) => {
+    const labels = d.split('.').length;
+    return labels >= minLabels || (labels >= 2 && ranked(d));
+  });
 }
 
 /**
@@ -54,13 +73,12 @@ export function domainChoices(hostname: string): string[] {
  */
 export function splitSuffix(domain: string): [name: string, suffix: string] {
   const parts = domain.split('.');
-  const [sld = '', tld = ''] = parts.slice(-2);
-  const labels = parts.length >= 3 && SECOND_LEVEL.has(sld) && tld.length === 2 ? 2 : 1;
+  const labels = suffixLabels(parts);
   if (parts.length <= labels || parts.some((p) => !p)) return [domain, ''];
   return [parts.slice(0, -labels).join('.'), `.${parts.slice(-labels).join('.')}`];
 }
 
-/** The registrable-ish domain: "docs.github.com" → "github.com", "bbc.co.uk" → "bbc.co.uk". */
+/** The registrable-ish domain: "docs.github.com" → "github.com", "news.bbc.co.uk" → "bbc.co.uk", "a.github.io" → "a.github.io". */
 export function siteOf(hostname: string): string {
   const choices = domainChoices(hostname);
   return choices[choices.length - 1] ?? hostname;

@@ -28,6 +28,22 @@ describe('domains', () => {
     expect(siteOf('docs.github.com')).toBe('github.com');
   });
 
+  it('treats each site on a shared host as its own', () => {
+    expect(domainChoices('someone.github.io')).toEqual(['someone.github.io']);
+    expect(domainChoices('docs.someone.github.io')).toEqual(['docs.someone.github.io', 'someone.github.io']);
+    expect(siteOf('someone.github.io')).toBe('someone.github.io');
+    expect(siteOf('me.blogspot.com')).toBe('me.blogspot.com');
+    expect(siteOf('github.io')).toBe('github.io');
+    expect(splitSuffix('someone.github.io')).toEqual(['someone', '.github.io']);
+    expect(splitSuffix('github.io')).toEqual(['github', '.io']);
+  });
+
+  it('still offers a wider domain that already has a ranking', () => {
+    const ranked = (d: string) => d === 'github.io';
+    expect(domainChoices('someone.github.io', ranked)).toEqual(['someone.github.io', 'github.io']);
+    expect(domainChoices('someone.github.io', () => true)).toEqual(['someone.github.io', 'github.io']);
+  });
+
   it('normalizes parsed hostnames without parsing user input', () => {
     expect(normalizeHostname('WWW.Example.COM')).toBe('example.com');
     expect(normalizeHostname('sub.example.com')).toBe('sub.example.com');
