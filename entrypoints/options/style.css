@@ -252,7 +252,10 @@ table.sites td.actions {
   align-items: center;
   gap: 4px 14px;
 }
+/* A closed select is as wide as its longest option, and tag names come from lists:
+   cap it so a long one can't widen the table. The open list still shows them whole. */
 select.add-tag {
+  max-width: 8em;
   height: 26px;
   padding: 0 24px 0 6px;
   border-color: transparent;

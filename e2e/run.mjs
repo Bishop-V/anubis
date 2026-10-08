@@ -1818,6 +1818,11 @@ if (!only || only === 'options') {
 }
 
 if (!only || only === 'responsive') {
+  // Tag names come from lists, and the Add tag picker on each site's row must not
+  // grow with them: add a long one here instead of relying on what the lists hold.
+  const [sw] = ctx.serviceWorkers();
+  const personal = await sw.evaluate(async () => (await chrome.storage.sync.get('personal.0'))['personal.0']);
+  await sw.evaluate(async (text) => chrome.storage.sync.set({ 'personal.0': text }), `${personal}\n! tag: long-label | A tag with a very long name from a list | #2b9aa0\n`);
   const opt = await ctx.newPage();
   for (const colorScheme of ['light', 'dark']) {
     await opt.emulateMedia({ colorScheme });
@@ -1891,6 +1896,7 @@ if (!only || only === 'responsive') {
     }
   }
   await opt.close();
+  await sw.evaluate(async (text) => chrome.storage.sync.set({ 'personal.0': text }), personal);
   console.log('\n== responsive Settings checks passed');
 }
 

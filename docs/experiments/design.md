@@ -42,6 +42,7 @@ The look, the wording, and Anubis's own pages. Part of [Experiments and decision
 
 ## Settings on narrow screens (2026-09-29)
 
+- **Found (2026-10-08):** the Your sites table overflowed at 390px once the AI content list added a tag named "Some AI content". A closed select is as wide as its longest option, so each row's Add tag picker grew with the lists' tag names. The pull request's own CI passed, because the e2e run downloads lists from `main`. **Shipped:** cap the picker at 8em; the open list still shows names whole. The `responsive` e2e part now adds a long tag name itself, so it doesn't depend on what the lists hold.
 - **Found:** at 320px, the Your sites table forced the whole Settings page wider than the screen. The labelled ranking choices in the Add a site form also wrapped as an accidental run of buttons.
 - **Rejected:** changing the table to `display: block` stopped the page overflow, but made site names wrap one character at a time and separated the table columns.
 - **Shipped:** keep the table semantic and scroll it horizontally inside its own wrapper below 390px; keep its columns together, wrap the labelled ranking choices in a small grid, and put Add on its own line.
