@@ -20,6 +20,7 @@ import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
 import { clampDeeper, colorSchemeItem, editPersonal, type Theme } from '@/utils/storage';
 import { reportUrl, suggestionUrl } from '@/utils/subscriptions';
 import { changeSentence } from '@/utils/summary';
+import { browserScheme } from '@/utils/theme';
 import { findClutter, mainColumn, redirectFor, watchAllTab, type Clutter } from './cleanup';
 import { freshState, nextPageReady, weighDeeper } from './deeper';
 import './page.css';
@@ -80,7 +81,7 @@ export default defineContentScript({
     // Light or dark as the popup sees it, for the result menu on "auto".
     let scheme = await colorSchemeItem.getValue().catch(() => null);
     const menuTheme = (setting: Theme): PageTheme =>
-      setting !== 'auto' ? setting : (scheme ?? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+      setting !== 'auto' ? setting : (scheme ?? browserScheme());
 
     let reveal = false;
     // Blocks removed by clean-up in the last pass.
@@ -698,7 +699,7 @@ function pageTheme(setting: Theme): PageTheme {
     const [r = 0, g = 0, b = 0] = rgb;
     return 0.2126 * r + 0.7152 * g + 0.0722 * b < 128 ? 'dark' : 'light';
   }
-  return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return browserScheme();
 }
 
 /** Anubis's elements and attributes left on the page by an earlier copy of the extension. */

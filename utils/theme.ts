@@ -7,18 +7,24 @@ import { colorSchemeItem, settingsItem, updateSettings, type Theme } from './sto
 // on the page follows the page (pageTheme() in entrypoints/content/index.ts), and
 // the result menu, a card like the popup, follows the scheme recorded here.
 
-// Chrome's background service worker has no matchMedia.
-const media = typeof matchMedia === 'function' ? matchMedia('(prefers-color-scheme: dark)') : undefined;
+// Chrome's background service worker has no matchMedia. Asking for light rather
+// than dark means a browser that reports neither gets dark.
+const media = typeof matchMedia === 'function' ? matchMedia('(prefers-color-scheme: light)') : undefined;
+
+/** Light or dark as the browser reports it, and dark when it doesn't say. */
+export function browserScheme(): 'light' | 'dark' {
+  return media?.matches ? 'light' : 'dark';
+}
 
 export function resolveTheme(theme: Theme): 'light' | 'dark' {
-  return theme === 'auto' ? (media?.matches ? 'dark' : 'light') : theme;
+  return theme === 'auto' ? browserScheme() : theme;
 }
 
 /** Record light or dark as extension pages see it, now and whenever it changes. */
 export function recordColorScheme(): void {
   if (!media) return;
   const save = async () => {
-    const scheme = media.matches ? 'dark' : 'light';
+    const scheme = browserScheme();
     if ((await colorSchemeItem.getValue()) !== scheme) await colorSchemeItem.setValue(scheme);
   };
   void save();
