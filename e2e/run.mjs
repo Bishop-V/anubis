@@ -2396,7 +2396,14 @@ if (only === 'tag-notes') {
   await options.getByRole('button', { name: 'Edit Great tutorial and its sites' }).click();
   const site = options.getByRole('textbox', { name: 'Sites to tag Great tutorial' });
   const reason = options.getByRole('textbox', { name: 'Why this site fits the “Great tutorial” tag (optional)' });
-  const reasonBox = await reason.boundingBox();
+  // Settings redraws as the lists finish loading, which replaces the field and can
+  // leave a handle measuring a detached one: measure whichever field is on the page.
+  const reasonHeight = await options
+    .waitForFunction(() => {
+      const label = [...document.querySelectorAll('label.field')].find((l) => l.textContent?.startsWith('Why this site fits the “Great tutorial” tag'));
+      return label?.querySelector('input')?.getBoundingClientRect().height || false;
+    })
+    .then((height) => height.jsonValue());
   const note = 'The project publishes its first-party tutorials here.';
   const worker = ctx.serviceWorkers()[0];
   if (!worker) throw new Error('Extension service worker is missing for tag-note checks.');
@@ -2429,7 +2436,7 @@ if (only === 'tag-notes') {
   }
   assertChecks('tag site explanation', {
     optionalField: await reason.isVisible(),
-    reasonIsSingleLine: reasonBox !== null && reasonBox.height <= 40,
+    reasonIsSingleLine: reasonHeight <= 40,
     commentStoredWithRule: personal.includes('$site=tutorial-source.example.com,tag=tutorial # Great tutorial: The project publishes its first-party tutorials here.'),
     descriptionIsOptional: personal.includes('$site=unannotated.example.com,tag=tutorial\n') && !personal.includes('$site=unannotated.example.com,tag=tutorial #'),
     explanationShownUnderSite: await options.locator('.site-note').textContent() === `Great tutorial: ${note}`,
