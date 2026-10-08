@@ -22,6 +22,16 @@ const withDark = (html: string, env: MarkdownEnv) =>
       : img,
   );
 
+// VitePress follows the browser's light or dark mode until you pick one with its
+// switch, but it reads a browser that reports neither as light. This runs before
+// VitePress's own check and, for such a browser only, makes the dark query match,
+// so the first paint and VitePress's Auto mode both come out dark.
+export const darkWhenUnknown = `(() => {
+  const query = window.matchMedia?.bind(window);
+  if (!query || query('(prefers-color-scheme: light)').matches || query('(prefers-color-scheme: dark)').matches) return;
+  window.matchMedia = (media) => query(media.replace(/\\(\\s*prefers-color-scheme\\s*:\\s*dark\\s*\\)/g, '(min-width: 0px)'));
+})()`;
+
 export default defineConfig({
   title: 'Anubis',
   description: 'A browser extension that hides, ranks, and tags search results, with lists anyone can publish.',
@@ -29,7 +39,10 @@ export default defineConfig({
   base,
   cleanUrls: true,
   lastUpdated: true,
-  head: [['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}anubis.svg` }]],
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}anubis.svg` }],
+    ['script', { id: 'dark-when-unknown' }, darkWhenUnknown],
+  ],
   themeConfig: {
     logo: '/anubis.svg',
     nav: [
