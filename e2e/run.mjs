@@ -946,7 +946,7 @@ if (!only || only === 'cleanup' || checks) {
       const visible = (el) => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0;
       return Object.fromEntries(Object.entries(selectors).map(([k, sel]) => [k, visible(document.querySelector(sel))]).concat([['results', [...document.querySelectorAll('[data-anubis-result]')].filter(visible).length]]));
     }, selectors);
-  const braveCleanup = await visibleIn({ videos: '.cluster-videos', discussions: '.cluster-discussions', relatedQueries: '.related-queries', elsewhere: '.find-elsewhere', videosTab: '.tabs a[href^="/videos"]' });
+  const braveCleanup = await visibleIn({ ai: '#llm-snippet', videos: '.cluster-videos', discussions: '.cluster-discussions', relatedQueries: '.related-queries', elsewhere: '.find-elsewhere', videosTab: '.tabs a[href^="/videos"]' });
   console.log('== Brave panels:', JSON.stringify(braveCleanup));
   // A thumbnail in a result's corner: the buttons stay in one column, clear of it.
   const braveButtons = await page.evaluate(() => {
@@ -962,6 +962,7 @@ if (!only || only === 'cleanup' || checks) {
   await page.screenshot({ path: `${SHOTS}brave-thumbnail.png`, clip: { x: 0, y: 80, width: 1000, height: 520 } });
   if (checks) {
     assertChecks('Brave cleanup selectors', {
+      removesAiAnswer: !braveCleanup.ai,
       removesVideos: !braveCleanup.videos,
       removesDiscussions: !braveCleanup.discussions,
       removesRelatedQueries: !braveCleanup.relatedQueries,
