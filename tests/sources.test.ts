@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 // @ts-expect-error: the update scripts are plain JavaScript.
-import { body, devDocs, docsTarget, fromMatchPattern, hugeAi, indieWikis, listSites, render } from '../.github/scripts/sources/convert.mjs';
+import { awesomeSelfhosted, body, devDocs, docsTarget, freeLicences, fromMatchPattern, hugeAi, indieWikis, listSites, projectTarget, render } from '../.github/scripts/sources/convert.mjs';
 import { parseList } from '@/utils/listformat';
 import { compileList, evaluate } from '@/utils/matcher';
 import { BUNDLED_DIRECTORY, defaultSubscriptions, reportTracker, subscriptionId } from '@/utils/subscriptions';
@@ -218,7 +218,7 @@ describe('devDocs', () => {
     expect(list.rules.map((r: { instruction: string }) => r.instruction).sort()).toEqual([
       '$site=flask.palletsprojects.com,tag=docs,boost=1',
       '$site=react.dev,tag=docs,boost=1',
-      '/docs/$site=prettier.io,tag=docs,boost=1',
+      '/docs^$site=prettier.io,tag=docs,boost=1',
     ]);
     expect(text).toContain('# DevDocs collects the docs for React here.');
     // Named after the class when the scraper doesn't set a name.
@@ -232,14 +232,24 @@ describe('devDocs', () => {
 
   it('reads a docs address as a whole docs site, or as a path on a main site', () => {
     expect(docsTarget('https://docs.deno.com/api/')).toEqual({ site: 'docs.deno.com' });
-    expect(docsTarget('https://mariadb.com/kb/en/')).toEqual({ site: 'mariadb.com', path: '/kb/' });
-    expect(docsTarget('https://www.tcl-lang.org/man/tcl#{self.version}/')).toEqual({ site: 'tcl-lang.org', path: '/man/' });
-    expect(docsTarget('https://sinonjs.org/releases/v#{ver}/')).toEqual({ site: 'sinonjs.org', path: '/releases/' });
+    expect(docsTarget('https://mariadb.com/kb/en/')).toEqual({ site: 'mariadb.com', path: '/kb^' });
+    expect(docsTarget('https://www.tcl-lang.org/man/tcl#{self.version}/')).toEqual({ site: 'tcl-lang.org', path: '/man^' });
+    expect(docsTarget('https://sinonjs.org/releases/v#{ver}/')).toEqual({ site: 'sinonjs.org', path: '/releases^' });
+    // `#{…}` is a version DevDocs fills in, not the start of a fragment.
+    expect(docsTarget('https://date-fns.org/v#{self.release}/docs/')).toEqual({ site: 'date-fns.org' });
+    expect(docsTarget('https://downloads.haskell.org/~ghc/#{release}/docs/')).toEqual({ site: 'downloads.haskell.org', path: '/~ghc^' });
     expect(docsTarget('https://developer.mozilla.org/en-US/docs/Web/API')).toEqual({ site: 'developer.mozilla.org' });
     expect(docsTarget('https://underscorejs.org')).toEqual({ site: 'underscorejs.org' });
-    expect(docsTarget('https://daringfireball.net/projects/markdown/syntax')).toEqual({ site: 'daringfireball.net', path: '/projects/' });
+    expect(docsTarget('https://daringfireball.net/projects/markdown/syntax')).toEqual({ site: 'daringfireball.net', path: '/projects^' });
     expect(docsTarget('http://localhost:8000/docs/')).toBeUndefined();
     expect(docsTarget('https://github.com/d3/')).toBeUndefined();
+  });
+
+  it('matches a docs path with or without its trailing slash', () => {
+    const compiled = compileList('devdocs', parsed, false, 'Official docs (DevDocs)');
+    expect(evaluate({ url: 'https://prettier.io/docs', title: '' }, [compiled]).tags).toEqual(['docs']);
+    expect(evaluate({ url: 'https://prettier.io/docs/options', title: '' }, [compiled]).tags).toEqual(['docs']);
+    expect(evaluate({ url: 'https://prettier.io/blog/', title: '' }, [compiled]).tags).toEqual([]);
   });
 
   it('shares the Official docs tag with the bundled list, which it never overlaps', () => {
@@ -258,6 +268,53 @@ describe('devDocs', () => {
     expect(parsed.errors).toEqual([]);
     expect(parsed.meta).toMatchObject({ name: 'Official docs (DevDocs)', license: 'MPL-2.0', homepage: 'https://github.com/freeCodeCamp/devdocs' });
     expect(text).toContain('commit fed789');
+  });
+});
+
+describe('awesomeSelfhosted', () => {
+  const free = freeLicences('- identifier: AGPL-3.0\n  name: GNU Affero General Public License 3.0\n\n- identifier: MIT\n  name: MIT License\n');
+  const entry = (name: string, url: string, licences: string[]) => ({
+    path: `software/${name.toLowerCase()}.yml`,
+    text: [`name: ${name}`, `website_url: ${url}`, 'description: Something.', 'licenses:', ...licences.map((l) => `  - ${l}`), 'platforms:', '  - Docker', ''].join('\n'),
+  });
+  const files = [
+    entry('Nextcloud', 'https://nextcloud.com/', ['AGPL-3.0']),
+    entry('Blocky', 'https://0xerr0r.github.io/blocky/latest/', ['MIT']),
+    entry('Confluence', 'https://www.atlassian.com/software/confluence', ['⊘ Proprietary']),
+    entry('Mixed', 'https://mixed.example.org/', ['MIT', 'BUSL-1.1']),
+    entry('Repo only', 'https://github.com/someone/project', ['MIT']),
+    { path: 'software/quoted.yml', text: "name: 'Quoted'\nwebsite_url: \"https://quoted.example.net/app/\"\nlicenses:\n  - MIT\n" },
+  ];
+  const list = awesomeSelfhosted(files, { commit: 'aa11', free });
+  const text = render(list);
+  const parsed = parseList(text);
+
+  it('labels the websites of free programs only', () => {
+    expect(list.rules.map((r: { instruction: string }) => r.instruction).sort()).toEqual([
+      '$site=nextcloud.com,tag=foss',
+      '/app^$site=quoted.example.net,tag=foss',
+      '/blocky^$site=0xerr0r.github.io,tag=foss',
+    ]);
+    expect(text).toContain('$site=nextcloud.com,tag=foss # awesome-selfhosted lists Nextcloud (AGPL-3.0).');
+    // A website on a shared host is counted as left out; a non-free program isn't wanted at all.
+    expect(list.skipped).toEqual(['Repo only: https://github.com/someone/project']);
+  });
+
+  it("keeps a program's own page on a company's site", () => {
+    expect(projectTarget('https://www.atlassian.com/software/confluence')).toEqual({ site: 'atlassian.com', path: '/software/confluence^' });
+    expect(projectTarget('https://docs.inventree.org/en/latest/')).toEqual({ site: 'docs.inventree.org' });
+    expect(projectTarget('https://example.com/~me/')).toEqual({ site: 'example.com', path: '/~me^' });
+  });
+
+  it('shares the FOSS tag with the FOSS tools list, never moves anything, and carries the licence', () => {
+    const foss = parseList(readFileSync('lists/foss-tools.anubis', 'utf8')).tags.find((t) => t.id === 'foss');
+    expect(parsed.tags).toEqual([foss]);
+    expect(parsed.errors).toEqual([]);
+    expect(parsed.meta).toMatchObject({ license: 'CC-BY-SA-3.0', homepage: 'https://github.com/awesome-selfhosted/awesome-selfhosted-data' });
+    expect(text).toContain('commit aa11');
+    expect(text).toContain('https://creativecommons.org/licenses/by-sa/3.0/');
+    const generated = parseList(readFileSync('lists/sources/self-hosted-foss.anubis', 'utf8'));
+    for (const rule of generated.rules) expect({ boost: rule.boost, discard: rule.discard }).toEqual({ boost: 0, discard: false });
   });
 });
 

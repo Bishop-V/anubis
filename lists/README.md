@@ -12,6 +12,7 @@ Lists that ship with Anubis, and the directory of lists it offers in **Settings 
 | [`sources/ai-content.anubis`](sources/ai-content.anubis) | Labels AI-generated sites, made from the [HUGE AI Blocklist](https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist). |
 | [`sources/independent-wikis.anubis`](sources/independent-wikis.anubis) | Raises independent wikis and lowers the Fandom wikis they replace, made from [Indie Wiki Buddy](https://github.com/KevinPayravi/indie-wiki-buddy)'s data. |
 | [`sources/devdocs.anubis`](sources/devdocs.anubis) | Tags the documentation sites [DevDocs](https://github.com/freeCodeCamp/devdocs) collects, beyond those in `official-docs.anubis`. |
+| [`sources/self-hosted-foss.anubis`](sources/self-hosted-foss.anubis) | Labels the websites of free programs [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted-data) lists as FOSS. |
 | [`directory.json`](directory.json) | The lists shown under "More lists", including community lists hosted elsewhere. |
 
 The five `.anubis` lists at the top level are bundled into the extension, so they work offline, and Anubis checks GitHub for newer versions of them and of this directory.
