@@ -262,22 +262,12 @@ button {
   line-height: 20px;
   color: var(--muted);
 }
-.summary .mark {
-  display: flex;
-  align-items: center;
-  height: 20px;
-  color: var(--gold);
-}
 /* The sentence and its buttons, laid out one by one here; on phones, one paragraph. */
 .summary .line {
   display: contents;
 }
 .summary .line > .icon-btn {
   margin-block: -2px;
-}
-.summary .mark svg {
-  width: 15px;
-  height: 15px;
 }
 .summary .sentence {
   flex: 1;
@@ -292,17 +282,14 @@ button {
     display: none;
   }
 }
-/* On phones the mark hangs to the left, and the sentence, the last change, and the
-   tags line up beside it. The buttons follow the sentence's words and wrap with them,
-   so none is left alone on a line under the mark. */
+/* On phones the sentence, the last change, and the tags stack in one column. The
+   buttons follow the sentence's words and wrap with them, so none is left alone on
+   a line. */
 @media (max-width: 600px) {
   .summary {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: 4px 8px;
-  }
-  .summary > :not(.mark) {
-    grid-column: 2;
   }
   .summary .line {
     display: block;

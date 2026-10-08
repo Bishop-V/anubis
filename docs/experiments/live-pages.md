@@ -2,6 +2,15 @@
 
 What was checked on real search pages, and what is still unverified. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Reported from live pages: Startpage and DuckDuckGo (2026-10-08)
+
+Screenshots from use, not yet checked against the live markup, so each fix is modelled on what the screenshot shows.
+
+- **Startpage's requests to allow ads** ("Block creepy ads, not private search." above the results, "Ads keep your private search results free." above the pager, each with **Allow Startpage ads**) stayed. They're a new kind, **Requests to allow ads**, found by their text (`markers` in `utils/cleanup.ts`). Unverified: that the text sits in its own text node, as markers need, and that the block found around it is the whole banner.
+- **Weigh buttons out of line on Startpage.** A long address pushed one result's button out past the result's right edge (`moveOffText`), while the rest stayed inside, so the column zigzagged. The first button to leave for the gutter now takes the others at their results' edges with it, as a thumbnail already did (`intoGutter` in `ui.ts`). Not covered by e2e: there is no Startpage mock.
+- **DuckDuckGo's button sat on result thumbnails** under the ⋯ menu (the owner's 2026-09-30 choice). It now sits just right of the menu, level with it (`besideMenu`). The DuckDuckGo "never over text" check in `checks`, which failed before this, passes.
+- **DuckDuckGo's "Videos for …" panel stayed.** Added `Videos for ` to the videos kind's prefixes, and the panel to the DuckDuckGo `ai` mock, where `checks` asserts it goes.
+
 ## Still unverified against live pages
 
 The development sandbox could not reach any search engine, so everything on search pages was tested against mock pages (see [`e2e/`](https://github.com/Bishop-V/anubis/tree/main/e2e)) shaped like each engine's markup as described by uBlacklist's maintained [SERPINFO definitions](https://github.com/ublacklist/builtin/tree/main/serpinfo), checked on 2026-09-28. Before a release, load the extension and check each engine by hand:

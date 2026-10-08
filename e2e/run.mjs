@@ -349,8 +349,8 @@ if (!only || only === 'pages') {
   await shoot('https://www.bing.com/search?q=javascript+promises', 'bing');
   await shoot('https://search.brave.com/search?q=anubis', 'brave');
 
-  // DuckDuckGo: the ⚖ button sits under each result's own ⋯ menu, centred on it,
-  // at its size and shape, and as bright as the menu button (since 2026-10-05).
+  // DuckDuckGo: the ⚖ button sits just right of each result's own ⋯ menu, level
+  // with it, at its size and shape, and as bright as the menu button (since 2026-10-05).
   await page.goto('https://duckduckgo.com/?q=javascript+promises&dark=1');
   await page.waitForTimeout(600);
   await page.mouse.move(1, 1);
@@ -363,27 +363,27 @@ if (!only || only === 'pages') {
         const a = host.getBoundingClientRect();
         const b = menu.getBoundingClientRect();
         return {
-          centred: Math.abs(a.left + a.width / 2 - (b.left + b.width / 2)) < 1,
-          gap: Math.round(a.top - b.bottom),
+          level: Math.abs(a.top + a.height / 2 - (b.top + b.height / 2)) < 1,
+          gap: Math.round(a.left - b.right),
           sameSize: Math.round(a.width) === Math.round(b.width) && Math.round(a.height) === Math.round(b.height),
           asBright: Math.abs((parseFloat(getComputedStyle(host).getPropertyValue('--anubis-weigh-opacity')) || 0.35) - parseFloat(getComputedStyle(menu).opacity)) < 0.02,
         };
       }),
     );
-  const underItsMenu = (p) => p.centred && p.sameSize && p.gap >= 0 && p.gap <= 6 && p.asBright;
+  const besideItsMenu = (p) => p.level && p.sameSize && p.gap >= 0 && p.gap <= 6 && p.asBright;
   const pairs = await pair();
-  console.log('\n== ddg button under its menu:', JSON.stringify({ results: pairs.length, all: pairs.every(underItsMenu), failing: pairs.filter((p) => !underItsMenu(p)) }));
-  // The engine cuts a long address off before the menu, so every result's button goes there.
-  assertChecks('DuckDuckGo button under its menu', { everyResult: pairs.length > 0 && pairs.every(underItsMenu) });
+  console.log('\n== ddg button beside its menu:', JSON.stringify({ results: pairs.length, all: pairs.every(besideItsMenu), failing: pairs.filter((p) => !besideItsMenu(p)) }));
+  assertChecks('DuckDuckGo button beside its menu', { everyResult: pairs.length > 0 && pairs.every(besideItsMenu) });
   for (const variant of ['unseen', 'wide']) {
     await page.goto(`https://duckduckgo.com/?q=javascript+promises&${variant}=1`);
     await page.waitForTimeout(600);
     const more = await pair();
-    console.log(`== ddg button under its menu, ${variant}:`, JSON.stringify({ results: more.length, failing: more.filter((p) => !underItsMenu(p)).length }));
-    assertChecks(`DuckDuckGo button under its menu (${variant})`, { everyResult: more.length > 0 && more.every(underItsMenu) });
+    console.log(`== ddg button beside its menu, ${variant}:`, JSON.stringify({ results: more.length, failing: more.filter((p) => !besideItsMenu(p)).length }));
+    assertChecks(`DuckDuckGo button beside its menu (${variant})`, { everyResult: more.length > 0 && more.every(besideItsMenu) });
   }
   // DuckDuckGo's open ⋯ menu is a role="menu" layer inside the result at z-index 1
-  // (read from the live page): it must cover the button, not the other way round.
+  // (read from the live page): where it reaches the button, it must cover it, not
+  // the other way round.
   const underMenu = await page.evaluate(() => {
     const li = document.querySelector('li[data-anubis-result]:not([data-anubis-state~="hide"])');
     const host = li.querySelector(':scope > anubis-weigh');
@@ -395,9 +395,11 @@ if (!only || only === 'pages') {
     menu.style.cssText = 'position:absolute;inset:0;z-index:1;background:#333';
     layer.append(menu);
     li.querySelector('article').append(layer);
+    const l = layer.getBoundingClientRect();
+    const reaches = l.left < r.right && l.right > r.left && l.top < r.bottom && l.bottom > r.top;
     const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
     layer.remove();
-    return top === menu;
+    return !reaches || top === menu;
   });
   assertChecks('ddg open menu', { coversButton: underMenu });
   // A menu that closes by a style change adds or removes no nodes, so no pass runs
@@ -815,7 +817,7 @@ if (!only || only === 'cleanup' || checks) {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       return tab ? chrome.tabs.sendMessage(tab.id, { type: 'get-page-stats' }).catch(() => undefined) : undefined;
     });
-  const all = { ai: true, videos: true, questions: true, news: true, images: true, related: true, elsewhere: true };
+  const all = { ai: true, videos: true, questions: true, news: true, images: true, related: true, elsewhere: true, adRequests: true };
   await setSettings({ cleanup: all });
   await page.goto('https://www.google.com/search?q=anubis&modules=1');
   await page.waitForTimeout(800);
@@ -910,7 +912,7 @@ if (!only || only === 'cleanup' || checks) {
   }
 
   // DuckDuckGo stays where it is, with your settings: the AI answer goes, and so do
-  // the Duck.ai tab and button, which aren't counted.
+  // the Duck.ai tab and button, which aren't counted. So does the "Videos for" panel.
   await page.goto('https://duckduckgo.com/?q=javascript+promises&ai=1');
   await page.waitForTimeout(800);
   const duckduckgoCleanup = await page.evaluate(() => {
@@ -918,6 +920,7 @@ if (!only || only === 'cleanup' || checks) {
         return {
           host: location.hostname,
           answer: visible(document.querySelector('[data-testid="duckassist-answer-content"]')),
+          videos: visible(document.querySelector('.ddg-videos .vmodule')),
           duckAiTab: visible(document.querySelector('.tabs .chat')),
           duckAiButton: visible(document.querySelector('.ask')),
           otherTabs: [...document.querySelectorAll('.tabs span')].filter(visible).length,
@@ -928,6 +931,8 @@ if (!only || only === 'cleanup' || checks) {
   if (checks) {
     assertChecks('DuckDuckGo cleanup selectors', {
       removesAnswer: !duckduckgoCleanup.answer,
+      removesVideosFor: !duckduckgoCleanup.videos,
+      keepsResults: duckduckgoCleanup.results > 0,
       removesDuckAiTab: !duckduckgoCleanup.duckAiTab,
       removesDuckAiButton: !duckduckgoCleanup.duckAiButton,
       keepsOtherTabs: duckduckgoCleanup.otherTabs > 0,
@@ -1158,7 +1163,7 @@ if (!only || only === 'cleanup' || checks) {
   if (checks) assertChecks('summary lined up with result cards', { found: cards.found, linedUp: cards.found && Math.abs(cards.left - cards.titleLeft) <= 1 });
 
   // The ⚖ button sits beside a result's first row, never over its text. On DuckDuckGo
-  // it always goes under the ⋯ menu (the owner's choice, 2026-09-30), so the mock
+  // it always goes beside the ⋯ menu (the owner's choice, 2026-10-08), so the mock
   // with whole, uncut addresses and titles that run under the menu isn't checked.
   const covering = {};
   for (const url of [

@@ -109,10 +109,10 @@ const STEPS: { title: string; text: string }[] = [
 // Everything drawn here copies what the extension puts on a search page, so the demo
 // shows what people will see. Check it against the extension after changing any of
 // these, and update the demo with them:
-// - icons: utils/icons.ts (WEIGH_ICONS, LEVEL_ICONS, ICON_ANUBIS), copied because that
+// - icons: utils/icons.ts (WEIGH_ICONS, LEVEL_ICONS), copied because that
 //   module needs the extension's APIs;
 // - the summary's wording: utils/summary.ts and the summary… messages in
-//   public/_locales/en/messages.json; its mark and layout: .summary in
+//   public/_locales/en/messages.json; its layout: .summary in
 //   entrypoints/content/shadow.css. On phones (600px or less) it's the short form
 //   (shortSummary) with Show hidden and Details, and the tags wait behind Details;
 // - the labels under a title: renderChips in ui.ts and .chips and .verdict in
@@ -144,11 +144,8 @@ const WEIGH: Record<Level, string> = {
   pin: svg('<path d="M9.8 2.2l4 4-1.6.5-2.6 2.6.3 3.1-1.2 1.2L5.4 10.3 2.2 13.8M5.4 10.3L2.3 7.2l1.2-1.2 3.1.3 2.6-2.6z"/>'),
 };
 // A new key on each ranking, so the icon swaps in with a small tip.
-// The labels' icons (LEVEL_ICONS) and the summary's mark (ICON_ANUBIS, its eye cut out
-// in the page's colour).
+// The labels' icons (LEVEL_ICONS).
 const CHIP_ICONS = { raise: svg('<path d="M4 9.5l4-4 4 4"/>'), lower: svg('<path d="M4 6.5l4 4 4-4"/>') };
-const MARK =
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="26 14 82 108" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M39.5 19 L55 48 L101 63 Q105 66 100.5 70 L79 72.5 Q63 76 62 88 L62 97 L32 97 Z"/><path fill="currentColor" d="M31 105 L63 105 L65 118 L30 118 Z"/><ellipse cx="67" cy="58" rx="4.2" ry="2.7" transform="rotate(18 67 58)" fill="var(--demo-page)"/></svg>';
 const chip = (on: boolean, level: 'raise' | 'lower', text: string) =>
   h('span', { class: ['chip', 'demo-verdict', level, { on }] }, [h('span', { class: 'chip-icon', innerHTML: CHIP_ICONS[level] }), text]);
 // The AI answer's mark: a plain four-pointed star in blue and violet, a sketch of
@@ -217,7 +214,6 @@ function renderPage(step: number): VNode {
     h('div', { class: 'tabs' }, ['All', 'Images', 'Videos', 'News', 'Maps', 'More'].map((t, i) => h('span', { class: { current: i === 0 } }, t))),
     fold(step >= 2, 'demo-summary', [
       h('p', [
-        h('span', { class: 'mark', innerHTML: MARK }),
         h('span', { class: 'long' }, [SUMMARY[step], ' ', h('span', { class: 'demo-link' }, 'Show hidden')]),
         h('span', { class: 'short' }, [
           SHORT[step],

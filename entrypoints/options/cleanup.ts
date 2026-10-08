@@ -7,9 +7,40 @@ import { helpLink, pageTitle, switchRow } from './parts';
 // "Remove panels": parts of search pages that aren't results (AI answers, video
 // panels, "People also ask"), removed on every search.
 
+interface Option {
+  label: string;
+  hint: string;
+  on: boolean;
+}
+
+/**
+ * A section's switches, led by one that turns them all on or off. The lead is
+ * on only while every switch is; `save` gets the switches' new values in order.
+ */
+function switchGroup(options: Option[], save: (values: boolean[]) => void): HTMLElement[] {
+  const values = options.map((o) => o.on);
+  const rows = options.map((o, i) =>
+    switchRow(o.label, o.hint, o.on, (on) => {
+      values[i] = on;
+      all.checked = values.every(Boolean);
+      save([...values]);
+    }),
+  );
+  const lead = switchRow(t('cleanupAll'), t('cleanupAllHint'), values.every(Boolean), (on) => {
+    values.fill(on);
+    for (const row of rows) row.querySelector('input')!.checked = on;
+    save([...values]);
+  });
+  const all = lead.querySelector('input')!;
+  return [lead, ...rows];
+}
+
 export async function renderCleanup(): Promise<HTMLElement> {
   const settings = await getSettings();
-  const setKind = (id: CleanupKind, on: boolean) => updateSettings((current) => ({ cleanup: { ...current.cleanup, [id]: on } }));
+  const saveKinds = (values: boolean[]) =>
+    updateSettings((current) => ({
+      cleanup: { ...current.cleanup, ...Object.fromEntries(CLEANUP.map((def, i): [CleanupKind, boolean] => [def.id, values[i] ?? false])) },
+    }));
   return h(
     'div',
     null,
@@ -22,17 +53,24 @@ export async function renderCleanup(): Promise<HTMLElement> {
       { class: 'panel' },
       h('h3', null, t('cleanupEverySearch')),
       h('p', { class: 'muted' }, t('cleanupEverySearchHint'), ' ', helpLink('guide/troubleshooting#ai-answers-or-panels-still-show', t('cleanupStillShows'))),
-      CLEANUP.map((def) => switchRow(t(def.label), t(def.hint), settings.cleanup[def.id], (on) => void setKind(def.id, on))),
+      switchGroup(
+        CLEANUP.map((def) => ({ label: t(def.label), hint: t(def.hint), on: settings.cleanup[def.id] })),
+        (values) => void saveKinds(values),
+      ),
     ),
     h(
       'div',
       { class: 'panel' },
       h('h3', null, t('cleanupOnGoogle')),
-      switchRow(
-        t('cleanupWebTab'),
-        t('cleanupWebTabHint'),
-        settings.googleWebTab,
-        (googleWebTab) => void updateSettings({ googleWebTab }),
+      switchGroup(
+        [
+          {
+            label: t('cleanupWebTab'),
+            hint: t('cleanupWebTabHint'),
+            on: settings.googleWebTab,
+          },
+        ],
+        ([googleWebTab]) => void updateSettings({ googleWebTab }),
       ),
     ),
   );

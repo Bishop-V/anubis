@@ -82,6 +82,8 @@ Asked for: pinning and the starter lists were only explained in the user guide, 
 
 ## Wording, icons, and the motif
 
+- **The summary's mark is gone (2026-10-08).** Asked for from use: the Anubis head before the summary's sentence went, on search pages and in the docs' demos. The summary is plain text now, which suits "stay quiet on search pages"; the motif stays in the logo and the result menu's balance.
+
 Feedback from use: "weigh" was too ambiguous for the functions people rely on ("Weigh deeper", "Weigh a site", "Weigh this site"), the settings button's icon read as a sun, and the Anubis logo on every result said who made the button, not what it does. The motif (the balance in the menu, the cartouche) was liked; it was the words and icons that got in the way.
 
 - **Inspiration:** Scott Jenson's talk "Are we really going to use the same Desktop UX forever?" (KDE Akademy 2026) treats UX as layers (style, structure, strategy, technology) and argues for tools shaped around the task in front of you rather than around the software. Here the style layer (the Egyptian theme) had leaked into the structure layer (the names of functions). The `ux-heuristics` skill (Krug's *Don't Make Me Think*, Nielsen's heuristics) was installed in `.claude/skills/` for the review. It flags this exact pattern: clever names lose to clear names, and icons without labels make people guess ("mystery meat navigation").

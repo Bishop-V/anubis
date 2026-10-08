@@ -52,8 +52,8 @@ Ready for translators: every word of the interface is in `public/_locales/en/mes
 
 ## Features
 
+- **Proper support for the Videos, Images, and News tabs.** Anubis weighs DuckDuckGo's tab cards, but the other engines' Videos and Images tabs are mostly untested grids where tags, the ⚖ button, and reranking may not fit. For each engine, model its tabs in `e2e/fixtures.mjs` (DuckDuckGo's `tab` option shows how), add a `cards` entry in `utils/engines.ts`, and check that the button sits on each card and that hidden cards leave no gaps in the grid. uBlacklist's SERPINFO has the selectors.
 - **Engine definitions fetched from the repo,** like uBlacklist's SERPINFO, so a selector fix doesn't need a store release. Chrome forbids downloading code, so they have to be data: `isResultsPage` is a function today and would need a declarative form.
-- **Image, video, and news results.** uBlacklist's SERPINFO has the selectors.
 
 ## Lists made from other projects
 
