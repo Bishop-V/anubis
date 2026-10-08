@@ -137,6 +137,8 @@
   "summaryRemovedRelated_other": { "message": "$1 lists of related searches" },
   "summaryRemovedElsewhere_one": { "message": "a row of other search engines" },
   "summaryRemovedElsewhere_other": { "message": "$1 rows of other search engines" },
+  "summaryRemovedAdRequests_one": { "message": "a request to allow ads" },
+  "summaryRemovedAdRequests_other": { "message": "$1 requests to allow ads" },
   "withShortcut": { "message": "$1 ($2)", "description": "A button's description followed by its keyboard shortcut, e.g. Show hidden (Alt+Shift+H)." },
   "toolbarOff": { "message": "Anubis is off", "description": "Tooltip of the toolbar button while Anubis is turned off." },
   "weighLabel": { "message": "Hide, rank, or tag $1", "description": "Tooltip and screen reader label of the balance button on each result, and the name of the menu it opens. $1 is the result's site, e.g. fandom.com." },

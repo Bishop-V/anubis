@@ -16,8 +16,9 @@ Search pages carry a lot that isn't results: AI answers, video panels, "People a
 | **Image rows** | Rows of images between the results. The Images tab still works. |
 | **Related searches** | Lists of other searches, usually at the bottom of the page, Bing's "Related searches based on your browsing", and the "People also search for" box Bing and Google add under a result you went to and came back from. The links to later pages stay. |
 | **Other search engines** | Rows of buttons that repeat your search on another engine, like Brave's "Find elsewhere" with Google, Bing, and Mojeek. |
+| **Requests to allow ads** | Banners asking you to turn off your ad blocker or allow ads, like Startpage's "Block creepy ads, not private search" with its **Allow Startpage ads** button. |
 
-All of them start off.
+All of them start off. **All of these**, at the top of each section, turns every switch in that section on or off at once.
 
 ## What was removed
 

@@ -193,6 +193,8 @@ const weighHosts = new WeakMap<HTMLElement, HTMLElement>();
 const barHosts = new WeakMap<HTMLElement, HTMLElement>();
 const weighResult = new WeakMap<HTMLElement, FoundResult>();
 const positioned = new WeakSet<HTMLElement>();
+/** Weigh buttons at their result's right edge (not on a card or by the engine's menu): they follow each other into the gutter. */
+const atEdge = new WeakSet<HTMLElement>();
 
 /**
  * Take Anubis off an element that is no longer a result, for instance after the
@@ -337,6 +339,8 @@ export function ensureWeighButton(
   const menu = (underMenu || besideMenu) && !result.card ? resultMenuOf(container) : undefined;
   // Not hidden while the engine's menu is open: a menu closes without adding or
   // removing nodes, so no pass would show the button again. It sits under the menu instead.
+  if (menu || result.card) atEdge.delete(host);
+  else atEdge.add(host);
   if (menu) placeNextToMenu(host, container, menu, besideMenu ? 'beside' : 'under');
   else {
     for (const prop of MENU_LOOK) host.style.removeProperty(prop);
@@ -463,20 +467,34 @@ function clipOf(el: HTMLElement, container: HTMLElement): { left: number; right:
  * room, otherwise down the result's right edge until it's clear.
  */
 function moveOffText(host: HTMLElement, container: HTMLElement): void {
-  const box = container.getBoundingClientRect();
   const b = host.getBoundingClientRect();
   const top = parseFloat(host.style.top) || 0;
-  if (box.right + b.width + 8 <= document.documentElement.clientWidth) {
-    host.style.setProperty('right', `${-Math.round(b.width + 4)}px`, 'important');
-    return;
-  }
+  if (intoGutter(host, container)) return;
   for (let step = 1; step <= 4 && coversText(host, container); step++) {
     host.style.setProperty('top', `${Math.round(top + step * (b.height + 2))}px`, 'important');
   }
 }
 
-/** Once a result's picture pushes a button out past the results, they all go there, in one column. */
+/** Once a result's picture or long address pushes a button out past the results, they all go there, in one column. */
 let buttonsInGutter = false;
+
+/**
+ * Just past the result's right edge, if nothing else is there. The first button
+ * to go takes the ones already placed at their results' edges with it.
+ */
+function intoGutter(host: HTMLElement, container: HTMLElement): boolean {
+  const box = container.getBoundingClientRect();
+  const b = host.getBoundingClientRect();
+  if (!gutterIsFree(container, { left: box.right + 4, right: box.right + 4 + b.width, top: b.top, bottom: b.bottom })) return false;
+  host.style.setProperty('right', `${-Math.round(b.width + 4)}px`, 'important');
+  if (!buttonsInGutter) {
+    buttonsInGutter = true;
+    for (const other of document.querySelectorAll<HTMLElement>('anubis-weigh')) {
+      if (other !== host && atEdge.has(other) && other.parentElement) intoGutter(other, other.parentElement);
+    }
+  }
+  return true;
+}
 
 /**
  * Clear of a thumbnail beside the result's first row (Google and Brave show them
@@ -497,11 +515,8 @@ function clearOfPictures(host: HTMLElement, container: HTMLElement): void {
   }
   const blocked = edge < b.right;
   if (!blocked && !buttonsInGutter) return;
-  const outside = { left: box.right + 4, right: box.right + 4 + b.width, top: b.top, bottom: b.bottom };
-  if (gutterIsFree(container, outside)) {
-    buttonsInGutter = true;
-    host.style.setProperty('right', `${-Math.round(b.width + 4)}px`, 'important');
-  } else if (blocked) {
+  if (intoGutter(host, container)) return;
+  if (blocked) {
     host.style.setProperty('right', `${Math.round(box.right - edge + 6)}px`, 'important');
   }
 }

@@ -813,7 +813,7 @@ if (!only || only === 'cleanup' || checks) {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       return tab ? chrome.tabs.sendMessage(tab.id, { type: 'get-page-stats' }).catch(() => undefined) : undefined;
     });
-  const all = { ai: true, videos: true, questions: true, news: true, images: true, related: true, elsewhere: true };
+  const all = { ai: true, videos: true, questions: true, news: true, images: true, related: true, elsewhere: true, adRequests: true };
   await setSettings({ cleanup: all });
   await page.goto('https://www.google.com/search?q=anubis&modules=1');
   await page.waitForTimeout(800);

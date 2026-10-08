@@ -43,6 +43,12 @@ describe('clean-up headings', () => {
     expect(cleanupMarkerFor('Why AI responses may include mistakes')).toBeUndefined();
   });
 
+  it('recognises a request to allow ads', () => {
+    expect(cleanupMarkerFor('Block creepy ads, not private search.')).toBe('adRequests');
+    expect(cleanupMarkerFor('Ads keep your private search results free.')).toBe('adRequests');
+    expect(cleanupKindFor('Block creepy ads, not private search.')).toBeUndefined();
+  });
+
   it('leaves result titles and partial matches alone', () => {
     expect(cleanupKindFor('AI Overview of the Egyptian gods')).toBeUndefined();
     expect(cleanupKindFor('Top stories about Anubis you missed')).toBeUndefined();

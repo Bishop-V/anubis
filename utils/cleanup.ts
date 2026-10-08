@@ -8,11 +8,11 @@
 
 import { tJoin, tn, type PluralKey } from './i18n';
 
-export type CleanupKind = 'ai' | 'videos' | 'questions' | 'discussions' | 'news' | 'images' | 'related' | 'elsewhere';
+export type CleanupKind = 'ai' | 'videos' | 'questions' | 'discussions' | 'news' | 'images' | 'related' | 'elsewhere' | 'adRequests';
 
 export type Cleanup = Record<CleanupKind, boolean>;
 
-export const NO_CLEANUP: Cleanup = { ai: false, videos: false, questions: false, discussions: false, news: false, images: false, related: false, elsewhere: false };
+export const NO_CLEANUP: Cleanup = { ai: false, videos: false, questions: false, discussions: false, news: false, images: false, related: false, elsewhere: false, adRequests: false };
 
 export interface CleanupDef {
   id: CleanupKind;
@@ -121,6 +121,13 @@ export const CLEANUP: CleanupDef[] = [
     hint: 'Rows of buttons that repeat your search on another engine, like Brave’s “Find elsewhere”.',
     headings: ['Find elsewhere', 'Search elsewhere'],
   },
+  {
+    id: 'adRequests',
+    label: 'Requests to allow ads',
+    hint: 'Banners asking you to turn off your ad blocker or allow ads, like Startpage’s “Block creepy ads, not private search”.',
+    headings: [],
+    markers: ['Block creepy ads, not private search', 'Ads keep your private search results free', 'Ads keep Startpage free'],
+  },
 ];
 
 /**
@@ -171,6 +178,7 @@ const REMOVED = {
   images: 'summaryRemovedImages',
   related: 'summaryRemovedRelated',
   elsewhere: 'summaryRemovedElsewhere',
+  adRequests: 'summaryRemovedAdRequests',
 } as const satisfies Record<CleanupKind, PluralKey>;
 
 /** "an AI answer and 2 video panels", or '' when nothing was removed. */
