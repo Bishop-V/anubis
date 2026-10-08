@@ -2,7 +2,7 @@ import { balanceSvg, setBalance } from '@/utils/balance';
 import { domainChoices, normalizeHostname, siteOf } from '@/utils/domain';
 import { h, icon } from '@/utils/dom';
 import type { EngineDef } from '@/utils/engines';
-import { ICON_ANUBIS, ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS, WEIGH_ICONS } from '@/utils/icons';
+import { ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS, WEIGH_ICONS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
 import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
 import { t, tJoin, tList, tn, tParts } from '@/utils/i18n';
@@ -756,7 +756,6 @@ export function renderSummary(
     h(
       'div',
       { class: `summary${compact ? ' compact' : ''}${summaryDetails ? ' open' : ''}` },
-      h('span', { class: 'mark' }, icon(ICON_ANUBIS)),
       // The sentence and its buttons: on phones they run on as one paragraph, so the
       // buttons follow the words and wrap with them; wider, the line steps aside
       // (display: contents) and each is laid out on its own.

@@ -213,7 +213,7 @@ export default defineComponent({
         h('div', { ref: root, class: 'hd-stage' }, [
           h('div', { class: 'demo-page hd-page', 'aria-hidden': 'true' }, [
             h('div', { class: 'demo-summary hd-summary' }, [
-              h('p', [html('span', 'mark', ICON.mark), h('span', [sentence, ' ', html('span', 'hd-gear', ICON.gear)])]),
+              h('p', [h('span', [sentence, ' ', html('span', 'hd-gear', ICON.gear)])]),
               fold(!!state.said, 'hd-change', [h('span', state.said), ' ', h('span', { class: 'demo-link' }, 'Undo')]),
               h('div', { class: 'summary-tags hd-tags' }, [tagMark('Reference', '#2b9aa0', 2)]),
             ]),

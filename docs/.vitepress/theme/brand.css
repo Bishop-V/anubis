@@ -379,14 +379,6 @@ body .VPContent .VPHome {
     display: none;
   }
 }
-/* The Anubis head in gold, as the extension's summary starts. */
-.demo-summary .mark {
-  display: flex;
-  flex: none;
-  align-items: center;
-  height: 20px;
-  color: var(--vp-c-brand-3);
-}
 .demo-link {
   font-weight: 600;
   color: var(--vp-c-brand-1);
