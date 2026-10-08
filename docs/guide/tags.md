@@ -10,7 +10,7 @@ Tags are small labels under a result's title: "Official docs", "Discussion", "Pa
 
 On any website, open the Anubis toolbar popup. Under **Tags**, press a tag to add it to the site, or press it again to remove it. To make a new tag for the site, type its name in **New tag** and press **Add tag**. On search pages, the ⚖ menu on each result offers the same controls.
 
-Your own tags are under **Yours**, and the tags your lists use are under **From lists**. You can add a tag from a list to any site, and that goes in your own list, not the list's. A tag a list gave the site shows without a button: only the list can take it off, and **Wrong? Report it** in the ⚖ menu tells its maintainers.
+Your own tags are under **Your tags**, and the tags your lists use are under **Tags from lists**. You can add a tag from a list to any site, and that changes only your own list, not the list's. A tag you gave the site is in bold and underlined in its colour. A tag a list gave the site is plain, with the list's name after it ("from Paywalls"): only the list can take it off, and **Wrong? Report it** in the ⚖ menu tells its maintainers.
 
 ## Whose tag is it
 

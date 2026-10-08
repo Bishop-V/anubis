@@ -79,7 +79,26 @@ export function tagPicker(ids: string[], fromLists: Set<string>, item: (id: stri
   if (!ids.length) return null;
   const yours = ids.filter((id) => !fromLists.has(id));
   const lists = ids.filter((id) => fromLists.has(id));
-  if (!yours.length || !lists.length) return h('div', { class: 'tags' }, ids.map(item));
-  const group = (name: string, group: string[]) => h('div', { class: 'tag-group' }, h('p', { class: 'tag-group-name' }, name), h('div', { class: 'tags' }, group.map(item)));
-  return h('div', { class: 'tag-groups' }, group(t('tagGroupYours'), yours), group(t('tagGroupLists'), lists));
+  if (!lists.length) return h('div', { class: 'tags' }, ids.map(item));
+  const group = (name: string, group: string[], hint?: string) =>
+    h(
+      'div',
+      { class: 'tag-group' },
+      h('p', { class: 'tag-group-name' }, name),
+      // Adding a list's tag to a site never changes the list: said where it's done.
+      hint ? h('p', { class: 'tag-group-hint' }, hint) : null,
+      h('div', { class: 'tags' }, group.map(item)),
+    );
+  return h(
+    'div',
+    { class: 'tag-groups' },
+    yours.length ? group(t('tagYoursHeading'), yours) : null,
+    group(t('tagListsHeading'), lists, t('tagListsPickerHint')),
+  );
+}
+
+/** The lists that gave the site a tag, after its name where it can't be pressed: "from Paywalls". */
+export function tagSource(verdict: Verdict, id: string): HTMLElement | null {
+  const lists = (verdict.tagSources[id] ?? []).filter((name) => name !== PERSONAL_NAME);
+  return lists.length ? h('span', { class: 'tag-source' }, t('tagFromSource', tJoin(lists))) : null;
 }

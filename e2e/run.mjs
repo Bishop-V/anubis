@@ -2349,7 +2349,7 @@ if (only === 'popup-tags' || checks) {
       return { weight: style?.fontWeight, underline: style?.boxShadow };
     });
   }
-  // Your tags and those from lists are two groups, yours first; "Great tutorial" is yours.
+  // Your tags and those from lists are two groups, yours first, under Settings' names; "Great tutorial" is yours.
   const groups = await popup.evaluate(() =>
     [...document.querySelectorAll('#here .tag-group')].map((g) => ({
       name: g.querySelector('.tag-group-name')?.textContent,
@@ -2357,7 +2357,8 @@ if (only === 'popup-tags' || checks) {
     })),
   );
   assertChecks('popup tag groups', {
-    yoursThenLists: groups.map((g) => g.name).join('|') === 'Yours|From lists',
+    yoursThenLists: groups.map((g) => g.name).join('|') === 'Your tags|Tags from lists',
+    listsSayOnlyYourListChanges: !!(await popup.locator('#here .tag-group-hint').textContent())?.includes('only your list'),
     tutorialIsYours: !!groups[0]?.tags.some((tag) => tag?.startsWith('Great tutorial')),
     listTagsApart: !!groups[1]?.tags.some((tag) => tag?.startsWith('Official docs')) && !groups[0]?.tags.some((tag) => tag?.startsWith('Official docs')),
   });

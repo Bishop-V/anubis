@@ -14,7 +14,7 @@ import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/mess
 import { displayLevel, getSite, listSites, setSiteLevel, tagSite, upsertTagDef, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal, updateSettings } from '@/utils/storage';
-import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder, tagPicker } from '@/utils/siteranking';
+import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder, tagPicker, tagSource } from '@/utils/siteranking';
 import { stoppedSentence, summarySentence } from '@/utils/summary';
 import { initTheme } from '@/utils/theme';
 
@@ -166,10 +166,11 @@ function renderHere(rules: RuleSet) {
     if (!on && fromList.has(id)) {
       return h(
         'span',
-        { class: 'tag', style: `--c: ${tag.color}`, title: t('popupTagFrom', tJoin(verdict.tagSources[id] ?? [])) },
+        { class: 'tag fixed', style: `--c: ${tag.color}` },
         tagMark(verdict.tagEffects[id]),
         tag.label,
         tagEffectText(verdict.tagEffects[id]),
+        tagSource(verdict, id),
       );
     }
     return h(

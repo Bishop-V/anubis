@@ -10,7 +10,7 @@ import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, type PersonalLevel } from '@/utils/personal';
 import { ruleParts } from '@/utils/ruletext';
 import type { Palette } from '@/utils/storage';
-import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder, tagPicker } from '@/utils/siteranking';
+import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder, tagPicker, tagSource } from '@/utils/siteranking';
 import { shortSummary, stoppedSentence, summarySentence } from '@/utils/summary';
 import { OWN_TAGS, type FoundResult } from './results';
 import shadowCss from './shadow.css?inline';
@@ -1208,10 +1208,11 @@ function buildPopover(
     if (!on && fromList.has(id)) {
       return h(
         'span',
-        { class: 'fixed', style: `--c: ${tag.color}`, title: t('popupTagFrom', tJoin(data.verdict.tagSources[id] ?? [])) },
+        { class: 'fixed', style: `--c: ${tag.color}` },
         tagMark(data.verdict.tagEffects[id]),
         tag.label,
         tagEffectText(data.verdict.tagEffects[id]),
+        tagSource(data.verdict, id),
       );
     }
     return h(
