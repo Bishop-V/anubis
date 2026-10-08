@@ -68,7 +68,7 @@
     {
       "id": "devdocs",
       "name": "Official docs (DevDocs)",
-      "description": "Tags the documentation sites DevDocs collects, and nudges them up. It adds about 180 sites to Official docs.",
+      "description": "Tags the documentation sites DevDocs collects, among them MDN and the Python, Rust, and React docs, and nudges them up.",
       "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/sources/devdocs.anubis",
       "homepage": "https://github.com/freeCodeCamp/devdocs",
       "format": "anubis",

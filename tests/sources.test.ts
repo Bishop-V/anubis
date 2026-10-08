@@ -210,12 +210,13 @@ describe('devDocs', () => {
     { path: 'lib/docs/scrapers/k8s.rb', text: 'class Kubernetes < UrlScraper\n  self.base_url = "https://v#{version.sub(".", "-")}.docs.kubernetes.io/"\n' },
     { path: 'lib/docs/scrapers/python.rb', text: "class Python < FileScraper\n  self.base_url = 'https://docs.python.org/3.13/library/'\n" },
   ];
-  const list = devDocs(files, { commit: 'fed789', known: ['docs.python.org'] });
+  const list = devDocs(files, { commit: 'fed789' });
   const text = render(list);
   const parsed = parseList(text);
 
   it('tags where each scraper reads its docs, once per site', () => {
     expect(list.rules.map((r: { instruction: string }) => r.instruction).sort()).toEqual([
+      '$site=docs.python.org,tag=docs,boost=1',
       '$site=flask.palletsprojects.com,tag=docs,boost=1',
       '$site=react.dev,tag=docs,boost=1',
       '/docs^$site=prettier.io,tag=docs,boost=1',
@@ -225,9 +226,8 @@ describe('devDocs', () => {
     expect(text).toContain('# DevDocs collects the docs for Prettier here.');
   });
 
-  it('leaves out shared hosts, addresses worked out at run time, and sites the bundled list has', () => {
+  it('leaves out shared hosts and addresses worked out at run time', () => {
     expect(list.skipped).toHaveLength(2);
-    expect(text).not.toContain('python.org');
   });
 
   it('reads a docs address as a whole docs site, or as a path on a main site', () => {
@@ -252,15 +252,17 @@ describe('devDocs', () => {
     expect(evaluate({ url: 'https://prettier.io/blog/', title: '' }, [compiled]).tags).toEqual([]);
   });
 
-  it('shares the Official docs tag with the bundled list, which it never overlaps', () => {
+  it('shares the Official docs tag with the bundled list, which keeps none of its sites', () => {
     const official = readFileSync('lists/official-docs.anubis', 'utf8');
     const tag = parseList(official).tags.find((t) => t.id === 'docs');
     expect(parsed.tags).toEqual([tag]);
+    // The source replaces the bundled list's entries, so no site is raised twice. When
+    // a weekly update brings in a site the bundled list has, remove it from the bundled list.
     const generated = parseList(readFileSync('lists/sources/devdocs.anubis', 'utf8'));
-    const known = listSites(official);
+    const bundled = listSites(official);
     for (const rule of generated.rules) {
       const site = rule.site!;
-      expect(known.filter((k: string) => site === k || site.endsWith(`.${k}`) || k.endsWith(`.${site}`))).toEqual([]);
+      expect(bundled.filter((k: string) => site === k || site.endsWith(`.${k}`) || k.endsWith(`.${site}`))).toEqual([]);
     }
   });
 

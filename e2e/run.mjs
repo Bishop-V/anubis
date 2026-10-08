@@ -115,6 +115,14 @@ async function launch(settings = {}, ext = EXT) {
     // Behind a proxy (as in CI sandboxes), real list downloads need it too.
     ...(process.env.HTTPS_PROXY && { proxy: { server: process.env.HTTPS_PROXY } }),
   });
+  // Lists this repository publishes (and its directory) come from the checkout, so a
+  // run tests this branch's lists, not what main has, and doesn't wait on GitHub.
+  await ctx.route(/^https:\/\/raw\.githubusercontent\.com\/Bishop-V\/anubis\/main\/lists\/([\w./-]+)$/, (route) => {
+    const path = /\/lists\/(.+)$/.exec(route.request().url())[1];
+    const file = fileURLToPath(new URL(`../lists/${path}`, import.meta.url));
+    if (path.includes('..') || !existsSync(file)) return route.fulfill({ status: 404, body: '' });
+    return route.fulfill({ contentType: 'text/plain; charset=utf-8', body: readFileSync(file, 'utf8') });
+  });
   let [sw] = ctx.serviceWorkers();
   if (!sw) sw = await ctx.waitForEvent('serviceworker');
   const extId = new URL(sw.url()).host;
