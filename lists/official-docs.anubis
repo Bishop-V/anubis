@@ -9,65 +9,29 @@
 ! tag: docs | Official docs | #2f5fae | Documentation published by the project or vendor itself.
 
 ! Web platform
-$site=developer.mozilla.org,tag=docs,boost=1
 $site=web.dev,tag=docs,boost=1
 $site=html.spec.whatwg.org,tag=docs,boost=1
 $site=w3.org,tag=docs
 
 ! Languages
-$site=docs.python.org,tag=docs,boost=1
-$site=doc.rust-lang.org,tag=docs,boost=1
-$site=docs.rs,tag=docs,boost=1
 $site=go.dev,tag=docs,boost=1
 $site=pkg.go.dev,tag=docs,boost=1
-$site=typescriptlang.org,tag=docs,boost=1
-/docs/$site=nodejs.org,tag=docs,boost=1
-/api/$site=nodejs.org,tag=docs,boost=1
-$site=docs.oracle.com,tag=docs
-$site=kotlinlang.org,tag=docs,boost=1
 $site=docs.swift.org,tag=docs,boost=1
 $site=ruby-doc.org,tag=docs,boost=1
-$site=php.net,tag=docs,boost=1
-$site=en.cppreference.com,tag=docs,boost=1
 $site=hexdocs.pm,tag=docs,boost=1
 $site=hackage.haskell.org,tag=docs
-$site=ziglang.org,tag=docs,boost=1
-$site=nixos.org,tag=docs
 $site=learn.microsoft.com,tag=docs,boost=1
 
 ! Frameworks and libraries
-$site=react.dev,tag=docs,boost=1
-$site=vuejs.org,tag=docs,boost=1
-$site=svelte.dev,tag=docs,boost=1
-$site=angular.dev,tag=docs,boost=1
-$site=nextjs.org,tag=docs,boost=1
 $site=vitejs.dev,tag=docs,boost=1
-$site=vite.dev,tag=docs,boost=1
-$site=tailwindcss.com,tag=docs,boost=1
-$site=djangoproject.com,tag=docs,boost=1
-$site=flask.palletsprojects.com,tag=docs,boost=1
-$site=fastapi.tiangolo.com,tag=docs,boost=1
-$site=numpy.org,tag=docs,boost=1
-$site=pandas.pydata.org,tag=docs,boost=1
-$site=pytorch.org,tag=docs,boost=1
 $site=guides.rubyonrails.org,tag=docs,boost=1
 $site=api.rubyonrails.org,tag=docs,boost=1
-$site=laravel.com,tag=docs,boost=1
-$site=docs.spring.io,tag=docs,boost=1
 $site=wxt.dev,tag=docs,boost=1
 
 ! Tools and platforms
-$site=git-scm.com,tag=docs,boost=1
 $site=docs.github.com,tag=docs,boost=1
 $site=docs.gitlab.com,tag=docs,boost=1
-$site=docs.docker.com,tag=docs,boost=1
-$site=kubernetes.io,tag=docs,boost=1
-$site=postgresql.org,tag=docs,boost=1
 $site=dev.mysql.com,tag=docs
-$site=sqlite.org,tag=docs,boost=1
-$site=redis.io,tag=docs,boost=1
-$site=nginx.org,tag=docs,boost=1
-$site=man7.org,tag=docs,boost=1
 $site=wiki.archlinux.org,tag=docs,boost=1
 $site=developer.chrome.com,tag=docs,boost=1
 $site=extensionworkshop.com,tag=docs,boost=1

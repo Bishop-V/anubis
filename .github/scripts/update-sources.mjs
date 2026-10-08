@@ -14,7 +14,7 @@ import { execFileSync } from 'node:child_process';
 import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
-import { AWESOME_SELFHOSTED, awesomeSelfhosted, body, DEVDOCS, devDocs, freeLicences, HUGE_AI, hugeAi, INDIE_WIKIS, indieWikis, listSites, render } from './sources/convert.mjs';
+import { AWESOME_SELFHOSTED, awesomeSelfhosted, body, DEVDOCS, devDocs, freeLicences, HUGE_AI, hugeAi, INDIE_WIKIS, indieWikis, render } from './sources/convert.mjs';
 
 const ROOT = new URL('../../', import.meta.url);
 const DEST = new URL('lists/sources/', ROOT);
@@ -81,8 +81,7 @@ const SOURCES = [
     repository: DEVDOCS.repository,
     async build() {
       const { files, commit } = folder(DEVDOCS.repository, DEVDOCS.scrapers, '.rb');
-      const known = listSites(readFileSync(new URL('lists/official-docs.anubis', ROOT), 'utf8'));
-      return devDocs(files, { commit, known });
+      return devDocs(files, { commit });
     },
   },
   {

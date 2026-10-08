@@ -307,13 +307,9 @@ export function listSites(text) {
  * DevDocs's scrapers (Ruby files) as Anubis rules tagging "Official docs" and
  * nudging them up, as Anubis's own Official docs list does. Each `base_url` in a
  * scraper, for every version it keeps, becomes a rule; its comment names the docs.
- * Sites the bundled list already has (`known`), or a part or parent of one, are left
- * out: both lists are on by default, and boosts from two lists add up. The bundled
- * list keeps them because installs that chose their own lists before this one
- * existed aren't subscribed to it.
+ * It replaces the bundled list's entries for the same sites.
  */
-export function devDocs(files, { commit, known = [] }) {
-  const overlaps = (site) => known.some((k) => site === k || site.endsWith(`.${k}`) || k.endsWith(`.${site}`));
+export function devDocs(files, { commit }) {
   const names = new Map();
   const skipped = [];
   for (const { path, text } of files) {
@@ -325,7 +321,6 @@ export function devDocs(files, { commit, known = [] }) {
         skipped.push(`${name}: ${url}`);
         continue;
       }
-      if (overlaps(target.site)) continue;
       const key = instruction(target.site, target.path, ['tag=docs', 'boost=1']);
       if (!names.has(key)) names.set(key, new Set());
       names.get(key).add(name);
@@ -349,8 +344,7 @@ export function devDocs(files, { commit, known = [] }) {
         `commit ${commit}, whose code is under the Mozilla Public License 2.0.`,
         "Each rule is an address a scraper reads its docs from. A docs site's whole host",
         "is tagged; docs on a project's main site only under their path (\"/docs\").",
-        'Addresses on GitHub, GitLab, and other shared hosts are left out, and so are',
-        "sites Anubis's own Official docs list already tags, so none is raised twice.",
+        'Addresses on GitHub, GitLab, and other shared hosts are left out.',
         '',
         'To add docs, open an issue or pull request on DevDocs. Anubis rewrites this',
         'file from it every week (.github/workflows/sources.yml), so edits made here are lost.',

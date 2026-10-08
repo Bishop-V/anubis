@@ -4,14 +4,14 @@ Lists that ship with Anubis, and the directory of lists it offers in **Settings 
 
 | File | What it does |
 | --- | --- |
-| [`official-docs.anubis`](official-docs.anubis) | Tags first-party documentation (MDN, language and framework docs) and raises it slightly. |
+| [`official-docs.anubis`](official-docs.anubis) | Tags first-party documentation DevDocs doesn't cover (Go, Swift, Ruby, cloud and platform docs) and raises it slightly. |
 | [`discussions.anubis`](discussions.anubis) | Tags forums, Q&A sites and issue threads. |
 | [`reference.anubis`](reference.anubis) | Tags encyclopedias, archives and research papers. |
 | [`paywalls.anubis`](paywalls.anubis) | Labels sites that usually paywall their articles. Never changes the ranking. |
 | [`foss-tools.anubis`](foss-tools.anubis) | Tags selected FOSS tools and provides reusable FOSS and AI slop tags. |
 | [`sources/ai-content.anubis`](sources/ai-content.anubis) | Labels AI-generated sites, made from the [HUGE AI Blocklist](https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist). |
 | [`sources/independent-wikis.anubis`](sources/independent-wikis.anubis) | Raises independent wikis and lowers the Fandom wikis they replace, made from [Indie Wiki Buddy](https://github.com/KevinPayravi/indie-wiki-buddy)'s data. |
-| [`sources/devdocs.anubis`](sources/devdocs.anubis) | Tags the documentation sites [DevDocs](https://github.com/freeCodeCamp/devdocs) collects, beyond those in `official-docs.anubis`. |
+| [`sources/devdocs.anubis`](sources/devdocs.anubis) | Tags the documentation sites [DevDocs](https://github.com/freeCodeCamp/devdocs) collects, including MDN and most language and framework docs. |
 | [`sources/self-hosted-foss.anubis`](sources/self-hosted-foss.anubis) | Labels the websites of free programs [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted-data) lists as FOSS. |
 | [`directory.json`](directory.json) | The lists shown under "More lists", including community lists hosted elsewhere. |
 
@@ -19,7 +19,7 @@ The five `.anubis` lists at the top level are bundled into the extension, so the
 
 ## Lists made from other projects
 
-The lists in [`sources/`](sources) are made from other projects' data by a weekly job (`.github/workflows/sources.yml`), which opens a pull request when the data changes. They aren't bundled: Anubis downloads them from here. Each keeps its source's licence, names its source, and links to it. Where a source covers what one of Anubis's own lists does, the source's data replaces the hand-made entries. The exception is a bundled default list: installs that chose their own lists before a new source existed aren't subscribed to it, so the source leaves out the sites the bundled list has instead (DevDocs and `official-docs.anubis`).
+The lists in [`sources/`](sources) are made from other projects' data by a weekly job (`.github/workflows/sources.yml`), which opens a pull request when the data changes. They aren't bundled: Anubis downloads them from here. Each keeps its source's licence, names its source, and links to it. Where a source covers what one of Anubis's own lists does, the source's data replaces the hand-made entries.
 
 Don't edit these files: the next update overwrites them. To add or remove a site, contribute to the project the list names; its change arrives here with the next update.
 
