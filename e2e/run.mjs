@@ -1975,6 +1975,28 @@ if (!only || only === 'sync') {
     'chunks arrived (hidden there)': await state(),
   }));
   await seed();
+  // Settings and tag choices from another computer arrive the same way, and the
+  // open page follows them.
+  await page.waitForTimeout(800);
+  const slop = () => page.locator('[data-anubis-result]', { hasText: 'JavaScript Promises Explained' }).getAttribute('data-anubis-state');
+  const marked = () => page.locator('[data-anubis-result]').count();
+  const { settings, tagPrefs } = await sw.evaluate(() => chrome.storage.sync.get(['settings', 'tagPrefs']));
+  const tagBefore = await slop();
+  await sw.evaluate(() => chrome.storage.sync.set({ tagPrefs: { 'ai-slop': { action: 'lower' } } }));
+  await page.waitForTimeout(800);
+  const tagAfter = await slop();
+  await sw.evaluate((s) => chrome.storage.sync.set({ settings: { ...s, enabled: false } }), settings);
+  await page.waitForTimeout(800);
+  const off = await marked();
+  await sw.evaluate((saved) => chrome.storage.sync.set(saved), { settings, tagPrefs });
+  await page.waitForTimeout(800);
+  const backOn = await marked();
+  console.log('== sync, settings and tag choices:', JSON.stringify({ 'tag before': tagBefore, 'tag after': tagAfter, 'results marked while off': off, 'after turning back on': backOn }));
+  assertChecks('Browser sync of settings and tag choices', {
+    'a tag choice from sync applies': tagBefore === 'hide tagged' && tagAfter === 'lower tagged',
+    'turning off from sync leaves the page alone': off === 0,
+    'turning on from sync weighs the page again': backOn > 0 && (await slop()) === 'hide tagged',
+  });
 }
 
 if (!only || only === 'webdav') {

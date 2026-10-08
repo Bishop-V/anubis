@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fakeBrowser } from 'wxt/testing/fake-browser';
 import { collectData, toBackup } from '@/utils/backup';
 import { listSites, setSite, setSiteLevel } from '@/utils/personal';
-import { editPersonal, loadPersonal, updateSettings } from '@/utils/storage';
+import { editPersonal, loadPersonal, setTagPref, tagPrefsItem, updateSettings } from '@/utils/storage';
 import { accountItem, changeEncryptionPassphrase, connect, disconnect, statusItem, syncChanges, syncFileUrl, syncWithServer } from '@/utils/webdav';
 import { decryptSyncData, encryptSyncData, isEncryptedSyncFile } from '@/utils/webdav-crypto';
 
@@ -390,5 +390,35 @@ describe('syncing through a WebDAV server', () => {
     expect(syncStorage).not.toContain('app-password');
     expect(syncStorage).not.toContain(ENCRYPTED_ACCOUNT.encryptionPassphrase);
     expect(await accountItem.getValue()).toMatchObject(ENCRYPTED_ACCOUNT);
+  });
+
+  it('keeps settings and tag choices made in both browsers, and a choice set back', async () => {
+    await connect(ACCOUNT);
+    await syncWithServer();
+    await use('chrome');
+    await connect(ACCOUNT);
+    await syncWithServer();
+
+    await setTagPref('ai', { action: 'hide', color: '#112233' });
+    await setTagPref('wiki', { action: 'raise' });
+    await updateSettings((s) => ({ engines: { ...s.engines, bing: false } }));
+    await syncWithServer();
+    await use('firefox');
+    await setTagPref('forum', { label: 'Forums', muted: true });
+    await updateSettings((s) => ({ cleanup: { ...s.cleanup, ai: true }, hideStyle: 'dim' }));
+    await syncWithServer();
+    await setTagPref('wiki', { action: undefined });
+    await syncWithServer();
+    await use('chrome');
+    await syncWithServer();
+
+    for (const name of ['chrome', 'firefox']) {
+      await use(name);
+      const { settings, tagPrefs } = await collectData();
+      expect(tagPrefs).toEqual({ ai: { action: 'hide', color: '#112233' }, wiki: {}, forum: { label: 'Forums', muted: true } });
+      expect(settings).toMatchObject({ engines: { bing: false }, hideStyle: 'dim' });
+      expect(settings.cleanup.ai).toBe(true);
+    }
+    expect(serverData().tagPrefs).toEqual((await collectData()).tagPrefs);
   });
 });
