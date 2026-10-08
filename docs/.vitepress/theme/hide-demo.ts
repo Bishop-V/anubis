@@ -152,7 +152,6 @@ export default defineComponent({
           h('div', { class: 'demo-page hd-page', 'aria-hidden': 'true' }, [
             h('div', { class: 'demo-summary hd-summary' }, [
               h('p', [
-                html('span', 'mark', ICON.mark),
                 h('span', { class: 'long' }, [
                   long,
                   ' ',

@@ -8,6 +8,7 @@ To find a note, search for its heading or a keyword (`grep -rn "Reranking" docs/
 
 What was checked on real search pages, and what is still unverified.
 
+- Reported from live pages: Startpage and DuckDuckGo (2026-10-08)
 - Still unverified against live pages
 - Reported from live pages: Bing's AI answer and the DuckDuckGo button (2026-09-30)
 - Reported from live pages: the summary, forum results, and more panels (2026-09-29)

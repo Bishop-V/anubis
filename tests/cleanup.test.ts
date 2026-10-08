@@ -36,11 +36,18 @@ describe('clean-up headings', () => {
     expect(cleanupKindFor('People also search for')).toBe('related');
     expect(cleanupKindFor('Discussions and forums')).toBe('discussions');
     expect(cleanupKindFor('Discussions')).toBe('discussions');
+    expect(cleanupKindFor('Videos for kj')).toBe('videos');
   });
 
   it('recognises text only an AI answer has', () => {
     expect(cleanupMarkerFor('AI responses may include mistakes. ')).toBe('ai');
     expect(cleanupMarkerFor('Why AI responses may include mistakes')).toBeUndefined();
+  });
+
+  it('recognises a request to allow ads', () => {
+    expect(cleanupMarkerFor('Block creepy ads, not private search.')).toBe('adRequests');
+    expect(cleanupMarkerFor('Ads keep your private search results free.')).toBe('adRequests');
+    expect(cleanupKindFor('Block creepy ads, not private search.')).toBeUndefined();
   });
 
   it('leaves result titles and partial matches alone', () => {

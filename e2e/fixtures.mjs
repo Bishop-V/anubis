@@ -75,7 +75,9 @@ const siteIcon = (svg) =>
 // ---------------------------------------------------------------- DuckDuckGo
 // `ai`: DuckDuckGo's AI features, modelled on EasyList's AI filters (unchecked on a
 // live page): the answer as the list's first item, found by its data-testid with no
-// heading to go by, and Duck.ai as a tab and a button in the search box.
+// heading to go by, and Duck.ai as a tab and a button in the search box. Also a
+// "Videos for <query>" panel between the results, as reported on a live page
+// (2026-10-08), with the query in bold inside the heading; its markup is made up.
 // `wide`: the results in a list that isn't an <ol>, inside a <main> that also holds
 // a side panel, so the results area is wider than the results, and each result's
 // whole address, long enough to run under the result's buttons.
@@ -98,7 +100,19 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
           <div class="unseen" style="position:absolute;top:-6px;right:30px;opacity:0;pointer-events:none;white-space:nowrap"><div>Only include results from this site</div><div>Hide site from these results</div></div>` : ''}
         </article>
       </li>`;
-  const items = results.map(item).join('');
+  const list = results.map(item);
+  if (ai)
+    list.splice(
+      2,
+      0,
+      `
+      <li data-layout="videos" class="ddg-videos"><div class="vmodule"><div class="vtitle">▷ <h2>Videos for <b>${esc(query)}</b></h2></div>
+        <div class="vcards">${['One', 'Two', 'Three']
+          .map((t, i) => `<div class="vcard"><a href="https://www.youtube.com/watch?v=${i}"><div class="vthumb">▶</div><h3>${t} video about ${esc(query)}</h3></a><div>2yr | 12M views</div><div>YouTube <button aria-label="More options">⋯</button></div></div>`)
+          .join('')}</div>
+        <a class="vmore" href="/?q=${encodeURIComponent(query)}&ia=videos">More Videos</a></div></li>`,
+    );
+  const items = list.join('');
   const moreHtml = JSON.stringify(more.map((r, i) => item(r, 100 + i)).join(''));
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${esc(query)} at DuckDuckGo</title>
   <style>
@@ -127,6 +141,12 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
     .menu:hover{background:${dark ? '#ffffff26' : '#0000000f'}}
     .ask{margin-left:auto;border:0;background:none;color:#de5833}
     .chat{color:inherit;text-decoration:none}
+    .vtitle h2{display:inline;font-size:18px}
+    .vcards{display:flex;gap:10px;margin:10px 0}
+    .vcard{flex:1;border-radius:8px;padding:6px;background:${dark ? '#222' : '#f4f4f4'}}
+    .vcard a{color:inherit;text-decoration:none}
+    .vthumb{height:60px;display:grid;place-items:center;background:#333;color:#fff}
+    .vcard h3{font-size:14px;margin:6px 0}
     .assist-box{border:1px solid ${dark ? '#333' : '#e5e5e5'};border-radius:10px;padding:12px 14px}
   </style></head><body>
   <div class="hdr"><div class="logo"></div><div class="q">${esc(query)}${ai ? '<button type="button" class="ask" title="Ask Duck.ai" data-ssg-id="ai-searchbox-chat-submit">✦</button>' : ''}</div></div>

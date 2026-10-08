@@ -8,11 +8,11 @@
 
 import { tJoin, tn, type MessageKey, type PluralKey } from './i18n';
 
-export type CleanupKind = 'ai' | 'videos' | 'questions' | 'discussions' | 'news' | 'images' | 'related' | 'elsewhere';
+export type CleanupKind = 'ai' | 'videos' | 'questions' | 'discussions' | 'news' | 'images' | 'related' | 'elsewhere' | 'adRequests';
 
 export type Cleanup = Record<CleanupKind, boolean>;
 
-export const NO_CLEANUP: Cleanup = { ai: false, videos: false, questions: false, discussions: false, news: false, images: false, related: false, elsewhere: false };
+export const NO_CLEANUP: Cleanup = { ai: false, videos: false, questions: false, discussions: false, news: false, images: false, related: false, elsewhere: false, adRequests: false };
 
 export interface CleanupDef {
   id: CleanupKind;
@@ -58,8 +58,8 @@ export const CLEANUP: CleanupDef[] = [
     label: 'cleanupVideos',
     hint: 'cleanupVideosHint',
     headings: ['Videos', 'Short videos', 'Vidéos', 'Vidéos courtes', 'Kurze Videos', 'Vídeos', 'Vídeos cortos', 'Video', 'Video brevi'],
-    // Bing: "Videos of how to bake sourdough bread".
-    prefixes: ['Videos of '],
+    // Bing: "Videos of how to bake sourdough bread". DuckDuckGo: "Videos for kj".
+    prefixes: ['Videos of ', 'Videos for '],
   },
   {
     id: 'questions',
@@ -122,6 +122,13 @@ export const CLEANUP: CleanupDef[] = [
     hint: 'cleanupElsewhereHint',
     headings: ['Find elsewhere', 'Search elsewhere'],
   },
+  {
+    id: 'adRequests',
+    label: 'cleanupAdRequests',
+    hint: 'cleanupAdRequestsHint',
+    headings: [],
+    markers: ['Block creepy ads, not private search', 'Ads keep your private search results free', 'Ads keep Startpage free'],
+  },
 ];
 
 /**
@@ -172,6 +179,7 @@ const REMOVED = {
   images: 'summaryRemovedImages',
   related: 'summaryRemovedRelated',
   elsewhere: 'summaryRemovedElsewhere',
+  adRequests: 'summaryRemovedAdRequests',
 } as const satisfies Record<CleanupKind, PluralKey>;
 
 /** "an AI answer and 2 video panels", or '' when nothing was removed. */

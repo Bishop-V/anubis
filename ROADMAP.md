@@ -53,8 +53,8 @@ Ready for translators: every word of the interface is in `public/_locales/en/mes
 
 ## Features
 
+- **Proper support for the Videos, Images, and News tabs.** Anubis weighs DuckDuckGo's tab cards, but the other engines' Videos and Images tabs are mostly untested grids where tags, the ⚖ button, and reranking may not fit. For each engine, model its tabs in `e2e/fixtures.mjs` (DuckDuckGo's `tab` option shows how), add a `cards` entry in `utils/engines.ts`, and check that the button sits on each card and that hidden cards leave no gaps in the grid. uBlacklist's SERPINFO has the selectors.
 - **Engine definitions fetched from the repo,** like uBlacklist's SERPINFO, so a selector fix doesn't need a store release. Chrome forbids downloading code, so they have to be data: `isResultsPage` is a function today and would need a declarative form.
-- **Image, video, and news results.** uBlacklist's SERPINFO has the selectors.
 - **An archived copy for paywalled results:** a link to `https://web.archive.org/web/<address>` beside the Paywalls label. It fetches nothing until clicked and needs no permission.
 - **SearXNG and Yahoo Japan.** uBlacklist's SERPINFO has `searxng.yml` and `yahoo-japan.yml`. SearXNG runs on many hosts, so let people add their instance: ask for that one host through the existing optional `https://*/*` permission, then register the content script for it (`scripting.registerContentScripts` in MV3, `contentScripts.register` in MV2). Nothing changes at install.
 
