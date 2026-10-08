@@ -2,7 +2,11 @@
 
 A list tags, raises, lowers, or hides sites for you. Anyone can publish one: it's a text file in a Git repository, a gist, or any public web address. There's no Anubis server in between.
 
-Anubis starts subscribed to five small lists that ship with it: **Official docs**, **Discussions**, **Reference**, **Paywalls**, and **FOSS tools**. They mostly add tags. **FOSS tools** labels LibreSpeed and cobalt.tools as FOSS, and makes the **AI slop** tag available for sites you choose to tag yourself. Existing installs keep their current subscriptions; add **FOSS tools** under **Settings → Lists → More lists**.
+Anubis starts subscribed to five small lists that ship with it: **Official docs**, **Discussions**, **Reference**, **Paywalls**, and **FOSS tools**. They mostly add tags. **FOSS tools** labels LibreSpeed and cobalt.tools as FOSS, and makes the **AI slop** tag available for sites you choose to tag yourself.
+
+It also starts with two [lists made from other projects](#lists-made-from-other-projects), which it downloads when it's installed: **AI content** and **Independent wikis**.
+
+Existing installs keep their current subscriptions; add any of these under **Settings → Lists → More lists**.
 
 <!-- Maintainer: this generated screenshot comes from the mock Settings page. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark image and its description together. -->
 
@@ -32,6 +36,19 @@ Some Brave Goggles are *lenses*: they hide every result they don't mention, so a
 ## Updates
 
 Anubis checks for new versions of your lists when the browser starts and while you search, at most every 30 minutes. Each list says how often it wants to be checked (usually once a day). **Update all** in **Settings → Lists** checks right away.
+
+## Lists made from other projects
+
+Some lists in the directory are made from data other projects collect. Every week, Anubis turns that data into a list and publishes it, so it stays current between Anubis's releases. Each list names its source and links to it in **Settings → Lists**.
+
+| List | Made from | What it does |
+| --- | --- | --- |
+| **AI content** | [HUGE AI Blocklist](https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist) by laylavish (CC0) | Labels sites made mostly of AI-generated text or images **AI-generated**, and sites that mix authentic and AI-generated work **Some AI content**. Sites the blocklist files as content farms or spam are also labelled **AI slop**. It never moves or hides anything unless you choose that for a tag. |
+| **Independent wikis** | [Indie Wiki Buddy](https://github.com/KevinPayravi/indie-wiki-buddy) by Kevin Payravi (MIT) | Raises independent wikis, labelled **Independent wiki**, and lowers the Fandom, Fextralife, and Neoseeker wikis they replace, labelled **Independent wiki elsewhere**. |
+
+To add a site to one of these lists, or to have one removed, contribute to the project it comes from, through the links above. Anubis copies the data as it is, and its next weekly update brings in the change. **Wrong? Report it** in the ⚖ menu opens an issue on that project's tracker.
+
+To stop using one, unsubscribe or turn it off like any list. To keep a list but not one of its labels, turn that tag off in **Settings → Tags**, or choose what it does there.
 
 ## Turn off, or unsubscribe
 

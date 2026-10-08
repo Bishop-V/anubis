@@ -59,6 +59,18 @@ Started: interface text is moving into `public/_locales/<language>/messages.json
 - **Engine definitions fetched from the repo,** like uBlacklist's SERPINFO, so a selector fix doesn't need a store release. Chrome forbids downloading code, so they have to be data: `isResultsPage` is a function today and would need a declarative form.
 - **Image, video, and news results.** uBlacklist's SERPINFO has the selectors.
 
+## Lists made from other projects
+
+Started: a weekly job (`.github/workflows/sources.yml`) turns other projects' data into lists in `lists/sources/`, credited and under their licences. **AI content** (the HUGE AI Blocklist) and **Independent wikis** (Indie Wiki Buddy) are on by default for new installs. What was weighed is in `docs/experiments/storage-and-lists.md`, "Lists made from other projects". Next:
+
+- **Where a tag shows.** Give each tag a choice of "On the result" (the chip, as now), "In the menu only" (under **Why** in the ⚖ menu, still counting for filtering and ranking), or "Off", building on `muted` in `TagPref` (`utils/matcher.ts`). Let a list suggest the starting choice for its tags, so broad categories start in the menu only. Needed before UT1, or every result gets a chip.
+- **Wikidata's official websites** (CC0): a SPARQL query in the weekly job joining "official website" (P856) with how many Wikipedia articles each item has, keeping the best-known entities, tens of thousands rather than all of them. Leave out addresses on shared hosts (`facebook.com/…`, `x.com/…`) or match them by path, and drop dead domains. `query.wikidata.org` can't be reached from cloud sessions, so try the query in the workflow. Where it covers sites one of Anubis's own lists tags by hand, its data replaces those entries.
+- **Read lists once, not on every page.** Search pages parse every list on each load (`compiled` in `utils/ruleset.ts` only lasts for one page): a 41,000-rule list took about 200 ms. Compile in the background script, or cache the compiled form, before adding a list much over 20,000 rules.
+- **UT1's categories** (CC BY-SA 4.0, mirrored in `olbat/ut1-blacklists` on GitHub): small ones first (press 4,600 sites, blog 1,500, forums 205, which joins the `forum` tag), starting in the menu only. Shopping, games, and gambling (35,000 to 40,000 each) wait for the two items above.
+- **Existing installs** only get default lists through **More lists**. Offer new default lists once in Settings, rather than subscribing anyone silently.
+- **The HUGE AI Blocklist's Pinterest rules** are regular expressions over Pinterest's many domains; the 92 of them are left out.
+- **Decided against:** credibility ratings (the Iffy Index, Wikipedia's perennial sources) on by default, since they're contested; at most an opt-in list. The Block List Project, which is built for blocking domains at the network level.
+
 ## Not planned
 
 - Telemetry or an uninstall survey: Anubis does not send user data to a developer-operated server; the privacy policy explains local processing and optional sync to a server the user chooses.

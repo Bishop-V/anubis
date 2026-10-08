@@ -80,13 +80,14 @@ export function builtinId(entry: DirectoryEntry): string {
   return `builtin:${entry.id}`;
 }
 
+/** The directory's default lists. Bundled ones work at once; the others arrive with the first update. */
 export function defaultSubscriptions(): Subscription[] {
   return BUNDLED_DIRECTORY.filter((e) => e.default).map((e) => ({
-    id: builtinId(e),
+    id: e.builtin ? builtinId(e) : subscriptionId(e.url),
     url: e.url,
     enabled: true,
     addedAt: Date.now(),
-    builtin: true,
+    ...(e.builtin ? { builtin: true } : {}),
     name: e.name,
   }));
 }
