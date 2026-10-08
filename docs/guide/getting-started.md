@@ -38,7 +38,7 @@ Browsers put new extensions behind the Extensions button (a puzzle piece) next t
 
 ## Search as usual
 
-Search on any [supported engine](./search-engines.md). Anubis starts with lists that tag official documentation, discussions, reference sites, paywalls, and FOSS online tools. The **AI slop** tag is available for sites you choose to tag yourself.
+Search on any [supported engine](./search-engines.md). Anubis starts with lists that tag official documentation, discussions, reference sites, paywalls, FOSS online tools, and AI-generated content, and that raise independent wikis above the Fandom wikis they replace. The **AI slop** tag is available for sites you choose to tag yourself.
 
 A one-line summary above the results says what Anubis did: which results it raised, lowered, or hid, and which tags are on the page. On a phone it says it in a few words ("Anubis changed 4 of 9 results."), and **Details** shows the rest.
 

@@ -8,7 +8,7 @@ import { localizePage, t, type MessageKey } from '@/utils/i18n';
 import { guide } from '@/utils/links';
 import { parseList } from '@/utils/listformat';
 import { getSettings, listCacheItem } from '@/utils/storage';
-import { displayName, getSubscriptions, listText } from '@/utils/subscriptions';
+import { BUNDLED_DIRECTORY, displayName, getSubscriptions, listText } from '@/utils/subscriptions';
 import { initTheme } from '@/utils/theme';
 
 // The page that opens when Anubis is installed: how to keep its button in the
@@ -72,7 +72,9 @@ async function renderLists() {
     .map((sub) => {
       const text = listText(sub, cache);
       const parsed = text ? parseList(text) : undefined;
-      return { name: displayName(sub, parsed?.meta), description: parsed?.meta.description, tags: parsed?.tags ?? [] };
+      // A default list that isn't bundled has no text until its first download.
+      const description = parsed?.meta.description ?? BUNDLED_DIRECTORY.find((e) => e.url === sub.url)?.description;
+      return { name: displayName(sub, parsed?.meta), description, tags: parsed?.tags ?? [] };
     });
   $('#lists-intro').textContent = lists.length ? t('welcomeListsIntro') : t('welcomeListsNone');
   $('#lists').replaceChildren(

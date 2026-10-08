@@ -48,9 +48,27 @@
       "default": true
     },
     {
+      "id": "ai-content",
+      "name": "AI content (HUGE AI Blocklist)",
+      "description": "Labels sites made of AI-generated content, or mixing it with authentic work, using the HUGE AI Blocklist by laylavish.",
+      "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/sources/ai-content.anubis",
+      "homepage": "https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist",
+      "format": "anubis",
+      "default": true
+    },
+    {
+      "id": "independent-wikis",
+      "name": "Independent wikis (Indie Wiki Buddy)",
+      "description": "Raises independent wikis and lowers the Fandom, Fextralife, and Neoseeker wikis they replace, using Indie Wiki Buddy's data.",
+      "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/sources/independent-wikis.anubis",
+      "homepage": "https://github.com/KevinPayravi/indie-wiki-buddy",
+      "format": "anubis",
+      "default": true
+    },
+    {
       "id": "huge-ai-blocklist",
       "name": "Huge AI Blocklist",
-      "description": "Hides AI-generated image and content farms. Community-maintained by laylavish.",
+      "description": "Hides AI-generated image and content farms. Community-maintained by laylavish. To label these sites instead, use AI content (HUGE AI Blocklist).",
       "url": "https://raw.githubusercontent.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist/main/list_uBlacklist.txt",
       "homepage": "https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist",
       "format": "ublacklist"

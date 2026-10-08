@@ -10,8 +10,8 @@ In Egyptian myth, Anubis weighed each heart against a feather. This extension we
 ## What it does
 
 - **[Rank any site from the results](https://bishop-v.github.io/anubis/guide/ranking)**: hide, lower, raise, or pin a site from the ⚖ button on any result.
-- **[Tags](https://bishop-v.github.io/anubis/guide/tags)**: labels like "Official docs", "Paywalled", "FOSS", or "AI slop" under each title, which can highlight, raise, lower, or hide results.
-- **[Lists anyone can publish](https://bishop-v.github.io/anubis/guide/lists)**: subscribe to Anubis lists, Brave Goggles, uBlacklist rulesets, and plain domain lists, or [publish your own](https://bishop-v.github.io/anubis/guide/publish-a-list).
+- **[Tags](https://bishop-v.github.io/anubis/guide/tags)**: labels like "Official docs", "Paywalled", "AI-generated", or "Independent wiki" under each title, which can highlight, raise, lower, or hide results.
+- **[Lists anyone can publish](https://bishop-v.github.io/anubis/guide/lists)**: subscribe to Anubis lists, Brave Goggles, uBlacklist rulesets, and plain domain lists, or [publish your own](https://bishop-v.github.io/anubis/guide/publish-a-list). Some are made every week from other projects' data, such as the HUGE AI Blocklist and Indie Wiki Buddy, and credit them.
 - **[Remove panels](https://bishop-v.github.io/anubis/guide/clean-up)**: take AI answers, video panels, "People also ask", and more off search pages.
 - **[More than one page of results](https://bishop-v.github.io/anubis/guide/more-results)**: bring later pages onto the first and rank them together.
 - **[Sync](https://bishop-v.github.io/anubis/guide/sync)**: your sites and settings follow you through your browser's own sync, and between Firefox and Chrome through a WebDAV server.
@@ -75,6 +75,6 @@ Other influences:
 
 ## License
 
-Anubis is released under the [GNU Affero General Public License v3.0](LICENSE) or any later version. The bundled lists in [`lists/`](lists) are CC0.
+Anubis is released under the [GNU Affero General Public License v3.0](LICENSE) or any later version. Anubis's own lists in [`lists/`](lists) are CC0. The lists in [`lists/sources/`](lists/sources) are made from other projects' data and keep their licences.
 
 The extension includes third-party code under its own licenses (WXT's runtime and the Lucide settings icon); their notices are in [`public/THIRD_PARTY_NOTICES.txt`](public/THIRD_PARTY_NOTICES.txt), which ships inside every build. The Claude skills in [`.claude/skills/`](.claude/skills) keep their upstream licenses (Apache-2.0 for `frontend-design`, MIT for `ux-heuristics`) and aren't part of the extension.
