@@ -8,7 +8,8 @@
 ! tag: docs | Official docs | #2f5fae | Documentation published by the project or vendor itself.
 !
 ! Made from DevDocs's scrapers (https://github.com/freeCodeCamp/devdocs),
-! commit 8ea53dd09805b52755f9e1703dbd7ccbea0d78c4, whose code is under the Mozilla Public License 2.0.
+! commit 8ea53dd09805b52755f9e1703dbd7ccbea0d78c4, whose code is under the Mozilla Public License 2.0
+! (https://mozilla.org/MPL/2.0/).
 ! Each rule is an address a scraper reads its docs from. A docs site's whole host
 ! is tagged; docs on a project's main site only under their path ("/docs").
 ! Addresses on GitHub, GitLab, and other shared hosts are left out.

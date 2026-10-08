@@ -341,7 +341,8 @@ export function devDocs(files, { commit }) {
       },
       [
         `Made from DevDocs's scrapers (${DEVDOCS.repository}),`,
-        `commit ${commit}, whose code is under the Mozilla Public License 2.0.`,
+        `commit ${commit}, whose code is under the Mozilla Public License 2.0`,
+        '(https://mozilla.org/MPL/2.0/).',
         "Each rule is an address a scraper reads its docs from. A docs site's whole host",
         "is tagged; docs on a project's main site only under their path (\"/docs\").",
         'Addresses on GitHub, GitLab, and other shared hosts are left out.',

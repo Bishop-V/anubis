@@ -270,6 +270,7 @@ describe('devDocs', () => {
     expect(parsed.errors).toEqual([]);
     expect(parsed.meta).toMatchObject({ name: 'Official docs (DevDocs)', license: 'MPL-2.0', homepage: 'https://github.com/freeCodeCamp/devdocs' });
     expect(text).toContain('commit fed789');
+    expect(text).toContain('https://mozilla.org/MPL/2.0/');
   });
 });
 
