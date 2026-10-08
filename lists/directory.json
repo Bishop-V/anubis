@@ -66,6 +66,24 @@
       "default": true
     },
     {
+      "id": "devdocs",
+      "name": "Official docs (DevDocs)",
+      "description": "Tags the documentation sites DevDocs collects, and nudges them up. It adds about 180 sites to Official docs.",
+      "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/sources/devdocs.anubis",
+      "homepage": "https://github.com/freeCodeCamp/devdocs",
+      "format": "anubis",
+      "default": true
+    },
+    {
+      "id": "self-hosted-foss",
+      "name": "Self-hosted FOSS (awesome-selfhosted)",
+      "description": "Labels the websites of about 1,000 free programs that awesome-selfhosted lists as FOSS. It never moves or hides anything.",
+      "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/sources/self-hosted-foss.anubis",
+      "homepage": "https://github.com/awesome-selfhosted/awesome-selfhosted-data",
+      "format": "anubis",
+      "default": true
+    },
+    {
       "id": "huge-ai-blocklist",
       "name": "Huge AI Blocklist",
       "description": "Hides AI-generated image and content farms. Community-maintained by laylavish. To label these sites instead, use AI content (HUGE AI Blocklist).",

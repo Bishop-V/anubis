@@ -241,3 +241,231 @@ export function indieWikis(data, { commit, licence }) {
     skipped,
   };
 }
+
+export const DEVDOCS = {
+  repository: 'https://github.com/freeCodeCamp/devdocs',
+  scrapers: 'lib/docs/scrapers',
+};
+
+// Hosts where an address is one project's page on a shared service, not a site of its own.
+const SHARED_HOSTS = new Set(
+  `github.com raw.githubusercontent.com gitlab.com bitbucket.org codeberg.org framagit.org gitee.com sr.ht git.sr.ht
+salsa.debian.org launchpad.net savannah.gnu.org sourceforge.net npmjs.com pypi.org hub.docker.com f-droid.org
+play.google.com apps.apple.com addons.mozilla.org chromewebstore.google.com wordpress.org web.archive.org devdocs.io`.split(/\s+/),
+);
+// Hosts whose name says they hold docs, so the whole host is tagged.
+const DOCS_HOST = /^(docs?|developer|devdocs|api|learn|reference|manual|man)\.|\.readthedocs\.io$/;
+// A first path segment that is a version or a language, under which a host keeps all its docs.
+const VERSION_SEGMENT = /^(v?\d.*|latest|stable|current|master|main|dev|next|en|[a-z]{2}-[a-z]{2,4})$|#\{/i;
+
+/**
+ * A project's address as a site and, when the project is only part of the site,
+ * the first segment of its path, ending in `^` so it matches with or without a
+ * trailing slash: `https://prettier.io/docs/` → prettier.io, `/docs^`. The whole
+ * host when `whole` says so, or when the path starts with a version or language.
+ * Nothing for an address on a shared host, one whose host is worked out at run
+ * time, or one whose path an Anubis pattern can't hold.
+ */
+function addressTarget(url, whole, deep = false) {
+  const m = /^https?:\/\/([^/?#"'{}]+)([/?#].*)?$/.exec(url.trim());
+  if (!m) return undefined;
+  const site = cleanHost(m[1]);
+  if (!site || !/\.[a-z]{2,}$/.test(site) || SHARED_HOSTS.has(site)) return undefined;
+  // A query or fragment ends the path; `#{…}` is DevDocs filling in a version.
+  const all = (m[2] ?? '').replace(/\?.*$|#(?!\{).*$/, '').split('/').filter(Boolean);
+  const end = all.findIndex((s) => VERSION_SEGMENT.test(s) || /\.\w+$/.test(s));
+  const segments = (end === -1 ? all : all.slice(0, end)).slice(0, deep ? undefined : 1);
+  if (!segments.length || whole(site)) return { site };
+  if (!segments.every((s) => /^[\w.~%-]+$/.test(s))) return undefined;
+  return { site, path: `/${segments.join('/')}^` };
+}
+
+/**
+ * Where a DevDocs scraper reads its docs (`base_url`): `https://docs.deno.com/api/`
+ * → the whole of docs.deno.com, `https://prettier.io/docs/` → prettier.io, `/docs^`.
+ */
+export function docsTarget(url) {
+  return addressTarget(url, (site) => DOCS_HOST.test(site));
+}
+
+/**
+ * A free program's website, down to its own page on a shared site:
+ * `https://www.atlassian.com/software/confluence` → atlassian.com,
+ * `/software/confluence^`; `https://0xerr0r.github.io/blocky/latest/` →
+ * 0xerr0r.github.io, `/blocky^`.
+ */
+export function projectTarget(url) {
+  return addressTarget(url, () => false, true);
+}
+
+/** The sites an Anubis list has `site=` rules for. */
+export function listSites(text) {
+  return [...new Set([...text.matchAll(/\$site=([^,\s]+)/g)].map((m) => m[1]))];
+}
+
+/**
+ * DevDocs's scrapers (Ruby files) as Anubis rules tagging "Official docs" and
+ * nudging them up, as Anubis's own Official docs list does. Each `base_url` in a
+ * scraper, for every version it keeps, becomes a rule; its comment names the docs.
+ * Sites the bundled list already has (`known`), or a part or parent of one, are left
+ * out: both lists are on by default, and boosts from two lists add up. The bundled
+ * list keeps them because installs that chose their own lists before this one
+ * existed aren't subscribed to it.
+ */
+export function devDocs(files, { commit, known = [] }) {
+  const overlaps = (site) => known.some((k) => site === k || site.endsWith(`.${k}`) || k.endsWith(`.${site}`));
+  const names = new Map();
+  const skipped = [];
+  for (const { path, text } of files) {
+    // DevDocs names docs after their class unless the scraper sets a name.
+    const name = /self\.name\s*=\s*['"]([^'"]+)['"]/.exec(text)?.[1] ?? /class\s+(\w+)\s*</.exec(text)?.[1] ?? path.replace(/^.*\//, '').replace(/\.rb$/, '');
+    for (const [, url] of text.matchAll(/base_url\s*=\s*['"]([^'"]+)['"]/g)) {
+      const target = docsTarget(url);
+      if (!target) {
+        skipped.push(`${name}: ${url}`);
+        continue;
+      }
+      if (overlaps(target.site)) continue;
+      const key = instruction(target.site, target.path, ['tag=docs', 'boost=1']);
+      if (!names.has(key)) names.set(key, new Set());
+      names.get(key).add(name);
+    }
+  }
+  const rules = [...names].map(([key, docs]) => ({ instruction: key, comment: `DevDocs collects the docs for ${[...docs].sort().join(', ')} here.` }));
+  return {
+    header: header(
+      {
+        name: 'Official docs (DevDocs)',
+        description: 'Tags the documentation sites DevDocs collects, and nudges them up.',
+        author: 'The DevDocs contributors',
+        homepage: DEVDOCS.repository,
+        license: 'MPL-2.0',
+        avatar: '#2f5fae',
+        expires: '7 days',
+        tag: ['docs | Official docs | #2f5fae | Documentation published by the project or vendor itself.'],
+      },
+      [
+        `Made from DevDocs's scrapers (${DEVDOCS.repository}),`,
+        `commit ${commit}, whose code is under the Mozilla Public License 2.0.`,
+        "Each rule is an address a scraper reads its docs from. A docs site's whole host",
+        "is tagged; docs on a project's main site only under their path (\"/docs\").",
+        'Addresses on GitHub, GitLab, and other shared hosts are left out, and so are',
+        "sites Anubis's own Official docs list already tags, so none is raised twice.",
+        '',
+        'To add docs, open an issue or pull request on DevDocs. Anubis rewrites this',
+        'file from it every week (.github/workflows/sources.yml), so edits made here are lost.',
+      ],
+    ),
+    rules: dropNarrower(rules),
+    skipped,
+  };
+}
+
+/**
+ * Drop rules another rule with the same options already covers: one on the same
+ * site or a parent site, for the whole site or the same path. `v18.angular.dev`
+ * goes when `angular.dev` has a rule, `/docs/$site=v3.tailwindcss.com` when
+ * `/docs/$site=tailwindcss.com` does.
+ */
+function dropNarrower(rules) {
+  const parsed = rules.map((r) => {
+    const [, path, site, options] = /^([^$]*)\$site=([^,]+),(.*)$/.exec(r.instruction);
+    return { rule: r, path, site, options };
+  });
+  const covers = (a, b) =>
+    a !== b && a.options === b.options && (!a.path || a.path === b.path) && (b.site === a.site || b.site.endsWith(`.${a.site}`));
+  return parsed.filter((b) => !parsed.some((a) => covers(a, b))).map((p) => p.rule);
+}
+
+export const AWESOME_SELFHOSTED = {
+  repository: 'https://github.com/awesome-selfhosted/awesome-selfhosted-data',
+  software: 'software',
+  licences: 'https://raw.githubusercontent.com/awesome-selfhosted/awesome-selfhosted-data/master/licenses.yml',
+};
+
+/** The top-level `key: value` and `key:` list fields of a flat YAML file. */
+function yamlFields(text) {
+  const out = {};
+  let list;
+  for (const line of text.split(/\r?\n/)) {
+    const field = /^([\w-]+):\s*(.*)$/.exec(line);
+    if (field) {
+      const value = field[2].trim().replace(/^(['"])(.*)\1$/, '$2');
+      list = value ? undefined : (out[field[1]] = []);
+      if (value) out[field[1]] = value;
+    } else if (list && /^\s+-\s+/.test(line)) {
+      list.push(line.replace(/^\s+-\s+/, '').trim().replace(/^(['"])(.*)\1$/, '$2'));
+    } else if (!/^\s/.test(line)) {
+      list = undefined;
+    }
+  }
+  return out;
+}
+
+/** The licence identifiers in awesome-selfhosted's `licenses.yml`, its list of free licences. */
+export function freeLicences(text) {
+  return new Set([...text.matchAll(/^- identifier:\s*(\S+)/gm)].map((m) => m[1]));
+}
+
+/**
+ * awesome-selfhosted's software entries (one YAML file each) as rules labelling
+ * each program's website FOSS, the FOSS tools list's tag. Only programs whose every
+ * licence is on its list of free licences are kept: the data also lists
+ * proprietary programs ("⊘ Proprietary") and ones under non-commercial licences.
+ * Labels only: nothing is moved or hidden.
+ */
+export function awesomeSelfhosted(files, { commit, free }) {
+  const names = new Map();
+  const skipped = [];
+  for (const { path, text } of files) {
+    const entry = yamlFields(text);
+    const name = entry.name ?? path.replace(/^.*\//, '').replace(/\.ya?ml$/, '');
+    const licences = Array.isArray(entry.licenses) ? entry.licenses : [];
+    if (!licences.length || !licences.every((l) => free.has(l))) continue;
+    const target = entry.website_url && projectTarget(entry.website_url);
+    if (!target) {
+      skipped.push(`${name}: ${entry.website_url ?? 'no website'}`);
+      continue;
+    }
+    const key = instruction(target.site, target.path, ['tag=foss']);
+    if (!names.has(key)) names.set(key, new Map());
+    names.get(key).set(name, licences);
+  }
+  const rules = [...names].map(([key, programs]) => ({
+    instruction: key,
+    comment: `awesome-selfhosted lists ${[...programs]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([name, licences]) => `${name} (${licences.join(', ')})`)
+      .join(', ')}.`,
+  }));
+  return {
+    header: header(
+      {
+        name: 'Self-hosted FOSS (awesome-selfhosted)',
+        description: 'Labels the websites of the free software awesome-selfhosted lists as FOSS. Never changes the ranking.',
+        author: 'The awesome-selfhosted contributors',
+        homepage: AWESOME_SELFHOSTED.repository,
+        license: 'CC-BY-SA-3.0',
+        avatar: '#3f6d8a',
+        expires: '7 days',
+        tag: ['foss | FOSS | #3f6d8a | Free and open-source software.'],
+      },
+      [
+        `Made from awesome-selfhosted's data (${AWESOME_SELFHOSTED.repository}),`,
+        `commit ${commit}, under the Creative Commons Attribution-ShareAlike 3.0`,
+        'Unported licence (https://creativecommons.org/licenses/by-sa/3.0/). This list',
+        'is shared under the same licence.',
+        '',
+        "Each rule is a program's website. Programs under a licence that isn't on",
+        "awesome-selfhosted's list of free licences are left out, and so are websites",
+        'on GitHub, GitLab, and other shared hosts.',
+        '',
+        'To add a program or report a mistake, open an issue or pull request on',
+        'awesome-selfhosted-data. Anubis rewrites this file from it every week',
+        '(.github/workflows/sources.yml), so edits made here are lost.',
+      ],
+    ),
+    rules: dropNarrower(rules),
+    skipped,
+  };
+}

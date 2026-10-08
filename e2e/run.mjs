@@ -2465,10 +2465,10 @@ if (!only || only === 'settings-undo' || checks) {
   const listName = ((await unsubscribe.getAttribute('aria-label')) ?? '').replace('Unsubscribe from ', '');
   await unsubscribe.click();
   await options.waitForTimeout(400);
-  const listGone = (await options.getByRole('button', { name: `Unsubscribe from ${listName}` }).count()) === 0;
+  const listGone = (await options.getByRole('button', { name: `Unsubscribe from ${listName}`, exact: true }).count()) === 0;
   const listFocus = await undoFocused();
   await undo();
-  const listBack = (await options.getByRole('button', { name: `Unsubscribe from ${listName}` }).count()) === 1;
+  const listBack = (await options.getByRole('button', { name: `Unsubscribe from ${listName}`, exact: true }).count()) === 1;
   const subsAfter = await worker.evaluate(async () => (await chrome.storage.sync.get('subscriptions')).subscriptions ?? null);
 
   await options.goto(`chrome-extension://${extId}/options.html#share`);

@@ -46,6 +46,8 @@ What Anubis draws and changes on search pages.
 
 Where things are stored, sync between browsers, and subscribing to lists.
 
+- FOSS from awesome-selfhosted (2026-10-08)
+- Official docs from DevDocs (2026-10-08)
 - More lists, and sites on shared hosts (2026-10-08)
 - Reading long lists on search pages (2026-10-08)
 - Settings and tag choices in sync (2026-10-08)

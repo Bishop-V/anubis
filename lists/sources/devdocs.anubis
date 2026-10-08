@@ -1,0 +1,195 @@
+! name: Official docs (DevDocs)
+! description: Tags the documentation sites DevDocs collects, and nudges them up.
+! author: The DevDocs contributors
+! homepage: https://github.com/freeCodeCamp/devdocs
+! license: MPL-2.0
+! avatar: #2f5fae
+! expires: 7 days
+! tag: docs | Official docs | #2f5fae | Documentation published by the project or vendor itself.
+!
+! Made from DevDocs's scrapers (https://github.com/freeCodeCamp/devdocs),
+! commit 8ea53dd09805b52755f9e1703dbd7ccbea0d78c4, whose code is under the Mozilla Public License 2.0.
+! Each rule is an address a scraper reads its docs from. A docs site's whole host
+! is tagged; docs on a project's main site only under their path ("/docs").
+! Addresses on GitHub, GitLab, and other shared hosts are left out, and so are
+! sites Anubis's own Official docs list already tags, so none is raised twice.
+!
+! To add docs, open an issue or pull request on DevDocs. Anubis rewrites this
+! file from it every week (.github/workflows/sources.yml), so edits made here are lost.
+
+/~ghc^$site=downloads.haskell.org,tag=docs,boost=1 # DevDocs collects the docs for Haskell here.
+/api_docs^$site=tensorflow.org,tag=docs,boost=1 # DevDocs collects the docs for TensorFlow, TensorFlow C++ here.
+/api^$site=dojotoolkit.org,tag=docs,boost=1 # DevDocs collects the docs for Dojo here.
+/api^$site=hapi.dev,tag=docs,boost=1 # DevDocs collects the docs for Hapi here.
+/api^$site=jasmine.github.io,tag=docs,boost=1 # DevDocs collects the docs for Jasmine here.
+/api^$site=joi.dev,tag=docs,boost=1 # DevDocs collects the docs for Joi here.
+/api^$site=qunitjs.com,tag=docs,boost=1 # DevDocs collects the docs for QUnit here.
+/api^$site=redux.js.org,tag=docs,boost=1 # DevDocs collects the docs for Redux here.
+/api^$site=scala-lang.org,tag=docs,boost=1 # DevDocs collects the docs for Scala here.
+/async^$site=caolan.github.io,tag=docs,boost=1 # DevDocs collects the docs for Async here.
+/clojure^$site=clojure.github.io,tag=docs,boost=1 # DevDocs collects the docs for Clojure here.
+/cmake^$site=cmake.org,tag=docs,boost=1 # DevDocs collects the docs for CMake here.
+/doc^$site=getcomposer.org,tag=docs,boost=1 # DevDocs collects the docs for Composer here.
+/doc^$site=twig.symfony.com,tag=docs,boost=1 # DevDocs collects the docs for Twig here.
+/Doc^$site=zsh.sourceforge.io,tag=docs,boost=1 # DevDocs collects the docs for Zsh here.
+/docs^$site=17.reactjs.org,tag=docs,boost=1 # DevDocs collects the docs for React here.
+/docs^$site=axios-http.com,tag=docs,boost=1 # DevDocs collects the docs for Axios here.
+/docs^$site=babeljs.io,tag=docs,boost=1 # DevDocs collects the docs for Babel here.
+/docs^$site=bluebirdjs.com,tag=docs,boost=1 # DevDocs collects the docs for Bluebird here.
+/docs^$site=bottlepy.org,tag=docs,boost=1 # DevDocs collects the docs for Bottle here.
+/docs^$site=bower.io,tag=docs,boost=1 # DevDocs collects the docs for Bower here.
+/docs^$site=codeception.com,tag=docs,boost=1 # DevDocs collects the docs for Codeception here.
+/docs^$site=cordova.apache.org,tag=docs,boost=1 # DevDocs collects the docs for Cordova here.
+/docs^$site=electronjs.org,tag=docs,boost=1 # DevDocs collects the docs for Electron here.
+/docs^$site=eslint.org,tag=docs,boost=1 # DevDocs collects the docs for ESLint here.
+/docs^$site=fishshell.com,tag=docs,boost=1 # DevDocs collects the docs for Fish here.
+/docs^$site=getbootstrap.com,tag=docs,boost=1 # DevDocs collects the docs for Bootstrap here.
+/docs^$site=hammerspoon.org,tag=docs,boost=1 # DevDocs collects the docs for Hammerspoon here.
+/docs^$site=httpd.apache.org,tag=docs,boost=1 # DevDocs collects the docs for Apache HTTP Server here.
+/docs^$site=i3wm.org,tag=docs,boost=1 # DevDocs collects the docs for i3 here.
+/docs^$site=immutable-js.com,tag=docs,boost=1 # DevDocs collects the docs for Immutable.js here.
+/docs^$site=jekyllrb.com,tag=docs,boost=1 # DevDocs collects the docs for Jekyll here.
+/docs^$site=lit.dev,tag=docs,boost=1 # DevDocs collects the docs for Lit here.
+/docs^$site=lodash.com,tag=docs,boost=1 # DevDocs collects the docs for lodash here.
+/docs^$site=marionettejs.com,tag=docs,boost=1 # DevDocs collects the docs for Marionette.js here.
+/docs^$site=modernizr.com,tag=docs,boost=1 # DevDocs collects the docs for Modernizr here.
+/docs^$site=mongoosejs.com,tag=docs,boost=1 # DevDocs collects the docs for Mongoose here.
+/docs^$site=nim-lang.org,tag=docs,boost=1 # DevDocs collects the docs for Nim here.
+/docs^$site=opentofu.org,tag=docs,boost=1 # DevDocs collects the docs for OpenTofu here.
+/docs^$site=opentsdb.net,tag=docs,boost=1 # DevDocs collects the docs for OpenTSDB here.
+/docs^$site=phaser.io,tag=docs,boost=1 # DevDocs collects the docs for Phaser here.
+/docs^$site=pig.apache.org,tag=docs,boost=1 # DevDocs collects the docs for Apache Pig here.
+/docs^$site=playwright.dev,tag=docs,boost=1 # DevDocs collects the docs for Playwright here.
+/docs^$site=prettier.io,tag=docs,boost=1 # DevDocs collects the docs for Prettier here.
+/docs^$site=pygame.org,tag=docs,boost=1 # DevDocs collects the docs for Pygame here.
+/docs^$site=rabbitmq.com,tag=docs,boost=1 # DevDocs collects the docs for RabbitMQ here.
+/docs^$site=reactnative.dev,tag=docs,boost=1 # DevDocs collects the docs for React Native here.
+/docs^$site=reactrouterdotcom.fly.dev,tag=docs,boost=1 # DevDocs collects the docs for React Router here.
+/docs^$site=relay.dev,tag=docs,boost=1 # DevDocs collects the docs for Relay here.
+/docs^$site=requirejs.org,tag=docs,boost=1 # DevDocs collects the docs for RequireJS here.
+/docs^$site=scikit-image.org,tag=docs,boost=1 # DevDocs collects the docs for scikit-image here.
+/docs^$site=socket.io,tag=docs,boost=1 # DevDocs collects the docs for Socket.IO here.
+/docs^$site=threejs.org,tag=docs,boost=1 # DevDocs collects the docs for Three.js here.
+/docs^$site=vagrantup.com,tag=docs,boost=1 # DevDocs collects the docs for Vagrant here.
+/docs^$site=varnish-cache.org,tag=docs,boost=1 # DevDocs collects the docs for Varnish here.
+/docs^$site=vertx.io,tag=docs,boost=1 # DevDocs collects the docs for Vert.x here.
+/docs^$site=webpack.github.io,tag=docs,boost=1 # DevDocs collects the docs for webpack here.
+/documentation^$site=knockoutjs.com,tag=docs,boost=1 # DevDocs collects the docs for Knockout.js here.
+/documentation^$site=pointclouds.org,tag=docs,boost=1 # DevDocs collects the docs for PointCloudLibrary here.
+/documentation^$site=sass-lang.com,tag=docs,boost=1 # DevDocs collects the docs for Sass here.
+/dox^$site=eigen.tuxfamily.org,tag=docs,boost=1 # DevDocs collects the docs for Eigen3 here.
+/enzyme^$site=enzymejs.github.io,tag=docs,boost=1 # DevDocs collects the docs for Enzyme here.
+/github^$site=rubydoc.info,tag=docs,boost=1 # DevDocs collects the docs for Padrino here.
+/gtk4^$site=developer-old.gnome.org,tag=docs,boost=1 # DevDocs collects the docs for GTK here.
+/haproxy-dconv^$site=cbonte.github.io,tag=docs,boost=1 # DevDocs collects the docs for HAProxy here.
+/HTML^$site=gnucobol.sourceforge.io,tag=docs,boost=1 # DevDocs collects the docs for GnuCOBOL here.
+/kb^$site=mariadb.com,tag=docs,boost=1 # DevDocs collects the docs for MariaDB here.
+/liquid^$site=shopify.github.io,tag=docs,boost=1 # DevDocs collects the docs for Liquid here.
+/man^$site=tcl-lang.org,tag=docs,boost=1 # DevDocs collects the docs for Tcl/Tk here.
+/manual^$site=jqlang.org,tag=docs,boost=1 # DevDocs collects the docs for jq here.
+/manual^$site=lua.org,tag=docs,boost=1 # DevDocs collects the docs for Lua here.
+/manual^$site=ocaml.org,tag=docs,boost=1 # DevDocs collects the docs for OCaml here.
+/manual^$site=phpunit.de,tag=docs,boost=1 # DevDocs collects the docs for PHPUnit here.
+/maplibre-gl-js^$site=maplibre.org,tag=docs,boost=1 # DevDocs collects the docs for MapLibre GL JS here.
+/onlinedocs^$site=gcc.gnu.org,tag=docs,boost=1 # DevDocs collects the docs for GCC, GNU Fortran here.
+/OpenGL-Refpages^$site=registry.khronos.org,tag=docs,boost=1 # DevDocs collects the docs for OpenGL here.
+/pkg^$site=golang.org,tag=docs,boost=1 # DevDocs collects the docs for Go here.
+/projects^$site=daringfireball.net,tag=docs,boost=1 # DevDocs collects the docs for Markdown here.
+/rdoc^$site=nokogiri.org,tag=docs,boost=1 # DevDocs collects the docs for Nokogiri here.
+/registry^$site=khronos.org,tag=docs,boost=1 # DevDocs collects the docs for Vulkan here.
+/release^$site=docs-archive.chef.io,tag=docs,boost=1 # DevDocs collects the docs for Chef here.
+/releases^$site=sinonjs.org,tag=docs,boost=1 # DevDocs collects the docs for Sinon.JS here.
+/releases^$site=v2.ocaml.org,tag=docs,boost=1 # DevDocs collects the docs for OCaml here.
+/software^$site=gnu.org,tag=docs,boost=1 # DevDocs collects the docs for Bash, Elisp, GNU Make here.
+/tcllib^$site=core.tcl-lang.org,tag=docs,boost=1 # DevDocs collects the docs for Tcllib here.
+/user_guide^$site=codeigniter.com,tag=docs,boost=1 # DevDocs collects the docs for CodeIgniter here.
+/userguide3^$site=codeigniter.com,tag=docs,boost=1 # DevDocs collects the docs for CodeIgniter here.
+/versions^$site=bazel.build,tag=docs,boost=1 # DevDocs collects the docs for Bazel here.
+/versions^$site=tensorflow.org,tag=docs,boost=1 # DevDocs collects the docs for TensorFlow, TensorFlow C++ here.
+/wiki^$site=love2d.org,tag=docs,boost=1 # DevDocs collects the docs for LÖVE here.
+$site=angular.io,tag=docs,boost=1 # DevDocs collects the docs for Angular here.
+$site=api.cakephp.org,tag=docs,boost=1 # DevDocs collects the docs for CakePHP here.
+$site=api.dart.dev,tag=docs,boost=1 # DevDocs collects the docs for Dart here.
+$site=api.drupal.org,tag=docs,boost=1 # DevDocs collects the docs for Drupal here.
+$site=api.haxe.org,tag=docs,boost=1 # DevDocs collects the docs for Haxe here.
+$site=api.jquery.com,tag=docs,boost=1 # DevDocs collects the docs for jQuery here.
+$site=api.jquerymobile.com,tag=docs,boost=1 # DevDocs collects the docs for jQuery Mobile here.
+$site=api.jqueryui.com,tag=docs,boost=1 # DevDocs collects the docs for jQuery UI here.
+$site=api.symfony.com,tag=docs,boost=1 # DevDocs collects the docs for Symfony here.
+$site=backbonejs.org,tag=docs,boost=1 # DevDocs collects the docs for Backbone.js here.
+$site=bun.com,tag=docs,boost=1 # DevDocs collects the docs for Bun here.
+$site=cfdocs.org,tag=docs,boost=1 # DevDocs collects the docs for ColdFusion here.
+$site=chaijs.com,tag=docs,boost=1 # DevDocs collects the docs for Chai here.
+$site=click.palletsprojects.com,tag=docs,boost=1 # DevDocs collects the docs for click here.
+$site=code.angularjs.org,tag=docs,boost=1 # DevDocs collects the docs for Angular.js here.
+$site=codecept.io,tag=docs,boost=1 # DevDocs collects the docs for CodeceptJS here.
+$site=coffeescript.org,tag=docs,boost=1 # DevDocs collects the docs for CoffeeScript here.
+$site=cycle.js.org,tag=docs,boost=1 # DevDocs collects the docs for Cycle.js here.
+$site=date-fns.org,tag=docs,boost=1 # DevDocs collects the docs for date-fns here.
+$site=developer.gnome.org,tag=docs,boost=1 # DevDocs collects the docs for GTK here.
+$site=developer.hashicorp.com,tag=docs,boost=1 # DevDocs collects the docs for Terraform here.
+$site=developer.wordpress.org,tag=docs,boost=1 # DevDocs collects the docs for WordPress here.
+$site=django-rest-framework.org,tag=docs,boost=1 # DevDocs collects the docs for Django REST Framework here.
+$site=doc.qt.io,tag=docs,boost=1 # DevDocs collects the docs for Qt here.
+$site=docs.ansible.com,tag=docs,boost=1 # DevDocs collects the docs for Ansible here.
+$site=docs.astro.build,tag=docs,boost=1 # DevDocs collects the docs for Astro here.
+$site=docs.brew.sh,tag=docs,boost=1 # DevDocs collects the docs for Homebrew here.
+$site=docs.celeryq.dev,tag=docs,boost=1 # DevDocs collects the docs for Celery here.
+$site=docs.chef.io,tag=docs,boost=1 # DevDocs collects the docs for Chef here.
+$site=docs.couchdb.org,tag=docs,boost=1 # DevDocs collects the docs for CouchDB here.
+$site=docs.cypress.io,tag=docs,boost=1 # DevDocs collects the docs for Cypress here.
+$site=docs.deno.com,tag=docs,boost=1 # DevDocs collects the docs for Deno here.
+$site=docs.godotengine.org,tag=docs,boost=1 # DevDocs collects the docs for Godot here.
+$site=docs.groovy-lang.org,tag=docs,boost=1 # DevDocs collects the docs for Groovy here.
+$site=docs.haproxy.org,tag=docs,boost=1 # DevDocs collects the docs for HAProxy here.
+$site=docs.influxdata.com,tag=docs,boost=1 # DevDocs collects the docs for InfluxData here.
+$site=docs.julialang.org,tag=docs,boost=1 # DevDocs collects the docs for Julia here.
+$site=docs.npmjs.com,tag=docs,boost=1 # DevDocs collects the docs for npm here.
+$site=docs.octave.org,tag=docs,boost=1 # DevDocs collects the docs for Octave here.
+$site=docs.phalconphp.com,tag=docs,boost=1 # DevDocs collects the docs for Phalcon here.
+$site=docs.phpunit.de,tag=docs,boost=1 # DevDocs collects the docs for PHPUnit here.
+$site=docs.pola.rs,tag=docs,boost=1 # DevDocs collects the docs for Polars here.
+$site=docs.pytest.org,tag=docs,boost=1 # DevDocs collects the docs for pytest here.
+$site=docs.saltproject.io,tag=docs,boost=1 # DevDocs collects the docs for SaltStack here.
+$site=docs.scipy.org,tag=docs,boost=1 # DevDocs collects the docs for NumPy here.
+$site=docs.wagtail.org,tag=docs,boost=1 # DevDocs collects the docs for Wagtail here.
+$site=esbuild.github.io,tag=docs,boost=1 # DevDocs collects the docs for esbuild here.
+$site=expressjs.com,tag=docs,boost=1 # DevDocs collects the docs for Express here.
+$site=falcon.readthedocs.io,tag=docs,boost=1 # DevDocs collects the docs for Falcon here.
+$site=flow.org,tag=docs,boost=1 # DevDocs collects the docs for Flow here.
+$site=graphite.readthedocs.io,tag=docs,boost=1 # DevDocs collects the docs for Graphite here.
+$site=graphviz.org,tag=docs,boost=1 # DevDocs collects the docs for Graphviz here.
+$site=gruntjs.com,tag=docs,boost=1 # DevDocs collects the docs for Grunt here.
+$site=handlebarsjs.com,tag=docs,boost=1 # DevDocs collects the docs for Handlebars.js here.
+$site=htmx.org,tag=docs,boost=1 # DevDocs collects the docs for htmx here.
+$site=jinja.palletsprojects.com,tag=docs,boost=1 # DevDocs collects the docs for Jinja here.
+$site=jsdoc.app,tag=docs,boost=1 # DevDocs collects the docs for JSDoc here.
+$site=latexref.xyz,tag=docs,boost=1 # DevDocs collects the docs for LaTeX here.
+$site=leafletjs.com,tag=docs,boost=1 # DevDocs collects the docs for Leaflet here.
+$site=lesscss.org,tag=docs,boost=1 # DevDocs collects the docs for Less here.
+$site=mochajs.org,tag=docs,boost=1 # DevDocs collects the docs for Mocha here.
+$site=momentjs.com,tag=docs,boost=1 # DevDocs collects the docs for Moment.js here.
+$site=openlayers.org,tag=docs,boost=1 # DevDocs collects the docs for OpenLayers here.
+$site=perldoc.perl.org,tag=docs,boost=1 # DevDocs collects the docs for Perl here.
+$site=phpunit.readthedocs.io,tag=docs,boost=1 # DevDocs collects the docs for PHPUnit here.
+$site=pugjs.org,tag=docs,boost=1 # DevDocs collects the docs for Pug here.
+$site=ramdajs.com,tag=docs,boost=1 # DevDocs collects the docs for Ramda here.
+$site=react-bootstrap.github.io,tag=docs,boost=1 # DevDocs collects the docs for React Bootstrap here.
+$site=reactivex.io,tag=docs,boost=1 # DevDocs collects the docs for ReactiveX here.
+$site=requests.readthedocs.io,tag=docs,boost=1 # DevDocs collects the docs for Requests here.
+$site=rethinkdb.com,tag=docs,boost=1 # DevDocs collects the docs for RethinkDB here.
+$site=rxjs.dev,tag=docs,boost=1 # DevDocs collects the docs for RxJS here.
+$site=sanctuary.js.org,tag=docs,boost=1 # DevDocs collects the docs for Sanctuary here.
+$site=scikit-learn.org,tag=docs,boost=1 # DevDocs collects the docs for scikit-learn here.
+$site=sequelize.org,tag=docs,boost=1 # DevDocs collects the docs for Sequelize here.
+$site=statsmodels.org,tag=docs,boost=1 # DevDocs collects the docs for Statsmodels here.
+$site=stdlib.ponylang.io,tag=docs,boost=1 # DevDocs collects the docs for Pony here.
+$site=trio.readthedocs.io,tag=docs,boost=1 # DevDocs collects the docs for Trio here.
+$site=underscorejs.org,tag=docs,boost=1 # DevDocs collects the docs for Underscore.js here.
+$site=valibot.dev,tag=docs,boost=1 # DevDocs collects the docs for Valibot here.
+$site=vitest.dev,tag=docs,boost=1 # DevDocs collects the docs for Vitest here.
+$site=vueuse.org,tag=docs,boost=1 # DevDocs collects the docs for VueUse here.
+$site=webpack.js.org,tag=docs,boost=1 # DevDocs collects the docs for webpack here.
+$site=werkzeug.palletsprojects.com,tag=docs,boost=1 # DevDocs collects the docs for Werkzeug here.
+$site=yarnpkg.com,tag=docs,boost=1 # DevDocs collects the docs for Yarn here.
+$site=yiiframework.com,tag=docs,boost=1 # DevDocs collects the docs for Yii here.
