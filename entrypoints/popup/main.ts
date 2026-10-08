@@ -7,7 +7,7 @@ import { engineFor } from '@/utils/engines';
 import { bugReportLink, describeBrowser, guide } from '@/utils/links';
 import { LEVELS, evaluate, type Level } from '@/utils/matcher';
 import { h, icon, siteName } from '@/utils/dom';
-import { ICON_GEAR, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
+import { ICON_GEAR, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS, tagEffectText, tagMark } from '@/utils/icons';
 import { localizePage, t, tJoin, tn, type MessageKey } from '@/utils/i18n';
 import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/messages';
@@ -167,8 +167,9 @@ function renderHere(rules: RuleSet) {
       return h(
         'span',
         { class: 'tag', style: `--c: ${tag.color}`, title: t('popupTagFrom', tJoin(verdict.tagSources[id] ?? [])) },
-        h('i', { class: 'gem' }),
+        tagMark(verdict.tagEffects[id]),
         tag.label,
+        tagEffectText(verdict.tagEffects[id]),
       );
     }
     return h(
@@ -187,8 +188,9 @@ function renderHere(rules: RuleSet) {
           },
         },
       },
-      h('i', { class: on ? 'gem' : 'gem hollow' }),
+      tagMark(on ? verdict.tagEffects[id] : undefined, !on),
       tag.label,
+      on ? tagEffectText(verdict.tagEffects[id]) : null,
     );
   });
 
@@ -246,7 +248,7 @@ function renderHere(rules: RuleSet) {
   target?.focus();
   // A tag just created only appears once the change is saved: keep waiting for it.
   if (target && focusKey === hereFocusKey) hereFocusKey = undefined;
-  requestAnimationFrame(() => requestAnimationFrame(() => setBalance(balance, r.shown)));
+  requestAnimationFrame(() => requestAnimationFrame(() => setBalance(balance, verdict.level, verdict.score)));
 }
 
 function renderPage(next: PageStats | undefined) {

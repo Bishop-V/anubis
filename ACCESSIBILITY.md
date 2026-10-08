@@ -9,7 +9,7 @@ Anubis works in two places, and they need different care:
 
 ## Screen readers
 
-**Hide things the same way for everyone.** A result or panel that is hidden on screen is hidden with `display: none` (`entrypoints/content/page.css`), which also takes it out of what a screen reader reads, and "Show hidden" brings both back. Don't hide something visually while leaving it readable, or the other way round. The exception is on purpose: lowered results and the Dim style only fade, so they stay readable, and the chip under the title ("Lowered", "Hidden") says what happened in words.
+**Hide things the same way for everyone.** A result or panel that is hidden on screen is hidden with `display: none` (`entrypoints/content/page.css`), which also takes it out of what a screen reader reads, and "Show hidden" brings both back. Don't hide something visually while leaving it readable, or the other way round. The exception is on purpose: lowered results and the Dim style only fade, so they stay readable, and the button on the result says what happened in words ("Hide, rank, or tag fandom.com (lowered)"), as does a tag that lowered it.
 
 **Reading order is the page's order.** Reranking moves results with CSS `order` and never moves the nodes (see Pitfalls in `CLAUDE.md`). Screen readers and Tab follow the DOM, so they meet results in the engine's order, not the reranked one. This can't be fixed without moving nodes the engine owns; keep it in mind, and don't make anything depend on the visual order being the reading order.
 

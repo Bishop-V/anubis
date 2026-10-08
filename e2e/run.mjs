@@ -271,13 +271,15 @@ async function clickShadowButton(hostSelector, text, index = 0) {
   await cdp.detach();
 }
 
-async function hasChipInHost(cdp, hostId, level) {
+async function hasInHost(cdp, hostId, selector) {
   const { node: host } = await cdp.send('DOM.describeNode', { nodeId: hostId, depth: -1, pierce: true });
   const shadow = host.shadowRoots?.[0];
   if (!shadow) return false;
-  const { nodeId } = await cdp.send('DOM.querySelector', { nodeId: shadow.nodeId, selector: `.verdict.${level}` });
+  const { nodeId } = await cdp.send('DOM.querySelector', { nodeId: shadow.nodeId, selector });
   return !!nodeId;
 }
+
+const hasChipInHost = (cdp, hostId, level) => hasInHost(cdp, hostId, `.verdict.${level}`);
 
 async function hasResultChip(cdp, resultId, level) {
   const { nodeId: hostId } = await cdp.send('DOM.querySelector', { nodeId: resultId, selector: 'anubis-chips' });
@@ -1310,7 +1312,8 @@ if (!only || only === 'pins' || checks) {
   const { nodeIds } = await cdp.send('DOM.querySelectorAll', { nodeId: root.nodeId, selector: '[data-anubis-state~="pin"]' });
   const chips = await Promise.all(nodeIds.map((id) => hasResultChip(cdp, id, 'pin')));
   const { nodeIds: chipHosts } = await cdp.send('DOM.querySelectorAll', { nodeId: root.nodeId, selector: 'anubis-chips' });
-  const retainedRankChips = { raised: false, lowered: false };
+  // Raised and lowered results have no label of their own: their tags say what moved them.
+  const retainedRankChips = { raised: false, lowered: false, tagMark: false };
   for (const hostId of chipHosts) {
     retainedRankChips.raised ||= await hasChipInHost(cdp, hostId, 'raise');
     retainedRankChips.lowered ||= await hasChipInHost(cdp, hostId, 'lower');
@@ -1345,6 +1348,17 @@ if (!only || only === 'pins' || checks) {
       accessibleName: ariaLabel.toLowerCase().includes('pinned'),
     });
   }
+  // Set "Great tutorial" to Raise: javascript.info's tag shows the raise sign in its diamond's place.
+  const sw = ctx.serviceWorkers()[0];
+  const { tagPrefs: savedPrefs } = await sw.evaluate(() => chrome.storage.sync.get('tagPrefs'));
+  await sw.evaluate((prefs) => chrome.storage.sync.set({ tagPrefs: { ...prefs, tutorial: { action: 'raise' } } }), savedPrefs);
+  for (let i = 0; i < 40 && !retainedRankChips.tagMark; i++) {
+    await page.waitForTimeout(100);
+    const { root: now } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+    const { nodeIds: hosts } = await cdp.send('DOM.querySelectorAll', { nodeId: now.nodeId, selector: 'anubis-chips' });
+    for (const hostId of hosts) retainedRankChips.tagMark ||= await hasInHost(cdp, hostId, '.gem-mark.raise');
+  }
+  await sw.evaluate((prefs) => chrome.storage.sync.set({ tagPrefs: prefs }), savedPrefs);
   await cdp.detach();
   console.log('\n== pinned results in a row:', JSON.stringify({ layout: await measure(), presentation: pinPresentation, retainedRankChips }));
   if (checks) {
@@ -1353,7 +1367,8 @@ if (!only || only === 'pins' || checks) {
       noRedundantPinnedChip: pinPresentation.every((pin) => !pin.chip),
       pinIconUsesGold: pinPresentation.every((pin) => pin.goldIcon),
       accessibleNameRetained: pinPresentation.every((pin) => pin.accessibleName),
-      raisedAndLoweredChipsRemain: retainedRankChips.raised && retainedRankChips.lowered,
+      noRaisedOrLoweredChips: !retainedRankChips.raised && !retainedRankChips.lowered,
+      tagMarkShown: retainedRankChips.tagMark,
     });
   }
   await page.screenshot({ path: `${SHOTS}google-pins.png`, fullPage: true });

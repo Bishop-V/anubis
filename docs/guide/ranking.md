@@ -12,17 +12,19 @@ Every site has a *ranking*, which you choose from the ⚖ button on any of its r
 
 </div>
 
-The button's balance tips with the site's ranking: down on the left for a lowered site, up for a raised one, and level for the rest. A pinned site's button shows a gold pin instead of a redundant label; a hidden site's (once you show it) shows a crossed-out eye. The result has no separate "Pinned" or "Hidden" label because the selector already shows its ranking. "Raised" and "Lowered" labels remain beside the tags.
+The button's balance tips with the site's ranking: down on the left for a lowered site, up for a raised one, and level for the rest. A pinned site's button shows a gold pin; a hidden site's (once you show it) shows a crossed-out eye. The result has no separate "Raised" or "Lowered" label, since the button already shows its ranking. A tag that moves or hides the result [shows that in place of its diamond](./tags.md#see-what-a-tag-does-to-a-result).
+
+The balance in the menu weighs everything together: your ranking, your tags, and your lists. The further a result moves, the further it tips, so a site with two tags you set to Raise tips further than one with a single tag.
 
 | Ranking | What happens to the site's results |
 | --- | --- |
 | **Hide** | They disappear, or shrink to one line you can open (see [Hidden results](#hidden-results)). |
-| **Lower** | They move five places down, with a "Lowered" label under the title. |
-| **Normal** | They stay where the engine put them, whatever your lists say. [Tags you set to Raise, Lower, or Hide](./tags.md#several-tags-on-one-result) still apply. |
+| **Lower** | They move five places down. |
+| **Normal** | They stay where the engine put them, whatever your lists say. [Tags you set to Raise or Lower](./tags.md#several-tags-on-one-result) still move them. |
 | **Raise** | They move five places up. |
 | **Pin** | They go to the top, with a thin gold outline (grey with the Plain colours in **Settings → Appearance**). |
 
-Your choice beats your lists. If a list lowers a site and you raise it, it's raised. Your choice adds to [the tags you set to Raise or Lower](./tags.md#several-tags-on-one-result) rather than replacing them: a site you raise that carries a tag you set to Lower stays where the engine put it. A tag you set to Hide still hides the site, whatever you choose for it; change the tag in **Settings → Tags** to show it. Without a choice of yours, the lists' rankings and your tags add up.
+Your choice beats your lists. If a list lowers a site and you raise it, it's raised. Your choice adds to [the tags you set to Raise or Lower](./tags.md#several-tags-on-one-result) rather than replacing them: a site you raise that carries a tag you set to Lower stays where the engine put it. A tag you set to Hide doesn't hide a site you ranked yourself, so ranking a site is how to keep one site that a Hide tag would hide. Without a choice of yours, the lists' rankings and your tags add up.
 
 After a change from the menu, the summary above the results says what you did ("Hid fandom.com.") with an **Undo** button. Undo puts the site back as it was before you opened its menu, tags included, even after several changes. It stays until your next search, or until you change another site.
 

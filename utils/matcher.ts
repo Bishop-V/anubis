@@ -12,8 +12,8 @@ import { PERSONAL_NAME } from './personal';
 //      places each, so two raises and a lower make one raise. A rule carrying a tag
 //      with a choice leaves the ranking to the choices.
 //   2. The personal list (pin / raise / lower / hide / allow for a site) adds to the
-//      tag choices, and replaces the subscribed lists' own instructions. A tag set to
-//      Hide still hides; a personal Hide hides whatever the tags say.
+//      Raise and Lower tag choices, and replaces the subscribed lists' own instructions
+//      and Hide tag choices: a site you ranked yourself isn't hidden by a tag.
 //   3. Without a personal ranking, the subscribed lists' own instructions add to the
 //      tag choices. Within one list, Goggles precedence applies: discard > boost >
 //      downrank. Across lists, boosts and downranks add up.
@@ -139,6 +139,8 @@ export interface Verdict {
   tags: string[];
   /** Tag id → names of the lists that applied it. */
   tagSources: Record<string, string[]>;
+  /** Tag id → what the tag does to this result, for tags that move or hide it: your choice for the tag, or the list's own rule when you follow the list. */
+  tagEffects: Record<string, Level>;
   /** Tag whose colour tints the result, when a tag's action is "highlight". */
   highlight?: string;
   /** The personal list's explicit level for this result, if any. */
@@ -258,7 +260,7 @@ export function evaluate(
   lists: CompiledList[],
   prefs: Record<string, TagPref> = {},
 ): Verdict {
-  const verdict: Verdict = { level: 'normal', score: 0, hidden: false, tags: [], tagSources: {}, reasons: [] };
+  const verdict: Verdict = { level: 'normal', score: 0, hidden: false, tags: [], tagSources: {}, tagEffects: {}, reasons: [] };
   const target = toTarget(result);
   if (!target) return verdict;
   const words = localWords();
@@ -278,6 +280,9 @@ export function evaluate(
   let highlight: string | undefined;
   const hides: NonNullable<Verdict['hiddenBy']>[] = [];
   const hide = (by: NonNullable<Verdict['hiddenBy']>) => hides.push(by);
+  // What the lists' own rules do to the tags you follow the lists for, strongest first.
+  const listEffects = new Map<string, Level>();
+  const STRENGTH: Record<Level, number> = { hide: 3, pin: 2, raise: 2, lower: 1, normal: 0 };
 
   // Your tag choices, each tag once however many lists give it. Returns whether the
   // rule carries a tag with a choice, which then decides instead of the rule.
@@ -341,6 +346,11 @@ export function evaluate(
       else if (boost > 0) up = Math.max(up, boost);
       else if (boost < 0) down = Math.min(down, boost);
     }
+    for (const rule of matched) {
+      if (rule.tags.some((id) => (prefs[id]?.action ?? 'list') !== 'list')) continue;
+      const effect: Level = rule.discard ? 'hide' : rule.pin || rule.boost > 0 ? 'raise' : rule.boost < 0 ? 'lower' : 'normal';
+      for (const id of rule.tags) if (STRENGTH[effect] > STRENGTH[listEffects.get(id) ?? 'normal']) listEffects.set(id, effect);
+    }
     if (listDiscard) hide({ kind: 'list', name: list.name });
     else listScore += up > 0 ? up : down;
   }
@@ -356,11 +366,15 @@ export function evaluate(
     return verdict;
   }
 
-  const choices = describeChoices(chosen, (id) => prefs[id]?.label ?? tagLabel(lists, id));
+  // Your own ranking adds to your Raise and Lower tags; the lists' own instructions and
+  // your Hide tags give way to it.
+  const counted = new Map([...chosen].filter(([, action]) => !p || action !== 'hide'));
+  const choices = describeChoices(counted, (id) => prefs[id]?.label ?? tagLabel(lists, id));
   if (choices) verdict.reasons.push({ list: t('reasonYourTagSettings'), listId: TAG_CHOICES, personal: true, text: choices, report: choices });
+  for (const [id, action] of counted) if (action === 'hide' || action === 'raise' || action === 'lower') verdict.tagEffects[id] = action;
+  if (!p) for (const [id, effect] of listEffects) if (effect !== 'normal') verdict.tagEffects[id] = effect;
 
-  // Your own ranking adds to your tag choices, and the lists' own instructions give way to it.
-  const hiddenBy = p ? hides.find((by) => by.kind === 'tag') : hides[0];
+  const hiddenBy = p ? undefined : hides[0];
   const own = p === 'pin' ? PIN_SCORE : p === 'raise' ? PERSONAL_STRENGTH : p === 'lower' ? -PERSONAL_STRENGTH : 0;
   const score = tagScore + (p ? own : listScore);
   verdict.hidden = !!hiddenBy;

@@ -362,6 +362,29 @@ input[type='color']::-moz-color-swatch {
   background: transparent;
   box-shadow: inset 0 0 0 1.25px var(--c);
 }
+/* A tag that moves or hides the result: its ranking's sign in the tag's colour, in the diamond's place. */
+.gem-mark {
+  display: inline-flex;
+  width: 10px;
+  height: 10px;
+  margin: 0 -1px;
+  color: var(--c);
+  flex: none;
+}
+.gem-mark svg {
+  width: 10px;
+  height: 10px;
+}
+
+/* Read by screen readers, not shown. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 button.tag {
   cursor: pointer;
 }

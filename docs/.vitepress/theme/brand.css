@@ -405,6 +405,15 @@ body .VPContent .VPHome {
   transform: rotate(45deg);
   background: var(--c);
 }
+/* A tag that moves the result, as the extension's .gem-mark: the ranking's sign in the tag's colour. */
+.demo-tag .mark {
+  display: inline-flex;
+  width: 10px;
+  height: 10px;
+  margin: 0 4px 0 -2px;
+  vertical-align: -1px;
+  color: var(--c);
+}
 .demo-results {
   display: flex;
   flex-direction: column;
@@ -465,26 +474,6 @@ body .VPContent .VPHome {
 }
 .demo-result .chip.on {
   opacity: 1;
-}
-/* Labels under a title, as the extension's .verdict: Raised in gold, Lowered muted,
-   each after its icon. A pinned site has none; its button shows the pin. */
-.demo-verdict {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12.5px;
-  color: var(--vp-c-text-2);
-  white-space: nowrap;
-}
-.demo-verdict.raise {
-  color: var(--vp-c-brand-1);
-}
-.demo-verdict .chip-icon {
-  display: flex;
-}
-.demo-verdict svg {
-  width: 13px;
-  height: 13px;
 }
 /* The button on each result, as the extension's .weigh: muted, its balance tipping
    with the ranking, and gold only for a pinned site. */

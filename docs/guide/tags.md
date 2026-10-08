@@ -30,6 +30,10 @@ A list decides which sites get a tag. You decide what the tag does, in **Setting
 
 Under each tag's name, one line says which sites carry it and what happens to them, for example "Marks 23 sites from Paywalls. Only a label: their ranking stays the same." The Paywalls list only labels; to lower paywalled sites, choose **Lower** for the tag.
 
+### See what a tag does to a result
+
+Under a result, each tag starts with a diamond in its colour. When the tag moves or hides that result, an arrow up (it raises it), an arrow down (it lowers it), or a crossed-out eye (it hides it) takes the diamond's place. This shows your choice for the tag, or, when you follow the lists, what the list does. The same marks show in the result's ⚖ menu and in the toolbar popup.
+
 Turn off **Shown** to keep a tag working without showing its label under results. Press a tag's colour to change it. To see every tag in grey on search pages, choose **Plain** in **Settings → Appearance → Colours on search pages**. Tags are then told apart by their names.
 
 ## Tag sites yourself
@@ -60,7 +64,7 @@ When a result carries several tags you've set to **Raise** or **Lower**, Anubis 
 
 A tag counts once, however many of your lists give it. A tag set to **Hide** still hides the result, whatever the others say. **Why** in the result's ⚖ menu shows each tag's part and where the result ends up ("raise it by 5 each for “Official docs” and “Reference” and lower it by 5 for “Paywall”, so it moves 5 places up").
 
-A ranking you gave a site yourself adds to its tags. If you raised a site and it has a tag set to Lower, they cancel out. A tag set to Hide still hides it, so change the tag here to show those sites again. If you hid a site yourself, it stays hidden whatever its tags say.
+A ranking you gave a site yourself adds to its tags. If you raised a site and it has a tag set to Lower, they cancel out. A tag set to Hide doesn't hide a site you ranked yourself, so you can keep one site that the tag would hide. If you hid a site yourself, it stays hidden whatever its tags say.
 
 ## Show only one tag
 

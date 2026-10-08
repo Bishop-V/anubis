@@ -1,4 +1,6 @@
+import { h, icon } from './dom';
 import { t } from './i18n';
+import type { Level } from './matcher';
 
 // Inline SVG icons, so no image files or extra requests are needed. All use
 // currentColor and a 16×16 grid. The rankings' names live here too, beside their icons.
@@ -84,3 +86,35 @@ export const LEVEL_CHIPS = {
   raise: t('chipRaised'),
   pin: t('chipPinned'),
 };
+
+/**
+ * A tag's mark when the tag moves or hides the result: the ranking's icon, simplified to
+ * sit where the tag's diamond does, in the tag's colour. On a 10×10 grid.
+ */
+const mark = (body: string) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" width="10" height="10" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
+const TAG_MARKS: Partial<Record<Level, string>> = {
+  hide: mark('<path d="M1 5s1.5-3 4-3c.8 0 1.5.3 2.1.7M9 5S7.5 8 5 8c-.8 0-1.5-.3-2.1-.7"/><path d="M1.6 8.4l6.8-6.8"/>'),
+  lower: mark('<path d="M2 3.4l3 3.2 3-3.2"/>'),
+  raise: mark('<path d="M2 6.6l3-3.2 3 3.2"/>'),
+};
+
+/** What a tag's mark means, for screen readers and its tooltip. */
+export const TAG_EFFECTS: Partial<Record<Level, string>> = {
+  hide: t('tagMarkHide'),
+  lower: t('tagMarkLower'),
+  raise: t('tagMarkRaise'),
+};
+
+/** A tag's diamond, or, when the tag moves or hides the result (`effect`), the sign of what it does. */
+export function tagMark(effect?: Level, hollow = false): HTMLElement {
+  const sign = effect && TAG_MARKS[effect];
+  if (!sign) return h('i', { class: hollow ? 'gem hollow' : 'gem' });
+  return h('i', { class: `gem-mark ${effect}` }, icon(sign));
+}
+
+/** The words for a tag's mark, unseen, after its name. */
+export function tagEffectText(effect?: Level): HTMLElement | null {
+  const words = effect && TAG_EFFECTS[effect];
+  return words ? h('span', { class: 'sr-only' }, t('tagMarkSpoken', words)) : null;
+}

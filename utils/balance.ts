@@ -8,6 +8,16 @@ import type { Level } from './matcher';
 // against the feather. Angles in degrees; negative drops the site's (left) pan.
 const TILT: Record<Level, number> = { hide: -13, lower: -6, normal: 0, raise: 6, pin: 13 };
 const ARM = 52;
+/** A raised or lowered site tips further the more places it moves, short of a pin or a hide. */
+const MAX_MOVE_TILT = 11;
+/** Sets how fast the tilt grows: one Raise (5 places) tips it TILT.raise. */
+const MOVE_SCALE = 5 / -Math.log(1 - TILT.raise / MAX_MOVE_TILT);
+
+/** How far the balance tips for a ranking, and for a raise or lower, how many places it moves the site. */
+export function tiltFor(level: Level, score = 0): number {
+  if ((level !== 'raise' && level !== 'lower') || !score) return TILT[level];
+  return Math.sign(score) * MAX_MOVE_TILT * (1 - Math.exp(-Math.abs(score) / MOVE_SCALE));
+}
 
 /** The balance, with the heart and the feather in its pans; `empty` leaves them out (the popup's empty list). */
 export function balanceSvg({ empty = false } = {}): SVGSVGElement {
@@ -30,8 +40,8 @@ export function balanceSvg({ empty = false } = {}): SVGSVGElement {
   </svg>`) as SVGSVGElement;
 }
 
-export function setBalance(svg: Element, level: Level): void {
-  const deg = TILT[level];
+export function setBalance(svg: Element, level: Level, score = 0): void {
+  const deg = tiltFor(level, score);
   const rad = (deg * Math.PI) / 180;
   const dy = ARM * Math.sin(rad);
   const dx = ARM * (1 - Math.cos(rad));

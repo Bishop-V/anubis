@@ -104,12 +104,28 @@ describe('evaluate', () => {
     // Raised with a Lower tag: they cancel out. With a Raise tag: they add up.
     expect(at('r.fandom.com')).toMatchObject({ level: 'normal', score: 0 });
     expect(at('r.fandom.com', { elsewhere: { action: 'raise' } })).toMatchObject({ level: 'raise', score: 2 * PERSONAL_STRENGTH });
-    // A pin stays a pin; a Hide tag still hides; your Hide hides whatever the tags say.
+    // A pin stays a pin; your ranking beats a Hide tag; your Hide hides whatever the tags say.
     expect(at('p.fandom.com')).toMatchObject({ level: 'pin', hidden: false });
-    expect(at('r.fandom.com', { elsewhere: { action: 'hide' } })).toMatchObject({ level: 'hide', hidden: true, hiddenBy: { kind: 'tag', name: 'elsewhere' } });
-    expect(at('h.fandom.com', { elsewhere: { action: 'raise' } })).toMatchObject({ level: 'hide', hiddenBy: { kind: 'personal' } });
+    const rescued = at('r.fandom.com', { elsewhere: { action: 'hide' } });
+    expect(rescued).toMatchObject({ level: 'raise', score: PERSONAL_STRENGTH, hidden: false, tagEffects: {} });
+    expect(rescued.reasons.some((r) => r.list === 'Your tag settings')).toBe(false);
+    expect(at('h.fandom.com', { elsewhere: { action: 'raise' } })).toMatchObject({ level: 'hide', hiddenBy: { kind: 'personal' }, tagEffects: {} });
     // The lists' own instructions still give way to your ranking.
     expect(weigh('https://b.com/', [me, sub])).toMatchObject({ level: 'raise', score: PERSONAL_STRENGTH });
+  });
+
+  it('says what each tag does to the result', () => {
+    const sub = list('Wikis', '$site=a.com,tag=indie,boost=2\n$site=a.com,tag=docs\n$site=b.com,tag=farm,tag=slop,downrank=2\n$site=c.com,tag=slop,discard');
+    // Following the list: the rule's own effect. Your choice: the choice. A tag that does neither: nothing.
+    expect(weigh('https://a.com/', [sub]).tagEffects).toEqual({ indie: 'raise' });
+    expect(weigh('https://b.com/', [sub]).tagEffects).toEqual({ farm: 'lower', slop: 'lower' });
+    expect(weigh('https://c.com/', [sub]).tagEffects).toEqual({ slop: 'hide' });
+    // A choice for one tag on a rule leaves the rule's own boost out, so its other tags do nothing.
+    expect(weigh('https://b.com/', [sub], { slop: { action: 'raise' } }).tagEffects).toEqual({ slop: 'raise' });
+    expect(weigh('https://a.com/', [sub], { docs: { action: 'hide' }, indie: { action: 'label' } }).tagEffects).toEqual({ docs: 'hide' });
+    // Your own ranking keeps only your Raise and Lower tags.
+    const me = list('me', '$site=a.com,boost=5', true);
+    expect(weigh('https://a.com/', [me, sub], { docs: { action: 'lower' } }).tagEffects).toEqual({ docs: 'lower' });
   });
 
   it('applies tag preferences to the user’s own tags too', () => {

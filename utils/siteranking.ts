@@ -13,14 +13,12 @@ export interface Ranking {
   pressed: Level | undefined;
   /** What the lists alone would do. */
   fromLists: Level;
-  /** What the site ends up as. */
-  shown: Level;
 }
 
 export function rankingOf(entry: SiteEntry | undefined, baseline: Verdict): Ranking {
   const personal = entry?.level;
   const pressed = personal && personal !== 'normal' ? displayLevel(personal) : undefined;
-  return { personal, pressed, fromLists: baseline.level, shown: pressed ?? baseline.level };
+  return { personal, pressed, fromLists: baseline.level };
 }
 
 /** What pressing a ranking stores. "Normal" has to beat the lists when they rank this site, so it becomes an explicit allow. */
@@ -53,9 +51,8 @@ export function siteCartouche(domain: string, choices: string[], onPick: (domain
 
 /** One sentence on where a site's ranking comes from. `verdict` is the whole weighing, your list included: your tag settings add to your ranking. */
 export function rankingHint(domain: string, baseline: Verdict, r: Ranking, verdict: Verdict = baseline): string {
-  if (r.personal && r.personal !== 'normal' && r.personal !== 'hide') {
-    if (verdict.hiddenBy?.kind === 'tag') return t('popupHintTagHides');
-    if (verdict.reasons.some((x) => x.listId === TAG_CHOICES)) return t('popupHintMineTags', domain);
+  if (r.personal && r.personal !== 'normal' && r.personal !== 'hide' && verdict.reasons.some((x) => x.listId === TAG_CHOICES)) {
+    return t('popupHintMineTags', domain);
   }
   if (r.personal === 'allow') return t('popupHintAllow');
   if (r.pressed) return t('popupHintMine', domain);

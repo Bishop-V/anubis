@@ -156,7 +156,7 @@ for (const reducedMotion of ['no-preference', 'reduce']) {
     state = await page.evaluate(() => ({
       order: [...document.querySelectorAll('.rank-demo .rd-result .title')].map((t) => t.textContent),
       pinnedFirst: !!document.querySelector('.rank-demo .rd-result:first-child.pinned'),
-      loweredLast: /Lowered/.test(document.querySelector('.rank-demo .rd-result:last-child')?.textContent ?? ''),
+      loweredLast: !!document.querySelector('.rank-demo .rd-result:last-child .demo-weigh.lower'),
       told: !!document.querySelector('.rank-demo .hd-change.open'),
       menu: !!document.querySelector('.rank-demo .hd-menu'),
       pointer: !!document.querySelector('.rank-demo .hd-pointer.shown'),
