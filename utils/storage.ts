@@ -17,6 +17,7 @@ import { fromBlockedSites, PERSONAL_HEADER } from './personal';
 //   local:colorScheme    light or dark, as the extension's own pages see it (see utils/theme.ts)
 //   sync:blockedSites    legacy block list, migrated into the personal list
 //   sync:hideStyleMoved  the one-time move from Collapse to Remove as the default
+//   sync:defaultListsAdded  the one-time subscription of existing installs to every default list
 
 export type Theme = 'auto' | 'dark' | 'light';
 export type HideStyle = 'collapse' | 'remove' | 'dim';
@@ -252,6 +253,7 @@ export function splitIntoChunks(text: string): string[] {
   return chunks.length ? chunks : [''];
 }
 
+// English on purpose: the start of a list file, which may be published as it is.
 export const DEFAULT_PERSONAL = `${PERSONAL_HEADER}
 ! One instruction per line. The ⚖ menu on each search result edits this list.
 ! The format: ${guide('list-format')}

@@ -113,7 +113,7 @@ Two builds of the same commit are identical file for file. Firefox's reviewers r
 | `local:listCache` | This computer | Downloaded lists, with when they were fetched and the last error. |
 | `local:lastUpdateCheck` | This computer | When the background script last checked lists for updates. |
 | `local:colorScheme` | This computer | Light or dark as the extension's own pages see it, written by the popup, settings, and (in Firefox) the background page. On Auto the result menu uses it, since a search page can be told otherwise (Firefox's Website appearance). |
-| `sync:blockedSites`, `sync:hideStyleMoved` | Sync | Migration leftovers: the old block list, and a flag for a one-time settings change. |
+| `sync:blockedSites`, `sync:hideStyleMoved`, `sync:defaultListsAdded` | Sync | Migration leftovers: the old block list, and flags for a one-time settings change and a one-time subscription to every default list. |
 | `local:webdav` | This computer | The WebDAV server connected for syncing between browsers: its address, user name, and password. Never in sync. |
 | `local:webdavBase` | This computer | What this browser and the server both had at the last sync: the starting point for the next merge. |
 | `local:webdavStatus` | This computer | When the last sync with the server ended, and why it failed if it did. |
@@ -219,10 +219,12 @@ Interface text belongs in `public/_locales/en/messages.json`, the browsers' own 
 
 - Name keys after where they appear: `popup…`, `welcome…`, `menu…`, `summary…`, `offer…`, and no prefix for text used in more than one place (`showHidden`, `anubisSettings`).
 - Give each message a `description` for translators: where it appears, and what each `$1`, `$2` stands for.
-- Use `t('key', …)` for text, `tn('key', count)` for counts (with `key_one` and `key_other` messages), `tJoin(items)` to join a list the way the language does ("a, b, and c"), and `tList('key', items)` for a sentence with a list of links in it. Build a sentence from whole messages, one per shape, rather than from English fragments. In tests, `useEnglish()` from `tests/english.ts` makes `t()` answer in English. Static HTML takes `data-i18n`, `data-i18n-title`, `data-i18n-aria-label` or `data-i18n-placeholder`, filled in by `localizePage()`.
-- `tests/i18n.test.ts` checks that every key the HTML and manifest use exists, and that counts have both forms.
+- Use `t('key', …)` for text, `tn('key', count)` for counts (with `key_one` and `key_other` messages), `tJoin(items)` to join a list the way the language does ("a, b, and c", or "a, b, c" with `'unit'`), `tList('key', items)` for a sentence with a list of links in it, `tParts('key', …elements)` for a sentence with elements (code, a link, bold) in place of its `$1`, `$2`, and `tAgo(time)` for "5 minutes ago". Build a sentence from whole messages, one per shape, rather than from English fragments, and quote names with the `quoted` message. Static HTML takes `data-i18n`, `data-i18n-title`, `data-i18n-aria-label` or `data-i18n-placeholder`, filled in by `localizePage()`, which also sets the page's language and direction.
+- Unit tests answer in English: `tests/setup.ts` installs the English messages before any test, so modules that translate as they load (`LEVEL_LABELS`, `PERSONAL_NAME`) work.
+- `tests/i18n.test.ts` checks that every key the HTML and manifest use exists, that counts have both forms, and that translations keep English's placeholders. `tests/i18n-coverage.test.ts` fails on interface text written straight into the code or a page, on a message without a description, on a key nothing uses, and on a `$` that isn't a placeholder.
+- Text that stays English on purpose goes under a comment saying so ("English on purpose: …"): the issues Anubis fills in for a list's maintainers (`reportUrl`, `suggestionUrl`, and each reason's `report`), and the start of a list file. Words Anubis matches on search pages, in the engines' own languages, go under "Not translated: …", or in an engine's selectors and clean-up's `headings`, `prefixes`, and `markers`, which the test knows.
 
-Not everything is converted yet: `ROADMAP.md` lists what's left. Wording follows the interface's conventions: labels say what happens in plain words, and a site's ranking is always Hide, Lower, Normal, Raise, or Pin.
+Wording follows the interface's conventions: labels say what happens in plain words, and a site's ranking is always Hide, Lower, Normal, Raise, or Pin. How to add a language is in the wiki's [Help translate](docs/guide/translate.md).
 
 ### Store something new
 
@@ -265,7 +267,8 @@ Not everything is converted yet: `ROADMAP.md` lists what's left. Wording follows
 | `cleanup.test.ts` | Clean-up headings and markers, the summary sentence, redirects |
 | `domain.test.ts` | Domains, redirect links, raw list addresses, issue links, subscribe links |
 | `engines.test.ts` | Picking an engine's phone layout |
-| `i18n.test.ts` | Message keys, plural forms, and placeholders, the undo line's wording |
+| `i18n.test.ts` | Message keys, plural forms, and placeholders, the undo line's wording, and reasons that stay English in reports |
+| `i18n-coverage.test.ts` | No interface text outside the messages; every message described and used |
 | `readme.test.ts` | The README's features against the wiki's introduction, and its links |
 | `help-links.test.ts` | Settings' links into the wiki, to pages and headings that exist |
 

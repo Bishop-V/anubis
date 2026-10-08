@@ -4,9 +4,7 @@ A list tags, raises, lowers, or hides sites for you. Anyone can publish one: it'
 
 Anubis starts subscribed to five small lists that ship with it: **Official docs**, **Discussions**, **Reference**, **Paywalls**, and **FOSS tools**. They mostly add tags. **FOSS tools** labels LibreSpeed and cobalt.tools as FOSS, and makes the **AI slop** tag available for sites you choose to tag yourself.
 
-It also starts with two [lists made from other projects](#lists-made-from-other-projects), which it downloads when it's installed: **AI content** and **Independent wikis**.
-
-Existing installs keep their current subscriptions; add any of these under **Settings → Lists → More lists**.
+It also starts with two [lists made from other projects](#lists-made-from-other-projects), which it downloads when it's installed: **AI content** and **Independent wikis**. Copies of Anubis installed before these two existed subscribe to them, and switch every starting list back on, once, when they update. Turn any of them off again under **Settings → Lists**.
 
 <!-- Maintainer: this generated screenshot comes from the mock Settings page. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark image and its description together. -->
 
@@ -52,7 +50,7 @@ To stop using one, unsubscribe or turn it off like any list. To keep a list but 
 
 ## Turn off, or unsubscribe
 
-Each list in **Your lists** has a switch to turn it off for a while and a button to unsubscribe. Your own rankings always beat any list, so to overrule one list about one site, rank that site yourself.
+Each list in **Your lists** has a switch to turn it off for a while and a button to unsubscribe. Unsubscribing happens at once, with **Undo** beside the message for a few seconds. Your own rankings always beat any list, so to overrule one list about one site, rank that site yourself.
 
 ## Report a mistake in a list
 

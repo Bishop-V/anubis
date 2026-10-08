@@ -1,5 +1,6 @@
 import { colorForTag, parseList, type TagDef } from './listformat';
 import { isDomain, normalizeHostname } from './domain';
+import { t } from './i18n';
 import { formatSiteLine, listSites, listTagDefs, setSites, upsertTagDef, type PersonalLevel } from './personal';
 
 // Bring sites over from the tools Anubis grew out of: uBlacklist rules, HOHSER's
@@ -96,7 +97,7 @@ export function importIntoPersonal(personalText: string, input: string): ImportR
           const slot = /^COLOR_(\d)$/.exec(e.color ?? '')?.[1] ?? '1';
           const id = `highlight-${slot}`;
           highlightTags.add(id);
-          into.defineTags([{ id, label: `Highlight ${slot}`, color: HOHSER_COLORS[`COLOR_${slot}`] ?? colorForTag(id) }]);
+          into.defineTags([{ id, label: t('importHighlightTag', slot), color: HOHSER_COLORS[`COLOR_${slot}`] ?? colorForTag(id) }]);
           into.merge(site, 'normal', [id]);
         }
       }

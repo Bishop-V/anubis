@@ -44,11 +44,11 @@ Started: Anubis picks an engine's phone layout by user agent (`mobile` in `utils
 
 ## Translation
 
-Started: interface text is moving into `public/_locales/<language>/messages.json` (the browsers' own format), used through `t()`, `tn()` for counts, and `localizePage()` for static HTML (`utils/i18n.ts`). Done: the manifest's description and shortcut names, the ranking names, the welcome page, the toolbar popup, and on search pages the summary (its sentence and buttons) and the result menu's report and suggestion lines. `tests/i18n.test.ts` checks keys and placeholders. Next:
+Ready for translators: every word of the interface is in `public/_locales/en/messages.json`, each with a description saying where it shows, and `tests/i18n-coverage.test.ts` fails on new text written straight into the code. How to add a language is in the wiki's [Help translate](docs/guide/translate.md). What was done and checked is in `docs/experiments/design.md`, "Translation". Next:
 
-- **The in-page UI** (`entrypoints/content/ui.ts`): the rest of the result menu, hidden lines' reasons, and chips.
-- **Settings** (`entrypoints/options/`), list errors shown there (`utils/listformat.ts`).
-- **Then invite translators:** a hosted Weblate or Crowdin project (both are free for open-source projects and read this format), a "Help translate" page in the wiki, and translated store listings.
+- **Open a hosted project:** Weblate (Hosted Weblate is free for open-source projects) or Crowdin, pointed at `public/_locales/en/messages.json` with the `WebExtension JSON` format. Then change Help translate's "Until a hosted translation project opens" to a link to it.
+- **Right-to-left languages:** Anubis's own pages take their direction from the browser, but their CSS uses left and right, not start and end. Check a right-to-left language at phone width before shipping one, and the result menu and summary on a right-to-left search page.
+- **Later:** translated store listings (`store/README.md`), and the wiki.
 
 ## Features
 
@@ -57,13 +57,12 @@ Started: interface text is moving into `public/_locales/<language>/messages.json
 
 ## Lists made from other projects
 
-Started: a weekly job (`.github/workflows/sources.yml`) turns other projects' data into lists in `lists/sources/`, credited and under their licences. **AI content** (the HUGE AI Blocklist) and **Independent wikis** (Indie Wiki Buddy) are on by default for new installs. What was weighed is in `docs/experiments/storage-and-lists.md`, "Lists made from other projects". Next:
+Started: a weekly job (`.github/workflows/sources.yml`) turns other projects' data into lists in `lists/sources/`, credited and under their licences. **AI content** (the HUGE AI Blocklist) and **Independent wikis** (Indie Wiki Buddy) are on by default, and installs from before them subscribe to them once when they update. What was weighed is in `docs/experiments/storage-and-lists.md`, "Lists made from other projects". Next:
 
 - **Where a tag shows.** Give each tag a choice of "On the result" (the chip, as now), "In the menu only" (under **Why** in the ⚖ menu, still counting for filtering and ranking), or "Off", building on `muted` in `TagPref` (`utils/matcher.ts`). Let a list suggest the starting choice for its tags, so broad categories start in the menu only. Needed before UT1, or every result gets a chip.
 - **Wikidata's official websites** (CC0): a SPARQL query in the weekly job joining "official website" (P856) with how many Wikipedia articles each item has, keeping the best-known entities, tens of thousands rather than all of them. Leave out addresses on shared hosts (`facebook.com/…`, `x.com/…`) or match them by path, and drop dead domains. `query.wikidata.org` can't be reached from cloud sessions, so try the query in the workflow. Where it covers sites one of Anubis's own lists tags by hand, its data replaces those entries.
 - **Read lists once, not on every page.** Search pages read every list on each load (`compiled` in `utils/ruleset.ts` only lasts for one page). Plain `$site=` lines are now only parsed for the sites on the page, so a 41,000-rule list takes about 65 ms instead of 180 ms (`docs/experiments/storage-and-lists.md`, "Reading long lists on search pages"). Before adding a list much over 40,000 rules, measure a search page in a browser, then compile in the background script or keep a compiled form.
 - **UT1's categories** (CC BY-SA 4.0, mirrored in `olbat/ut1-blacklists` on GitHub): small ones first (press 4,600 sites, blog 1,500, forums 205, which joins the `forum` tag), starting in the menu only. Shopping, games, and gambling (35,000 to 40,000 each) wait for the two items above.
-- **Existing installs** only get default lists through **More lists**. Offer new default lists once in Settings, rather than subscribing anyone silently.
 - **The HUGE AI Blocklist's Pinterest rules** are regular expressions over Pinterest's many domains; the 92 of them are left out.
 - **Decided against:** credibility ratings (the Iffy Index, Wikipedia's perennial sources) on by default, since they're contested; at most an opt-in list. The Block List Project, which is built for blocking domains at the network level.
 

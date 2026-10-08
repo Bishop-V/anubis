@@ -1,5 +1,6 @@
 import { CLEANUP, type CleanupKind } from '@/utils/cleanup';
 import { h } from '@/utils/dom';
+import { t } from '@/utils/i18n';
 import { getSettings, updateSettings } from '@/utils/storage';
 import { helpLink, pageTitle, switchRow } from './parts';
 
@@ -13,29 +14,23 @@ export async function renderCleanup(): Promise<HTMLElement> {
     'div',
     null,
     pageTitle(
-      'Remove panels',
-      'Anubis can remove the panels on search pages that aren’t results. Turn on each one you’d rather not see. “Show hidden” above the results brings them back for that search.',
+      t('cleanupHeading'),
+      t('cleanupIntro'),
     ),
     h(
       'div',
       { class: 'panel' },
-      h('h3', null, 'On every search'),
-      h(
-        'p',
-        { class: 'muted' },
-        'On means Anubis removes it. Off leaves it on the page.',
-        ' ',
-        helpLink('guide/troubleshooting#ai-answers-or-panels-still-show', 'If a panel still shows'),
-      ),
-      CLEANUP.map((def) => switchRow(def.label, def.hint, settings.cleanup[def.id], (on) => void setKind(def.id, on))),
+      h('h3', null, t('cleanupEverySearch')),
+      h('p', { class: 'muted' }, t('cleanupEverySearchHint'), ' ', helpLink('guide/troubleshooting#ai-answers-or-panels-still-show', t('cleanupStillShows'))),
+      CLEANUP.map((def) => switchRow(t(def.label), t(def.hint), settings.cleanup[def.id], (on) => void setKind(def.id, on))),
     ),
     h(
       'div',
       { class: 'panel' },
-      h('h3', null, 'On Google'),
+      h('h3', null, t('cleanupOnGoogle')),
       switchRow(
-        'Always open the Web tab',
-        'Sends every Google search to its Web tab: plain links, with no AI Overview, videos, or other panels, even ones Anubis doesn’t recognise. To leave it for one search, choose All above the results.',
+        t('cleanupWebTab'),
+        t('cleanupWebTabHint'),
         settings.googleWebTab,
         (googleWebTab) => void updateSettings({ googleWebTab }),
       ),

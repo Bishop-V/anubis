@@ -1,5 +1,6 @@
 import { andList } from './dom';
 import { hostSuffixes, normalizeHostname } from './domain';
+import { t, tJoin, tn } from './i18n';
 import { MAX_STRENGTH, parseDeferred, type DeferredRule, type ParsedList, type Rule, type TagDef } from './listformat';
 import { displayLevel, PERSONAL_NAME } from './personal';
 
@@ -118,7 +119,10 @@ export interface Reason {
   list: string;
   listId: string;
   personal: boolean;
+  /** What the list does to the result, in the interface's language: "raises it by 3". */
   text: string;
+  /** The same in English, for an issue sent to the list's maintainers. */
+  report: string;
   /** The rule that matched, as written in the list. Absent when a lens leaves the result out. */
   rule?: { line: number; raw: string };
 }
@@ -164,36 +168,74 @@ function toTarget(result: ResultInfo): Target | undefined {
   }
 }
 
-function ruleMatches(rule: Rule, t: Target): boolean {
-  if (rule.pathPattern && !rule.pathPattern.test(t.path)) return false;
+function ruleMatches(rule: Rule, target: Target): boolean {
+  if (rule.pathPattern && !rule.pathPattern.test(target.path)) return false;
   if (rule.pattern) {
-    const subject = rule.target === 'title' ? t.title : rule.target === 'description' ? t.description : t.url;
+    const subject = rule.target === 'title' ? target.title : rule.target === 'description' ? target.description : target.url;
     if (!rule.pattern.test(subject)) return false;
   }
   return true;
 }
 
 /** Every rule in the list that matches, most specific site first. */
-export function matchList(list: CompiledList, t: Target): Rule[] {
+export function matchList(list: CompiledList, target: Target): Rule[] {
   const out: Rule[] = [];
-  for (const rule of list.byHost.get(t.host) ?? []) if (ruleMatches(rule, t)) out.push(rule);
-  for (const suffix of hostSuffixes(t.host)) {
-    for (const rule of siteRules(list, suffix)) if (ruleMatches(rule, t)) out.push(rule);
+  for (const rule of list.byHost.get(target.host) ?? []) if (ruleMatches(rule, target)) out.push(rule);
+  for (const suffix of hostSuffixes(target.host)) {
+    for (const rule of siteRules(list, suffix)) if (ruleMatches(rule, target)) out.push(rule);
   }
-  for (const rule of list.generic) if (ruleMatches(rule, t)) out.push(rule);
+  for (const rule of list.generic) if (ruleMatches(rule, target)) out.push(rule);
   return out;
 }
 
+/** The words a list's reasons are told in. */
+interface ReasonWords {
+  pin: string;
+  allow: string;
+  hide: string;
+  raise: (n: number) => string;
+  lower: (n: number) => string;
+  tags: (labels: string[]) => string;
+  none: string;
+  lens: string;
+  join: (parts: string[]) => string;
+}
+
+const localWords = (): ReasonWords => ({
+  pin: t('reasonPins'),
+  allow: t('reasonKeepsNormal'),
+  hide: t('reasonHides'),
+  raise: (n) => t('reasonRaises', n),
+  lower: (n) => t('reasonLowers', n),
+  tags: (labels) => t('reasonTags', tJoin(labels.map((l) => t('quoted', l)))),
+  none: t('reasonMentions'),
+  lens: t('reasonLens'),
+  join: (parts) => tJoin(parts),
+});
+
+// English on purpose: issues go to a list's maintainers in English, whatever the interface language.
+const REPORT_WORDS: ReasonWords = {
+  pin: 'pins it',
+  allow: 'keeps it at normal',
+  hide: 'hides it',
+  raise: (n) => `raises it by ${n}`,
+  lower: (n) => `lowers it by ${n}`,
+  tags: (labels) => `tags it ${andList(labels.map((l) => `“${l}”`))}`,
+  none: 'mentions it',
+  lens: 'doesn’t include it, so it’s hidden',
+  join: andList,
+};
+
 /** A rule as a plain sentence fragment: "raises it by 5 and tags it “Great tutorial”". */
-function describe(rule: Rule, tagLabel: (id: string) => string): string {
+function describe(rule: Rule, tagLabel: (id: string) => string, words: ReasonWords): string {
   const parts: string[] = [];
-  if (rule.pin) parts.push('pins it');
-  if (rule.allow) parts.push('keeps it at normal');
-  if (rule.discard) parts.push('hides it');
-  if (rule.boost > 0) parts.push(`raises it by ${rule.boost}`);
-  if (rule.boost < 0) parts.push(`lowers it by ${-rule.boost}`);
-  if (rule.tags.length) parts.push(`tags it ${andList(rule.tags.map((t) => `“${tagLabel(t)}”`))}`);
-  return parts.length ? andList(parts) : 'mentions it';
+  if (rule.pin) parts.push(words.pin);
+  if (rule.allow) parts.push(words.allow);
+  if (rule.discard) parts.push(words.hide);
+  if (rule.boost > 0) parts.push(words.raise(rule.boost));
+  if (rule.boost < 0) parts.push(words.lower(-rule.boost));
+  if (rule.tags.length) parts.push(words.tags(rule.tags.map(tagLabel)));
+  return parts.length ? words.join(parts) : words.none;
 }
 
 function personalLevel(rules: Rule[]): Level | 'allow' | undefined {
@@ -214,8 +256,9 @@ export function evaluate(
   prefs: Record<string, TagPref> = {},
 ): Verdict {
   const verdict: Verdict = { level: 'normal', score: 0, hidden: false, tags: [], tagSources: {}, reasons: [] };
-  const t = toTarget(result);
-  if (!t) return verdict;
+  const target = toTarget(result);
+  if (!target) return verdict;
+  const words = localWords();
 
   const addTag = (id: string, source: string) => {
     if (!verdict.tagSources[id]) {
@@ -253,21 +296,22 @@ export function evaluate(
   };
 
   for (const list of lists) {
-    const matched = matchList(list, t);
-    const reason = (text: string, rule?: Rule) =>
+    const matched = matchList(list, target);
+    const reason = (text: string, report: string, rule?: Rule) =>
       verdict.reasons.push({
         list: list.name,
         listId: list.id,
         personal: list.personal,
         text,
+        report,
         rule: rule && { line: rule.line, raw: rule.raw },
       });
-    const label = (id: string) => list.tags.find((t) => t.id === id)?.label ?? id;
+    const label = (id: string) => list.tags.find((tag) => tag.id === id)?.label ?? id;
 
     if (!matched.length) {
       if (list.lens) {
         hide({ kind: 'lens', name: list.name });
-        reason('doesn’t include it, so it’s hidden');
+        reason(words.lens, REPORT_WORDS.lens);
       }
       continue;
     }
@@ -276,7 +320,7 @@ export function evaluate(
 
     if (list.personal) {
       verdict.personal = personalLevel(matched);
-      for (const rule of matched) reason(describe(rule, label), rule);
+      for (const rule of matched) reason(describe(rule, label, words), describe(rule, label, REPORT_WORDS), rule);
       // Personal tags still carry the user's tag choices.
       for (const rule of matched) applyChoices(rule);
       continue;
@@ -287,7 +331,7 @@ export function evaluate(
     let up = 0;
     let down = 0;
     for (const rule of matched) {
-      reason(describe(rule, label), rule);
+      reason(describe(rule, label, words), describe(rule, label, REPORT_WORDS), rule);
       if (applyChoices(rule)) continue;
       const boost = rule.pin ? MAX_LIST_BOOST : rule.boost;
       if (rule.discard) listDiscard = true;
@@ -311,7 +355,7 @@ export function evaluate(
   }
 
   const choices = describeChoices(chosen, (id) => prefs[id]?.label ?? tagLabel(lists, id));
-  if (choices) verdict.reasons.push({ list: 'Your tag settings', listId: TAG_CHOICES, personal: true, text: choices });
+  if (choices) verdict.reasons.push({ list: t('reasonYourTagSettings'), listId: TAG_CHOICES, personal: true, text: choices, report: choices });
   verdict.hidden = discard;
   if (!discard) verdict.hiddenBy = undefined;
   verdict.score = discard ? 0 : score;
@@ -322,7 +366,7 @@ export function evaluate(
 /** A tag's name from the first list that declares one; a list that only uses the tag names it by its id. */
 function tagLabel(lists: CompiledList[], id: string): string {
   for (const list of lists) {
-    const tag = list.tags.find((t) => t.id === id && t.label !== id);
+    const tag = list.tags.find((d) => d.id === id && d.label !== id);
     if (tag) return tag.label;
   }
   return id;
@@ -334,21 +378,20 @@ function tagLabel(lists: CompiledList[], id: string): string {
  * moves 5 places up". Undefined when no choice moves or hides the result.
  */
 function describeChoices(chosen: Map<string, TagAction>, label: (id: string) => string): string | undefined {
-  const ids = (action: TagAction) => [...chosen].filter(([, a]) => a === action).map(([id]) => `“${label(id)}”`);
+  const ids = (action: TagAction) => [...chosen].filter(([, a]) => a === action).map(([id]) => t('quoted', label(id)));
   const hide = ids('hide');
-  if (hide.length) return `hide it for ${andList(hide)}`;
-  const move = (verb: string, tags: string[]) => `${verb} it by ${PERSONAL_STRENGTH}${tags.length > 1 ? ' each' : ''} for ${andList(tags)}`;
+  if (hide.length) return t('choiceHide', tJoin(hide));
   const raise = ids('raise');
   const lower = ids('lower');
   const parts: string[] = [];
-  if (raise.length) parts.push(move('raise', raise));
-  if (lower.length) parts.push(move('lower', lower));
+  if (raise.length) parts.push(tn('choiceRaise', raise.length, PERSONAL_STRENGTH, tJoin(raise)));
+  if (lower.length) parts.push(tn('choiceLower', lower.length, PERSONAL_STRENGTH, tJoin(lower)));
   if (!parts.length) return undefined;
   const moves = [...chosen.values()].filter((a) => a === 'raise' || a === 'lower');
   if (moves.length < 2) return parts[0];
   const net = moves.reduce((sum, a) => sum + (a === 'raise' ? PERSONAL_STRENGTH : -PERSONAL_STRENGTH), 0);
-  const total = net > 0 ? `so it moves ${net} places up` : net < 0 ? `so it moves ${-net} places down` : 'so it stays where it was';
-  return `${andList(parts)}, ${total}`;
+  const total = net > 0 ? tn('choiceNetUp', net) : net < 0 ? tn('choiceNetDown', -net) : t('choiceNetSame');
+  return t('choiceTotal', tJoin(parts), total);
 }
 
 function personalName(lists: CompiledList[]): string {

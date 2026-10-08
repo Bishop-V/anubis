@@ -23,13 +23,33 @@ export function t(key: MessageKey, ...subs: (string | number)[]): string {
   return getMessage(key, subs.map(String)) || key;
 }
 
-/** The language the messages are in, as a BCP 47 tag (pt-BR) for Intl. */
-const lang = () => t('langCode').replace('_', '-');
+/** The language the messages are in, as a BCP 47 tag (pt-BR) for Intl; English if a translation's code is wrong. */
+const lang = (): string => {
+  try {
+    return Intl.getCanonicalLocales(t('langCode').replace('_', '-'))[0] ?? 'en';
+  } catch {
+    return 'en';
+  }
+};
 
-/** How lists are joined: in English "a, b, and c", with the serial comma. */
-const listFormat = (type: 'conjunction' | 'disjunction') => new Intl.ListFormat(lang(), { type });
+/** How lists are joined: in English "a, b, and c", with the serial comma; a `unit` list is "a, b, c". */
+const listFormat = (type: ListType) => new Intl.ListFormat(lang(), { type, style: type === 'unit' ? 'short' : 'long' });
+type ListType = 'conjunction' | 'disjunction' | 'unit';
 
 let pluralRules: Intl.PluralRules | undefined;
+
+/** How long ago a time was, in the language's words: "just now", "5 minutes ago", "2 days ago". */
+export function tAgo(ms: number, now = Date.now()): string {
+  if (!ms) return t('timeNever');
+  const s = Math.round((now - ms) / 1000);
+  if (s < 60) return t('timeJustNow');
+  const format = new Intl.RelativeTimeFormat(lang(), { numeric: 'auto' });
+  const m = Math.round(s / 60);
+  if (m < 60) return format.format(-m, 'minute');
+  const hr = Math.round(m / 60);
+  if (hr < 48) return format.format(-hr, 'hour');
+  return format.format(-Math.round(hr / 24), 'day');
+}
 
 /** A message about `count` things, in the right plural form. `$1` is the count. */
 export function tn(key: PluralKey, count: number, ...subs: (string | number)[]): string {
@@ -38,8 +58,8 @@ export function tn(key: PluralKey, count: number, ...subs: (string | number)[]):
   return getMessage(`${key}_${pluralRules.select(count)}`, args) || getMessage(`${key}_other`, args) || key;
 }
 
-/** Items joined the way the language joins a list: "a, b, and c" in English. */
-export function tJoin(items: string[], type: 'conjunction' | 'disjunction' = 'conjunction'): string {
+/** Items joined the way the language joins a list: "a, b, and c" in English, or "a, b, c" for `unit`. */
+export function tJoin(items: string[], type: ListType = 'conjunction'): string {
   return listFormat(type).format(items);
 }
 
@@ -52,19 +72,33 @@ const SLOT = '\uE000';
  * "Suggest it to <a>A</a> or <a>B</a>." Returns the message's text with the items
  * in place of `$1`, joined the way the language joins a list.
  */
-export function tList<T>(key: MessageKey, items: T[], type: 'conjunction' | 'disjunction' = 'conjunction'): (string | T)[] {
+export function tList<T>(key: MessageKey, items: T[], type: ListType = 'conjunction'): (string | T)[] {
   const [before = '', after = ''] = t(key, SLOT).split(SLOT);
   const parts = listFormat(type).formatToParts(items.map((_, i) => String(i)));
   return [before, ...parts.map((p) => (p.type === 'element' ? items[Number(p.value)]! : p.value)), after];
 }
 
 /**
+ * A message whose placeholders are elements, such as code or links: "Add <code>…</code>
+ * so people can…". Returns the message's text with each item in place of its `$n`.
+ */
+export function tParts<T>(key: MessageKey, ...items: (string | T)[]): (string | T)[] {
+  const slots = items.map((_, i) => String.fromCharCode(SLOT.charCodeAt(0) + i));
+  return t(key, ...slots)
+    .split(/([\uE000-\uE0FF])/)
+    .filter((part) => part !== '')
+    .map((part) => (part.length === 1 && part >= '\uE000' && part <= '\uE0FF' ? items[part.charCodeAt(0) - SLOT.charCodeAt(0)]! : part));
+}
+
+/**
  * Fill a static page's text from messages: `data-i18n` sets the text, and
  * `data-i18n-title`, `data-i18n-aria-label` and `data-i18n-placeholder` set those
- * attributes. Also marks the page with the language its text is in.
+ * attributes. Also marks the page with the language its text is in, and its direction.
  */
 export function localizePage(root: Document = document): void {
-  root.documentElement.lang = t('langCode').replace('_', '-');
+  root.documentElement.lang = lang();
+  // The browser's own message: "rtl" for Arabic, Hebrew, Persian…
+  root.documentElement.dir = getMessage('@@bidi_dir', []) === 'rtl' ? 'rtl' : 'ltr';
   for (const el of root.querySelectorAll<HTMLElement>('[data-i18n]')) el.textContent = t(el.dataset.i18n as MessageKey);
   for (const attr of ['title', 'aria-label', 'placeholder']) {
     for (const el of root.querySelectorAll<HTMLElement>(`[data-i18n-${attr}]`)) {

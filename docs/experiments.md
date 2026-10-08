@@ -61,6 +61,7 @@ Where things are stored, sync between browsers, and subscribing to lists.
 
 The look, the wording, and Anubis's own pages.
 
+- Undo instead of "Are you sure?" in Settings (2026-10-08)
 - Report a problem (2026-09-30)
 - Explanations on tagged sites (2026-10-04)
 - Tags in the site popup (2026-10-03)

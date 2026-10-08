@@ -27,8 +27,9 @@ const SEARCHES: [engine: string, url: string][] = [
 
 /** Each browser's own way to put an extension's button on the toolbar. */
 function pinSteps(): MessageKey {
-  if (import.meta.env.FIREFOX) return 'welcomePinFirefox';
   const ua = navigator.userAgent;
+  // Firefox for Android keeps extensions in its menu, with no toolbar to pin to.
+  if (import.meta.env.FIREFOX) return /\bAndroid\b/.test(ua) ? 'welcomePinAndroid' : 'welcomePinFirefox';
   if (/\bEdg\//.test(ua)) return 'welcomePinEdge';
   if (/\bOPR\//.test(ua)) return 'welcomePinOpera';
   return 'welcomePinChrome';

@@ -1,4 +1,4 @@
-import { h, icon, plural } from '@/utils/dom';
+import { h, icon } from '@/utils/dom';
 import { ENGINES } from '@/utils/engines';
 import { ICON_DOWNLOAD, ICON_UPLOAD } from '@/utils/icons';
 import { loadRuleSet } from '@/utils/ruleset';
@@ -18,6 +18,7 @@ import {
   type Settings,
 } from '@/utils/storage';
 import { applyData, collectData, readBackup, toBackup } from '@/utils/backup';
+import { t, tn, tParts } from '@/utils/i18n';
 import { importIntoPersonal } from '@/utils/importers';
 import { guide, REPO_URL } from '@/utils/links';
 import { themeSwitcher } from '@/utils/theme';
@@ -26,16 +27,12 @@ import { download, helpLink, pageTitle, switchRow } from './parts';
 
 /** What loading this many extra pages costs, said as the amount changes. */
 export function deeperTip(pages: number): { text: string; warn: boolean } {
-  if (pages === 0) return { text: 'Off: more results load only when you press “Load more results”.', warn: false };
+  if (pages === 0) return { text: t('deeperTipOff'), warn: false };
   // Each page waits 0.7 s after the last, plus the time to load it.
-  const seconds = Math.max(1, Math.round(pages * 1.2));
-  const time = `Adds about ${plural(seconds, 'second')} to each search.`;
-  if (pages <= 3) return { text: `${time} Engines rarely mind a few pages.`, warn: false };
-  if (pages < 10) return { text: `${time} Some engines may start asking you to confirm you’re not a robot.`, warn: true };
-  return {
-    text: `${time} Google and Bing often ask you to confirm you’re not a robot after this many. Some engines run out of pages before then.`,
-    warn: true,
-  };
+  const time = tn('deeperTipTime', Math.max(1, Math.round(pages * 1.2)));
+  if (pages <= 3) return { text: t('deeperTipFew', time), warn: false };
+  if (pages < 10) return { text: t('deeperTipSome', time), warn: true };
+  return { text: t('deeperTipMany', time), warn: true };
 }
 
 function deeperRow(stored: number): HTMLElement {
@@ -68,17 +65,17 @@ function deeperRow(stored: number): HTMLElement {
     h(
       'div',
       null,
-      h('label', { attrs: { for: 'deeper' } }, h('b', null, 'Load more results automatically')),
+      h('label', { attrs: { for: 'deeper' } }, h('b', null, t('deeperAuto'))),
       h(
         'span',
         { class: 'muted' },
-        `Add the next pages of results to the first one and rank them together, so a site you pinned on page 3 rises to the top. “Load more results” above the results does the same when you ask. Type how many pages to add, from 0 (off) to ${MAX_DEEPER}.`,
+        t('deeperAutoHint', MAX_DEEPER),
         ' ',
-        helpLink('guide/more-results', 'How loading more works'),
+        helpLink('guide/more-results', t('deeperHelp')),
       ),
       tip,
     ),
-    h('span', { class: 'amount' }, input, h('span', { attrs: { 'aria-hidden': 'true' } }, 'more pages')),
+    h('span', { class: 'amount' }, input, h('span', { attrs: { 'aria-hidden': 'true' } }, t('deeperUnit'))),
   );
 }
 
@@ -119,7 +116,7 @@ export async function renderAppearance(): Promise<HTMLElement> {
   return h(
     'div',
     null,
-    pageTitle('Appearance', 'How Anubis looks here and on search pages.'),
+    pageTitle(t('appearanceHeading'), t('appearanceIntro')),
     h(
       'div',
       { class: 'panel' },
@@ -129,43 +126,43 @@ export async function renderAppearance(): Promise<HTMLElement> {
         h(
           'div',
           null,
-          h('b', null, 'Colour scheme'),
-          h('span', { class: 'muted' }, 'Auto follows your browser here and in the menu on each result, and each search engine’s own light or dark mode for the rest of what Anubis adds to its pages.'),
+          h('b', null, t('themeHeading')),
+          h('span', { class: 'muted' }, t('themeHint')),
         ),
         themeSwitcher(settings.theme),
       ),
       segRow<Palette>(
-        'Colours on search pages',
-        'Plain draws everything Anubis adds to search pages in grey, with no gold. Tags lose their colours and are told apart by their names. Settings and the toolbar popup stay gold.',
+        t('paletteHeading'),
+        t('paletteHint'),
         [
-          { value: 'gold', label: 'Gold' },
-          { value: 'plain', label: 'Plain' },
+          { value: 'gold', label: t('paletteGold') },
+          { value: 'plain', label: t('palettePlain') },
         ],
         settings.palette,
         (palette) => void updateSettings({ palette }),
       ),
       segRow<HideStyle>(
-        'Hidden results',
-        'Remove takes them off the page; the summary above the results counts them, and Show hidden brings them back. Collapse leaves one slim line for each run of hidden results. Dim fades them.',
+        t('hideStyleHeading'),
+        t('hideStyleHint'),
         [
-          { value: 'remove', label: 'Remove' },
-          { value: 'collapse', label: 'Collapse' },
-          { value: 'dim', label: 'Dim' },
+          { value: 'remove', label: t('hideStyleRemove') },
+          { value: 'collapse', label: t('hideStyleCollapse') },
+          { value: 'dim', label: t('hideStyleDim') },
         ],
         settings.hideStyle,
         (hideStyle) => void updateSettings({ hideStyle }),
       ),
       toggleRow(
-        'Rerank results',
-        'Move raised and pinned results up and lowered ones down, like a Brave Goggle.',
+        t('rerankHeading'),
+        t('rerankHint'),
         'rerank',
         settings,
-        helpLink('guide/ranking#reranking', 'How reranking works'),
+        helpLink('guide/ranking#reranking', t('rerankHelp')),
       ),
       deeperRow(settings.deeper),
-      toggleRow('Tag chips', 'Show tags and rankings under each result title.', 'showChips', settings),
-      toggleRow('Summary', 'Show a one-line summary of what Anubis changed above the results.', 'showSummary', settings),
-      toggleRow('Anubis is on', 'Turn this off to leave search pages alone without uninstalling.', 'enabled', settings),
+      toggleRow(t('chipsHeading'), t('chipsHint'), 'showChips', settings),
+      toggleRow(t('summaryHeading'), t('summaryHint'), 'showSummary', settings),
+      toggleRow(t('enabledHeading'), t('enabledHint'), 'enabled', settings),
     ),
   );
 }
@@ -176,8 +173,8 @@ export async function renderEngines(): Promise<HTMLElement> {
     'div',
     null,
     pageTitle(
-      'Search engines',
-      'Anubis works on web results from these engines. Results are found by page structure where possible, so small redesigns don’t break it.',
+      t('enginesHeading'),
+      t('enginesIntro'),
     ),
     h(
       'div',
@@ -196,9 +193,9 @@ export async function renderEngines(): Promise<HTMLElement> {
       h(
         'p',
         { class: 'muted', style: 'margin:14px 0 0;font-size:13px' },
-        'Anubis doing nothing on a search page?',
+        t('enginesTrouble'),
         ' ',
-        helpLink('guide/troubleshooting#anubis-does-nothing-on-a-search-page', 'What to check'),
+        helpLink('guide/troubleshooting#anubis-does-nothing-on-a-search-page', t('enginesTroubleHelp')),
       ),
     ),
   );
@@ -219,9 +216,9 @@ export async function renderShare(): Promise<HTMLElement> {
     if (!f) return;
     try {
       await applyData(readBackup(await f.text()));
-      flash('backup', 'ok', 'Backup restored.');
+      flash('backup', 'ok', t('backupRestored'));
     } catch (error) {
-      flash('backup', 'error', `Couldn’t restore: ${error instanceof Error ? error.message : String(error)}`);
+      flash('backup', 'error', t('backupRestoreFailed', error instanceof Error ? error.message : String(error)));
     }
     file.value = '';
     rerender();
@@ -232,9 +229,9 @@ export async function renderShare(): Promise<HTMLElement> {
     class: 'code',
     rows: 6,
     spellcheck: false,
-    placeholder: 'Paste uBlacklist rules, a HOHSER export, a Goggle, or one domain per line',
+    placeholder: t('importPlaceholder'),
     style: 'min-height:0',
-    attrs: { 'aria-label': 'Sites to import' },
+    attrs: { 'aria-label': t('importLabel') },
   });
   const importFile = h('input', { type: 'file', accept: '.txt,.json,.goggle,.anubis,text/plain,application/json', hidden: true });
   importFile.addEventListener('change', async () => {
@@ -248,89 +245,86 @@ export async function renderShare(): Promise<HTMLElement> {
     let summary = '';
     let highlight: string[] = [];
     try {
-      await editPersonal((t) => {
-        const r = importIntoPersonal(t, importArea.value);
+      await editPersonal((text) => {
+        const r = importIntoPersonal(text, importArea.value);
         highlight = r.highlightTags;
-        const names = { hohser: 'a HOHSER export', ublacklist: 'uBlacklist rules', goggle: 'a Goggle', anubis: 'an Anubis list', domains: 'a list of domains' };
-        summary =
-          `Read as ${names[r.source]}: ${plural(r.added, 'site')} added and ${r.updated} updated.` +
-          (r.skipped
-            ? ` ${plural(r.skipped, 'rule')} with address patterns or unsupported syntax left out; subscribe to the original list to keep them.`
-            : '');
+        const names = {
+          hohser: t('importSourceHohser'),
+          ublacklist: t('importSourceUblacklist'),
+          goggle: t('importSourceGoggle'),
+          anubis: t('importSourceAnubis'),
+          domains: t('importSourceDomains'),
+        };
+        summary = tn('importRead', r.added, names[r.source], r.updated) + (r.skipped ? ` ${tn('importSkipped', r.skipped)}` : '');
         return r.text;
       });
       for (const id of highlight) await setTagPref(id, { action: 'highlight' });
       flash('import', 'ok', summary);
     } catch (error) {
-      flash('import', 'error', `Couldn’t import: ${error instanceof Error ? error.message : String(error)}`);
+      flash('import', 'error', t('importFailed', error instanceof Error ? error.message : String(error)));
     }
     rerender();
   };
 
   const reset = async () => {
-    if (!confirm('Reset all Anubis settings, tags, and subscriptions? Your list is kept.')) return;
+    const [settings, prefs, subs] = await Promise.all([settingsItem.getValue(), tagPrefsItem.getValue(), subscriptionsItem.getValue()]);
     await settingsItem.setValue(DEFAULT_SETTINGS);
     await tagPrefsItem.setValue({});
     // Absent, not empty: the default subscriptions come back.
     await subscriptionsItem.removeValue();
-    flash('backup', 'ok', 'Settings reset.');
+    // Undo puts back what was there, as it was stored.
+    flash('backup', 'ok', t('resetDone'), async () => {
+      await (settings ? settingsItem.setValue(settings) : settingsItem.removeValue());
+      await tagPrefsItem.setValue(prefs);
+      if (subs) await subscriptionsItem.setValue(subs);
+    });
     rerender();
   };
 
   return h(
     'div',
     null,
-    pageTitle('Back up, import, and share', 'Keep a copy of everything, bring your sites over from another tool, or publish your list for others to subscribe to.'),
+    pageTitle(t('shareHeading'), t('shareIntro')),
     h(
       'div',
       { class: 'panel' },
-      h('h3', null, 'Publish your list'),
-      h(
-        'p',
-        { class: 'muted' },
-        'No server needed: a public git repository is the database, and pull requests are how people contribute.',
-        ' ',
-        helpLink('guide/publish-a-list', 'How to publish a list'),
-      ),
+      h('h3', null, t('publishHeading')),
+      h('p', { class: 'muted' }, t('publishIntro'), ' ', helpLink('guide/publish-a-list', t('publishHelp'))),
       h(
         'ol',
         { class: 'steps' },
-        h('li', null, 'Download your list below. Set its ', h('code', null, '! name:'), ', ', h('code', null, '! description:'), ', and ', h('code', null, '! author:'), ' lines at the top.'),
-        h('li', null, 'Create a public GitHub repository (or a gist) and add the file, e.g. ', h('code', null, 'lists/my-list.anubis'), '.'),
-        h('li', null, 'Add ', h('code', null, '! issues: https://github.com/you/repo/issues'), ' so people can suggest sites to your list from the menu on each result.'),
-        h('li', null, 'Share the file’s link. People paste it into Lists → Add a list.'),
+        h('li', null, tParts('publishStepDownload', h('code', null, '! name:'), h('code', null, '! description:'), h('code', null, '! author:'))),
+        h('li', null, tParts('publishStepRepository', h('code', null, 'lists/my-list.anubis'))),
+        // Not translated: a line of the list format.
+        h('li', null, tParts('publishStepIssues', h('code', null, '! issues: https://github.com/you/repo/issues'))),
+        h('li', null, t('publishStepShare')),
         h(
           'li',
           null,
-          'Want it under More lists for everyone? Open a pull request adding it to ',
-          h('a', { href: `${REPO_URL}/blob/main/lists/directory.json`, target: '_blank', rel: 'noopener noreferrer' }, 'lists/directory.json'),
-          '.',
+          tParts(
+            'publishStepDirectory',
+            h('a', { href: `${REPO_URL}/blob/main/lists/directory.json`, target: '_blank', rel: 'noopener noreferrer' }, 'lists/directory.json'),
+          ),
         ),
       ),
       h(
         'div',
         { class: 'toolbar', style: 'margin-top:12px' },
-        h('button', { class: 'btn primary', type: 'button', on: { click: () => download('my-anubis-list.anubis', rules.personalText) } }, icon(ICON_DOWNLOAD), 'Download my list'),
-        h('a', { class: 'btn', href: guide('list-format'), target: '_blank', rel: 'noopener noreferrer' }, 'List format'),
+        h('button', { class: 'btn primary', type: 'button', on: { click: () => download('my-anubis-list.anubis', rules.personalText) } }, icon(ICON_DOWNLOAD), t('publishDownload')),
+        h('a', { class: 'btn', href: guide('list-format'), target: '_blank', rel: 'noopener noreferrer' }, t('publishFormat')),
       ),
     ),
     h(
       'div',
       { class: 'panel' },
-      h('h3', null, 'Import sites'),
-      h(
-        'p',
-        { class: 'muted' },
-        'Coming from uBlacklist or HOHSER? Paste your rules or export here and the sites join your list. Hidden stays hidden, HOHSER’s partial hide becomes Lower, and highlight colours become tags that highlight.',
-        ' ',
-        helpLink('guide/import-and-backup#import-sites', 'What each tool’s rules become'),
-      ),
+      h('h3', null, t('importHeading')),
+      h('p', { class: 'muted' }, t('importIntro'), ' ', helpLink('guide/import-and-backup#import-sites', t('importHelp'))),
       importArea,
       h(
         'div',
         { class: 'toolbar', style: 'margin-top:10px' },
-        h('button', { class: 'btn primary', type: 'button', on: { click: () => void runImport() } }, 'Import'),
-        h('button', { class: 'text-btn', type: 'button', on: { click: () => importFile.click() } }, 'Choose a file'),
+        h('button', { class: 'btn primary', type: 'button', on: { click: () => void runImport() } }, t('importButton')),
+        h('button', { class: 'text-btn', type: 'button', on: { click: () => importFile.click() } }, t('importChooseFile')),
         importFile,
       ),
       importStatus,
@@ -338,14 +332,14 @@ export async function renderShare(): Promise<HTMLElement> {
     h(
       'div',
       { class: 'panel' },
-      h('h3', null, 'Backup'),
-      h('p', { class: 'muted' }, 'Everything in one file: settings, tag choices, subscriptions, and your list.'),
+      h('h3', null, t('backupHeading')),
+      h('p', { class: 'muted' }, t('backupIntro')),
       h(
         'div',
         { class: 'toolbar' },
-        h('button', { class: 'btn', type: 'button', on: { click: () => void exportAll() } }, icon(ICON_DOWNLOAD), 'Export backup'),
-        h('button', { class: 'btn', type: 'button', on: { click: () => file.click() } }, icon(ICON_UPLOAD), 'Restore backup'),
-        h('button', { class: 'btn danger', type: 'button', on: { click: () => void reset() } }, 'Reset settings'),
+        h('button', { class: 'btn', type: 'button', on: { click: () => void exportAll() } }, icon(ICON_DOWNLOAD), t('backupExport')),
+        h('button', { class: 'btn', type: 'button', on: { click: () => file.click() } }, icon(ICON_UPLOAD), t('backupRestore')),
+        h('button', { class: 'btn danger', type: 'button', on: { click: () => void reset() } }, t('resetButton')),
         file,
       ),
       status,

@@ -1,4 +1,5 @@
 import { normalizeDomain, normalizeHostname } from './domain';
+import { t } from './i18n';
 
 // Parser for the list files Anubis can subscribe to. It reads:
 //
@@ -284,7 +285,7 @@ export function parseList(text: string, defer = false): ParsedList {
       const value = m[2]!;
       if (key === 'tag') {
         const tag = parseTagDef(value);
-        if (!tag) list.errors.push({ line: lineNo, message: `Bad tag definition: ${value}` });
+        if (!tag) list.errors.push({ line: lineNo, message: t('lineBadTagDefinition', value) });
         else if (!tagIds.has(tag.id)) {
           tagIds.add(tag.id);
           list.tags.push(tag);
@@ -356,7 +357,7 @@ function usesTagOtherThan(options: string, ids: Set<string>): boolean {
 /** Parse an instruction `parseList` deferred: a rule for its site, or what's wrong with it. */
 export function parseDeferred(d: DeferredRule): Rule | string {
   const rule = parseGoggleLine(d.raw.replace(/\s+#.*$/, '').trim(), d.line);
-  return rule === 'lens' ? 'Instruction needs a pattern or a site' : rule;
+  return rule === 'lens' ? t('lineNeedsPattern') : rule;
 }
 
 /** A `site=` value as a site: a domain, or a bare TLD (Goggles allow `site=rs`). */
@@ -378,7 +379,7 @@ export function fastDomain(value: string): string | undefined {
 }
 
 export function parseGoggleLine(line: string, lineNo: number): Rule | 'lens' | string {
-  if (line.length > 500) return 'Instruction is longer than 500 characters';
+  if (line.length > 500) return t('lineTooLong', 500);
   const rule = emptyRule(lineNo, line);
 
   let pattern = line;
@@ -397,14 +398,14 @@ export function parseGoggleLine(line: string, lineNo: number): Rule | 'lens' | s
     switch (key) {
       case 'site': {
         const site = siteValue(value ?? '');
-        if (!site) return `Bad site: ${value}`;
+        if (!site) return t('lineBadSite', value ?? '');
         rule.site = site;
         break;
       }
       case 'boost':
       case 'downrank': {
         const n = value === undefined ? 1 : Number(value);
-        if (!Number.isInteger(n) || n < 1 || n > MAX_STRENGTH) return `${key} must be 1–${MAX_STRENGTH}`;
+        if (!Number.isInteger(n) || n < 1 || n > MAX_STRENGTH) return t('lineBadStrength', key, MAX_STRENGTH);
         rule.boost = key === 'boost' ? n : -n;
         hasAction = true;
         break;
@@ -423,7 +424,7 @@ export function parseGoggleLine(line: string, lineNo: number): Rule | 'lens' | s
         break;
       case 'tag': {
         const id = (value ?? '').toLowerCase();
-        if (!TAG_ID.test(id)) return `Bad tag id: ${value}`;
+        if (!TAG_ID.test(id)) return t('lineBadTagId', value ?? '');
         if (!rule.tags.includes(id)) rule.tags.push(id);
         break;
       }
@@ -438,7 +439,7 @@ export function parseGoggleLine(line: string, lineNo: number): Rule | 'lens' | s
         rule.target = 'description';
         break;
       default:
-        return `Unknown option: ${key}`;
+        return t('lineUnknownOption', key);
     }
   }
 
@@ -451,7 +452,7 @@ export function parseGoggleLine(line: string, lineNo: number): Rule | 'lens' | s
   if (!rule.site && !rule.pattern) {
     // A bare `$discard` turns the list into a lens: everything else is discarded.
     if (rule.discard && !rule.tags.length) return 'lens';
-    return 'Instruction needs a pattern or a site';
+    return t('lineNeedsPattern');
   }
 
   // Goggles: an instruction without an action boosts.
@@ -472,9 +473,9 @@ export function compileGogglePattern(pattern: string): RegExp | string {
     end = true;
     p = p.slice(0, -1);
   }
-  if (!p) return 'Empty pattern';
-  if ((p.match(/\*/g)?.length ?? 0) > 2) return 'At most 2 wildcards (*) per instruction';
-  if ((p.match(/\^/g)?.length ?? 0) > 2) return 'At most 2 separators (^) per instruction';
+  if (!p) return t('lineEmptyPattern');
+  if ((p.match(/\*/g)?.length ?? 0) > 2) return t('lineTooManyWildcards', 2);
+  if ((p.match(/\^/g)?.length ?? 0) > 2) return t('lineTooManySeparators', 2);
   let re = '';
   for (const ch of p) {
     if (ch === '*') re += '.*';
@@ -549,32 +550,32 @@ export function parseUblacklistLine(input: string, lineNo: number): Rule | strin
     } else rule.allow = true;
   } else rule.discard = true;
 
-  if (/\s@if\(/.test(body)) return '@if guards are not supported yet';
+  if (/\s@if\(/.test(body)) return t('lineIfGuard');
 
   const regex = /^\/(.+)\/([a-z]*)$/i.exec(body);
   if (regex) {
-    if (regex[1]!.length > MAX_REGEX) return `Regular expression is longer than ${MAX_REGEX} characters`;
-    if (nestedRepeat(regex[1]!)) return `Regular expression could freeze search pages (a repeated group repeats inside): ${body}`;
+    if (regex[1]!.length > MAX_REGEX) return t('lineRegexTooLong', MAX_REGEX);
+    if (nestedRepeat(regex[1]!)) return t('lineRegexFreeze', body);
     try {
       rule.pattern = new RegExp(regex[1]!, regex[2]!.replace(/[^imsu]/g, ''));
     } catch {
-      return `Bad regular expression: ${body}`;
+      return t('lineBadRegex', body);
     }
     return rule;
   }
 
   const mp = /^(\*|https?|ftp|wss?):\/\/([^/]+)(\/.*)$/i.exec(body);
-  if (!mp) return `Unsupported rule: ${body}`;
+  if (!mp) return t('lineUnsupported', body);
   const hostPart = mp[2]!;
   const path = mp[3]!;
   if (hostPart === '*') {
     // Matches every host: keep only the path part.
   } else if (hostPart.startsWith('*.')) {
     const site = normalizeDomain(hostPart.slice(2));
-    if (!site) return `Bad host: ${hostPart}`;
+    if (!site) return t('lineBadHost', hostPart);
     rule.site = site;
   } else {
-    if (hostPart.includes('*')) return `Bad host: ${hostPart}`;
+    if (hostPart.includes('*')) return t('lineBadHost', hostPart);
     rule.host = hostPart.toLowerCase().replace(/:\d+$/, '');
   }
   if (path !== '/*') {
@@ -584,7 +585,7 @@ export function parseUblacklistLine(input: string, lineNo: number): Rule | strin
       .join('.*');
     rule.pathPattern = new RegExp(`^${re}$`, 'i');
   }
-  if (!rule.site && !rule.host && !rule.pathPattern) return 'Rule matches everything';
+  if (!rule.site && !rule.host && !rule.pathPattern) return t('lineMatchesEverything');
   return rule;
 }
 
@@ -592,6 +593,6 @@ export function parseUblacklistLine(input: string, lineNo: number): Rule | strin
 export function parseDomainLine(line: string, lineNo: number): Rule | string {
   const bare = line.replace(/^(0\.0\.0\.0|127\.0\.0\.1)\s+/, '').split(/\s/)[0] ?? '';
   const site = normalizeDomain(bare);
-  if (!site) return `Not a domain: ${line}`;
+  if (!site) return t('lineNotDomain', line);
   return { ...emptyRule(lineNo, line), site, discard: true };
 }

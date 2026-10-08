@@ -5,7 +5,7 @@ import type { EngineDef } from '@/utils/engines';
 import { ICON_ANUBIS, ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS, WEIGH_ICONS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
 import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
-import { t, tJoin, tList, tn } from '@/utils/i18n';
+import { t, tJoin, tList, tn, tParts } from '@/utils/i18n';
 import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, type PersonalLevel } from '@/utils/personal';
 import { ruleParts } from '@/utils/ruletext';
@@ -251,7 +251,7 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
       chipLevel &&
         h(
           'span',
-          { class: `verdict ${chipLevel}`, title: verdict.reasons.map((r) => `${r.list}: ${r.text}`).join('\n') },
+          { class: `verdict ${chipLevel}`, title: verdict.reasons.map((r) => t('reasonLine', r.list, r.text)).join('\n') },
           icon(LEVEL_ICONS[chipLevel]),
           LEVEL_CHIPS[chipLevel],
         ),
@@ -1297,8 +1297,7 @@ function buildPopover(
                   h(
                     'li',
                     null,
-                    h('b', null, r.list),
-                    ` ${r.text}.`,
+                    tParts('menuReason', h('b', null, r.list), r.text),
                     r.rule ? h('small', null, t('menuMatchedRule', r.rule.line)) : null,
                     r.rule ? ruleCode(r.rule.raw) : null,
                   ),

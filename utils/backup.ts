@@ -1,4 +1,5 @@
 import { storage } from '#imports';
+import { t } from './i18n';
 import { normalizeColor } from './listformat';
 import type { TagAction, TagPref } from './matcher';
 import { deepEqual, mergeById, mergeLists, mergeValue, type Side } from './merge';
@@ -84,9 +85,9 @@ export function readBackup(text: string): SyncData {
   try {
     data = JSON.parse(text);
   } catch {
-    throw new Error('This isn’t an Anubis backup.');
+    throw new Error(t('backupNotBackup'));
   }
-  if (!isRecord(data) || data.anubis !== 1) throw new Error('This isn’t an Anubis backup.');
+  if (!isRecord(data) || data.anubis !== 1) throw new Error(t('backupNotBackup'));
   const subs = Array.isArray(data.subscriptions) ? data.subscriptions : undefined;
   return {
     settings: normalizeSettings(isRecord(data.settings) ? (data.settings as Partial<Settings>) : undefined),

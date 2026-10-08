@@ -235,6 +235,7 @@ h2 .text-btn {
 }
 .add-levels {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 .add-levels .btn {

@@ -73,6 +73,7 @@ export default defineConfig({
           { text: 'Search engines', link: '/guide/search-engines' },
           { text: 'Privacy and permissions', link: '/guide/privacy' },
           { text: 'Troubleshooting', link: '/guide/troubleshooting' },
+          { text: 'Help translate', link: '/guide/translate' },
           { text: 'Experiments and decisions', link: '/experiments' },
           { text: 'Contributing', link: `${repo}/blob/main/CONTRIBUTING.md` },
           { text: 'Developing Anubis', link: `${repo}/blob/main/DEVELOPMENT.md` },

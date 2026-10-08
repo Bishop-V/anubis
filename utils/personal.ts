@@ -1,3 +1,4 @@
+import { t } from './i18n';
 import { formatTagDef, parseTagDef, type TagDef } from './listformat';
 import type { Level } from './matcher';
 
@@ -7,8 +8,9 @@ import type { Level } from './matcher';
 
 /** The personal list's id, and its name wherever Anubis shows it (a reason, a tag's source). */
 export const PERSONAL_ID = 'personal';
-export const PERSONAL_NAME = 'Your list';
+export const PERSONAL_NAME = t('personalListName');
 
+// English on purpose: the start of a list file, which may be published as it is.
 export const PERSONAL_HEADER = `! name: My list
 ! description: Sites I've weighed myself.
 ! author: me

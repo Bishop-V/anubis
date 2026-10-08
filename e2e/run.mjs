@@ -5,7 +5,7 @@
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
 //                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options,
-//                               responsive, welcome, sync, webdav, popup-tags, tag-notes, checks (layout, lifecycle, pin/hidden chips, DDG icon colors)
+//                               responsive, welcome, sync, webdav, popup-tags, tag-notes, settings-undo, checks (layout, lifecycle, pin/hidden chips, DDG icon colors, Undo in Settings)
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slides
 //                               in docs/public/
 //
@@ -124,6 +124,8 @@ async function launch(settings = {}, ext = EXT) {
   // settings below while that runs can land between its reads, so the tests would
   // run with "Remove": wait until it has set its flag.
   await waitForWorker(sw, async () => (await chrome.storage.sync.get('hideStyleMoved')).hideStyleMoved === true, 'Extension settings migration did not finish');
+  // Then it subscribes saved subscriptions to every default list, once: wait for that too.
+  await waitForWorker(sw, async () => (await chrome.storage.sync.get('defaultListsAdded')).defaultListsAdded === true, 'Extension default-lists migration did not finish');
   await sw.evaluate(
     async ({ personal, settings }) => {
       await chrome.storage.sync.set({
@@ -2422,6 +2424,72 @@ if (only === 'tag-notes') {
   });
   await options.close();
   console.log('\n== tag-site explanations passed');
+}
+
+if (!only || only === 'settings-undo' || checks) {
+  // Settings never asks "Are you sure?": a browser can be told to stop showing a
+  // page's dialogs, and confirm() then answers "no" at once, so a delete button did
+  // nothing. Deleting acts and offers Undo. Every dialog is dismissed here, as a
+  // suppressed one would be.
+  const options = await ctx.newPage();
+  let dialogs = 0;
+  options.on('dialog', (d) => {
+    dialogs++;
+    void d.dismiss();
+  });
+  const worker = ctx.serviceWorkers()[0];
+  const stored = (key) => worker.evaluate(async (k) => (await chrome.storage.sync.get(k))[k], key);
+  const undoFocused = () => options.waitForFunction(() => document.activeElement?.hasAttribute('data-undo'), null, { timeout: 5000 }).then(() => true, () => false);
+  const undo = async () => {
+    await options.locator('[data-undo]').click();
+    await options.waitForTimeout(400);
+  };
+
+  await options.goto(`chrome-extension://${extId}/options.html#tags`);
+  await options.getByRole('button', { name: 'Delete “Great tutorial”' }).click();
+  await options.waitForTimeout(400);
+  const tagGone = (await options.getByRole('button', { name: 'Edit Great tutorial and its sites' }).count()) === 0;
+  const tagNotice = (await options.locator('.notice:has([data-undo])').textContent()) ?? '';
+  const tagFocus = await undoFocused();
+  await undo();
+  const tagBack = (await options.getByRole('button', { name: 'Edit Great tutorial and its sites' }).count()) === 1;
+
+  await options.goto(`chrome-extension://${extId}/options.html#lists`);
+  const subsBefore = await worker.evaluate(async () => (await chrome.storage.sync.get('subscriptions')).subscriptions ?? null);
+  const unsubscribe = options.getByRole('button', { name: /^Unsubscribe from / }).first();
+  const listName = ((await unsubscribe.getAttribute('aria-label')) ?? '').replace('Unsubscribe from ', '');
+  await unsubscribe.click();
+  await options.waitForTimeout(400);
+  const listGone = (await options.getByRole('button', { name: `Unsubscribe from ${listName}` }).count()) === 0;
+  const listFocus = await undoFocused();
+  await undo();
+  const listBack = (await options.getByRole('button', { name: `Unsubscribe from ${listName}` }).count()) === 1;
+  const subsAfter = await worker.evaluate(async () => (await chrome.storage.sync.get('subscriptions')).subscriptions ?? null);
+
+  await options.goto(`chrome-extension://${extId}/options.html#share`);
+  const settingsBefore = await stored('settings');
+  await options.getByRole('button', { name: 'Reset settings' }).click();
+  await options.waitForTimeout(400);
+  const reset = (await stored('settings'))?.hideStyle !== settingsBefore.hideStyle;
+  const resetFocus = await undoFocused();
+  await undo();
+  const settingsBack = JSON.stringify(await stored('settings')) === JSON.stringify(settingsBefore);
+
+  assertChecks('deleting in Settings with dialogs suppressed', {
+    noDialogs: dialogs === 0,
+    tagDeleted: tagGone,
+    tagNoticeSaysWhat: tagNotice.includes('Deleted the tag “Great tutorial”'),
+    tagUndoFocused: tagFocus,
+    tagUndone: tagBack,
+    listUnsubscribed: listGone,
+    listUndoFocused: listFocus,
+    listUndone: listBack && (subsBefore === null ? subsAfter !== null : subsAfter?.length === subsBefore.length),
+    settingsReset: reset,
+    resetUndoFocused: resetFocus,
+    resetUndone: settingsBack,
+  });
+  await options.close();
+  console.log('\n== deleting in Settings with Undo passed');
 }
 
 await ctx.close();
