@@ -10,7 +10,7 @@ import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, type PersonalLevel } from '@/utils/personal';
 import { ruleParts } from '@/utils/ruletext';
 import type { Palette } from '@/utils/storage';
-import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder } from '@/utils/siteranking';
+import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder, tagPicker } from '@/utils/siteranking';
 import { shortSummary, stoppedSentence, summarySentence } from '@/utils/summary';
 import { OWN_TAGS, type FoundResult } from './results';
 import shadowCss from './shadow.css?inline';
@@ -1017,6 +1017,8 @@ export interface PopoverData {
   baseline: Verdict;
   personalText: string;
   tags: Map<string, TagDef>;
+  /** The tags subscribed lists give sites, which the menu shows apart from yours. */
+  listTags: Set<string>;
   /** Subscribed lists with an issue tracker, for "suggest" links, with the tag ids each defines. */
   trackers: { id: string; name: string; issues: string; tags: string[] }[];
   /** Pre-filled issues telling each list that weighed this result it's wrong. */
@@ -1200,7 +1202,7 @@ function buildPopover(
 
   const { mine, fromList, ids: tagIds } = tagOrder(data.tags, entry, data.verdict);
   // Tags you set toggle; tags from lists are shown but fixed.
-  const tagItems = tagIds.map((id) => {
+  const tagItem = (id: string) => {
     const tag = data.tags.get(id)!;
     const on = mine.has(id);
     if (!on && fromList.has(id)) {
@@ -1225,7 +1227,8 @@ function buildPopover(
       tag.label,
       on ? tagEffectText(data.verdict.tagEffects[id]) : null,
     );
-  });
+  };
+  const tagItems = tagPicker(tagIds, data.listTags, tagItem);
 
   const input = h('input', {
     type: 'text',
@@ -1287,7 +1290,7 @@ function buildPopover(
       'div',
       { class: 'section' },
       h('h3', null, t('popupTags')),
-      tagItems.length ? h('div', { class: 'tags' }, tagItems) : null,
+      tagItems,
       h(
         'div',
         { class: 'new-tag' },

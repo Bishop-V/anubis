@@ -21,6 +21,8 @@ Every line after the header is one instruction: which sites, and what to do with
 
 Lists that only tag, and leave ranking to each subscriber, are the friendliest to publish: subscribers can decide in **Settings → Tags** whether your tag raises, highlights, or hides.
 
+Reuse a tag id other lists already have where one fits, so subscribers see one tag rather than two with the same meaning; the [list format](../list-format.md#tags) lists the ones Anubis's lists use. Once published, keep each id: to rename a tag, change its label.
+
 ## 2. Put it online
 
 Create a public repository on GitHub, GitLab, or Codeberg, or a gist, and add the file. Any file name works; ending it in `.anubis` helps people recognise it.

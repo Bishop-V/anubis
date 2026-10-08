@@ -1,7 +1,8 @@
 import { parseList, type ListMeta, type TagDef } from './listformat';
-import { collectTags, compileList, type CompiledList, type TagPref } from './matcher';
-import { PERSONAL_ID, PERSONAL_NAME } from './personal';
+import { collectTags, compileList, listTagCards, type CompiledList, type TagPref } from './matcher';
+import { keepTagDefs, PERSONAL_ID, PERSONAL_NAME } from './personal';
 import {
+  editPersonal,
   getSettings,
   listCacheItem,
   loadPersonal,
@@ -102,4 +103,16 @@ export function watchRuleSet(cb: () => void): () => void {
     watchPersonal(fire),
   ];
   return () => unwatch.forEach((u) => u());
+}
+
+/**
+ * Give your list a copy of each list's tag your sites use, as tagging a site now does.
+ * Sites tagged before that only had the list's definition, and lost the tag's name
+ * when the list dropped it. Runs after an install or update; does nothing once done.
+ */
+export async function copyListTags(): Promise<void> {
+  const rules = await loadRuleSet();
+  const cards = listTagCards(rules.lists);
+  if (keepTagDefs(rules.personalText, cards) === rules.personalText) return;
+  await editPersonal((text) => keepTagDefs(text, cards));
 }

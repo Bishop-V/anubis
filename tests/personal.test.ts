@@ -3,6 +3,7 @@ import {
   changeHolds,
   fromBlockedSites,
   getSite,
+  keepTagDefs,
   listSites,
   listTagDefs,
   PERSONAL_HEADER,
@@ -10,12 +11,13 @@ import {
   removeTag,
   setSite,
   setSiteLevel,
+  tagSite,
   toggleSiteTag,
   undoChange,
   upsertTagDef,
 } from '@/utils/personal';
 import { parseList } from '@/utils/listformat';
-import { compileList, evaluate } from '@/utils/matcher';
+import { compileList, evaluate, listTagCards } from '@/utils/matcher';
 
 const base = `${PERSONAL_HEADER}
 ! Keep this comment.
@@ -144,5 +146,46 @@ describe('undoing a change from the result menu', () => {
     // The list not reloaded yet.
     expect(changeHolds(change, base)).toBe(true);
     expect(changeHolds(change, setSiteLevel(hid, 'mdn.dev', 'pin'))).toBe(false);
+  });
+});
+
+describe('tags from lists on your sites', () => {
+  const wikis = compileList('wikis', parseList('! tag: indie | Independent wiki | #3fa37a | A wiki run by its community.\n$site=wiki.gg,tag=indie\n$site=x.com,tag=undefined-here\n'));
+  const cards = listTagCards([wikis]);
+
+  it('copies a list’s tag into your list when you use it, so it keeps its name without the list', () => {
+    const tagged = tagSite(PERSONAL_HEADER, 'terraria.org', 'indie', cards);
+    expect(getSite(tagged, 'terraria.org')?.tags).toEqual(['indie']);
+    expect(listTagDefs(tagged)).toEqual([{ id: 'indie', label: 'Independent wiki', color: '#3fa37a', description: 'A wiki run by its community.' }]);
+    // Unsubscribed: the copy names the tag.
+    const mine = compileList('mine', parseList(tagged), true);
+    expect(evaluate({ url: 'https://terraria.org/' }, [mine]).tags).toEqual(['indie']);
+    expect(listTagDefs(tagged)[0]?.label).toBe('Independent wiki');
+    // A second site doesn't copy it again.
+    expect(listTagDefs(tagSite(tagged, 'other.org', 'indie', cards))).toHaveLength(1);
+  });
+
+  it('takes the copy out with your last site, but keeps a tag you made', () => {
+    const two = tagSite(tagSite(PERSONAL_HEADER, 'a.org', 'indie', cards), 'b.org', 'indie', cards);
+    const one = tagSite(two, 'a.org', 'indie', cards, false);
+    expect(listTagDefs(one)).toHaveLength(1);
+    expect(listTagDefs(tagSite(one, 'b.org', 'indie', cards, false))).toEqual([]);
+    const made = upsertTagDef(PERSONAL_HEADER, { id: 'meh', label: 'Meh', color: '#888888' });
+    expect(listTagDefs(tagSite(tagSite(made, 'a.org', 'meh', cards), 'a.org', 'meh', cards, false))).toHaveLength(1);
+  });
+
+  it('fills in copies for sites tagged before, and only adds', () => {
+    const before = `${PERSONAL_HEADER}$site=terraria.org,tag=indie\n$site=y.com,tag=undefined-here\n`;
+    const after = keepTagDefs(before, cards);
+    expect(listTagDefs(after).map((d) => d.id)).toEqual(['indie']);
+    expect(keepTagDefs(after, cards)).toBe(after);
+    // A list's tag your sites don't use is left out.
+    expect(keepTagDefs(PERSONAL_HEADER, cards)).toBe(PERSONAL_HEADER);
+  });
+
+  it('undo takes out a copy the change made', () => {
+    const tagged = tagSite(PERSONAL_HEADER, 'a.org', 'indie', cards);
+    const change = recordChange(undefined, 'a.org', PERSONAL_HEADER, tagged)!;
+    expect(listTagDefs(undoChange(tagged, change))).toEqual([]);
   });
 });

@@ -2,6 +2,13 @@
 
 Where things are stored, sync between browsers, and subscribing to lists. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Whose tag is it: lists' tags on your sites (2026-10-08)
+
+- **Raised by the owner:** people see list tags beside their own in the tag picker, add them to sites, and expect their additions to be overwritten or go out of date. They never were overwritten: a list's update can't touch the personal list, and renaming a list's tag is saved as a tag choice. But they did go stale: tagging a site with a list's tag stored only the id, so when the list dropped or renamed the tag, or you unsubscribed, your sites kept a bare id with a made-up colour.
+- **Considered and rejected: tag repositories.** Subscribable sets of tag definitions that lists would depend on, so a list reuses a tag you already have rather than duplicating it. Tags are already shared by id, which does that de-duplication, and a list of only `! tag:` lines already works as such a set. Dependencies would add fetch order, versions, a list that breaks when what it depends on goes, and a second thing to trust, and still wouldn't keep your own tagging from going stale.
+- **Shipped:** tagging a site with a list's tag copies the list's `! tag:` line into the personal list (`tagSite`), and untagging the last of your sites takes the copy out again. A subscribed list's definition now wins over the personal list's (`collectTags`); before, the personal list's won. The copy only names the tag once no list defines it. The background script fills in copies for sites tagged before, after an install or update (`copyListTags`). Settings → Tags groups by who defines the tag: Your tags holds tags no list gives sites, and a list's tag you use stays under Tags from lists ("Marks 3 sites of yours and 908 from …"). Before, a tag you'd defined that a list also used sat under Your tags with "Also used by". The popup and the result menu split the picker into Yours and From lists. `list-format.md` asks list authors to keep ids and reuse common ones, and lists the ids Anubis's lists use.
+- **Changed for some:** a tag you made whose id a list also defines now shows the list's name and colour. Rename it in Settings → Tags to keep yours; that's saved as a tag choice, which wins over both.
+
 ## FOSS from awesome-selfhosted (2026-10-08)
 
 - **Built:** a weekly source, `lists/sources/self-hosted-foss.anubis`, on by default. awesome-selfhosted-data keeps one YAML file per program in `software/`; each program's `website_url` becomes a rule labelling it **FOSS**, the FOSS tools list's tag, with no boost. 1,006 rules from 1,353 entries. The files are flat enough to read without a YAML library (`yamlFields`).

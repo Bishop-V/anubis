@@ -2,7 +2,7 @@ import { browser, defineContentScript } from '#imports';
 import { NO_CLEANUP } from '@/utils/cleanup';
 import { engineFor, ENGINE_MATCHES, isMobileAgent, sameSearch, type EngineDef } from '@/utils/engines';
 import { colorForTag, slugifyTag } from '@/utils/listformat';
-import { evaluate, type Verdict } from '@/utils/matcher';
+import { evaluate, listTagCards, listTagIds, type Verdict } from '@/utils/matcher';
 import { send, type Message, type PageStats } from '@/utils/messages';
 import {
   changeHolds,
@@ -10,7 +10,8 @@ import {
   getSite,
   recordChange,
   setSiteLevel,
-  toggleSiteTag,
+  keepTagDefs,
+  tagSite,
   undoChange,
   upsertTagDef,
   type PersonalLevel,
@@ -237,7 +238,7 @@ export default defineContentScript({
             if (!undone) return;
             change = undefined;
             pass();
-            editPersonal((t) => undoChange(t, undone)).catch((error: unknown) => {
+            editPersonal((t) => keepTagDefs(undoChange(t, undone), listTagCards(rules.lists), undone.before.tags)).catch((error: unknown) => {
               change = undone;
               schedule();
               console.warn('[anubis] could not save your list', error);
@@ -369,19 +370,20 @@ export default defineContentScript({
           baseline,
           personalText: rules.personalText,
           tags: rules.tags,
+          listTags: listTagIds(rules.lists),
           trackers,
           reports,
           theme: menuTheme(rules.settings.theme),
         },
         {
           setLevel: (domain, level: PersonalLevel) => editSite(domain, (t) => setSiteLevel(t, domain, level)),
-          toggleTag: (domain, tag) => editSite(domain, (t) => toggleSiteTag(t, domain, tag)),
+          toggleTag: (domain, tag) => editSite(domain, (t) => tagSite(t, domain, tag, listTagCards(rules.lists))),
           createTag: (domain, label) => {
             const id = slugifyTag(label);
             if (!id) return;
             editSite(domain, (t) => {
               const withTag = rules.tags.has(id) ? t : upsertTagDef(t, { id, label, color: colorForTag(id) });
-              return toggleSiteTag(withTag, domain, id, true);
+              return tagSite(withTag, domain, id, listTagCards(rules.lists), true);
             });
           },
           suggest: (tracker, domain) => {

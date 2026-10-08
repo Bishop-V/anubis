@@ -3,8 +3,8 @@ import { h, icon } from '@/utils/dom';
 import { t, tJoin, tn, tParts } from '@/utils/i18n';
 import { ICON_CLOSE, ICON_TRASH, LEVEL_LABELS } from '@/utils/icons';
 import { colorForTag, normalizeColor, slugifyTag, TAG_PALETTE, type TagDef } from '@/utils/listformat';
-import { allSites, type CompiledList, type TagAction } from '@/utils/matcher';
-import { listSites, listTagDefs, removeTag, toggleSiteTag, upsertTagDef, type SiteEntry } from '@/utils/personal';
+import { allSites, listTagCards, type CompiledList, type TagAction } from '@/utils/matcher';
+import { listSites, removeTag, tagSite, upsertTagDef, type SiteEntry } from '@/utils/personal';
 import { loadRuleSet } from '@/utils/ruleset';
 import { editPersonal, setTagPref } from '@/utils/storage';
 import { flash, flashed } from './flash';
@@ -58,7 +58,8 @@ function effectSentence(tag: TagDef, action: TagAction, lists: CompiledList[], p
   const from = lists.filter((l) => !l.personal && l.tags.some((d) => d.id === tag.id));
   const who = [
     personalCount ? tn('tagMarksYours', personalCount) : null,
-    ...from.map((l) => tn('tagMarksFromList', ruleCount(l, tag.id), l.name)),
+    // A list that only defines the tag names it, under the sentence, and marks nothing.
+    ...from.filter((l) => ruleCount(l, tag.id) > 0).map((l) => tn('tagMarksFromList', ruleCount(l, tag.id), l.name)),
   ].filter((w): w is string => !!w);
   if (!who.length) return t('tagMarksNone');
   const carriers = t('tagMarks', tJoin(who));
@@ -149,7 +150,7 @@ function sitesPanel(
     reasonInput.value = '';
     input.blur();
     const note = reason ? t('tagSiteNote', tag.label, reason) : undefined;
-    const saved = await editPersonal((text) => domains.reduce((acc, d) => toggleSiteTag(acc, d!, tag.id, true, note), text));
+    const saved = await editPersonal((text) => domains.reduce((acc, d) => tagSite(acc, d!, tag.id, listTagCards(lists), true, note), text));
     refocus = { tag: tag.id, text: saved };
   });
   if (refocus?.tag === tag.id && refocus.text === personalText) {
@@ -202,7 +203,7 @@ function sitesPanel(
                   type: 'button',
                   title: t('popupUntag', entry.site),
                   attrs: { 'aria-label': t('popupUntag', entry.site) },
-                  on: { click: () => void editPersonal((text) => toggleSiteTag(text, entry.site, tag.id, false)) },
+                  on: { click: () => void editPersonal((text) => tagSite(text, entry.site, tag.id, listTagCards(lists), false)) },
                 },
                 icon(ICON_CLOSE),
               ),
@@ -218,22 +219,23 @@ function sitesPanel(
 
 export async function renderTags(): Promise<HTMLElement> {
   const rules = await loadRuleSet();
-  const personalDefs = new Map(listTagDefs(rules.personalText).map((d) => [d.id, d]));
   const sites = listSites(rules.personalText);
 
   const cards = [...rules.tags.values()]
-    .sort((a, b) => Number(personalDefs.has(b.id)) - Number(personalDefs.has(a.id)) || a.label.localeCompare(b.label))
+    .sort((a, b) => a.label.localeCompare(b.label))
     .map((tag) => {
-      const mine = personalDefs.has(tag.id);
-      // The lists that define the tag. A tag only your sites use has none.
+      // The lists that give sites the tag. A tag is yours when none does: one you made, or
+      // one a list dropped that your sites still use. Your list keeps a copy of a list's
+      // tag you use, for then.
       const sources = rules.lists.filter((l) => !l.personal && l.tags.some((d) => d.id === tag.id)).map((l) => l.name);
-      const yours = mine || !sources.length;
+      const yours = !sources.length;
       const pref = rules.prefs[tag.id] ?? {};
       const personalCount = sites.filter((s) => s.tags.includes(tag.id)).length;
 
+      // Your tag's name and colour live in your list; a list's tag keeps the list's, with yours over them.
       const save = (patch: Partial<TagDef>) => {
         const next = { ...tag, ...patch };
-        if (mine) void editPersonal((text) => upsertTagDef(text, next));
+        if (yours) void editPersonal((text) => upsertTagDef(text, next));
         else void setTagPref(tag.id, { color: next.color, label: next.label });
       };
 
@@ -250,7 +252,7 @@ export async function renderTags(): Promise<HTMLElement> {
       const show = h('input', { type: 'checkbox', checked: !pref.muted, attrs: { 'aria-label': t('tagShowUnder', tag.label) } });
       show.addEventListener('change', () => void setTagPref(tag.id, { muted: show.checked ? undefined : true }));
 
-      const panel = sitesPanel(tag, mine, rules.personalText, sites, rules.lists, save);
+      const panel = sitesPanel(tag, yours, rules.personalText, sites, rules.lists, save);
       const toggleLabel = () => (open.has(tag.id) ? t('tagDone') : t('tagEdit'));
       const toggle = h(
         'button',
@@ -307,7 +309,7 @@ export async function renderTags(): Promise<HTMLElement> {
           { class: 'meta' },
           h('p', { class: 'effect' }, effectSentence(tag, pref.action ?? 'list', rules.lists, personalCount)),
           tag.description ? h('p', null, tag.description) : null,
-          sources.length ? h('p', { class: 'source' }, t(yours ? 'tagAlsoLists' : 'tagSourceLists', tJoin(sources))) : null,
+          sources.length ? h('p', { class: 'source' }, t('tagSourceLists', tJoin(sources))) : null,
         ),
         panel,
       );

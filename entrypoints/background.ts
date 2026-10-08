@@ -12,6 +12,7 @@ import {
   updateSettings,
   watchPersonal,
 } from '@/utils/storage';
+import { copyListTags } from '@/utils/ruleset';
 import { migrateDefaultLists, refreshStale } from '@/utils/subscriptions';
 import { recordColorScheme } from '@/utils/theme';
 import { changeEncryptionPassphrase, syncChanges, syncIfDue, syncWithServer } from '@/utils/webdav';
@@ -102,6 +103,7 @@ export default defineBackground(() => {
     await migrateSettings();
     await migrateDefaultLists();
     await refresh();
+    await copyListTags();
     await syncWithServer();
   });
   browser.runtime.onStartup.addListener(() => {

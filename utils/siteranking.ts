@@ -70,3 +70,16 @@ export function tagOrder(tags: Map<string, { label: string }>, entry: SiteEntry 
   const ids = [...tags.keys()].sort((a, b) => rank(a) - rank(b) || tags.get(a)!.label.localeCompare(tags.get(b)!.label));
   return { mine, fromList, ids };
 }
+
+/**
+ * The tags to choose from, yours apart from those lists give sites, each group under
+ * its name when there are both. `item` draws one tag; `ids` comes in `tagOrder`'s order.
+ */
+export function tagPicker(ids: string[], fromLists: Set<string>, item: (id: string) => HTMLElement): HTMLElement | null {
+  if (!ids.length) return null;
+  const yours = ids.filter((id) => !fromLists.has(id));
+  const lists = ids.filter((id) => fromLists.has(id));
+  if (!yours.length || !lists.length) return h('div', { class: 'tags' }, ids.map(item));
+  const group = (name: string, group: string[]) => h('div', { class: 'tag-group' }, h('p', { class: 'tag-group-name' }, name), h('div', { class: 'tags' }, group.map(item)));
+  return h('div', { class: 'tag-groups' }, group(t('tagGroupYours'), yours), group(t('tagGroupLists'), lists));
+}
