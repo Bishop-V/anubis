@@ -2,6 +2,11 @@
 
 Builds, tests, the end-to-end run, stores, and releases. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## The ⚖ button check depends on fonts (2026-10-08)
+
+- **Found:** in a cloud session, `node e2e/run.mjs checks` fails "the ⚖ button on the first row, never over text" on the DuckDuckGo mock, on `main` as well: a long title ("How do I return the response from an asy…") wraps under the button. CI, on Ubuntu with Playwright's fonts, passes. The cloud container's fallback font is wider.
+- **Not changed:** the check is right for the fonts CI has. Leaving DuckDuckGo out of that one check locally showed every other check passing.
+
 ## Shared ranking code and trimming duplication (2026-10-05)
 
 - **Kept:** the result menu and the popup share their ranking, hint, cartouche, and tag order through `utils/siteranking.ts`, with unit tests; `displayLevel` in `utils/personal.ts` replaces four copies of "an allow shows as Normal".

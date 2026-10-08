@@ -38,7 +38,7 @@ closing:
   title: Nothing to sign up for
   details:
     - Anubis has no server and collects nothing. Your choices stay in your browser, unless you connect a storage server of your own to sync between browsers.
-    - It works on Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, and Yandex, in Firefox and Chrome. Mojeek and Edge are experimental: they haven't been tried on the live site or in the browser yet.
+    - "It works on Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, and Yandex, in Firefox and Chrome. Mojeek and Edge are experimental: they haven't been tried on the live site or in the browser yet."
   link: /guide/privacy
   linkText: Privacy and permissions
 ---

@@ -5,7 +5,7 @@ import type { EngineDef } from '@/utils/engines';
 import { ICON_ANUBIS, ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS, WEIGH_ICONS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
 import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
-import { t, tJoin, tList, tn } from '@/utils/i18n';
+import { t, tJoin, tList, tn, tParts } from '@/utils/i18n';
 import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, type PersonalLevel } from '@/utils/personal';
 import { ruleParts } from '@/utils/ruletext';
@@ -253,7 +253,7 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
       chipLevel &&
         h(
           'span',
-          { class: `verdict ${chipLevel}`, title: verdict.reasons.map((r) => `${r.list}: ${r.text}`).join('\n') },
+          { class: `verdict ${chipLevel}`, title: verdict.reasons.map((r) => t('reasonLine', r.list, r.text)).join('\n') },
           icon(LEVEL_ICONS[chipLevel]),
           LEVEL_CHIPS[chipLevel],
         ),
@@ -560,8 +560,8 @@ const MENU_LOOK = ['--anubis-weigh-size', '--anubis-weigh-radius', '--anubis-wei
 /**
  * Just under the engine's menu button and centred on it, at its size, shape, and
  * colour, so the two read as a pair of options. The engine cuts a long address off
- * before the menu, so the spot under it is free on every result. Faint until the
- * result is hovered, like the button everywhere else.
+ * before the menu, so the spot under it is free on every result. As bright as the
+ * menu button, so a faint menu makes a faint button.
  */
 function placeNextToMenu(host: HTMLElement, container: HTMLElement, menu: HTMLElement, where: 'under' | 'beside'): void {
   const box = container.getBoundingClientRect();
@@ -1312,8 +1312,7 @@ function buildPopover(
                   h(
                     'li',
                     null,
-                    h('b', null, r.list),
-                    ` ${r.text}.`,
+                    tParts('menuReason', h('b', null, r.list), r.text),
                     r.rule ? h('small', null, t('menuMatchedRule', r.rule.line)) : null,
                     r.rule ? ruleCode(r.rule.raw) : null,
                   ),

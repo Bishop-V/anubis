@@ -3,7 +3,7 @@ import './style.css';
 import { browser } from '#imports';
 import { h, icon } from '@/utils/dom';
 import { ICON_EXTERNAL } from '@/utils/icons';
-import { t } from '@/utils/i18n';
+import { localizePage, t } from '@/utils/i18n';
 import { bugReportLink, describeBrowser, guide, REPO_URL } from '@/utils/links';
 import { listSites } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet } from '@/utils/ruleset';
@@ -29,14 +29,14 @@ interface Section {
 }
 
 const SECTIONS: Section[] = [
-  { id: 'sites', label: 'Your sites', render: renderSites, help: ['guide/ranking', 'How ranking works'] },
-  { id: 'tags', label: 'Tags', render: renderTags, help: ['guide/tags', 'How tags work'] },
-  { id: 'lists', label: 'Lists', render: renderLists, help: ['guide/lists', 'How lists work'] },
-  { id: 'cleanup', label: 'Remove panels', render: renderCleanup, help: ['guide/clean-up', 'How removing panels works'] },
-  { id: 'appearance', label: 'Appearance', render: renderAppearance, help: ['guide/ranking#hidden-results', 'About hidden results'] },
-  { id: 'engines', label: 'Search engines', render: renderEngines, help: ['guide/search-engines', 'Which engines work'] },
-  { id: 'sync', label: t('syncHeading'), render: renderSync, help: ['guide/sync', 'How sync works'] },
-  { id: 'share', label: 'Backup', render: renderShare, help: ['guide/import-and-backup', 'Moving from other tools'] },
+  { id: 'sites', label: t('sitesHeading'), render: renderSites, help: ['guide/ranking', t('sitesHelp')] },
+  { id: 'tags', label: t('tagsHeading'), render: renderTags, help: ['guide/tags', t('tagsHelp')] },
+  { id: 'lists', label: t('listsHeading'), render: renderLists, help: ['guide/lists', t('listsHelp')] },
+  { id: 'cleanup', label: t('cleanupHeading'), render: renderCleanup, help: ['guide/clean-up', t('cleanupHelp')] },
+  { id: 'appearance', label: t('appearanceHeading'), render: renderAppearance, help: ['guide/ranking#hidden-results', t('appearanceHelp')] },
+  { id: 'engines', label: t('enginesHeading'), render: renderEngines, help: ['guide/search-engines', t('enginesHelp')] },
+  { id: 'sync', label: t('syncHeading'), render: renderSync, help: ['guide/sync', t('syncHelp')] },
+  { id: 'share', label: t('backupHeading'), render: renderShare, help: ['guide/import-and-backup', t('shareHelp')] },
 ];
 
 function external(href: string, text: string, title?: string): HTMLElement {
@@ -63,9 +63,9 @@ async function renderNav() {
     // The name opens the wiki, where everything here is explained.
     h(
       'a',
-      { class: 'brand', href: guide(), target: '_blank', rel: 'noopener noreferrer', title: 'Open the Anubis wiki' },
+      { class: 'brand', href: guide(), target: '_blank', rel: 'noopener noreferrer', title: t('settingsBrandTitle') },
       h('img', { src: '/anubis.svg', alt: '', width: 36, height: 36 }),
-      h('div', null, h('h1', null, 'Anubis'), h('p', null, 'Hide, rank, and tag search results')),
+      h('div', null, h('h1', null, 'Anubis'), h('p', null, t('settingsTagline'))),
     ),
     ...SECTIONS.map((s) =>
       h(
@@ -82,9 +82,9 @@ async function renderNav() {
       h(
         'div',
         { class: 'links' },
-        external(guide(), 'Wiki'),
+        external(guide(), t('welcomeGuide')),
         external(bugReportLink({ version: browser.runtime.getManifest().version, browser: describeBrowser(navigator.userAgent) }), t('reportProblem'), t('reportProblemTitle')),
-        external(REPO_URL, 'Source on GitHub'),
+        external(REPO_URL, t('settingsSource')),
       ),
     ),
   );
@@ -99,7 +99,7 @@ async function renderMain() {
   if (ticket !== rendering) return;
   if (section.help) el.querySelector('.page-title p')?.append(' ', helpLink(...section.help));
   main.replaceChildren(el);
-  document.title = `${section.label} – Anubis`;
+  document.title = t('settingsPageTitle', section.label);
   window.scrollTo(0, scroll);
 }
 
@@ -129,6 +129,7 @@ window.addEventListener('hashchange', () => {
 });
 
 async function start() {
+  localizePage();
   await initTheme();
   await Promise.all([renderNav(), renderMain()]);
   watchRuleSet(() => void refresh());

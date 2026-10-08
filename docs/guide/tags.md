@@ -39,6 +39,8 @@ Press **Edit** beside a tag to open it. There you can:
 
 The ⚖ button on a search result tags that result's site the same way.
 
+The bin beside one of your own tags deletes it and takes it off your sites. Anubis doesn't ask first: it says what it deleted, with **Undo** beside it for a few seconds.
+
 ![Settings, Tags, with an expanded tag showing the optional explanation field for a site](../img/options-tags.png)
 
 ### Several tags on one result

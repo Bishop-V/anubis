@@ -69,23 +69,8 @@ export function icon(svg: string): Element {
   return document.importNode(el, true);
 }
 
-export function plural(n: number, one: string, many = `${one}s`): string {
-  return `${n} ${n === 1 ? one : many}`;
-}
-
 /** "a", "a and b", "a, b, and c". */
 export function andList(items: string[]): string {
   if (items.length < 3) return items.join(' and ');
   return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`;
-}
-
-export function timeAgo(ms: number): string {
-  if (!ms) return 'never';
-  const s = Math.round((Date.now() - ms) / 1000);
-  if (s < 60) return 'just now';
-  const m = Math.round(s / 60);
-  if (m < 60) return `${m} min ago`;
-  const hr = Math.round(m / 60);
-  if (hr < 48) return `${hr} h ago`;
-  return `${Math.round(hr / 24)} days ago`;
 }

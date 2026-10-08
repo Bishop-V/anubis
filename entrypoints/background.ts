@@ -12,7 +12,7 @@ import {
   updateSettings,
   watchPersonal,
 } from '@/utils/storage';
-import { refreshStale } from '@/utils/subscriptions';
+import { migrateDefaultLists, refreshStale } from '@/utils/subscriptions';
 import { recordColorScheme } from '@/utils/theme';
 import { changeEncryptionPassphrase, syncChanges, syncIfDue, syncWithServer } from '@/utils/webdav';
 
@@ -100,6 +100,7 @@ export default defineBackground(() => {
     if (reason === 'install') void browser.tabs.create({ url: browser.runtime.getURL('/welcome.html') });
     await migrateLegacy();
     await migrateSettings();
+    await migrateDefaultLists();
     await refresh();
     await syncWithServer();
   });

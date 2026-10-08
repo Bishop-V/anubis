@@ -11,7 +11,7 @@ Thanks for helping. Everything happens on GitHub: issues for reports and ideas, 
 - **Report a security problem** privately, not in an issue. [SECURITY.md](SECURITY.md) says how.
 - **Fix a bug or build a feature.** For anything bigger than a small fix, open an issue first so the approach can be agreed before you spend time on it. [`ROADMAP.md`](ROADMAP.md) lists planned work.
 - **Improve the wiki** in [`docs/`](docs), which is published at [bishop-v.github.io/anubis](https://bishop-v.github.io/anubis/).
-- **Translate.** Not open yet; the Translation section of [`ROADMAP.md`](ROADMAP.md) says what's left before it is.
+- **Translate.** Every word of the interface comes from `public/_locales/en/messages.json`. [Help translate](https://bishop-v.github.io/anubis/guide/translate) in the wiki says how to add a language.
 
 ## Getting set up
 
@@ -31,7 +31,7 @@ npm run dev:chrome   # the same in Chrome
 Keep each pull request to one topic. The project's conventions, briefly:
 
 - **Protect working behavior.** Read [`AGENTS.md`](AGENTS.md) before editing; reproduce bugs and add a regression check before changing behavior. Treat stored formats, extension identity, permissions, and guide URLs as compatibility contracts.
-- **Interface.** The popup, settings, welcome page, and in-page UI are plain DOM built with `h()` from `utils/dom.ts`. Text from lists always goes in as text nodes, never markup, and nothing uses `innerHTML`. Interface text goes in `public/_locales/en/messages.json` and is used through `t()`, `tn()` (counts) and `localizePage()` (static HTML) from `utils/i18n.ts`.
+- **Interface.** The popup, settings, welcome page, and in-page UI are plain DOM built with `h()` from `utils/dom.ts`. Text from lists always goes in as text nodes, never markup, and nothing uses `innerHTML`. Interface text goes in `public/_locales/en/messages.json`, with a description for translators, and is used through `t()`, `tn()` (counts), `tParts()` (messages with elements in them) and `localizePage()` (static HTML) from `utils/i18n.ts`. A test fails on text written straight into the code.
 - **Look.** [`STYLEGUIDE.md`](STYLEGUIDE.md) has the palette, type sizes, controls, and layouts. Use what's there rather than a new colour, size, or radius. Red is only for errors and actions that delete something; a chosen Hide is grey.
 - **Access.** [`ACCESSIBILITY.md`](ACCESSIBILITY.md) has what to keep in mind for screen readers and the keyboard, on Anubis's own pages and on search pages.
 - **Wording.** Labels say what happens in plain words ("Load more results", "Hide, rank, or tag this site"). A site's *ranking* is Hide, Lower, Normal, Raise, or Pin, and the same word means the same thing everywhere. Use an icon only where everyone knows it (a cog for settings, × to close), and give every icon-only button a label and a tooltip. Write in British spelling, with a comma before the last "and" or "or" in lists of three or more.

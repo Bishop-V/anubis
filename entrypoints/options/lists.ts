@@ -1,6 +1,6 @@
 import { browser } from '#imports';
-import { h, icon, plural, timeAgo } from '@/utils/dom';
-import { t } from '@/utils/i18n';
+import { h, icon } from '@/utils/dom';
+import { t, tAgo, tJoin, tList, tn, tParts, type MessageKey } from '@/utils/i18n';
 import { ICON_EXTERNAL, ICON_REFRESH, ICON_TRASH } from '@/utils/icons';
 import { readSubscribeLink, REPO_URL, type SubscribeLink } from '@/utils/links';
 import { colorForTag, parseList, type ListFormat, type ParsedList } from '@/utils/listformat';
@@ -24,18 +24,17 @@ import {
   type DirectoryEntry,
 } from '@/utils/subscriptions';
 
-const FORMAT_LABEL: Record<ListFormat, string> = {
-  anubis: 'Anubis list',
-  goggle: 'Brave Goggle',
-  ublacklist: 'uBlacklist ruleset',
-  domains: 'domain list',
+const FORMAT_LABEL: Record<ListFormat, MessageKey> = {
+  anubis: 'listFormatAnubis',
+  goggle: 'listFormatGoggle',
+  ublacklist: 'listFormatUblacklist',
+  domains: 'listFormatDomains',
 };
 
 /** "Brave Goggle, lens" / "Anubis list, built in" */
 function kindOf(format: string | undefined, lens?: boolean, builtin?: boolean): string {
-  return [format ? (FORMAT_LABEL[format as ListFormat] ?? format) : null, lens ? 'lens' : null, builtin ? 'built in' : null]
-    .filter(Boolean)
-    .join(', ');
+  const label = format && format in FORMAT_LABEL ? t(FORMAT_LABEL[format as ListFormat]) : format;
+  return tJoin([label, lens ? t('listKindLens') : null, builtin ? t('listKindBuiltin') : null].filter((x): x is string => !!x), 'unit');
 }
 
 let directory: DirectoryEntry[] | undefined;
@@ -65,14 +64,14 @@ function offered(link: SubscribeLink) {
 async function subscribe(input: string, entry?: DirectoryEntry, name = entry?.name): Promise<void> {
   const url = toRawUrl(input);
   if (!/^https:\/\//.test(url)) {
-    flash('lists', 'error', 'Lists must be served over https.');
+    flash('lists', 'error', t('listsNeedHttps'));
     return rerender();
   }
   const origin = originPermissionFor(url);
   if (origin) {
     const granted = await browser.permissions.request({ origins: [origin] }).catch(() => false);
     if (!granted) {
-      flash('lists', 'error', `Anubis needs permission to read ${new URL(url).hostname} to download this list.`);
+      flash('lists', 'error', t('listsPermissionToDownload', new URL(url).hostname));
       return rerender();
     }
   }
@@ -91,7 +90,7 @@ async function subscribe(input: string, entry?: DirectoryEntry, name = entry?.na
         : [...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: entry?.builtin || undefined, name }],
     );
     const { parsed } = download;
-    flash('lists', 'ok', `Subscribed to ${displayName({ url, name }, parsed.meta)}: ${plural(parsed.rules.length, 'instruction')} and ${plural(parsed.tags.length, 'tag')}.`);
+    flash('lists', 'ok', t('listsSubscribed', displayName({ url, name }, parsed.meta), tn('listInstructions', parsed.rules.length), tn('popupTagCount', parsed.tags.length)));
     if (offer && offered(offer).url === url) dropOffer();
   } catch (error) {
     // Built-in lists still work from their bundled copy when the download fails.
@@ -99,10 +98,10 @@ async function subscribe(input: string, entry?: DirectoryEntry, name = entry?.na
       await editSubscriptions((subs) =>
         subs.some((s) => s.id === id) ? subs : [...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: true, name: entry.name }],
       );
-      flash('lists', 'ok', `Subscribed to ${entry.name} (using the copy bundled with Anubis until it can update).`);
+      flash('lists', 'ok', t('listsSubscribedBundled', entry.name));
       if (offer && offered(offer).url === url) dropOffer();
     } else {
-      flash('lists', 'error', `Couldn’t subscribe: ${error instanceof Error ? error.message : String(error)}`);
+      flash('lists', 'error', t('listsSubscribeFailed', error instanceof Error ? error.message : String(error)));
     }
   } finally {
     busy.delete(id);
@@ -117,9 +116,9 @@ export async function renderLists(): Promise<HTMLElement> {
   const urlInput = h('input', {
     type: 'url',
     placeholder: 'https://github.com/you/lists/blob/main/my.anubis',
-    attrs: { 'aria-label': 'List URL' },
+    attrs: { 'aria-label': t('listsUrlLabel') },
   });
-  const form = h('form', { class: 'inline-form' }, urlInput, h('button', { class: 'btn primary', type: 'submit' }, 'Subscribe'));
+  const form = h('form', { class: 'inline-form' }, urlInput, h('button', { class: 'btn primary', type: 'submit' }, t('offerSubscribe')));
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     if (urlInput.value.trim()) void subscribe(urlInput.value.trim());
@@ -143,8 +142,8 @@ export async function renderLists(): Promise<HTMLElement> {
     'div',
     null,
     pageTitle(
-      'Lists',
-      'Subscribe to lists that tag, rerank, or hide sites. Any text file on GitHub, GitLab, Codeberg, or a gist works: Anubis lists, Brave Goggles, uBlacklist rulesets, and plain domain lists.',
+      t('listsHeading'),
+      t('listsIntro'),
       h(
         'button',
         {
@@ -154,44 +153,39 @@ export async function renderLists(): Promise<HTMLElement> {
             click: async (e) => {
               const b = e.currentTarget as HTMLButtonElement;
               b.disabled = true;
-              b.lastChild!.textContent = 'Updating…';
+              b.lastChild!.textContent = t('listsUpdating');
               await send({ type: 'refresh-all' });
-              flash('lists', 'ok', 'All lists checked for updates.');
+              flash('lists', 'ok', t('listsAllChecked'));
               rerender();
             },
           },
         },
         icon(ICON_REFRESH),
-        'Update all',
+        t('listsUpdateAll'),
       ),
     ),
     offer ? offerPanel(offer, notice) : null,
     h(
       'div',
       { class: 'panel' },
-      h('h3', null, 'Add a list'),
-      h(
-        'p',
-        { class: 'muted' },
-        'Paste a link to the file. Links to a GitHub page, a gist, or a Brave Goggle work too.',
-        ' ',
-        helpLink('guide/lists#what-lists-work', 'Which lists work'),
-      ),
+      h('h3', null, t('listsAddHeading')),
+      h('p', { class: 'muted' }, t('listsAddHint'), ' ', helpLink('guide/lists#what-lists-work', t('listsAddHelp'))),
       form,
       offer ? null : notice,
     ),
     h(
       'div',
       { class: 'panel' },
-      h('h3', null, 'Your lists'),
-      cards.length ? cards : h('p', { class: 'empty' }, 'No lists yet. Pick some from the ones below.'),
+      h('h3', null, t('welcomeListsHeading')),
+      flashed('unsubscribed'),
+      cards.length ? cards : h('p', { class: 'empty' }, t('listsNone')),
     ),
     discover.length
       ? h(
           'div',
           { class: 'panel' },
-          h('h3', null, 'More lists'),
-          h('p', { class: 'muted' }, 'From the Anubis directory and the wider community.'),
+          h('h3', null, t('listsMoreHeading')),
+          h('p', { class: 'muted' }, t('listsMoreIntro')),
           discover.map((d) => {
             const id = d.builtin ? builtinId(d) : subscriptionId(d.url);
             return h(
@@ -201,13 +195,13 @@ export async function renderLists(): Promise<HTMLElement> {
                 'div',
                 { class: 'body' },
                 h('b', null, d.name),
-                h('span', { class: 'kind', title: d.lens ? 'A lens hides results the list doesn’t mention' : undefined }, kindOf(d.format, d.lens)),
+                h('span', { class: 'kind', title: d.lens ? t('listLensTitle') : undefined }, kindOf(d.format, d.lens)),
                 h('p', null, d.description),
               ),
               h(
                 'button',
                 { class: 'text-btn', type: 'button', disabled: busy.has(id), on: { click: () => void subscribe(d.url, d) } },
-                busy.has(id) ? 'Subscribing…' : 'Subscribe',
+                busy.has(id) ? t('offerSubscribing') : t('offerSubscribe'),
               ),
             );
           }),
@@ -216,11 +210,9 @@ export async function renderLists(): Promise<HTMLElement> {
     h(
       'p',
       { class: 'muted', style: 'margin-top:26px;font-size:13px' },
-      'Made a list worth sharing? Add it to the directory with a pull request to ',
-      h('a', { href: `${REPO_URL}/blob/main/lists/directory.json`, target: '_blank', rel: 'noopener noreferrer' }, 'lists/directory.json'),
-      '.',
+      tParts('listsShare', h('a', { href: `${REPO_URL}/blob/main/lists/directory.json`, target: '_blank', rel: 'noopener noreferrer' }, 'lists/directory.json')),
       ' ',
-      helpLink('guide/publish-a-list', 'How to publish a list'),
+      helpLink('guide/publish-a-list', t('publishHelp')),
     ),
   );
 }
@@ -272,7 +264,7 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
   const name = displayName(sub, meta);
   const color = meta.avatar ?? colorForTag(sub.id);
 
-  const toggle = h('input', { type: 'checkbox', checked: sub.enabled, attrs: { 'aria-label': `Use ${name}` } });
+  const toggle = h('input', { type: 'checkbox', checked: sub.enabled, attrs: { 'aria-label': t('listsUse', name) } });
   toggle.addEventListener('change', () => {
     void editSubscriptions((subs) => subs.map((s) => (s.id === sub.id ? { ...s, enabled: toggle.checked } : s)));
   });
@@ -292,28 +284,36 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
         return;
       }
       const entry = await refreshList(sub);
-      if (entry.error) flash('lists', 'error', `${name}: ${entry.error}`);
-      else flash('lists', 'ok', `${name} is up to date.`);
+      if (entry.error) flash('lists', 'error', t('listsUpdateFailed', name, entry.error));
+      else flash('lists', 'ok', t('listsUpToDate', name));
       rerender();
     });
   };
 
   const remove = async () => {
-    if (!confirm(`Unsubscribe from ${name}?`)) return;
-    await editSubscriptions((subs) => subs.filter((s) => s.id !== sub.id));
+    let at = -1;
+    await editSubscriptions((subs) => {
+      at = subs.findIndex((s) => s.id === sub.id);
+      return subs.filter((s) => s.id !== sub.id);
+    });
     await editListCache(({ [sub.id]: _, ...rest }) => rest);
+    // Undo puts the list back where it was, with the copy it had.
+    flash('unsubscribed', 'ok', t('listsUnsubscribed', name), async () => {
+      await editSubscriptions((subs) => (subs.some((s) => s.id === sub.id) ? subs : [...subs.slice(0, Math.max(0, at)), sub, ...subs.slice(Math.max(0, at))]));
+      if (cached) await editListCache((cache) => (cache[sub.id] ? cache : { ...cache, [sub.id]: cached }));
+    });
   };
 
   const facts = [
-    parsed ? plural(parsed.rules.length, 'instruction') : 'not downloaded yet',
-    parsed?.tags.length ? plural(parsed.tags.length, 'tag') : null,
-    meta.author ? `by ${meta.author}` : null,
-    sub.builtin && !cached?.fetchedAt ? 'the copy bundled with Anubis' : `updated ${timeAgo(cached?.fetchedAt ?? 0)}`,
+    parsed ? tn('listInstructions', parsed.rules.length) : t('listsNotDownloaded'),
+    parsed?.tags.length ? tn('popupTagCount', parsed.tags.length) : null,
+    meta.author ? t('listsBy', meta.author) : null,
+    sub.builtin && !cached?.fetchedAt ? t('listsBundledCopy') : t('listsUpdated', tAgo(cached?.fetchedAt ?? 0)),
     meta.license ?? null,
   ].filter(Boolean) as string[];
   const links = [
-    meta.homepage ? h('a', { href: meta.homepage, target: '_blank', rel: 'noopener noreferrer' }, 'homepage') : null,
-    meta.issues ? h('a', { href: meta.issues, target: '_blank', rel: 'noopener noreferrer' }, 'suggest changes') : null,
+    meta.homepage ? h('a', { href: meta.homepage, target: '_blank', rel: 'noopener noreferrer' }, t('listsHomepage')) : null,
+    meta.issues ? h('a', { href: meta.issues, target: '_blank', rel: 'noopener noreferrer' }, t('listsSuggestChanges')) : null,
   ].filter((a): a is HTMLAnchorElement => a !== null);
 
   return h(
@@ -329,7 +329,7 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
         name,
         h(
           'span',
-          { class: 'kind', title: parsed?.lens ? 'A lens hides results the list doesn’t mention' : undefined },
+          { class: 'kind', title: parsed?.lens ? t('listLensTitle') : undefined },
           kindOf(parsed?.format, parsed?.lens, sub.builtin),
         ),
       ),
@@ -337,33 +337,33 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
       h(
         'div',
         { class: 'facts' },
-        `${facts.join(', ')}.`,
+        t('listsFacts', tJoin(facts, 'unit')),
         links.length ? ' ' : null,
-        links.flatMap((a, i) => (i ? [', ', a] : [a])),
+        tList('listsLinks', links, 'unit'),
       ),
       parsed?.tags.length
         ? h(
             'div',
             { class: 'tag-line' },
-            parsed.tags.slice(0, 12).map((t) => h('span', { class: 'tag', style: `--c: ${t.color}`, title: t.description ?? t.id }, h('i', { class: 'gem' }), t.label)),
+            parsed.tags.slice(0, 12).map((tag) => h('span', { class: 'tag', style: `--c: ${tag.color}`, title: tag.description ?? tag.id }, h('i', { class: 'gem' }), tag.label)),
           )
         : null,
       cached?.error
         ? sub.builtin && !cached.text
-          ? h('div', { class: 'facts', style: 'margin-top:6px' }, `Using the copy bundled with Anubis until it can update (${cached.error}).`)
-          : h('div', { class: 'err' }, `The last update failed: ${cached.error}.`)
+          ? h('div', { class: 'facts', style: 'margin-top:6px' }, t('listsUsingBundled', cached.error))
+          : h('div', { class: 'err' }, t('listsLastUpdateFailed', cached.error))
         : null,
       parsed?.errors.length
-        ? h('div', { class: 'facts', style: 'margin-top:6px' }, `${plural(parsed.errors.length, 'line')} skipped: Anubis can’t read that syntax yet.`)
+        ? h('div', { class: 'facts', style: 'margin-top:6px' }, tn('listsSkippedLines', parsed.errors.length))
         : null,
     ),
     h(
       'div',
       { class: 'side' },
-      h('label', { class: 'switch', title: sub.enabled ? 'On' : 'Off' }, toggle, h('span')),
-      h('button', { class: 'icon-btn', type: 'button', title: 'Update now', attrs: { 'aria-label': `Update ${name}` }, on: { click: update } }, icon(ICON_REFRESH)),
-      h('a', { class: 'icon-btn', href: sub.url, target: '_blank', rel: 'noopener noreferrer', title: 'View the file', attrs: { 'aria-label': `View ${name}` } }, icon(ICON_EXTERNAL)),
-      h('button', { class: 'icon-btn danger', type: 'button', title: 'Unsubscribe', attrs: { 'aria-label': `Unsubscribe from ${name}` }, on: { click: remove } }, icon(ICON_TRASH)),
+      h('label', { class: 'switch', title: sub.enabled ? t('listsOn') : t('listsOff') }, toggle, h('span')),
+      h('button', { class: 'icon-btn', type: 'button', title: t('listsUpdateNow'), attrs: { 'aria-label': t('listsUpdateOne', name) }, on: { click: update } }, icon(ICON_REFRESH)),
+      h('a', { class: 'icon-btn', href: sub.url, target: '_blank', rel: 'noopener noreferrer', title: t('listsViewFile'), attrs: { 'aria-label': t('listsViewOne', name) } }, icon(ICON_EXTERNAL)),
+      h('button', { class: 'icon-btn danger', type: 'button', title: t('listsUnsubscribe'), attrs: { 'aria-label': t('listsUnsubscribeOne', name) }, on: { click: remove } }, icon(ICON_TRASH)),
     ),
   );
 }

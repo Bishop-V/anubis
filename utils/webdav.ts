@@ -82,6 +82,7 @@ export async function supportsDataConsent(): Promise<boolean> {
   const info = await runtime.getBrowserInfo?.();
   if (!info || info.name !== 'Firefox') return false;
   const major = Number.parseInt(info.version, 10);
+  // English on purpose: a developer's error, never shown on its own.
   if (!Number.isInteger(major)) throw new Error(`Unexpected Firefox version: ${info.version}`);
   return major >= 140;
 }

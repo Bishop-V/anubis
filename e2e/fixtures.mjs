@@ -558,6 +558,9 @@ export function bingChallenge() {
 // results, with the structure reported from a live page (2026-09-29): each is a
 // div.snippet in section#mixed-main with its title in a <header>, and the page's
 // tabs (one of them "Videos") are links in nav.tabs. The contents are made up.
+// With `panels`, also the AI answer: #llm-snippet in section#mixed-top, above the
+// results (live page, 2026-09-29). Its disclaimer is left out here, so only the
+// selector can catch it.
 // `pager`: the Next button at the end of section#mixed-main, after the results.
 // Reported on a live page (2026-09-30): results loaded by Load more results went
 // after it; its markup here is a guess.
@@ -613,6 +616,7 @@ export function brave(query, results, { panels = false, pager } = {}) {
     cite{font-style:normal;font-size:12px;color:#6b6f80}
     .title{margin-top:6px;font-size:19px;color:#3e44b5;font-weight:500}
     .generic-snippet{margin-top:4px;font-size:14px;color:#51556a}
+    .llm-snippet{margin:0 0 14px;padding:16px 18px;border-radius:12px;background:#eef0ff}
     .panel{margin:0 0 14px;padding:16px 18px;border-radius:12px;background:#fff}
     .cluster-header{display:flex;gap:8px;align-items:center;font-weight:600;color:#1b1c21}.cluster-header a{display:flex;gap:8px;align-items:center;color:inherit;text-decoration:none}
     .vgrid,.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.vcard,.related-query{color:inherit;text-decoration:none}
@@ -623,7 +627,7 @@ export function brave(query, results, { panels = false, pager } = {}) {
   </style></head><body>
   <div id="main"><header class="hdr"><div class="brlogo"></div><form class="q" role="search" action="/search"><input name="q" value="${esc(query)}"></form></header>
   <div id="nav-tabs"><div class="nav-tabs-content"><nav class="tabs"><ul id="primary-tabs">${['All', 'Images', 'Videos', 'News'].map((t) => `<li class="tab-item"><a href="/${t === 'All' ? 'search' : t.toLowerCase()}?q=anubis"><span>${t}</span></a></li>`).join('')}</ul></nav></div></div>
-  <main id="search-page"><div class="serp-layout"><div class="serp-columns"><div class="serp-columns-main"><main class="main-column"><section id="mixed-main">${items.join('')}${pager ? `
+  <main id="search-page"><div class="serp-layout"><div class="serp-columns"><div class="serp-columns-main"><main class="main-column">${panels ? `<section id="mixed-top"><div id="llm-snippet" class="llm-snippet"><div class="llm-answer">Anubis is the ancient Egyptian god of funerary rites, shown with a jackal’s head.</div><button type="button">Ask a follow-up</button></div></section>` : ''}<section id="mixed-main">${items.join('')}${pager ? `
       <div id="pagination" class="pagination"><a class="btn" href="${pager}">Next</a></div>` : ''}</section></main></div></div></div></main></div></body></html>`;
 }
 

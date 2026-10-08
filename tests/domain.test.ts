@@ -85,7 +85,7 @@ describe('subscription URLs', () => {
 
   it('never builds a link from a non-web address', () => {
     expect(issueUrl('javascript:alert(1)', 't', 'b')).toBeUndefined();
-    expect(reportUrl('javascript:alert(1)', 'L', 'https://a.com/', [{ text: 'hides it' }])).toBeUndefined();
+    expect(reportUrl('javascript:alert(1)', 'L', 'https://a.com/', [{ report: 'hides it' }])).toBeUndefined();
   });
 
   it('finds where a list takes reports', () => {
@@ -106,8 +106,8 @@ describe('subscription URLs', () => {
   it('builds a report with the rules that matched', () => {
     const url = new URL(
       reportUrl('https://github.com/o/r/issues', 'AI list', 'https://www.example.com/a/b?session=secret#top', [
-        { text: 'hides it', rule: { line: 12, raw: '*://*.example.com/*' } },
-        { text: 'tags it “AI”', rule: { line: 40, raw: '/ex`ample/' } },
+        { report: 'hides it', rule: { line: 12, raw: '*://*.example.com/*' } },
+        { report: 'tags it “AI”', rule: { line: 40, raw: '/ex`ample/' } },
       ])!,
     );
     expect(url.pathname).toBe('/o/r/issues/new');
@@ -129,7 +129,7 @@ describe('subscription URLs', () => {
   });
 
   it('reports a lens leaving a result out, which has no rule', () => {
-    const body = new URL(reportUrl('https://github.com/o/r/issues', 'Lens', 'https://a.com/', [{ text: 'doesn’t include it, so it’s hidden' }])!).searchParams.get('body')!;
+    const body = new URL(reportUrl('https://github.com/o/r/issues', 'Lens', 'https://a.com/', [{ report: 'doesn’t include it, so it’s hidden' }])!).searchParams.get('body')!;
     expect(body).toContain('**Lens** doesn’t include it, so it’s hidden, and I think that’s wrong.');
     expect(body).not.toContain('Rule');
   });

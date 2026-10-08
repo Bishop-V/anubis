@@ -5,7 +5,7 @@
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
 //                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options,
-//                               responsive, welcome, sync, webdav, popup-tags, tag-notes, checks (layout, lifecycle, pin/hidden chips, DDG icon colors)
+//                               responsive, welcome, sync, webdav, popup-tags, tag-notes, settings-undo, checks (layout, lifecycle, pin/hidden chips, DDG icon colors, Undo in Settings)
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slides
 //                               in docs/public/
 //
@@ -124,6 +124,8 @@ async function launch(settings = {}, ext = EXT) {
   // settings below while that runs can land between its reads, so the tests would
   // run with "Remove": wait until it has set its flag.
   await waitForWorker(sw, async () => (await chrome.storage.sync.get('hideStyleMoved')).hideStyleMoved === true, 'Extension settings migration did not finish');
+  // Then it subscribes saved subscriptions to every default list, once: wait for that too.
+  await waitForWorker(sw, async () => (await chrome.storage.sync.get('defaultListsAdded')).defaultListsAdded === true, 'Extension default-lists migration did not finish');
   await sw.evaluate(
     async ({ personal, settings }) => {
       await chrome.storage.sync.set({
@@ -348,7 +350,7 @@ if (!only || only === 'pages') {
   await shoot('https://search.brave.com/search?q=anubis', 'brave');
 
   // DuckDuckGo: the ⚖ button sits just right of each result's own ⋯ menu, level
-  // with it, at its size, shape, and brightness.
+  // with it, at its size and shape, and as bright as the menu button (since 2026-10-05).
   await page.goto('https://duckduckgo.com/?q=javascript+promises&dark=1');
   await page.waitForTimeout(600);
   await page.mouse.move(1, 1);
@@ -364,11 +366,11 @@ if (!only || only === 'pages') {
           level: Math.abs(a.top + a.height / 2 - (b.top + b.height / 2)) < 1,
           gap: Math.round(a.left - b.right),
           sameSize: Math.round(a.width) === Math.round(b.width) && Math.round(a.height) === Math.round(b.height),
-          sameBrightness: Math.abs(parseFloat(getComputedStyle(host).getPropertyValue('--anubis-weigh-opacity')) - parseFloat(getComputedStyle(menu).opacity)) < 0.01,
+          asBright: Math.abs((parseFloat(getComputedStyle(host).getPropertyValue('--anubis-weigh-opacity')) || 0.35) - parseFloat(getComputedStyle(menu).opacity)) < 0.02,
         };
       }),
     );
-  const besideItsMenu = (p) => p.level && p.sameSize && p.gap >= 0 && p.gap <= 6 && p.sameBrightness;
+  const besideItsMenu = (p) => p.level && p.sameSize && p.gap >= 0 && p.gap <= 6 && p.asBright;
   const pairs = await pair();
   console.log('\n== ddg button beside its menu:', JSON.stringify({ results: pairs.length, all: pairs.every(besideItsMenu), failing: pairs.filter((p) => !besideItsMenu(p)) }));
   assertChecks('DuckDuckGo button beside its menu', { everyResult: pairs.length > 0 && pairs.every(besideItsMenu) });
@@ -951,7 +953,7 @@ if (!only || only === 'cleanup' || checks) {
       const visible = (el) => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().height > 0;
       return Object.fromEntries(Object.entries(selectors).map(([k, sel]) => [k, visible(document.querySelector(sel))]).concat([['results', [...document.querySelectorAll('[data-anubis-result]')].filter(visible).length]]));
     }, selectors);
-  const braveCleanup = await visibleIn({ videos: '.cluster-videos', discussions: '.cluster-discussions', relatedQueries: '.related-queries', elsewhere: '.find-elsewhere', videosTab: '.tabs a[href^="/videos"]' });
+  const braveCleanup = await visibleIn({ ai: '#llm-snippet', videos: '.cluster-videos', discussions: '.cluster-discussions', relatedQueries: '.related-queries', elsewhere: '.find-elsewhere', videosTab: '.tabs a[href^="/videos"]' });
   console.log('== Brave panels:', JSON.stringify(braveCleanup));
   // A thumbnail in a result's corner: the buttons stay in one column, clear of it.
   const braveButtons = await page.evaluate(() => {
@@ -967,6 +969,7 @@ if (!only || only === 'cleanup' || checks) {
   await page.screenshot({ path: `${SHOTS}brave-thumbnail.png`, clip: { x: 0, y: 80, width: 1000, height: 520 } });
   if (checks) {
     assertChecks('Brave cleanup selectors', {
+      removesAiAnswer: !braveCleanup.ai,
       removesVideos: !braveCleanup.videos,
       removesDiscussions: !braveCleanup.discussions,
       removesRelatedQueries: !braveCleanup.relatedQueries,
@@ -2426,6 +2429,72 @@ if (only === 'tag-notes') {
   });
   await options.close();
   console.log('\n== tag-site explanations passed');
+}
+
+if (!only || only === 'settings-undo' || checks) {
+  // Settings never asks "Are you sure?": a browser can be told to stop showing a
+  // page's dialogs, and confirm() then answers "no" at once, so a delete button did
+  // nothing. Deleting acts and offers Undo. Every dialog is dismissed here, as a
+  // suppressed one would be.
+  const options = await ctx.newPage();
+  let dialogs = 0;
+  options.on('dialog', (d) => {
+    dialogs++;
+    void d.dismiss();
+  });
+  const worker = ctx.serviceWorkers()[0];
+  const stored = (key) => worker.evaluate(async (k) => (await chrome.storage.sync.get(k))[k], key);
+  const undoFocused = () => options.waitForFunction(() => document.activeElement?.hasAttribute('data-undo'), null, { timeout: 5000 }).then(() => true, () => false);
+  const undo = async () => {
+    await options.locator('[data-undo]').click();
+    await options.waitForTimeout(400);
+  };
+
+  await options.goto(`chrome-extension://${extId}/options.html#tags`);
+  await options.getByRole('button', { name: 'Delete “Great tutorial”' }).click();
+  await options.waitForTimeout(400);
+  const tagGone = (await options.getByRole('button', { name: 'Edit Great tutorial and its sites' }).count()) === 0;
+  const tagNotice = (await options.locator('.notice:has([data-undo])').textContent()) ?? '';
+  const tagFocus = await undoFocused();
+  await undo();
+  const tagBack = (await options.getByRole('button', { name: 'Edit Great tutorial and its sites' }).count()) === 1;
+
+  await options.goto(`chrome-extension://${extId}/options.html#lists`);
+  const subsBefore = await worker.evaluate(async () => (await chrome.storage.sync.get('subscriptions')).subscriptions ?? null);
+  const unsubscribe = options.getByRole('button', { name: /^Unsubscribe from / }).first();
+  const listName = ((await unsubscribe.getAttribute('aria-label')) ?? '').replace('Unsubscribe from ', '');
+  await unsubscribe.click();
+  await options.waitForTimeout(400);
+  const listGone = (await options.getByRole('button', { name: `Unsubscribe from ${listName}` }).count()) === 0;
+  const listFocus = await undoFocused();
+  await undo();
+  const listBack = (await options.getByRole('button', { name: `Unsubscribe from ${listName}` }).count()) === 1;
+  const subsAfter = await worker.evaluate(async () => (await chrome.storage.sync.get('subscriptions')).subscriptions ?? null);
+
+  await options.goto(`chrome-extension://${extId}/options.html#share`);
+  const settingsBefore = await stored('settings');
+  await options.getByRole('button', { name: 'Reset settings' }).click();
+  await options.waitForTimeout(400);
+  const reset = (await stored('settings'))?.hideStyle !== settingsBefore.hideStyle;
+  const resetFocus = await undoFocused();
+  await undo();
+  const settingsBack = JSON.stringify(await stored('settings')) === JSON.stringify(settingsBefore);
+
+  assertChecks('deleting in Settings with dialogs suppressed', {
+    noDialogs: dialogs === 0,
+    tagDeleted: tagGone,
+    tagNoticeSaysWhat: tagNotice.includes('Deleted the tag “Great tutorial”'),
+    tagUndoFocused: tagFocus,
+    tagUndone: tagBack,
+    listUnsubscribed: listGone,
+    listUndoFocused: listFocus,
+    listUndone: listBack && (subsBefore === null ? subsAfter !== null : subsAfter?.length === subsBefore.length),
+    settingsReset: reset,
+    resetUndoFocused: resetFocus,
+    resetUndone: settingsBack,
+  });
+  await options.close();
+  console.log('\n== deleting in Settings with Undo passed');
 }
 
 await ctx.close();

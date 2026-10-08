@@ -16,7 +16,7 @@ describe('clean-up headings', () => {
       questions: '.related-question-pair',
     });
     expect(engine('duckduckgo').cleanupSelectors?.ai).toBe('[data-testid="duckassist-answer-content"], [data-react-module-id="wikinlp"]');
-    expect(engine('brave').cleanupSelectors?.ai).toBe('#summarizer');
+    expect(engine('brave').cleanupSelectors?.ai).toBe('#llm-snippet, #summarizer');
     expect(engine('bing').cleanupSelectors?.ai).toBe('.cht_container, .cht_disclaimer');
   });
 

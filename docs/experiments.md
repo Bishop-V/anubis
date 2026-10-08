@@ -8,6 +8,7 @@ To find a note, search for its heading or a keyword (`grep -rn "Reranking" docs/
 
 What was checked on real search pages, and what is still unverified.
 
+- Reported from live pages: Startpage and DuckDuckGo (2026-10-08)
 - Still unverified against live pages
 - Reported from live pages: Bing's AI answer and the DuckDuckGo button (2026-09-30)
 - Reported from live pages: the summary, forum results, and more panels (2026-09-29)
@@ -45,6 +46,7 @@ What Anubis draws and changes on search pages.
 
 Where things are stored, sync between browsers, and subscribing to lists.
 
+- Reading long lists on search pages (2026-10-08)
 - Settings and tag choices in sync (2026-10-08)
 - Lists made from other projects (2026-10-08)
 - Passphrase changes that race or lose their answer (2026-09-29)
@@ -60,6 +62,7 @@ Where things are stored, sync between browsers, and subscribing to lists.
 
 The look, the wording, and Anubis's own pages.
 
+- Undo instead of "Are you sure?" in Settings (2026-10-08)
 - Report a problem (2026-09-30)
 - Explanations on tagged sites (2026-10-04)
 - Tags in the site popup (2026-10-03)
@@ -82,6 +85,7 @@ The documentation site and its screenshots.
 
 Builds, tests, the end-to-end run, stores, and releases.
 
+- The ⚖ button check depends on fonts (2026-10-08)
 - Shared ranking code and trimming duplication (2026-10-05)
 - 0.2.2 release: first Chrome submission (2026-10-05)
 - Finding Chromium for the end-to-end run (2026-09-29)

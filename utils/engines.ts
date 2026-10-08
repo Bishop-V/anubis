@@ -222,7 +222,8 @@ export const ENGINES: EngineDef[] = [
     item: '.snippet[data-type="web"]',
     link: 'a',
     title: '.title',
-    cleanupSelectors: { ai: '#summarizer' },
+    // Live (2026-09-29): #llm-snippet in #mixed-top. #summarizer is the older name.
+    cleanupSelectors: { ai: '#llm-snippet, #summarizer' },
     button: { top: '4px', right: '4px' },
     // Brave numbers pages from 0 in `offset`.
     more: { kind: 'param', name: 'offset', first: 0, step: 1 },

@@ -6,7 +6,7 @@
 // a few selectors where a heading isn't enough. Keep this file free of browser
 // APIs: the options page and the content script both use it.
 
-import { tJoin, tn, type PluralKey } from './i18n';
+import { tJoin, tn, type MessageKey, type PluralKey } from './i18n';
 
 export type CleanupKind = 'ai' | 'videos' | 'questions' | 'discussions' | 'news' | 'images' | 'related' | 'elsewhere' | 'adRequests';
 
@@ -16,8 +16,9 @@ export const NO_CLEANUP: Cleanup = { ai: false, videos: false, questions: false,
 
 export interface CleanupDef {
   id: CleanupKind;
-  label: string;
-  hint: string;
+  /** The switch in Settings → Remove panels, and what it removes. */
+  label: MessageKey;
+  hint: MessageKey;
   /** Heading texts, matched whole and ignoring case. English first, then common translations. */
   headings: string[];
   /** Heading texts that start with these, e.g. "Images for anubis". */
@@ -29,8 +30,8 @@ export interface CleanupDef {
 export const CLEANUP: CleanupDef[] = [
   {
     id: 'ai',
-    label: 'AI answers',
-    hint: 'Google’s AI Overview and AI Mode tab, DuckDuckGo’s AI-assisted answers and Duck.ai, Bing’s AI answers, and Brave’s AI answers.',
+    label: 'cleanupAi',
+    hint: 'cleanupAiHint',
     headings: [
       'AI Overview',
       'AI Overviews',
@@ -54,16 +55,16 @@ export const CLEANUP: CleanupDef[] = [
   },
   {
     id: 'videos',
-    label: 'Video panels',
-    hint: 'Video and short-video panels between the results.',
+    label: 'cleanupVideos',
+    hint: 'cleanupVideosHint',
     headings: ['Videos', 'Short videos', 'Vidéos', 'Vidéos courtes', 'Kurze Videos', 'Vídeos', 'Vídeos cortos', 'Video', 'Video brevi'],
     // Bing: "Videos of how to bake sourdough bread". DuckDuckGo: "Videos for kj".
     prefixes: ['Videos of ', 'Videos for '],
   },
   {
     id: 'questions',
-    label: 'People also ask',
-    hint: 'Lists of other people’s questions with expandable answers.',
+    label: 'cleanupQuestions',
+    hint: 'cleanupQuestionsHint',
     headings: [
       'People also ask',
       'Related questions',
@@ -80,27 +81,27 @@ export const CLEANUP: CleanupDef[] = [
   },
   {
     id: 'discussions',
-    label: 'Discussion panels',
-    hint: 'Panels of forum threads between the results, like Google’s “Discussions and forums”. Forum pages among the results stay.',
+    label: 'cleanupDiscussions',
+    hint: 'cleanupDiscussionsHint',
     headings: ['Discussions and forums', 'Discussions'],
   },
   {
     id: 'news',
-    label: 'Top stories',
-    hint: 'News panels between the results.',
+    label: 'cleanupNews',
+    hint: 'cleanupNewsHint',
     headings: ['Top stories', 'News', 'Latest news', 'À la une', 'Schlagzeilen', 'Noticias destacadas', 'Principais notícias', 'Notizie principali', 'Topverhalen'],
   },
   {
     id: 'images',
-    label: 'Image rows',
-    hint: 'Rows of images between the results. The Images tab still works.',
+    label: 'cleanupImages',
+    hint: 'cleanupImagesHint',
     headings: ['Images', 'Bilder', 'Imágenes', 'Imagens', 'Immagini', 'Afbeeldingen'],
     prefixes: ['Images for ', 'Images de ', 'Bilder zu ', 'Imágenes de '],
   },
   {
     id: 'related',
-    label: 'Related searches',
-    hint: 'Lists of other searches, usually at the bottom of the page.',
+    label: 'cleanupRelated',
+    hint: 'cleanupRelatedHint',
     headings: [
       'Related searches',
       'Related queries',
@@ -117,14 +118,14 @@ export const CLEANUP: CleanupDef[] = [
   },
   {
     id: 'elsewhere',
-    label: 'Other search engines',
-    hint: 'Rows of buttons that repeat your search on another engine, like Brave’s “Find elsewhere”.',
+    label: 'cleanupElsewhere',
+    hint: 'cleanupElsewhereHint',
     headings: ['Find elsewhere', 'Search elsewhere'],
   },
   {
     id: 'adRequests',
-    label: 'Requests to allow ads',
-    hint: 'Banners asking you to turn off your ad blocker or allow ads, like Startpage’s “Block creepy ads, not private search”.',
+    label: 'cleanupAdRequests',
+    hint: 'cleanupAdRequestsHint',
     headings: [],
     markers: ['Block creepy ads, not private search', 'Ads keep your private search results free', 'Ads keep Startpage free'],
   },

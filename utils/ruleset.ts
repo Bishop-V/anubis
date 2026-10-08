@@ -43,7 +43,8 @@ const compiled = new Map<string, CompiledSubscription>();
 function compiledSubscription(sub: Subscription, text: string): CompiledSubscription {
   const known = compiled.get(sub.id);
   if (known && known.text === text && known.name === sub.name && known.url === sub.url) return known;
-  const parsed = parseList(text);
+  // A search page needs a few sites of each list: the rest are only filed by site.
+  const parsed = parseList(text, true);
   const list = {
     text,
     name: sub.name,
