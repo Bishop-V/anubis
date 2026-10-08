@@ -286,7 +286,7 @@ export default defineContentScript({
 
       const ctx = { tags: rules.tags, prefs: rules.prefs, theme, belowRow: engine.chipsBelowRow };
       if (rules.settings.showChips) renderChips(result, verdict, ctx, revealed);
-      else renderChips(result, { ...verdict, level: 'normal', tags: [] }, ctx, false);
+      else renderChips(result, { ...verdict, tags: [] }, ctx, false);
 
       ensureWeighButton(result, verdict.level, engine, theme, openWeigh);
     };

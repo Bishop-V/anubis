@@ -107,11 +107,11 @@ A line with nothing but `$discard` turns the list into a lens: every result the 
 
 ## How lists combine
 
-For each result, strongest first:
+For each result:
 
-1. **Your own list.** A site you pinned, raised, lowered, hid, or kept at normal stays that way whatever your subscriptions say. The most specific entry wins, so `good.fandom.com` can be raised while `fandom.com` is hidden.
-2. **Your tag choices.** If you chose "Hide" for a tag, results carrying it are hidden, whichever list tagged them. Tags you set to "Raise" or "Lower" add up, five places each: two raises and a lower make one raise. Each tag counts once, however many lists give it, and a rule carrying a tag you chose for leaves the ranking to your choice instead of its own `boost` or `downrank`.
-3. **Subscribed lists.** Within one list, Goggles precedence applies: `discard` beats `boost`, which beats `downrank`. Across lists, boosts and downranks add up, and any list's `discard` hides the result.
+1. **Your tag choices.** If you chose "Hide" for a tag, results carrying it are hidden, whichever list tagged them. Tags you set to "Raise" or "Lower" add up, five places each: two raises and a lower make one raise. Each tag counts once, however many lists give it, and a rule carrying a tag you chose for leaves the ranking to your choice instead of its own `boost` or `downrank`.
+2. **Your own list.** A site you pinned, raised, lowered, or kept at normal ignores what your subscriptions say and your tags set to "Hide", and its ranking adds to your "Raise" and "Lower" tags: raised with a tag set to "Lower", it stays in place. A site you hid stays hidden. The most specific entry wins, so `good.fandom.com` can be raised while `fandom.com` is hidden.
+3. **Subscribed lists.** Used only for sites you haven't ranked yourself. Within one list, Goggles precedence applies: `discard` beats `boost`, which beats `downrank`. Across lists, boosts and downranks add up, and any list's `discard` hides the result.
 
 Reranking moves results within the page you're on (and within extra pages brought in with **Load more results**): each boost point moves a result up one place.
 

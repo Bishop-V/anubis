@@ -18,8 +18,6 @@ export const ICON = {
   raise: balanceIcon(3.6, 6.4),
   close: svg('<path d="M4 4l8 8M12 4l-8 8"/>'),
   gear: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>',
-  chipRaise: svg('<path d="M4 9.5l4-4 4 4"/>', 13),
-  chipLower: svg('<path d="M4 6.5l4 4 4-4"/>', 13),
   lower: balanceIcon(6.4, 3.6),
   pin: svg('<path d="M9.8 2.2l4 4-1.6.5-2.6 2.6.3 3.1-1.2 1.2L5.4 10.3 2.2 13.8M5.4 10.3L2.3 7.2l1.2-1.2 3.1.3 2.6-2.6z"/>'),
 };
@@ -62,6 +60,13 @@ export function balance(level: Level): VNode {
 export const html = (tag: string, cls: string, markup: string) => h(tag, { class: cls, innerHTML: markup });
 export const fold = (open: boolean, cls: string, children: (VNode | string | null)[]) =>
   h('div', { class: ['fold', cls, { open }] }, [h('div', { class: 'fold-inner' }, children)]);
-export const tagMark = (name: string, color: string, n?: number) =>
-  h('span', { class: 'demo-tag', style: { '--c': color } }, [h('span', { class: 'diamond' }), n ? `${name} ${n}` : name]);
+// A tag that moves the result shows the ranking's sign in its diamond's place (tagMark in utils/icons.ts).
+const mark = (body: string) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" width="10" height="10" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
+export const TAG_MARKS = { raise: mark('<path d="M2 6.6l3-3.2 3 3.2"/>'), lower: mark('<path d="M2 3.4l3 3.2 3-3.2"/>') };
+export const tagMark = (name: string, color: string, n?: number, effect?: keyof typeof TAG_MARKS) =>
+  h('span', { class: 'demo-tag', style: { '--c': color } }, [
+    effect ? html('span', 'mark', TAG_MARKS[effect]) : h('span', { class: 'diamond' }),
+    n ? `${name} ${n}` : name,
+  ]);
 

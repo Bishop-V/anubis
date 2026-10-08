@@ -137,9 +137,7 @@ export default defineComponent({
             h('div', { class: 'title' }, r.title),
             r.chip
               ? h('div', { class: 'hd-chips' }, [
-                  r.chip === 'raised'
-                    ? h('span', { class: 'demo-verdict raise' }, [html('span', 'chip-icon', ICON.chipRaise), 'Raised'])
-                    : tagMark('Reference', '#2b9aa0'),
+                  r.chip === 'raised' ? tagMark('Reference', '#2b9aa0', undefined, 'raise') : tagMark('Reference', '#2b9aa0'),
                 ])
               : null,
             h('div', { class: 'snippet' }, r.snippet),

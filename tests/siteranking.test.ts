@@ -13,6 +13,7 @@ const verdict = (level: Level, reasons: Partial<Reason>[] = [], extra: Partial<V
   hidden: level === 'hide',
   tags: [],
   tagSources: {},
+  tagEffects: {},
   reasons: reasons.map((r) => ({ list: 'A list', listId: 'a', personal: false, text: '', report: '', ...r })),
   ...extra,
 });
@@ -27,13 +28,13 @@ describe('displayLevel', () => {
 
 describe('rankingOf', () => {
   it('follows the lists when you have no ranking for the site', () => {
-    expect(rankingOf(undefined, verdict('lower'))).toEqual({ personal: undefined, pressed: undefined, fromLists: 'lower', shown: 'lower' });
-    expect(rankingOf(site('normal'), verdict('lower'))).toMatchObject({ pressed: undefined, shown: 'lower' });
+    expect(rankingOf(undefined, verdict('lower'))).toEqual({ personal: undefined, pressed: undefined, fromLists: 'lower' });
+    expect(rankingOf(site('normal'), verdict('lower'))).toMatchObject({ pressed: undefined, fromLists: 'lower' });
   });
 
   it('presses your ranking, and Normal for an allow', () => {
-    expect(rankingOf(site('pin'), verdict('hide'))).toMatchObject({ pressed: 'pin', shown: 'pin' });
-    expect(rankingOf(site('allow'), verdict('hide'))).toMatchObject({ personal: 'allow', pressed: 'normal', shown: 'normal' });
+    expect(rankingOf(site('pin'), verdict('hide'))).toMatchObject({ pressed: 'pin' });
+    expect(rankingOf(site('allow'), verdict('hide'))).toMatchObject({ personal: 'allow', pressed: 'normal' });
   });
 });
 
@@ -66,6 +67,14 @@ describe('rankingHint', () => {
     expect(hint(site('allow'), verdict('hide'))).toBe('Normal, whatever your lists say.');
     expect(hint(site('pin'), verdict('normal'))).toBe('Your choice for example.com, on every search.');
     expect(hint(undefined, verdict('normal'))).toBe('Your choice applies on every search.');
+  });
+
+  it('says when your tag settings add to your ranking', () => {
+    const tags = verdict('lower', [{ listId: TAG_CHOICES }]);
+    expect(rankingHint('example.com', verdict('normal'), rankingOf(site('raise'), verdict('normal')), tags)).toBe(
+      'Your choice for example.com, on every search, added to your tag settings.',
+    );
+    expect(rankingHint('example.com', tags, rankingOf(site('hide'), tags), tags)).toBe('Your choice for example.com, on every search.');
   });
 
   it('names each list once, and your tag settings last', () => {

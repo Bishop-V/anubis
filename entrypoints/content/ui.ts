@@ -2,7 +2,7 @@ import { balanceSvg, setBalance } from '@/utils/balance';
 import { domainChoices, normalizeHostname, siteOf } from '@/utils/domain';
 import { h, icon } from '@/utils/dom';
 import type { EngineDef } from '@/utils/engines';
-import { ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS, WEIGH_ICONS } from '@/utils/icons';
+import { ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS, TAG_EFFECTS, tagEffectText, tagMark, WEIGH_ICONS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
 import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
 import { t, tJoin, tList, tn, tParts } from '@/utils/i18n';
@@ -225,13 +225,13 @@ export interface ChipContext {
 
 export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipContext, revealed: boolean): void {
   const { container, titleBlock } = result;
-  const level = verdict.level !== 'normal' && (verdict.level !== 'hide' || revealed) ? verdict.level : undefined;
-  const chipLevel = level === 'pin' || level === 'hide' ? undefined : level;
+  // A hidden result's tags show only once it's revealed; a tag that hides it then shows so.
+  const effect = (id: string) => (verdict.hidden && !revealed ? undefined : verdict.tagEffects[id]);
   const tags = verdict.tags.filter((id) => !ctx.prefs[id]?.muted && ctx.tags.has(id));
   const page = result.page;
 
   let host = chipsHosts.get(container);
-  if (!chipLevel && !tags.length && !page) {
+  if (!tags.length && !page) {
     host?.remove();
     return;
   }
@@ -245,18 +245,11 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
   keepUpright(host);
   host.dataset.theme = ctx.theme;
 
-  const key = JSON.stringify([chipLevel, tags.map((id) => ctx.tags.get(id)), page]);
+  const key = JSON.stringify([tags.map((id) => [ctx.tags.get(id), effect(id)]), page]);
   render(host, key, () =>
     h(
       'div',
       { class: 'chips' },
-      chipLevel &&
-        h(
-          'span',
-          { class: `verdict ${chipLevel}`, title: verdict.reasons.map((r) => t('reasonLine', r.list, r.text)).join('\n') },
-          icon(LEVEL_ICONS[chipLevel]),
-          LEVEL_CHIPS[chipLevel],
-        ),
       tags.map((id) => {
         const tag = ctx.tags.get(id)!;
         const sources = verdict.tagSources[id] ?? [];
@@ -265,10 +258,11 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
           {
             class: 'tag',
             style: `--c: ${tag.color}`,
-            title: [tag.description, t('popupTagFrom', tJoin(sources))].filter(Boolean).join('\n'),
+            title: [tag.description, t('popupTagFrom', tJoin(sources)), TAG_EFFECTS[effect(id) ?? 'normal']].filter(Boolean).join('\n'),
           },
-          h('i', { class: 'gem' }),
+          tagMark(effect(id)),
           tag.label,
+          tagEffectText(effect(id)),
         );
       }),
       page
@@ -1105,7 +1099,7 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
   const focusKey = root.activeElement?.getAttribute('data-focus-key');
   const oldPop = rendered.get(popover.host) as HTMLElement | undefined;
   const oldBalance = oldPop?.querySelector('svg.balance');
-  const { pop, level } = buildPopover(data, actions, domain, (d) => {
+  const pop = buildPopover(data, actions, domain, (d) => {
     if (popover) popover.domain = d;
     openPopover(anchor, data, actions);
   });
@@ -1120,7 +1114,8 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
   // Position only on open: if the result moves when reranked, the menu stays put.
   if (opening) position(popover.host, anchor);
   if (opening) setBalance(balance, 'normal');
-  requestAnimationFrame(() => requestAnimationFrame(() => setBalance(balance, level)));
+  // The result's whole weight: your ranking, its tags, and its lists.
+  requestAnimationFrame(() => requestAnimationFrame(() => setBalance(balance, data.verdict.level, data.verdict.score)));
 
   const focusTarget =
     (focusKey && root.querySelector<HTMLElement>(`[data-focus-key="${focusKey}"]`)) ||
@@ -1175,7 +1170,7 @@ function buildPopover(
   actions: PopoverActions,
   domain: string,
   switchDomain: (d: string) => void,
-): { pop: HTMLElement; level: Level } {
+): HTMLElement {
   const entry = getSite(data.personalText, domain);
   const r = rankingOf(entry, data.baseline);
   const choices = domainChoices(data.result.host, (d) => !!getSite(data.personalText, d));
@@ -1201,7 +1196,7 @@ function buildPopover(
   );
 
   // The same words as the popup's This site.
-  const hint = rankingHint(domain, data.baseline, r);
+  const hint = rankingHint(domain, data.baseline, r, data.verdict);
 
   const { mine, fromList, ids: tagIds } = tagOrder(data.tags, entry, data.verdict);
   // Tags you set toggle; tags from lists are shown but fixed.
@@ -1212,8 +1207,9 @@ function buildPopover(
       return h(
         'span',
         { class: 'fixed', style: `--c: ${tag.color}`, title: t('popupTagFrom', tJoin(data.verdict.tagSources[id] ?? [])) },
-        h('i', { class: 'gem' }),
+        tagMark(data.verdict.tagEffects[id]),
         tag.label,
+        tagEffectText(data.verdict.tagEffects[id]),
       );
     }
     return h(
@@ -1225,8 +1221,9 @@ function buildPopover(
         attrs: { 'aria-pressed': String(on), 'data-focus-key': `tag-${id}` },
         on: { click: () => actions.toggleTag(domain, id) },
       },
-      h('i', { class: on ? 'gem' : 'gem hollow' }),
+      tagMark(on ? data.verdict.tagEffects[id] : undefined, !on),
       tag.label,
+      on ? tagEffectText(data.verdict.tagEffects[id]) : null,
     );
   });
 
@@ -1329,5 +1326,5 @@ function buildPopover(
       settingsButton(actions.settings),
     ),
   );
-  return { pop, level: r.shown };
+  return pop;
 }

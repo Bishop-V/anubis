@@ -2,18 +2,21 @@ import { andList } from './dom';
 import { hostSuffixes, normalizeHostname } from './domain';
 import { t, tJoin, tn } from './i18n';
 import { MAX_STRENGTH, parseDeferred, type DeferredRule, type ParsedList, type Rule, type TagDef } from './listformat';
-import { displayLevel, PERSONAL_NAME } from './personal';
+import { PERSONAL_NAME } from './personal';
 
 // Turns parsed lists into lookup tables and weighs search results against them.
 //
-// Precedence, from strongest to weakest:
-//   1. The personal list (pin / raise / lower / hide / allow for a site).
-//   2. The user's per-tag choices ("hide everything tagged ai-slop"). Each tag counts
+// How a result is weighed:
+//   1. The user's per-tag choices ("hide everything tagged ai-slop"). Each tag counts
 //      once, however many lists give it; Hide hides, and Raise and Lower add up, five
 //      places each, so two raises and a lower make one raise. A rule carrying a tag
 //      with a choice leaves the ranking to the choices.
-//   3. The subscribed lists' own instructions. Within one list, Goggles precedence
-//      applies: discard > boost > downrank. Across lists, boosts and downranks add up.
+//   2. The personal list (pin / raise / lower / hide / allow for a site) adds to the
+//      Raise and Lower tag choices, and replaces the subscribed lists' own instructions
+//      and Hide tag choices: a site you ranked yourself isn't hidden by a tag.
+//   3. Without a personal ranking, the subscribed lists' own instructions add to the
+//      tag choices. Within one list, Goggles precedence applies: discard > boost >
+//      downrank. Across lists, boosts and downranks add up.
 
 export type Level = 'pin' | 'raise' | 'normal' | 'lower' | 'hide';
 export const LEVELS: Level[] = ['hide', 'lower', 'normal', 'raise', 'pin'];
@@ -136,6 +139,8 @@ export interface Verdict {
   tags: string[];
   /** Tag id → names of the lists that applied it. */
   tagSources: Record<string, string[]>;
+  /** Tag id → what the tag does to this result, for tags that move or hide it: your choice for the tag, or the list's own rule when you follow the list. */
+  tagEffects: Record<string, Level>;
   /** Tag whose colour tints the result, when a tag's action is "highlight". */
   highlight?: string;
   /** The personal list's explicit level for this result, if any. */
@@ -255,7 +260,7 @@ export function evaluate(
   lists: CompiledList[],
   prefs: Record<string, TagPref> = {},
 ): Verdict {
-  const verdict: Verdict = { level: 'normal', score: 0, hidden: false, tags: [], tagSources: {}, reasons: [] };
+  const verdict: Verdict = { level: 'normal', score: 0, hidden: false, tags: [], tagSources: {}, tagEffects: {}, reasons: [] };
   const target = toTarget(result);
   if (!target) return verdict;
   const words = localWords();
@@ -268,13 +273,16 @@ export function evaluate(
     if (!verdict.tagSources[id].includes(source)) verdict.tagSources[id].push(source);
   };
 
-  let discard = false;
-  let score = 0;
+  // Tag choices and the lists' own instructions are kept apart: a personal ranking
+  // replaces the lists' but adds to the tags'.
+  let tagScore = 0;
+  let listScore = 0;
   let highlight: string | undefined;
-  const hide = (by: NonNullable<Verdict['hiddenBy']>) => {
-    discard = true;
-    verdict.hiddenBy ??= by;
-  };
+  const hides: NonNullable<Verdict['hiddenBy']>[] = [];
+  const hide = (by: NonNullable<Verdict['hiddenBy']>) => hides.push(by);
+  // What the lists' own rules do to the tags you follow the lists for, strongest first.
+  const listEffects = new Map<string, Level>();
+  const STRENGTH: Record<Level, number> = { hide: 3, pin: 2, raise: 2, lower: 1, normal: 0 };
 
   // Your tag choices, each tag once however many lists give it. Returns whether the
   // rule carries a tag with a choice, which then decides instead of the rule.
@@ -288,8 +296,8 @@ export function evaluate(
       if (chosen.has(id)) continue;
       chosen.set(id, action);
       if (action === 'hide') hide({ kind: 'tag', name: id });
-      else if (action === 'raise') score += PERSONAL_STRENGTH;
-      else if (action === 'lower') score -= PERSONAL_STRENGTH;
+      else if (action === 'raise') tagScore += PERSONAL_STRENGTH;
+      else if (action === 'lower') tagScore -= PERSONAL_STRENGTH;
       else if (action === 'highlight') highlight ??= id;
     }
     return decides;
@@ -338,28 +346,41 @@ export function evaluate(
       else if (boost > 0) up = Math.max(up, boost);
       else if (boost < 0) down = Math.min(down, boost);
     }
+    for (const rule of matched) {
+      if (rule.tags.some((id) => (prefs[id]?.action ?? 'list') !== 'list')) continue;
+      const effect: Level = rule.discard ? 'hide' : rule.pin || rule.boost > 0 ? 'raise' : rule.boost < 0 ? 'lower' : 'normal';
+      for (const id of rule.tags) if (STRENGTH[effect] > STRENGTH[listEffects.get(id) ?? 'normal']) listEffects.set(id, effect);
+    }
     if (listDiscard) hide({ kind: 'list', name: list.name });
-    else score += up > 0 ? up : down;
+    else listScore += up > 0 ? up : down;
   }
 
   verdict.highlight = highlight;
 
-  // An explicit personal level decides everything except the tags shown.
-  if (verdict.personal) {
-    const p = verdict.personal;
-    verdict.hidden = p === 'hide';
-    verdict.hiddenBy = p === 'hide' ? { kind: 'personal', name: personalName(lists) } : undefined;
-    verdict.level = displayLevel(p);
-    verdict.score = p === 'pin' ? PIN_SCORE : p === 'raise' ? PERSONAL_STRENGTH : p === 'lower' ? -PERSONAL_STRENGTH : 0;
+  const p = verdict.personal;
+  if (p === 'hide') {
+    verdict.hidden = true;
+    verdict.hiddenBy = { kind: 'personal', name: personalName(lists) };
+    verdict.level = 'hide';
+    verdict.score = 0;
     return verdict;
   }
 
-  const choices = describeChoices(chosen, (id) => prefs[id]?.label ?? tagLabel(lists, id));
+  // Your own ranking adds to your Raise and Lower tags; the lists' own instructions and
+  // your Hide tags give way to it.
+  const counted = new Map([...chosen].filter(([, action]) => !p || action !== 'hide'));
+  const choices = describeChoices(counted, (id) => prefs[id]?.label ?? tagLabel(lists, id));
   if (choices) verdict.reasons.push({ list: t('reasonYourTagSettings'), listId: TAG_CHOICES, personal: true, text: choices, report: choices });
-  verdict.hidden = discard;
-  if (!discard) verdict.hiddenBy = undefined;
-  verdict.score = discard ? 0 : score;
-  verdict.level = discard ? 'hide' : score > 0 ? 'raise' : score < 0 ? 'lower' : 'normal';
+  for (const [id, action] of counted) if (action === 'hide' || action === 'raise' || action === 'lower') verdict.tagEffects[id] = action;
+  if (!p) for (const [id, effect] of listEffects) if (effect !== 'normal') verdict.tagEffects[id] = effect;
+
+  const hiddenBy = p ? undefined : hides[0];
+  const own = p === 'pin' ? PIN_SCORE : p === 'raise' ? PERSONAL_STRENGTH : p === 'lower' ? -PERSONAL_STRENGTH : 0;
+  const score = tagScore + (p ? own : listScore);
+  verdict.hidden = !!hiddenBy;
+  verdict.hiddenBy = hiddenBy;
+  verdict.score = hiddenBy ? 0 : score;
+  verdict.level = hiddenBy ? 'hide' : p === 'pin' ? 'pin' : score > 0 ? 'raise' : score < 0 ? 'lower' : 'normal';
   return verdict;
 }
 

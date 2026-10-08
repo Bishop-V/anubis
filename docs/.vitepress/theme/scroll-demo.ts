@@ -1,4 +1,5 @@
 import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, ref, type VNode } from 'vue';
+import { tagMark } from './demo-parts';
 
 // The homepage's demo: one search on a drawn results page that Anubis works through
 // as you scroll. The page's heading (the default slot, from home.ts) is the first
@@ -115,9 +116,9 @@ const STEPS: { title: string; text: string }[] = [
 //   public/_locales/en/messages.json; its layout: .summary in
 //   entrypoints/content/shadow.css. On phones (600px or less) it's the short form
 //   (shortSummary) with Show hidden and Details, and the tags wait behind Details;
-// - the labels under a title: renderChips in ui.ts and .chips and .verdict in
-//   shadow.css (Raised in gold and Lowered muted, each with its icon; a pinned site
-//   has no label, since its button shows the pin);
+// - the tags under a title: renderChips in ui.ts, tagMark in utils/icons.ts, and
+//   .chips and .gem-mark in shadow.css (a tag that raises or lowers the result shows
+//   that sign in its diamond's place; there's no separate Raised or Lowered label);
 // - the button on each result: .weigh in shadow.css (muted, and gold only for a
 //   pinned site);
 // - hidden results: gone from the page, as Remove (the default in Settings →
@@ -144,10 +145,6 @@ const WEIGH: Record<Level, string> = {
   pin: svg('<path d="M9.8 2.2l4 4-1.6.5-2.6 2.6.3 3.1-1.2 1.2L5.4 10.3 2.2 13.8M5.4 10.3L2.3 7.2l1.2-1.2 3.1.3 2.6-2.6z"/>'),
 };
 // A new key on each ranking, so the icon swaps in with a small tip.
-// The labels' icons (LEVEL_ICONS).
-const CHIP_ICONS = { raise: svg('<path d="M4 9.5l4-4 4 4"/>'), lower: svg('<path d="M4 6.5l4 4 4-4"/>') };
-const chip = (on: boolean, level: 'raise' | 'lower', text: string) =>
-  h('span', { class: ['chip', 'demo-verdict', level, { on }] }, [h('span', { class: 'chip-icon', innerHTML: CHIP_ICONS[level] }), text]);
 // The AI answer's mark: a plain four-pointed star in blue and violet, a sketch of
 // the one engines put beside their AI answers rather than any engine's own logo.
 const SPARKLE = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><defs><linearGradient id="demo-sparkle" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f8df5"/><stop offset="1" stop-color="#9b72cb"/></linearGradient></defs><path fill="url(#demo-sparkle)" d="M8 0c.6 4.2 3.8 7.4 8 8-4.2.6-7.4 3.8-8 8-.6-4.2-3.8-7.4-8-8 4.2-.6 7.4-3.8 8-8z"/></svg>`;
@@ -159,8 +156,7 @@ const isBlock = (item: Item): item is Block => 'heading' in item;
 const fold = (open: boolean, cls: string, children: (VNode | string | null)[] | VNode) =>
   h('div', { class: ['fold', cls, { open }] }, [h('div', { class: 'fold-inner' }, children)]);
 
-const tag = (t: Tag, n?: number) =>
-  h('span', { class: 'demo-tag', style: { '--c': t.color } }, [h('span', { class: 'diamond' }), n ? `${t.name} ${n}` : t.name]);
+const tag = (t: Tag, n?: number, effect?: 'raise' | 'lower') => tagMark(t.name, t.color, n, effect);
 
 function renderResult(r: Result, step: number): VNode {
   const hidden = !!r.hidden && step >= 3;
@@ -178,11 +174,8 @@ function renderResult(r: Result, step: number): VNode {
         weigh(level),
       ]),
       h('div', { class: 'title' }, r.title),
-      fold(raised || lowered || tagged, 'chips', [
-        r.raised ? chip(raised, 'raise', 'Raised') : null,
-        r.lowered ? chip(lowered, 'lower', 'Lowered') : null,
-        r.tag ? h('span', { class: ['chip', { on: tagged }] }, [tag(r.tag)]) : null,
-      ]),
+      // The tag that moved the result shows how, once it has.
+      fold(tagged, 'chips', [r.tag ? h('span', { class: ['chip', { on: tagged }] }, [tag(r.tag, undefined, raised ? 'raise' : lowered ? 'lower' : undefined)]) : null]),
       h('div', { class: 'snippet' }, r.snippet),
     ]),
   ]);

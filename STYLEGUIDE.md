@@ -123,9 +123,9 @@ All shared controls are in `assets/theme.css`; the search-page versions in `shad
 | Select | `select` | The same box as an input, with the one caret: a small `--muted` chevron drawn in CSS, 10px from the right edge | Never the browser's own arrow |
 | Switch | `.switch` | 30×17px pill, gold when on | Settings that take effect at once; no Save button |
 | Choice row | `.seg`, `.levels` | Plain words in `--muted`; the chosen one `--text`, 600, with a 2px underline in gold (`--muted` for Hide, the tag's colour for a tag filter). The rankings put each one's icon over its word: `--muted` at rest, and once chosen `--gold-ink` for Raise and Pin, `--text` for the rest | Choosing one of a few: the rankings, Appearance's options |
-| Tag | `.tag` + `.gem` | A 6px diamond in the tag's colour, then its name; hollow for a tag you could add. In the popup, a selected tag also has bold text and a 2px underline in its colour. | Tags everywhere. Never pills or chips with fills. |
+| Tag | `.tag` + `.gem` | A 6px diamond in the tag's colour, then its name; hollow for a tag you could add. When the tag raises, lowers, or hides the result, `.gem-mark` takes the diamond's place: that ranking's icon, simplified to a 10px sign in the tag's colour (`tagMark` in `utils/icons.ts`), with its meaning for screen readers. In the popup, a selected tag also has bold text and a 2px underline in its colour. | Tags everywhere. Never pills or chips with fills. |
 | Site name | `siteName()` + `.suffix` | The name in the row's colour, the ending it shares with other sites (`.org`, `.co.uk`) in `--muted` at 400 | A site as a row's subject: the popup's and Settings' Your sites |
-| Ranking note | `.level-note`, `.verdict` | Pin and Raise in `--gold-ink`, Hide, Lower, and Normal in `--muted`; pinned and hidden results use their selector icon instead of a redundant chip, while Raised and Lowered chips remain | Naming a site's ranking |
+| Ranking note | `.level-note` | Pin and Raise in `--gold-ink`, Hide, Lower, and Normal in `--muted`. Results have no ranking label: the button on each result shows the ranking, and tags show what they do | Naming a site's ranking in the popup's list of your sites |
 
 ```ts
 // A form: one primary button, the rest plain or text buttons.

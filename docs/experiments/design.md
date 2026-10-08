@@ -2,6 +2,12 @@
 
 The look, the wording, and Anubis's own pages. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Tag marks and a balance that weighs (2026-10-08)
+
+- **Asked for:** the balance in the result menu and the popup tips by how far the result moves, not only by its ranking, so two Raise tags tip it further than one. `tiltFor` in `utils/balance.ts` grows with the score and levels off below a pin or a hide (one Raise, 5 places, tips it 6° as before; 10 places 8.7°; 15 places 10°; never past 11°). The balance now weighs the result's whole verdict, your ranking included; before, it showed the ranking you pressed, or else the lists'.
+- **Asked for:** a tag that raises, lowers, or hides the result shows that ranking's icon, simplified to a 10px sign in the tag's colour, where its diamond was (`tagMark`); a tag that does neither keeps the diamond. It shows what the tag actually does to that result: your choice for it, or the list's own rule when you follow the list, and nothing once your own ranking replaces the lists'. A tag can't pin (a list's `pin` counts as its strongest raise), so there's no pin sign. Screen readers hear the meaning after the tag's name, and the tooltip says it too.
+- **Removed:** the "Raised" and "Lowered" labels under a title, which the marks and the button's tilt now cover. Screen readers still hear the ranking in the button's label. A result raised only by a list or your own ranking, with no tag, shows it on its button alone.
+
 ## Undo instead of "Are you sure?" in Settings (2026-10-08)
 
 - **Reported:** after pressing delete on a tag, the browser's confirmation box offered to stop the page showing more dialogs. With that ticked, the tag could no longer be deleted: the browser suppresses `confirm()`, which then answers "no" at once, so the button silently did nothing. Unsubscribing from a list and Reset settings asked the same way.

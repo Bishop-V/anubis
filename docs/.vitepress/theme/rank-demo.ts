@@ -3,7 +3,7 @@ import { balance, fold, html, ICON, LEVELS, tagMark, type Level } from './demo-p
 
 // Ranking sites, played out: a pointer opens the button beside the last result and
 // presses Pin, and the result moves to the top in its gold frame. Then it lowers
-// another site, which moves down the page with a "Lowered" label. The summary says
+// another site, which moves down the page as its button tips. The summary says
 // what changed each time, with Undo. It plays once when it scrolls into view, and
 // again from "Play again". With reduced motion there's no pointer, and results
 // change places without moving.
@@ -197,12 +197,7 @@ export default defineComponent({
               }),
             ]),
             h('div', { class: 'title' }, r.title),
-            r.tag || level === 'lower'
-              ? h('div', { class: 'hd-chips' }, [
-                  level === 'lower' ? h('span', { class: 'demo-verdict' }, [html('span', 'chip-icon', ICON.chipLower), 'Lowered']) : null,
-                  r.tag ? tagMark(r.tag[0], r.tag[1]) : null,
-                ])
-              : null,
+            r.tag ? h('div', { class: 'hd-chips' }, [tagMark(r.tag[0], r.tag[1])]) : null,
             h('div', { class: 'snippet' }, r.snippet),
           ],
         );
