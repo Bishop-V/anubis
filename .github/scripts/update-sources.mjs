@@ -11,8 +11,10 @@
 // a person should look first. The run then fails, which GitHub reports.
 
 import { execFileSync } from 'node:child_process';
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { body, HUGE_AI, hugeAi, INDIE_WIKIS, indieWikis, render } from './sources/convert.mjs';
+import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, relative } from 'node:path';
+import { body, DEVDOCS, devDocs, HUGE_AI, hugeAi, INDIE_WIKIS, indieWikis, listSites, render } from './sources/convert.mjs';
 
 const ROOT = new URL('../../', import.meta.url);
 const DEST = new URL('lists/sources/', ROOT);
@@ -27,6 +29,27 @@ async function fetchText(url) {
 /** The commit a repository's default branch is at. */
 function head(repository) {
   return execFileSync('git', ['ls-remote', repository, 'HEAD'], { encoding: 'utf8' }).split(/\s/)[0];
+}
+
+/**
+ * The files under one folder of a repository, from a shallow clone that fetches
+ * only that folder: `[{ path, text }]`, and the commit they're from.
+ */
+function folder(repository, path, extension) {
+  const dir = mkdtempSync(join(tmpdir(), 'source-'));
+  try {
+    const git = (...args) => execFileSync('git', ['-C', dir, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'] });
+    execFileSync('git', ['clone', '-q', '--depth', '1', '--filter=blob:none', '--sparse', repository, dir], { stdio: 'inherit' });
+    git('sparse-checkout', 'set', path);
+    const files = readdirSync(join(dir, path), { recursive: true, withFileTypes: true })
+      .filter((f) => f.isFile() && f.name.endsWith(extension))
+      .map((f) => join(f.parentPath, f.name))
+      .sort()
+      .map((file) => ({ path: relative(dir, file), text: readFileSync(file, 'utf8') }));
+    return { files, commit: git('rev-parse', 'HEAD').trim() };
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 }
 
 const SOURCES = [
@@ -50,6 +73,16 @@ const SOURCES = [
         fetchText(`${INDIE_WIKIS.repository.replace('github.com', 'raw.githubusercontent.com')}/main/LICENSE`),
       ]);
       return indieWikis(data, { commit: data.commit ?? head(INDIE_WIKIS.repository), licence });
+    },
+  },
+  {
+    id: 'devdocs',
+    name: 'DevDocs',
+    repository: DEVDOCS.repository,
+    async build() {
+      const { files, commit } = folder(DEVDOCS.repository, DEVDOCS.scrapers, '.rb');
+      const known = listSites(readFileSync(new URL('lists/official-docs.anubis', ROOT), 'utf8'));
+      return devDocs(files, { commit, known });
     },
   },
 ];

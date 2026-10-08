@@ -241,3 +241,112 @@ export function indieWikis(data, { commit, licence }) {
     skipped,
   };
 }
+
+export const DEVDOCS = {
+  repository: 'https://github.com/freeCodeCamp/devdocs',
+  scrapers: 'lib/docs/scrapers',
+};
+
+// Hosts where an address is one project's page on a shared service, not a docs site.
+const SHARED_HOSTS = new Set(['github.com', 'raw.githubusercontent.com', 'gitlab.com', 'bitbucket.org', 'codeberg.org', 'sourceforge.net', 'npmjs.com', 'web.archive.org', 'devdocs.io']);
+// Hosts whose name says they hold docs, so the whole host is tagged.
+const DOCS_HOST = /^(docs?|developer|devdocs|api|learn|reference|manual|man)\.|\.readthedocs\.io$/;
+// A first path segment that is a version or a language, under which a host keeps all its docs.
+const VERSION_SEGMENT = /^(v?\d.*|latest|stable|current|master|main|dev|next|en|[a-z]{2}-[a-z]{2,4})$|#\{/i;
+
+/**
+ * Where a DevDocs scraper reads its docs (`base_url`), as a site and, when the
+ * docs are only part of the site, the first segment of their path:
+ * `https://docs.deno.com/api/` → docs.deno.com; `https://prettier.io/docs/` →
+ * prettier.io, `/docs/`. Nothing for an address on a shared host, or one whose
+ * host is worked out when DevDocs runs.
+ */
+export function docsTarget(url) {
+  const m = /^https?:\/\/([^/"'#{}]+)(\/.*)?$/.exec(url);
+  if (!m) return undefined;
+  const site = cleanHost(m[1]);
+  if (!site || !/\.[a-z]{2,}$/.test(site) || SHARED_HOSTS.has(site)) return undefined;
+  const segment = (m[2] ?? '/').split('/')[1] ?? '';
+  if (!segment || DOCS_HOST.test(site) || VERSION_SEGMENT.test(segment)) return { site };
+  if (!/^[\w.-]+$/.test(segment) || /\.\w+$/.test(segment)) return { site };
+  return { site, path: `/${segment}/` };
+}
+
+/** The sites an Anubis list has `site=` rules for. */
+export function listSites(text) {
+  return [...new Set([...text.matchAll(/\$site=([^,\s]+)/g)].map((m) => m[1]))];
+}
+
+/**
+ * DevDocs's scrapers (Ruby files) as Anubis rules tagging "Official docs" and
+ * nudging them up, as Anubis's own Official docs list does. Each `base_url` in a
+ * scraper, for every version it keeps, becomes a rule; its comment names the docs.
+ * Sites the bundled list already has (`known`), or a part or parent of one, are left
+ * out: both lists are on by default, and boosts from two lists add up. The bundled
+ * list keeps them because installs that chose their own lists before this one
+ * existed aren't subscribed to it.
+ */
+export function devDocs(files, { commit, known = [] }) {
+  const overlaps = (site) => known.some((k) => site === k || site.endsWith(`.${k}`) || k.endsWith(`.${site}`));
+  const names = new Map();
+  const skipped = [];
+  for (const { path, text } of files) {
+    // DevDocs names docs after their class unless the scraper sets a name.
+    const name = /self\.name\s*=\s*['"]([^'"]+)['"]/.exec(text)?.[1] ?? /class\s+(\w+)\s*</.exec(text)?.[1] ?? path.replace(/^.*\//, '').replace(/\.rb$/, '');
+    for (const [, url] of text.matchAll(/base_url\s*=\s*['"]([^'"]+)['"]/g)) {
+      const target = docsTarget(url);
+      if (!target) {
+        skipped.push(`${name}: ${url}`);
+        continue;
+      }
+      if (overlaps(target.site)) continue;
+      const key = instruction(target.site, target.path, ['tag=docs', 'boost=1']);
+      if (!names.has(key)) names.set(key, new Set());
+      names.get(key).add(name);
+    }
+  }
+  const rules = [...names].map(([key, docs]) => ({ instruction: key, comment: `DevDocs collects the docs for ${[...docs].sort().join(', ')} here.` }));
+  return {
+    header: header(
+      {
+        name: 'Official docs (DevDocs)',
+        description: 'Tags the documentation sites DevDocs collects, and nudges them up.',
+        author: 'The DevDocs contributors',
+        homepage: DEVDOCS.repository,
+        license: 'MPL-2.0',
+        avatar: '#2f5fae',
+        expires: '7 days',
+        tag: ['docs | Official docs | #2f5fae | Documentation published by the project or vendor itself.'],
+      },
+      [
+        `Made from DevDocs's scrapers (${DEVDOCS.repository}),`,
+        `commit ${commit}, whose code is under the Mozilla Public License 2.0.`,
+        "Each rule is an address a scraper reads its docs from. A docs site's whole host",
+        "is tagged; docs on a project's main site only under their path (\"/docs/\").",
+        'Addresses on GitHub, GitLab, and other shared hosts are left out, and so are',
+        "sites Anubis's own Official docs list already tags, so none is raised twice.",
+        '',
+        'To add docs, open an issue or pull request on DevDocs. Anubis rewrites this',
+        'file from it every week (.github/workflows/sources.yml), so edits made here are lost.',
+      ],
+    ),
+    rules: dropNarrower(rules),
+    skipped,
+  };
+}
+
+/**
+ * Drop rules another rule with the same options already covers: one on the same
+ * site or a parent site, for the whole site or the same path. `v18.angular.dev`
+ * goes when `angular.dev` has a rule, `/docs/$site=v3.tailwindcss.com` when
+ * `/docs/$site=tailwindcss.com` does.
+ */
+function dropNarrower(rules) {
+  const parsed = rules.map((r) => {
+    const [, path, site, options] = /^([^$]*)\$site=([^,]+),(.*)$/.exec(r.instruction);
+    return { rule: r, path, site, options };
+  });
+  const covers = (a, b) =>
+    a !== b && a.options === b.options && (!a.path || a.path === b.path) && (b.site === a.site || b.site.endsWith(`.${a.site}`));
+  return parsed.filter((b) => !parsed.some((a) => covers(a, b))).map((p) => p.rule);
+}

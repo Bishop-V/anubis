@@ -42,6 +42,7 @@ Some lists in the directory are made from data other projects collect. Every wee
 | List | Made from | What it does |
 | --- | --- | --- |
 | **AI content** | [HUGE AI Blocklist](https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist) by laylavish (CC0) | Labels sites made mostly of AI-generated text or images **AI-generated**, and sites that mix authentic and AI-generated work **Some AI content**. Sites the blocklist files as content farms or spam are also labelled **AI slop**. It never moves or hides anything unless you choose that for a tag. |
+| **Official docs (DevDocs)** | [DevDocs](https://github.com/freeCodeCamp/devdocs) by its contributors (MPL-2.0) | Labels the documentation sites DevDocs collects **Official docs** and raises them slightly, like the Official docs list. It adds about 180 sites that list doesn't have. |
 | **Independent wikis** | [Indie Wiki Buddy](https://github.com/KevinPayravi/indie-wiki-buddy) by Kevin Payravi (MIT) | Raises independent wikis, labelled **Independent wiki**, and lowers the Fandom, Fextralife, and Neoseeker wikis they replace, labelled **Independent wiki elsewhere**. |
 
 To add a site to one of these lists, or to have one removed, contribute to the project it comes from, through the links above. Anubis copies the data as it is, and its next weekly update brings in the change. **Wrong? Report it** in the ⚖ menu opens an issue on that project's tracker.

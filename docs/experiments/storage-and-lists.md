@@ -2,6 +2,14 @@
 
 Where things are stored, sync between browsers, and subscribing to lists. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Official docs from DevDocs (2026-10-08)
+
+- **Built:** a weekly source, `lists/sources/devdocs.anubis`, on by default. DevDocs's scrapers (`lib/docs/scrapers/*.rb` in `freeCodeCamp/devdocs`) each set a `base_url`, the address their docs are read from; each becomes a rule tagging **Official docs** with `boost=1`, the bundled list's tag and nudge. `devdocs.io/docs.json` would be simpler, but it can't be reached from cloud sessions to test, and it doesn't carry `base_url`, only each project's homepage, which is often not its docs.
+- **Reading an address:** a docs host (`docs.`, `developer.`, `api.`, and similar, or `*.readthedocs.io`) is tagged whole; so is a host whose path starts with a version or language (`/en/`, `/3.13/`, `#{self.release}`). Otherwise only the first path segment is (`/docs/$site=prettier.io`, `/kb/$site=mariadb.com`). A first try read any two-letter segment as a language, which made all of `mariadb.com` docs. Rules a parent site's rule covers are dropped, 38 of them, mostly versioned hosts such as `v10.angular.io` and `18.react.dev`. Left out: 23 addresses on GitHub, on `localhost`, or with a host worked out at run time.
+- **Overlap with the bundled list:** 36 of `official-docs.anubis`'s 60 rules are sites DevDocs has, and boosts from two lists add up. The rule for sources is that their data replaces hand-made entries, but `migrateDefaultLists` subscribes existing installs to default lists only once, so an install that had chosen its own lists would have lost those sites without gaining DevDocs's list. Instead the DevDocs list leaves out any site the bundled list has, or a part or parent of one (`docs.djangoproject.com` for `djangoproject.com`). That leaves 176 new rules, and `tests/sources.test.ts` checks the two never overlap.
+- **Licence:** DevDocs's code is MPL-2.0; the list carries it and credits the commit. Reports go to DevDocs, as for the other sources.
+- **Not checked:** the job's first run on GitHub, and how many DevDocs sites turn up in real searches.
+
 ## More lists, and sites on shared hosts (2026-10-08)
 
 A look at other projects whose data or tools could help Anubis. Counts are from each project's default branch on 2026-10-08, and each list was read with `parseList` without errors.

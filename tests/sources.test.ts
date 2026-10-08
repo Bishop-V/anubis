@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 // @ts-expect-error: the update scripts are plain JavaScript.
-import { body, fromMatchPattern, hugeAi, indieWikis, render } from '../.github/scripts/sources/convert.mjs';
+import { body, devDocs, docsTarget, fromMatchPattern, hugeAi, indieWikis, listSites, render } from '../.github/scripts/sources/convert.mjs';
 import { parseList } from '@/utils/listformat';
 import { compileList, evaluate } from '@/utils/matcher';
 import { BUNDLED_DIRECTORY, defaultSubscriptions, reportTracker, subscriptionId } from '@/utils/subscriptions';
@@ -198,6 +198,66 @@ describe('indieWikis', () => {
     const independent = evaluate({ url: 'https://minecraft.wiki/w/Creeper', title: '' }, [compiled]);
     expect(fandom).toMatchObject({ score: -3, tags: ['independent-elsewhere'] });
     expect(independent).toMatchObject({ score: 3, tags: ['independent-wiki'] });
+  });
+});
+
+describe('devDocs', () => {
+  const files = [
+    { path: 'lib/docs/scrapers/react.rb', text: "class React < UrlScraper\n  self.name = 'React'\n  version do\n    self.base_url = 'https://react.dev'\n  end\n  version '18' do\n    self.base_url = 'https://18.react.dev'\n  end\n" },
+    { path: 'lib/docs/scrapers/prettier.rb', text: "class Prettier < UrlScraper\n  self.base_url = 'https://prettier.io/docs/'\n" },
+    { path: 'lib/docs/scrapers/flask.rb', text: 'class Flask < UrlScraper\n  self.base_url = "https://flask.palletsprojects.com/en/#{self.release}/"\n' },
+    { path: 'lib/docs/scrapers/koa.rb', text: "class Koa < UrlScraper\n  self.base_url = 'https://github.com/koajs/koa/blob/v3.0.0/docs'\n" },
+    { path: 'lib/docs/scrapers/k8s.rb', text: 'class Kubernetes < UrlScraper\n  self.base_url = "https://v#{version.sub(".", "-")}.docs.kubernetes.io/"\n' },
+    { path: 'lib/docs/scrapers/python.rb', text: "class Python < FileScraper\n  self.base_url = 'https://docs.python.org/3.13/library/'\n" },
+  ];
+  const list = devDocs(files, { commit: 'fed789', known: ['docs.python.org'] });
+  const text = render(list);
+  const parsed = parseList(text);
+
+  it('tags where each scraper reads its docs, once per site', () => {
+    expect(list.rules.map((r: { instruction: string }) => r.instruction).sort()).toEqual([
+      '$site=flask.palletsprojects.com,tag=docs,boost=1',
+      '$site=react.dev,tag=docs,boost=1',
+      '/docs/$site=prettier.io,tag=docs,boost=1',
+    ]);
+    expect(text).toContain('# DevDocs collects the docs for React here.');
+    // Named after the class when the scraper doesn't set a name.
+    expect(text).toContain('# DevDocs collects the docs for Prettier here.');
+  });
+
+  it('leaves out shared hosts, addresses worked out at run time, and sites the bundled list has', () => {
+    expect(list.skipped).toHaveLength(2);
+    expect(text).not.toContain('python.org');
+  });
+
+  it('reads a docs address as a whole docs site, or as a path on a main site', () => {
+    expect(docsTarget('https://docs.deno.com/api/')).toEqual({ site: 'docs.deno.com' });
+    expect(docsTarget('https://mariadb.com/kb/en/')).toEqual({ site: 'mariadb.com', path: '/kb/' });
+    expect(docsTarget('https://www.tcl-lang.org/man/tcl#{self.version}/')).toEqual({ site: 'tcl-lang.org', path: '/man/' });
+    expect(docsTarget('https://sinonjs.org/releases/v#{ver}/')).toEqual({ site: 'sinonjs.org', path: '/releases/' });
+    expect(docsTarget('https://developer.mozilla.org/en-US/docs/Web/API')).toEqual({ site: 'developer.mozilla.org' });
+    expect(docsTarget('https://underscorejs.org')).toEqual({ site: 'underscorejs.org' });
+    expect(docsTarget('https://daringfireball.net/projects/markdown/syntax')).toEqual({ site: 'daringfireball.net', path: '/projects/' });
+    expect(docsTarget('http://localhost:8000/docs/')).toBeUndefined();
+    expect(docsTarget('https://github.com/d3/')).toBeUndefined();
+  });
+
+  it('shares the Official docs tag with the bundled list, which it never overlaps', () => {
+    const official = readFileSync('lists/official-docs.anubis', 'utf8');
+    const tag = parseList(official).tags.find((t) => t.id === 'docs');
+    expect(parsed.tags).toEqual([tag]);
+    const generated = parseList(readFileSync('lists/sources/devdocs.anubis', 'utf8'));
+    const known = listSites(official);
+    for (const rule of generated.rules) {
+      const site = rule.site!;
+      expect(known.filter((k: string) => site === k || site.endsWith(`.${k}`) || k.endsWith(`.${site}`))).toEqual([]);
+    }
+  });
+
+  it('credits the source and its commit, and parses cleanly', () => {
+    expect(parsed.errors).toEqual([]);
+    expect(parsed.meta).toMatchObject({ name: 'Official docs (DevDocs)', license: 'MPL-2.0', homepage: 'https://github.com/freeCodeCamp/devdocs' });
+    expect(text).toContain('commit fed789');
   });
 });
 
