@@ -16,6 +16,7 @@ import {
   editSubscriptions,
   fetchDirectory,
   getSubscriptions,
+  listsToDiscover,
   listText,
   originPermissionFor,
   refreshList,
@@ -134,9 +135,7 @@ export async function renderLists(): Promise<HTMLElement> {
   const notice = flashed('lists');
 
   const cards = subs.map((sub) => listCard(sub, listText(sub, cache), cache[sub.id]));
-  const subscribedUrls = new Set(subs.map((s) => s.url));
-  const subscribedIds = new Set(subs.map((s) => s.id));
-  const discover = directory.filter((d) => !subscribedUrls.has(d.url) && !subscribedIds.has(builtinId(d)));
+  const discover = listsToDiscover(directory, subs);
 
   return h(
     'div',

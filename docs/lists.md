@@ -45,6 +45,6 @@ Host your list anywhere public (see [Publish a list](./guide/publish-a-list.md))
 }
 ```
 
-`format` is `anubis`, `goggle`, `ublacklist` or `domains`. Add `"lens": true` for a list that hides everything it doesn't mention.
+`format` is `anubis`, `goggle`, `ublacklist` or `domains`. Add `"lens": true` for a list that hides everything it doesn't mention. If your list covers the same sites as another in the directory, add `"overlaps": ["their-id"]` to yours, and yours to theirs: someone who has one isn't offered the other.
 
 To link to your list from anywhere else, such as your repository's README, use a [subscribe link](./subscribe.md#make-a-subscribe-link).

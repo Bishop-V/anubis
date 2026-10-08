@@ -9,7 +9,8 @@
       "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/official-docs.anubis",
       "format": "anubis",
       "builtin": true,
-      "default": true
+      "default": true,
+      "overlaps": ["devdocs"]
     },
     {
       "id": "discussions",
@@ -45,7 +46,8 @@
       "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/foss-tools.anubis",
       "format": "anubis",
       "builtin": true,
-      "default": true
+      "default": true,
+      "overlaps": ["self-hosted-foss"]
     },
     {
       "id": "ai-content",
@@ -54,7 +56,8 @@
       "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/sources/ai-content.anubis",
       "homepage": "https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist",
       "format": "anubis",
-      "default": true
+      "default": true,
+      "overlaps": ["huge-ai-blocklist"]
     },
     {
       "id": "independent-wikis",
@@ -72,7 +75,8 @@
       "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/sources/devdocs.anubis",
       "homepage": "https://github.com/freeCodeCamp/devdocs",
       "format": "anubis",
-      "default": true
+      "default": true,
+      "overlaps": ["official-docs"]
     },
     {
       "id": "self-hosted-foss",
@@ -81,7 +85,8 @@
       "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/sources/self-hosted-foss.anubis",
       "homepage": "https://github.com/awesome-selfhosted/awesome-selfhosted-data",
       "format": "anubis",
-      "default": true
+      "default": true,
+      "overlaps": ["foss-tools"]
     },
     {
       "id": "huge-ai-blocklist",
@@ -89,7 +94,8 @@
       "description": "Hides AI-generated image and content farms. Community-maintained by laylavish. To label these sites instead, use AI content (HUGE AI Blocklist).",
       "url": "https://raw.githubusercontent.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist/main/list_uBlacklist.txt",
       "homepage": "https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist",
-      "format": "ublacklist"
+      "format": "ublacklist",
+      "overlaps": ["ai-content"]
     },
     {
       "id": "ai-content-farms",

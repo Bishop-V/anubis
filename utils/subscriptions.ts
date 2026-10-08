@@ -34,6 +34,8 @@ export interface DirectoryEntry {
   /** Subscribed on first install. */
   default?: boolean;
   lens?: boolean;
+  /** Ids of directory lists that cover the same sites; once you have one, this one isn't offered. */
+  overlaps?: string[];
 }
 
 /** Subscriptions as stored, or the defaults if the user never changed them. */
@@ -79,6 +81,18 @@ export function displayName(sub: Pick<Subscription, 'url' | 'name'>, meta?: { na
 
 export function builtinId(entry: DirectoryEntry): string {
   return `builtin:${entry.id}`;
+}
+
+/**
+ * The directory lists worth offering: not ones you already have, and not ones
+ * that cover the same sites as a list you have (an entry's `overlaps`).
+ */
+export function listsToDiscover(directory: DirectoryEntry[], subs: Pick<Subscription, 'id' | 'url'>[]): DirectoryEntry[] {
+  const urls = new Set(subs.map((s) => s.url));
+  const ids = new Set(subs.map((s) => s.id));
+  const has = (d: DirectoryEntry) => urls.has(d.url) || ids.has(d.builtin ? builtinId(d) : subscriptionId(d.url));
+  const owned = new Set(directory.filter(has).map((d) => d.id));
+  return directory.filter((d) => !has(d) && !d.overlaps?.some((id) => owned.has(id)));
 }
 
 /** The directory's default lists. Bundled ones work at once; the others arrive with the first update. */

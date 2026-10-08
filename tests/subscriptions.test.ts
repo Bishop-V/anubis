@@ -1,7 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fakeBrowser } from 'wxt/testing/fake-browser';
 import { storage } from '#imports';
-import { defaultSubscriptions, fetchText, getSubscriptions, migrateDefaultLists, saveSubscriptions } from '@/utils/subscriptions';
+import {
+  BUNDLED_DIRECTORY,
+  defaultSubscriptions,
+  fetchText,
+  getSubscriptions,
+  listsToDiscover,
+  migrateDefaultLists,
+  saveSubscriptions,
+  subscriptionId,
+  type DirectoryEntry,
+} from '@/utils/subscriptions';
 import { installEnglish } from './english';
 
 const MB = 1024 * 1024;
@@ -71,5 +81,35 @@ describe('default lists on update', () => {
   it('leaves an install that never changed its lists on the defaults', async () => {
     await migrateDefaultLists();
     expect(await storage.getItem('sync:subscriptions')).toBeNull();
+  });
+});
+
+describe('the lists offered under More lists', () => {
+  const entry = (id: string, extra: Partial<DirectoryEntry> = {}): DirectoryEntry => ({
+    id,
+    name: id,
+    description: '',
+    url: `https://example.org/${id}.txt`,
+    ...extra,
+  });
+  const sub = (d: DirectoryEntry) => ({ id: d.builtin ? `builtin:${d.id}` : subscriptionId(d.url), url: d.url });
+
+  it('leaves out lists you already subscribe to', () => {
+    const [a, b] = [entry('a'), entry('b', { builtin: true })];
+    expect(listsToDiscover([a, b, entry('c')], [sub(a), sub(b)]).map((d) => d.id)).toEqual(['c']);
+  });
+
+  it('leaves out a list that covers the same sites as one you have', () => {
+    const [labels, hides] = [entry('labels', { overlaps: ['hides'] }), entry('hides', { overlaps: ['labels'] })];
+    expect(listsToDiscover([labels, hides, entry('other')], [sub(labels)]).map((d) => d.id)).toEqual(['other']);
+    expect(listsToDiscover([labels, hides, entry('other')], [sub(hides)]).map((d) => d.id)).toEqual(['other']);
+    expect(listsToDiscover([labels, hides], []).map((d) => d.id)).toEqual(['labels', 'hides']);
+  });
+
+  it('has overlaps in the directory that name real lists and go both ways', () => {
+    const byId = new Map(BUNDLED_DIRECTORY.map((d) => [d.id, d]));
+    for (const d of BUNDLED_DIRECTORY) {
+      for (const id of d.overlaps ?? []) expect(byId.get(id)?.overlaps, `${d.id} overlaps ${id}`).toContain(d.id);
+    }
   });
 });

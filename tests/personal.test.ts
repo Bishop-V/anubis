@@ -91,6 +91,13 @@ describe('personal list edits', () => {
     expect(getSite(t, 'fandom.com')?.tags).toEqual([]);
   });
 
+  it('removes a tag that was never defined from the sites that use it', () => {
+    let t = toggleSiteTag(base, 'fandom.com', 'forum');
+    expect(getSite(t, 'fandom.com')?.tags).toEqual(['forum']);
+    t = removeTag(t, 'forum');
+    expect(getSite(t, 'fandom.com')?.tags).toEqual([]);
+  });
+
   it('migrates the old block list', () => {
     const t = fromBlockedSites(['fandom.com', 'pinterest.com']);
     expect(listSites(t).map((e) => [e.site, e.level])).toEqual([
