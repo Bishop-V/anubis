@@ -1,6 +1,6 @@
 import { andList } from './dom';
 import { hostSuffixes, normalizeHostname } from './domain';
-import { MAX_STRENGTH, type ParsedList, type Rule, type TagDef } from './listformat';
+import { MAX_STRENGTH, parseDeferred, type DeferredRule, type ParsedList, type Rule, type TagDef } from './listformat';
 import { displayLevel, PERSONAL_NAME } from './personal';
 
 // Turns parsed lists into lookup tables and weighs search results against them.
@@ -43,9 +43,12 @@ export interface CompiledList {
   lens: boolean;
   avatar?: string;
   tags: TagDef[];
+  /** Read through `siteRules` or `allSites`, which parse the deferred rules they need. */
   bySite: Map<string, Rule[]>;
   byHost: Map<string, Rule[]>;
   generic: Rule[];
+  /** Rules for a site not parsed yet (`parseList(text, true)`), by site. */
+  deferred: Map<string, DeferredRule | DeferredRule[]>;
 }
 
 export function compileList(id: string, parsed: ParsedList, personal = false, name?: string): CompiledList {
@@ -62,6 +65,14 @@ export function compileList(id: string, parsed: ParsedList, personal = false, na
     else if (rule.host) push(byHost, normalizeHostname(rule.host), rule);
     else generic.push(rule);
   }
+  // Most sites have one rule, kept without an array.
+  const deferred = new Map<string, DeferredRule | DeferredRule[]>();
+  for (const d of parsed.deferred ?? []) {
+    const known = deferred.get(d.site);
+    if (!known) deferred.set(d.site, d);
+    else if (Array.isArray(known)) known.push(d);
+    else deferred.set(d.site, [known, d]);
+  }
   return {
     id,
     name: name ?? parsed.meta.name ?? id,
@@ -72,7 +83,29 @@ export function compileList(id: string, parsed: ParsedList, personal = false, na
     bySite,
     byHost,
     generic,
+    deferred,
   };
+}
+
+/** The list's rules for exactly this site, in line order, parsing any it deferred. */
+export function siteRules(list: CompiledList, site: string): Rule[] {
+  const later = list.deferred.get(site);
+  if (later) {
+    list.deferred.delete(site);
+    const parsed: Rule[] = [];
+    for (const d of Array.isArray(later) ? later : [later]) {
+      const rule = parseDeferred(d);
+      if (typeof rule !== 'string') parsed.push(rule);
+    }
+    if (parsed.length) list.bySite.set(site, [...(list.bySite.get(site) ?? []), ...parsed].sort((a, b) => a.line - b.line));
+  }
+  return list.bySite.get(site) ?? [];
+}
+
+/** Every site's rules, all parsed: for going through a whole list. */
+export function allSites(list: CompiledList): Map<string, Rule[]> {
+  for (const site of [...list.deferred.keys()]) siteRules(list, site);
+  return list.bySite;
 }
 
 export interface ResultInfo {
@@ -145,7 +178,7 @@ export function matchList(list: CompiledList, t: Target): Rule[] {
   const out: Rule[] = [];
   for (const rule of list.byHost.get(t.host) ?? []) if (ruleMatches(rule, t)) out.push(rule);
   for (const suffix of hostSuffixes(t.host)) {
-    for (const rule of list.bySite.get(suffix) ?? []) if (ruleMatches(rule, t)) out.push(rule);
+    for (const rule of siteRules(list, suffix)) if (ruleMatches(rule, t)) out.push(rule);
   }
   for (const rule of list.generic) if (ruleMatches(rule, t)) out.push(rule);
   return out;

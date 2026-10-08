@@ -70,6 +70,20 @@ export interface ParsedList {
   /** The list has a generic `$discard`: results it doesn't mention are discarded (Goggles semantics). */
   lens: boolean;
   errors: ParseError[];
+  /**
+   * With `parseList(text, true)`: plain `$site=` instructions left unparsed, in line
+   * order, until a result from their site turns up (`siteRules` in matcher.ts). Their
+   * mistakes aren't in `errors`.
+   */
+  deferred?: DeferredRule[];
+}
+
+/** An instruction filed under its site but not parsed yet. */
+export interface DeferredRule {
+  line: number;
+  site: string;
+  /** The line as written, trimmed. */
+  raw: string;
 }
 
 export const MAX_STRENGTH = 10;
@@ -226,11 +240,25 @@ function emptyRule(line: number, raw: string): Rule {
   return { line, raw, target: 'url', boost: 0, discard: false, pin: false, allow: false, tags: [] };
 }
 
-export function parseList(text: string): ParsedList {
+/**
+ * An Anubis list's plainest instruction: an optional pattern, `$site=` first, then
+ * options, and perhaps a comment. Nothing in it can make `parseGoggleLine` read the
+ * site differently, so it can be filed under its site without being parsed.
+ */
+const PLAIN_SITE_LINE = /^[^\s$#]*\$site=([^\s,$#]+)((?:,[a-z_]+(?:=[^\s,$#]*)?)*)(?:\s+#.*)?$/;
+
+/**
+ * Read a list. With `defer`, an Anubis list's plain `$site=` lines are only filed
+ * under their site (`deferred`), which is most of the work for a long list that a
+ * search page only needs a few sites of.
+ */
+export function parseList(text: string, defer = false): ParsedList {
   const lines = text.replace(/^﻿/, '').split(/\r?\n/);
   const format = detectFormat(lines);
   const list: ParsedList = { format, meta: {}, tags: [], rules: [], lens: false, errors: [] };
   const tagIds = new Set<string>();
+  const deferred: DeferredRule[] = [];
+  const unsure: DeferredRule[] = [];
 
   let inFrontmatter = false;
   lines.forEach((raw, i) => {
@@ -266,6 +294,18 @@ export function parseList(text: string): ParsedList {
     }
     if (line.startsWith('#')) return;
 
+    if (defer && format === 'anubis' && line.length <= 500) {
+      const m = PLAIN_SITE_LINE.exec(line);
+      const site = m && !m[2]!.includes(',site=') ? (fastDomain(m[1]!) ?? siteValue(m[1]!)) : undefined;
+      if (site) {
+        const d = { line: lineNo, site, raw: line };
+        deferred.push(d);
+        // Tags are mostly defined at the top; any other is checked once all are read.
+        if (m![2] && usesTagOtherThan(m![2], tagIds)) unsure.push(d);
+        return;
+      }
+    }
+
     const instruction = format === 'anubis' ? line.replace(/\s+#.*$/, '').trim() : line;
     const result =
       format === 'ublacklist'
@@ -279,6 +319,19 @@ export function parseList(text: string): ParsedList {
     else list.rules.push(result);
   });
 
+  if (defer) {
+    // A tag that isn't defined is made up from the rules that use it, so those
+    // rules are read now, as they would have been.
+    const now = new Set(unsure.filter((d) => usesTagOtherThan(PLAIN_SITE_LINE.exec(d.raw)![2]!, tagIds)));
+    list.deferred = now.size ? deferred.filter((d) => !now.has(d)) : deferred;
+    for (const d of now) {
+      const rule = parseDeferred(d);
+      if (typeof rule === 'string') list.errors.push({ line: d.line, message: rule });
+      else list.rules.push(rule);
+    }
+    if (now.size) list.rules.sort((a, b) => a.line - b.line);
+  }
+
   // Tags used by rules but never defined get a generated definition.
   for (const rule of list.rules) {
     for (const id of rule.tags) {
@@ -291,6 +344,39 @@ export function parseList(text: string): ParsedList {
 }
 
 /** Goggles/Anubis instruction: `pattern$option,option=value`. */
+/** Whether `options` (`,key=value` pairs) give a tag that isn't one of `ids`. */
+function usesTagOtherThan(options: string, ids: Set<string>): boolean {
+  for (let at = options.indexOf(',tag='); at !== -1; at = options.indexOf(',tag=', at + 5)) {
+    const end = options.indexOf(',', at + 5);
+    if (!ids.has(options.slice(at + 5, end === -1 ? undefined : end).toLowerCase())) return true;
+  }
+  return false;
+}
+
+/** Parse an instruction `parseList` deferred: a rule for its site, or what's wrong with it. */
+export function parseDeferred(d: DeferredRule): Rule | string {
+  const rule = parseGoggleLine(d.raw.replace(/\s+#.*$/, '').trim(), d.line);
+  return rule === 'lens' ? 'Instruction needs a pattern or a site' : rule;
+}
+
+/** A `site=` value as a site: a domain, or a bare TLD (Goggles allow `site=rs`). */
+function siteValue(value: string): string | undefined {
+  const site = normalizeDomain(value);
+  const tld = /^[a-z]{2,63}$/.test(value) ? value : undefined;
+  return site || tld;
+}
+
+/**
+ * `value` when `normalizeDomain` would give it back unchanged, without building a URL:
+ * lowercase labels, no `www.`, no punycode (which a URL checks), and a last label
+ * that isn't a number (which a URL reads as an IPv4 address).
+ */
+export function fastDomain(value: string): string | undefined {
+  if (!/^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(value) || value.startsWith('www.') || value.includes('xn--')) return undefined;
+  const last = value.slice(value.lastIndexOf('.') + 1);
+  return /[a-z]/.test(last) && !/^0x[0-9a-f]*$/.test(last) ? value : undefined;
+}
+
 export function parseGoggleLine(line: string, lineNo: number): Rule | 'lens' | string {
   if (line.length > 500) return 'Instruction is longer than 500 characters';
   const rule = emptyRule(lineNo, line);
@@ -310,11 +396,9 @@ export function parseGoggleLine(line: string, lineNo: number): Rule | 'lens' | s
     const value = eq === -1 ? undefined : opt.slice(eq + 1).trim();
     switch (key) {
       case 'site': {
-        const site = normalizeDomain(value ?? '');
-        // Goggles allow bare TLDs like `site=rs`.
-        const tld = /^[a-z]{2,63}$/.test(value ?? '') ? value : undefined;
-        if (!site && !tld) return `Bad site: ${value}`;
-        rule.site = site || tld;
+        const site = siteValue(value ?? '');
+        if (!site) return `Bad site: ${value}`;
+        rule.site = site;
         break;
       }
       case 'boost':

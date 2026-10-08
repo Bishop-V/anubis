@@ -2,6 +2,13 @@
 
 Where things are stored, sync between browsers, and subscribing to lists. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Reading long lists on search pages (2026-10-08)
+
+- **Measured first:** a made-up 41,000-rule Anubis list (`$site=…,tag=…`, the shape the weekly lists have) took 140 to 260 ms to parse and compile in Node. Parsing was nearly all of it: a `Rule` object, its options, and a URL for every site.
+- **Tried, and kept:** subscribed lists are read with their plain `$site=` lines only filed under their site (`parseList(text, true)`, `deferred`); a line is parsed when a result from its site turns up (`siteRules` in `utils/matcher.ts`), and Settings, which goes through whole lists, parses them all (`allSites`). The same list now loads in 60 to 75 ms, and weighing 30 results stays under 1 ms. What makes a line plain is strict (`PLAIN_SITE_LINE`): one `site=`, nothing a comment could hide, and a domain a URL would read back unchanged (`fastDomain`); anything else is read in full as before. A line using a tag the list never defines is read in full too, since the made-up tag comes from the rules that use it.
+- **Checked:** `tests/deferred.test.ts` compares a deferred read with a full one, site by site and whole, for every bundled and generated list and a list of awkward lines. Breaking `fastDomain`'s check for numeric addresses, or the undefined-tag check, fails it.
+- **Not tried yet:** compiling in the background script, or keeping a compiled form. Messages and `storage.local` can't carry a `RegExp` or a `Map`, so either needs a form of its own. What's left per page is reading the list texts from storage and the filing pass itself.
+
 ## Settings and tag choices in sync (2026-10-08)
 
 Checked that settings and tag choices follow the user both ways. Through a WebDAV server, two browsers that each change different settings (an engine, a clean-up kind, how hidden results look) and different tag choices end up with all of them, and a tag set back to its default stays set back (`tests/webdav.test.ts`). Through browser sync, a tag's ranking and the on/off switch arriving from another computer change an open search page straight away (the e2e `sync` part). Nothing needed fixing. **Known limit:** all settings are one sync item, so when two computers change different settings before either syncs, browser sync keeps only the later change. WebDAV merges them key by key. **Not checkable:** a muted tag's chip, since the chips' shadow root is closed to the harness.

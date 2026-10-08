@@ -3,7 +3,7 @@ import { andList, h, icon, plural } from '@/utils/dom';
 import { t } from '@/utils/i18n';
 import { ICON_CLOSE, ICON_TRASH, LEVEL_LABELS } from '@/utils/icons';
 import { colorForTag, normalizeColor, slugifyTag, TAG_PALETTE, type TagDef } from '@/utils/listformat';
-import type { CompiledList, TagAction } from '@/utils/matcher';
+import { allSites, type CompiledList, type TagAction } from '@/utils/matcher';
 import { listSites, listTagDefs, removeTag, toggleSiteTag, upsertTagDef, type SiteEntry } from '@/utils/personal';
 import { loadRuleSet } from '@/utils/ruleset';
 import { editPersonal, setTagPref } from '@/utils/storage';
@@ -20,7 +20,7 @@ const ACTIONS: { value: TagAction; label: string }[] = [
 
 function ruleCount(list: CompiledList, tag: string): number {
   let n = 0;
-  for (const rules of [...list.bySite.values(), ...list.byHost.values(), list.generic]) {
+  for (const rules of [...allSites(list).values(), ...list.byHost.values(), list.generic]) {
     for (const r of rules) if (r.tags.includes(tag)) n++;
   }
   return n;
@@ -29,7 +29,7 @@ function ruleCount(list: CompiledList, tag: string): number {
 /** The sites a list gives this tag. */
 function listSitesWith(list: CompiledList, tag: string): string[] {
   const out: string[] = [];
-  for (const map of [list.bySite, list.byHost]) {
+  for (const map of [allSites(list), list.byHost]) {
     for (const [site, rules] of map) if (rules.some((r) => r.tags.includes(tag))) out.push(site);
   }
   return out.sort();
@@ -38,7 +38,7 @@ function listSitesWith(list: CompiledList, tag: string): string[] {
 /** What a list's own rules with this tag do to rankings, by count. */
 function listEffects(list: CompiledList, tag: string): { raise: number; lower: number; hide: number } {
   const out = { raise: 0, lower: 0, hide: 0 };
-  for (const rules of [...list.bySite.values(), ...list.byHost.values(), list.generic]) {
+  for (const rules of [...allSites(list).values(), ...list.byHost.values(), list.generic]) {
     for (const r of rules) {
       if (!r.tags.includes(tag)) continue;
       if (r.discard) out.hide++;
