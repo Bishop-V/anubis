@@ -65,6 +65,7 @@ For interface changes, run `node e2e/run.mjs responsive` to check every Settings
 - **Changes reach `main` only through pull requests.** Direct pushes and force-pushes to `main` are refused, and the branch can't be deleted.
 - **CI must pass.** The `check` job (type-check, tests, both builds, and the add-on linter) is required before anything merges. Changes to the wiki also run the Docs build.
 - **Review and merge.** A maintainer reviews the pull request and merges it with a merge commit, sometimes by turning on auto-merge, which merges it as soon as `check` passes. Your branch doesn't have to be up to date with `main`. If it conflicts, merge `main` into it rather than rebasing a branch someone else may have checked out.
+- **Branch names** say what the change is, as `<kind>/<what-it-does>` in lower case with hyphens: `fix/shared-host-sites`, `lists/devdocs`, `docs/branch-naming`. The workflows' own branches follow it too (`sources/update`, `engines/serpinfo`).
 - **Commit messages** are a short summary line saying what the change does ("Remove whole video panels on Google"), with a body only when the reason isn't obvious from the diff.
 - **Releases** are cut by the maintainers by tagging a version (see [Releasing](DEVELOPMENT.md#releasing)).
 

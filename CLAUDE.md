@@ -51,6 +51,7 @@ Read these only when the task touches them, and only the relevant section:
 
 ## Working agreements
 
+- Branches: name each after its change, `<kind>/<what-it-does>` in lower case with hyphens (`fix/shared-host-sites`, `lists/devdocs`, `docs/branch-naming`), like the workflows' `sources/update` and `engines/serpinfo`. Use one even when a session starts on a generated name. One branch per pull request; after a merge, start the next from `main`.
 - Commit messages: the message text only — no trailers, no co-author or AI attribution. Keep them short and general unless detail is asked for.
 - Keep replies short. Explain browser-extension concepts (manifest keys, permissions, content versus background scripts, MV2 versus MV3) briefly the first time they come up.
 - Committed files stay neutral and project-scoped: no personal or identifying details.
