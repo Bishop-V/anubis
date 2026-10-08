@@ -61,4 +61,4 @@ That's **Settings → Remove panels → Always open the Web tab**. Choose **All*
 
 ## Something was hidden and I don't know why
 
-Open the ⚖ menu on the result. **Why** lists each list or tag behind the decision. Your own ranking beats all of them. If a list got it wrong, "Wrong? Report it to *list name*" tells the list's maintainers ([Report a mistake in a list](./lists.md#report-a-mistake-in-a-list)).
+Open the ⚖ menu on the result. **Why** lists each list or tag behind the decision. Your own ranking beats the lists, and adds to the tags you set to Raise or Lower. A tag you set to Hide hides the site even if you ranked it. If a list got it wrong, "Wrong? Report it to *list name*" tells the list's maintainers ([Report a mistake in a list](./lists.md#report-a-mistake-in-a-list)).

@@ -68,6 +68,16 @@ describe('rankingHint', () => {
     expect(hint(undefined, verdict('normal'))).toBe('Your choice applies on every search.');
   });
 
+  it('says when your tag settings add to your ranking, or hide the site anyway', () => {
+    const tags = verdict('lower', [{ listId: TAG_CHOICES }]);
+    expect(rankingHint('example.com', verdict('normal'), rankingOf(site('raise'), verdict('normal')), tags)).toBe(
+      'Your choice for example.com, on every search, added to your tag settings.',
+    );
+    const hidden = verdict('hide', [], { hiddenBy: { kind: 'tag', name: 'slop' } });
+    expect(rankingHint('example.com', hidden, rankingOf(site('pin'), hidden), hidden)).toMatch(/^Hidden by your tag settings/);
+    expect(rankingHint('example.com', hidden, rankingOf(site('hide'), hidden), hidden)).toBe('Your choice for example.com, on every search.');
+  });
+
   it('names each list once, and your tag settings last', () => {
     const baseline = verdict('lower', [{ listId: TAG_CHOICES }, { list: 'Spam' }, { list: 'Spam' }, { list: 'Farms' }]);
     const text = hint(undefined, baseline);

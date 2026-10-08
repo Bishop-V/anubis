@@ -60,7 +60,7 @@ When a result carries several tags you've set to **Raise** or **Lower**, Anubis 
 
 A tag counts once, however many of your lists give it. A tag set to **Hide** still hides the result, whatever the others say. **Why** in the result's ⚖ menu shows each tag's part and where the result ends up ("raise it by 5 each for “Official docs” and “Reference” and lower it by 5 for “Paywall”, so it moves 5 places up").
 
-A ranking you gave a site yourself beats any tag. If you raised a site, a tag set to Hide won't hide it.
+A ranking you gave a site yourself adds to its tags. If you raised a site and it has a tag set to Lower, they cancel out. A tag set to Hide still hides it, so change the tag here to show those sites again. If you hid a site yourself, it stays hidden whatever its tags say.
 
 ## Show only one tag
 

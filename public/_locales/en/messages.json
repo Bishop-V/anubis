@@ -53,6 +53,8 @@
   "popupSiteChoice": { "message": "Choose how much of the site this applies to", "description": "In the toolbar popup. Tooltip of the menu that picks how much of a site (fandom.com or harrypotter.fandom.com) a ranking applies to." },
   "popupHintAllow": { "message": "Normal, whatever your lists say.", "description": "In the toolbar popup. Under the rankings, for a site you set to Normal on purpose." },
   "popupHintMine": { "message": "Your choice for $1, on every search.", "description": "$1 is a site." },
+  "popupHintMineTags": { "message": "Your choice for $1, on every search, added to your tag settings.", "description": "In the toolbar popup and the menu on a result. Under the rankings, for a site you ranked whose tags you set to Raise or Lower also move it. $1 is a site." },
+  "popupHintTagHides": { "message": "Hidden by your tag settings, whatever you choose here. Change them in Settings to show it.", "description": "In the toolbar popup and the menu on a result. Under the rankings, for a site you ranked that carries a tag you set to Hide." },
   "popupHintLists": { "message": "$1 by $2. Choose one to decide yourself.", "description": "$1 is a ranking in the past tense (Hidden, Raised…), $2 the lists that chose it." },
   "popupHintNone": { "message": "Your choice applies on every search.", "description": "In the toolbar popup. Under the rankings, for a site you haven’t ranked." },
   "popupYourTagSettings": { "message": "your tag settings", "description": "Stands in for a list's name in popupHintLists when a tag you chose to hide or raise decided the ranking." },

@@ -51,8 +51,12 @@ export function siteCartouche(domain: string, choices: string[], onPick: (domain
   return h('span', { class: 'cartouche choosable' }, h('span', { class: 'name', attrs: { 'aria-hidden': 'true' } }, domain), select);
 }
 
-/** One sentence on where a site's ranking comes from. */
-export function rankingHint(domain: string, baseline: Verdict, r: Ranking): string {
+/** One sentence on where a site's ranking comes from. `verdict` is the whole weighing, your list included: your tag settings add to your ranking. */
+export function rankingHint(domain: string, baseline: Verdict, r: Ranking, verdict: Verdict = baseline): string {
+  if (r.personal && r.personal !== 'normal' && r.personal !== 'hide') {
+    if (verdict.hiddenBy?.kind === 'tag') return t('popupHintTagHides');
+    if (verdict.reasons.some((x) => x.listId === TAG_CHOICES)) return t('popupHintMineTags', domain);
+  }
   if (r.personal === 'allow') return t('popupHintAllow');
   if (r.pressed) return t('popupHintMine', domain);
   if (r.fromLists === 'normal') return t('popupHintNone');

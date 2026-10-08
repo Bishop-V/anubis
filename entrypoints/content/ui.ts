@@ -1201,7 +1201,7 @@ function buildPopover(
   );
 
   // The same words as the popup's This site.
-  const hint = rankingHint(domain, data.baseline, r);
+  const hint = rankingHint(domain, data.baseline, r, data.verdict);
 
   const { mine, fromList, ids: tagIds } = tagOrder(data.tags, entry, data.verdict);
   // Tags you set toggle; tags from lists are shown but fixed.

@@ -155,9 +155,9 @@ function renderHere(rules: RuleSet) {
     ),
   );
 
-  const hint = rankingHint(domain, baseline, r);
-
   const verdict = evaluate(result, rules.lists, rules.prefs);
+  const hint = rankingHint(domain, baseline, r, verdict);
+
   const { mine, fromList, ids: tagIds } = tagOrder(rules.tags, entry, verdict);
   // Tags you set toggle; tags from lists are shown but fixed.
   const tagItems = tagIds.map((id) => {

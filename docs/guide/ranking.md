@@ -18,11 +18,11 @@ The button's balance tips with the site's ranking: down on the left for a lowere
 | --- | --- |
 | **Hide** | They disappear, or shrink to one line you can open (see [Hidden results](#hidden-results)). |
 | **Lower** | They move five places down, with a "Lowered" label under the title. |
-| **Normal** | They stay where the engine put them, whatever your lists say. |
+| **Normal** | They stay where the engine put them, whatever your lists say. [Tags you set to Raise, Lower, or Hide](./tags.md#several-tags-on-one-result) still apply. |
 | **Raise** | They move five places up. |
 | **Pin** | They go to the top, with a thin gold outline (grey with the Plain colours in **Settings → Appearance**). |
 
-Your choice always beats your lists. If a list lowers a site and you raise it, it's raised. Without a choice of yours, the lists' rankings and [the tags you set to Raise or Lower](./tags.md#several-tags-on-one-result) add up.
+Your choice beats your lists. If a list lowers a site and you raise it, it's raised. Your choice adds to [the tags you set to Raise or Lower](./tags.md#several-tags-on-one-result) rather than replacing them: a site you raise that carries a tag you set to Lower stays where the engine put it. A tag you set to Hide still hides the site, whatever you choose for it; change the tag in **Settings → Tags** to show it. Without a choice of yours, the lists' rankings and your tags add up.
 
 After a change from the menu, the summary above the results says what you did ("Hid fandom.com.") with an **Undo** button. Undo puts the site back as it was before you opened its menu, tags included, even after several changes. It stays until your next search, or until you change another site.
 

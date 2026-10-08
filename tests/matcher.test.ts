@@ -84,11 +84,32 @@ describe('evaluate', () => {
     // One raise and one lower cancel out; a Hide tag still hides.
     expect(weigh('https://y.com/', [b], { docs: { action: 'raise' }, paywall: { action: 'lower' } })).toMatchObject({ level: 'normal', score: 0 });
     expect(weigh('https://y.com/', [b], { ...up, paywall: { action: 'hide' } })).toMatchObject({ hidden: true, hiddenBy: { kind: 'tag', name: 'paywall' } });
-    // Your own ranking for the site still decides, and the tags aren't given as a reason.
+    // Your own ranking for the site adds to them: two raises and your lower make one raise.
     const me = list('me', '$site=y.com,downrank=5', true);
     const own = weigh('https://y.com/', [me, b], up);
-    expect(own).toMatchObject({ level: 'lower', score: -PERSONAL_STRENGTH });
-    expect(own.reasons.some((r) => r.list === 'Your tag settings')).toBe(false);
+    expect(own).toMatchObject({ level: 'raise', score: PERSONAL_STRENGTH });
+    expect(own.reasons.some((r) => r.list === 'Your tag settings')).toBe(true);
+  });
+
+  it('adds your own ranking to your tag choices instead of replacing them', () => {
+    const sub = list('Wikis', '! tag: elsewhere | Independent wiki elsewhere\n$site=terraria.fandom.com,tag=elsewhere,downrank=3\n$site=b.com,downrank=3');
+    const me = list('me', '$site=fandom.com,allow\n$site=r.fandom.com,boost=5\n$site=p.fandom.com,pin\n$site=h.fandom.com,discard\n$site=b.com,boost=5', true);
+    const prefs = { elsewhere: { action: 'lower' } } as const;
+    const at = (host: string, p: Record<string, TagPref> = prefs) =>
+      weigh(`https://${host}/`, [me, list('Wikis', `! tag: elsewhere | Independent wiki elsewhere\n$site=${host},tag=elsewhere`)], p);
+    // Kept at Normal: the Lower tag still lowers it, and Why says so.
+    const kept = weigh('https://terraria.fandom.com/', [me, sub], prefs);
+    expect(kept).toMatchObject({ level: 'lower', score: -PERSONAL_STRENGTH, hidden: false });
+    expect(kept.reasons.at(-1)).toMatchObject({ list: 'Your tag settings' });
+    // Raised with a Lower tag: they cancel out. With a Raise tag: they add up.
+    expect(at('r.fandom.com')).toMatchObject({ level: 'normal', score: 0 });
+    expect(at('r.fandom.com', { elsewhere: { action: 'raise' } })).toMatchObject({ level: 'raise', score: 2 * PERSONAL_STRENGTH });
+    // A pin stays a pin; a Hide tag still hides; your Hide hides whatever the tags say.
+    expect(at('p.fandom.com')).toMatchObject({ level: 'pin', hidden: false });
+    expect(at('r.fandom.com', { elsewhere: { action: 'hide' } })).toMatchObject({ level: 'hide', hidden: true, hiddenBy: { kind: 'tag', name: 'elsewhere' } });
+    expect(at('h.fandom.com', { elsewhere: { action: 'raise' } })).toMatchObject({ level: 'hide', hiddenBy: { kind: 'personal' } });
+    // The lists' own instructions still give way to your ranking.
+    expect(weigh('https://b.com/', [me, sub])).toMatchObject({ level: 'raise', score: PERSONAL_STRENGTH });
   });
 
   it('applies tag preferences to the user’s own tags too', () => {
