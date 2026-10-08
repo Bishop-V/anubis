@@ -10,7 +10,19 @@ Tags are small labels under a result's title: "Official docs", "Discussion", "Pa
 
 On any website, open the Anubis toolbar popup. Under **Tags**, press a tag to add it to the site, or press it again to remove it. To make a new tag for the site, type its name in **New tag** and press **Add tag**. On search pages, the ⚖ menu on each result offers the same controls.
 
-Tags from lists appear among your choices too, but only their lists can remove them.
+Your own tags are under **Your tags**, and the tags your lists use are under **Tags from lists**. You can add a tag from a list to any site, and that changes only your own list, not the list's. A tag you gave the site is in bold and underlined in its colour. A tag a list gave the site is plain, with the list's name after it ("from Paywalls"): only the list can take it off, and **Wrong? Report it** in the ⚖ menu tells its maintainers.
+
+## Whose tag is it
+
+Three things make a tag, and each has one owner:
+
+| What | Who changes it |
+| --- | --- |
+| Its id, such as `paywall` | Nobody: lists that use the same id share the tag ([Shared tags](#shared-tags)). |
+| Its name, colour, and description | The list that defines it. Your renaming or recolouring in **Settings → Tags** shows over the list's and is never overwritten. |
+| Which sites carry it | Each list for its own sites, and you for yours. A list's update never changes your sites, and your sites never change the list. |
+
+When you add a list's tag to one of your sites, your list keeps a copy of the tag's name, colour, and description. While the list defines the tag, you see the list's version, so its updates reach you. If the list stops using the tag, or you unsubscribe, your sites keep it under the same name, and it moves to **Your tags**.
 
 ## See where a tag comes from
 
@@ -72,4 +84,4 @@ The summary above the results lists the tags on the page and how many results ha
 
 ## Shared tags
 
-Tags are identified by a short id like `ai-slop`. When two lists use the same id, you see one tag fed by both. That's how lists by different people can build a shared vocabulary; see [the list format](../list-format.md#tags).
+Tags are identified by a short id like `ai-slop`. When two lists use the same id, you see one tag fed by both, under the name the first list gives it. There's nothing extra to subscribe to: lists by different people build a shared vocabulary by using the same ids; see [the list format](../list-format.md#tags).

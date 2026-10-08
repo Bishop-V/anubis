@@ -57,6 +57,24 @@ When adding a tagged site rule to an Anubis list, put an explanation after `#` s
 
 Only the id is required: `! tag: ai-slop` works. A tag used by an instruction but never defined gets a plain definition.
 
+Keep a tag's id once you've published it. To rename a tag, change its label: subscribers' choices for the tag, and the sites they tagged with it themselves, follow the id. Before making up an id, reuse one other lists already have. Anubis's own lists use these:
+
+| id | Label |
+| --- | --- |
+| `ai-generated` | AI-generated |
+| `ai-mixed` | Some AI content |
+| `ai-slop` | AI slop |
+| `docs` | Official docs |
+| `forum` | Discussion |
+| `foss` | FOSS |
+| `independent-elsewhere` | Independent wiki elsewhere |
+| `independent-wiki` | Independent wiki |
+| `paywall` | Paywalled |
+| `reference` | Reference |
+| `research` | Research |
+
+Your own list uses the same lines. When you add a list's tag to a site, Anubis copies the list's `! tag:` line into your list. A subscribed list's definition is the one shown, and your copy names the tag only once no list defines it.
+
 Lists label; subscribers decide. In **Settings → Tags** each person chooses what a tag does for them: follow the list's instructions, only show the label, highlight results, or raise, lower, or hide them. A list that tags without ranking (`$site=x.com,tag=paywall`) is the friendliest kind to publish.
 
 ## Instructions

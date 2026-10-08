@@ -419,13 +419,17 @@ function personalName(lists: CompiledList[]): string {
   return lists.find((l) => l.personal)?.name ?? PERSONAL_NAME;
 }
 
-/** Every tag known to the given lists, first definition wins, with user overrides applied. */
+/**
+ * Every tag known to the given lists, with user overrides applied. A subscribed list's
+ * definition wins over yours, which is a copy kept for when no list defines the tag
+ * any more; among lists, the first wins.
+ */
 export function collectTags(lists: CompiledList[], prefs: Record<string, TagPref> = {}): Map<string, TagDef> {
   const out = new Map<string, TagDef>();
-  for (const list of lists) {
+  for (const list of [...lists.filter((l) => !l.personal), ...lists.filter((l) => l.personal)]) {
     for (const tag of list.tags) {
       const known = out.get(tag.id);
-      // A defined tag beats a made-up one, whichever list comes first (yours is first).
+      // A defined tag beats a made-up one, whichever list comes first.
       if (!known || (known.generated && !tag.generated)) out.set(tag.id, { ...tag });
     }
   }
@@ -437,4 +441,19 @@ export function collectTags(lists: CompiledList[], prefs: Record<string, TagPref
     if (pref.label) tag.label = pref.label;
   }
   return out;
+}
+
+/** The tags subscribed lists define (not only use), first definition wins, as the lists wrote them. */
+export function listTagCards(lists: CompiledList[]): Map<string, TagDef> {
+  const out = new Map<string, TagDef>();
+  for (const list of lists) {
+    if (list.personal) continue;
+    for (const tag of list.tags) if (!tag.generated && !out.has(tag.id)) out.set(tag.id, { ...tag });
+  }
+  return out;
+}
+
+/** The tags subscribed lists give sites, defined or only used: the picker's "From lists". */
+export function listTagIds(lists: CompiledList[]): Set<string> {
+  return new Set(lists.filter((l) => !l.personal).flatMap((l) => l.tags.map((tag) => tag.id)));
 }

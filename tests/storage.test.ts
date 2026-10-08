@@ -190,6 +190,15 @@ describe('tag names', () => {
     expect(collectTags([mine, lists]).get('forum')).toEqual(expect.objectContaining({ label: 'Discussion' }));
     expect(collectTags([mine]).get('forum')?.label).toBe('forum');
   });
+
+  it('shows a list’s definition over your copy of it, and your copy once no list defines the tag', () => {
+    const mine = compileList('mine', parseList('! tag: forum | Forums (old name) | #111111\n$site=example.com,tag=forum\n'), true);
+    const lists = compileList('a', parseList('! tag: forum | Discussion | #222222\nexample.org$tag=forum\n'));
+    expect(collectTags([mine, lists]).get('forum')).toEqual(expect.objectContaining({ label: 'Discussion', color: '#222222' }));
+    expect(collectTags([mine]).get('forum')).toEqual(expect.objectContaining({ label: 'Forums (old name)', color: '#111111' }));
+    // Your renaming in Settings still wins over both.
+    expect(collectTags([mine, lists], { forum: { label: 'Threads' } }).get('forum')?.label).toBe('Threads');
+  });
 });
 
 describe('extra pages to load automatically', () => {

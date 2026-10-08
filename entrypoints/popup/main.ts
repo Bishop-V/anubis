@@ -5,16 +5,16 @@ import { balanceSvg, setBalance } from '@/utils/balance';
 import { domainChoices, normalizeDomain, siteOf } from '@/utils/domain';
 import { engineFor } from '@/utils/engines';
 import { bugReportLink, describeBrowser, guide } from '@/utils/links';
-import { LEVELS, evaluate, type Level } from '@/utils/matcher';
+import { LEVELS, evaluate, listTagCards, listTagIds, type Level } from '@/utils/matcher';
 import { h, icon, siteName } from '@/utils/dom';
 import { ICON_GEAR, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS, tagEffectText, tagMark } from '@/utils/icons';
 import { localizePage, t, tJoin, tn, type MessageKey } from '@/utils/i18n';
 import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/messages';
-import { displayLevel, getSite, listSites, setSiteLevel, toggleSiteTag, upsertTagDef, type PersonalLevel } from '@/utils/personal';
+import { displayLevel, getSite, listSites, setSiteLevel, tagSite, upsertTagDef, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal, updateSettings } from '@/utils/storage';
-import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder } from '@/utils/siteranking';
+import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder, tagPicker, tagSource } from '@/utils/siteranking';
 import { stoppedSentence, summarySentence } from '@/utils/summary';
 import { initTheme } from '@/utils/theme';
 
@@ -160,16 +160,17 @@ function renderHere(rules: RuleSet) {
 
   const { mine, fromList, ids: tagIds } = tagOrder(rules.tags, entry, verdict);
   // Tags you set toggle; tags from lists are shown but fixed.
-  const tagItems = tagIds.map((id) => {
+  const tagItem = (id: string) => {
     const tag = rules.tags.get(id)!;
     const on = mine.has(id);
     if (!on && fromList.has(id)) {
       return h(
         'span',
-        { class: 'tag', style: `--c: ${tag.color}`, title: t('popupTagFrom', tJoin(verdict.tagSources[id] ?? [])) },
+        { class: 'tag fixed', style: `--c: ${tag.color}` },
         tagMark(verdict.tagEffects[id]),
         tag.label,
         tagEffectText(verdict.tagEffects[id]),
+        tagSource(verdict, id),
       );
     }
     return h(
@@ -184,7 +185,7 @@ function renderHere(rules: RuleSet) {
           click: () => {
             hereDomain = domain;
             hereFocusKey = `tag-${id}`;
-            void editPersonal((text) => toggleSiteTag(text, domain, id));
+            void editPersonal((text) => tagSite(text, domain, id, listTagCards(rules.lists)));
           },
         },
       },
@@ -192,7 +193,8 @@ function renderHere(rules: RuleSet) {
       tag.label,
       on ? tagEffectText(verdict.tagEffects[id]) : null,
     );
-  });
+  };
+  const tagItems = tagPicker(tagIds, listTagIds(rules.lists), tagItem);
 
   const tagInput = h('input', {
     type: 'text',
@@ -234,14 +236,14 @@ function renderHere(rules: RuleSet) {
     hereFocusKey = `tag-${id}`;
     void editPersonal((text) => {
       const withDefinition = rules.tags.has(id) ? text : upsertTagDef(text, { id, label, color: colorForTag(id) });
-      return toggleSiteTag(withDefinition, domain, id, true);
+      return tagSite(withDefinition, domain, id, listTagCards(rules.lists), true);
     });
   });
 
   here.dataset.domain = domain;
   here.replaceChildren(
     h('div', { class: 'weigh' }, cartouche, balance, levels, h('p', { class: 'hint' }, hint)),
-    h('div', { class: 'here-tags' }, h('h2', null, t('popupTags')), tagItems.length ? h('div', { class: 'tags' }, tagItems) : null, tagForm),
+    h('div', { class: 'here-tags' }, h('h2', null, t('popupTags')), tagItems, tagForm),
   );
   // At once, not on the next frame: another render could come first and find nothing focused.
   const target = focusKey ? here.querySelector<HTMLElement>(`[data-focus-key="${focusKey}"]`) : null;

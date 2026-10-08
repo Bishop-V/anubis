@@ -273,15 +273,45 @@ export function upsertTagDef(text: string, tag: TagDef): string {
   return lines.join('\n');
 }
 
-/** Remove a tag definition and every use of it in simple site lines. */
-export function removeTag(text: string, id: string): string {
-  let next = text
+/** Remove a tag's definition, leaving the sites that use it. */
+export function removeTagDef(text: string, id: string): string {
+  return text
     .split(/\r?\n/)
     .filter((l) => {
       const m = /^!\s*tag\s*:\s*(.*)$/i.exec(l.trim());
       return !(m && parseTagDef(m[1]!)?.id === id);
     })
     .join('\n');
+}
+
+/**
+ * Copy into your list the definition of each tag your sites use that only a list
+ * defines (`listTags`), so the tags keep their names and colours if the list renames
+ * or drops them, or you unsubscribe. While a list defines a tag, its definition is the
+ * one shown (`collectTags`). With `ids`, only those tags; a copy no site of yours uses
+ * any more goes again.
+ */
+export function keepTagDefs(text: string, listTags: Map<string, TagDef>, ids?: string[]): string {
+  const used = new Set(listSites(text).flatMap((e) => e.tags));
+  const defined = new Set(listTagDefs(text).map((d) => d.id));
+  let next = text;
+  for (const id of ids ?? [...used]) {
+    const card = listTags.get(id);
+    if (!card) continue;
+    if (used.has(id) && !defined.has(id)) next = upsertTagDef(next, card);
+    else if (ids && !used.has(id) && defined.has(id)) next = removeTagDef(next, id);
+  }
+  return next;
+}
+
+/** Tag a site in your list, or untag it, keeping a copy of a list's tag while your sites use it. */
+export function tagSite(text: string, site: string, tag: string, listTags: Map<string, TagDef>, on?: boolean, description?: string): string {
+  return keepTagDefs(toggleSiteTag(text, site, tag, on, description), listTags, [tag]);
+}
+
+/** Remove a tag definition and every use of it in simple site lines. */
+export function removeTag(text: string, id: string): string {
+  let next = removeTagDef(text, id);
   for (const entry of listSites(next)) {
     if (entry.tags.includes(id)) {
       next = setSite(

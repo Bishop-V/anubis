@@ -547,6 +547,28 @@ button {
   font-weight: 600;
   color: var(--muted);
 }
+.tag-groups {
+  display: grid;
+  gap: 8px;
+}
+/* Over your tags and those from lists, when there are both: quieter than the section's heading. */
+.tag-group-name {
+  margin: 0 0 3px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.tag-group-name + .tag-group-hint {
+  margin: -3px 0 3px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.tag-source {
+  min-width: 0;
+  font-size: 12.5px;
+  font-weight: 400;
+  color: var(--muted);
+  white-space: normal;
+}
 .tags {
   display: flex;
   flex-wrap: wrap;
@@ -566,12 +588,21 @@ button {
 .tags button:hover {
   color: var(--text);
 }
+/* A tag you gave the site, as in the popup: bold, underlined in its colour. */
 .tags [aria-pressed='true'] {
   color: var(--text);
+  font-weight: 600;
+  box-shadow: inset 0 -2px var(--c);
 }
+:host([data-palette='plain']) .tags [aria-pressed='true'] {
+  box-shadow: inset 0 -2px var(--muted);
+}
+/* A tag a list gave the site: plain, not a button, with the list's name after it. */
 .tags .fixed {
   color: var(--text);
   cursor: default;
+  max-width: 100%;
+  white-space: nowrap;
 }
 .new-tag {
   display: flex;
