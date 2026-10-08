@@ -2,6 +2,10 @@
 
 Where things are stored, sync between browsers, and subscribing to lists. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Settings and tag choices in sync (2026-10-08)
+
+Checked that settings and tag choices follow the user both ways. Through a WebDAV server, two browsers that each change different settings (an engine, a clean-up kind, how hidden results look) and different tag choices end up with all of them, and a tag set back to its default stays set back (`tests/webdav.test.ts`). Through browser sync, a tag's ranking and the on/off switch arriving from another computer change an open search page straight away (the e2e `sync` part). Nothing needed fixing. **Known limit:** all settings are one sync item, so when two computers change different settings before either syncs, browser sync keeps only the later change. WebDAV merges them key by key. **Not checkable:** a muted tag's chip, since the chips' shadow root is closed to the harness.
+
 ## Lists made from other projects (2026-10-08)
 
 Asked for: use outside datasets (UT1, Block List Project, Indie Wiki Buddy, Kagi Small Web, the HUGE AI Blocklist, Wikipedia's perennial sources, the Iffy Index, Wikidata) to tag sites, on by default but easy to turn off by source and by tag, credited, and kept current.

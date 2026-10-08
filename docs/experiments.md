@@ -45,6 +45,7 @@ What Anubis draws and changes on search pages.
 
 Where things are stored, sync between browsers, and subscribing to lists.
 
+- Settings and tag choices in sync (2026-10-08)
 - Lists made from other projects (2026-10-08)
 - Passphrase changes that race or lose their answer (2026-09-29)
 - WebDAV passphrase changes and recovery (2026-09-29)
