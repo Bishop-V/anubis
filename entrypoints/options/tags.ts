@@ -225,6 +225,9 @@ export async function renderTags(): Promise<HTMLElement> {
     .sort((a, b) => Number(personalDefs.has(b.id)) - Number(personalDefs.has(a.id)) || a.label.localeCompare(b.label))
     .map((tag) => {
       const mine = personalDefs.has(tag.id);
+      // The lists that define the tag. A tag only your sites use has none.
+      const sources = rules.lists.filter((l) => !l.personal && l.tags.some((d) => d.id === tag.id)).map((l) => l.name);
+      const yours = mine || !sources.length;
       const pref = rules.prefs[tag.id] ?? {};
       const personalCount = sites.filter((s) => s.tags.includes(tag.id)).length;
 
@@ -276,7 +279,7 @@ export async function renderTags(): Promise<HTMLElement> {
           h('label', { class: 'switch show', title: t('tagShowTitle') }, show, h('span')),
           toggle,
         ),
-        mine
+        yours
           ? h(
               'button',
               {
@@ -304,11 +307,15 @@ export async function renderTags(): Promise<HTMLElement> {
           { class: 'meta' },
           h('p', { class: 'effect' }, effectSentence(tag, pref.action ?? 'list', rules.lists, personalCount)),
           tag.description ? h('p', null, tag.description) : null,
+          sources.length ? h('p', { class: 'source' }, t(yours ? 'tagAlsoLists' : 'tagSourceLists', tJoin(sources))) : null,
         ),
         panel,
       );
-      return row;
+      return { row, yours };
     });
+
+  const yours = cards.filter((c) => c.yours).map((c) => c.row);
+  const elsewhere = cards.filter((c) => !c.yours).map((c) => c.row);
 
   // Create a tag
   let pick = TAG_PALETTE[rules.tags.size % TAG_PALETTE.length]!;
@@ -358,9 +365,18 @@ export async function renderTags(): Promise<HTMLElement> {
     h(
       'div',
       { class: 'panel' },
-      h('h3', null, t('tagAllHeading')),
+      h('h3', null, t('tagYoursHeading')),
       flashed('tags'),
-      cards.length ? h('div', { class: 'tag-rows' }, cards) : h('p', { class: 'empty' }, t('tagNone')),
+      yours.length ? h('div', { class: 'tag-rows' }, yours) : h('p', { class: 'empty' }, t('tagNoneYours')),
     ),
+    elsewhere.length
+      ? h(
+          'div',
+          { class: 'panel' },
+          h('h3', null, t('tagListsHeading')),
+          h('p', { class: 'muted' }, t('tagListsHint')),
+          h('div', { class: 'tag-rows' }, elsewhere),
+        )
+      : null,
   );
 }

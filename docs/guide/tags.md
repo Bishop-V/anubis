@@ -12,6 +12,10 @@ On any website, open the Anubis toolbar popup. Under **Tags**, press a tag to ad
 
 Tags from lists appear among your choices too, but only their lists can remove them.
 
+## See where a tag comes from
+
+**Settings → Tags** has two groups. **Your tags** are the ones you made, or that only your own sites use. **Tags from lists** are the ones your subscribed lists give sites, and each says which lists it is from, for example "From Paywalls". A tag of yours that a list also uses says "Also used by" and the list's name. Unsubscribe from a list and its tags leave the second group.
+
 ## Decide what a tag does
 
 A list decides which sites get a tag. You decide what the tag does, in **Settings → Tags**:

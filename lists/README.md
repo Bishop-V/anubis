@@ -42,6 +42,6 @@ The format is described in [docs/list-format.md](../docs/list-format.md).
   }
   ```
 
-  `format` is one of `anubis`, `goggle`, `ublacklist` or `domains`. Add `"lens": true` if the list hides everything it doesn't mention.
+  `format` is one of `anubis`, `goggle`, `ublacklist` or `domains`. Add `"lens": true` if the list hides everything it doesn't mention. If your list covers the same sites as another in the directory, add `"overlaps": ["their-id"]` to yours, and yours to theirs: someone who has one isn't offered the other.
 
 Please keep lists factual and neutral in their labels: describe what a result is ("Paywalled", "Discussion", "Official docs") rather than what you think of it, and let people choose in their settings whether to raise, lower or hide what a tag marks. A tag sits under a result's title as a description of it, so name it the way you'd describe the result: "Paywalled", not "Paywall". `npm test` checks that every list here parses cleanly.

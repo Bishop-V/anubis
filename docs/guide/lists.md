@@ -12,7 +12,7 @@ It also starts with two [lists made from other projects](#lists-made-from-other-
 
 ## Subscribe
 
-- **From the directory:** **Settings → Lists → More lists** shows lists other people have published. Press **Subscribe** on one.
+- **From the directory:** **Settings → Lists → More lists** shows lists other people have published. Press **Subscribe** on one. It leaves out lists you already have, and lists built from the same source as one you have.
 - **From the web:** **Subscribe** on the [Lists directory](../lists.md) page, or a subscribe link on a list's own page, opens Anubis's settings with the list filled in. Check it's the list you expected, and press **Subscribe** there to add it.
 - **From its address:** paste the list's address into **Add a list** and press **Subscribe**. Links to a file's page on GitHub, GitLab, or Codeberg, gist links, and Brave Search Goggle links all work; Anubis finds the raw file.
 

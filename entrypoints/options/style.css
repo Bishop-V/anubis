@@ -353,6 +353,10 @@ textarea.code {
 .tag-row .meta p {
   margin: 0;
 }
+.tag-row .meta .source {
+  color: var(--muted);
+  font-size: 12.5px;
+}
 .tag-row .meta .effect {
   color: var(--text);
   font-size: 13px;
