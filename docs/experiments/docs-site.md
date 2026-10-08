@@ -6,6 +6,7 @@ The documentation site and its screenshots. Part of [Experiments and decisions](
 
 Modelled on [uBlacklist's documentation](https://ublacklist.github.io/docs/introduction): an introduction, getting started with screenshots, then one page per feature, publishing, and a directory of lists.
 
+- **The home page's last sentence was missing** (found 2026-10-08): "Mojeek and Edge are experimental: they haven't…" was unquoted in the page's front matter, so YAML read it as a key and a value, and the page drew an empty paragraph (the build warned "Skipped rendering unsafe attribute name"). It's quoted now, and `tests/docs-frontmatter.test.ts` fails on any unquoted front matter text with ": " in it.
 - **Tried:** VitePress 1.6.4, the current stable release. It pulls in Vite 5 and an esbuild with published advisories for their development servers (`npm audit`: two moderate, one high). **Shipped:** VitePress 2.0.0-alpha.20, which uses the same Vite 8 as the extension and audits clean. It only builds the documentation, so a pre-release costs little; move to 2.0 stable when it's out.
 - **Not used:** Hugo, which uBlacklist's site uses. It would need a second toolchain alongside Node and the Nix flake.
 - **Screenshots** come from the e2e mock pages (`node e2e/run.mjs docs`), so they can be regenerated after interface changes instead of retaken by hand. They show test pages, not the real engines, and the captions say so.

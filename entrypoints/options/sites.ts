@@ -1,5 +1,6 @@
 import { normalizeDomain } from '@/utils/domain';
-import { h, icon, plural, siteName } from '@/utils/dom';
+import { h, icon, siteName } from '@/utils/dom';
+import { t, tn } from '@/utils/i18n';
 import { ICON_CLOSE, ICON_DOWNLOAD, ICON_EDIT, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
 import { guide } from '@/utils/links';
 import { colorForTag, parseList } from '@/utils/listformat';
@@ -22,8 +23,8 @@ export async function renderSites(): Promise<HTMLElement> {
     'div',
     null,
     pageTitle(
-      'Your sites',
-      'Sites you’ve ranked or hidden yourself. Your choice beats every list you subscribe to. Use the button on any search result, or add sites here.',
+      t('sitesHeading'),
+      t('sitesIntro'),
       h(
         'button',
         {
@@ -37,28 +38,24 @@ export async function renderSites(): Promise<HTMLElement> {
           },
         },
         icon(ICON_EDIT),
-        editingText ? 'Back to the table' : 'Edit as text',
+        editingText ? t('sitesBackToTable') : t('sitesEditAsText'),
       ),
       h(
         'button',
         { class: 'btn', type: 'button', on: { click: () => download('my-anubis-list.anubis', rules.personalText) } },
         icon(ICON_DOWNLOAD),
-        'Download my list',
+        t('publishDownload'),
       ),
     ),
     local
-      ? h(
-          'div',
-          { class: 'notice' },
-          'Your list is too big for browser sync, so it’s saved on this device only. Download it to keep a copy.',
-        )
+      ? h('div', { class: 'notice' }, t('sitesTooBig'))
       : null,
     editingText ? textEditor(rules) : table(rules, entries),
   );
 }
 
 function addForm(): HTMLElement {
-  const input = h('input', { type: 'text', placeholder: 'Domain or URL, e.g. fandom.com', attrs: { 'aria-label': 'Site' } });
+  const input = h('input', { type: 'text', placeholder: t('sitesAddPlaceholder'), attrs: { 'aria-label': t('popupSite') } });
   let level: Level = 'hide';
   const seg = levelSeg(level, (l) => {
     level = l;
@@ -70,26 +67,26 @@ function addForm(): HTMLElement {
     { class: 'inline-form' },
     input,
     seg,
-    h('button', { class: 'btn primary', type: 'submit' }, 'Add'),
+    h('button', { class: 'btn primary', type: 'submit' }, t('sitesAdd')),
   );
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const domain = normalizeDomain(input.value);
     if (!domain) {
-      error.textContent = 'That doesn’t look like a domain.';
+      error.textContent = t('sitesNotDomain');
       error.hidden = false;
       return;
     }
     error.hidden = true;
     input.value = '';
     input.blur();
-    await editPersonal((t) => setSite(t, domain, level, []));
+    await editPersonal((text) => setSite(text, domain, level, []));
   });
   return h(
     'div',
     { class: 'panel' },
-    h('h3', null, 'Add a site'),
-    h('p', { class: 'muted' }, 'It applies to the site and all its subdomains.', ' ', helpLink('guide/ranking#how-much-of-the-site', 'Choosing how much of a site')),
+    h('h3', null, t('popupAddSite')),
+    h('p', { class: 'muted' }, t('sitesAddHint'), ' ', helpLink('guide/ranking#how-much-of-the-site', t('sitesAddHelp'))),
     form,
     error,
   );
@@ -98,7 +95,7 @@ function addForm(): HTMLElement {
 function levelSeg(current: Level | undefined, onPick: (l: Level) => void, compact = true): HTMLElement {
   return h(
     'div',
-    { class: compact ? 'levels' : 'levels labelled', attrs: { role: 'group', 'aria-label': 'Ranking' } },
+    { class: compact ? 'levels' : 'levels labelled', attrs: { role: 'group', 'aria-label': t('popupRanking') } },
     LEVELS.map((l) =>
       h(
         'button',
@@ -119,9 +116,9 @@ function levelSeg(current: Level | undefined, onPick: (l: Level) => void, compac
 function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
   const search = h('input', {
     type: 'search',
-    placeholder: `Filter ${plural(entries.length, 'site')}…`,
+    placeholder: tn('sitesFilter', entries.length),
     value: filter,
-    attrs: { 'aria-label': 'Filter sites' },
+    attrs: { 'aria-label': t('sitesFilterLabel') },
   });
   const body = h('tbody');
   const tagIds = [...rules.tags.keys()];
@@ -129,27 +126,27 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
   const renderRows = () => {
     const q = filter.trim().toLowerCase();
     const shown = entries
-      .filter((e) => !q || e.site.includes(q) || e.tags.some((t) => t.includes(q)))
+      .filter((e) => !q || e.site.includes(q) || e.tags.some((id) => id.includes(q)))
       .sort((a, b) => a.site.localeCompare(b.site))
       .slice(0, 500);
     body.replaceChildren(
       ...shown.map((entry) => {
         const level = displayLevel(entry.level);
-        const setLevel = (l: Level) => void editPersonal((t) => setSite(t, entry.site, l, entry.tags));
+        const setLevel = (l: Level) => void editPersonal((text) => setSite(text, entry.site, l, entry.tags));
         const available = tagIds.filter((id) => !entry.tags.includes(id));
         const addTag = h(
           'select',
-          { class: 'add-tag', attrs: { 'aria-label': `Add a tag to ${entry.site}` } },
-          h('option', { value: '' }, 'Add tag'),
+          { class: 'add-tag', attrs: { 'aria-label': t('sitesAddTagTo', entry.site) } },
+          h('option', { value: '' }, t('menuAddTagButton')),
           available.map((id) => h('option', { value: id }, rules.tags.get(id)?.label ?? id)),
         );
         addTag.addEventListener('change', () => {
-          if (addTag.value) void editPersonal((t) => setSite(t, entry.site, entry.level, [...entry.tags, addTag.value]));
+          if (addTag.value) void editPersonal((text) => setSite(text, entry.site, entry.level, [...entry.tags, addTag.value]));
         });
         return h(
           'tr',
           null,
-          h('td', { class: 'site' }, siteName(entry.site), entry.level === 'allow' ? h('div', { class: 'muted', style: 'font-weight:400;font-size:12.5px' }, 'Kept at normal, whatever your lists say') : null),
+          h('td', { class: 'site' }, siteName(entry.site), entry.level === 'allow' ? h('div', { class: 'muted', style: 'font-weight:400;font-size:12.5px' }, t('sitesKeptNormal')) : null),
           h('td', null, levelSeg(level, setLevel, true)),
           h(
             'td',
@@ -165,8 +162,8 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
                     class: 'tag',
                     type: 'button',
                     style: `--c: ${tag?.color ?? colorForTag(id)}`,
-                    title: `Remove “${tag?.label ?? id}” from ${entry.site}`,
-                    on: { click: () => void editPersonal((t) => setSite(t, entry.site, entry.level, entry.tags.filter((x) => x !== id))) },
+                    title: t('sitesRemoveTag', tag?.label ?? id, entry.site),
+                    on: { click: () => void editPersonal((text) => setSite(text, entry.site, entry.level, entry.tags.filter((x) => x !== id))) },
                   },
                   h('i', { class: 'gem' }),
                   tag?.label ?? id,
@@ -183,9 +180,9 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
               {
                 class: 'icon-btn danger',
                 type: 'button',
-                title: `Forget ${entry.site}`,
-                attrs: { 'aria-label': `Forget ${entry.site}` },
-                on: { click: () => void editPersonal((t) => setSite(t, entry.site, 'normal', [])) },
+                title: t('sitesForget', entry.site),
+                attrs: { 'aria-label': t('sitesForget', entry.site) },
+                on: { click: () => void editPersonal((text) => setSite(text, entry.site, 'normal', [])) },
               },
               icon(ICON_CLOSE),
             ),
@@ -218,26 +215,26 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
               h(
                 'table',
                 { class: 'sites' },
-                h('thead', null, h('tr', null, h('th', null, 'Site'), h('th', null, 'Ranking'), h('th', null, 'Tags'), h('th'))),
+                h('thead', null, h('tr', null, h('th', null, t('popupSite')), h('th', null, t('popupRanking')), h('th', null, t('popupTags')), h('th'))),
                 body,
               ),
             ),
-            entries.length > 500 ? h('p', { class: 'muted' }, 'Showing the first 500. Filter to find the rest.') : null,
+            entries.length > 500 ? h('p', { class: 'muted' }, t('sitesFirst500')) : null,
           )
-        : h('p', { class: 'empty' }, 'No sites yet. Add one above, or use the button on a search result.'),
+        : h('p', { class: 'empty' }, t('sitesNone')),
     ),
   );
 }
 
 function textEditor(rules: RuleSet): HTMLElement {
-  const area = h('textarea', { class: 'code', spellcheck: false, value: rules.personalText, attrs: { 'aria-label': 'Your list as text' } });
+  const area = h('textarea', { class: 'code', spellcheck: false, value: rules.personalText, attrs: { 'aria-label': t('sitesTextLabel') } });
   const status = h('div');
   const check = () => {
     const parsed = parseList(area.value);
     status.replaceChildren(
       parsed.errors.length
-        ? h('ul', { class: 'errors' }, parsed.errors.slice(0, 20).map((e) => h('li', null, `Line ${e.line}: ${e.message}`)))
-        : h('p', { class: 'muted', style: 'font-size:12.5px' }, `${plural(parsed.rules.length, 'instruction')} and ${plural(parsed.tags.length, 'tag')}, all readable.`),
+        ? h('ul', { class: 'errors' }, parsed.errors.slice(0, 20).map((e) => h('li', null, t('listErrorLine', e.line, e.message))))
+        : h('p', { class: 'muted', style: 'font-size:12.5px' }, t('sitesTextReadable', tn('listInstructions', parsed.rules.length), tn('popupTagCount', parsed.tags.length))),
     );
   };
   area.addEventListener('input', check);
@@ -245,12 +242,8 @@ function textEditor(rules: RuleSet): HTMLElement {
   return h(
     'div',
     { class: 'panel' },
-    h('h3', null, 'Edit as text'),
-    h(
-      'p',
-      { class: 'muted' },
-      'Your list in the Anubis list format: Brave Goggles syntax plus tags. It’s exactly the file you would publish. Lines the table can’t show are kept as written.',
-    ),
+    h('h3', null, t('sitesEditAsText')),
+    h('p', { class: 'muted' }, t('sitesTextIntro')),
     area,
     status,
     h(
@@ -269,7 +262,7 @@ function textEditor(rules: RuleSet): HTMLElement {
             },
           },
         },
-        'Save',
+        t('sitesSave'),
       ),
       h(
         'button',
@@ -283,9 +276,9 @@ function textEditor(rules: RuleSet): HTMLElement {
             },
           },
         },
-        'Cancel',
+        t('offerCancel'),
       ),
-      h('a', { class: 'text-btn', href: guide('list-format'), target: '_blank', rel: 'noopener noreferrer' }, 'Format reference'),
+      h('a', { class: 'text-btn', href: guide('list-format'), target: '_blank', rel: 'noopener noreferrer' }, t('sitesFormatReference')),
     ),
   );
 }

@@ -7,6 +7,7 @@ import reference from '@/lists/reference.anubis?raw';
 import { storage } from '#imports';
 import { andList } from './dom';
 import { normalizeHostname } from './domain';
+import { t } from './i18n';
 import { parseList, safeWebUrl, type ParsedList } from './listformat';
 import {
   editListCache,
@@ -92,6 +93,29 @@ export function defaultSubscriptions(): Subscription[] {
   }));
 }
 
+const DEFAULTS_ADDED = 'sync:defaultListsAdded' as const;
+
+/**
+ * Lists that became defaults after someone first saved their subscriptions (AI
+ * content and Independent wikis, after 0.2.4) only reached new installs. Once, subscribe
+ * everyone to every default list and switch it on, keeping their other lists.
+ */
+export async function migrateDefaultLists(): Promise<void> {
+  if (await storage.getItem<boolean>(DEFAULTS_ADDED)) return;
+  if (await storage.getItem<Subscription[]>('sync:subscriptions')) {
+    await editSubscriptions((subs) => {
+      const out = subs.map((s) => s);
+      for (const d of defaultSubscriptions()) {
+        const i = out.findIndex((s) => s.id === d.id || s.url === d.url);
+        if (i === -1) out.push(d);
+        else out[i] = { ...out[i]!, enabled: true };
+      }
+      return out;
+    });
+  }
+  await storage.setItem(DEFAULTS_ADDED, true);
+}
+
 /**
  * Accept the URL people actually copy (a GitHub page, a gist, a Brave Goggle link)
  * and turn it into the raw file URL.
@@ -156,7 +180,7 @@ const MAX_BYTES = 5 * 1024 * 1024;
  * length before reading anything, otherwise while it streams in.
  */
 async function readLimited(res: Response, max: number): Promise<string> {
-  const tooBig = () => new Error('List is larger than 5 MB');
+  const tooBig = () => new Error(t('listTooBig', Math.round(max / 1024 / 1024)));
   if (Number(res.headers.get('content-length')) > max) {
     void res.body?.cancel();
     throw tooBig();
@@ -187,10 +211,10 @@ export async function fetchText(url: string, timeoutMs = 20000): Promise<string>
     const res = await fetch(url, { signal: controller.signal, cache: 'no-cache', credentials: 'omit' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const text = await readLimited(res, MAX_BYTES);
-    if (/^\s*<(!doctype|html)/i.test(text)) throw new Error('Got a web page, not a list. Use the raw file URL.');
+    if (/^\s*<(!doctype|html)/i.test(text)) throw new Error(t('listIsWebPage'));
     return text;
   } catch (error) {
-    if (error instanceof DOMException && error.name === 'AbortError') throw new Error('Timed out');
+    if (error instanceof DOMException && error.name === 'AbortError') throw new Error(t('listTimedOut'));
     throw error instanceof Error ? error : new Error(String(error));
   } finally {
     clearTimeout(timer);
@@ -202,7 +226,7 @@ export async function downloadList(url: string): Promise<{ text: string; parsed:
   const text = await fetchText(url);
   const parsed = parseList(text);
   if (!parsed.rules.length && !parsed.lens) {
-    throw new Error(parsed.errors[0] ? `No usable rules (line ${parsed.errors[0].line}: ${parsed.errors[0].message})` : 'No rules found');
+    throw new Error(parsed.errors[0] ? t('listNoUsableRules', parsed.errors[0].line, parsed.errors[0].message) : t('listNoRules'));
   }
   return { text, parsed };
 }
@@ -344,14 +368,14 @@ function plainAddress(url: URL): string {
 
 /**
  * A pre-filled issue telling a list it's wrong about a result: what the list does,
- * the rules that matched and the result's address. Like suggestions, the issue is
- * written in English whatever the interface language, for the list's maintainers.
+ * the rules that matched and the result's address. English on purpose: like
+ * suggestions, the issue is for the list's maintainers, whatever the interface language.
  */
 export function reportUrl(
   issues: string | undefined,
   list: string,
   resultUrl: string,
-  reasons: { text: string; rule?: { line: number; raw: string } }[],
+  reasons: { report: string; rule?: { line: number; raw: string } }[],
 ): string | undefined {
   let url: URL;
   try {
@@ -361,7 +385,7 @@ export function reportUrl(
   }
   const site = normalizeHostname(url.hostname);
   const rules = reasons.flatMap((r) => (r.rule ? [r.rule] : []));
-  const lines = [`Result: ${plainAddress(url)}`, '', `**${list}** ${andList([...new Set(reasons.map((r) => r.text))])}, and I think that’s wrong.`];
+  const lines = [`Result: ${plainAddress(url)}`, '', `**${list}** ${andList([...new Set(reasons.map((r) => r.report))])}, and I think that’s wrong.`];
   if (rules.length) {
     // A fence longer than any run of backticks in the rules, so none can close it.
     const longest = Math.max(0, ...rules.map((r) => Math.max(0, ...(r.raw.match(/`+/g) ?? []).map((m) => m.length))));
@@ -373,7 +397,10 @@ export function reportUrl(
   return issueUrl(issues, `Wrong rule for ${site}`, lines.join('\n'));
 }
 
-/** A pre-filled issue proposing a site to a list: the line for it, and a result from the site as an example. */
+/**
+ * A pre-filled issue proposing a site to a list: the line for it, and a result from
+ * the site as an example. English on purpose, like reportUrl's.
+ */
 export function suggestionUrl(issues: string | undefined, list: string, domain: string, line: string, resultUrl: string): string | undefined {
   let url: URL;
   try {

@@ -13,7 +13,7 @@ const verdict = (level: Level, reasons: Partial<Reason>[] = [], extra: Partial<V
   hidden: level === 'hide',
   tags: [],
   tagSources: {},
-  reasons: reasons.map((r) => ({ list: 'A list', listId: 'a', personal: false, text: '', ...r })),
+  reasons: reasons.map((r) => ({ list: 'A list', listId: 'a', personal: false, text: '', report: '', ...r })),
   ...extra,
 });
 const site = (level: PersonalLevel, tags: string[] = []): SiteEntry => ({ site: 'example.com', level, tags, line: 0 });

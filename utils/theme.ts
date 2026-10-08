@@ -1,4 +1,5 @@
 import { h, icon } from './dom';
+import { t, type MessageKey } from './i18n';
 import { ICON_AUTO, ICON_MOON, ICON_SUN } from './icons';
 import { colorSchemeItem, settingsItem, updateSettings, type Theme } from './storage';
 
@@ -41,22 +42,22 @@ export async function initTheme(onChange?: (theme: Theme) => void): Promise<Them
   return theme;
 }
 
-const OPTIONS: { value: Theme; label: string; svg: string }[] = [
-  { value: 'auto', label: 'Auto', svg: ICON_AUTO },
-  { value: 'light', label: 'Light', svg: ICON_SUN },
-  { value: 'dark', label: 'Dark', svg: ICON_MOON },
+const OPTIONS: { value: Theme; label: MessageKey; title: MessageKey; svg: string }[] = [
+  { value: 'auto', label: 'themeAuto', title: 'themeAutoTitle', svg: ICON_AUTO },
+  { value: 'light', label: 'themeLight', title: 'themeLightTitle', svg: ICON_SUN },
+  { value: 'dark', label: 'themeDark', title: 'themeDarkTitle', svg: ICON_MOON },
 ];
 
 /** Auto / Light / Dark segmented control. `compact` shows icons only. */
 export function themeSwitcher(current: Theme, compact = false): HTMLElement {
-  const seg = h('div', { class: 'seg', attrs: { role: 'group', 'aria-label': 'Colour scheme' } });
+  const seg = h('div', { class: 'seg', attrs: { role: 'group', 'aria-label': t('themeHeading') } });
   const buttons = OPTIONS.map((o) =>
     h(
       'button',
       {
         type: 'button',
-        title: `${o.label} theme`,
-        attrs: { 'aria-pressed': String(o.value === current), 'aria-label': `${o.label} theme` },
+        title: t(o.title),
+        attrs: { 'aria-pressed': String(o.value === current), 'aria-label': t(o.title) },
         on: {
           click: () => {
             buttons.forEach((b, i) => b.setAttribute('aria-pressed', String(OPTIONS[i]!.value === o.value)));
@@ -65,7 +66,7 @@ export function themeSwitcher(current: Theme, compact = false): HTMLElement {
         },
       },
       icon(o.svg),
-      compact ? null : o.label,
+      compact ? null : t(o.label),
     ),
   );
   seg.append(...buttons);

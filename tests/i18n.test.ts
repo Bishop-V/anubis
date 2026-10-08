@@ -1,10 +1,14 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { andList } from '@/utils/dom';
-import { t, tJoin, tList, tn } from '@/utils/i18n';
+import { t, tJoin, tList, tn, tParts } from '@/utils/i18n';
 import type { SiteChange } from '@/utils/personal';
 import { changeSentence } from '@/utils/summary';
-import { useEnglish } from './english';
+import { fakeBrowser } from 'wxt/testing/fake-browser';
+import { parseList } from '@/utils/listformat';
+import { compileList, evaluate } from '@/utils/matcher';
+import { reportUrl } from '@/utils/subscriptions';
+import { en as english, installEnglish, useEnglish } from './english';
 
 // Translations live in public/_locales/<language>/messages.json; English is the source.
 type Messages = Record<string, { message: string; description?: string }>;
@@ -94,5 +98,38 @@ describe('t and tn', () => {
     expect(changeSentence(change({}, { tags: ['slop'] }), label)).toBe('Tagged fandom.com “AI slop”.');
     expect(changeSentence(change({ level: 'hide', tags: ['slop'] }, { level: 'hide' }), label)).toBe('Removed the tag “AI slop” from fandom.com.');
     expect(changeSentence(change({}, { level: 'lower', tags: ['slop'] }), label)).toBe('Changed fandom.com in your list.');
+  });
+});
+
+describe('in another language', () => {
+  // A made-up language: every message in brackets, so English shows through where it shouldn't.
+  const bracketed = () => {
+    fakeBrowser.i18n.getMessage = ((key: string, subs?: string[]) =>
+      english[key] ? `[${english[key].message.replace(/\$(\d)/g, (_, n: string) => subs?.[Number(n) - 1] ?? '')}]` : '') as typeof fakeBrowser.i18n.getMessage;
+  };
+
+  it('tells the menu’s reasons in the interface’s language, and reports them to lists in English', () => {
+    bracketed();
+    try {
+      const list = compileList('docs', parseList('! tag: docs | Docs | #2f5fae\n$site=a.com,boost=3,tag=docs'), false, 'Docs list');
+      const [reason] = evaluate({ url: 'https://a.com/x' }, [list]).reasons;
+      expect(reason!.text).toMatch(/^\[/);
+      expect(reason!.report).toBe('raises it by 3 and tags it “Docs”');
+      const body = new URL(reportUrl('https://github.com/o/r/issues', 'Docs list', 'https://a.com/x', [reason!])!).searchParams.get('body')!;
+      expect(body).toContain('**Docs list** raises it by 3 and tags it “Docs”, and I think that’s wrong.');
+      expect(body).not.toContain('[');
+    } finally {
+      installEnglish();
+    }
+  });
+
+  it('puts elements where a message’s placeholders are', () => {
+    bracketed();
+    try {
+      const code = { el: 'code' };
+      expect(tParts('publishStepIssues', code)).toEqual(['[Add ', code, ' so people can suggest sites to your list from the menu on each result.]']);
+    } finally {
+      installEnglish();
+    }
   });
 });

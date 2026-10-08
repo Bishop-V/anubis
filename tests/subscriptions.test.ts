@@ -1,5 +1,8 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fetchText } from '@/utils/subscriptions';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { fakeBrowser } from 'wxt/testing/fake-browser';
+import { storage } from '#imports';
+import { defaultSubscriptions, fetchText, getSubscriptions, migrateDefaultLists, saveSubscriptions } from '@/utils/subscriptions';
+import { installEnglish } from './english';
 
 const MB = 1024 * 1024;
 
@@ -41,5 +44,32 @@ describe('downloading lists', () => {
   it('says when it got a web page', async () => {
     vi.stubGlobal('fetch', async () => new Response('<!DOCTYPE html><html></html>'));
     await expect(fetchText('https://example.org/')).rejects.toThrow('web page');
+  });
+});
+
+describe('default lists on update', () => {
+  beforeEach(() => {
+    fakeBrowser.reset();
+    installEnglish();
+  });
+
+  it('subscribes an existing install to every default list once, keeping its own', async () => {
+    const defaults = defaultSubscriptions();
+    const own = { id: 'own', url: 'https://example.org/own.anubis', enabled: true, addedAt: 1 };
+    // Saved before the newer defaults existed: one default switched off, another missing.
+    await saveSubscriptions([{ ...defaults[0]!, enabled: false }, own]);
+    await migrateDefaultLists();
+    const after = await getSubscriptions();
+    expect(after.find((s) => s.id === 'own')).toEqual(own);
+    for (const d of defaults) expect(after.find((s) => s.id === d.id)?.enabled, d.id).toBe(true);
+    // Only once: switching a default off afterwards sticks.
+    await saveSubscriptions(after.map((s) => (s.id === defaults[0]!.id ? { ...s, enabled: false } : s)));
+    await migrateDefaultLists();
+    expect((await getSubscriptions()).find((s) => s.id === defaults[0]!.id)?.enabled).toBe(false);
+  });
+
+  it('leaves an install that never changed its lists on the defaults', async () => {
+    await migrateDefaultLists();
+    expect(await storage.getItem('sync:subscriptions')).toBeNull();
   });
 });

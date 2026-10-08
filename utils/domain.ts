@@ -94,6 +94,7 @@ export function displayedDomainToUrl(text: string | null | undefined): string | 
 
 // Sites Google shows by name ("Reddit · r/learnpython", "LinkedIn · Fandom") with a
 // line like "20+ comments" or "34.4K+ followers" where the address would be.
+// Not translated: names as search pages show them.
 const SITE_NAMES = new Map<string, string>([
   ['reddit', 'reddit.com'],
   ['quora', 'quora.com'],
