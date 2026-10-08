@@ -1081,7 +1081,7 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
     anchor.setAttribute('aria-expanded', 'true');
   }
 
-  const choices = domainChoices(data.result.host);
+  const choices = domainChoices(data.result.host, (d) => !!getSite(data.personalText, d));
   const existing = choices.find((d) => getSite(data.personalText, d));
   const domain = keepDomain && choices.includes(keepDomain) ? keepDomain : (existing ?? siteOf(data.result.host));
   popover.domain = domain;
@@ -1164,7 +1164,7 @@ function buildPopover(
 ): { pop: HTMLElement; level: Level } {
   const entry = getSite(data.personalText, domain);
   const r = rankingOf(entry, data.baseline);
-  const choices = domainChoices(data.result.host);
+  const choices = domainChoices(data.result.host, (d) => !!getSite(data.personalText, d));
 
   const cartouche = siteCartouche(domain, choices, switchDomain, 'site');
 

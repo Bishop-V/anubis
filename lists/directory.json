@@ -74,6 +74,30 @@
       "format": "ublacklist"
     },
     {
+      "id": "ai-content-farms",
+      "name": "AI content farms",
+      "description": "Hides AI-generated content farms that alvi-se adds by hand while browsing. Many are Italian sites.",
+      "url": "https://raw.githubusercontent.com/alvi-se/ai-ublock-blacklist/master/ublacklist.txt",
+      "homepage": "https://github.com/alvi-se/ai-ublock-blacklist",
+      "format": "ublacklist"
+    },
+    {
+      "id": "ai-answers",
+      "name": "AI news and answers",
+      "description": "Hides sites of AI-generated news and answers. It leaves discussion of AI alone, as well as AI work that's labelled as such. Maintained by agsimmons.",
+      "url": "https://raw.githubusercontent.com/agsimmons/ai-content-blocklist/main/uBlacklist.txt",
+      "homepage": "https://github.com/agsimmons/ai-content-blocklist",
+      "format": "ublacklist"
+    },
+    {
+      "id": "bad-websites",
+      "name": "Bad Website Blocklist",
+      "description": "Hides AI-generated articles, low-effort spam, and advertising posing as information. Each site has an issue explaining why it was added. Maintained by popcar2.",
+      "url": "https://raw.githubusercontent.com/popcar2/BadWebsiteBlocklist/main/uBlacklist.txt",
+      "homepage": "https://github.com/popcar2/BadWebsiteBlocklist",
+      "format": "ublacklist"
+    },
+    {
       "id": "stackoverflow-copies",
       "name": "Stack Overflow copies",
       "description": "Hides sites that scrape and machine-translate Stack Overflow.",
@@ -87,6 +111,14 @@
       "description": "Hides sites that mirror GitHub repositories and issues.",
       "url": "https://raw.githubusercontent.com/arosh/ublacklist-github-translation/master/uBlacklist.txt",
       "homepage": "https://github.com/arosh/ublacklist-github-translation",
+      "format": "ublacklist"
+    },
+    {
+      "id": "dev-copies",
+      "name": "Developer site copies",
+      "description": "Hides sites that copy Stack Overflow, GitHub, npm, or Wikipedia, plus some SEO spam. Its Stack Overflow part is several times longer than Stack Overflow copies. Maintained by quenhus.",
+      "url": "https://raw.githubusercontent.com/quenhus/uBlock-Origin-dev-filter/main/dist/other_format/uBlacklist/global.txt",
+      "homepage": "https://github.com/quenhus/uBlock-Origin-dev-filter",
       "format": "ublacklist"
     },
     {
