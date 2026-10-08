@@ -36,6 +36,7 @@ describe('clean-up headings', () => {
     expect(cleanupKindFor('People also search for')).toBe('related');
     expect(cleanupKindFor('Discussions and forums')).toBe('discussions');
     expect(cleanupKindFor('Discussions')).toBe('discussions');
+    expect(cleanupKindFor('Videos for kj')).toBe('videos');
   });
 
   it('recognises text only an AI answer has', () => {

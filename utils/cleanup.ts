@@ -57,8 +57,8 @@ export const CLEANUP: CleanupDef[] = [
     label: 'Video panels',
     hint: 'Video and short-video panels between the results.',
     headings: ['Videos', 'Short videos', 'Vidéos', 'Vidéos courtes', 'Kurze Videos', 'Vídeos', 'Vídeos cortos', 'Video', 'Video brevi'],
-    // Bing: "Videos of how to bake sourdough bread".
-    prefixes: ['Videos of '],
+    // Bing: "Videos of how to bake sourdough bread". DuckDuckGo: "Videos for kj".
+    prefixes: ['Videos of ', 'Videos for '],
   },
   {
     id: 'questions',

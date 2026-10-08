@@ -64,7 +64,7 @@ export interface EngineDef {
    * Where the weigh button sits in the top-right corner of each result. With
    * `underMenu`, it sits just under the engine's own menu button on the result
    * (DuckDuckGo's ⋯) instead, at its size and in its colour, like a second option;
-   * `top` and `right` apply when a result has no such button. `popOut` is the
+   * `top` and `right` apply when a result has no such button (Yandex). `popOut` is the
    * selector of the result's card, when it is narrower than the result: the result
    * menu opens to the right of the result (or the card), level with its top, and
    * falls back to under the button when the window has no room. With `besideMenu`, it sits just right of the engine's
@@ -167,8 +167,9 @@ export const ENGINES: EngineDef[] = [
       { item: '[data-testid="news-vertical"] li:has(> article)', link: 'article > a', title: 'h2' },
     ],
     cleanupSelectors: { ai: '[data-testid="duckassist-answer-content"], [data-react-module-id="wikinlp"]' },
-    // Under DuckDuckGo's own ⋯ menu on each result, as a second option.
-    button: { top: '6px', right: '36px', underMenu: true },
+    // Right of DuckDuckGo's own ⋯ menu on each result, as a second option: under
+    // it, the button sat on the thumbnails some results have below the menu.
+    button: { top: '6px', right: '36px', besideMenu: true },
     more: { kind: 'click', button: '#more-results, button[data-testid="more-results"]' },
   },
   {
