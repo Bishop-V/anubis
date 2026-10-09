@@ -2,7 +2,7 @@ import { h } from './dom';
 import { LEVEL_CHIPS } from './icons';
 import { t, tJoin } from './i18n';
 import { TAG_CHOICES, type Level, type Verdict } from './matcher';
-import { displayLevel, PERSONAL_NAME, type PersonalLevel, type SiteEntry } from './personal';
+import { displayLevel, levelSteps, PERSONAL_NAME, type PersonalLevel, type SiteEntry } from './personal';
 
 // The pieces the result menu and the toolbar popup share when they rank a site.
 
@@ -11,6 +11,8 @@ export interface Ranking {
   personal: PersonalLevel | undefined;
   /** The ranking button you pressed, if any: an allow presses Normal. */
   pressed: Level | undefined;
+  /** How many times you pressed Raise or Lower: 2 once it moves the site twice as far. */
+  steps: 1 | 2;
   /** What the lists alone would do. */
   fromLists: Level;
 }
@@ -18,16 +20,19 @@ export interface Ranking {
 export function rankingOf(entry: SiteEntry | undefined, baseline: Verdict): Ranking {
   const personal = entry?.level;
   const pressed = personal && personal !== 'normal' ? displayLevel(personal) : undefined;
-  return { personal, pressed, fromLists: baseline.level };
+  return { personal, pressed, steps: personal ? levelSteps(personal) : 1, fromLists: baseline.level };
 }
 
 /**
- * What pressing a ranking stores. Your ranking sits on top of the lists, so taking it back (Normal after Raise) leaves them as they were.
- * Only with no choice of yours does "Normal" have to beat lists that rank the site, as an explicit allow.
+ * What pressing a ranking stores. Your ranking sits on top of your tags and lists, so Normal takes it back and leaves the
+ * weighing to them. Raise and Lower move a site further each time you press them, up to twice, then take it back.
+ * The one exception: lists that hide a site you haven't ranked can only be answered with an explicit allow.
  */
 export function nextLevel(level: Level, r: Ranking): PersonalLevel {
-  if (level === 'normal') return r.personal || r.fromLists === 'normal' ? 'normal' : 'allow';
-  return r.pressed === level ? 'normal' : level;
+  if (level === 'normal') return r.personal || r.fromLists !== 'hide' ? 'normal' : 'allow';
+  if (r.pressed !== level) return level;
+  if (level === 'raise' || level === 'lower') return r.steps === 1 ? (`${level}2` as 'raise2' | 'lower2') : 'normal';
+  return 'normal';
 }
 
 /** Marks the ranking the lists chose when you haven't pressed one. */

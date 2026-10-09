@@ -243,14 +243,19 @@ function describe(rule: Rule, tagLabel: (id: string) => string, words: ReasonWor
   return parts.length ? words.join(parts) : words.none;
 }
 
-function personalLevel(rules: Rule[]): Level | 'allow' | undefined {
+/** Your own raise or lower moves a site once or twice as far as a Raise tag: a boost of ten or more is two presses. */
+function personalPull(boost: number): number {
+  return PERSONAL_STRENGTH * (Math.abs(boost) >= PERSONAL_STRENGTH * 2 ? 2 : 1);
+}
+
+function personalLevel(rules: Rule[]): { level: Level | 'allow'; pull: number } | undefined {
   // Rules arrive most-specific first; the first rule with an action decides.
   for (const rule of rules) {
-    if (rule.discard) return 'hide';
-    if (rule.pin) return 'pin';
-    if (rule.allow) return 'allow';
-    if (rule.boost > 0) return 'raise';
-    if (rule.boost < 0) return 'lower';
+    if (rule.discard) return { level: 'hide', pull: 0 };
+    if (rule.pin) return { level: 'pin', pull: 0 };
+    if (rule.allow) return { level: 'allow', pull: 0 };
+    if (rule.boost > 0) return { level: 'raise', pull: personalPull(rule.boost) };
+    if (rule.boost < 0) return { level: 'lower', pull: -personalPull(rule.boost) };
   }
   return undefined;
 }
@@ -279,6 +284,8 @@ export function evaluate(
   let listScore = 0;
   let highlight: string | undefined;
   let tagPin = false;
+  /** How far your own raise or lower moves the result, signed. */
+  let ownPull = 0;
   const hides: NonNullable<Verdict['hiddenBy']>[] = [];
   const hide = (by: NonNullable<Verdict['hiddenBy']>) => hides.push(by);
   // What the lists' own rules do to the tags you follow the lists for, strongest first.
@@ -329,7 +336,9 @@ export function evaluate(
     for (const rule of matched) for (const id of rule.tags) addTag(id, list.name);
 
     if (list.personal) {
-      verdict.personal = personalLevel(matched);
+      const mine = personalLevel(matched);
+      verdict.personal = mine?.level;
+      ownPull = mine?.pull ?? 0;
       for (const rule of matched) reason(describe(rule, label, words), describe(rule, label, REPORT_WORDS), rule);
       // Personal tags still carry the user's tag choices.
       for (const rule of matched) applyChoices(rule);
@@ -377,7 +386,7 @@ export function evaluate(
   if (!p) for (const [id, effect] of listEffects) if (effect !== 'normal') verdict.tagEffects[id] = effect;
 
   const hiddenBy = p ? undefined : hides[0];
-  const own = p === 'pin' ? PIN_SCORE : p === 'raise' ? PERSONAL_STRENGTH : p === 'lower' ? -PERSONAL_STRENGTH : 0;
+  const own = p === 'pin' ? PIN_SCORE : p === 'raise' || p === 'lower' ? ownPull : 0;
   // A Pin tag pins as your own Pin does, and the rest still order the pinned results.
   const pinned = p === 'pin' || tagPin;
   const score = tagScore + (p ? own : listScore) + (tagPin && p !== 'pin' ? PIN_SCORE : 0);

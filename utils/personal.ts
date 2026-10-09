@@ -1,6 +1,6 @@
 import { t } from './i18n';
 import { formatTagDef, parseTagDef, type TagDef } from './listformat';
-import type { Level } from './matcher';
+import { PERSONAL_STRENGTH, type Level } from './matcher';
 
 // The personal list is stored as text in the Anubis list format, so it can be
 // published unchanged. These helpers edit it line by line and leave comments and
@@ -16,11 +16,17 @@ export const PERSONAL_HEADER = `! name: My list
 ! author: me
 `;
 
-export type PersonalLevel = Level | 'allow';
+/** `raise2` and `lower2` are a Raise or Lower pressed twice: they move the site twice as far. */
+export type PersonalLevel = Level | 'allow' | 'raise2' | 'lower2';
+
+/** How many times Raise or Lower was pressed: 2 for the doubled levels, else 1. */
+export function levelSteps(level: PersonalLevel): 1 | 2 {
+  return level === 'raise2' || level === 'lower2' ? 2 : 1;
+}
 
 /** The ranking a personal level shows as: an allow is Normal that beats the lists. */
 export function displayLevel(level: PersonalLevel): Level {
-  return level === 'allow' ? 'normal' : level;
+  return level === 'allow' ? 'normal' : level === 'raise2' ? 'raise' : level === 'lower2' ? 'lower' : level;
 }
 
 export interface SiteEntry {
@@ -34,6 +40,11 @@ export interface SiteEntry {
 // A "simple" site line: only options, one of which is site=. Anything with a URL
 // pattern is treated as hand-written and never rewritten.
 const SIMPLE_SITE_LINE = /^\$([a-z_]+(?:=[^,\s]*)?(?:,[a-z_]+(?:=[^,\s]*)?)*)(?:\s+#\s*(.*))?$/i;
+
+/** A boost's strength as steps: ten places or more is two Raises, anything less one. */
+function stepsOf(value: string | undefined): 1 | 2 {
+  return Number(value) >= PERSONAL_STRENGTH * 2 ? 2 : 1;
+}
 
 export function parseSimpleLine(line: string): { site: string; level: PersonalLevel; tags: string[]; description?: string } | undefined {
   const m = SIMPLE_SITE_LINE.exec(line.trim());
@@ -57,10 +68,10 @@ export function parseSimpleLine(line: string): { site: string; level: PersonalLe
         level = 'allow';
         break;
       case 'boost':
-        if (level === 'normal') level = 'raise';
+        if (level === 'normal') level = stepsOf(value) === 2 ? 'raise2' : 'raise';
         break;
       case 'downrank':
-        if (level === 'normal') level = 'lower';
+        if (level === 'normal') level = stepsOf(value) === 2 ? 'lower2' : 'lower';
         break;
       case 'tag':
         if (value) tags.push(value.toLowerCase());
@@ -76,8 +87,8 @@ export function formatSiteLine(site: string, level: PersonalLevel, tags: string[
   if (level === 'hide') opts.push('discard');
   else if (level === 'pin') opts.push('pin');
   else if (level === 'allow') opts.push('allow');
-  else if (level === 'raise') opts.push('boost=5');
-  else if (level === 'lower') opts.push('downrank=5');
+  else if (level === 'raise' || level === 'raise2') opts.push(`boost=${PERSONAL_STRENGTH * levelSteps(level)}`);
+  else if (level === 'lower' || level === 'lower2') opts.push(`downrank=${PERSONAL_STRENGTH * levelSteps(level)}`);
   for (const t of tags) opts.push(`tag=${t}`);
   if (level === 'normal' && !tags.length) return undefined;
   const line = `$${opts.join(',')}`;

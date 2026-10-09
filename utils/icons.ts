@@ -13,6 +13,9 @@ export const ICON_HIDE = svg(
 );
 export const ICON_LOWER = svg('<path d="M4 6.5l4 4 4-4"/>');
 export const ICON_RAISE = svg('<path d="M4 9.5l4-4 4 4"/>');
+/** Raise and Lower pressed twice: a second arrow. */
+export const ICON_LOWER2 = svg('<path d="M4 3.5l4 4 4-4M4 8.5l4 4 4-4"/>');
+export const ICON_RAISE2 = svg('<path d="M4 7.5l4-4 4 4M4 12.5l4-4 4 4"/>');
 /** Ma'at's feather: the neutral weight. */
 export const ICON_FEATHER = svg('<path d="M13 3C7.5 3.5 4.5 7 4 13"/><path d="M13 3c.3 4.5-2.8 8-7.2 8.6M7.5 8.5l3-.5M6 11l3.5-.4"/>');
 export const ICON_PIN = svg('<path d="M9.8 2.2l4 4-1.6.5-2.6 2.6.3 3.1-1.2 1.2L5.4 10.3 2.2 13.8M5.4 10.3L2.3 7.2l1.2-1.2 3.1.3 2.6-2.6z"/>');
@@ -68,6 +71,13 @@ export const LEVEL_ICONS = {
   raise: ICON_RAISE,
   pin: ICON_PIN,
 } as const;
+
+/** A ranking's icon: Raise and Lower show a second arrow once pressed twice. */
+export function levelIcon(level: Level, steps: 1 | 2 = 1): string {
+  if (steps === 2 && level === 'raise') return ICON_RAISE2;
+  if (steps === 2 && level === 'lower') return ICON_LOWER2;
+  return LEVEL_ICONS[level];
+}
 
 /** The five rankings, in the user's language. */
 export const LEVEL_LABELS = {

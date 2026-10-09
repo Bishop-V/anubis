@@ -7,6 +7,12 @@ const weigh = (url: string, lists: ReturnType<typeof list>[], prefs: Record<stri
   evaluate({ url, title }, lists, prefs);
 
 describe('evaluate', () => {
+  it('moves a site twice as far for a boost or downrank of ten, from your own list', () => {
+    const me = list('me', '$site=a.com,boost=10\n$site=b.com,downrank=10\n$site=c.com,boost=5\n$site=d.com,boost=3', true);
+    const at = (host: string) => weigh(`https://${host}/`, [me]).score;
+    expect([at('a.com'), at('b.com'), at('c.com'), at('d.com')]).toEqual([2 * PERSONAL_STRENGTH, -2 * PERSONAL_STRENGTH, PERSONAL_STRENGTH, PERSONAL_STRENGTH]);
+  });
+
   it('matches a site and its subdomains, with or without www', () => {
     const l = list('l', '$discard,site=fandom.com');
     expect(weigh('https://harrypotter.fandom.com/wiki/x', [l]).hidden).toBe(true);

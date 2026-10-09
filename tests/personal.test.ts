@@ -26,6 +26,14 @@ $site=fandom.com,discard
 `;
 
 describe('personal list edits', () => {
+  it('writes and reads a Raise or Lower pressed twice', () => {
+    const text = setSiteLevel(setSiteLevel('', 'a.com', 'raise2'), 'b.com', 'lower2');
+    expect(text).toContain('$site=a.com,boost=10');
+    expect(text).toContain('$site=b.com,downrank=10');
+    expect(listSites(text).map((e) => e.level)).toEqual(['raise2', 'lower2']);
+    expect(setSiteLevel('', 'c.com', 'raise')).toContain('boost=5');
+  });
+
   it('lists simple site lines', () => {
     expect(listSites(base)).toEqual([{ site: 'fandom.com', level: 'hide', tags: [], line: 7 }]);
   });
