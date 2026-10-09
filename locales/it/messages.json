@@ -1415,9 +1415,6 @@
   "listFormatDomains": {
     "message": "lista di domini"
   },
-  "timeNever": {
-    "message": "mai"
-  },
   "timeJustNow": {
     "message": "proprio ora"
   },

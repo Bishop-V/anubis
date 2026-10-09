@@ -444,7 +444,6 @@
   "listFormatGoggle": "Brave Goggle",
   "listFormatUblacklist": "uBlacklist ruleset",
   "listFormatDomains": "domain list",
-  "timeNever": "never",
   "timeJustNow": "just now",
   "tagsIntro": "Lists label results. You decide what each label does: follow the list, only show it, highlight it, or pin, raise, lower, or hide what carries it. Lists that use the same tag name share it.",
   "tagActionList": "Follow the lists",

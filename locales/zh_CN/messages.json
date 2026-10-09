@@ -1253,9 +1253,6 @@
   "listFormatDomains": {
     "message": "域名列表"
   },
-  "timeNever": {
-    "message": "从未"
-  },
   "timeJustNow": {
     "message": "刚刚"
   },
@@ -1305,7 +1302,7 @@
     "message": "$1这些网站会在你的搜索中被隐藏。"
   },
   "tagEffectOneList": {
-    "message": "$1$2 $3。"
+    "message": "$1列表 $2 $3。"
   },
   "tagEffectLists": {
     "message": "$1这些列表$2。"

@@ -1253,9 +1253,6 @@
   "listFormatDomains": {
     "message": "도메인 목록"
   },
-  "timeNever": {
-    "message": "없음"
-  },
   "timeJustNow": {
     "message": "방금"
   },

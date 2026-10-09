@@ -1334,9 +1334,6 @@
   "listFormatDomains": {
     "message": "ডোমেন তালিকা"
   },
-  "timeNever": {
-    "message": "কখনও না"
-  },
   "timeJustNow": {
     "message": "এইমাত্র"
   },

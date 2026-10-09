@@ -1253,9 +1253,6 @@
   "listFormatDomains": {
     "message": "daftar domain"
   },
-  "timeNever": {
-    "message": "tidak pernah"
-  },
   "timeJustNow": {
     "message": "baru saja"
   },

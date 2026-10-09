@@ -41,7 +41,6 @@ let pluralRules: Intl.PluralRules | undefined;
 
 /** How long ago a time was, in the language's words: "just now", "5 minutes ago", "2 days ago". */
 export function tAgo(ms: number, now = Date.now()): string {
-  if (!ms) return t('timeNever');
   const s = Math.round((now - ms) / 1000);
   if (s < 60) return t('timeJustNow');
   const format = new Intl.RelativeTimeFormat(lang(), { numeric: 'auto' });
@@ -108,8 +107,12 @@ export function tParts<T>(key: MessageKey, ...items: (string | T)[]): (string | 
     .map((part) => (part.length === 1 && part >= '\uE000' && part <= '\uE0FF' ? items[part.charCodeAt(0) - SLOT.charCodeAt(0)]! : part));
 }
 
-/** The interface's direction, from the browser's own message: "rtl" for Arabic, Urdu, Hebrew… */
-export const dir = (): 'ltr' | 'rtl' => (getMessage('@@bidi_dir', []) === 'rtl' ? 'rtl' : 'ltr');
+// Languages written right to left. Chrome's own `@@bidi_dir` said "ltr" for Arabic, so
+// the direction follows the language the messages are in.
+const RTL = new Set(['ar', 'ckb', 'dv', 'fa', 'he', 'ps', 'sd', 'ug', 'ur', 'yi']);
+
+/** The interface's direction: "rtl" for Arabic, Urdu, Hebrew… */
+export const dir = (): 'ltr' | 'rtl' => (RTL.has(lang().split('-')[0]!) ? 'rtl' : 'ltr');
 
 /**
  * Fill a static page's text from messages: `data-i18n` sets the text, and

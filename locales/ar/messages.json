@@ -1658,9 +1658,6 @@
   "listFormatDomains": {
     "message": "قائمة نطاقات"
   },
-  "timeNever": {
-    "message": "لم يحدث بعد"
-  },
   "timeJustNow": {
     "message": "الآن"
   },
