@@ -5,6 +5,8 @@ import { andList } from '@/utils/dom';
 import { t, tJoin, tList, tn, tParts } from '@/utils/i18n';
 import type { SiteChange } from '@/utils/personal';
 import { changeSentence } from '@/utils/summary';
+import { hiddenReason } from '@/entrypoints/content/ui';
+import type { Verdict } from '@/utils/matcher';
 import { fakeBrowser } from 'wxt/testing/fake-browser';
 import { parseList } from '@/utils/listformat';
 import { compileList, evaluate } from '@/utils/matcher';
@@ -144,6 +146,23 @@ describe('in another language', () => {
     try {
       const code = { el: 'code' };
       expect(tParts('publishStepIssues', code)).toEqual(['[Add ', code, ' so people can suggest sites to your list from the menu on each result.]']);
+    } finally {
+      installEnglish();
+    }
+  });
+
+  it('agrees the hidden line’s words with how many results it stands for', () => {
+    // "fandom.com and 2 more" took the singular, so French read "masqué" for three results.
+    const tagged = { hiddenBy: { kind: 'tag', name: 'slop' } } as Verdict;
+    const tags = new Map([['slop', { label: 'AI slop' }]]) as unknown as Parameters<typeof hiddenReason>[1];
+    expect(hiddenReason(tagged, tags)).toBe('hidden because it’s tagged “AI slop”');
+    expect(hiddenReason(tagged, tags, 3)).toBe('hidden because they’re tagged “AI slop”');
+    const fr = translation('fr').messages;
+    fakeBrowser.i18n.getMessage = ((key: string, subs?: string[]) =>
+      fr[key]?.message.replace(/\$(\d)/g, (_, n: string) => subs?.[Number(n) - 1] ?? '') ?? '') as typeof fakeBrowser.i18n.getMessage;
+    try {
+      expect(hiddenReason({ hiddenBy: { kind: 'personal', name: 'mine' } } as Verdict, tags, 3)).toBe('masqués par votre liste');
+      expect(hiddenReason({} as Verdict, tags, 1)).toBe('masqué');
     } finally {
       installEnglish();
     }
