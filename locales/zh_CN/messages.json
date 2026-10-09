@@ -1,0 +1,1598 @@
+{
+  "langCode": {
+    "message": "zh_CN"
+  },
+  "machineTranslatedTitle": {
+    "message": "机器翻译。"
+  },
+  "machineTranslatedNote": {
+    "message": "Anubis 由机器翻译成你的浏览器语言，这份翻译并未获得完整支持：部分内容可能有误或不清楚，请谨慎使用。如需查看英文版 Anubis，请将浏览器语言设为英语。"
+  },
+  "machineTranslatedShort": {
+    "message": "请谨慎使用。"
+  },
+  "machineTranslatedHelp": {
+    "message": "帮助改进翻译"
+  },
+  "extDescription": {
+    "message": "衡量你的搜索结果：用人人都能发布的列表，给网站加标签、重新排序和隐藏网站。"
+  },
+  "commandToggleEnabled": {
+    "message": "开启或关闭 Anubis"
+  },
+  "commandToggleHidden": {
+    "message": "显示已隐藏的结果，或重新隐藏它们"
+  },
+  "levelHide": {
+    "message": "隐藏"
+  },
+  "levelLower": {
+    "message": "降低"
+  },
+  "levelNormal": {
+    "message": "正常"
+  },
+  "levelRaise": {
+    "message": "提升"
+  },
+  "levelPin": {
+    "message": "置顶"
+  },
+  "chipHidden": {
+    "message": "已隐藏"
+  },
+  "chipLowered": {
+    "message": "已降低"
+  },
+  "chipRaised": {
+    "message": "已提升"
+  },
+  "chipPinned": {
+    "message": "已置顶"
+  },
+  "popupOn": {
+    "message": "已在你的搜索中开启"
+  },
+  "popupOff": {
+    "message": "已关闭。搜索页面保持原样。"
+  },
+  "popupOnLabel": {
+    "message": "开启 Anubis"
+  },
+  "popupAddSite": {
+    "message": "添加网站"
+  },
+  "popupRanking": {
+    "message": "排名"
+  },
+  "popupNoSites": {
+    "message": "还没有。在任意搜索结果上使用 ⚖ 按钮，即可为它的网站设定排名。"
+  },
+  "popupKeptNormal": {
+    "message": "保持正常"
+  },
+  "popupListsAndTags": {
+    "message": "$1，$2"
+  },
+  "popupListCount_other": {
+    "message": "$1 个列表"
+  },
+  "popupTagCount_other": {
+    "message": "$1 个标签"
+  },
+  "popupRankingFor": {
+    "message": "$1 的排名"
+  },
+  "popupRankHide": {
+    "message": "在搜索结果中隐藏 $1"
+  },
+  "popupRankLower": {
+    "message": "在搜索结果中降低 $1 的排名"
+  },
+  "popupRankNormal": {
+    "message": "让 $1 在搜索结果中正常排名"
+  },
+  "popupRankRaise": {
+    "message": "在搜索结果中提升 $1 的排名"
+  },
+  "popupRankPin": {
+    "message": "在搜索结果中将 $1 置顶"
+  },
+  "popupYourSites": {
+    "message": "你的网站"
+  },
+  "popupSeeAll": {
+    "message": "查看全部 $1 个"
+  },
+  "popupOpenLists": {
+    "message": "打开列表设置"
+  },
+  "popupShowOnly": {
+    "message": "仅显示"
+  },
+  "popupTags": {
+    "message": "标签"
+  },
+  "popupSite": {
+    "message": "网站"
+  },
+  "popupSiteChoice": {
+    "message": "选择这项设置适用于网站的多大范围"
+  },
+  "popupHintAllow": {
+    "message": "正常，无论你订阅的列表怎么说。"
+  },
+  "popupHintMine": {
+    "message": "你对 $1 的选择，适用于每次搜索。"
+  },
+  "popupHintMineTags": {
+    "message": "你对 $1 的选择，适用于每次搜索，并叠加你的标签设置。"
+  },
+  "popupHintLists": {
+    "message": "$1（由 $2 决定）。选择一项即可自己决定。"
+  },
+  "popupHintNone": {
+    "message": "你的选择适用于每次搜索。"
+  },
+  "popupYourTagSettings": {
+    "message": "你的标签设置"
+  },
+  "tagMarkRaise": {
+    "message": "提升此结果"
+  },
+  "tagMarkLower": {
+    "message": "降低此结果"
+  },
+  "tagMarkPin": {
+    "message": "置顶此结果"
+  },
+  "tagMarkHide": {
+    "message": "隐藏此结果"
+  },
+  "tagMarkSpoken": {
+    "message": "（$1）"
+  },
+  "tagListsPickerHint": {
+    "message": "添加其中的标签只会更改你的列表。"
+  },
+  "tagFromSource": {
+    "message": "来自 $1"
+  },
+  "popupTagFrom": {
+    "message": "来自 $1"
+  },
+  "popupTagSite": {
+    "message": "给 $1 加上“$2”标签"
+  },
+  "popupUntag": {
+    "message": "移除 $1 的标签"
+  },
+  "popupTagInvalid": {
+    "message": "请输入至少包含一个字母或数字的标签名称。"
+  },
+  "popupTagAlreadySet": {
+    "message": "此网站已有这个标签。"
+  },
+  "tagSiteReason": {
+    "message": "此网站为什么适合“$1”标签（可选）"
+  },
+  "popupThisPage": {
+    "message": "此页面"
+  },
+  "popupThisPageOn": {
+    "message": "$1 上的此页面"
+  },
+  "popupNotSearch": {
+    "message": "在 Google、DuckDuckGo、Bing、Brave 或其他受支持的搜索引擎上搜索，即可查看 Anubis 做了哪些更改。"
+  },
+  "showHidden": {
+    "message": "显示已隐藏"
+  },
+  "hideAgain": {
+    "message": "重新隐藏"
+  },
+  "loadMore": {
+    "message": "加载更多结果"
+  },
+  "loadMoreTitle": {
+    "message": "将下一页结果添加到此页，并一起排序"
+  },
+  "loading": {
+    "message": "正在加载…"
+  },
+  "loadMoreEmpty": {
+    "message": "$1 没有返回第 $2 页的结果。它可能要你先确认自己不是机器人。"
+  },
+  "loadMoreRepeat": {
+    "message": "$1 在第 $2 页再次返回了相同的结果，因此没有更多结果了。"
+  },
+  "loadMoreBusy": {
+    "message": "$1 在第 $2 页之前要求 Anubis 放慢速度。请过一分钟再试。"
+  },
+  "loadMoreRefused": {
+    "message": "$1 拒绝发送第 $2 页。"
+  },
+  "loadMoreSlow": {
+    "message": "$1 发送第 $2 页的时间太长。"
+  },
+  "loadMoreFailed": {
+    "message": "来自 $1 的第 $2 页未能加载。"
+  },
+  "loadMoreOpen": {
+    "message": "打开第 $1 页"
+  },
+  "loadMoreOpenTitle": {
+    "message": "在新标签页中打开，查看 $1 返回了什么"
+  },
+  "chipFromPage": {
+    "message": "来自第 $1 页"
+  },
+  "chipFromPageTitle": {
+    "message": "由“加载更多结果”添加"
+  },
+  "barHidden_other": {
+    "message": "已隐藏"
+  },
+  "barHiddenByYou_other": {
+    "message": "已被你的列表隐藏"
+  },
+  "barHiddenByTag_other": {
+    "message": "已隐藏，因为带有“$2”标签"
+  },
+  "barHiddenByLens_other": {
+    "message": "已隐藏，因为不在 $2 之中"
+  },
+  "barHiddenByList_other": {
+    "message": "已被 $2 隐藏"
+  },
+  "menuWhyHeading": {
+    "message": "原因"
+  },
+  "menuNewTagPlaceholder": {
+    "message": "新标签"
+  },
+  "menuNewTagLabel": {
+    "message": "新标签名称"
+  },
+  "menuAddTagButton": {
+    "message": "添加标签"
+  },
+  "menuSavedNote": {
+    "message": "已保存在你的列表中。"
+  },
+  "menuCloseLabel": {
+    "message": "关闭"
+  },
+  "anubisSettings": {
+    "message": "Anubis 设置"
+  },
+  "help": {
+    "message": "帮助"
+  },
+  "helpTitle": {
+    "message": "打开 Wiki"
+  },
+  "reportProblem": {
+    "message": "报告问题"
+  },
+  "reportProblemTitle": {
+    "message": "在 GitHub 上提交错误报告，并自动填入 Anubis 的版本和你的浏览器"
+  },
+  "summaryShowAll": {
+    "message": "显示全部"
+  },
+  "summaryFilterLabel": {
+    "message": "仅显示带有以下标签的结果"
+  },
+  "summaryFilterOn": {
+    "message": "仅显示带有“$1”标签的结果"
+  },
+  "summaryFilterOff": {
+    "message": "显示全部结果"
+  },
+  "summaryPinned": {
+    "message": "置顶了 $1 个"
+  },
+  "summaryRaised": {
+    "message": "提升了 $1 个"
+  },
+  "summaryLowered": {
+    "message": "降低了 $1 个"
+  },
+  "summaryHid": {
+    "message": "隐藏了 $1 个"
+  },
+  "summaryActed": {
+    "message": "Anubis 在 $2中$1。"
+  },
+  "summaryResults_other": {
+    "message": "$1 个结果"
+  },
+  "summaryResultsPages_other": {
+    "message": "$2 页的 $1 个结果"
+  },
+  "summaryAlsoRemoved": {
+    "message": "它还移除了 $1。"
+  },
+  "summaryRemovedOnly": {
+    "message": "Anubis 移除了 $1。"
+  },
+  "summaryShortActed": {
+    "message": "Anubis 更改了 $2中的 $1 个。"
+  },
+  "summaryShortActedRemoved": {
+    "message": "Anubis 更改了 $2中的 $1 个，并清理了页面。"
+  },
+  "summaryShortRemoved": {
+    "message": "Anubis 清理了页面。"
+  },
+  "summaryDetails": {
+    "message": "详情"
+  },
+  "summaryFewerDetails": {
+    "message": "收起详情"
+  },
+  "summaryUnchanged_other": {
+    "message": "Anubis 未改动这 $1 个结果。"
+  },
+  "summaryUnchangedPages": {
+    "message": "Anubis 未改动这 $2 页的 $1 个结果。"
+  },
+  "summaryFiltered_other": {
+    "message": "仅显示“$2”：$1 个结果中的 $3 个。"
+  },
+  "summaryRemovedAi_other": {
+    "message": "$1 个 AI 回答"
+  },
+  "summaryRemovedVideos_other": {
+    "message": "$1 个视频面板"
+  },
+  "summaryRemovedQuestions_other": {
+    "message": "$1 个问题列表"
+  },
+  "summaryRemovedDiscussions_other": {
+    "message": "$1 个讨论面板"
+  },
+  "summaryRemovedNews_other": {
+    "message": "$1 个新闻面板"
+  },
+  "summaryRemovedImages_other": {
+    "message": "$1 个图片面板"
+  },
+  "summaryRemovedRelated_other": {
+    "message": "$1 个相关搜索列表"
+  },
+  "summaryRemovedElsewhere_other": {
+    "message": "$1 排其他搜索引擎按钮"
+  },
+  "summaryRemovedAdRequests_other": {
+    "message": "$1 个允许广告的请求"
+  },
+  "withShortcut": {
+    "message": "$1（$2）"
+  },
+  "toolbarOff": {
+    "message": "Anubis 已关闭"
+  },
+  "weighLabel": {
+    "message": "隐藏 $1、设定其排名或给它加标签"
+  },
+  "weighLabelRanked": {
+    "message": "隐藏 $1、设定其排名或给它加标签（$2）"
+  },
+  "hiddenShow": {
+    "message": "显示"
+  },
+  "hiddenShowSite": {
+    "message": "显示 $1"
+  },
+  "hiddenMore_other": {
+    "message": "及另外 $1 个"
+  },
+  "summaryChangedHide": {
+    "message": "已隐藏 $1。"
+  },
+  "summaryChangedLower": {
+    "message": "已降低 $1 的排名。"
+  },
+  "summaryChangedRaise": {
+    "message": "已提升 $1 的排名。"
+  },
+  "summaryChangedPin": {
+    "message": "已将 $1 置顶。"
+  },
+  "summaryChangedAllow": {
+    "message": "已将 $1 设为正常。"
+  },
+  "summaryChangedNormal": {
+    "message": "已清除你对 $1 设定的排名。"
+  },
+  "summaryChangedTagOn": {
+    "message": "已给 $1 加上“$2”标签。"
+  },
+  "summaryChangedTagOff": {
+    "message": "已从 $1 移除“$2”标签。"
+  },
+  "summaryChangedSite": {
+    "message": "已在你的列表中更改 $1。"
+  },
+  "summaryUndo": {
+    "message": "撤销"
+  },
+  "menuSuggest": {
+    "message": "应该收录到列表中吗？推荐给 $1。"
+  },
+  "menuSuggestTitle": {
+    "message": "在 $2 的问题跟踪器上推荐 $1"
+  },
+  "menuReport": {
+    "message": "有误？报告给 $1。"
+  },
+  "menuMatchedRule": {
+    "message": "匹配的规则，第 $1 行"
+  },
+  "menuReportTitle": {
+    "message": "在 $1 的问题跟踪器上告诉它，它对此结果的判断有误"
+  },
+  "offerTitle": {
+    "message": "订阅 $1？"
+  },
+  "offerTrust": {
+    "message": "列表可以在你的结果中隐藏网站、为网站设定排名和给网站加标签。请只订阅你信任的列表。"
+  },
+  "offerPermission": {
+    "message": "随后你的浏览器会请求允许 Anubis 读取 $1，也就是列表所在的网站。"
+  },
+  "offerAlready": {
+    "message": "你已订阅 $1。"
+  },
+  "offerSubscribe": {
+    "message": "订阅"
+  },
+  "offerSubscribing": {
+    "message": "正在订阅…"
+  },
+  "offerCancel": {
+    "message": "取消"
+  },
+  "welcomeTitle": {
+    "message": "欢迎使用 Anubis"
+  },
+  "welcomeHeading": {
+    "message": "Anubis 已安装"
+  },
+  "welcomeIntro": {
+    "message": "它会按照你自己的选择和你订阅的列表，给搜索结果加标签、重新排序和隐藏。"
+  },
+  "welcomePinHeading": {
+    "message": "把它留在工具栏中"
+  },
+  "welcomePinWhy": {
+    "message": "它的工具栏按钮会显示 Anubis 在当前页面上做了什么，可以开启或关闭 Anubis，还能为你所在的网站设定排名。"
+  },
+  "welcomePinChrome": {
+    "message": "点击地址栏旁的“扩展程序”按钮（拼图图标），然后点击 Anubis 旁边的图钉。"
+  },
+  "welcomePinEdge": {
+    "message": "点击地址栏旁的“扩展”按钮（拼图图标），然后点击 Anubis 旁边的眼睛图标。"
+  },
+  "welcomePinOpera": {
+    "message": "点击地址栏旁的“扩展”按钮（立方体图标），然后点击 Anubis 旁边的图钉。"
+  },
+  "welcomePinFirefox": {
+    "message": "点击地址栏旁的“扩展”按钮（拼图图标），然后点击 Anubis 旁边的齿轮，并选择“固定到工具栏”。"
+  },
+  "welcomePinAndroid": {
+    "message": "Anubis 位于浏览器菜单的“扩展”下。"
+  },
+  "welcomePinned": {
+    "message": "Anubis 已在你的工具栏中。"
+  },
+  "welcomeSearchHeading": {
+    "message": "试着搜索一下"
+  },
+  "welcomeSearchHow": {
+    "message": "像平时一样搜索。要隐藏网站、为其设定排名或给它加标签，请将鼠标指向它的某个结果，然后点击 ⚖ 按钮。"
+  },
+  "welcomeSearchFor": {
+    "message": "搜索“$1”，查看你订阅的列表给出的标签："
+  },
+  "welcomeSearchOn": {
+    "message": "在 $2 上搜索“$1”"
+  },
+  "welcomeQuery": {
+    "message": "python list comprehension"
+  },
+  "welcomeListsHeading": {
+    "message": "你订阅的列表"
+  },
+  "welcomeListsIntro": {
+    "message": "列表会替你给网站加标签，或提升、降低、隐藏网站。你一开始订阅了这些："
+  },
+  "welcomeListsNone": {
+    "message": "列表会替你给网站加标签，或提升、降低、隐藏网站。你还没有订阅任何列表。"
+  },
+  "welcomeListsMore": {
+    "message": "你可以在设置中关闭这些列表，或查找更多列表。"
+  },
+  "welcomeListsOpen": {
+    "message": "打开列表设置"
+  },
+  "welcomeGuide": {
+    "message": "Wiki"
+  },
+  "welcomePrivacy": {
+    "message": "隐私"
+  },
+  "syncHeading": {
+    "message": "同步"
+  },
+  "syncIntro": {
+    "message": "在你的其他电脑和其他浏览器上使用你的列表和设置。"
+  },
+  "syncBrowserHeading": {
+    "message": "浏览器同步"
+  },
+  "syncFirefox": {
+    "message": "你的列表、设置、标签选择和订阅会保存在 Firefox 的同步存储中。当你登录了 Firefox，并在其同步设置中勾选了“附加组件”时，Firefox 会把它们复制到你的其他电脑上。它大约每 10 分钟同步一次，你也可以选择“立即同步”。"
+  },
+  "syncFirefoxAndroid": {
+    "message": "Android 版 Firefox 不会同步附加组件的数据，因此你的列表、设置、标签选择和订阅只保存在此设备上。如需同步，请在下方连接一个 WebDAV 服务器。"
+  },
+  "syncChrome": {
+    "message": "你的列表、设置、标签选择和订阅会保存在浏览器的同步存储中。当你登录了浏览器并开启了扩展程序同步时，浏览器会把它们复制到你的其他电脑上。"
+  },
+  "syncBrowserHelp": {
+    "message": "需要检查哪些浏览器设置"
+  },
+  "syncUsage": {
+    "message": "它们占用了同步空间 $2 KB 中的 $1 KB。"
+  },
+  "syncTooBig": {
+    "message": "你的列表太大，无法同步，因此只保存在此设备上。你的设置、标签选择和订阅仍会同步。"
+  },
+  "webdavHeading": {
+    "message": "在浏览器之间"
+  },
+  "webdavIntro": {
+    "message": "Firefox 和 Chrome 之间无法直接同步。要在两者之间共享，你可以在每个浏览器中连接同一个 WebDAV 存储。Koofr 和 InfiniCLOUD 提供免费套餐，Nextcloud 等自托管方案也可以使用。Anubis 会在其中保存一个文件 anubis-sync.json，并合并来自每个浏览器的更改。"
+  },
+  "webdavHelp": {
+    "message": "在哪里获取地址和密码"
+  },
+  "webdavAddress": {
+    "message": "地址"
+  },
+  "webdavAddressHint": {
+    "message": "服务的 WebDAV 地址，以 https:// 开头"
+  },
+  "listPermissionDenied": {
+    "message": "Anubis 需要读取 $1 的权限，才能更新此列表。"
+  },
+  "webdavUser": {
+    "message": "用户名"
+  },
+  "webdavPassword": {
+    "message": "密码"
+  },
+  "webdavPasswordHint": {
+    "message": "大多数服务会为应用单独提供一个密码。请使用那个密码。"
+  },
+  "webdavConnect": {
+    "message": "连接"
+  },
+  "webdavEncrypt": {
+    "message": "对同步文件进行端到端加密（推荐）"
+  },
+  "webdavEncryptionPassphrase": {
+    "message": "加密密码短语"
+  },
+  "webdavConfirmPassphrase": {
+    "message": "确认密码短语"
+  },
+  "webdavEncryptionHint": {
+    "message": "请在每个浏览器中使用同一个足够长、不与别处重复的密码短语（至少 12 个字符）。它只保存在此浏览器中，绝不会发送到服务器。如果你忘记了它，服务器上的副本将无法恢复。"
+  },
+  "webdavCorrectPassphrase": {
+    "message": "输入正确的加密密码短语"
+  },
+  "webdavCorrectPassphraseHint": {
+    "message": "请使用你在另一个浏览器中设置的同一个密码短语。它只保存在这里，绝不会发送到服务器。"
+  },
+  "webdavSavePassphrase": {
+    "message": "保存密码短语并同步"
+  },
+  "webdavChangePassphrase": {
+    "message": "更改加密密码短语"
+  },
+  "webdavChangePassphraseHint": {
+    "message": "Anubis 会先验证当前的密码短语，再更改服务器上的文件。请在其他每个浏览器下次同步之前，在其中输入新的密码短语。"
+  },
+  "webdavChangePassphraseHelp": {
+    "message": "更改后会发生什么"
+  },
+  "webdavEncryptionShort": {
+    "message": "请使用至少 12 个字符的加密密码短语。"
+  },
+  "webdavPassphraseMismatch": {
+    "message": "两次输入的密码短语不一致。"
+  },
+  "webdavEncrypted": {
+    "message": "同步文件已端到端加密。它的密码短语只保存在此浏览器中；服务器无法读取其内容。请在每个浏览器中使用同一个密码短语。如果你忘记了它，服务器上的副本将无法恢复。"
+  },
+  "webdavEncryptionPending": {
+    "message": "已在此处设置加密。下一次同步成功时，服务器上的副本将被加密。请在每个浏览器中使用同一个密码短语。"
+  },
+  "webdavEncryptionMissing": {
+    "message": "此浏览器还没有设置加密密码短语。要读取加密的文件，请使用与另一个浏览器相同的密码短语。未加密的同步文件可以被服务器的运营者读取。"
+  },
+  "webdavPrivacy": {
+    "message": "开启加密后，只有加密的数据会发送到此服务器；你的密码短语保存在这里，绝不会被发送。不开启加密时，服务器可以读取同步文件。你的 WebDAV 登录信息保存在这里，并会发送到此服务器用于登录。"
+  },
+  "webdavBadAddress": {
+    "message": "请输入服务的 WebDAV 地址，以 https:// 开头"
+  },
+  "webdavMissingLogin": {
+    "message": "还需要输入用户名和密码。"
+  },
+  "webdavDenied": {
+    "message": "Anubis 需要你的许可，才能将你的列表发送到 $1。"
+  },
+  "webdavConnected": {
+    "message": "正在以 $2 的身份与 $1 同步。"
+  },
+  "webdavWhen": {
+    "message": "你做出更改几秒钟后，更改就会发送到服务器。来自你其他浏览器的更改会在浏览器启动时和你搜索时获取，最多每 5 分钟一次。"
+  },
+  "webdavSyncing": {
+    "message": "正在同步…"
+  },
+  "webdavLastSync": {
+    "message": "上次同步：$1。"
+  },
+  "webdavLastTried": {
+    "message": "上次尝试：$1。"
+  },
+  "webdavSyncNow": {
+    "message": "立即同步"
+  },
+  "webdavDisconnect": {
+    "message": "断开连接"
+  },
+  "webdavDisconnected": {
+    "message": "已断开连接。文件仍留在服务器上，你的列表和设置仍留在这里。"
+  },
+  "webdavErrorAuth": {
+    "message": "服务器不接受此用户名或密码。许多服务在这里需要使用应用密码，而不是你平时用的密码。"
+  },
+  "webdavErrorForbidden": {
+    "message": "服务器不允许此账户在那里保存文件。"
+  },
+  "webdavErrorFolder": {
+    "message": "服务器上的这个地址没有文件夹。请检查地址。"
+  },
+  "webdavErrorPermission": {
+    "message": "Anubis 已不再拥有与 $1 同步的权限。点击“立即同步”即可重新允许。"
+  },
+  "webdavErrorNetwork": {
+    "message": "无法连接到 $1。请检查地址和你的网络连接。"
+  },
+  "webdavErrorFile": {
+    "message": "那里的 anubis-sync.json 文件不是 Anubis 能读取的文件，因此没有改动它。请使用其他文件夹。"
+  },
+  "webdavErrorNeedsPassphrase": {
+    "message": "此同步文件已加密。请输入它的密码短语；没有做任何更改。"
+  },
+  "webdavErrorWrongPassphrase": {
+    "message": "这个密码短语无法解密同步文件。请检查一下；服务器上的文件没有改动。"
+  },
+  "webdavErrorUnencrypted": {
+    "message": "此连接之前是加密的，但服务器上现在是一个未加密的同步文件。该文件没有改动。请先检查服务器上的文件，再重新同步。"
+  },
+  "webdavErrorChanged": {
+    "message": "同步文件在更改密码短语期间发生了变化，或者服务器无法防止同时编辑。没有覆盖任何内容。请再次同步，然后重试。"
+  },
+  "webdavErrorUnconfirmed": {
+    "message": "保存文件时与 $1 的连接中断了，因此 Anubis 无法确定它现在使用的是哪个密码短语。旧密码短语仍保存在这里。如果下次同步提示密码短语错误，请输入新的密码短语。"
+  },
+  "webdavErrorServer": {
+    "message": "服务器返回了错误（HTTP $1）。请稍后再试。"
+  },
+  "webdavErrorFailed": {
+    "message": "同步未完成。请重试。"
+  },
+  "appearanceHeading": {
+    "message": "外观"
+  },
+  "appearanceIntro": {
+    "message": "Anubis 在这里和搜索页面上的外观。"
+  },
+  "themeHeading": {
+    "message": "配色方案"
+  },
+  "themeHint": {
+    "message": "“自动”在这里和每个结果的菜单中跟随你的浏览器；对于 Anubis 添加到搜索页面上的其他内容，则跟随各个搜索引擎自己的浅色或深色模式。"
+  },
+  "paletteHeading": {
+    "message": "搜索页面上的颜色"
+  },
+  "paletteHint": {
+    "message": "“素色”会把 Anubis 在搜索页面上添加的所有内容都显示为灰色，不使用金色。标签将失去颜色，只能通过名称区分。设置和工具栏弹出窗口仍保持金色。"
+  },
+  "paletteGold": {
+    "message": "金色"
+  },
+  "palettePlain": {
+    "message": "素色"
+  },
+  "hideStyleHeading": {
+    "message": "已隐藏的结果"
+  },
+  "hideStyleHint": {
+    "message": "“移除”会把它们从页面上拿掉；结果上方的摘要会统计它们，“显示已隐藏”可以把它们找回来。“折叠”会为每一组连续的已隐藏结果留下一行细线。“淡化”会让它们变淡。"
+  },
+  "hideStyleRemove": {
+    "message": "移除"
+  },
+  "hideStyleCollapse": {
+    "message": "折叠"
+  },
+  "hideStyleDim": {
+    "message": "淡化"
+  },
+  "rerankHeading": {
+    "message": "重新排序结果"
+  },
+  "rerankHint": {
+    "message": "将提升和置顶的结果上移，将降低的结果下移，就像 Brave Goggle 一样。"
+  },
+  "rerankHelp": {
+    "message": "重新排序的原理"
+  },
+  "deeperAuto": {
+    "message": "自动加载更多结果"
+  },
+  "deeperAutoHint": {
+    "message": "将后面几页的结果添加到第一页，并一起排序，这样你在第 3 页置顶的网站也会升到最上方。结果上方的“加载更多结果”会在你需要时做同样的事。输入要添加的页数，从 0（关闭）到 $1。"
+  },
+  "deeperHelp": {
+    "message": "加载更多结果的原理"
+  },
+  "deeperUnit": {
+    "message": "页"
+  },
+  "deeperTipOff": {
+    "message": "关闭：只有当你点击“加载更多结果”时，才会加载更多结果。"
+  },
+  "deeperTipTime_other": {
+    "message": "每次搜索约增加 $1 秒。"
+  },
+  "deeperTipFew": {
+    "message": "$1搜索引擎很少会介意几页。"
+  },
+  "deeperTipSome": {
+    "message": "$1有些搜索引擎可能会开始要求你确认自己不是机器人。"
+  },
+  "deeperTipMany": {
+    "message": "$1加载这么多页后，Google 和 Bing 常会要求你确认自己不是机器人。有些搜索引擎在此之前就没有更多页面了。"
+  },
+  "chipsHeading": {
+    "message": "结果下方的标签"
+  },
+  "chipsHint": {
+    "message": "在每个结果的标题下方显示标签和排名。"
+  },
+  "summaryHeading": {
+    "message": "摘要"
+  },
+  "summaryHint": {
+    "message": "在结果上方用一行摘要说明 Anubis 更改了什么。"
+  },
+  "enabledHeading": {
+    "message": "Anubis 已开启"
+  },
+  "enabledHint": {
+    "message": "关闭此项即可让搜索页面保持原样，无需卸载。"
+  },
+  "enginesHeading": {
+    "message": "搜索引擎"
+  },
+  "enginesIntro": {
+    "message": "Anubis 适用于这些搜索引擎的网页结果。它会尽可能根据页面结构识别结果，因此小的改版不会让它失效。"
+  },
+  "enginesTrouble": {
+    "message": "Anubis 在搜索页面上没有起作用？"
+  },
+  "enginesTroubleHelp": {
+    "message": "需要检查什么"
+  },
+  "shareHeading": {
+    "message": "备份、导入和分享"
+  },
+  "shareIntro": {
+    "message": "保留所有内容的副本，从其他工具迁移你的网站，或发布你的列表供他人订阅。"
+  },
+  "publishHeading": {
+    "message": "发布你的列表"
+  },
+  "publishIntro": {
+    "message": "无需服务器：公开的 git 仓库就是数据库，大家通过拉取请求来贡献。"
+  },
+  "publishHelp": {
+    "message": "如何发布列表"
+  },
+  "publishStepDownload": {
+    "message": "在下方下载你的列表。设置文件顶部的 $1、$2 和 $3 行。"
+  },
+  "publishStepRepository": {
+    "message": "创建一个公开的 GitHub 仓库（或 gist），并添加该文件，例如 $1。"
+  },
+  "publishStepIssues": {
+    "message": "添加 $1，让大家可以通过每个结果上的菜单向你的列表推荐网站。"
+  },
+  "publishStepShare": {
+    "message": "分享文件的链接。其他人把它粘贴到“列表”→“添加列表”中即可。"
+  },
+  "publishStepDirectory": {
+    "message": "想让所有人都能在“更多列表”中看到它？提交一个拉取请求，把它添加到 $1。"
+  },
+  "publishDownload": {
+    "message": "下载我的列表"
+  },
+  "publishFormat": {
+    "message": "列表格式"
+  },
+  "importHeading": {
+    "message": "导入网站"
+  },
+  "importIntro": {
+    "message": "从 uBlacklist 或 HOHSER 迁移过来？在这里粘贴你的规则或导出内容，这些网站就会加入你的列表。已隐藏的仍然隐藏，HOHSER 的部分隐藏会变为“降低”，高亮颜色会变为带高亮的标签。"
+  },
+  "importHelp": {
+    "message": "各工具的规则会变成什么"
+  },
+  "importPlaceholder": {
+    "message": "粘贴 uBlacklist 规则、HOHSER 导出内容、Goggle，或每行一个域名"
+  },
+  "importLabel": {
+    "message": "要导入的网站"
+  },
+  "importButton": {
+    "message": "导入"
+  },
+  "importChooseFile": {
+    "message": "选择文件"
+  },
+  "importSourceHohser": {
+    "message": "HOHSER 导出内容"
+  },
+  "importSourceUblacklist": {
+    "message": "uBlacklist 规则"
+  },
+  "importSourceGoggle": {
+    "message": "Goggle"
+  },
+  "importSourceAnubis": {
+    "message": "Anubis 列表"
+  },
+  "importSourceDomains": {
+    "message": "域名列表"
+  },
+  "importRead_other": {
+    "message": "识别为：$2。已添加 $1 个网站，已更新 $3 个。"
+  },
+  "importSkipped_other": {
+    "message": "有 $1 条规则因包含地址模式或不支持的语法而被略过；如需保留它们，请订阅原始列表。"
+  },
+  "importFailed": {
+    "message": "无法导入：$1"
+  },
+  "backupHeading": {
+    "message": "备份"
+  },
+  "backupIntro": {
+    "message": "所有内容都在一个文件中：设置、标签选择、订阅和你的列表。"
+  },
+  "backupExport": {
+    "message": "导出备份"
+  },
+  "backupRestore": {
+    "message": "恢复备份"
+  },
+  "backupRestored": {
+    "message": "备份已恢复。"
+  },
+  "backupRestoreFailed": {
+    "message": "无法恢复：$1"
+  },
+  "resetButton": {
+    "message": "重置设置"
+  },
+  "resetDone": {
+    "message": "设置、标签和订阅已重置。你的列表已保留。"
+  },
+  "settingsSections": {
+    "message": "设置分区"
+  },
+  "settingsPageTitle": {
+    "message": "$1 – Anubis"
+  },
+  "settingsBrandTitle": {
+    "message": "打开 Anubis Wiki"
+  },
+  "settingsTagline": {
+    "message": "隐藏搜索结果、设定排名、加标签"
+  },
+  "settingsSource": {
+    "message": "GitHub 上的源代码"
+  },
+  "sitesHeading": {
+    "message": "你的网站"
+  },
+  "sitesHelp": {
+    "message": "排名的原理"
+  },
+  "tagsHeading": {
+    "message": "标签"
+  },
+  "tagsHelp": {
+    "message": "标签的原理"
+  },
+  "listsHeading": {
+    "message": "列表"
+  },
+  "listsHelp": {
+    "message": "列表的原理"
+  },
+  "cleanupHeading": {
+    "message": "移除面板"
+  },
+  "cleanupHelp": {
+    "message": "移除面板的原理"
+  },
+  "appearanceHelp": {
+    "message": "关于已隐藏的结果"
+  },
+  "enginesHelp": {
+    "message": "支持哪些搜索引擎"
+  },
+  "syncHelp": {
+    "message": "同步的原理"
+  },
+  "shareHelp": {
+    "message": "从其他工具迁移"
+  },
+  "cleanupIntro": {
+    "message": "Anubis 可以移除搜索页面上不属于结果的面板。为每一种你不想看到的面板打开开关。结果上方的“显示已隐藏”可以在那次搜索中把它们找回来。"
+  },
+  "cleanupEverySearch": {
+    "message": "在每次搜索中"
+  },
+  "cleanupEverySearchHint": {
+    "message": "开启表示 Anubis 会移除它。关闭则把它留在页面上。"
+  },
+  "cleanupStillShows": {
+    "message": "如果面板仍然显示"
+  },
+  "cleanupAll": {
+    "message": "全部"
+  },
+  "cleanupAllHint": {
+    "message": "开启或关闭此分区中的所有开关。"
+  },
+  "cleanupOnGoogle": {
+    "message": "在 Google 上"
+  },
+  "cleanupWebTab": {
+    "message": "始终打开“网页”标签页"
+  },
+  "cleanupWebTabHint": {
+    "message": "将每次 Google 搜索都转到它的“网页”标签页：只有普通链接，没有 AI 概览、视频或其他面板，连 Anubis 无法识别的面板也没有。如果某次搜索想离开它，请选择结果上方的“全部”。"
+  },
+  "cleanupAi": {
+    "message": "AI 回答"
+  },
+  "cleanupAiHint": {
+    "message": "Google 的 AI 概览和 AI 模式标签页、DuckDuckGo 的 AI 辅助回答和 Duck.ai、Bing 的 AI 回答，以及 Brave 的 AI 回答。"
+  },
+  "cleanupVideos": {
+    "message": "视频面板"
+  },
+  "cleanupVideosHint": {
+    "message": "结果之间的视频和短视频面板。"
+  },
+  "cleanupQuestions": {
+    "message": "相关问题"
+  },
+  "cleanupQuestionsHint": {
+    "message": "其他人提出的问题列表，答案可以展开。"
+  },
+  "cleanupDiscussions": {
+    "message": "讨论面板"
+  },
+  "cleanupDiscussionsHint": {
+    "message": "结果之间的论坛帖子面板，例如 Google 的“讨论和论坛”。结果中的论坛页面会保留。"
+  },
+  "cleanupNews": {
+    "message": "头条新闻"
+  },
+  "cleanupNewsHint": {
+    "message": "结果之间的新闻面板。"
+  },
+  "cleanupImages": {
+    "message": "图片行"
+  },
+  "cleanupImagesHint": {
+    "message": "结果之间成行的图片。“图片”标签页仍可正常使用。"
+  },
+  "cleanupRelated": {
+    "message": "相关搜索"
+  },
+  "cleanupRelatedHint": {
+    "message": "其他搜索的列表，通常位于页面底部。"
+  },
+  "cleanupElsewhere": {
+    "message": "其他搜索引擎"
+  },
+  "cleanupElsewhereHint": {
+    "message": "在其他搜索引擎上重复你的搜索的一排按钮，例如 Brave 的“Find elsewhere”。"
+  },
+  "cleanupAdRequests": {
+    "message": "允许广告的请求"
+  },
+  "cleanupAdRequestsHint": {
+    "message": "要求你关闭广告拦截器或允许广告的横幅，例如 Startpage 的“Block creepy ads, not private search”。"
+  },
+  "sitesIntro": {
+    "message": "你自己设定了排名或隐藏的网站。你的选择优先于你订阅的所有列表。在任意搜索结果上使用按钮，或在这里添加网站。"
+  },
+  "sitesEditAsText": {
+    "message": "以文本编辑"
+  },
+  "sitesBackToTable": {
+    "message": "返回表格"
+  },
+  "sitesTooBig": {
+    "message": "你的列表太大，无法通过浏览器同步，因此只保存在此设备上。请下载它以保留一份副本。"
+  },
+  "sitesAddPlaceholder": {
+    "message": "域名或网址，例如 fandom.com"
+  },
+  "sitesAdd": {
+    "message": "添加"
+  },
+  "sitesNotDomain": {
+    "message": "这看起来不像域名。"
+  },
+  "sitesAddHint": {
+    "message": "它适用于该网站及其所有子域名。"
+  },
+  "sitesAddHelp": {
+    "message": "选择网站的适用范围"
+  },
+  "sitesFilter_other": {
+    "message": "筛选 $1 个网站…"
+  },
+  "sitesFilterLabel": {
+    "message": "筛选网站"
+  },
+  "sitesAddTagTo": {
+    "message": "给 $1 添加标签"
+  },
+  "sitesKeptNormal": {
+    "message": "保持正常，无论你订阅的列表怎么说"
+  },
+  "sitesRemoveTag": {
+    "message": "从 $2 移除“$1”"
+  },
+  "sitesForget": {
+    "message": "移除 $1"
+  },
+  "sitesFirst500": {
+    "message": "仅显示前 500 个。使用筛选查找其余网站。"
+  },
+  "sitesNone": {
+    "message": "还没有网站。在上方添加一个，或在搜索结果上使用按钮。"
+  },
+  "sitesTextLabel": {
+    "message": "你的列表（文本）"
+  },
+  "sitesTextIntro": {
+    "message": "以 Anubis 列表格式显示的你的列表：Brave Goggles 语法加上标签。它正是你会发布的那个文件。表格无法显示的行会按原样保留。"
+  },
+  "sitesTextReadable": {
+    "message": "$1和 $2，全部可读。"
+  },
+  "listInstructions_other": {
+    "message": "$1 条指令"
+  },
+  "listErrorLine": {
+    "message": "第 $1 行：$2"
+  },
+  "sitesSave": {
+    "message": "保存"
+  },
+  "sitesFormatReference": {
+    "message": "格式参考"
+  },
+  "listsIntro": {
+    "message": "订阅可以给网站加标签、重新排序或隐藏网站的列表。GitHub、GitLab、Codeberg 或 gist 上的任何文本文件都可以：Anubis 列表、Brave Goggles、uBlacklist 规则集和普通域名列表。"
+  },
+  "listsUpdateAll": {
+    "message": "全部更新"
+  },
+  "listsUpdating": {
+    "message": "正在更新…"
+  },
+  "listsAllChecked": {
+    "message": "已检查所有列表的更新。"
+  },
+  "listsAddHeading": {
+    "message": "添加列表"
+  },
+  "listsAddHint": {
+    "message": "粘贴文件的链接。GitHub 页面、gist 或 Brave Goggle 的链接也可以。"
+  },
+  "listsAddHelp": {
+    "message": "支持哪些列表"
+  },
+  "listsUrlLabel": {
+    "message": "列表网址"
+  },
+  "listsNone": {
+    "message": "还没有列表。从下方选择一些。"
+  },
+  "listsMoreHeading": {
+    "message": "更多列表"
+  },
+  "listsMoreIntro": {
+    "message": "来自 Anubis 目录和更广泛的社区。"
+  },
+  "listsShare": {
+    "message": "做了一个值得分享的列表？向 $1 提交拉取请求，把它添加到目录中。"
+  },
+  "listsNeedHttps": {
+    "message": "列表必须通过 https 提供。"
+  },
+  "listsPermissionToDownload": {
+    "message": "Anubis 需要读取 $1 的权限，才能下载此列表。"
+  },
+  "listsSubscribed": {
+    "message": "已订阅 $1：$2和 $3。"
+  },
+  "listsSubscribedBundled": {
+    "message": "已订阅 $1（在能够更新之前，先使用 Anubis 自带的副本）。"
+  },
+  "listsSubscribeFailed": {
+    "message": "无法订阅：$1"
+  },
+  "listsUse": {
+    "message": "使用 $1"
+  },
+  "listsOn": {
+    "message": "开"
+  },
+  "listsOff": {
+    "message": "关"
+  },
+  "listsUpdateFailed": {
+    "message": "$1：$2"
+  },
+  "listsUpToDate": {
+    "message": "$1 已是最新。"
+  },
+  "listsFacts": {
+    "message": "$1。"
+  },
+  "listsLinks": {
+    "message": "$1"
+  },
+  "listsNotDownloaded": {
+    "message": "尚未下载"
+  },
+  "listsBy": {
+    "message": "作者 $1"
+  },
+  "listsBundledCopy": {
+    "message": "Anubis 自带的副本"
+  },
+  "listsUpdated": {
+    "message": "$1更新"
+  },
+  "listsHomepage": {
+    "message": "主页"
+  },
+  "listsSuggestChanges": {
+    "message": "建议更改"
+  },
+  "listsUsingBundled": {
+    "message": "在能够更新之前，先使用 Anubis 自带的副本（$1）。"
+  },
+  "listsLastUpdateFailed": {
+    "message": "上次更新失败：$1。"
+  },
+  "listsSkippedLines_other": {
+    "message": "跳过了 $1 行：Anubis 暂时还无法读取该语法。"
+  },
+  "listsUpdateNow": {
+    "message": "立即更新"
+  },
+  "listsUpdateOne": {
+    "message": "更新 $1"
+  },
+  "listsViewFile": {
+    "message": "查看文件"
+  },
+  "listsViewOne": {
+    "message": "查看 $1"
+  },
+  "listsUnsubscribe": {
+    "message": "取消订阅"
+  },
+  "listsUnsubscribeOne": {
+    "message": "取消订阅 $1"
+  },
+  "listLensTitle": {
+    "message": "滤镜会隐藏列表未提及的结果"
+  },
+  "listKindLens": {
+    "message": "滤镜"
+  },
+  "listKindBuiltin": {
+    "message": "内置"
+  },
+  "listFormatAnubis": {
+    "message": "Anubis 列表"
+  },
+  "listFormatGoggle": {
+    "message": "Brave Goggle"
+  },
+  "listFormatUblacklist": {
+    "message": "uBlacklist 规则集"
+  },
+  "listFormatDomains": {
+    "message": "域名列表"
+  },
+  "timeNever": {
+    "message": "从未"
+  },
+  "timeJustNow": {
+    "message": "刚刚"
+  },
+  "tagsIntro": {
+    "message": "列表会给结果加上标签。每个标签起什么作用由你决定：跟随列表、仅作标签、高亮显示，或者将带有它的结果置顶、提升、降低或隐藏。使用相同标签名称的列表会共用这个标签。"
+  },
+  "tagActionList": {
+    "message": "跟随列表"
+  },
+  "tagActionLabel": {
+    "message": "仅作标签"
+  },
+  "tagActionHighlight": {
+    "message": "高亮显示"
+  },
+  "tagActionFor": {
+    "message": "如何处理带有 $1 标签的结果"
+  },
+  "tagMarksNone": {
+    "message": "还没有网站带有此标签。"
+  },
+  "tagMarks": {
+    "message": "标记了$1。"
+  },
+  "tagMarksYours_other": {
+    "message": "你的 $1 个网站"
+  },
+  "tagMarksFromList_other": {
+    "message": "来自 $2 的 $1 个网站"
+  },
+  "tagEffectLabel": {
+    "message": "$1仅作标签：这些网站的排名保持不变。"
+  },
+  "tagEffectHighlight": {
+    "message": "$1这些网站会以标签的颜色高亮显示。"
+  },
+  "tagEffectRaise": {
+    "message": "$1这些网站会在你的搜索中被提升。"
+  },
+  "tagEffectLower": {
+    "message": "$1这些网站会在你的搜索中被降低。"
+  },
+  "tagEffectPin": {
+    "message": "$1这些网站会在你的搜索中被置顶。"
+  },
+  "tagEffectHide": {
+    "message": "$1这些网站会在你的搜索中被隐藏。"
+  },
+  "tagEffectOneList": {
+    "message": "$1$2 $3。"
+  },
+  "tagEffectLists": {
+    "message": "$1这些列表$2。"
+  },
+  "tagListRaises_other": {
+    "message": "提升其中 $1 个"
+  },
+  "tagListLowers_other": {
+    "message": "降低其中 $1 个"
+  },
+  "tagListHides_other": {
+    "message": "隐藏其中 $1 个"
+  },
+  "tagListsRaise_other": {
+    "message": "提升其中 $1 个"
+  },
+  "tagListsLower_other": {
+    "message": "降低其中 $1 个"
+  },
+  "tagListsHide_other": {
+    "message": "隐藏其中 $1 个"
+  },
+  "tagSitesToTag": {
+    "message": "要加上 $1 标签的网站"
+  },
+  "tagAddSite": {
+    "message": "添加网站"
+  },
+  "tagNotSite": {
+    "message": "“$1”看起来不像网站。"
+  },
+  "tagTypeSite": {
+    "message": "请输入一个网站，例如 fandom.com。"
+  },
+  "tagSiteNote": {
+    "message": "$1：$2"
+  },
+  "tagMoreSites_other": {
+    "message": "另外 $1 个"
+  },
+  "tagFromList": {
+    "message": "$1：$2。"
+  },
+  "tagName": {
+    "message": "标签名称"
+  },
+  "tagNameShort": {
+    "message": "名称"
+  },
+  "tagDescription": {
+    "message": "描述"
+  },
+  "tagDescriptionPlaceholder": {
+    "message": "它的含义（可选）"
+  },
+  "tagMeaning": {
+    "message": "$1 的含义"
+  },
+  "tagYourSites": {
+    "message": "你带有此标签的网站"
+  },
+  "tagNoSites": {
+    "message": "还没有。在这里添加一个，或在搜索结果上使用 ⚖ 按钮。"
+  },
+  "tagFromYourLists": {
+    "message": "来自你订阅的列表"
+  },
+  "tagColour": {
+    "message": "颜色"
+  },
+  "tagColourOf": {
+    "message": "$1 的颜色"
+  },
+  "tagShowUnder": {
+    "message": "在结果下方显示 $1"
+  },
+  "tagShowTitle": {
+    "message": "在结果下方显示此标签"
+  },
+  "tagEdit": {
+    "message": "编辑"
+  },
+  "tagDone": {
+    "message": "完成"
+  },
+  "tagEditLabel": {
+    "message": "编辑 $1 及其网站"
+  },
+  "tagDelete": {
+    "message": "删除“$1”"
+  },
+  "tagNewHeading": {
+    "message": "新标签"
+  },
+  "tagNewHint": {
+    "message": "你的标签保存在你的列表中，因此发布列表时，它们也会一起发布。"
+  },
+  "tagNewHelp": {
+    "message": "将网站添加到标签"
+  },
+  "tagNewPlaceholder": {
+    "message": "名称，例如“AI 垃圾内容”"
+  },
+  "tagNewColour": {
+    "message": "新标签的颜色"
+  },
+  "tagCreate": {
+    "message": "创建标签"
+  },
+  "tagNameInvalid": {
+    "message": "请给标签取一个至少包含一个字母或数字的名称。"
+  },
+  "tagExists": {
+    "message": "已经有名为“$1”的标签了。"
+  },
+  "tagYoursHeading": {
+    "message": "你的标签"
+  },
+  "tagListsHeading": {
+    "message": "来自列表的标签"
+  },
+  "tagListsHint": {
+    "message": "这些标签由你订阅的列表定义。你可以决定每个标签的作用，也可以把自己的网站添加到任意一个标签。如果某个列表不再使用你的网站所用的标签，该标签会移到“你的标签”中。"
+  },
+  "tagSourceLists": {
+    "message": "来自 $1"
+  },
+  "tagNoneYours": {
+    "message": "还没有你自己的标签。在上方创建一个。"
+  },
+  "quoted": {
+    "message": "“$1”"
+  },
+  "reasonPins": {
+    "message": "将其置顶"
+  },
+  "reasonKeepsNormal": {
+    "message": "使其保持正常"
+  },
+  "reasonHides": {
+    "message": "将其隐藏"
+  },
+  "reasonRaises": {
+    "message": "将其提升 $1 位"
+  },
+  "reasonLowers": {
+    "message": "将其降低 $1 位"
+  },
+  "reasonTags": {
+    "message": "为其加上$1标签"
+  },
+  "reasonMentions": {
+    "message": "提及了它"
+  },
+  "reasonLens": {
+    "message": "未收录它，因此它被隐藏"
+  },
+  "reasonYourTagSettings": {
+    "message": "你的标签设置"
+  },
+  "menuReason": {
+    "message": "$1：$2。"
+  },
+  "choicePin": {
+    "message": "因$1标签将其置顶"
+  },
+  "choiceHide": {
+    "message": "因$1标签将其隐藏"
+  },
+  "choiceRaise_other": {
+    "message": "因$3标签将其提升（每个标签 $2 位）"
+  },
+  "choiceLower_other": {
+    "message": "因$3标签将其降低（每个标签 $2 位）"
+  },
+  "choiceTotal": {
+    "message": "$1，$2"
+  },
+  "choiceNetUp_other": {
+    "message": "因此它上移 $1 位"
+  },
+  "choiceNetDown_other": {
+    "message": "因此它下移 $1 位"
+  },
+  "choiceNetSame": {
+    "message": "因此它的位置不变"
+  },
+  "lineBadTagDefinition": {
+    "message": "标签定义有误：$1"
+  },
+  "lineNeedsPattern": {
+    "message": "指令需要一个模式或网站"
+  },
+  "lineTooLong": {
+    "message": "指令超过 $1 个字符"
+  },
+  "lineBadSite": {
+    "message": "网站有误：$1"
+  },
+  "lineBadStrength": {
+    "message": "$1 必须在 1–$2 之间"
+  },
+  "lineBadTagId": {
+    "message": "标签 ID 有误：$1"
+  },
+  "lineUnknownOption": {
+    "message": "未知选项：$1"
+  },
+  "lineEmptyPattern": {
+    "message": "模式为空"
+  },
+  "lineTooManyWildcards": {
+    "message": "每条指令最多 $1 个通配符（*）"
+  },
+  "lineTooManySeparators": {
+    "message": "每条指令最多 $1 个分隔符（^）"
+  },
+  "lineIfGuard": {
+    "message": "暂不支持 @if 条件"
+  },
+  "lineRegexTooLong": {
+    "message": "正则表达式超过 $1 个字符"
+  },
+  "lineRegexFreeze": {
+    "message": "正则表达式可能会让搜索页面卡死（重复的分组里又有重复）：$1"
+  },
+  "lineBadRegex": {
+    "message": "正则表达式有误：$1"
+  },
+  "lineUnsupported": {
+    "message": "不支持的规则：$1"
+  },
+  "lineBadHost": {
+    "message": "主机名有误：$1"
+  },
+  "lineMatchesEverything": {
+    "message": "规则会匹配所有内容"
+  },
+  "lineNotDomain": {
+    "message": "不是域名：$1"
+  },
+  "listTooBig": {
+    "message": "列表大于 $1 MB"
+  },
+  "listIsWebPage": {
+    "message": "收到的是网页，而不是列表。请使用原始文件的网址。"
+  },
+  "listTimedOut": {
+    "message": "超时"
+  },
+  "listNoUsableRules": {
+    "message": "没有可用的规则（第 $1 行：$2）"
+  },
+  "listNoRules": {
+    "message": "未找到规则"
+  },
+  "backupNotBackup": {
+    "message": "这不是 Anubis 备份。"
+  },
+  "themeAuto": {
+    "message": "自动"
+  },
+  "themeLight": {
+    "message": "浅色"
+  },
+  "themeDark": {
+    "message": "深色"
+  },
+  "themeAutoTitle": {
+    "message": "自动主题"
+  },
+  "themeLightTitle": {
+    "message": "浅色主题"
+  },
+  "themeDarkTitle": {
+    "message": "深色主题"
+  },
+  "personalListName": {
+    "message": "你的列表"
+  },
+  "importHighlightTag": {
+    "message": "高亮 $1"
+  },
+  "tagDeleted_other": {
+    "message": "已删除“$2”标签，并从 $1 个网站上移除了它。"
+  },
+  "listsUnsubscribed": {
+    "message": "已取消订阅 $1。"
+  }
+}
