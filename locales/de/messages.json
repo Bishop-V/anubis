@@ -236,20 +236,35 @@
   "chipFromPageTitle": {
     "message": "Hinzugefügt durch „Mehr Ergebnisse laden“"
   },
-  "barHidden": {
+  "barHidden_one": {
     "message": "ausgeblendet"
   },
-  "barHiddenByYou": {
+  "barHidden_other": {
+    "message": "ausgeblendet"
+  },
+  "barHiddenByYou_one": {
     "message": "von deiner Liste ausgeblendet"
   },
-  "barHiddenByTag": {
-    "message": "ausgeblendet, weil es mit „$1“ getaggt ist"
+  "barHiddenByYou_other": {
+    "message": "von deiner Liste ausgeblendet"
   },
-  "barHiddenByLens": {
-    "message": "ausgeblendet, weil $1 es nicht enthält"
+  "barHiddenByTag_one": {
+    "message": "ausgeblendet, weil es mit „$2“ getaggt ist"
   },
-  "barHiddenByList": {
-    "message": "von $1 ausgeblendet"
+  "barHiddenByTag_other": {
+    "message": "ausgeblendet, weil sie mit „$2“ getaggt sind"
+  },
+  "barHiddenByLens_one": {
+    "message": "ausgeblendet, weil $2 es nicht enthält"
+  },
+  "barHiddenByLens_other": {
+    "message": "ausgeblendet, weil $2 sie nicht enthält"
+  },
+  "barHiddenByList_one": {
+    "message": "von $2 ausgeblendet"
+  },
+  "barHiddenByList_other": {
+    "message": "von $2 ausgeblendet"
   },
   "menuWhyHeading": {
     "message": "Warum"
@@ -480,7 +495,7 @@
     "message": "Passende Regel, Zeile $1"
   },
   "menuReportTitle": {
-    "message": "$1 im Issue-Tracker mitteilen, dass es bei diesem Ergebnis falsch liegt"
+    "message": "Im Issue-Tracker von $1 melden, dass die Liste bei diesem Ergebnis falschliegt"
   },
   "offerTitle": {
     "message": "$1 abonnieren?"
@@ -510,7 +525,7 @@
     "message": "Anubis ist installiert"
   },
   "welcomeIntro": {
-    "message": "Es taggt, ordnet und blendet Suchergebnisse aus, nach deinen eigenen Entscheidungen und den Listen, die du abonnierst."
+    "message": "Es taggt Suchergebnisse, ordnet sie neu und blendet sie aus, nach deinen eigenen Entscheidungen und den Listen, die du abonnierst."
   },
   "welcomePinHeading": {
     "message": "In der Symbolleiste behalten"
@@ -837,7 +852,7 @@
     "message": "Zusammenfassung"
   },
   "summaryHint": {
-    "message": "Über den Ergebnissen eine Zeile zeigen, was Anubis geändert hat."
+    "message": "Über den Ergebnissen in einer Zeile zusammenfassen, was Anubis geändert hat."
   },
   "enabledHeading": {
     "message": "Anubis ist an"
@@ -969,7 +984,7 @@
     "message": "Einstellungen, Tags und Abonnements zurückgesetzt. Deine Liste bleibt erhalten."
   },
   "settingsSections": {
-    "message": "Bereiche der Einstellungen"
+    "message": "Abschnitte der Einstellungen"
   },
   "settingsPageTitle": {
     "message": "$1 – Anubis"
@@ -1050,7 +1065,7 @@
     "message": "KI-Antworten"
   },
   "cleanupAiHint": {
-    "message": "Googles „Übersicht mit KI“ und den Tab „KI-Modus“, DuckDuckGos KI-gestützte Antworten und Duck.ai, Bings KI-Antworten und Braves KI-Antworten."
+    "message": "Googles „Übersicht mit KI“ und der Tab „KI-Modus“, DuckDuckGos KI-gestützte Antworten und Duck.ai, Bings KI-Antworten und Braves KI-Antworten."
   },
   "cleanupVideos": {
     "message": "Videobereiche"
@@ -1326,7 +1341,7 @@
     "message": "gerade eben"
   },
   "tagsIntro": {
-    "message": "Listen beschriften Ergebnisse. Du entscheidest, was jede Beschriftung tut: der Liste folgen, sie nur zeigen, hervorheben, oder was sie trägt anheften, aufwerten, abwerten oder ausblenden. Listen, die denselben Tag-Namen verwenden, teilen ihn."
+    "message": "Listen beschriften Ergebnisse. Du entscheidest, was jede Beschriftung tut: der Liste folgen, sie nur zeigen, hervorheben, oder was sie trägt anheften, aufwerten, abwerten oder ausblenden. Listen, die denselben Tag-Namen verwenden, teilen sich dieses Tag."
   },
   "tagActionList": {
     "message": "Den Listen folgen"

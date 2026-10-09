@@ -236,20 +236,35 @@
   "chipFromPageTitle": {
     "message": "Adicionado por “Carregar mais resultados”"
   },
-  "barHidden": {
+  "barHidden_one": {
     "message": "oculto"
   },
-  "barHiddenByYou": {
+  "barHidden_other": {
+    "message": "ocultos"
+  },
+  "barHiddenByYou_one": {
     "message": "oculto pela sua lista"
   },
-  "barHiddenByTag": {
-    "message": "oculto porque tem a etiqueta “$1”"
+  "barHiddenByYou_other": {
+    "message": "ocultos pela sua lista"
   },
-  "barHiddenByLens": {
-    "message": "oculto porque $1 não o inclui"
+  "barHiddenByTag_one": {
+    "message": "oculto porque tem a etiqueta “$2”"
   },
-  "barHiddenByList": {
-    "message": "oculto por $1"
+  "barHiddenByTag_other": {
+    "message": "ocultos porque têm a etiqueta “$2”"
+  },
+  "barHiddenByLens_one": {
+    "message": "oculto porque $2 não o inclui"
+  },
+  "barHiddenByLens_other": {
+    "message": "ocultos porque $2 não os inclui"
+  },
+  "barHiddenByList_one": {
+    "message": "oculto por $2"
+  },
+  "barHiddenByList_other": {
+    "message": "ocultos por $2"
   },
   "menuWhyHeading": {
     "message": "Por quê"

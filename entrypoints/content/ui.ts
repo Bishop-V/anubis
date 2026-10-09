@@ -595,14 +595,17 @@ export function weighButtonOf(container: HTMLElement): HTMLButtonElement | undef
 // ---------------------------------------------------------------------------
 // One quiet line in place of a hidden result
 
-/** "hidden by your list", "hidden because it’s tagged “AI slop”", "hidden by Copycats removal"… */
-export function hiddenReason(verdict: Verdict, tags: Map<string, TagDef>): string {
+/**
+ * "hidden by your list", "hidden because it’s tagged “AI slop”", "hidden by Copycats removal"…
+ * `count` is how many results the line stands for, so the words agree with them.
+ */
+export function hiddenReason(verdict: Verdict, tags: Map<string, TagDef>, count = 1): string {
   const by = verdict.hiddenBy;
-  if (!by) return t('barHidden');
-  if (by.kind === 'personal') return t('barHiddenByYou');
-  if (by.kind === 'tag') return t('barHiddenByTag', tags.get(by.name)?.label ?? by.name);
-  if (by.kind === 'lens') return t('barHiddenByLens', by.name);
-  return t('barHiddenByList', by.name);
+  if (!by) return tn('barHidden', count);
+  if (by.kind === 'personal') return tn('barHiddenByYou', count);
+  if (by.kind === 'tag') return tn('barHiddenByTag', count, tags.get(by.name)?.label ?? by.name);
+  if (by.kind === 'lens') return tn('barHiddenByLens', count, by.name);
+  return tn('barHiddenByList', count, by.name);
 }
 
 /**
@@ -633,8 +636,9 @@ export function renderHiddenBar(
   keepUpright(host);
   host.dataset.theme = theme;
 
-  const why = hiddenReason(verdict, tags);
-  const sameWhy = more.every((v) => hiddenReason(v, tags) === why);
+  const count = 1 + more.length;
+  const sameWhy = more.every((v) => hiddenReason(v, tags) === hiddenReason(verdict, tags));
+  const why = sameWhy ? hiddenReason(verdict, tags, count) : tn('barHidden', count);
   const site = normalizeHostname(result.host);
   render(host, JSON.stringify([site, why, more.length, sameWhy]), () =>
     h(
@@ -646,7 +650,7 @@ export function renderHiddenBar(
         { class: 'why' },
         h('b', null, site),
         more.length ? ` ${tn('hiddenMore', more.length)}` : '',
-        ` ${sameWhy ? why : t('barHidden')}`,
+        ` ${why}`,
       ),
       h(
         'button',
