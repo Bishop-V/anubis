@@ -491,13 +491,20 @@ button {
 
 .levels {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  /* Five equal columns; a ranking's word wraps, at its soft hyphens (translations put them in long
+     words), rather than run into the next one's. */
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  column-gap: 2px;
   margin: 4px 12px 0;
 }
 .level {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-width: 0;
+  text-align: center;
+  overflow-wrap: anywhere;
+  hyphens: auto;
   gap: 3px;
   padding: 5px 0 6px;
   border: 0;

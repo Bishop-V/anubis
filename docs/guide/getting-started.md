@@ -1,5 +1,9 @@
 # Getting started
 
+::: warning Languages
+Anubis shows itself in your browser's language when it has a translation. Only English is fully supported: German, French, Spanish, and Brazilian Portuguese are machine translations, so use them with caution. To use Anubis in English, set your browser's language to English. [Help translate](./translate.md) says more.
+:::
+
 ## Install in Firefox
 
 For the normal install, get [Anubis from Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/). The latest [Firefox build package](https://github.com/Bishop-V/anubis/releases/latest/download/anubis-firefox.zip) and versioned packages are also available from [GitHub Releases](https://github.com/Bishop-V/anubis/releases).

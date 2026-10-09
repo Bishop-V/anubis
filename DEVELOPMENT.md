@@ -95,7 +95,8 @@ Two builds of the same commit are identical file for file. Firefox's reviewers r
 - `lists/`: the bundled lists and `directory.json` (the "More lists" directory). `docs/list-format.md` is the format reference. `lists/sources/` holds lists made from other projects' data, rewritten weekly by `.github/workflows/sources.yml` (`.github/scripts/update-sources.mjs`, with the conversions in `.github/scripts/sources/convert.mjs`).
 - `docs/`: the documentation site. `guide/` holds the wiki's pages, `lists.md` renders `lists/directory.json`, and `.vitepress/` holds the config and brand theme. The extension links to the published site through `utils/links.ts` (the manifest's `homepage_url`, the popup's Help link, a wiki link on each settings section, and `helpLink` in `entrypoints/options/parts.ts` on panels and settings that a heading explains). Earlier builds link to `docs/list-format.md` on GitHub, so don't move that file, and keep page paths and headings stable or the links from settings break (`tests/help-links.test.ts` checks them). `subscribe.md` is where subscribe links lead and what the subscribe content script matches, so it can't move either. `.github/workflows/docs.yml` builds the site on pull requests and publishes it to GitHub Pages from main.
 - `README.md`: the repository's front page (see [Documentation](#documentation)).
-- `public/`: the logo (`anubis.svg`), toolbar icons (`icon/{16,32,48,96,128}.png`), and interface text (`_locales/`). WXT detects these automatically.
+- `public/`: the logo (`anubis.svg`), toolbar icons (`icon/{16,32,48,96,128}.png`), and the English interface text (`_locales/en/`). WXT detects these automatically.
+- `locales/<lang>/`: translations (`messages.json`) and the English each message came from (`sources.json`). The build adds them as `_locales/<lang>/`, leaving out messages whose English has changed since (`scripts/locales.mjs`, called from `wxt.config.ts`'s `build:publicAssets` hook).
 - `store/`: store listing text and images; `node store/render.mjs` redraws the store icon and promo tile. `ROADMAP.md`: planned work.
 
 ## How it works
@@ -226,6 +227,15 @@ Interface text belongs in `public/_locales/en/messages.json`, the browsers' own 
 
 Wording follows the interface's conventions: labels say what happens in plain words, and a site's ranking is always Hide, Lower, Normal, Raise, or Pin. How to add a language is in the wiki's [Help translate](docs/guide/translate.md).
 
+### Translations
+
+German, French, Spanish, and Brazilian Portuguese are machine translations, and every page that shows one says so (`machineTranslationNote` in `utils/translated.ts`: Settings above each section, the welcome page, and the popup's foot). Keep the notes until a speaker has read a language through, and keep the docs saying so too: the README, the wiki's Introduction, Getting started, and Help translate, and the store description.
+
+- **Changing English makes its translations stale.** The build then ships that message in English for each language until it's translated again, so nobody reads an old meaning. Nothing fails: `node scripts/locales.mjs status` lists what's stale in each language.
+- **After translating or correcting messages,** run `node scripts/locales.mjs record <lang> [key…]`, which records the English they came from. `tests/i18n.test.ts` fails on a translated message with no record, on one whose placeholders differ from English, and on a `langCode` that isn't its folder's name.
+- **New messages** show in English in every translation until someone adds them.
+- `ANUBIS_LANG=<lang> node e2e/run.mjs responsive` runs the browser in a translation and checks Settings at phone widths; parts that read English text don't work that way. The ranking words in German and French carry soft hyphens, so the ⚖ menu's row of five can break them.
+
 ### Store something new
 
 1. Define an item in `utils/storage.ts` with `storage.defineItem`, in `sync:` if it's small and should follow the user between computers, otherwise `local:`. Sync allows 8 KB per item and about 100 KB in all.
@@ -267,7 +277,7 @@ Wording follows the interface's conventions: labels say what happens in plain wo
 | `cleanup.test.ts` | Clean-up headings and markers, the summary sentence, redirects |
 | `domain.test.ts` | Domains, redirect links, raw list addresses, issue links, subscribe links |
 | `engines.test.ts` | Picking an engine's phone layout |
-| `i18n.test.ts` | Message keys, plural forms, and placeholders, the undo line's wording, and reasons that stay English in reports |
+| `i18n.test.ts` | Message keys, plural forms, and placeholders; translations recorded against their English and left out once it changes; the undo line's wording, and reasons that stay English in reports |
 | `i18n-coverage.test.ts` | No interface text outside the messages; every message described and used |
 | `readme.test.ts` | The README's features against the wiki's introduction, and its links |
 | `help-links.test.ts` | Settings' links into the wiki, to pages and headings that exist |

@@ -18,6 +18,8 @@ In Egyptian myth, Anubis weighed each heart against a feather. This extension we
 - **[Bring your old lists](https://bishop-v.github.io/anubis/guide/import-and-backup)**: move your sites over from uBlacklist, HOHSER, or a Brave Goggle.
 - **Easy to undo**: a one-line summary above the results says what Anubis changed, and "Show hidden" brings it back.
 
+Anubis is in English. It also comes in German, French, Spanish, and Brazilian Portuguese, but **those are machine translations, not fully supported: use them with caution** ([Help translate](https://bishop-v.github.io/anubis/guide/translate) says more, and how to correct them).
+
 It works on Google, DuckDuckGo, Bing, and [more search engines](https://bishop-v.github.io/anubis/guide/search-engines). It has no server and collects nothing; [Privacy and permissions](https://bishop-v.github.io/anubis/guide/privacy) says what it stores, what it connects to, and why it asks for each permission.
 
 ## Install

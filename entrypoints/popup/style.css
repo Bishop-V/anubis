@@ -145,15 +145,21 @@ h2 .text-btn {
     transition: transform 0.45s cubic-bezier(0.34, 1.45, 0.5, 1);
   }
 }
-.levels {
-  gap: 6px;
+.seg.levels {
+  display: grid;
+  /* Five equal columns; a ranking's word wraps, hyphenated, rather than push the row apart. */
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px 2px;
 }
 /* Each ranking's icon over its name: muted at rest, the ranking's colour once chosen. */
 .levels button {
   flex-direction: column;
   gap: 3px;
-  min-width: 48px;
+  min-width: 0;
   padding: 2px 2px 4px;
+  text-align: center;
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 .levels .level-icon {
   color: var(--muted);

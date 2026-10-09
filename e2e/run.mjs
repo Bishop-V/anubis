@@ -24,6 +24,17 @@ import { fileURLToPath } from 'node:url';
 import { ANUBIS_PAGE2, ANUBIS_PAGE3, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, bingChallenge, brave, duckduckgo, google, googleMobile } from './fixtures.mjs';
 
 const EXT = fileURLToPath(new URL('../.output/chrome-mv3', import.meta.url));
+/** A message as the build shows it, in ANUBIS_LANG's translation where it has the message. */
+function builtMessage(key) {
+  const read = (lang) => {
+    try {
+      return JSON.parse(readFileSync(join(EXT, '_locales', lang, 'messages.json'), 'utf8'))[key]?.message;
+    } catch {
+      return undefined;
+    }
+  };
+  return (process.env.ANUBIS_LANG && read(process.env.ANUBIS_LANG)) ?? read('en');
+}
 const SHOTS = fileURLToPath(new URL('./shots/', import.meta.url));
 const only = process.argv[2];
 const checks = only === 'checks';
@@ -108,7 +119,10 @@ async function launch(settings = {}, ext = EXT) {
   const ctx = await chromium.launchPersistentContext(mkdtempSync(join(tmpdir(), 'anubis-')), {
     executablePath,
     headless: true,
-    args: [`--disable-extensions-except=${ext}`, `--load-extension=${ext}`, ...proxyTrustArgs()],
+    // ANUBIS_LANG=de runs the browser, and so Anubis, in a translation; checks that
+    // read English text then fail, but layout checks such as `responsive` still hold.
+    args: [`--disable-extensions-except=${ext}`, `--load-extension=${ext}`, ...proxyTrustArgs(), ...(process.env.ANUBIS_LANG ? [`--lang=${process.env.ANUBIS_LANG}`] : [])],
+    ...(process.env.ANUBIS_LANG && { locale: process.env.ANUBIS_LANG.replace('_', '-') }),
     viewport: { width: 1180, height: 1000 },
     // Sharper screenshots for the documentation site.
     deviceScaleFactor: only === 'docs' ? 2 : 1,
@@ -1871,16 +1885,9 @@ if (!only || only === 'responsive') {
       await opt.setViewportSize({ width, height: 900 });
       for (const section of ['sites', 'tags', 'lists', 'cleanup', 'appearance', 'engines', 'sync', 'share']) {
         await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
-        const heading = {
-          sites: 'Your sites',
-          tags: 'Tags',
-          lists: 'Lists',
-          cleanup: 'Remove panels',
-          appearance: 'Appearance',
-          engines: 'Search engines',
-          sync: 'Sync',
-          share: 'Back up, import, and share',
-        }[section];
+        const heading = builtMessage(
+          { sites: 'sitesHeading', tags: 'tagsHeading', lists: 'listsHeading', cleanup: 'cleanupHeading', appearance: 'appearanceHeading', engines: 'enginesHeading', sync: 'syncHeading', share: 'shareHeading' }[section],
+        );
         await opt.waitForFunction((text) => document.querySelector('main h2')?.textContent === text, heading);
         const layout = await opt.evaluate(() => ({
           document: document.documentElement.scrollWidth,

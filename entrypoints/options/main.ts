@@ -1,3 +1,4 @@
+import { machineTranslationNote } from '@/utils/translated';
 import '@/assets/theme.css';
 import './style.css';
 import { browser } from '#imports';
@@ -98,7 +99,8 @@ async function renderMain() {
   const el = await section.render();
   if (ticket !== rendering) return;
   if (section.help) el.querySelector('.page-title p')?.append(' ', helpLink(...section.help));
-  main.replaceChildren(el);
+  // Above every section, in a machine translation: use it with caution.
+  main.replaceChildren(...[machineTranslationNote(), el].filter((x) => !!x));
   document.title = t('settingsPageTitle', section.label);
   window.scrollTo(0, scroll);
 }

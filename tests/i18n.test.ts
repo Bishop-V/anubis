@@ -1,4 +1,5 @@
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
+import { check, freshMessages, languages, sourceKey, translation } from '../scripts/locales.mjs';
 import { describe, expect, it } from 'vitest';
 import { andList } from '@/utils/dom';
 import { t, tJoin, tList, tn, tParts } from '@/utils/i18n';
@@ -10,11 +11,10 @@ import { compileList, evaluate } from '@/utils/matcher';
 import { reportUrl } from '@/utils/subscriptions';
 import { en as english, installEnglish, useEnglish } from './english';
 
-// Translations live in public/_locales/<language>/messages.json; English is the source.
+// English is public/_locales/en/messages.json, the source; translations are in
+// locales/<language>, with the English each message came from (scripts/locales.mjs).
 type Messages = Record<string, { message: string; description?: string }>;
-const LOCALES = 'public/_locales';
-const read = (lang: string): Messages => JSON.parse(readFileSync(`${LOCALES}/${lang}/messages.json`, 'utf8'));
-const en = read('en');
+const en: Messages = JSON.parse(readFileSync('public/_locales/en/messages.json', 'utf8'));
 const placeholders = (text: string) => [...new Set(text.match(/\$\d/g) ?? [])].sort();
 
 function htmlFiles(dir: string): string[] {
@@ -40,17 +40,33 @@ describe('messages', () => {
   });
 
   it('keeps each translation in step with English', () => {
-    for (const lang of readdirSync(LOCALES).filter((l) => l !== 'en' && existsSync(`${LOCALES}/${l}/messages.json`))) {
-      const messages = read(lang);
+    expect(readdirSync('public/_locales')).toEqual(['en']);
+    for (const lang of languages()) {
+      const { messages } = translation(lang);
       for (const [key, { message }] of Object.entries(messages)) {
         // Plural forms English doesn't have (_few, _many…) are fine.
-        const source = en[key] ?? en[key.replace(/_(zero|two|few|many)$/, '_other')];
-        expect(source, `${lang}: ${key} isn't an English key`).toBeDefined();
-        expect(placeholders(message), `${lang}: ${key}`).toEqual(placeholders(source!.message));
+        const from = sourceKey(key, en);
+        expect(from, `${lang}: ${key} isn't an English key`).toBeDefined();
+        expect(placeholders(message), `${lang}: ${key}`).toEqual(placeholders(en[from!]!.message));
       }
+      // Every message says which English it came from, or it could never go stale.
+      expect(check(lang, en).unrecorded, lang).toEqual([]);
+      expect(messages.langCode?.message, lang).toBe(lang);
       if (messages.extDescription) expect(messages.extDescription.message.length, lang).toBeLessThanOrEqual(132);
     }
     expect(en.extDescription!.message.length).toBeLessThanOrEqual(132);
+  });
+
+  it('ships a translated message only while its English is unchanged', () => {
+    const lang = languages()[0];
+    if (!lang) return;
+    const { messages } = translation(lang);
+    const key = check(lang, en).fresh.find((k) => en[k]) ?? Object.keys(messages)[0]!;
+    expect(freshMessages(lang, en)[key]).toEqual({ message: messages[key]!.message });
+    // The English changes: the translation is stale and the build leaves it out, so English shows.
+    const changed = { ...en, [key]: { ...en[key]!, message: `${en[key]!.message} (changed)` } };
+    expect(check(lang, changed).stale).toContain(key);
+    expect(freshMessages(lang, changed)[key]).toBeUndefined();
   });
 });
 
