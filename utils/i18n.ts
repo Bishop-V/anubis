@@ -59,10 +59,27 @@ export function tn(key: PluralKey, count: number, ...subs: (string | number)[]):
   return getMessage(`${key}_${pluralRules.select(count)}`, args) || getMessage(`${key}_other`, args) || key;
 }
 
+// In some languages a `unit` list has nothing between its items (Chinese) or only a
+// space (Japanese, Korean, Russian), so a row of facts runs together; those get a comma.
+const LIST_COMMAS: Record<string, string> = { zh: '、', ja: '、', ar: '، ', fa: '، ', ur: '، ' };
+
+function listParts(items: string[], type: ListType): { type: string; value: string }[] {
+  const format = listFormat(type);
+  const separated = format.formatToParts(['a', 'b']).some((p) => p.type === 'literal' && p.value.trim());
+  if (type !== 'unit' || separated) return format.formatToParts(items);
+  const comma = LIST_COMMAS[lang().split('-')[0]!] ?? ', ';
+  return items.flatMap((value, i) => [...(i ? [{ type: 'literal' as const, value: comma }] : []), { type: 'element' as const, value }]);
+}
+
 /** Items joined the way the language joins a list: "a, b, and c" in English, or "a, b, c" for `unit`. */
 export function tJoin(items: string[], type: ListType = 'conjunction'): string {
-  return listFormat(type).format(items);
+  return listParts(items, type)
+    .map((p) => p.value)
+    .join('');
 }
+
+/** The space between two sentences or phrases: none in Chinese and Japanese, which don't use one. */
+export const gap = (): string => (/^(zh|ja)\b/.test(lang()) ? '' : ' ');
 
 // Stands in for the items while the message is looked up; a private-use
 // character, so it's never in a message.
@@ -75,7 +92,7 @@ const SLOT = '\uE000';
  */
 export function tList<T>(key: MessageKey, items: T[], type: ListType = 'conjunction'): (string | T)[] {
   const [before = '', after = ''] = t(key, SLOT).split(SLOT);
-  const parts = listFormat(type).formatToParts(items.map((_, i) => String(i)));
+  const parts = listParts(items.map((_, i) => String(i)), type);
   return [before, ...parts.map((p) => (p.type === 'element' ? items[Number(p.value)]! : p.value)), after];
 }
 

@@ -1,5 +1,5 @@
 import { h } from './dom';
-import { t } from './i18n';
+import { gap, t } from './i18n';
 import { guide } from './links';
 
 // Every language but English is a machine translation, not checked by people who
@@ -20,9 +20,9 @@ export function machineTranslationNote(short = false): HTMLElement | null {
     'aside',
     { class: `machine-note${short ? ' short' : ''}`, attrs: { role: 'note' } },
     h('b', null, t('machineTranslatedTitle')),
-    ' ',
+    gap(),
     short ? t('machineTranslatedShort') : t('machineTranslatedNote'),
-    ' ',
+    gap(),
     h('a', { href: guide('guide/translate'), target: '_blank', rel: 'noopener noreferrer' }, t('machineTranslatedHelp')),
   );
 }

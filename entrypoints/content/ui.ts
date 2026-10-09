@@ -5,7 +5,7 @@ import type { EngineDef } from '@/utils/engines';
 import { ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS, TAG_EFFECTS, tagEffectText, tagMark, WEIGH_ICONS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
 import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
-import { dir, lang, t, tJoin, tList, tn, tParts } from '@/utils/i18n';
+import { dir, gap, lang, t, tJoin, tList, tn, tParts } from '@/utils/i18n';
 import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, type PersonalLevel } from '@/utils/personal';
 import { ruleParts } from '@/utils/ruletext';
@@ -650,8 +650,8 @@ export function renderHiddenBar(
         'span',
         { class: 'why' },
         h('b', null, site),
-        more.length ? ` ${tn('hiddenMore', more.length)}` : '',
-        ` ${why}`,
+        more.length ? ` ${tn('hiddenMore', more.length)}${gap()}` : ' ',
+        why,
       ),
       h(
         'button',
