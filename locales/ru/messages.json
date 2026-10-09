@@ -1,0 +1,1967 @@
+{
+  "langCode": {
+    "message": "ru"
+  },
+  "machineTranslatedTitle": {
+    "message": "Машинный перевод."
+  },
+  "machineTranslatedNote": {
+    "message": "Anubis переведён на язык вашего браузера машиной, и этот перевод поддерживается не полностью: что-то может быть неверным или непонятным, поэтому пользуйтесь им с осторожностью. Чтобы видеть Anubis на английском, выберите в браузере английский язык."
+  },
+  "machineTranslatedShort": {
+    "message": "Пользуйтесь им с осторожностью."
+  },
+  "machineTranslatedHelp": {
+    "message": "Помочь исправить"
+  },
+  "extDescription": {
+    "message": "Взвешивает результаты поиска: помечает сайты, меняет их порядок и скрывает их по спискам, которые может опубликовать любой."
+  },
+  "commandToggleEnabled": {
+    "message": "Включить или выключить Anubis"
+  },
+  "commandToggleHidden": {
+    "message": "Показать скрытые результаты или снова скрыть их"
+  },
+  "levelHide": {
+    "message": "Скрыть"
+  },
+  "levelLower": {
+    "message": "Пони­зить"
+  },
+  "levelNormal": {
+    "message": "Обыч­ный"
+  },
+  "levelRaise": {
+    "message": "Под­нять"
+  },
+  "levelPin": {
+    "message": "Закре­пить"
+  },
+  "chipHidden": {
+    "message": "Скрыт"
+  },
+  "chipLowered": {
+    "message": "Понижен"
+  },
+  "chipRaised": {
+    "message": "Поднят"
+  },
+  "chipPinned": {
+    "message": "Закреплён"
+  },
+  "popupOn": {
+    "message": "Включён и работает при поиске"
+  },
+  "popupOff": {
+    "message": "Выключен. Страницы поиска остаются как есть."
+  },
+  "popupOnLabel": {
+    "message": "Anubis включён"
+  },
+  "popupAddSite": {
+    "message": "Добавить сайт"
+  },
+  "popupRanking": {
+    "message": "Ранг"
+  },
+  "popupNoSites": {
+    "message": "Пока ничего нет. Нажмите кнопку ⚖ у любого результата поиска, чтобы задать ранг его сайта."
+  },
+  "popupKeptNormal": {
+    "message": "Оставлен обычным"
+  },
+  "popupListsAndTags": {
+    "message": "$1, $2"
+  },
+  "popupListCount_one": {
+    "message": "$1 список"
+  },
+  "popupListCount_few": {
+    "message": "$1 списка"
+  },
+  "popupListCount_many": {
+    "message": "$1 списков"
+  },
+  "popupListCount_other": {
+    "message": "$1 списка"
+  },
+  "popupTagCount_one": {
+    "message": "$1 метка"
+  },
+  "popupTagCount_few": {
+    "message": "$1 метки"
+  },
+  "popupTagCount_many": {
+    "message": "$1 меток"
+  },
+  "popupTagCount_other": {
+    "message": "$1 метки"
+  },
+  "popupRankingFor": {
+    "message": "Ранг для $1"
+  },
+  "popupRankHide": {
+    "message": "Скрыть $1 в результатах поиска"
+  },
+  "popupRankLower": {
+    "message": "Понизить $1 в результатах поиска"
+  },
+  "popupRankNormal": {
+    "message": "Показывать $1 в результатах поиска как обычно"
+  },
+  "popupRankRaise": {
+    "message": "Поднять $1 в результатах поиска"
+  },
+  "popupRankPin": {
+    "message": "Закрепить $1 вверху результатов поиска"
+  },
+  "popupYourSites": {
+    "message": "Ваши сайты"
+  },
+  "popupSeeAll": {
+    "message": "Показать все ($1)"
+  },
+  "popupOpenLists": {
+    "message": "Открыть настройки списков"
+  },
+  "popupShowOnly": {
+    "message": "Показать только"
+  },
+  "popupTags": {
+    "message": "Метки"
+  },
+  "popupSite": {
+    "message": "Сайт"
+  },
+  "popupSiteChoice": {
+    "message": "Выберите, к какой части сайта это относится"
+  },
+  "popupHintAllow": {
+    "message": "Обычный, что бы ни говорили ваши списки."
+  },
+  "popupHintMine": {
+    "message": "Ваш выбор для $1, при каждом поиске."
+  },
+  "popupHintMineTags": {
+    "message": "Ваш выбор для $1, при каждом поиске, в дополнение к настройкам меток."
+  },
+  "popupHintLists": {
+    "message": "$1. Источник: $2. Выберите вариант, чтобы решить самостоятельно."
+  },
+  "popupHintNone": {
+    "message": "Ваш выбор действует при каждом поиске."
+  },
+  "popupYourTagSettings": {
+    "message": "ваши настройки меток"
+  },
+  "tagMarkRaise": {
+    "message": "Поднимает этот результат"
+  },
+  "tagMarkLower": {
+    "message": "Понижает этот результат"
+  },
+  "tagMarkPin": {
+    "message": "Закрепляет этот результат"
+  },
+  "tagMarkHide": {
+    "message": "Скрывает этот результат"
+  },
+  "tagMarkSpoken": {
+    "message": " ($1)"
+  },
+  "tagListsPickerHint": {
+    "message": "Добавление меняет только ваш список."
+  },
+  "tagFromSource": {
+    "message": "из $1"
+  },
+  "popupTagFrom": {
+    "message": "Из $1"
+  },
+  "popupTagSite": {
+    "message": "Пометить $1 как «$2»"
+  },
+  "popupUntag": {
+    "message": "Снять метку с $1"
+  },
+  "popupTagInvalid": {
+    "message": "Введите название метки, в котором есть хотя бы одна буква или цифра."
+  },
+  "popupTagAlreadySet": {
+    "message": "Эта метка уже есть у этого сайта."
+  },
+  "tagSiteReason": {
+    "message": "Почему этот сайт подходит к метке «$1» (необязательно)"
+  },
+  "popupThisPage": {
+    "message": "Эта страница"
+  },
+  "popupThisPageOn": {
+    "message": "Эта страница в $1"
+  },
+  "popupNotSearch": {
+    "message": "Выполните поиск в Google, DuckDuckGo, Bing, Brave или другой поддерживаемой поисковой системе, чтобы увидеть, что меняет Anubis."
+  },
+  "showHidden": {
+    "message": "Показать скрытые"
+  },
+  "hideAgain": {
+    "message": "Скрыть снова"
+  },
+  "loadMore": {
+    "message": "Загрузить ещё результаты"
+  },
+  "loadMoreTitle": {
+    "message": "Добавить следующую страницу результатов к этой и ранжировать их вместе"
+  },
+  "loading": {
+    "message": "Загрузка…"
+  },
+  "loadMoreEmpty": {
+    "message": "$1 не прислал результатов для страницы $2. Возможно, он хочет, чтобы вы сначала подтвердили, что вы не робот."
+  },
+  "loadMoreRepeat": {
+    "message": "$1 снова прислал те же результаты для страницы $2, так что больше их нет."
+  },
+  "loadMoreBusy": {
+    "message": "$1 попросил Anubis притормозить перед страницей $2. Попробуйте снова через минуту."
+  },
+  "loadMoreRefused": {
+    "message": "$1 отказался прислать страницу $2."
+  },
+  "loadMoreSlow": {
+    "message": "$1 слишком долго присылал страницу $2."
+  },
+  "loadMoreFailed": {
+    "message": "Страница $2 от $1 не загрузилась."
+  },
+  "loadMoreOpen": {
+    "message": "Открыть страницу $1"
+  },
+  "loadMoreOpenTitle": {
+    "message": "Открыть её в новой вкладке, чтобы увидеть, что прислал $1"
+  },
+  "chipFromPage": {
+    "message": "Со страницы $1"
+  },
+  "chipFromPageTitle": {
+    "message": "Добавлен кнопкой «Загрузить ещё результаты»"
+  },
+  "barHidden_one": {
+    "message": "скрыт"
+  },
+  "barHidden_few": {
+    "message": "скрыты"
+  },
+  "barHidden_many": {
+    "message": "скрыты"
+  },
+  "barHidden_other": {
+    "message": "скрыты"
+  },
+  "barHiddenByYou_one": {
+    "message": "скрыт вашим списком"
+  },
+  "barHiddenByYou_few": {
+    "message": "скрыты вашим списком"
+  },
+  "barHiddenByYou_many": {
+    "message": "скрыты вашим списком"
+  },
+  "barHiddenByYou_other": {
+    "message": "скрыты вашим списком"
+  },
+  "barHiddenByTag_one": {
+    "message": "скрыт, потому что помечен как «$2»"
+  },
+  "barHiddenByTag_few": {
+    "message": "скрыты, потому что помечены как «$2»"
+  },
+  "barHiddenByTag_many": {
+    "message": "скрыты, потому что помечены как «$2»"
+  },
+  "barHiddenByTag_other": {
+    "message": "скрыты, потому что помечены как «$2»"
+  },
+  "barHiddenByLens_one": {
+    "message": "скрыт, потому что $2 его не включает"
+  },
+  "barHiddenByLens_few": {
+    "message": "скрыты, потому что $2 их не включает"
+  },
+  "barHiddenByLens_many": {
+    "message": "скрыты, потому что $2 их не включает"
+  },
+  "barHiddenByLens_other": {
+    "message": "скрыты, потому что $2 их не включает"
+  },
+  "barHiddenByList_one": {
+    "message": "скрыт списком $2"
+  },
+  "barHiddenByList_few": {
+    "message": "скрыты списком $2"
+  },
+  "barHiddenByList_many": {
+    "message": "скрыты списком $2"
+  },
+  "barHiddenByList_other": {
+    "message": "скрыты списком $2"
+  },
+  "menuWhyHeading": {
+    "message": "Почему"
+  },
+  "menuNewTagPlaceholder": {
+    "message": "Новая метка"
+  },
+  "menuNewTagLabel": {
+    "message": "Название новой метки"
+  },
+  "menuAddTagButton": {
+    "message": "Добавить метку"
+  },
+  "menuSavedNote": {
+    "message": "Сохранено в вашем списке."
+  },
+  "menuCloseLabel": {
+    "message": "Закрыть"
+  },
+  "anubisSettings": {
+    "message": "Настройки Anubis"
+  },
+  "help": {
+    "message": "Справка"
+  },
+  "helpTitle": {
+    "message": "Открыть вики"
+  },
+  "reportProblem": {
+    "message": "Сообщить о проблеме"
+  },
+  "reportProblemTitle": {
+    "message": "Открыть отчёт об ошибке на GitHub, в котором уже указаны версия Anubis и ваш браузер"
+  },
+  "summaryShowAll": {
+    "message": "Показать все"
+  },
+  "summaryFilterLabel": {
+    "message": "Показать только результаты с меткой"
+  },
+  "summaryFilterOn": {
+    "message": "Показать только результаты с меткой «$1»"
+  },
+  "summaryFilterOff": {
+    "message": "Показать все результаты"
+  },
+  "summaryPinned": {
+    "message": "закрепил $1"
+  },
+  "summaryRaised": {
+    "message": "поднял $1"
+  },
+  "summaryLowered": {
+    "message": "понизил $1"
+  },
+  "summaryHid": {
+    "message": "скрыл $1"
+  },
+  "summaryActed": {
+    "message": "Anubis $1 из $2."
+  },
+  "summaryResults_one": {
+    "message": "$1 результата"
+  },
+  "summaryResults_few": {
+    "message": "$1 результатов"
+  },
+  "summaryResults_many": {
+    "message": "$1 результатов"
+  },
+  "summaryResults_other": {
+    "message": "$1 результата"
+  },
+  "summaryResultsPages_one": {
+    "message": "$1 результата (страниц: $2)"
+  },
+  "summaryResultsPages_few": {
+    "message": "$1 результатов (страниц: $2)"
+  },
+  "summaryResultsPages_many": {
+    "message": "$1 результатов (страниц: $2)"
+  },
+  "summaryResultsPages_other": {
+    "message": "$1 результата (страниц: $2)"
+  },
+  "summaryAlsoRemoved": {
+    "message": "Кроме того, он убрал $1."
+  },
+  "summaryRemovedOnly": {
+    "message": "Anubis убрал $1."
+  },
+  "summaryShortActed": {
+    "message": "Anubis изменил $1 из $2."
+  },
+  "summaryShortActedRemoved": {
+    "message": "Anubis изменил $1 из $2 и почистил страницу."
+  },
+  "summaryShortRemoved": {
+    "message": "Anubis почистил страницу."
+  },
+  "summaryDetails": {
+    "message": "Подробнее"
+  },
+  "summaryFewerDetails": {
+    "message": "Свернуть"
+  },
+  "summaryUnchanged_one": {
+    "message": "Anubis ничего не изменил в результатах."
+  },
+  "summaryUnchanged_few": {
+    "message": "Anubis оставил все $1 результата как есть."
+  },
+  "summaryUnchanged_many": {
+    "message": "Anubis оставил все $1 результатов как есть."
+  },
+  "summaryUnchanged_other": {
+    "message": "Anubis оставил все $1 результата как есть."
+  },
+  "summaryUnchangedPages": {
+    "message": "Anubis ничего не изменил: результатов — $1, страниц — $2."
+  },
+  "summaryFiltered_one": {
+    "message": "Показаны только «$2»: $3 из $1 результата."
+  },
+  "summaryFiltered_few": {
+    "message": "Показаны только «$2»: $3 из $1 результатов."
+  },
+  "summaryFiltered_many": {
+    "message": "Показаны только «$2»: $3 из $1 результатов."
+  },
+  "summaryFiltered_other": {
+    "message": "Показаны только «$2»: $3 из $1 результата."
+  },
+  "summaryRemovedAi_one": {
+    "message": "ответ ИИ"
+  },
+  "summaryRemovedAi_few": {
+    "message": "$1 ответа ИИ"
+  },
+  "summaryRemovedAi_many": {
+    "message": "$1 ответов ИИ"
+  },
+  "summaryRemovedAi_other": {
+    "message": "$1 ответа ИИ"
+  },
+  "summaryRemovedVideos_one": {
+    "message": "блок видео"
+  },
+  "summaryRemovedVideos_few": {
+    "message": "$1 блока видео"
+  },
+  "summaryRemovedVideos_many": {
+    "message": "$1 блоков видео"
+  },
+  "summaryRemovedVideos_other": {
+    "message": "$1 блока видео"
+  },
+  "summaryRemovedQuestions_one": {
+    "message": "список вопросов"
+  },
+  "summaryRemovedQuestions_few": {
+    "message": "$1 списка вопросов"
+  },
+  "summaryRemovedQuestions_many": {
+    "message": "$1 списков вопросов"
+  },
+  "summaryRemovedQuestions_other": {
+    "message": "$1 списка вопросов"
+  },
+  "summaryRemovedDiscussions_one": {
+    "message": "блок обсуждений"
+  },
+  "summaryRemovedDiscussions_few": {
+    "message": "$1 блока обсуждений"
+  },
+  "summaryRemovedDiscussions_many": {
+    "message": "$1 блоков обсуждений"
+  },
+  "summaryRemovedDiscussions_other": {
+    "message": "$1 блока обсуждений"
+  },
+  "summaryRemovedNews_one": {
+    "message": "блок новостей"
+  },
+  "summaryRemovedNews_few": {
+    "message": "$1 блока новостей"
+  },
+  "summaryRemovedNews_many": {
+    "message": "$1 блоков новостей"
+  },
+  "summaryRemovedNews_other": {
+    "message": "$1 блока новостей"
+  },
+  "summaryRemovedImages_one": {
+    "message": "блок картинок"
+  },
+  "summaryRemovedImages_few": {
+    "message": "$1 блока картинок"
+  },
+  "summaryRemovedImages_many": {
+    "message": "$1 блоков картинок"
+  },
+  "summaryRemovedImages_other": {
+    "message": "$1 блока картинок"
+  },
+  "summaryRemovedRelated_one": {
+    "message": "список похожих запросов"
+  },
+  "summaryRemovedRelated_few": {
+    "message": "$1 списка похожих запросов"
+  },
+  "summaryRemovedRelated_many": {
+    "message": "$1 списков похожих запросов"
+  },
+  "summaryRemovedRelated_other": {
+    "message": "$1 списка похожих запросов"
+  },
+  "summaryRemovedElsewhere_one": {
+    "message": "ряд кнопок других поисковых систем"
+  },
+  "summaryRemovedElsewhere_few": {
+    "message": "$1 ряда кнопок других поисковых систем"
+  },
+  "summaryRemovedElsewhere_many": {
+    "message": "$1 рядов кнопок других поисковых систем"
+  },
+  "summaryRemovedElsewhere_other": {
+    "message": "$1 ряда кнопок других поисковых систем"
+  },
+  "summaryRemovedAdRequests_one": {
+    "message": "просьбу разрешить рекламу"
+  },
+  "summaryRemovedAdRequests_few": {
+    "message": "$1 просьбы разрешить рекламу"
+  },
+  "summaryRemovedAdRequests_many": {
+    "message": "$1 просьб разрешить рекламу"
+  },
+  "summaryRemovedAdRequests_other": {
+    "message": "$1 просьбы разрешить рекламу"
+  },
+  "withShortcut": {
+    "message": "$1 ($2)"
+  },
+  "toolbarOff": {
+    "message": "Anubis выключен"
+  },
+  "weighLabel": {
+    "message": "Скрыть, ранжировать или пометить $1"
+  },
+  "weighLabelRanked": {
+    "message": "Скрыть, ранжировать или пометить $1 ($2)"
+  },
+  "hiddenShow": {
+    "message": "Показать"
+  },
+  "hiddenShowSite": {
+    "message": "Показать $1"
+  },
+  "hiddenMore_one": {
+    "message": "и ещё $1"
+  },
+  "hiddenMore_few": {
+    "message": "и ещё $1"
+  },
+  "hiddenMore_many": {
+    "message": "и ещё $1"
+  },
+  "hiddenMore_other": {
+    "message": "и ещё $1"
+  },
+  "summaryChangedHide": {
+    "message": "Сайт $1 скрыт."
+  },
+  "summaryChangedLower": {
+    "message": "Сайт $1 понижен."
+  },
+  "summaryChangedRaise": {
+    "message": "Сайт $1 поднят."
+  },
+  "summaryChangedPin": {
+    "message": "Сайт $1 закреплён."
+  },
+  "summaryChangedAllow": {
+    "message": "Для сайта $1 задан ранг «Обычный»."
+  },
+  "summaryChangedNormal": {
+    "message": "Ваш ранг для сайта $1 сброшен."
+  },
+  "summaryChangedTagOn": {
+    "message": "Сайт $1 помечен как «$2»."
+  },
+  "summaryChangedTagOff": {
+    "message": "С сайта $1 снята метка «$2»."
+  },
+  "summaryChangedSite": {
+    "message": "Сайт $1 изменён в вашем списке."
+  },
+  "summaryUndo": {
+    "message": "Отменить"
+  },
+  "menuSuggest": {
+    "message": "Стоит ли добавить его в список? Предложите его в $1."
+  },
+  "menuSuggestTitle": {
+    "message": "Предложить $1 для списка $2 в его трекере задач"
+  },
+  "menuReport": {
+    "message": "Неверно? Сообщите об этом в $1."
+  },
+  "menuMatchedRule": {
+    "message": "Сработавшее правило, строка $1"
+  },
+  "menuReportTitle": {
+    "message": "Сообщить в трекер задач $1, что этот результат обработан неверно"
+  },
+  "offerTitle": {
+    "message": "Подписаться на $1?"
+  },
+  "offerTrust": {
+    "message": "Список может скрывать, ранжировать и помечать сайты в ваших результатах. Подписывайтесь только на списки, которым доверяете."
+  },
+  "offerPermission": {
+    "message": "Затем браузер попросит разрешить Anubis читать данные с $1 — сайта, на котором размещён список."
+  },
+  "offerAlready": {
+    "message": "Вы уже подписаны на $1."
+  },
+  "offerSubscribe": {
+    "message": "Подписаться"
+  },
+  "offerSubscribing": {
+    "message": "Подписка…"
+  },
+  "offerCancel": {
+    "message": "Отмена"
+  },
+  "welcomeTitle": {
+    "message": "Добро пожаловать в Anubis"
+  },
+  "welcomeHeading": {
+    "message": "Anubis установлен"
+  },
+  "welcomeIntro": {
+    "message": "Он помечает результаты поиска, меняет их порядок и скрывает их, следуя вашему собственному выбору и спискам, на которые вы подписаны."
+  },
+  "welcomePinHeading": {
+    "message": "Держите его на панели инструментов"
+  },
+  "welcomePinWhy": {
+    "message": "Его кнопка на панели показывает, что Anubis сделал на странице, включает и выключает его и задаёт ранг сайта, на котором вы находитесь."
+  },
+  "welcomePinChrome": {
+    "message": "Нажмите кнопку «Расширения» (значок пазла) рядом с адресной строкой, а затем значок булавки рядом с Anubis."
+  },
+  "welcomePinEdge": {
+    "message": "Нажмите кнопку «Расширения» (значок пазла) рядом с адресной строкой, а затем значок глаза рядом с Anubis."
+  },
+  "welcomePinOpera": {
+    "message": "Нажмите кнопку «Расширения» (значок куба) рядом с адресной строкой, а затем значок булавки рядом с Anubis."
+  },
+  "welcomePinFirefox": {
+    "message": "Нажмите кнопку «Расширения» (значок пазла) рядом с адресной строкой, затем значок шестерёнки рядом с Anubis и выберите «Прикрепить к панели инструментов»."
+  },
+  "welcomePinAndroid": {
+    "message": "Anubis находится в меню браузера, в разделе «Расширения»."
+  },
+  "welcomePinned": {
+    "message": "Anubis уже на панели инструментов."
+  },
+  "welcomeSearchHeading": {
+    "message": "Попробуйте поиск"
+  },
+  "welcomeSearchHow": {
+    "message": "Ищите как обычно. Чтобы скрыть сайт, задать ему ранг или пометить его, наведите указатель на один из его результатов и нажмите кнопку ⚖."
+  },
+  "welcomeSearchFor": {
+    "message": "Поищите «$1», чтобы увидеть метки из ваших списков:"
+  },
+  "welcomeSearchOn": {
+    "message": "Искать «$1» в $2"
+  },
+  "welcomeQuery": {
+    "message": "python list comprehension"
+  },
+  "welcomeListsHeading": {
+    "message": "Ваши списки"
+  },
+  "welcomeListsIntro": {
+    "message": "Списки помечают, поднимают, понижают или скрывают сайты за вас. Для начала у вас есть эти:"
+  },
+  "welcomeListsNone": {
+    "message": "Списки помечают, поднимают, понижают или скрывают сайты за вас. Вы пока не подписаны ни на один."
+  },
+  "welcomeListsMore": {
+    "message": "Выключить их или найти другие списки можно в настройках."
+  },
+  "welcomeListsOpen": {
+    "message": "Открыть настройки списков"
+  },
+  "welcomeGuide": {
+    "message": "Вики"
+  },
+  "welcomePrivacy": {
+    "message": "Конфиденциальность"
+  },
+  "syncHeading": {
+    "message": "Синхронизация"
+  },
+  "syncIntro": {
+    "message": "Ваш список и настройки на других ваших компьютерах и в других браузерах."
+  },
+  "syncBrowserHeading": {
+    "message": "Синхронизация браузера"
+  },
+  "syncFirefox": {
+    "message": "Ваш список, настройки, выбор для меток и подписки хранятся в хранилище синхронизации Firefox. Firefox копирует их на другие ваши компьютеры, если вы вошли в Firefox и в настройках синхронизации отмечены «Дополнения». Синхронизация происходит примерно раз в 10 минут или когда вы выбираете «Синхронизировать сейчас»."
+  },
+  "syncFirefoxAndroid": {
+    "message": "Firefox для Android не синхронизирует данные дополнений, поэтому ваш список, настройки, выбор для меток и подписки остаются на этом устройстве. Чтобы синхронизировать их, подключите сервер WebDAV ниже."
+  },
+  "syncChrome": {
+    "message": "Ваш список, настройки, выбор для меток и подписки хранятся в хранилище синхронизации браузера. Браузер копирует их на другие ваши компьютеры, если вы вошли в него и включили синхронизацию расширений."
+  },
+  "syncBrowserHelp": {
+    "message": "Какие настройки браузера проверить"
+  },
+  "syncUsage": {
+    "message": "Они занимают $1 КБ из $2 КБ, доступных для синхронизации."
+  },
+  "syncTooBig": {
+    "message": "Ваш список слишком велик для синхронизации, поэтому он хранится только на этом устройстве. Настройки, выбор для меток и подписки по-прежнему синхронизируются."
+  },
+  "webdavHeading": {
+    "message": "Между браузерами"
+  },
+  "webdavIntro": {
+    "message": "Firefox и Chrome сами по себе не синхронизируются друг с другом. Чтобы делиться данными между ними, подключите в каждом одно и то же хранилище WebDAV. У Koofr и InfiniCLOUD есть бесплатные тарифы, подойдут и собственные серверы, например Nextcloud. Anubis хранит там один файл, anubis-sync.json, и объединяет в нём изменения из каждого браузера."
+  },
+  "webdavHelp": {
+    "message": "Где взять адрес и пароль"
+  },
+  "webdavAddress": {
+    "message": "Адрес"
+  },
+  "webdavAddressHint": {
+    "message": "Адрес WebDAV вашего сервиса, начинающийся с https://"
+  },
+  "listPermissionDenied": {
+    "message": "Чтобы обновить этот список, Anubis нужно разрешение на чтение $1."
+  },
+  "webdavUser": {
+    "message": "Имя пользователя"
+  },
+  "webdavPassword": {
+    "message": "Пароль"
+  },
+  "webdavPasswordHint": {
+    "message": "Большинство сервисов выдают отдельный пароль для приложений. Используйте его."
+  },
+  "webdavConnect": {
+    "message": "Подключить"
+  },
+  "webdavEncrypt": {
+    "message": "Сквозное шифрование файла синхронизации (рекомендуется)"
+  },
+  "webdavEncryptionPassphrase": {
+    "message": "Парольная фраза для шифрования"
+  },
+  "webdavConfirmPassphrase": {
+    "message": "Подтвердите парольную фразу"
+  },
+  "webdavEncryptionHint": {
+    "message": "Используйте одну и ту же длинную уникальную парольную фразу во всех браузерах (не менее 12 символов). Она хранится только в этом браузере и никогда не отправляется на сервер. Если вы её забудете, копию на сервере восстановить не удастся."
+  },
+  "webdavCorrectPassphrase": {
+    "message": "Введите правильную парольную фразу для шифрования"
+  },
+  "webdavCorrectPassphraseHint": {
+    "message": "Используйте ту же парольную фразу, что и в другом браузере. Она хранится только здесь и никогда не отправляется на сервер."
+  },
+  "webdavSavePassphrase": {
+    "message": "Сохранить фразу и синхронизировать"
+  },
+  "webdavChangePassphrase": {
+    "message": "Сменить парольную фразу для шифрования"
+  },
+  "webdavChangePassphraseHint": {
+    "message": "Перед изменением файла на сервере Anubis проверяет текущую парольную фразу. Введите новую фразу во всех остальных браузерах до их следующей синхронизации."
+  },
+  "webdavChangePassphraseHelp": {
+    "message": "Что происходит при смене"
+  },
+  "webdavEncryptionShort": {
+    "message": "Используйте парольную фразу длиной не менее 12 символов."
+  },
+  "webdavPassphraseMismatch": {
+    "message": "Парольные фразы не совпадают."
+  },
+  "webdavEncrypted": {
+    "message": "Файл синхронизации защищён сквозным шифрованием. Его парольная фраза хранится только в этом браузере; сервер не может прочитать содержимое. Используйте одну и ту же фразу во всех браузерах. Если вы её забудете, копию на сервере восстановить не удастся."
+  },
+  "webdavEncryptionPending": {
+    "message": "Шифрование здесь настроено. При следующей успешной синхронизации копия на сервере будет зашифрована. Используйте одну и ту же фразу во всех браузерах."
+  },
+  "webdavEncryptionMissing": {
+    "message": "В этом браузере не задана парольная фраза для шифрования. Чтобы прочитать зашифрованный файл, введите ту же фразу, что и в другом браузере. Незашифрованный файл синхронизации может прочитать владелец сервера."
+  },
+  "webdavPrivacy": {
+    "message": "При включённом шифровании на этот сервер попадают только зашифрованные данные; ваша парольная фраза хранится здесь и никуда не отправляется. Без шифрования сервер может прочитать файл синхронизации. Ваши данные для входа в WebDAV хранятся здесь и отправляются на этот сервер, чтобы войти."
+  },
+  "webdavBadAddress": {
+    "message": "Введите адрес WebDAV вашего сервиса, начинающийся с https://"
+  },
+  "webdavMissingLogin": {
+    "message": "Введите также имя пользователя и пароль."
+  },
+  "webdavDenied": {
+    "message": "Anubis нужно ваше разрешение, чтобы отправлять ваш список на $1."
+  },
+  "webdavConnected": {
+    "message": "Синхронизация с $1, пользователь $2."
+  },
+  "webdavWhen": {
+    "message": "Изменения уходят на сервер через несколько секунд после того, как вы их внесли. Изменения из других браузеров приходят при запуске браузера и при поиске, но не чаще чем раз в 5 минут."
+  },
+  "webdavSyncing": {
+    "message": "Синхронизация…"
+  },
+  "webdavLastSync": {
+    "message": "Последняя синхронизация: $1."
+  },
+  "webdavLastTried": {
+    "message": "Последняя попытка: $1."
+  },
+  "webdavSyncNow": {
+    "message": "Синхронизировать сейчас"
+  },
+  "webdavDisconnect": {
+    "message": "Отключить"
+  },
+  "webdavDisconnected": {
+    "message": "Отключено. Файл остаётся на сервере, а ваш список и настройки — здесь."
+  },
+  "webdavErrorAuth": {
+    "message": "Сервер не принял имя пользователя или пароль. Многим сервисам здесь нужен пароль приложения, а не ваш обычный."
+  },
+  "webdavErrorForbidden": {
+    "message": "Сервер не разрешает этой учётной записи сохранять туда файлы."
+  },
+  "webdavErrorFolder": {
+    "message": "По этому адресу на сервере нет папки. Проверьте адрес."
+  },
+  "webdavErrorPermission": {
+    "message": "У Anubis больше нет разрешения синхронизироваться с $1. Нажмите «Синхронизировать сейчас», чтобы снова разрешить это."
+  },
+  "webdavErrorNetwork": {
+    "message": "Не удалось связаться с $1. Проверьте адрес и подключение к сети."
+  },
+  "webdavErrorFile": {
+    "message": "Anubis не может прочитать файл anubis-sync.json в этой папке, поэтому оставил его как есть. Выберите другую папку."
+  },
+  "webdavErrorNeedsPassphrase": {
+    "message": "Этот файл синхронизации зашифрован. Введите его парольную фразу; ничего не изменено."
+  },
+  "webdavErrorWrongPassphrase": {
+    "message": "Эта парольная фраза не расшифровывает файл синхронизации. Проверьте её; файл на сервере не изменён."
+  },
+  "webdavErrorUnencrypted": {
+    "message": "Раньше это подключение было зашифровано, но теперь на сервере лежит незашифрованный файл синхронизации. Он не изменён. Проверьте файл на сервере, прежде чем синхронизироваться снова."
+  },
+  "webdavErrorChanged": {
+    "message": "Файл синхронизации изменился во время смены парольной фразы, или сервер не умеет защищать его от одновременных правок. Ничего не перезаписано. Синхронизируйтесь снова и повторите попытку."
+  },
+  "webdavErrorUnconfirmed": {
+    "message": "Связь с $1 прервалась во время сохранения файла, поэтому Anubis не знает, какая парольная фраза у файла теперь. Старая фраза по-прежнему сохранена здесь. Если при следующей синхронизации она окажется неверной, введите новую."
+  },
+  "webdavErrorServer": {
+    "message": "Сервер ответил ошибкой (HTTP $1). Попробуйте позже."
+  },
+  "webdavErrorFailed": {
+    "message": "Синхронизация не завершилась. Попробуйте снова."
+  },
+  "appearanceHeading": {
+    "message": "Внешний вид"
+  },
+  "appearanceIntro": {
+    "message": "Как Anubis выглядит здесь и на страницах поиска."
+  },
+  "themeHeading": {
+    "message": "Цветовая схема"
+  },
+  "themeHint": {
+    "message": "«Авто» следует настройке браузера здесь и в меню у каждого результата, а для остального, что Anubis добавляет на страницы поиска, — светлому или тёмному режиму самой поисковой системы."
+  },
+  "paletteHeading": {
+    "message": "Цвета на страницах поиска"
+  },
+  "paletteHint": {
+    "message": "В режиме «Простая» всё, что Anubis добавляет на страницы поиска, рисуется серым, без золотого. Метки теряют свои цвета, и их различают по названиям. Настройки и окно кнопки на панели инструментов остаются золотыми."
+  },
+  "paletteGold": {
+    "message": "Золотая"
+  },
+  "palettePlain": {
+    "message": "Простая"
+  },
+  "hideStyleHeading": {
+    "message": "Скрытые результаты"
+  },
+  "hideStyleHint": {
+    "message": "«Убрать» удаляет их со страницы; сводка над результатами их подсчитывает, а «Показать скрытые» возвращает. «Свернуть» оставляет одну тонкую строку на каждую группу скрытых результатов подряд. «Приглушить» делает их бледными."
+  },
+  "hideStyleRemove": {
+    "message": "Убрать"
+  },
+  "hideStyleCollapse": {
+    "message": "Свернуть"
+  },
+  "hideStyleDim": {
+    "message": "Приглушить"
+  },
+  "rerankHeading": {
+    "message": "Менять порядок результатов"
+  },
+  "rerankHint": {
+    "message": "Перемещать поднятые и закреплённые результаты выше, а пониженные — ниже, как это делают Brave Goggles."
+  },
+  "rerankHelp": {
+    "message": "Как меняется порядок"
+  },
+  "deeperAuto": {
+    "message": "Загружать ещё результаты автоматически"
+  },
+  "deeperAutoHint": {
+    "message": "Добавлять следующие страницы результатов к первой и ранжировать их вместе, чтобы сайт, закреплённый вами на странице 3, поднимался наверх. Кнопка «Загрузить ещё результаты» над результатами делает то же самое, когда вы её нажимаете. Введите, сколько страниц добавлять: от 0 (выключено) до $1."
+  },
+  "deeperHelp": {
+    "message": "Как работает загрузка дополнительных страниц"
+  },
+  "deeperUnit": {
+    "message": "доп. стр."
+  },
+  "deeperTipOff": {
+    "message": "Выключено: дополнительные результаты загружаются, только когда вы нажимаете «Загрузить ещё результаты»."
+  },
+  "deeperTipTime_one": {
+    "message": "Добавляет около $1 секунды к каждому поиску."
+  },
+  "deeperTipTime_few": {
+    "message": "Добавляет около $1 секунд к каждому поиску."
+  },
+  "deeperTipTime_many": {
+    "message": "Добавляет около $1 секунд к каждому поиску."
+  },
+  "deeperTipTime_other": {
+    "message": "Добавляет около $1 секунды к каждому поиску."
+  },
+  "deeperTipFew": {
+    "message": "$1 Несколько страниц поисковые системы обычно не смущают."
+  },
+  "deeperTipSome": {
+    "message": "$1 Некоторые поисковые системы могут начать просить подтвердить, что вы не робот."
+  },
+  "deeperTipMany": {
+    "message": "$1 После такого количества Google и Bing часто просят подтвердить, что вы не робот. У некоторых поисковых систем страницы заканчиваются раньше."
+  },
+  "chipsHeading": {
+    "message": "Метки под результатами"
+  },
+  "chipsHint": {
+    "message": "Показывать метки и ранги под заголовком каждого результата."
+  },
+  "summaryHeading": {
+    "message": "Сводка"
+  },
+  "summaryHint": {
+    "message": "Показывать над результатами однострочную сводку того, что изменил Anubis."
+  },
+  "enabledHeading": {
+    "message": "Anubis включён"
+  },
+  "enabledHint": {
+    "message": "Выключите, чтобы оставить страницы поиска как есть, не удаляя расширение."
+  },
+  "enginesHeading": {
+    "message": "Поисковые системы"
+  },
+  "enginesIntro": {
+    "message": "Anubis работает с веб-результатами этих поисковых систем. По возможности он находит результаты по структуре страницы, поэтому небольшие изменения дизайна его не ломают."
+  },
+  "enginesTrouble": {
+    "message": "Anubis ничего не делает на странице поиска?"
+  },
+  "enginesTroubleHelp": {
+    "message": "Что проверить"
+  },
+  "shareHeading": {
+    "message": "Резервная копия, импорт и публикация"
+  },
+  "shareIntro": {
+    "message": "Сохраните копию всего, перенесите сайты из другого инструмента или опубликуйте свой список, чтобы другие могли на него подписаться."
+  },
+  "publishHeading": {
+    "message": "Опубликовать свой список"
+  },
+  "publishIntro": {
+    "message": "Сервер не нужен: базой данных служит публичный git-репозиторий, а вклад люди вносят через пул-реквесты."
+  },
+  "publishHelp": {
+    "message": "Как опубликовать список"
+  },
+  "publishStepDownload": {
+    "message": "Скачайте свой список ниже. Заполните строки $1, $2 и $3 в его начале."
+  },
+  "publishStepRepository": {
+    "message": "Создайте публичный репозиторий на GitHub (или gist) и добавьте в него файл, например $1."
+  },
+  "publishStepIssues": {
+    "message": "Добавьте $1, чтобы люди могли предлагать сайты для вашего списка из меню у каждого результата."
+  },
+  "publishStepShare": {
+    "message": "Поделитесь ссылкой на файл. Её вставляют в «Списки» → «Добавить список»."
+  },
+  "publishStepDirectory": {
+    "message": "Хотите, чтобы он был в разделе «Другие списки» для всех? Откройте пул-реквест, который добавляет его в $1."
+  },
+  "publishDownload": {
+    "message": "Скачать мой список"
+  },
+  "publishFormat": {
+    "message": "Формат списков"
+  },
+  "importHeading": {
+    "message": "Импорт сайтов"
+  },
+  "importIntro": {
+    "message": "Переходите с uBlacklist или HOHSER? Вставьте сюда свои правила или экспорт, и сайты попадут в ваш список. Скрытые останутся скрытыми, частичное скрытие HOHSER станет рангом «Понизить», а цвета выделения станут метками, которые выделяют результаты."
+  },
+  "importHelp": {
+    "message": "Во что превращаются правила каждого инструмента"
+  },
+  "importPlaceholder": {
+    "message": "Вставьте правила uBlacklist, экспорт HOHSER, Goggle или домены, по одному на строку"
+  },
+  "importLabel": {
+    "message": "Сайты для импорта"
+  },
+  "importButton": {
+    "message": "Импортировать"
+  },
+  "importChooseFile": {
+    "message": "Выбрать файл"
+  },
+  "importSourceHohser": {
+    "message": "экспорт HOHSER"
+  },
+  "importSourceUblacklist": {
+    "message": "правила uBlacklist"
+  },
+  "importSourceGoggle": {
+    "message": "Goggle"
+  },
+  "importSourceAnubis": {
+    "message": "список Anubis"
+  },
+  "importSourceDomains": {
+    "message": "список доменов"
+  },
+  "importRead_one": {
+    "message": "Распознано как $2: добавлен $1 сайт, обновлено: $3."
+  },
+  "importRead_few": {
+    "message": "Распознано как $2: добавлено $1 сайта, обновлено: $3."
+  },
+  "importRead_many": {
+    "message": "Распознано как $2: добавлено $1 сайтов, обновлено: $3."
+  },
+  "importRead_other": {
+    "message": "Распознано как $2: добавлено $1 сайта, обновлено: $3."
+  },
+  "importSkipped_one": {
+    "message": "$1 правило с шаблонами адресов или неподдерживаемым синтаксисом пропущено; чтобы сохранить такие правила, подпишитесь на исходный список."
+  },
+  "importSkipped_few": {
+    "message": "$1 правила с шаблонами адресов или неподдерживаемым синтаксисом пропущены; чтобы сохранить такие правила, подпишитесь на исходный список."
+  },
+  "importSkipped_many": {
+    "message": "$1 правил с шаблонами адресов или неподдерживаемым синтаксисом пропущено; чтобы сохранить такие правила, подпишитесь на исходный список."
+  },
+  "importSkipped_other": {
+    "message": "$1 правила с шаблонами адресов или неподдерживаемым синтаксисом пропущено; чтобы сохранить такие правила, подпишитесь на исходный список."
+  },
+  "importFailed": {
+    "message": "Не удалось импортировать: $1"
+  },
+  "backupHeading": {
+    "message": "Резервная копия"
+  },
+  "backupIntro": {
+    "message": "Всё в одном файле: настройки, выбор для меток, подписки и ваш список."
+  },
+  "backupExport": {
+    "message": "Экспортировать копию"
+  },
+  "backupRestore": {
+    "message": "Восстановить из копии"
+  },
+  "backupRestored": {
+    "message": "Резервная копия восстановлена."
+  },
+  "backupRestoreFailed": {
+    "message": "Не удалось восстановить: $1"
+  },
+  "resetButton": {
+    "message": "Сбросить настройки"
+  },
+  "resetDone": {
+    "message": "Настройки, метки и подписки сброшены. Ваш список сохранён."
+  },
+  "settingsSections": {
+    "message": "Разделы настроек"
+  },
+  "settingsPageTitle": {
+    "message": "$1 — Anubis"
+  },
+  "settingsBrandTitle": {
+    "message": "Открыть вики Anubis"
+  },
+  "settingsTagline": {
+    "message": "Скрывайте, ранжируйте и помечайте результаты поиска"
+  },
+  "settingsSource": {
+    "message": "Исходный код на GitHub"
+  },
+  "sitesHeading": {
+    "message": "Ваши сайты"
+  },
+  "sitesHelp": {
+    "message": "Как работает ранжирование"
+  },
+  "tagsHeading": {
+    "message": "Метки"
+  },
+  "tagsHelp": {
+    "message": "Как работают метки"
+  },
+  "listsHeading": {
+    "message": "Списки"
+  },
+  "listsHelp": {
+    "message": "Как работают списки"
+  },
+  "cleanupHeading": {
+    "message": "Убрать блоки"
+  },
+  "cleanupHelp": {
+    "message": "Как Anubis убирает блоки"
+  },
+  "appearanceHelp": {
+    "message": "О скрытых результатах"
+  },
+  "enginesHelp": {
+    "message": "С какими поисковыми системами он работает"
+  },
+  "syncHelp": {
+    "message": "Как работает синхронизация"
+  },
+  "shareHelp": {
+    "message": "Переход с других инструментов"
+  },
+  "cleanupIntro": {
+    "message": "Anubis может убирать со страниц поиска блоки, которые не являются результатами. Включите те, которые вы не хотите видеть. «Показать скрытые» над результатами возвращает их для этого поиска."
+  },
+  "cleanupEverySearch": {
+    "message": "При каждом поиске"
+  },
+  "cleanupEverySearchHint": {
+    "message": "Включено — Anubis убирает блок. Выключено — блок остаётся на странице."
+  },
+  "cleanupStillShows": {
+    "message": "Если блок всё ещё виден"
+  },
+  "cleanupAll": {
+    "message": "Все сразу"
+  },
+  "cleanupAllHint": {
+    "message": "Включает или выключает все переключатели в этом разделе."
+  },
+  "cleanupOnGoogle": {
+    "message": "В Google"
+  },
+  "cleanupWebTab": {
+    "message": "Всегда открывать вкладку «Веб»"
+  },
+  "cleanupWebTabHint": {
+    "message": "Отправляет каждый поиск в Google на вкладку «Веб»: только ссылки, без блока «Обзор от ИИ», видео и других блоков, даже тех, которые Anubis не распознаёт. Чтобы уйти с неё для одного поиска, выберите «Все» над результатами."
+  },
+  "cleanupAi": {
+    "message": "Ответы ИИ"
+  },
+  "cleanupAiHint": {
+    "message": "«Обзор от ИИ» и вкладка «Режим ИИ» в Google, ответы с помощью ИИ и Duck.ai в DuckDuckGo, ответы ИИ в Bing и в Brave."
+  },
+  "cleanupVideos": {
+    "message": "Блоки видео"
+  },
+  "cleanupVideosHint": {
+    "message": "Блоки с видео и короткими видео между результатами."
+  },
+  "cleanupQuestions": {
+    "message": "Похожие вопросы"
+  },
+  "cleanupQuestionsHint": {
+    "message": "Списки вопросов других людей с раскрывающимися ответами."
+  },
+  "cleanupDiscussions": {
+    "message": "Блоки обсуждений"
+  },
+  "cleanupDiscussionsHint": {
+    "message": "Блоки с ветками форумов между результатами, например «Обсуждения и форумы» в Google. Страницы форумов среди результатов остаются."
+  },
+  "cleanupNews": {
+    "message": "Главные новости"
+  },
+  "cleanupNewsHint": {
+    "message": "Блоки новостей между результатами."
+  },
+  "cleanupImages": {
+    "message": "Ряды картинок"
+  },
+  "cleanupImagesHint": {
+    "message": "Ряды картинок между результатами. Вкладка «Картинки» продолжает работать."
+  },
+  "cleanupRelated": {
+    "message": "Похожие запросы"
+  },
+  "cleanupRelatedHint": {
+    "message": "Списки других запросов, обычно внизу страницы."
+  },
+  "cleanupElsewhere": {
+    "message": "Другие поисковые системы"
+  },
+  "cleanupElsewhereHint": {
+    "message": "Ряды кнопок, которые повторяют ваш поиск в другой поисковой системе, например «Find elsewhere» в Brave."
+  },
+  "cleanupAdRequests": {
+    "message": "Просьбы разрешить рекламу"
+  },
+  "cleanupAdRequestsHint": {
+    "message": "Баннеры с просьбой выключить блокировщик рекламы или разрешить рекламу, например «Block creepy ads, not private search» в Startpage."
+  },
+  "sitesIntro": {
+    "message": "Сайты, которым вы сами задали ранг или которые вы скрыли. Ваш выбор важнее любого списка, на который вы подписаны. Используйте кнопку у любого результата поиска или добавьте сайты здесь."
+  },
+  "sitesEditAsText": {
+    "message": "Редактировать как текст"
+  },
+  "sitesBackToTable": {
+    "message": "Вернуться к таблице"
+  },
+  "sitesTooBig": {
+    "message": "Ваш список слишком велик для синхронизации браузера, поэтому он хранится только на этом устройстве. Скачайте его, чтобы сохранить копию."
+  },
+  "sitesAddPlaceholder": {
+    "message": "Домен или URL, например fandom.com"
+  },
+  "sitesAdd": {
+    "message": "Добавить"
+  },
+  "sitesNotDomain": {
+    "message": "Это не похоже на домен."
+  },
+  "sitesAddHint": {
+    "message": "Действует на сайт и все его поддомены."
+  },
+  "sitesAddHelp": {
+    "message": "Как выбрать часть сайта"
+  },
+  "sitesFilter_one": {
+    "message": "Найти среди $1 сайта…"
+  },
+  "sitesFilter_few": {
+    "message": "Найти среди $1 сайтов…"
+  },
+  "sitesFilter_many": {
+    "message": "Найти среди $1 сайтов…"
+  },
+  "sitesFilter_other": {
+    "message": "Найти среди $1 сайта…"
+  },
+  "sitesFilterLabel": {
+    "message": "Фильтр сайтов"
+  },
+  "sitesAddTagTo": {
+    "message": "Добавить метку к $1"
+  },
+  "sitesKeptNormal": {
+    "message": "Оставлен обычным, что бы ни говорили ваши списки"
+  },
+  "sitesRemoveTag": {
+    "message": "Снять «$1» с $2"
+  },
+  "sitesForget": {
+    "message": "Забыть $1"
+  },
+  "sitesFirst500": {
+    "message": "Показаны первые 500. Воспользуйтесь фильтром, чтобы найти остальные."
+  },
+  "sitesNone": {
+    "message": "Сайтов пока нет. Добавьте сайт выше или используйте кнопку у результата поиска."
+  },
+  "sitesTextLabel": {
+    "message": "Ваш список в виде текста"
+  },
+  "sitesTextIntro": {
+    "message": "Ваш список в формате списков Anubis: синтаксис Brave Goggles плюс метки. Это ровно тот файл, который вы бы опубликовали. Строки, которые таблица не может показать, сохраняются как есть."
+  },
+  "sitesTextReadable": {
+    "message": "$1 и $2, всё читается."
+  },
+  "listInstructions_one": {
+    "message": "$1 инструкция"
+  },
+  "listInstructions_few": {
+    "message": "$1 инструкции"
+  },
+  "listInstructions_many": {
+    "message": "$1 инструкций"
+  },
+  "listInstructions_other": {
+    "message": "$1 инструкции"
+  },
+  "listErrorLine": {
+    "message": "Строка $1: $2"
+  },
+  "sitesSave": {
+    "message": "Сохранить"
+  },
+  "sitesFormatReference": {
+    "message": "Справка по формату"
+  },
+  "listsIntro": {
+    "message": "Подписывайтесь на списки, которые помечают сайты, меняют их порядок или скрывают их. Подойдёт любой текстовый файл на GitHub, GitLab, Codeberg или в gist: списки Anubis, Brave Goggles, наборы правил uBlacklist и простые списки доменов."
+  },
+  "listsUpdateAll": {
+    "message": "Обновить все"
+  },
+  "listsUpdating": {
+    "message": "Обновление…"
+  },
+  "listsAllChecked": {
+    "message": "Все списки проверены на обновления."
+  },
+  "listsAddHeading": {
+    "message": "Добавить список"
+  },
+  "listsAddHint": {
+    "message": "Вставьте ссылку на файл. Ссылки на страницу GitHub, gist или Brave Goggle тоже подойдут."
+  },
+  "listsAddHelp": {
+    "message": "Какие списки подходят"
+  },
+  "listsUrlLabel": {
+    "message": "URL списка"
+  },
+  "listsNone": {
+    "message": "Списков пока нет. Выберите какие-нибудь из тех, что ниже."
+  },
+  "listsMoreHeading": {
+    "message": "Другие списки"
+  },
+  "listsMoreIntro": {
+    "message": "Из каталога Anubis и от сообщества."
+  },
+  "listsShare": {
+    "message": "Составили список, которым стоит поделиться? Добавьте его в каталог пул-реквестом в $1."
+  },
+  "listsNeedHttps": {
+    "message": "Списки должны загружаться по https."
+  },
+  "listsPermissionToDownload": {
+    "message": "Чтобы скачать этот список, Anubis нужно разрешение на чтение $1."
+  },
+  "listsSubscribed": {
+    "message": "Вы подписались на $1: $2 и $3."
+  },
+  "listsSubscribedBundled": {
+    "message": "Вы подписались на $1 (пока список не сможет обновиться, используется копия, встроенная в Anubis)."
+  },
+  "listsSubscribeFailed": {
+    "message": "Не удалось подписаться: $1"
+  },
+  "listsUse": {
+    "message": "Использовать $1"
+  },
+  "listsOn": {
+    "message": "Включён"
+  },
+  "listsOff": {
+    "message": "Выключен"
+  },
+  "listsUpdateFailed": {
+    "message": "$1: $2"
+  },
+  "listsUpToDate": {
+    "message": "Список $1 актуален."
+  },
+  "listsFacts": {
+    "message": "$1."
+  },
+  "listsLinks": {
+    "message": "$1"
+  },
+  "listsNotDownloaded": {
+    "message": "ещё не скачан"
+  },
+  "listsBy": {
+    "message": "автор: $1"
+  },
+  "listsBundledCopy": {
+    "message": "копия, встроенная в Anubis"
+  },
+  "listsUpdated": {
+    "message": "обновление: $1"
+  },
+  "listsHomepage": {
+    "message": "домашняя страница"
+  },
+  "listsSuggestChanges": {
+    "message": "предложить изменения"
+  },
+  "listsUsingBundled": {
+    "message": "Пока список не сможет обновиться, используется копия, встроенная в Anubis ($1)."
+  },
+  "listsLastUpdateFailed": {
+    "message": "Последнее обновление не удалось: $1."
+  },
+  "listsSkippedLines_one": {
+    "message": "$1 строка пропущена: Anubis пока не понимает этот синтаксис."
+  },
+  "listsSkippedLines_few": {
+    "message": "$1 строки пропущены: Anubis пока не понимает этот синтаксис."
+  },
+  "listsSkippedLines_many": {
+    "message": "$1 строк пропущено: Anubis пока не понимает этот синтаксис."
+  },
+  "listsSkippedLines_other": {
+    "message": "$1 строки пропущено: Anubis пока не понимает этот синтаксис."
+  },
+  "listsUpdateNow": {
+    "message": "Обновить сейчас"
+  },
+  "listsUpdateOne": {
+    "message": "Обновить $1"
+  },
+  "listsViewFile": {
+    "message": "Открыть файл"
+  },
+  "listsViewOne": {
+    "message": "Открыть $1"
+  },
+  "listsUnsubscribe": {
+    "message": "Отписаться"
+  },
+  "listsUnsubscribeOne": {
+    "message": "Отписаться от $1"
+  },
+  "listLensTitle": {
+    "message": "Линза скрывает результаты, которые список не упоминает"
+  },
+  "listKindLens": {
+    "message": "линза"
+  },
+  "listKindBuiltin": {
+    "message": "встроенный"
+  },
+  "listFormatAnubis": {
+    "message": "список Anubis"
+  },
+  "listFormatGoggle": {
+    "message": "Brave Goggle"
+  },
+  "listFormatUblacklist": {
+    "message": "набор правил uBlacklist"
+  },
+  "listFormatDomains": {
+    "message": "список доменов"
+  },
+  "timeNever": {
+    "message": "никогда"
+  },
+  "timeJustNow": {
+    "message": "только что"
+  },
+  "tagsIntro": {
+    "message": "Списки помечают результаты. Вы решаете, что делает каждая метка: следовать спискам, только показывать метку, выделять результаты или закреплять, поднимать, понижать или скрывать то, что ею помечено. Списки, использующие одно и то же название метки, делят её между собой."
+  },
+  "tagActionList": {
+    "message": "Следовать спискам"
+  },
+  "tagActionLabel": {
+    "message": "Только метка"
+  },
+  "tagActionHighlight": {
+    "message": "Выделять"
+  },
+  "tagActionFor": {
+    "message": "Что делать с результатами с меткой $1"
+  },
+  "tagMarksNone": {
+    "message": "Пока ни у одного сайта её нет."
+  },
+  "tagMarks": {
+    "message": "Помечает $1."
+  },
+  "tagMarksYours_one": {
+    "message": "$1 ваш сайт"
+  },
+  "tagMarksYours_few": {
+    "message": "$1 ваших сайта"
+  },
+  "tagMarksYours_many": {
+    "message": "$1 ваших сайтов"
+  },
+  "tagMarksYours_other": {
+    "message": "$1 вашего сайта"
+  },
+  "tagMarksFromList_one": {
+    "message": "$1 сайт из списка $2"
+  },
+  "tagMarksFromList_few": {
+    "message": "$1 сайта из списка $2"
+  },
+  "tagMarksFromList_many": {
+    "message": "$1 сайтов из списка $2"
+  },
+  "tagMarksFromList_other": {
+    "message": "$1 сайта из списка $2"
+  },
+  "tagEffectLabel": {
+    "message": "$1 Это только метка: их ранг не меняется."
+  },
+  "tagEffectHighlight": {
+    "message": "$1 Выделяет их цветом метки."
+  },
+  "tagEffectRaise": {
+    "message": "$1 Поднимает их в результатах поиска."
+  },
+  "tagEffectLower": {
+    "message": "$1 Понижает их в результатах поиска."
+  },
+  "tagEffectPin": {
+    "message": "$1 Закрепляет их вверху результатов поиска."
+  },
+  "tagEffectHide": {
+    "message": "$1 Скрывает их из результатов поиска."
+  },
+  "tagEffectOneList": {
+    "message": "$1 $2 $3 из них."
+  },
+  "tagEffectLists": {
+    "message": "$1 Списки $2 из них."
+  },
+  "tagListRaises_one": {
+    "message": "поднимает $1"
+  },
+  "tagListRaises_few": {
+    "message": "поднимает $1"
+  },
+  "tagListRaises_many": {
+    "message": "поднимает $1"
+  },
+  "tagListRaises_other": {
+    "message": "поднимает $1"
+  },
+  "tagListLowers_one": {
+    "message": "понижает $1"
+  },
+  "tagListLowers_few": {
+    "message": "понижает $1"
+  },
+  "tagListLowers_many": {
+    "message": "понижает $1"
+  },
+  "tagListLowers_other": {
+    "message": "понижает $1"
+  },
+  "tagListHides_one": {
+    "message": "скрывает $1"
+  },
+  "tagListHides_few": {
+    "message": "скрывает $1"
+  },
+  "tagListHides_many": {
+    "message": "скрывает $1"
+  },
+  "tagListHides_other": {
+    "message": "скрывает $1"
+  },
+  "tagListsRaise_one": {
+    "message": "поднимают $1"
+  },
+  "tagListsRaise_few": {
+    "message": "поднимают $1"
+  },
+  "tagListsRaise_many": {
+    "message": "поднимают $1"
+  },
+  "tagListsRaise_other": {
+    "message": "поднимают $1"
+  },
+  "tagListsLower_one": {
+    "message": "понижают $1"
+  },
+  "tagListsLower_few": {
+    "message": "понижают $1"
+  },
+  "tagListsLower_many": {
+    "message": "понижают $1"
+  },
+  "tagListsLower_other": {
+    "message": "понижают $1"
+  },
+  "tagListsHide_one": {
+    "message": "скрывают $1"
+  },
+  "tagListsHide_few": {
+    "message": "скрывают $1"
+  },
+  "tagListsHide_many": {
+    "message": "скрывают $1"
+  },
+  "tagListsHide_other": {
+    "message": "скрывают $1"
+  },
+  "tagSitesToTag": {
+    "message": "Сайты для метки $1"
+  },
+  "tagAddSite": {
+    "message": "Добавить сайт"
+  },
+  "tagNotSite": {
+    "message": "«$1» не похоже на сайт."
+  },
+  "tagTypeSite": {
+    "message": "Введите сайт, например fandom.com."
+  },
+  "tagSiteNote": {
+    "message": "$1: $2"
+  },
+  "tagMoreSites_one": {
+    "message": "ещё $1"
+  },
+  "tagMoreSites_few": {
+    "message": "ещё $1"
+  },
+  "tagMoreSites_many": {
+    "message": "ещё $1"
+  },
+  "tagMoreSites_other": {
+    "message": "ещё $1"
+  },
+  "tagFromList": {
+    "message": "$1: $2."
+  },
+  "tagName": {
+    "message": "Название метки"
+  },
+  "tagNameShort": {
+    "message": "Название"
+  },
+  "tagDescription": {
+    "message": "Описание"
+  },
+  "tagDescriptionPlaceholder": {
+    "message": "Что она означает (необязательно)"
+  },
+  "tagMeaning": {
+    "message": "Что означает $1"
+  },
+  "tagYourSites": {
+    "message": "Ваши сайты с этой меткой"
+  },
+  "tagNoSites": {
+    "message": "Пока нет. Добавьте сайт здесь или используйте кнопку ⚖ у результата поиска."
+  },
+  "tagFromYourLists": {
+    "message": "Из ваших списков"
+  },
+  "tagColour": {
+    "message": "Цвет"
+  },
+  "tagColourOf": {
+    "message": "Цвет метки $1"
+  },
+  "tagShowUnder": {
+    "message": "Показывать $1 под результатами"
+  },
+  "tagShowTitle": {
+    "message": "Показывать эту метку под результатами"
+  },
+  "tagEdit": {
+    "message": "Изменить"
+  },
+  "tagDone": {
+    "message": "Готово"
+  },
+  "tagEditLabel": {
+    "message": "Изменить метку $1 и её сайты"
+  },
+  "tagDelete": {
+    "message": "Удалить «$1»"
+  },
+  "tagNewHeading": {
+    "message": "Новая метка"
+  },
+  "tagNewHint": {
+    "message": "Ваши метки хранятся в вашем списке, поэтому публикуются вместе с ним."
+  },
+  "tagNewHelp": {
+    "message": "Как добавить сайты к метке"
+  },
+  "tagNewPlaceholder": {
+    "message": "Название, например «ИИ-мусор»"
+  },
+  "tagNewColour": {
+    "message": "Цвет новой метки"
+  },
+  "tagCreate": {
+    "message": "Создать метку"
+  },
+  "tagNameInvalid": {
+    "message": "Дайте метке название, в котором есть хотя бы одна буква или цифра."
+  },
+  "tagExists": {
+    "message": "Метка «$1» уже существует."
+  },
+  "tagYoursHeading": {
+    "message": "Ваши метки"
+  },
+  "tagListsHeading": {
+    "message": "Метки из списков"
+  },
+  "tagListsHint": {
+    "message": "Их задают ваши списки. Решите, что делает каждая, и добавляйте к любой из них свои сайты. Если список перестанет использовать метку, которая есть у ваших сайтов, она переместится в «Ваши метки»."
+  },
+  "tagSourceLists": {
+    "message": "Из $1"
+  },
+  "tagNoneYours": {
+    "message": "Своих меток пока нет. Создайте метку выше."
+  },
+  "quoted": {
+    "message": "«$1»"
+  },
+  "reasonPins": {
+    "message": "закрепляет его"
+  },
+  "reasonKeepsNormal": {
+    "message": "оставляет его обычным"
+  },
+  "reasonHides": {
+    "message": "скрывает его"
+  },
+  "reasonRaises": {
+    "message": "поднимает его на $1"
+  },
+  "reasonLowers": {
+    "message": "понижает его на $1"
+  },
+  "reasonTags": {
+    "message": "помечает его как $1"
+  },
+  "reasonMentions": {
+    "message": "упоминает его"
+  },
+  "reasonLens": {
+    "message": "не включает его, поэтому он скрыт"
+  },
+  "reasonYourTagSettings": {
+    "message": "Ваши настройки меток"
+  },
+  "menuReason": {
+    "message": "$1 $2."
+  },
+  "choicePin": {
+    "message": "закрепляют его из-за $1"
+  },
+  "choiceHide": {
+    "message": "скрывают его из-за $1"
+  },
+  "choiceRaise_one": {
+    "message": "поднимают его на $2 из-за $3"
+  },
+  "choiceRaise_few": {
+    "message": "поднимают его на $2 за каждую из меток $3"
+  },
+  "choiceRaise_many": {
+    "message": "поднимают его на $2 за каждую из меток $3"
+  },
+  "choiceRaise_other": {
+    "message": "поднимают его на $2 за каждую из меток $3"
+  },
+  "choiceLower_one": {
+    "message": "понижают его на $2 из-за $3"
+  },
+  "choiceLower_few": {
+    "message": "понижают его на $2 за каждую из меток $3"
+  },
+  "choiceLower_many": {
+    "message": "понижают его на $2 за каждую из меток $3"
+  },
+  "choiceLower_other": {
+    "message": "понижают его на $2 за каждую из меток $3"
+  },
+  "choiceTotal": {
+    "message": "$1, $2"
+  },
+  "choiceNetUp_one": {
+    "message": "поэтому он поднимается на $1 позицию"
+  },
+  "choiceNetUp_few": {
+    "message": "поэтому он поднимается на $1 позиции"
+  },
+  "choiceNetUp_many": {
+    "message": "поэтому он поднимается на $1 позиций"
+  },
+  "choiceNetUp_other": {
+    "message": "поэтому он поднимается на $1 позиции"
+  },
+  "choiceNetDown_one": {
+    "message": "поэтому он опускается на $1 позицию"
+  },
+  "choiceNetDown_few": {
+    "message": "поэтому он опускается на $1 позиции"
+  },
+  "choiceNetDown_many": {
+    "message": "поэтому он опускается на $1 позиций"
+  },
+  "choiceNetDown_other": {
+    "message": "поэтому он опускается на $1 позиции"
+  },
+  "choiceNetSame": {
+    "message": "поэтому он остаётся на месте"
+  },
+  "lineBadTagDefinition": {
+    "message": "Неверное определение метки: $1"
+  },
+  "lineNeedsPattern": {
+    "message": "Инструкции нужен шаблон или сайт"
+  },
+  "lineTooLong": {
+    "message": "Инструкция длиннее $1 символов"
+  },
+  "lineBadSite": {
+    "message": "Неверный сайт: $1"
+  },
+  "lineBadStrength": {
+    "message": "Значение $1 должно быть от 1 до $2"
+  },
+  "lineBadTagId": {
+    "message": "Неверный id метки: $1"
+  },
+  "lineUnknownOption": {
+    "message": "Неизвестный параметр: $1"
+  },
+  "lineEmptyPattern": {
+    "message": "Пустой шаблон"
+  },
+  "lineTooManyWildcards": {
+    "message": "Не более $1 подстановочных знаков (*) на инструкцию"
+  },
+  "lineTooManySeparators": {
+    "message": "Не более $1 разделителей (^) на инструкцию"
+  },
+  "lineIfGuard": {
+    "message": "Условия @if пока не поддерживаются"
+  },
+  "lineRegexTooLong": {
+    "message": "Регулярное выражение длиннее $1 символов"
+  },
+  "lineRegexFreeze": {
+    "message": "Регулярное выражение может подвесить страницы поиска (внутри повторяющейся группы есть ещё повтор): $1"
+  },
+  "lineBadRegex": {
+    "message": "Неверное регулярное выражение: $1"
+  },
+  "lineUnsupported": {
+    "message": "Неподдерживаемое правило: $1"
+  },
+  "lineBadHost": {
+    "message": "Неверный хост: $1"
+  },
+  "lineMatchesEverything": {
+    "message": "Правило подходит под всё"
+  },
+  "lineNotDomain": {
+    "message": "Не домен: $1"
+  },
+  "listTooBig": {
+    "message": "Список больше $1 МБ"
+  },
+  "listIsWebPage": {
+    "message": "Получена веб-страница, а не список. Используйте прямую ссылку на файл (raw)."
+  },
+  "listTimedOut": {
+    "message": "Время ожидания истекло"
+  },
+  "listNoUsableRules": {
+    "message": "Нет пригодных правил (строка $1: $2)"
+  },
+  "listNoRules": {
+    "message": "Правила не найдены"
+  },
+  "backupNotBackup": {
+    "message": "Это не резервная копия Anubis."
+  },
+  "themeAuto": {
+    "message": "Авто"
+  },
+  "themeLight": {
+    "message": "Светлая"
+  },
+  "themeDark": {
+    "message": "Тёмная"
+  },
+  "themeAutoTitle": {
+    "message": "Автоматическая тема"
+  },
+  "themeLightTitle": {
+    "message": "Светлая тема"
+  },
+  "themeDarkTitle": {
+    "message": "Тёмная тема"
+  },
+  "personalListName": {
+    "message": "Ваш список"
+  },
+  "importHighlightTag": {
+    "message": "Выделение $1"
+  },
+  "tagDeleted_one": {
+    "message": "Метка «$2» удалена и снята с $1 сайта."
+  },
+  "tagDeleted_few": {
+    "message": "Метка «$2» удалена и снята с $1 сайтов."
+  },
+  "tagDeleted_many": {
+    "message": "Метка «$2» удалена и снята с $1 сайтов."
+  },
+  "tagDeleted_other": {
+    "message": "Метка «$2» удалена и снята с $1 сайта."
+  },
+  "listsUnsubscribed": {
+    "message": "Вы отписались от $1."
+  }
+}
