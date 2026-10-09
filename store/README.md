@@ -130,7 +130,7 @@ Nothing disappears without a trace. A one-line summary says what Anubis changed,
 
 Works on the major search engines. See which ones: https://bishop-v.github.io/anubis/guide/search-engines
 
-Languages: English. German, French, Spanish, and Brazilian Portuguese are machine translations, not yet checked by speakers and not fully supported, so use them with caution: https://bishop-v.github.io/anubis/guide/translate
+Languages: English. Arabic, Bengali, Chinese (Simplified), French, German, Hindi, Indonesian, Brazilian Portuguese, Russian, Spanish, and Urdu are machine translations, not yet checked by speakers and not fully supported, so use them with caution: https://bishop-v.github.io/anubis/guide/translate
 
 No Anubis server or account. Anubis does not send your searches or settings to the developer. If you connect your own WebDAV server, it sends your rankings, tags, settings, and lists there to sync between browsers; the sync file is encrypted by default for new connections, but you can turn encryption off.
 
