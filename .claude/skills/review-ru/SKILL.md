@@ -49,8 +49,8 @@ The Russian interface is `locales/ru/messages.json`, machine translated from `pu
 
 ## Names to match
 
-- **Google (google.ru):** «Обзор от ИИ», «Режим ИИ», «Похожие вопросы», «Главные новости», «Обсуждения и форумы», the tabs «Веб», «Все», «Картинки». The Web tab's Russian name is the least certain; check it on google.ru with `&udm=14`.
-- **Firefox:** «Дополнения» (in the sync settings), «Синхронизировать сейчас», «Прикрепить к панели инструментов», «Расширения».
+- **Google (google.ru):** «Обзор от ИИ», «Режим ИИ», «Похожие вопросы», «Главные новости», «Обсуждения и форумы», the tabs «Веб», «Все», «Картинки». «Веб» (the `&udm=14` tab, under «Ещё») is the name Russian tech press quotes from google.ru.
+- **Firefox** (as in Mozilla's Russian localisation): «Дополнения» (in the sync settings), «Синхронизировать» for Sync Now (Firefox's Russian has no «сейчас»), «Закрепить на панели инструментов» for Pin to Toolbar, «Расширения» (the toolbar button, and Firefox for Android's menu). Anubis's own Sync now button (`webdavSyncNow`) is «Синхронизировать сейчас»; that one isn't Firefox's.
 - **Chrome, Edge, Opera:** «Расширения» (the puzzle piece; Opera's cube).
 - Product names stay in Latin script, undeclined: Anubis, Google, Firefox, Brave Goggles, uBlacklist, HOHSER, Koofr, Nextcloud, Duck.ai, WebDAV. Quoted English UI from sites that show no Russian stays English: Brave's «Find elsewhere», Startpage's «Block creepy ads, not private search».
 
