@@ -8,11 +8,11 @@ import { engineFor } from '@/utils/engines';
 import { bugReportLink, describeBrowser, guide } from '@/utils/links';
 import { LEVELS, evaluate, listTagCards, listTagIds, type Level } from '@/utils/matcher';
 import { h, icon, siteName } from '@/utils/dom';
-import { ICON_GEAR, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS, tagEffectText, tagMark } from '@/utils/icons';
+import { ICON_GEAR, LEVEL_CHIPS, LEVEL_LABELS, levelIcon, tagEffectText, tagMark } from '@/utils/icons';
 import { localizePage, t, tJoin, tn, type MessageKey } from '@/utils/i18n';
 import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/messages';
-import { displayLevel, getSite, listSites, setSiteLevel, tagSite, upsertTagDef, type PersonalLevel } from '@/utils/personal';
+import { displayLevel, getSite, levelSteps, listSites, setSiteLevel, tagSite, upsertTagDef, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal, updateSettings } from '@/utils/storage';
 import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder, tagPicker, tagSource } from '@/utils/siteranking';
@@ -87,7 +87,7 @@ async function renderAll() {
             null,
             h('span', { class: 'site', title: entry.site }, siteName(entry.site)),
             level !== 'normal'
-              ? h('span', { class: `level-note ${level}` }, icon(LEVEL_ICONS[level]), LEVEL_CHIPS[level])
+              ? h('span', { class: `level-note ${level}` }, icon(levelIcon(level, levelSteps(entry.level))), LEVEL_CHIPS[level])
               : entry.level === 'allow'
                 ? h('span', { class: 'level-note' }, t('popupKeptNormal'))
                 : onlyTag
@@ -150,7 +150,7 @@ function renderHere(rules: RuleSet) {
             },
           },
         },
-        h('span', { class: 'level-icon' }, icon(LEVEL_ICONS[level])),
+        h('span', { class: 'level-icon' }, icon(levelIcon(level, r.pressed === level ? r.steps : 1))),
         LEVEL_LABELS[level],
       ),
     ),

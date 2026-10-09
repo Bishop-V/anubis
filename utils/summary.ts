@@ -81,5 +81,7 @@ const LEVEL_CHANGED = {
   normal: 'summaryChangedNormal',
   allow: 'summaryChangedAllow',
   raise: 'summaryChangedRaise',
+  raise2: 'summaryChangedRaise',
+  lower2: 'summaryChangedLower',
   pin: 'summaryChangedPin',
 } as const satisfies Record<PersonalLevel, MessageKey>;

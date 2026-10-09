@@ -2,7 +2,7 @@ import { balanceSvg, setBalance } from '@/utils/balance';
 import { domainChoices, normalizeHostname, siteOf } from '@/utils/domain';
 import { h, icon } from '@/utils/dom';
 import type { EngineDef } from '@/utils/engines';
-import { ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS, TAG_EFFECTS, tagEffectText, tagMark, WEIGH_ICONS } from '@/utils/icons';
+import { ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_LABELS, levelIcon, TAG_EFFECTS, tagEffectText, tagMark, WEIGH_ICONS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
 import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
 import { dir, gap, lang, t, tJoin, tList, tn, tParts } from '@/utils/i18n';
@@ -1199,7 +1199,7 @@ function buildPopover(
           attrs: { 'aria-pressed': String(r.pressed === level), 'data-focus-key': `level-${level}` },
           on: { click: () => actions.setLevel(domain, nextLevel(level, r)) },
         },
-        h('span', { class: 'level-icon' }, icon(LEVEL_ICONS[level])),
+        h('span', { class: 'level-icon' }, icon(levelIcon(level, r.pressed === level ? r.steps : 1))),
         LEVEL_LABELS[level],
       ),
     ),

@@ -28,7 +28,7 @@ describe('displayLevel', () => {
 
 describe('rankingOf', () => {
   it('follows the lists when you have no ranking for the site', () => {
-    expect(rankingOf(undefined, verdict('lower'))).toEqual({ personal: undefined, pressed: undefined, fromLists: 'lower' });
+    expect(rankingOf(undefined, verdict('lower'))).toEqual({ personal: undefined, pressed: undefined, steps: 1, fromLists: 'lower' });
     expect(rankingOf(site('normal'), verdict('lower'))).toMatchObject({ pressed: undefined, fromLists: 'lower' });
   });
 
@@ -39,19 +39,29 @@ describe('rankingOf', () => {
 });
 
 describe('nextLevel', () => {
-  it('stores Normal as an allow when the lists rank the site, so it beats them', () => {
-    expect(nextLevel('normal', rankingOf(undefined, verdict('lower')))).toBe('allow');
-    expect(nextLevel('normal', rankingOf(undefined, verdict('normal')))).toBe('normal');
-    // Normal after Raise takes your choice back; the lists still apply.
+  it('takes your ranking back with Normal, and leaves the weighing to tags and lists', () => {
+    expect(nextLevel('normal', rankingOf(undefined, verdict('lower')))).toBe('normal');
     expect(nextLevel('normal', rankingOf(site('raise'), verdict('raise')))).toBe('normal');
-    // Pressing Normal again on a kept-normal site clears it too.
+    expect(nextLevel('normal', rankingOf(site('lower2'), verdict('lower')))).toBe('normal');
     expect(nextLevel('normal', rankingOf(site('allow'), verdict('raise')))).toBe('normal');
+  });
+
+  it('answers lists that hide a site you have not ranked with an allow', () => {
+    expect(nextLevel('normal', rankingOf(undefined, verdict('hide')))).toBe('allow');
   });
 
   it('presses a ranking, and pressing it again clears it', () => {
     expect(nextLevel('raise', rankingOf(undefined, verdict('normal')))).toBe('raise');
-    expect(nextLevel('raise', rankingOf(site('raise'), verdict('normal')))).toBe('normal');
     expect(nextLevel('hide', rankingOf(site('raise'), verdict('normal')))).toBe('hide');
+    expect(nextLevel('pin', rankingOf(site('pin'), verdict('normal')))).toBe('normal');
+  });
+
+  it('moves a site twice as far when Raise or Lower is pressed twice, then takes it back', () => {
+    expect(nextLevel('raise', rankingOf(site('raise'), verdict('normal')))).toBe('raise2');
+    expect(nextLevel('raise', rankingOf(site('raise2'), verdict('normal')))).toBe('normal');
+    expect(nextLevel('lower', rankingOf(site('lower'), verdict('normal')))).toBe('lower2');
+    expect(nextLevel('lower', rankingOf(site('lower2'), verdict('normal')))).toBe('normal');
+    expect(rankingOf(site('lower2'), verdict('normal'))).toMatchObject({ pressed: 'lower', steps: 2 });
   });
 });
 
