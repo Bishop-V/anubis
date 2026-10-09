@@ -91,6 +91,9 @@ export function tParts<T>(key: MessageKey, ...items: (string | T)[]): (string | 
     .map((part) => (part.length === 1 && part >= '\uE000' && part <= '\uE0FF' ? items[part.charCodeAt(0) - SLOT.charCodeAt(0)]! : part));
 }
 
+/** The interface's direction, from the browser's own message: "rtl" for Arabic, Urdu, Hebrew… */
+export const dir = (): 'ltr' | 'rtl' => (getMessage('@@bidi_dir', []) === 'rtl' ? 'rtl' : 'ltr');
+
 /**
  * Fill a static page's text from messages: `data-i18n` sets the text, and
  * `data-i18n-title`, `data-i18n-aria-label` and `data-i18n-placeholder` set those
@@ -98,8 +101,7 @@ export function tParts<T>(key: MessageKey, ...items: (string | T)[]): (string | 
  */
 export function localizePage(root: Document = document): void {
   root.documentElement.lang = lang();
-  // The browser's own message: "rtl" for Arabic, Hebrew, Persian…
-  root.documentElement.dir = getMessage('@@bidi_dir', []) === 'rtl' ? 'rtl' : 'ltr';
+  root.documentElement.dir = dir();
   for (const el of root.querySelectorAll<HTMLElement>('[data-i18n]')) el.textContent = t(el.dataset.i18n as MessageKey);
   for (const attr of ['title', 'aria-label', 'placeholder']) {
     for (const el of root.querySelectorAll<HTMLElement>(`[data-i18n-${attr}]`)) {

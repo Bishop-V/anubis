@@ -210,7 +210,7 @@ textarea:focus {
 /* One caret for every select, the same as on the result menu's site name. */
 select {
   appearance: none;
-  padding-right: 26px;
+  padding-inline-end: 26px;
   background-image:
     linear-gradient(45deg, transparent 50%, var(--muted) 50%),
     linear-gradient(135deg, var(--muted) 50%, transparent 50%);
@@ -220,6 +220,11 @@ select {
   background-size: 4px 4px;
   background-repeat: no-repeat;
   cursor: pointer;
+}
+[dir='rtl'] select {
+  background-position:
+    10px 55%,
+    14px 55%;
 }
 input::placeholder,
 textarea::placeholder {
@@ -274,7 +279,7 @@ input[type='color']::-moz-color-swatch {
   content: '';
   position: absolute;
   top: 2px;
-  left: 2px;
+  inset-inline-start: 2px;
   width: 13px;
   height: 13px;
   border-radius: 50%;
@@ -286,6 +291,9 @@ input[type='color']::-moz-color-swatch {
 }
 .switch input:checked + span::after {
   transform: translateX(13px);
+}
+[dir='rtl'] .switch input:checked + span::after {
+  transform: translateX(-13px);
 }
 .switch input:focus-visible + span {
   outline: 2px solid var(--gold);
@@ -381,7 +389,7 @@ input[type='color']::-moz-color-swatch {
   margin: 0 0 20px;
   padding: 10px 14px;
   border: 1px solid var(--line-strong);
-  border-left: 3px solid var(--gold);
+  border-inline-start: 3px solid var(--gold);
   border-radius: 6px;
   font-size: 13px;
   line-height: 1.5;

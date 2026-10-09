@@ -5,7 +5,7 @@ import type { EngineDef } from '@/utils/engines';
 import { ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_ICONS, LEVEL_LABELS, TAG_EFFECTS, tagEffectText, tagMark, WEIGH_ICONS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
 import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
-import { lang, t, tJoin, tList, tn, tParts } from '@/utils/i18n';
+import { dir, lang, t, tJoin, tList, tn, tParts } from '@/utils/i18n';
 import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, type PersonalLevel } from '@/utils/personal';
 import { ruleParts } from '@/utils/ruletext';
@@ -61,9 +61,10 @@ function makeHost(tag: string, theme: PageTheme, display = 'block'): { host: HTM
   root.append(h('style', null, shadowCss));
   host.dataset.theme = theme;
   host.dataset.palette = palette;
-  // Anubis's own language, not the page's: screen readers pronounce it right, and long
-  // words hyphenate in it.
+  // Anubis's own language and direction, not the page's: screen readers pronounce it
+  // right, long words hyphenate in it, and Arabic reads right to left on an English page.
   host.lang = lang();
+  host.dir = dir();
   guard(host, display);
   roots.set(host, root);
   return { host, root };
