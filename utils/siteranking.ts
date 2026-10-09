@@ -1,5 +1,5 @@
 import { h } from './dom';
-import { LEVEL_CHIPS } from './icons';
+import { LEVEL_CHIPS, tagEffectText, tagMark } from './icons';
 import { t, tJoin } from './i18n';
 import { TAG_CHOICES, type Level, type Verdict } from './matcher';
 import { displayLevel, levelSteps, PERSONAL_NAME, type PersonalLevel, type SiteEntry } from './personal';
@@ -68,6 +68,17 @@ export function rankingHint(domain: string, baseline: Verdict, r: Ranking, verdi
   const names = [...new Set(baseline.reasons.filter((x) => x.listId !== TAG_CHOICES).map((x) => x.list))];
   if (baseline.reasons.some((x) => x.listId === TAG_CHOICES)) names.push(t('popupYourTagSettings'));
   return t('popupHintLists', LEVEL_CHIPS[r.fromLists], tJoin(names));
+}
+
+/**
+ * "Your list" as a tag that can't be pressed, for a site you ranked: it carries the ranking's mark,
+ * so the tags from lists keep theirs and you can see your own weight beside them. Null when you haven't ranked the site.
+ */
+export function yourListTag(entry: SiteEntry | undefined, classes: string[]): HTMLElement | null {
+  if (!entry || entry.level === 'normal') return null;
+  const level = displayLevel(entry.level);
+  const effect = level === 'normal' ? undefined : level;
+  return h('div', { class: 'tags' }, h('span', { class: classes.join(' '), style: '--c: var(--gold)' }, tagMark(effect), PERSONAL_NAME, tagEffectText(effect)));
 }
 
 /** Your tags first, then those lists gave the site, then the rest, each by label. */

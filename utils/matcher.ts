@@ -12,8 +12,9 @@ import { PERSONAL_NAME } from './personal';
 //      up, five places each, so two raises and a lower make one raise. A rule carrying a tag
 //      with a choice leaves the ranking to the choices.
 //   2. The personal list (pin / raise / lower / hide / allow for a site) adds to the
-//      Pin, Raise, and Lower tag choices, and replaces the subscribed lists' own instructions
-//      and Hide tag choices: a site you ranked yourself isn't hidden by a tag.
+//      Pin, Raise, and Lower tag choices. Your raise or lower adds to the subscribed lists' own
+//      instructions too; your pin, hide, and allow replace them. Hide tag choices give way to
+//      any ranking of yours: a site you ranked yourself isn't hidden by a tag.
 //   3. Without a personal ranking, the subscribed lists' own instructions add to the
 //      tag choices. Within one list, Goggles precedence applies: discard > boost >
 //      downrank. Across lists, boosts and downranks add up.
@@ -379,17 +380,19 @@ export function evaluate(
 
   // Your own ranking adds to your Raise and Lower tags; the lists' own instructions and
   // your Hide tags give way to it.
+  // Your Raise or Lower adds to what the lists do; your Pin, Hide, or allow replaces it.
+  const moves = p === 'raise' || p === 'lower';
   const counted = new Map([...chosen].filter(([, action]) => !p || action !== 'hide'));
   const choices = describeChoices(counted, (id) => prefs[id]?.label ?? tagLabel(lists, id));
   if (choices) verdict.reasons.push({ list: t('reasonYourTagSettings'), listId: TAG_CHOICES, personal: true, text: choices, report: choices });
   for (const [id, action] of counted) if (action === 'hide' || action === 'pin' || action === 'raise' || action === 'lower') verdict.tagEffects[id] = action;
-  if (!p) for (const [id, effect] of listEffects) if (effect !== 'normal') verdict.tagEffects[id] = effect;
+  if (!p || moves) for (const [id, effect] of listEffects) if (effect !== 'normal') verdict.tagEffects[id] = effect;
 
   const hiddenBy = p ? undefined : hides[0];
   const own = p === 'pin' ? PIN_SCORE : p === 'raise' || p === 'lower' ? ownPull : 0;
   // A Pin tag pins as your own Pin does, and the rest still order the pinned results.
   const pinned = p === 'pin' || tagPin;
-  const score = tagScore + (p ? own : listScore) + (tagPin && p !== 'pin' ? PIN_SCORE : 0);
+  const score = tagScore + (p ? own + (moves ? listScore : 0) : listScore) + (tagPin && p !== 'pin' ? PIN_SCORE : 0);
   verdict.hidden = !!hiddenBy;
   verdict.hiddenBy = hiddenBy;
   verdict.score = hiddenBy ? 0 : score;

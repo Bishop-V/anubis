@@ -15,7 +15,7 @@ import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/mess
 import { displayLevel, getSite, levelSteps, listSites, setSiteLevel, tagSite, upsertTagDef, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal, updateSettings } from '@/utils/storage';
-import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder, tagPicker, tagSource } from '@/utils/siteranking';
+import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder, yourListTag, tagPicker, tagSource } from '@/utils/siteranking';
 import { stoppedSentence, summarySentence } from '@/utils/summary';
 import { initTheme } from '@/utils/theme';
 
@@ -244,7 +244,7 @@ function renderHere(rules: RuleSet) {
   here.dataset.domain = domain;
   here.replaceChildren(
     h('div', { class: 'weigh' }, cartouche, balance, levels, h('p', { class: 'hint' }, hint)),
-    h('div', { class: 'here-tags' }, h('h2', null, t('popupTags')), tagItems, tagForm),
+    h('div', { class: 'here-tags' }, h('h2', null, t('popupTags')), yourListTag(entry, ['tag', 'fixed']), tagItems, tagForm),
   );
   // At once, not on the next frame: another render could come first and find nothing focused.
   const target = focusKey ? here.querySelector<HTMLElement>(`[data-focus-key="${focusKey}"]`) : null;

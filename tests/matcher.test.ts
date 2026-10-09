@@ -116,8 +116,8 @@ describe('evaluate', () => {
     expect(rescued).toMatchObject({ level: 'raise', score: PERSONAL_STRENGTH, hidden: false, tagEffects: {} });
     expect(rescued.reasons.some((r) => r.list === 'Your tag settings')).toBe(false);
     expect(at('h.fandom.com', { elsewhere: { action: 'raise' } })).toMatchObject({ level: 'hide', hiddenBy: { kind: 'personal' }, tagEffects: {} });
-    // The lists' own instructions still give way to your ranking.
-    expect(weigh('https://b.com/', [me, sub])).toMatchObject({ level: 'raise', score: PERSONAL_STRENGTH });
+    // Your raise or lower adds to the lists' own instructions: a list's downrank of 3 and your raise of 5 make a raise of 2.
+    expect(weigh('https://b.com/', [me, sub])).toMatchObject({ level: 'raise', score: PERSONAL_STRENGTH - 3 });
   });
 
   it('pins a result carrying a tag set to Pin, with your own ranking and the other tags on top', () => {
@@ -144,9 +144,10 @@ describe('evaluate', () => {
     // A choice for one tag on a rule leaves the rule's own boost out, so its other tags do nothing.
     expect(weigh('https://b.com/', [sub], { slop: { action: 'raise' } }).tagEffects).toEqual({ slop: 'raise' });
     expect(weigh('https://a.com/', [sub], { docs: { action: 'hide' }, indie: { action: 'label' } }).tagEffects).toEqual({ docs: 'hide' });
-    // Your own ranking keeps only your Raise and Lower tags.
+    // Your own raise or lower leaves what the lists' tags do as it was; your allow or pin replaces it.
     const me = list('me', '$site=a.com,boost=5', true);
-    expect(weigh('https://a.com/', [me, sub], { docs: { action: 'lower' } }).tagEffects).toEqual({ docs: 'lower' });
+    expect(weigh('https://a.com/', [me, sub], { docs: { action: 'lower' } }).tagEffects).toEqual({ docs: 'lower', indie: 'raise' });
+    expect(weigh('https://a.com/', [list('me', '$site=a.com,allow', true), sub]).tagEffects).toEqual({});
   });
 
   it('applies tag preferences to the user’s own tags too', () => {
