@@ -466,7 +466,6 @@
   "listFormatGoggle": { "message": "Brave Goggle", "description": "A list’s format. Goggles are Brave Search’s lists; keep the name." },
   "listFormatUblacklist": { "message": "uBlacklist ruleset", "description": "A list’s format. uBlacklist is another extension; keep the name." },
   "listFormatDomains": { "message": "domain list", "description": "A list’s format: one domain per line." },
-  "timeNever": { "message": "never", "description": "For a time that hasn’t happened, e.g. “updated never”." },
   "timeJustNow": { "message": "just now", "description": "For a time less than a minute ago." },
 
   "tagsIntro": { "message": "Lists label results. You decide what each label does: follow the list, only show it, highlight it, or pin, raise, lower, or hide what carries it. Lists that use the same tag name share it.", "description": "Settings → Tags: under the heading." },

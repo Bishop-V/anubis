@@ -1,0 +1,1595 @@
+{
+  "langCode": {
+    "message": "id"
+  },
+  "machineTranslatedTitle": {
+    "message": "Diterjemahkan oleh mesin."
+  },
+  "machineTranslatedNote": {
+    "message": "Anubis diterjemahkan oleh mesin ke bahasa browser Anda, dan terjemahan ini belum didukung sepenuhnya: sebagian mungkin salah atau kurang jelas, jadi gunakan dengan hati-hati. Untuk melihat Anubis dalam bahasa Inggris, setel bahasa browser Anda ke bahasa Inggris."
+  },
+  "machineTranslatedShort": {
+    "message": "Gunakan dengan hati-hati."
+  },
+  "machineTranslatedHelp": {
+    "message": "Bantu perbaiki"
+  },
+  "extDescription": {
+    "message": "Menimbang hasil penelusuran Anda: beri tag, urutkan ulang, dan sembunyikan situs, dengan daftar yang bisa diterbitkan siapa saja."
+  },
+  "commandToggleEnabled": {
+    "message": "Aktifkan atau nonaktifkan Anubis"
+  },
+  "commandToggleHidden": {
+    "message": "Tampilkan hasil yang disembunyikan, atau sembunyikan lagi"
+  },
+  "levelHide": {
+    "message": "Sem­bu­nyi­kan"
+  },
+  "levelLower": {
+    "message": "Turunkan"
+  },
+  "levelNormal": {
+    "message": "Normal"
+  },
+  "levelRaise": {
+    "message": "Naikkan"
+  },
+  "levelPin": {
+    "message": "Sematkan"
+  },
+  "chipHidden": {
+    "message": "Disembunyikan"
+  },
+  "chipLowered": {
+    "message": "Diturunkan"
+  },
+  "chipRaised": {
+    "message": "Dinaikkan"
+  },
+  "chipPinned": {
+    "message": "Disematkan"
+  },
+  "popupOn": {
+    "message": "Aktif untuk penelusuran Anda"
+  },
+  "popupOff": {
+    "message": "Nonaktif. Halaman penelusuran dibiarkan apa adanya."
+  },
+  "popupOnLabel": {
+    "message": "Anubis aktif"
+  },
+  "popupAddSite": {
+    "message": "Tambahkan situs"
+  },
+  "popupRanking": {
+    "message": "Peringkat"
+  },
+  "popupNoSites": {
+    "message": "Belum ada. Gunakan tombol ⚖ pada hasil penelusuran mana pun untuk memberi peringkat pada situsnya."
+  },
+  "popupKeptNormal": {
+    "message": "Tetap normal"
+  },
+  "popupListsAndTags": {
+    "message": "$1, $2"
+  },
+  "popupListCount_other": {
+    "message": "$1 daftar"
+  },
+  "popupTagCount_other": {
+    "message": "$1 tag"
+  },
+  "popupRankingFor": {
+    "message": "Peringkat untuk $1"
+  },
+  "popupRankHide": {
+    "message": "Sembunyikan $1 di hasil penelusuran"
+  },
+  "popupRankLower": {
+    "message": "Turunkan $1 di hasil penelusuran"
+  },
+  "popupRankNormal": {
+    "message": "Beri $1 peringkat normal di hasil penelusuran"
+  },
+  "popupRankRaise": {
+    "message": "Naikkan $1 di hasil penelusuran"
+  },
+  "popupRankPin": {
+    "message": "Sematkan $1 di bagian atas hasil penelusuran"
+  },
+  "popupYourSites": {
+    "message": "Situs Anda"
+  },
+  "popupSeeAll": {
+    "message": "Lihat semua $1"
+  },
+  "popupOpenLists": {
+    "message": "Buka setelan daftar"
+  },
+  "popupShowOnly": {
+    "message": "Tampilkan hanya"
+  },
+  "popupTags": {
+    "message": "Tag"
+  },
+  "popupSite": {
+    "message": "Situs"
+  },
+  "popupSiteChoice": {
+    "message": "Pilih seberapa banyak bagian situs yang terkena"
+  },
+  "popupHintAllow": {
+    "message": "Normal, apa pun kata daftar Anda."
+  },
+  "popupHintMine": {
+    "message": "Pilihan Anda untuk $1, di setiap penelusuran."
+  },
+  "popupHintMineTags": {
+    "message": "Pilihan Anda untuk $1, di setiap penelusuran, ditambah efek setelan tag Anda."
+  },
+  "popupHintLists": {
+    "message": "$1 oleh $2. Pilih salah satu untuk menentukan sendiri."
+  },
+  "popupHintNone": {
+    "message": "Pilihan Anda berlaku di setiap penelusuran."
+  },
+  "popupYourTagSettings": {
+    "message": "setelan tag Anda"
+  },
+  "tagMarkRaise": {
+    "message": "Menaikkan hasil ini"
+  },
+  "tagMarkLower": {
+    "message": "Menurunkan hasil ini"
+  },
+  "tagMarkPin": {
+    "message": "Menyematkan hasil ini"
+  },
+  "tagMarkHide": {
+    "message": "Menyembunyikan hasil ini"
+  },
+  "tagMarkSpoken": {
+    "message": " ($1)"
+  },
+  "tagListsPickerHint": {
+    "message": "Menambahkan salah satunya hanya mengubah daftar Anda."
+  },
+  "tagFromSource": {
+    "message": "dari $1"
+  },
+  "popupTagFrom": {
+    "message": "Dari $1"
+  },
+  "popupTagSite": {
+    "message": "Beri $1 tag “$2”"
+  },
+  "popupUntag": {
+    "message": "Hapus tag dari $1"
+  },
+  "popupTagInvalid": {
+    "message": "Masukkan nama tag dengan minimal satu huruf atau angka."
+  },
+  "popupTagAlreadySet": {
+    "message": "Situs ini sudah memiliki tag tersebut."
+  },
+  "tagSiteReason": {
+    "message": "Alasan situs ini cocok dengan tag “$1” (opsional)"
+  },
+  "popupThisPage": {
+    "message": "Halaman ini"
+  },
+  "popupThisPageOn": {
+    "message": "Halaman ini di $1"
+  },
+  "popupNotSearch": {
+    "message": "Lakukan penelusuran di Google, DuckDuckGo, Bing, Brave, atau mesin telusur lain yang didukung untuk melihat apa yang diubah Anubis."
+  },
+  "showHidden": {
+    "message": "Tampilkan yang disembunyikan"
+  },
+  "hideAgain": {
+    "message": "Sembunyikan lagi"
+  },
+  "loadMore": {
+    "message": "Muat hasil lainnya"
+  },
+  "loadMoreTitle": {
+    "message": "Tambahkan halaman hasil berikutnya ke halaman ini dan beri peringkat semuanya bersama-sama"
+  },
+  "loading": {
+    "message": "Memuat…"
+  },
+  "loadMoreEmpty": {
+    "message": "$1 tidak mengirim hasil apa pun untuk halaman $2. Mungkin Anda perlu mengonfirmasi bahwa Anda bukan robot terlebih dahulu."
+  },
+  "loadMoreRepeat": {
+    "message": "$1 mengirim hasil yang sama lagi untuk halaman $2, jadi tidak ada hasil lain."
+  },
+  "loadMoreBusy": {
+    "message": "$1 meminta Anubis memperlambat permintaan sebelum halaman $2. Coba lagi dalam satu menit."
+  },
+  "loadMoreRefused": {
+    "message": "$1 menolak mengirim halaman $2."
+  },
+  "loadMoreSlow": {
+    "message": "$1 terlalu lama mengirim halaman $2."
+  },
+  "loadMoreFailed": {
+    "message": "Halaman $2 dari $1 gagal dimuat."
+  },
+  "loadMoreOpen": {
+    "message": "Buka halaman $1"
+  },
+  "loadMoreOpenTitle": {
+    "message": "Buka di tab baru untuk melihat apa yang dikirim $1"
+  },
+  "chipFromPage": {
+    "message": "Dari halaman $1"
+  },
+  "chipFromPageTitle": {
+    "message": "Ditambahkan oleh “Muat hasil lainnya”"
+  },
+  "barHidden_other": {
+    "message": "disembunyikan"
+  },
+  "barHiddenByYou_other": {
+    "message": "disembunyikan oleh daftar Anda"
+  },
+  "barHiddenByTag_other": {
+    "message": "disembunyikan karena diberi tag “$2”"
+  },
+  "barHiddenByLens_other": {
+    "message": "disembunyikan karena tidak termasuk dalam $2"
+  },
+  "barHiddenByList_other": {
+    "message": "disembunyikan oleh $2"
+  },
+  "menuWhyHeading": {
+    "message": "Alasan"
+  },
+  "menuNewTagPlaceholder": {
+    "message": "Tag baru"
+  },
+  "menuNewTagLabel": {
+    "message": "Nama tag baru"
+  },
+  "menuAddTagButton": {
+    "message": "Tambahkan tag"
+  },
+  "menuSavedNote": {
+    "message": "Disimpan di daftar Anda."
+  },
+  "menuCloseLabel": {
+    "message": "Tutup"
+  },
+  "anubisSettings": {
+    "message": "Setelan Anubis"
+  },
+  "help": {
+    "message": "Bantuan"
+  },
+  "helpTitle": {
+    "message": "Buka wiki"
+  },
+  "reportProblem": {
+    "message": "Laporkan masalah"
+  },
+  "reportProblemTitle": {
+    "message": "Buka laporan bug di GitHub, dengan versi Anubis dan browser Anda sudah terisi"
+  },
+  "summaryShowAll": {
+    "message": "Tampilkan semua"
+  },
+  "summaryFilterLabel": {
+    "message": "Tampilkan hanya hasil dengan tag"
+  },
+  "summaryFilterOn": {
+    "message": "Tampilkan hanya hasil dengan tag “$1”"
+  },
+  "summaryFilterOff": {
+    "message": "Tampilkan semua hasil"
+  },
+  "summaryPinned": {
+    "message": "menyematkan $1"
+  },
+  "summaryRaised": {
+    "message": "menaikkan $1"
+  },
+  "summaryLowered": {
+    "message": "menurunkan $1"
+  },
+  "summaryHid": {
+    "message": "menyembunyikan $1"
+  },
+  "summaryActed": {
+    "message": "Anubis $1 dari $2."
+  },
+  "summaryResults_other": {
+    "message": "$1 hasil"
+  },
+  "summaryResultsPages_other": {
+    "message": "$1 hasil di $2 halaman"
+  },
+  "summaryAlsoRemoved": {
+    "message": "Anubis juga menghapus $1."
+  },
+  "summaryRemovedOnly": {
+    "message": "Anubis menghapus $1."
+  },
+  "summaryShortActed": {
+    "message": "Anubis mengubah $1 dari $2."
+  },
+  "summaryShortActedRemoved": {
+    "message": "Anubis mengubah $1 dari $2 dan merapikan halaman."
+  },
+  "summaryShortRemoved": {
+    "message": "Anubis merapikan halaman."
+  },
+  "summaryDetails": {
+    "message": "Detail"
+  },
+  "summaryFewerDetails": {
+    "message": "Tutup detail"
+  },
+  "summaryUnchanged_other": {
+    "message": "Anubis membiarkan $1 hasil apa adanya."
+  },
+  "summaryUnchangedPages": {
+    "message": "Anubis membiarkan semua $1 hasil di $2 halaman apa adanya."
+  },
+  "summaryFiltered_other": {
+    "message": "Hanya menampilkan “$2”: $3 dari $1 hasil."
+  },
+  "summaryRemovedAi_other": {
+    "message": "$1 jawaban AI"
+  },
+  "summaryRemovedVideos_other": {
+    "message": "$1 panel video"
+  },
+  "summaryRemovedQuestions_other": {
+    "message": "$1 daftar pertanyaan"
+  },
+  "summaryRemovedDiscussions_other": {
+    "message": "$1 panel diskusi"
+  },
+  "summaryRemovedNews_other": {
+    "message": "$1 panel berita"
+  },
+  "summaryRemovedImages_other": {
+    "message": "$1 panel gambar"
+  },
+  "summaryRemovedRelated_other": {
+    "message": "$1 daftar penelusuran terkait"
+  },
+  "summaryRemovedElsewhere_other": {
+    "message": "$1 baris mesin telusur lain"
+  },
+  "summaryRemovedAdRequests_other": {
+    "message": "$1 permintaan untuk mengizinkan iklan"
+  },
+  "withShortcut": {
+    "message": "$1 ($2)"
+  },
+  "toolbarOff": {
+    "message": "Anubis nonaktif"
+  },
+  "weighLabel": {
+    "message": "Sembunyikan, beri peringkat, atau beri tag $1"
+  },
+  "weighLabelRanked": {
+    "message": "Sembunyikan, beri peringkat, atau beri tag $1 ($2)"
+  },
+  "hiddenShow": {
+    "message": "Tampilkan"
+  },
+  "hiddenShowSite": {
+    "message": "Tampilkan $1"
+  },
+  "hiddenMore_other": {
+    "message": "dan $1 lainnya"
+  },
+  "summaryChangedHide": {
+    "message": "$1 disembunyikan."
+  },
+  "summaryChangedLower": {
+    "message": "$1 diturunkan."
+  },
+  "summaryChangedRaise": {
+    "message": "$1 dinaikkan."
+  },
+  "summaryChangedPin": {
+    "message": "$1 disematkan."
+  },
+  "summaryChangedAllow": {
+    "message": "$1 disetel ke Normal."
+  },
+  "summaryChangedNormal": {
+    "message": "Peringkat yang Anda berikan untuk $1 dihapus."
+  },
+  "summaryChangedTagOn": {
+    "message": "$1 diberi tag “$2”."
+  },
+  "summaryChangedTagOff": {
+    "message": "Tag “$2” dihapus dari $1."
+  },
+  "summaryChangedSite": {
+    "message": "$1 diubah di daftar Anda."
+  },
+  "summaryUndo": {
+    "message": "Urungkan"
+  },
+  "menuSuggest": {
+    "message": "Perlukah sebuah daftar memuatnya? Usulkan ke $1."
+  },
+  "menuSuggestTitle": {
+    "message": "Usulkan $1 ke $2 di pelacak masalahnya"
+  },
+  "menuReport": {
+    "message": "Salah? Laporkan ke $1."
+  },
+  "menuMatchedRule": {
+    "message": "Aturan yang cocok, baris $1"
+  },
+  "menuReportTitle": {
+    "message": "Beri tahu $1 bahwa daftar itu salah tentang hasil ini, di pelacak masalahnya"
+  },
+  "offerTitle": {
+    "message": "Berlangganan $1?"
+  },
+  "offerTrust": {
+    "message": "Sebuah daftar dapat menyembunyikan, memberi peringkat, dan memberi tag pada situs di hasil Anda. Berlanggananlah hanya ke daftar yang Anda percayai."
+  },
+  "offerPermission": {
+    "message": "Browser Anda lalu akan meminta izin agar Anubis dapat membaca dari $1, situs tempat daftar itu berada."
+  },
+  "offerAlready": {
+    "message": "Anda sudah berlangganan $1."
+  },
+  "offerSubscribe": {
+    "message": "Berlangganan"
+  },
+  "offerSubscribing": {
+    "message": "Sedang berlangganan…"
+  },
+  "offerCancel": {
+    "message": "Batal"
+  },
+  "welcomeTitle": {
+    "message": "Selamat datang di Anubis"
+  },
+  "welcomeHeading": {
+    "message": "Anubis sudah terpasang"
+  },
+  "welcomeIntro": {
+    "message": "Anubis memberi tag, mengurutkan ulang, dan menyembunyikan hasil penelusuran, sesuai pilihan Anda sendiri dan daftar yang Anda langgani."
+  },
+  "welcomePinHeading": {
+    "message": "Simpan di toolbar"
+  },
+  "welcomePinWhy": {
+    "message": "Tombol toolbar-nya menunjukkan apa yang dilakukan Anubis di halaman, mengaktifkan atau menonaktifkannya, dan memberi peringkat pada situs yang sedang Anda buka."
+  },
+  "welcomePinChrome": {
+    "message": "Tekan tombol Ekstensi (ikon kepingan puzzle) di samping kolom alamat, lalu ikon pin di samping Anubis."
+  },
+  "welcomePinEdge": {
+    "message": "Tekan tombol Ekstensi (ikon kepingan puzzle) di samping bilah alamat, lalu ikon mata di samping Anubis."
+  },
+  "welcomePinOpera": {
+    "message": "Tekan tombol Ekstensi (ikon kubus) di samping bilah alamat, lalu ikon pin di samping Anubis."
+  },
+  "welcomePinFirefox": {
+    "message": "Tekan tombol Ekstensi (ikon kepingan puzzle) di samping bilah alamat, lalu ikon roda gigi di samping Anubis, dan pilih Sematkan ke Bilah Alat."
+  },
+  "welcomePinAndroid": {
+    "message": "Anubis ada di menu browser, di bawah Ekstensi."
+  },
+  "welcomePinned": {
+    "message": "Anubis sudah ada di toolbar Anda."
+  },
+  "welcomeSearchHeading": {
+    "message": "Coba lakukan penelusuran"
+  },
+  "welcomeSearchHow": {
+    "message": "Telusuri seperti biasa. Untuk menyembunyikan, memberi peringkat, atau memberi tag pada situs, arahkan kursor ke salah satu hasilnya dan tekan tombol ⚖."
+  },
+  "welcomeSearchFor": {
+    "message": "Telusuri “$1” untuk melihat tag dari daftar Anda:"
+  },
+  "welcomeSearchOn": {
+    "message": "Telusuri “$1” di $2"
+  },
+  "welcomeQuery": {
+    "message": "python list comprehension"
+  },
+  "welcomeListsHeading": {
+    "message": "Daftar Anda"
+  },
+  "welcomeListsIntro": {
+    "message": "Daftar memberi tag, menaikkan, menurunkan, atau menyembunyikan situs untuk Anda. Anda mulai dengan daftar berikut:"
+  },
+  "welcomeListsNone": {
+    "message": "Daftar memberi tag, menaikkan, menurunkan, atau menyembunyikan situs untuk Anda. Anda belum berlangganan daftar apa pun."
+  },
+  "welcomeListsMore": {
+    "message": "Nonaktifkan daftar ini, atau temukan daftar lain, di setelan."
+  },
+  "welcomeListsOpen": {
+    "message": "Buka setelan daftar"
+  },
+  "welcomeGuide": {
+    "message": "Wiki"
+  },
+  "welcomePrivacy": {
+    "message": "Privasi"
+  },
+  "syncHeading": {
+    "message": "Sinkronisasi"
+  },
+  "syncIntro": {
+    "message": "Daftar dan setelan Anda di komputer lain, dan di browser lain milik Anda."
+  },
+  "syncBrowserHeading": {
+    "message": "Sinkronisasi browser"
+  },
+  "syncFirefox": {
+    "message": "Daftar, setelan, pilihan tag, dan langganan Anda disimpan di penyimpanan sinkronisasi Firefox. Firefox menyalinnya ke komputer Anda yang lain jika Anda login ke Firefox dengan Pengaya dicentang di setelan sinkronisasinya. Firefox menyinkronkan kira-kira setiap 10 menit, atau saat Anda memilih Sinkronkan Sekarang."
+  },
+  "syncFirefoxAndroid": {
+    "message": "Firefox untuk Android tidak menyinkronkan data pengaya, jadi daftar, setelan, pilihan tag, dan langganan Anda tetap di perangkat ini. Untuk menyinkronkannya, hubungkan server WebDAV di bawah."
+  },
+  "syncChrome": {
+    "message": "Daftar, setelan, pilihan tag, dan langganan Anda disimpan di penyimpanan sinkronisasi browser. Browser menyalinnya ke komputer Anda yang lain jika Anda login ke browser dengan sinkronisasi ekstensi aktif."
+  },
+  "syncBrowserHelp": {
+    "message": "Setelan browser yang perlu diperiksa"
+  },
+  "syncUsage": {
+    "message": "Semuanya memakai $1 KB dari $2 KB ruang sinkronisasi."
+  },
+  "syncTooBig": {
+    "message": "Daftar Anda terlalu besar untuk sinkronisasi, jadi hanya disimpan di perangkat ini. Setelan, pilihan tag, dan langganan Anda tetap disinkronkan."
+  },
+  "webdavHeading": {
+    "message": "Antar-browser"
+  },
+  "webdavIntro": {
+    "message": "Firefox dan Chrome tidak bisa saling menyinkronkan secara langsung. Untuk berbagi di antara keduanya, Anda bisa menghubungkan penyimpanan WebDAV yang sama di masing-masing browser. Koofr dan InfiniCLOUD punya paket gratis, dan opsi yang dihosting sendiri seperti Nextcloud juga bisa dipakai. Anubis menyimpan satu file di sana, anubis-sync.json, dan menggabungkan perubahan dari setiap browser."
+  },
+  "webdavHelp": {
+    "message": "Tempat mendapatkan alamat dan sandi"
+  },
+  "webdavAddress": {
+    "message": "Alamat"
+  },
+  "webdavAddressHint": {
+    "message": "Alamat WebDAV layanan, diawali dengan https://"
+  },
+  "listPermissionDenied": {
+    "message": "Anubis memerlukan izin untuk membaca $1 agar dapat memperbarui daftar ini."
+  },
+  "webdavUser": {
+    "message": "Nama pengguna"
+  },
+  "webdavPassword": {
+    "message": "Sandi"
+  },
+  "webdavPasswordHint": {
+    "message": "Sebagian besar layanan memberi Anda sandi terpisah untuk aplikasi. Gunakan sandi itu."
+  },
+  "webdavConnect": {
+    "message": "Hubungkan"
+  },
+  "webdavEncrypt": {
+    "message": "Enkripsi file sinkronisasi secara end-to-end (direkomendasikan)"
+  },
+  "webdavEncryptionPassphrase": {
+    "message": "Frasa sandi enkripsi"
+  },
+  "webdavConfirmPassphrase": {
+    "message": "Konfirmasi frasa sandi"
+  },
+  "webdavEncryptionHint": {
+    "message": "Gunakan frasa sandi yang panjang dan unik di setiap browser (minimal 12 karakter). Frasa sandi hanya disimpan di browser ini, tidak pernah dikirim ke server. Jika Anda lupa, salinan di server tidak dapat dipulihkan."
+  },
+  "webdavCorrectPassphrase": {
+    "message": "Masukkan frasa sandi enkripsi yang benar"
+  },
+  "webdavCorrectPassphraseHint": {
+    "message": "Gunakan frasa sandi yang sama dengan yang Anda setel di browser lain. Frasa sandi hanya disimpan di sini dan tidak pernah dikirim ke server."
+  },
+  "webdavSavePassphrase": {
+    "message": "Simpan frasa sandi dan sinkronkan"
+  },
+  "webdavChangePassphrase": {
+    "message": "Ubah frasa sandi enkripsi"
+  },
+  "webdavChangePassphraseHint": {
+    "message": "Anubis memeriksa frasa sandi saat ini sebelum mengubah file di server. Masukkan frasa sandi baru di setiap browser lain sebelum sinkronisasi berikutnya."
+  },
+  "webdavChangePassphraseHelp": {
+    "message": "Yang terjadi saat Anda mengubahnya"
+  },
+  "webdavEncryptionShort": {
+    "message": "Gunakan frasa sandi enkripsi minimal 12 karakter."
+  },
+  "webdavPassphraseMismatch": {
+    "message": "Frasa sandi tidak cocok."
+  },
+  "webdavEncrypted": {
+    "message": "File sinkronisasi dienkripsi secara end-to-end. Frasa sandinya hanya disimpan di browser ini; server tidak dapat membaca isinya. Gunakan frasa sandi yang sama di setiap browser. Jika Anda lupa, salinan di server tidak dapat dipulihkan."
+  },
+  "webdavEncryptionPending": {
+    "message": "Enkripsi sudah disiapkan di sini. Sinkronisasi berikutnya yang berhasil akan mengenkripsi salinan di server. Gunakan frasa sandi yang sama di setiap browser."
+  },
+  "webdavEncryptionMissing": {
+    "message": "Browser ini belum memiliki frasa sandi enkripsi. Gunakan frasa sandi yang sama dengan browser lain untuk membaca file yang dienkripsi. File sinkronisasi biasa dapat dibaca oleh operator server."
+  },
+  "webdavPrivacy": {
+    "message": "Dengan enkripsi aktif, hanya data terenkripsi yang dikirim ke server ini; frasa sandi Anda disimpan di sini dan tidak pernah dikirim. Tanpa enkripsi, server dapat membaca file sinkronisasi. Info login WebDAV Anda disimpan di sini dan dikirim ke server ini untuk login."
+  },
+  "webdavBadAddress": {
+    "message": "Masukkan alamat WebDAV layanan, diawali dengan https://"
+  },
+  "webdavMissingLogin": {
+    "message": "Masukkan juga nama pengguna dan sandi."
+  },
+  "webdavDenied": {
+    "message": "Anubis memerlukan izin Anda untuk mengirim daftar Anda ke $1."
+  },
+  "webdavConnected": {
+    "message": "Menyinkronkan dengan $1 sebagai $2."
+  },
+  "webdavWhen": {
+    "message": "Perubahan dikirim ke server beberapa detik setelah Anda membuatnya. Perubahan dari browser Anda yang lain masuk saat browser dimulai dan saat Anda menelusuri, paling sering setiap 5 menit."
+  },
+  "webdavSyncing": {
+    "message": "Menyinkronkan…"
+  },
+  "webdavLastSync": {
+    "message": "Terakhir disinkronkan: $1."
+  },
+  "webdavLastTried": {
+    "message": "Terakhir dicoba: $1."
+  },
+  "webdavSyncNow": {
+    "message": "Sinkronkan sekarang"
+  },
+  "webdavDisconnect": {
+    "message": "Putuskan hubungan"
+  },
+  "webdavDisconnected": {
+    "message": "Hubungan diputuskan. File tetap ada di server, dan daftar serta setelan Anda tetap ada di sini."
+  },
+  "webdavErrorAuth": {
+    "message": "Server tidak menerima nama pengguna atau sandi. Banyak layanan memerlukan sandi aplikasi di sini, bukan sandi yang biasa Anda pakai."
+  },
+  "webdavErrorForbidden": {
+    "message": "Server tidak mengizinkan akun ini menyimpan file di sana."
+  },
+  "webdavErrorFolder": {
+    "message": "Tidak ada folder di alamat tersebut di server. Periksa alamatnya."
+  },
+  "webdavErrorPermission": {
+    "message": "Anubis tidak lagi memiliki izin untuk menyinkronkan dengan $1. Tekan Sinkronkan sekarang untuk mengizinkannya lagi."
+  },
+  "webdavErrorNetwork": {
+    "message": "Tidak dapat menjangkau $1. Periksa alamat dan koneksi Anda."
+  },
+  "webdavErrorFile": {
+    "message": "File anubis-sync.json di sana tidak dapat dibaca Anubis, jadi file itu dibiarkan. Gunakan folder lain."
+  },
+  "webdavErrorNeedsPassphrase": {
+    "message": "File sinkronisasi ini dienkripsi. Masukkan frasa sandinya; tidak ada yang diubah."
+  },
+  "webdavErrorWrongPassphrase": {
+    "message": "Frasa sandi itu tidak dapat mendekripsi file sinkronisasi. Periksa lagi; file di server tidak diubah."
+  },
+  "webdavErrorUnencrypted": {
+    "message": "Koneksi ini sebelumnya dienkripsi, tetapi sekarang server memiliki file sinkronisasi berupa teks biasa. File itu tidak diubah. Periksa file di server sebelum menyinkronkan lagi."
+  },
+  "webdavErrorChanged": {
+    "message": "File sinkronisasi berubah selama frasa sandi diubah, atau server tidak dapat melindunginya dari pengeditan bersamaan. Tidak ada yang ditimpa. Sinkronkan lagi, lalu coba ulang."
+  },
+  "webdavErrorUnconfirmed": {
+    "message": "Koneksi ke $1 terputus saat menyimpan file, jadi Anubis tidak tahu frasa sandi mana yang kini dipakai file itu. Frasa sandi lama masih tersimpan di sini. Jika sinkronisasi berikutnya menyatakan frasa sandi salah, masukkan yang baru."
+  },
+  "webdavErrorServer": {
+    "message": "Server merespons dengan error (HTTP $1). Coba lagi nanti."
+  },
+  "webdavErrorFailed": {
+    "message": "Sinkronisasi tidak selesai. Coba lagi."
+  },
+  "appearanceHeading": {
+    "message": "Tampilan"
+  },
+  "appearanceIntro": {
+    "message": "Tampilan Anubis di sini dan di halaman penelusuran."
+  },
+  "themeHeading": {
+    "message": "Skema warna"
+  },
+  "themeHint": {
+    "message": "Otomatis mengikuti browser Anda di sini dan di menu pada setiap hasil, serta mode terang atau gelap milik setiap mesin telusur untuk bagian lain yang ditambahkan Anubis ke halamannya."
+  },
+  "paletteHeading": {
+    "message": "Warna di halaman penelusuran"
+  },
+  "paletteHint": {
+    "message": "Polos menampilkan semua yang ditambahkan Anubis ke halaman penelusuran dalam warna abu-abu, tanpa emas. Tag kehilangan warnanya dan dibedakan berdasarkan namanya. Setelan dan popup toolbar tetap berwarna emas."
+  },
+  "paletteGold": {
+    "message": "Emas"
+  },
+  "palettePlain": {
+    "message": "Polos"
+  },
+  "hideStyleHeading": {
+    "message": "Hasil yang disembunyikan"
+  },
+  "hideStyleHint": {
+    "message": "Hapus menghilangkannya dari halaman; ringkasan di atas hasil menghitungnya, dan Tampilkan yang disembunyikan memunculkannya kembali. Ciutkan menyisakan satu baris tipis untuk setiap rangkaian hasil yang disembunyikan. Redupkan memudarkannya."
+  },
+  "hideStyleRemove": {
+    "message": "Hapus"
+  },
+  "hideStyleCollapse": {
+    "message": "Ciutkan"
+  },
+  "hideStyleDim": {
+    "message": "Redupkan"
+  },
+  "rerankHeading": {
+    "message": "Urutkan ulang hasil"
+  },
+  "rerankHint": {
+    "message": "Pindahkan hasil yang dinaikkan dan disematkan ke atas, dan yang diturunkan ke bawah, seperti Brave Goggle."
+  },
+  "rerankHelp": {
+    "message": "Cara kerja pengurutan ulang"
+  },
+  "deeperAuto": {
+    "message": "Muat hasil lainnya secara otomatis"
+  },
+  "deeperAutoHint": {
+    "message": "Tambahkan halaman hasil berikutnya ke halaman pertama dan beri peringkat semuanya bersama-sama, sehingga situs yang Anda sematkan di halaman 3 naik ke atas. “Muat hasil lainnya” di atas hasil melakukan hal yang sama saat Anda memintanya. Ketik jumlah halaman yang ingin ditambahkan, dari 0 (nonaktif) sampai $1."
+  },
+  "deeperHelp": {
+    "message": "Cara kerja memuat hasil lainnya"
+  },
+  "deeperUnit": {
+    "message": "halaman lagi"
+  },
+  "deeperTipOff": {
+    "message": "Nonaktif: hasil lainnya hanya dimuat saat Anda menekan “Muat hasil lainnya”."
+  },
+  "deeperTipTime_other": {
+    "message": "Menambah sekitar $1 detik pada setiap penelusuran."
+  },
+  "deeperTipFew": {
+    "message": "$1 Mesin telusur jarang keberatan dengan beberapa halaman."
+  },
+  "deeperTipSome": {
+    "message": "$1 Beberapa mesin telusur mungkin mulai meminta Anda mengonfirmasi bahwa Anda bukan robot."
+  },
+  "deeperTipMany": {
+    "message": "$1 Google dan Bing sering meminta Anda mengonfirmasi bahwa Anda bukan robot setelah sebanyak ini. Beberapa mesin telusur kehabisan halaman sebelum itu."
+  },
+  "chipsHeading": {
+    "message": "Chip tag"
+  },
+  "chipsHint": {
+    "message": "Tampilkan tag dan peringkat di bawah judul setiap hasil."
+  },
+  "summaryHeading": {
+    "message": "Ringkasan"
+  },
+  "summaryHint": {
+    "message": "Tampilkan ringkasan satu baris tentang apa yang diubah Anubis di atas hasil."
+  },
+  "enabledHeading": {
+    "message": "Anubis aktif"
+  },
+  "enabledHint": {
+    "message": "Nonaktifkan ini untuk membiarkan halaman penelusuran apa adanya tanpa menghapus Anubis."
+  },
+  "enginesHeading": {
+    "message": "Mesin telusur"
+  },
+  "enginesIntro": {
+    "message": "Anubis bekerja pada hasil web dari mesin telusur berikut. Hasil dikenali dari struktur halaman jika memungkinkan, jadi perubahan desain kecil tidak membuatnya rusak."
+  },
+  "enginesTrouble": {
+    "message": "Anubis tidak melakukan apa pun di halaman penelusuran?"
+  },
+  "enginesTroubleHelp": {
+    "message": "Yang perlu diperiksa"
+  },
+  "shareHeading": {
+    "message": "Cadangkan, impor, dan bagikan"
+  },
+  "shareIntro": {
+    "message": "Simpan salinan semuanya, bawa situs Anda dari alat lain, atau terbitkan daftar Anda agar orang lain dapat berlangganan."
+  },
+  "publishHeading": {
+    "message": "Terbitkan daftar Anda"
+  },
+  "publishIntro": {
+    "message": "Tidak perlu server: repositori git publik menjadi database-nya, dan pull request menjadi cara orang berkontribusi."
+  },
+  "publishHelp": {
+    "message": "Cara menerbitkan daftar"
+  },
+  "publishStepDownload": {
+    "message": "Unduh daftar Anda di bawah. Setel baris $1, $2, dan $3 di bagian atasnya."
+  },
+  "publishStepRepository": {
+    "message": "Buat repositori GitHub publik (atau gist) dan tambahkan file, misalnya $1."
+  },
+  "publishStepIssues": {
+    "message": "Tambahkan $1 agar orang dapat mengusulkan situs ke daftar Anda dari menu pada setiap hasil."
+  },
+  "publishStepShare": {
+    "message": "Bagikan link file tersebut. Orang dapat menempelkannya di Daftar → Tambahkan daftar."
+  },
+  "publishStepDirectory": {
+    "message": "Ingin daftar Anda muncul di Daftar lainnya untuk semua orang? Buka pull request yang menambahkannya ke $1."
+  },
+  "publishDownload": {
+    "message": "Unduh daftar saya"
+  },
+  "publishFormat": {
+    "message": "Format daftar"
+  },
+  "importHeading": {
+    "message": "Impor situs"
+  },
+  "importIntro": {
+    "message": "Beralih dari uBlacklist atau HOHSER? Tempel aturan atau ekspor Anda di sini, dan situsnya akan masuk ke daftar Anda. Yang disembunyikan tetap disembunyikan, penyembunyian sebagian dari HOHSER menjadi Turunkan, dan warna sorotan menjadi tag yang menyorot."
+  },
+  "importHelp": {
+    "message": "Hasil impor dari setiap alat"
+  },
+  "importPlaceholder": {
+    "message": "Tempel aturan uBlacklist, ekspor HOHSER, Goggle, atau satu domain per baris"
+  },
+  "importLabel": {
+    "message": "Situs yang akan diimpor"
+  },
+  "importButton": {
+    "message": "Impor"
+  },
+  "importChooseFile": {
+    "message": "Pilih file"
+  },
+  "importSourceHohser": {
+    "message": "ekspor HOHSER"
+  },
+  "importSourceUblacklist": {
+    "message": "aturan uBlacklist"
+  },
+  "importSourceGoggle": {
+    "message": "Goggle"
+  },
+  "importSourceAnubis": {
+    "message": "daftar Anubis"
+  },
+  "importSourceDomains": {
+    "message": "daftar domain"
+  },
+  "importRead_other": {
+    "message": "Dibaca sebagai $2: $1 situs ditambahkan dan $3 diperbarui."
+  },
+  "importSkipped_other": {
+    "message": "$1 aturan dengan pola alamat atau sintaks yang tidak didukung tidak diimpor; berlanggananlah ke daftar aslinya untuk mempertahankannya."
+  },
+  "importFailed": {
+    "message": "Tidak dapat mengimpor: $1"
+  },
+  "backupHeading": {
+    "message": "Cadangan"
+  },
+  "backupIntro": {
+    "message": "Semuanya dalam satu file: setelan, pilihan tag, langganan, dan daftar Anda."
+  },
+  "backupExport": {
+    "message": "Ekspor cadangan"
+  },
+  "backupRestore": {
+    "message": "Pulihkan cadangan"
+  },
+  "backupRestored": {
+    "message": "Cadangan dipulihkan."
+  },
+  "backupRestoreFailed": {
+    "message": "Tidak dapat memulihkan: $1"
+  },
+  "resetButton": {
+    "message": "Reset setelan"
+  },
+  "resetDone": {
+    "message": "Setelan, tag, dan langganan direset. Daftar Anda tetap disimpan."
+  },
+  "settingsSections": {
+    "message": "Bagian setelan"
+  },
+  "settingsPageTitle": {
+    "message": "$1 – Anubis"
+  },
+  "settingsBrandTitle": {
+    "message": "Buka wiki Anubis"
+  },
+  "settingsTagline": {
+    "message": "Sembunyikan, beri peringkat, dan beri tag hasil penelusuran"
+  },
+  "settingsSource": {
+    "message": "Kode sumber di GitHub"
+  },
+  "sitesHeading": {
+    "message": "Situs Anda"
+  },
+  "sitesHelp": {
+    "message": "Cara kerja peringkat"
+  },
+  "tagsHeading": {
+    "message": "Tag"
+  },
+  "tagsHelp": {
+    "message": "Cara kerja tag"
+  },
+  "listsHeading": {
+    "message": "Daftar"
+  },
+  "listsHelp": {
+    "message": "Cara kerja daftar"
+  },
+  "cleanupHeading": {
+    "message": "Hapus panel"
+  },
+  "cleanupHelp": {
+    "message": "Cara kerja penghapusan panel"
+  },
+  "appearanceHelp": {
+    "message": "Tentang hasil yang disembunyikan"
+  },
+  "enginesHelp": {
+    "message": "Mesin telusur yang didukung"
+  },
+  "syncHelp": {
+    "message": "Cara kerja sinkronisasi"
+  },
+  "shareHelp": {
+    "message": "Pindah dari alat lain"
+  },
+  "cleanupIntro": {
+    "message": "Anubis dapat menghapus panel di halaman penelusuran yang bukan hasil. Aktifkan setiap panel yang tidak ingin Anda lihat. “Tampilkan yang disembunyikan” di atas hasil memunculkannya kembali untuk penelusuran tersebut."
+  },
+  "cleanupEverySearch": {
+    "message": "Di setiap penelusuran"
+  },
+  "cleanupEverySearchHint": {
+    "message": "Aktif berarti Anubis menghapusnya. Nonaktif membiarkannya di halaman."
+  },
+  "cleanupStillShows": {
+    "message": "Jika panel masih muncul"
+  },
+  "cleanupAll": {
+    "message": "Semua ini"
+  },
+  "cleanupAllHint": {
+    "message": "Mengaktifkan atau menonaktifkan setiap tombol di bagian ini."
+  },
+  "cleanupOnGoogle": {
+    "message": "Di Google"
+  },
+  "cleanupWebTab": {
+    "message": "Selalu buka tab Web"
+  },
+  "cleanupWebTabHint": {
+    "message": "Mengarahkan setiap penelusuran Google ke tab Web: hanya link, tanpa Ringkasan AI, video, atau panel lain, termasuk yang tidak dikenali Anubis. Untuk keluar darinya pada satu penelusuran, pilih Semua di atas hasil."
+  },
+  "cleanupAi": {
+    "message": "Jawaban AI"
+  },
+  "cleanupAiHint": {
+    "message": "Ringkasan AI dan tab Mode AI dari Google, jawaban berbantuan AI dan Duck.ai dari DuckDuckGo, jawaban AI dari Bing, dan jawaban AI dari Brave."
+  },
+  "cleanupVideos": {
+    "message": "Panel video"
+  },
+  "cleanupVideosHint": {
+    "message": "Panel video dan video pendek di antara hasil."
+  },
+  "cleanupQuestions": {
+    "message": "Orang lain juga bertanya"
+  },
+  "cleanupQuestionsHint": {
+    "message": "Daftar pertanyaan orang lain dengan jawaban yang dapat diluaskan."
+  },
+  "cleanupDiscussions": {
+    "message": "Panel diskusi"
+  },
+  "cleanupDiscussionsHint": {
+    "message": "Panel utas forum di antara hasil, seperti “Diskusi dan forum” dari Google. Halaman forum di antara hasil tetap ditampilkan."
+  },
+  "cleanupNews": {
+    "message": "Berita utama"
+  },
+  "cleanupNewsHint": {
+    "message": "Panel berita di antara hasil."
+  },
+  "cleanupImages": {
+    "message": "Baris gambar"
+  },
+  "cleanupImagesHint": {
+    "message": "Baris gambar di antara hasil. Tab Gambar tetap berfungsi."
+  },
+  "cleanupRelated": {
+    "message": "Penelusuran terkait"
+  },
+  "cleanupRelatedHint": {
+    "message": "Daftar penelusuran lain, biasanya di bagian bawah halaman."
+  },
+  "cleanupElsewhere": {
+    "message": "Mesin telusur lain"
+  },
+  "cleanupElsewhereHint": {
+    "message": "Baris tombol yang mengulang penelusuran Anda di mesin telusur lain, seperti “Find elsewhere” dari Brave."
+  },
+  "cleanupAdRequests": {
+    "message": "Permintaan untuk mengizinkan iklan"
+  },
+  "cleanupAdRequestsHint": {
+    "message": "Banner yang meminta Anda menonaktifkan pemblokir iklan atau mengizinkan iklan, seperti “Block creepy ads, not private search” dari Startpage."
+  },
+  "sitesIntro": {
+    "message": "Situs yang Anda beri peringkat atau sembunyikan sendiri. Pilihan Anda mengalahkan setiap daftar yang Anda langgani. Gunakan tombol pada hasil penelusuran mana pun, atau tambahkan situs di sini."
+  },
+  "sitesEditAsText": {
+    "message": "Edit sebagai teks"
+  },
+  "sitesBackToTable": {
+    "message": "Kembali ke tabel"
+  },
+  "sitesTooBig": {
+    "message": "Daftar Anda terlalu besar untuk sinkronisasi browser, jadi hanya disimpan di perangkat ini. Unduh daftar untuk menyimpan salinannya."
+  },
+  "sitesAddPlaceholder": {
+    "message": "Domain atau URL, misalnya fandom.com"
+  },
+  "sitesAdd": {
+    "message": "Tambahkan"
+  },
+  "sitesNotDomain": {
+    "message": "Itu sepertinya bukan domain."
+  },
+  "sitesAddHint": {
+    "message": "Berlaku untuk situs ini dan semua subdomainnya."
+  },
+  "sitesAddHelp": {
+    "message": "Memilih seberapa luas bagian situs"
+  },
+  "sitesFilter_other": {
+    "message": "Filter $1 situs…"
+  },
+  "sitesFilterLabel": {
+    "message": "Filter situs"
+  },
+  "sitesAddTagTo": {
+    "message": "Tambahkan tag ke $1"
+  },
+  "sitesKeptNormal": {
+    "message": "Tetap normal, apa pun kata daftar Anda"
+  },
+  "sitesRemoveTag": {
+    "message": "Hapus “$1” dari $2"
+  },
+  "sitesForget": {
+    "message": "Lupakan $1"
+  },
+  "sitesFirst500": {
+    "message": "Menampilkan 500 yang pertama. Gunakan filter untuk menemukan sisanya."
+  },
+  "sitesNone": {
+    "message": "Belum ada situs. Tambahkan di atas, atau gunakan tombol pada hasil penelusuran."
+  },
+  "sitesTextLabel": {
+    "message": "Daftar Anda sebagai teks"
+  },
+  "sitesTextIntro": {
+    "message": "Daftar Anda dalam format daftar Anubis: sintaks Brave Goggles ditambah tag. Isinya persis file yang akan Anda terbitkan. Baris yang tidak dapat ditampilkan tabel tetap disimpan seperti yang ditulis."
+  },
+  "sitesTextReadable": {
+    "message": "$1 dan $2, semuanya dapat dibaca."
+  },
+  "listInstructions_other": {
+    "message": "$1 instruksi"
+  },
+  "listErrorLine": {
+    "message": "Baris $1: $2"
+  },
+  "sitesSave": {
+    "message": "Simpan"
+  },
+  "sitesFormatReference": {
+    "message": "Referensi format"
+  },
+  "listsIntro": {
+    "message": "Berlanggananlah ke daftar yang memberi tag, mengurutkan ulang, atau menyembunyikan situs. File teks apa pun di GitHub, GitLab, Codeberg, atau gist bisa dipakai: daftar Anubis, Brave Goggles, ruleset uBlacklist, dan daftar domain biasa."
+  },
+  "listsUpdateAll": {
+    "message": "Perbarui semua"
+  },
+  "listsUpdating": {
+    "message": "Memperbarui…"
+  },
+  "listsAllChecked": {
+    "message": "Semua daftar sudah diperiksa pembaruannya."
+  },
+  "listsAddHeading": {
+    "message": "Tambahkan daftar"
+  },
+  "listsAddHint": {
+    "message": "Tempel link ke file. Link ke halaman GitHub, gist, atau Brave Goggle juga bisa dipakai."
+  },
+  "listsAddHelp": {
+    "message": "Daftar yang didukung"
+  },
+  "listsUrlLabel": {
+    "message": "URL daftar"
+  },
+  "listsNone": {
+    "message": "Belum ada daftar. Pilih beberapa dari daftar di bawah."
+  },
+  "listsMoreHeading": {
+    "message": "Daftar lainnya"
+  },
+  "listsMoreIntro": {
+    "message": "Dari direktori Anubis dan komunitas yang lebih luas."
+  },
+  "listsShare": {
+    "message": "Membuat daftar yang layak dibagikan? Tambahkan ke direktori dengan pull request ke $1."
+  },
+  "listsNeedHttps": {
+    "message": "Daftar harus disajikan melalui https."
+  },
+  "listsPermissionToDownload": {
+    "message": "Anubis memerlukan izin untuk membaca $1 agar dapat mengunduh daftar ini."
+  },
+  "listsSubscribed": {
+    "message": "Berhasil berlangganan $1: $2 dan $3."
+  },
+  "listsSubscribedBundled": {
+    "message": "Berhasil berlangganan $1 (memakai salinan bawaan Anubis sampai daftar itu dapat diperbarui)."
+  },
+  "listsSubscribeFailed": {
+    "message": "Tidak dapat berlangganan: $1"
+  },
+  "listsUse": {
+    "message": "Gunakan $1"
+  },
+  "listsOn": {
+    "message": "Aktif"
+  },
+  "listsOff": {
+    "message": "Nonaktif"
+  },
+  "listsUpdateFailed": {
+    "message": "$1: $2"
+  },
+  "listsUpToDate": {
+    "message": "$1 sudah yang terbaru."
+  },
+  "listsFacts": {
+    "message": "$1."
+  },
+  "listsLinks": {
+    "message": "$1"
+  },
+  "listsNotDownloaded": {
+    "message": "belum diunduh"
+  },
+  "listsBy": {
+    "message": "oleh $1"
+  },
+  "listsBundledCopy": {
+    "message": "salinan bawaan Anubis"
+  },
+  "listsUpdated": {
+    "message": "diperbarui $1"
+  },
+  "listsHomepage": {
+    "message": "halaman beranda"
+  },
+  "listsSuggestChanges": {
+    "message": "usulkan perubahan"
+  },
+  "listsUsingBundled": {
+    "message": "Memakai salinan bawaan Anubis sampai daftar ini dapat diperbarui ($1)."
+  },
+  "listsLastUpdateFailed": {
+    "message": "Pembaruan terakhir gagal: $1."
+  },
+  "listsSkippedLines_other": {
+    "message": "$1 baris dilewati: Anubis belum dapat membaca sintaks tersebut."
+  },
+  "listsUpdateNow": {
+    "message": "Perbarui sekarang"
+  },
+  "listsUpdateOne": {
+    "message": "Perbarui $1"
+  },
+  "listsViewFile": {
+    "message": "Lihat file"
+  },
+  "listsViewOne": {
+    "message": "Lihat $1"
+  },
+  "listsUnsubscribe": {
+    "message": "Berhenti berlangganan"
+  },
+  "listsUnsubscribeOne": {
+    "message": "Berhenti berlangganan $1"
+  },
+  "listLensTitle": {
+    "message": "Lensa menyembunyikan hasil yang tidak disebut oleh daftar"
+  },
+  "listKindLens": {
+    "message": "lensa"
+  },
+  "listKindBuiltin": {
+    "message": "bawaan"
+  },
+  "listFormatAnubis": {
+    "message": "Daftar Anubis"
+  },
+  "listFormatGoggle": {
+    "message": "Brave Goggle"
+  },
+  "listFormatUblacklist": {
+    "message": "Ruleset uBlacklist"
+  },
+  "listFormatDomains": {
+    "message": "daftar domain"
+  },
+  "timeJustNow": {
+    "message": "baru saja"
+  },
+  "tagsIntro": {
+    "message": "Daftar memberi label pada hasil. Anda yang menentukan fungsi setiap label: mengikuti daftar, hanya menampilkannya, menyorotnya, atau menyematkan, menaikkan, menurunkan, atau menyembunyikan hasil yang memilikinya. Daftar yang memakai nama tag yang sama berbagi tag itu."
+  },
+  "tagActionList": {
+    "message": "Ikuti daftar"
+  },
+  "tagActionLabel": {
+    "message": "Hanya label"
+  },
+  "tagActionHighlight": {
+    "message": "Sorot"
+  },
+  "tagActionFor": {
+    "message": "Tindakan untuk hasil dengan tag $1"
+  },
+  "tagMarksNone": {
+    "message": "Belum ada situs yang memiliki tag ini."
+  },
+  "tagMarks": {
+    "message": "Menandai $1."
+  },
+  "tagMarksYours_other": {
+    "message": "$1 situs Anda"
+  },
+  "tagMarksFromList_other": {
+    "message": "$1 situs dari $2"
+  },
+  "tagEffectLabel": {
+    "message": "$1 Hanya label: peringkatnya tidak berubah."
+  },
+  "tagEffectHighlight": {
+    "message": "$1 Menyorotnya dengan warna tag."
+  },
+  "tagEffectRaise": {
+    "message": "$1 Menaikkannya di penelusuran Anda."
+  },
+  "tagEffectLower": {
+    "message": "$1 Menurunkannya di penelusuran Anda."
+  },
+  "tagEffectPin": {
+    "message": "$1 Menyematkannya di bagian atas penelusuran Anda."
+  },
+  "tagEffectHide": {
+    "message": "$1 Menyembunyikannya dari penelusuran Anda."
+  },
+  "tagEffectOneList": {
+    "message": "$1 $2 $3 di antaranya."
+  },
+  "tagEffectLists": {
+    "message": "$1 Daftar-daftar tersebut $2 di antaranya."
+  },
+  "tagListRaises_other": {
+    "message": "menaikkan $1"
+  },
+  "tagListLowers_other": {
+    "message": "menurunkan $1"
+  },
+  "tagListHides_other": {
+    "message": "menyembunyikan $1"
+  },
+  "tagListsRaise_other": {
+    "message": "menaikkan $1"
+  },
+  "tagListsLower_other": {
+    "message": "menurunkan $1"
+  },
+  "tagListsHide_other": {
+    "message": "menyembunyikan $1"
+  },
+  "tagSitesToTag": {
+    "message": "Situs yang akan diberi tag $1"
+  },
+  "tagAddSite": {
+    "message": "Tambahkan situs"
+  },
+  "tagNotSite": {
+    "message": "“$1” sepertinya bukan situs."
+  },
+  "tagTypeSite": {
+    "message": "Ketik situs, misalnya fandom.com."
+  },
+  "tagSiteNote": {
+    "message": "$1: $2"
+  },
+  "tagMoreSites_other": {
+    "message": "$1 lainnya"
+  },
+  "tagFromList": {
+    "message": "$1: $2."
+  },
+  "tagName": {
+    "message": "Nama tag"
+  },
+  "tagNameShort": {
+    "message": "Nama"
+  },
+  "tagDescription": {
+    "message": "Deskripsi"
+  },
+  "tagDescriptionPlaceholder": {
+    "message": "Artinya, opsional"
+  },
+  "tagMeaning": {
+    "message": "Arti $1"
+  },
+  "tagYourSites": {
+    "message": "Situs Anda dengan tag ini"
+  },
+  "tagNoSites": {
+    "message": "Belum ada. Tambahkan di sini, atau gunakan tombol ⚖ pada hasil penelusuran."
+  },
+  "tagFromYourLists": {
+    "message": "Dari daftar Anda"
+  },
+  "tagColour": {
+    "message": "Warna"
+  },
+  "tagColourOf": {
+    "message": "Warna $1"
+  },
+  "tagShowUnder": {
+    "message": "Tampilkan $1 di bawah hasil"
+  },
+  "tagShowTitle": {
+    "message": "Tampilkan tag ini di bawah hasil"
+  },
+  "tagEdit": {
+    "message": "Edit"
+  },
+  "tagDone": {
+    "message": "Selesai"
+  },
+  "tagEditLabel": {
+    "message": "Edit $1 dan situsnya"
+  },
+  "tagDelete": {
+    "message": "Hapus “$1”"
+  },
+  "tagNewHeading": {
+    "message": "Tag baru"
+  },
+  "tagNewHint": {
+    "message": "Tag Anda disimpan di daftar Anda, jadi ikut terbawa saat Anda menerbitkannya."
+  },
+  "tagNewHelp": {
+    "message": "Menambahkan situs ke tag"
+  },
+  "tagNewPlaceholder": {
+    "message": "Nama, misalnya “AI slop”"
+  },
+  "tagNewColour": {
+    "message": "Warna tag baru"
+  },
+  "tagCreate": {
+    "message": "Buat tag"
+  },
+  "tagNameInvalid": {
+    "message": "Beri nama tag dengan minimal satu huruf atau angka."
+  },
+  "tagExists": {
+    "message": "Sudah ada tag bernama “$1”."
+  },
+  "tagYoursHeading": {
+    "message": "Tag Anda"
+  },
+  "tagListsHeading": {
+    "message": "Tag dari daftar"
+  },
+  "tagListsHint": {
+    "message": "Tag ini ditentukan oleh daftar Anda. Tentukan fungsi masing-masing, dan tambahkan situs Anda sendiri ke tag mana pun. Jika sebuah daftar berhenti memakai tag yang dipakai situs Anda, tag itu pindah ke Tag Anda."
+  },
+  "tagSourceLists": {
+    "message": "Dari $1"
+  },
+  "tagNoneYours": {
+    "message": "Belum ada tag milik Anda sendiri. Buat di atas."
+  },
+  "quoted": {
+    "message": "“$1”"
+  },
+  "reasonPins": {
+    "message": "menyematkannya"
+  },
+  "reasonKeepsNormal": {
+    "message": "membiarkannya tetap normal"
+  },
+  "reasonHides": {
+    "message": "menyembunyikannya"
+  },
+  "reasonRaises": {
+    "message": "menaikkannya $1 posisi"
+  },
+  "reasonLowers": {
+    "message": "menurunkannya $1 posisi"
+  },
+  "reasonTags": {
+    "message": "memberinya tag $1"
+  },
+  "reasonMentions": {
+    "message": "menyebutnya"
+  },
+  "reasonLens": {
+    "message": "tidak memasukkannya, jadi hasil ini disembunyikan"
+  },
+  "reasonYourTagSettings": {
+    "message": "Setelan tag Anda"
+  },
+  "menuReason": {
+    "message": "$1 $2."
+  },
+  "choicePin": {
+    "message": "menyematkannya karena $1"
+  },
+  "choiceHide": {
+    "message": "menyembunyikannya karena $1"
+  },
+  "choiceRaise_other": {
+    "message": "menaikkannya $2 posisi per tag karena $3"
+  },
+  "choiceLower_other": {
+    "message": "menurunkannya $2 posisi per tag karena $3"
+  },
+  "choiceTotal": {
+    "message": "$1, $2"
+  },
+  "choiceNetUp_other": {
+    "message": "jadi hasil ini naik $1 posisi"
+  },
+  "choiceNetDown_other": {
+    "message": "jadi hasil ini turun $1 posisi"
+  },
+  "choiceNetSame": {
+    "message": "jadi posisinya tetap"
+  },
+  "lineBadTagDefinition": {
+    "message": "Definisi tag tidak valid: $1"
+  },
+  "lineNeedsPattern": {
+    "message": "Instruksi memerlukan pola atau situs"
+  },
+  "lineTooLong": {
+    "message": "Instruksi lebih panjang dari $1 karakter"
+  },
+  "lineBadSite": {
+    "message": "Situs tidak valid: $1"
+  },
+  "lineBadStrength": {
+    "message": "$1 harus 1–$2"
+  },
+  "lineBadTagId": {
+    "message": "ID tag tidak valid: $1"
+  },
+  "lineUnknownOption": {
+    "message": "Opsi tidak dikenal: $1"
+  },
+  "lineEmptyPattern": {
+    "message": "Pola kosong"
+  },
+  "lineTooManyWildcards": {
+    "message": "Maksimal $1 karakter pengganti (*) per instruksi"
+  },
+  "lineTooManySeparators": {
+    "message": "Maksimal $1 pemisah (^) per instruksi"
+  },
+  "lineIfGuard": {
+    "message": "Guard @if belum didukung"
+  },
+  "lineRegexTooLong": {
+    "message": "Ekspresi reguler lebih panjang dari $1 karakter"
+  },
+  "lineRegexFreeze": {
+    "message": "Ekspresi reguler dapat membuat halaman penelusuran macet (ada grup berulang di dalam grup berulang): $1"
+  },
+  "lineBadRegex": {
+    "message": "Ekspresi reguler tidak valid: $1"
+  },
+  "lineUnsupported": {
+    "message": "Aturan tidak didukung: $1"
+  },
+  "lineBadHost": {
+    "message": "Host tidak valid: $1"
+  },
+  "lineMatchesEverything": {
+    "message": "Aturan cocok dengan semuanya"
+  },
+  "lineNotDomain": {
+    "message": "Bukan domain: $1"
+  },
+  "listTooBig": {
+    "message": "Daftar lebih besar dari $1 MB"
+  },
+  "listIsWebPage": {
+    "message": "Yang diterima halaman web, bukan daftar. Gunakan URL file mentah (raw)."
+  },
+  "listTimedOut": {
+    "message": "Waktu habis"
+  },
+  "listNoUsableRules": {
+    "message": "Tidak ada aturan yang dapat dipakai (baris $1: $2)"
+  },
+  "listNoRules": {
+    "message": "Tidak ada aturan"
+  },
+  "backupNotBackup": {
+    "message": "Ini bukan cadangan Anubis."
+  },
+  "themeAuto": {
+    "message": "Otomatis"
+  },
+  "themeLight": {
+    "message": "Terang"
+  },
+  "themeDark": {
+    "message": "Gelap"
+  },
+  "themeAutoTitle": {
+    "message": "Tema otomatis"
+  },
+  "themeLightTitle": {
+    "message": "Tema terang"
+  },
+  "themeDarkTitle": {
+    "message": "Tema gelap"
+  },
+  "personalListName": {
+    "message": "Daftar Anda"
+  },
+  "importHighlightTag": {
+    "message": "Sorotan $1"
+  },
+  "tagDeleted_other": {
+    "message": "Tag “$2” dihapus dan dilepas dari $1 situs."
+  },
+  "listsUnsubscribed": {
+    "message": "Langganan $1 dihentikan."
+  }
+}

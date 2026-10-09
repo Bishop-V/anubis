@@ -1334,9 +1334,6 @@
   "listFormatDomains": {
     "message": "Domainliste"
   },
-  "timeNever": {
-    "message": "nie"
-  },
   "timeJustNow": {
     "message": "gerade eben"
   },

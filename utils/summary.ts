@@ -1,5 +1,5 @@
 import { describeRemoved } from './cleanup';
-import { t, tJoin, tn, type MessageKey } from './i18n';
+import { gap, t, tJoin, tn, type MessageKey } from './i18n';
 import type { DeeperStop, PageStats } from './messages';
 import type { PersonalLevel, SiteChange } from './personal';
 
@@ -22,7 +22,7 @@ export function summarySentence(stats: PageStats): string {
   if (parts.length) {
     const of = pages > 1 ? tn('summaryResultsPages', total, pages) : tn('summaryResults', total);
     const acted = t('summaryActed', tJoin(parts), of);
-    return removed ? `${acted} ${t('summaryAlsoRemoved', removed)}` : acted;
+    return removed ? `${acted}${gap()}${t('summaryAlsoRemoved', removed)}` : acted;
   }
   if (removed) return t('summaryRemovedOnly', removed);
   return pages > 1 && total > 1 ? t('summaryUnchangedPages', total, pages) : tn('summaryUnchanged', total);

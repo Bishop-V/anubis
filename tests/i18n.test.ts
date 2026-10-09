@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { check, freshMessages, languages, sourceKey, translation } from '../scripts/locales.mjs';
 import { describe, expect, it } from 'vitest';
 import { andList } from '@/utils/dom';
-import { t, tJoin, tList, tn, tParts } from '@/utils/i18n';
+import { dir, t, tJoin, tList, tn, tParts } from '@/utils/i18n';
 import type { SiteChange } from '@/utils/personal';
 import { changeSentence } from '@/utils/summary';
 import { hiddenReason } from '@/entrypoints/content/ui';
@@ -50,6 +50,8 @@ describe('messages', () => {
         const from = sourceKey(key, en);
         expect(from, `${lang}: ${key} isn't an English key`).toBeDefined();
         expect(placeholders(message), `${lang}: ${key}`).toEqual(placeholders(en[from!]!.message));
+        // "$1$2" reads as a named placeholder "$1$", which the browsers reject.
+        expect(message, `${lang}: ${key}`).not.toMatch(/\$\w+\$/);
       }
       // Every message says which English it came from, or it could never go stale.
       expect(check(lang, en).unrecorded, lang).toEqual([]);
@@ -166,5 +168,25 @@ describe('in another language', () => {
     } finally {
       installEnglish();
     }
+  });
+});
+
+describe('lists of facts and gaps in other languages', () => {
+  it('separates a list of facts in languages whose unit lists run together', () => {
+    // Chinese joined "120 条指令3 个标签", Russian "12 инструкций 3 метки".
+    for (const [code, joined] of [['zh_CN', '120 条、3 个'], ['ru', '12, 3'], ['en', '12, 3']] as const) {
+      fakeBrowser.i18n.getMessage = ((key: string) => (key === 'langCode' ? code : '')) as typeof fakeBrowser.i18n.getMessage;
+      const items = code === 'zh_CN' ? ['120 条', '3 个'] : ['12', '3'];
+      expect(tJoin(items, 'unit'), code).toBe(joined);
+    }
+    installEnglish();
+  });
+
+  it('reads right to left in Arabic and Urdu, whatever the browser says', () => {
+    for (const [code, want] of [['ar', 'rtl'], ['ur', 'rtl'], ['de', 'ltr'], ['en', 'ltr']] as const) {
+      fakeBrowser.i18n.getMessage = ((key: string) => (key === 'langCode' ? code : key === '@@bidi_dir' ? 'ltr' : '')) as typeof fakeBrowser.i18n.getMessage;
+      expect(dir(), code).toBe(want);
+    }
+    installEnglish();
   });
 });

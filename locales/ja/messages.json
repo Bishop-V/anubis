@@ -1,0 +1,1595 @@
+{
+  "langCode": {
+    "message": "ja"
+  },
+  "machineTranslatedTitle": {
+    "message": "機械翻訳です。"
+  },
+  "machineTranslatedNote": {
+    "message": "Anubis はブラウザの言語に機械翻訳されており、この翻訳は完全にはサポートされていません。誤りや分かりにくい箇所があるかもしれないため、注意してご利用ください。Anubis を英語で表示するには、ブラウザの言語を英語に設定してください。"
+  },
+  "machineTranslatedShort": {
+    "message": "注意してご利用ください。"
+  },
+  "machineTranslatedHelp": {
+    "message": "修正に協力する"
+  },
+  "extDescription": {
+    "message": "検索結果を天秤にかけます。サイトのタグ付け、並べ替え、非表示を、誰でも公開できるリストとともに行います。"
+  },
+  "commandToggleEnabled": {
+    "message": "Anubis のオンとオフを切り替える"
+  },
+  "commandToggleHidden": {
+    "message": "非表示の結果を表示する、または再び非表示にする"
+  },
+  "levelHide": {
+    "message": "非表示"
+  },
+  "levelLower": {
+    "message": "格下げ"
+  },
+  "levelNormal": {
+    "message": "通常"
+  },
+  "levelRaise": {
+    "message": "格上げ"
+  },
+  "levelPin": {
+    "message": "固定"
+  },
+  "chipHidden": {
+    "message": "非表示"
+  },
+  "chipLowered": {
+    "message": "格下げ"
+  },
+  "chipRaised": {
+    "message": "格上げ"
+  },
+  "chipPinned": {
+    "message": "固定"
+  },
+  "popupOn": {
+    "message": "オン：検索結果に適用しています"
+  },
+  "popupOff": {
+    "message": "オフ：検索ページはそのままです。"
+  },
+  "popupOnLabel": {
+    "message": "Anubis オン"
+  },
+  "popupAddSite": {
+    "message": "サイトを追加"
+  },
+  "popupRanking": {
+    "message": "ランク"
+  },
+  "popupNoSites": {
+    "message": "まだありません。検索結果の ⚖ ボタンで、そのサイトをランク付けできます。"
+  },
+  "popupKeptNormal": {
+    "message": "通常のまま"
+  },
+  "popupListsAndTags": {
+    "message": "$1、$2"
+  },
+  "popupListCount_other": {
+    "message": "リスト $1 個"
+  },
+  "popupTagCount_other": {
+    "message": "タグ $1 個"
+  },
+  "popupRankingFor": {
+    "message": "$1 のランク"
+  },
+  "popupRankHide": {
+    "message": "検索結果で $1 を非表示にする"
+  },
+  "popupRankLower": {
+    "message": "検索結果で $1 を格下げする"
+  },
+  "popupRankNormal": {
+    "message": "検索結果で $1 を通常のランクにする"
+  },
+  "popupRankRaise": {
+    "message": "検索結果で $1 を格上げする"
+  },
+  "popupRankPin": {
+    "message": "検索結果の上部に $1 を固定する"
+  },
+  "popupYourSites": {
+    "message": "マイサイト"
+  },
+  "popupSeeAll": {
+    "message": "$1 件すべて表示"
+  },
+  "popupOpenLists": {
+    "message": "リストの設定を開く"
+  },
+  "popupShowOnly": {
+    "message": "絞り込み"
+  },
+  "popupTags": {
+    "message": "タグ"
+  },
+  "popupSite": {
+    "message": "サイト"
+  },
+  "popupSiteChoice": {
+    "message": "サイトのどの範囲に適用するかを選択"
+  },
+  "popupHintAllow": {
+    "message": "リストの設定に関係なく、通常のままです。"
+  },
+  "popupHintMine": {
+    "message": "$1 の設定は、すべての検索に適用されます。"
+  },
+  "popupHintMineTags": {
+    "message": "$1 の設定は、すべての検索でタグの設定に加えて適用されます。"
+  },
+  "popupHintLists": {
+    "message": "$1（$2）。自分で決めるには、ランクを選んでください。"
+  },
+  "popupHintNone": {
+    "message": "選んだ設定は、すべての検索に適用されます。"
+  },
+  "popupYourTagSettings": {
+    "message": "タグの設定"
+  },
+  "tagMarkRaise": {
+    "message": "この結果を格上げします"
+  },
+  "tagMarkLower": {
+    "message": "この結果を格下げします"
+  },
+  "tagMarkPin": {
+    "message": "この結果を固定します"
+  },
+  "tagMarkHide": {
+    "message": "この結果を非表示にします"
+  },
+  "tagMarkSpoken": {
+    "message": "（$1）"
+  },
+  "tagListsPickerHint": {
+    "message": "追加しても、変わるのはマイリストだけです。"
+  },
+  "tagFromSource": {
+    "message": "提供元：$1"
+  },
+  "popupTagFrom": {
+    "message": "提供元：$1"
+  },
+  "popupTagSite": {
+    "message": "$1 に「$2」タグを付ける"
+  },
+  "popupUntag": {
+    "message": "$1 のタグを外す"
+  },
+  "popupTagInvalid": {
+    "message": "文字か数字を 1 つ以上含むタグ名を入力してください。"
+  },
+  "popupTagAlreadySet": {
+    "message": "このタグはすでにこのサイトに付いています。"
+  },
+  "tagSiteReason": {
+    "message": "このサイトが「$1」タグに当てはまる理由（任意）"
+  },
+  "popupThisPage": {
+    "message": "このページ"
+  },
+  "popupThisPageOn": {
+    "message": "$1 のこのページ"
+  },
+  "popupNotSearch": {
+    "message": "Google、DuckDuckGo、Bing、Brave、またはその他の対応する検索エンジンで検索すると、Anubis による変更を確認できます。"
+  },
+  "showHidden": {
+    "message": "非表示の結果を表示"
+  },
+  "hideAgain": {
+    "message": "再び非表示にする"
+  },
+  "loadMore": {
+    "message": "さらに結果を読み込む"
+  },
+  "loadMoreTitle": {
+    "message": "次のページの結果をこのページに追加し、まとめてランク付けします"
+  },
+  "loading": {
+    "message": "読み込み中…"
+  },
+  "loadMoreEmpty": {
+    "message": "$1 から $2 ページ目の結果が返されませんでした。先にロボットでないことの確認を求めている可能性があります。"
+  },
+  "loadMoreRepeat": {
+    "message": "$1 が $2 ページ目にも同じ結果を返したため、これ以上の結果はありません。"
+  },
+  "loadMoreBusy": {
+    "message": "$2 ページ目を読み込む前に、$1 から速度を落とすよう求められました。1 分ほどしてからもう一度お試しください。"
+  },
+  "loadMoreRefused": {
+    "message": "$1 が $2 ページ目の送信を拒否しました。"
+  },
+  "loadMoreSlow": {
+    "message": "$1 から $2 ページ目が届くまでに時間がかかりすぎました。"
+  },
+  "loadMoreFailed": {
+    "message": "$1 の $2 ページ目を読み込めませんでした。"
+  },
+  "loadMoreOpen": {
+    "message": "$1 ページ目を開く"
+  },
+  "loadMoreOpenTitle": {
+    "message": "新しいタブで開いて、$1 が返した内容を確認します"
+  },
+  "chipFromPage": {
+    "message": "$1 ページ目から"
+  },
+  "chipFromPageTitle": {
+    "message": "「さらに結果を読み込む」で追加"
+  },
+  "barHidden_other": {
+    "message": "非表示"
+  },
+  "barHiddenByYou_other": {
+    "message": "マイリストで非表示"
+  },
+  "barHiddenByTag_other": {
+    "message": "「$2」タグ付きのため非表示"
+  },
+  "barHiddenByLens_other": {
+    "message": "「$2」に含まれないため非表示"
+  },
+  "barHiddenByList_other": {
+    "message": "「$2」で非表示"
+  },
+  "menuWhyHeading": {
+    "message": "理由"
+  },
+  "menuNewTagPlaceholder": {
+    "message": "新しいタグ"
+  },
+  "menuNewTagLabel": {
+    "message": "新しいタグの名前"
+  },
+  "menuAddTagButton": {
+    "message": "タグを追加"
+  },
+  "menuSavedNote": {
+    "message": "マイリストに保存しました。"
+  },
+  "menuCloseLabel": {
+    "message": "閉じる"
+  },
+  "anubisSettings": {
+    "message": "Anubis の設定"
+  },
+  "help": {
+    "message": "ヘルプ"
+  },
+  "helpTitle": {
+    "message": "Wiki を開く"
+  },
+  "reportProblem": {
+    "message": "問題を報告"
+  },
+  "reportProblemTitle": {
+    "message": "Anubis のバージョンとブラウザを記入したバグ報告を GitHub で開きます"
+  },
+  "summaryShowAll": {
+    "message": "すべて表示"
+  },
+  "summaryFilterLabel": {
+    "message": "次のタグが付いた結果のみ表示"
+  },
+  "summaryFilterOn": {
+    "message": "「$1」タグが付いた結果のみ表示"
+  },
+  "summaryFilterOff": {
+    "message": "すべての結果を表示"
+  },
+  "summaryPinned": {
+    "message": "$1 件を固定"
+  },
+  "summaryRaised": {
+    "message": "$1 件を格上げ"
+  },
+  "summaryLowered": {
+    "message": "$1 件を格下げ"
+  },
+  "summaryHid": {
+    "message": "$1 件を非表示に"
+  },
+  "summaryActed": {
+    "message": "Anubis は $2中 $1しました。"
+  },
+  "summaryResults_other": {
+    "message": "$1 件"
+  },
+  "summaryResultsPages_other": {
+    "message": "$2 ページ分の $1 件"
+  },
+  "summaryAlsoRemoved": {
+    "message": "また、$1を削除しました。"
+  },
+  "summaryRemovedOnly": {
+    "message": "Anubis は、$1を削除しました。"
+  },
+  "summaryShortActed": {
+    "message": "Anubis は $2中 $1 件を変更しました。"
+  },
+  "summaryShortActedRemoved": {
+    "message": "Anubis は $2中 $1 件を変更し、ページを整理しました。"
+  },
+  "summaryShortRemoved": {
+    "message": "Anubis はページを整理しました。"
+  },
+  "summaryDetails": {
+    "message": "詳細"
+  },
+  "summaryFewerDetails": {
+    "message": "詳細を閉じる"
+  },
+  "summaryUnchanged_other": {
+    "message": "Anubis は $1 件の結果を変更しませんでした。"
+  },
+  "summaryUnchangedPages": {
+    "message": "Anubis は $2 ページ分の $1 件の結果を変更しませんでした。"
+  },
+  "summaryFiltered_other": {
+    "message": "「$2」のみ表示中：$1 件中 $3 件。"
+  },
+  "summaryRemovedAi_other": {
+    "message": "AI による回答 $1 件"
+  },
+  "summaryRemovedVideos_other": {
+    "message": "動画パネル $1 件"
+  },
+  "summaryRemovedQuestions_other": {
+    "message": "質問リスト $1 件"
+  },
+  "summaryRemovedDiscussions_other": {
+    "message": "ディスカッションのパネル $1 件"
+  },
+  "summaryRemovedNews_other": {
+    "message": "ニュースのパネル $1 件"
+  },
+  "summaryRemovedImages_other": {
+    "message": "画像のパネル $1 件"
+  },
+  "summaryRemovedRelated_other": {
+    "message": "関連する検索のリスト $1 件"
+  },
+  "summaryRemovedElsewhere_other": {
+    "message": "ほかの検索エンジンへのボタンの列 $1 件"
+  },
+  "summaryRemovedAdRequests_other": {
+    "message": "広告の許可を求める表示 $1 件"
+  },
+  "withShortcut": {
+    "message": "$1（$2）"
+  },
+  "toolbarOff": {
+    "message": "Anubis はオフです"
+  },
+  "weighLabel": {
+    "message": "$1 の非表示、ランク付け、タグ付け"
+  },
+  "weighLabelRanked": {
+    "message": "$1 の非表示、ランク付け、タグ付け（$2）"
+  },
+  "hiddenShow": {
+    "message": "表示"
+  },
+  "hiddenShowSite": {
+    "message": "表示（$1）"
+  },
+  "hiddenMore_other": {
+    "message": "ほか $1 件"
+  },
+  "summaryChangedHide": {
+    "message": "$1 を非表示にしました。"
+  },
+  "summaryChangedLower": {
+    "message": "$1 を格下げしました。"
+  },
+  "summaryChangedRaise": {
+    "message": "$1 を格上げしました。"
+  },
+  "summaryChangedPin": {
+    "message": "$1 を固定しました。"
+  },
+  "summaryChangedAllow": {
+    "message": "$1 を「通常」に設定しました。"
+  },
+  "summaryChangedNormal": {
+    "message": "$1 のランク設定を解除しました。"
+  },
+  "summaryChangedTagOn": {
+    "message": "$1 に「$2」タグを付けました。"
+  },
+  "summaryChangedTagOff": {
+    "message": "$1 から「$2」タグを外しました。"
+  },
+  "summaryChangedSite": {
+    "message": "マイリストの $1 を変更しました。"
+  },
+  "summaryUndo": {
+    "message": "元に戻す"
+  },
+  "menuSuggest": {
+    "message": "リストに含めるべきですか？　$1 に提案してください。"
+  },
+  "menuSuggestTitle": {
+    "message": "$2 の Issue トラッカーで $1 を提案します"
+  },
+  "menuReport": {
+    "message": "間違っていますか？　$1 に報告してください。"
+  },
+  "menuMatchedRule": {
+    "message": "一致したルール（$1 行目）"
+  },
+  "menuReportTitle": {
+    "message": "この結果についての誤りを $1 の Issue トラッカーで報告します"
+  },
+  "offerTitle": {
+    "message": "$1 を購読しますか？"
+  },
+  "offerTrust": {
+    "message": "リストは、検索結果のサイトを非表示にしたり、ランク付けやタグ付けをしたりできます。信頼できるリストだけを購読してください。"
+  },
+  "offerPermission": {
+    "message": "このあと、リストのあるサイト $1 の読み取りを Anubis に許可するよう、ブラウザから求められます。"
+  },
+  "offerAlready": {
+    "message": "$1 はすでに購読しています。"
+  },
+  "offerSubscribe": {
+    "message": "購読"
+  },
+  "offerSubscribing": {
+    "message": "購読処理中…"
+  },
+  "offerCancel": {
+    "message": "キャンセル"
+  },
+  "welcomeTitle": {
+    "message": "Anubis へようこそ"
+  },
+  "welcomeHeading": {
+    "message": "Anubis をインストールしました"
+  },
+  "welcomeIntro": {
+    "message": "自分の選択と購読しているリストに従って、検索結果にタグを付け、並べ替え、非表示にします。"
+  },
+  "welcomePinHeading": {
+    "message": "ツールバーに表示しておく"
+  },
+  "welcomePinWhy": {
+    "message": "ツールバーのボタンでは、そのページで Anubis が行ったことの確認、オンとオフの切り替え、表示中のサイトのランク付けができます。"
+  },
+  "welcomePinChrome": {
+    "message": "アドレスバーの横にある拡張機能ボタン（パズルのピース）を押し、Anubis の横にある固定アイコン（ピン）を押します。"
+  },
+  "welcomePinEdge": {
+    "message": "アドレスバーの横にある拡張機能ボタン（パズルのピース）を押し、Anubis の横にある目のアイコンを押します。"
+  },
+  "welcomePinOpera": {
+    "message": "アドレスバーの横にある拡張機能ボタン（キューブ）を押し、Anubis の横にあるピンを押します。"
+  },
+  "welcomePinFirefox": {
+    "message": "アドレスバーの横にある拡張機能ボタン（パズルのピース）を押し、Anubis の横にある歯車を押して「ツールバーにピン留め」を選びます。"
+  },
+  "welcomePinAndroid": {
+    "message": "Anubis は、ブラウザのメニューの「拡張機能」にあります。"
+  },
+  "welcomePinned": {
+    "message": "Anubis はツールバーにあります。"
+  },
+  "welcomeSearchHeading": {
+    "message": "検索してみる"
+  },
+  "welcomeSearchHow": {
+    "message": "いつもどおりに検索してください。サイトを非表示、ランク付け、タグ付けするには、その検索結果にポインタを合わせて ⚖ ボタンを押します。"
+  },
+  "welcomeSearchFor": {
+    "message": "「$1」を検索して、リストのタグを確認しましょう："
+  },
+  "welcomeSearchOn": {
+    "message": "$2 で「$1」を検索"
+  },
+  "welcomeQuery": {
+    "message": "python リスト内包表記"
+  },
+  "welcomeListsHeading": {
+    "message": "購読中のリスト"
+  },
+  "welcomeListsIntro": {
+    "message": "リストが代わりにサイトのタグ付け、格上げ、格下げ、非表示を行います。最初は次のリストを使います："
+  },
+  "welcomeListsNone": {
+    "message": "リストが代わりにサイトのタグ付け、格上げ、格下げ、非表示を行います。まだどのリストも購読していません。"
+  },
+  "welcomeListsMore": {
+    "message": "これらをオフにしたり、ほかのリストを探したりするには、設定を開いてください。"
+  },
+  "welcomeListsOpen": {
+    "message": "リストの設定を開く"
+  },
+  "welcomeGuide": {
+    "message": "Wiki"
+  },
+  "welcomePrivacy": {
+    "message": "プライバシー"
+  },
+  "syncHeading": {
+    "message": "同期"
+  },
+  "syncIntro": {
+    "message": "マイリストと設定を、ほかのパソコンやほかのブラウザでも使えます。"
+  },
+  "syncBrowserHeading": {
+    "message": "ブラウザの同期"
+  },
+  "syncFirefox": {
+    "message": "マイリスト、設定、タグの設定、購読リストは、Firefox の同期ストレージに保存されます。Firefox にログインし、同期の設定で「アドオン」にチェックを入れていると、Firefox がほかのパソコンにコピーします。同期はおよそ 10 分ごと、または「今すぐ同期」を選んだときに行われます。"
+  },
+  "syncFirefoxAndroid": {
+    "message": "Android 版 Firefox はアドオンのデータを同期しないため、マイリスト、設定、タグの設定、購読リストはこの端末にのみ保存されます。同期するには、下で WebDAV サーバーに接続してください。"
+  },
+  "syncChrome": {
+    "message": "マイリスト、設定、タグの設定、購読リストは、ブラウザの同期ストレージに保存されます。ブラウザにログインして拡張機能の同期をオンにしていると、ブラウザがほかのパソコンにコピーします。"
+  },
+  "syncBrowserHelp": {
+    "message": "確認するブラウザの設定"
+  },
+  "syncUsage": {
+    "message": "同期で使える $2 KB のうち、$1 KB を使用しています。"
+  },
+  "syncTooBig": {
+    "message": "マイリストは同期するには大きすぎるため、この端末にのみ保存されています。設定、タグの設定、購読リストは引き続き同期されます。"
+  },
+  "webdavHeading": {
+    "message": "ブラウザ間"
+  },
+  "webdavIntro": {
+    "message": "Firefox と Chrome は、互いに直接は同期できません。両方で共有するには、それぞれに同じ WebDAV ストレージを接続します。Koofr と InfiniCLOUD には無料プランがあり、Nextcloud などのセルフホスト型も使えます。Anubis はそこに anubis-sync.json というファイルを 1 つ置き、各ブラウザの変更をまとめます。"
+  },
+  "webdavHelp": {
+    "message": "アドレスとパスワードの入手方法"
+  },
+  "webdavAddress": {
+    "message": "アドレス"
+  },
+  "webdavAddressHint": {
+    "message": "サービスの WebDAV アドレス（https:// で始まるもの）"
+  },
+  "listPermissionDenied": {
+    "message": "このリストを更新するには、$1 を読み取る権限が Anubis に必要です。"
+  },
+  "webdavUser": {
+    "message": "ユーザー名"
+  },
+  "webdavPassword": {
+    "message": "パスワード"
+  },
+  "webdavPasswordHint": {
+    "message": "多くのサービスでは、アプリ用に別のパスワードが発行されます。そちらを使ってください。"
+  },
+  "webdavConnect": {
+    "message": "接続"
+  },
+  "webdavEncrypt": {
+    "message": "同期ファイルをエンドツーエンドで暗号化する（推奨）"
+  },
+  "webdavEncryptionPassphrase": {
+    "message": "暗号化パスフレーズ"
+  },
+  "webdavConfirmPassphrase": {
+    "message": "パスフレーズの確認"
+  },
+  "webdavEncryptionHint": {
+    "message": "どのブラウザでも、長く固有のパスフレーズ（12 文字以上）を使ってください。パスフレーズはこのブラウザにのみ保存され、サーバーには送信されません。忘れると、サーバー上のコピーは復元できません。"
+  },
+  "webdavCorrectPassphrase": {
+    "message": "正しい暗号化パスフレーズを入力してください"
+  },
+  "webdavCorrectPassphraseHint": {
+    "message": "ほかのブラウザで設定したものと同じパスフレーズを使ってください。パスフレーズはここにのみ保存され、サーバーには送信されません。"
+  },
+  "webdavSavePassphrase": {
+    "message": "パスフレーズを保存して同期"
+  },
+  "webdavChangePassphrase": {
+    "message": "暗号化パスフレーズを変更"
+  },
+  "webdavChangePassphraseHint": {
+    "message": "Anubis は、サーバーのファイルを変更する前に現在のパスフレーズを確認します。ほかのブラウザでも、次の同期の前に新しいパスフレーズを入力してください。"
+  },
+  "webdavChangePassphraseHelp": {
+    "message": "変更するとどうなるか"
+  },
+  "webdavEncryptionShort": {
+    "message": "12 文字以上の暗号化パスフレーズを使ってください。"
+  },
+  "webdavPassphraseMismatch": {
+    "message": "パスフレーズが一致しません。"
+  },
+  "webdavEncrypted": {
+    "message": "同期ファイルはエンドツーエンドで暗号化されています。パスフレーズはこのブラウザにのみ保存され、サーバーは内容を読み取れません。どのブラウザでも同じパスフレーズを使ってください。忘れると、サーバー上のコピーは復元できません。"
+  },
+  "webdavEncryptionPending": {
+    "message": "このブラウザで暗号化を設定しました。次の同期が成功すると、サーバー上のコピーが暗号化されます。どのブラウザでも同じパスフレーズを使ってください。"
+  },
+  "webdavEncryptionMissing": {
+    "message": "このブラウザには暗号化パスフレーズが設定されていません。暗号化されたファイルを読み取るには、ほかのブラウザと同じパスフレーズを使ってください。暗号化されていない同期ファイルは、サーバーの運営者が読み取れます。"
+  },
+  "webdavPrivacy": {
+    "message": "暗号化がオンのときは、暗号化されたデータだけがこのサーバーに送られます。パスフレーズはここに保存され、送信されません。暗号化しない場合、サーバーは同期ファイルを読み取れます。WebDAV のログイン情報はここに保存され、ログインのためにこのサーバーへ送信されます。"
+  },
+  "webdavBadAddress": {
+    "message": "https:// で始まる、サービスの WebDAV アドレスを入力してください"
+  },
+  "webdavMissingLogin": {
+    "message": "ユーザー名とパスワードも入力してください。"
+  },
+  "webdavDenied": {
+    "message": "マイリストを $1 に送信するには、Anubis に許可を与える必要があります。"
+  },
+  "webdavConnected": {
+    "message": "$2 として $1 と同期しています。"
+  },
+  "webdavWhen": {
+    "message": "変更は、行ってから数秒後にサーバーへ送られます。ほかのブラウザからの変更は、ブラウザの起動時と検索時に、最短で 5 分おきに取り込まれます。"
+  },
+  "webdavSyncing": {
+    "message": "同期中…"
+  },
+  "webdavLastSync": {
+    "message": "最終同期：$1"
+  },
+  "webdavLastTried": {
+    "message": "最終試行：$1"
+  },
+  "webdavSyncNow": {
+    "message": "今すぐ同期"
+  },
+  "webdavDisconnect": {
+    "message": "接続を解除"
+  },
+  "webdavDisconnected": {
+    "message": "接続を解除しました。ファイルはサーバーに残り、マイリストと設定はこのブラウザに残ります。"
+  },
+  "webdavErrorAuth": {
+    "message": "サーバーがユーザー名またはパスワードを受け付けませんでした。多くのサービスでは、普段のパスワードではなくアプリパスワードが必要です。"
+  },
+  "webdavErrorForbidden": {
+    "message": "このアカウントでは、サーバーのその場所にファイルを保存できません。"
+  },
+  "webdavErrorFolder": {
+    "message": "サーバーのそのアドレスにフォルダがありません。アドレスを確認してください。"
+  },
+  "webdavErrorPermission": {
+    "message": "Anubis には $1 と同期する権限がなくなりました。「今すぐ同期」を押して、もう一度許可してください。"
+  },
+  "webdavErrorNetwork": {
+    "message": "$1 に接続できませんでした。アドレスとネットワーク接続を確認してください。"
+  },
+  "webdavErrorFile": {
+    "message": "そこにある anubis-sync.json は Anubis が読み取れるファイルではないため、変更していません。別のフォルダを使ってください。"
+  },
+  "webdavErrorNeedsPassphrase": {
+    "message": "この同期ファイルは暗号化されています。パスフレーズを入力してください。何も変更していません。"
+  },
+  "webdavErrorWrongPassphrase": {
+    "message": "そのパスフレーズでは同期ファイルを復号できませんでした。確認してください。サーバーのファイルは変更していません。"
+  },
+  "webdavErrorUnencrypted": {
+    "message": "この接続は以前は暗号化されていましたが、現在サーバーには暗号化されていない同期ファイルがあります。ファイルは変更していません。もう一度同期する前に、サーバーのファイルを確認してください。"
+  },
+  "webdavErrorChanged": {
+    "message": "パスフレーズの変更中に同期ファイルが変更されたか、サーバーが同時編集からファイルを保護できません。何も上書きしていません。もう一度同期してから、やり直してください。"
+  },
+  "webdavErrorUnconfirmed": {
+    "message": "ファイルの保存中に $1 との接続が切れたため、現在どのパスフレーズが使われているか Anubis には分かりません。古いパスフレーズはここに保存されたままです。次の同期で誤りと表示されたら、新しいパスフレーズを入力してください。"
+  },
+  "webdavErrorServer": {
+    "message": "サーバーがエラーを返しました（HTTP $1）。しばらくしてからもう一度お試しください。"
+  },
+  "webdavErrorFailed": {
+    "message": "同期が完了しませんでした。もう一度お試しください。"
+  },
+  "appearanceHeading": {
+    "message": "外観"
+  },
+  "appearanceIntro": {
+    "message": "この設定ページと検索ページでの Anubis の見た目です。"
+  },
+  "themeHeading": {
+    "message": "配色"
+  },
+  "themeHint": {
+    "message": "「自動」は、この設定ページと各結果のメニューではブラウザに合わせ、Anubis が検索ページに追加するその他の部分では、各検索エンジンのライトモードやダークモードに合わせます。"
+  },
+  "paletteHeading": {
+    "message": "検索ページでの色"
+  },
+  "paletteHint": {
+    "message": "「シンプル」では、Anubis が検索ページに追加するものをすべてグレーで表示し、ゴールドを使いません。タグは色がなくなり、名前で区別します。設定とツールバーのポップアップはゴールドのままです。"
+  },
+  "paletteGold": {
+    "message": "ゴールド"
+  },
+  "palettePlain": {
+    "message": "シンプル"
+  },
+  "hideStyleHeading": {
+    "message": "非表示の結果"
+  },
+  "hideStyleHint": {
+    "message": "「削除」はページから取り除きます。結果の上のサマリーがその数を示し、「非表示の結果を表示」で元に戻せます。「折りたたみ」は、連続する非表示の結果ごとに細い行を 1 つ残します。「薄く表示」は結果を薄くします。"
+  },
+  "hideStyleRemove": {
+    "message": "削除"
+  },
+  "hideStyleCollapse": {
+    "message": "折りたたみ"
+  },
+  "hideStyleDim": {
+    "message": "薄く表示"
+  },
+  "rerankHeading": {
+    "message": "結果を並べ替える"
+  },
+  "rerankHint": {
+    "message": "Brave Goggle のように、格上げした結果と固定した結果を上へ、格下げした結果を下へ移動します。"
+  },
+  "rerankHelp": {
+    "message": "並べ替えのしくみ"
+  },
+  "deeperAuto": {
+    "message": "さらに結果を自動で読み込む"
+  },
+  "deeperAutoHint": {
+    "message": "次のページの結果を最初のページに追加し、まとめてランク付けします。3 ページ目にあった固定したサイトも先頭に上がります。結果の上にある「さらに結果を読み込む」を押しても、同じことができます。追加するページ数を 0（オフ）から $1 までで入力してください。"
+  },
+  "deeperHelp": {
+    "message": "追加読み込みのしくみ"
+  },
+  "deeperUnit": {
+    "message": "ページを追加"
+  },
+  "deeperTipOff": {
+    "message": "オフ：「さらに結果を読み込む」を押したときだけ、追加の結果を読み込みます。"
+  },
+  "deeperTipTime_other": {
+    "message": "検索ごとに約 $1 秒長くかかります。"
+  },
+  "deeperTipFew": {
+    "message": "$1数ページ程度なら、検索エンジンが問題にすることはほとんどありません。"
+  },
+  "deeperTipSome": {
+    "message": "$1一部の検索エンジンで、ロボットでないことの確認を求められる場合があります。"
+  },
+  "deeperTipMany": {
+    "message": "$1Google と Bing では、この数になるとロボットでないことの確認を求められることがよくあります。それより前にページがなくなる検索エンジンもあります。"
+  },
+  "chipsHeading": {
+    "message": "タグのラベル"
+  },
+  "chipsHint": {
+    "message": "各結果のタイトルの下に、タグとランクを表示します。"
+  },
+  "summaryHeading": {
+    "message": "サマリー"
+  },
+  "summaryHint": {
+    "message": "Anubis が変更した内容を、結果の上に 1 行のサマリーで表示します。"
+  },
+  "enabledHeading": {
+    "message": "Anubis オン"
+  },
+  "enabledHint": {
+    "message": "オフにすると、アンインストールせずに検索ページをそのままにできます。"
+  },
+  "enginesHeading": {
+    "message": "検索エンジン"
+  },
+  "enginesIntro": {
+    "message": "Anubis は、次の検索エンジンのウェブ検索結果で動作します。結果はできるだけページの構造から見つけるため、小さなデザイン変更では動かなくなりません。"
+  },
+  "enginesTrouble": {
+    "message": "検索ページで Anubis が何もしない場合は"
+  },
+  "enginesTroubleHelp": {
+    "message": "確認すること"
+  },
+  "shareHeading": {
+    "message": "バックアップ、インポート、共有"
+  },
+  "shareIntro": {
+    "message": "すべてのコピーを保存したり、ほかのツールからサイトを移したり、マイリストを公開してほかの人が購読できるようにしたりできます。"
+  },
+  "publishHeading": {
+    "message": "マイリストを公開"
+  },
+  "publishIntro": {
+    "message": "サーバーは不要です。公開 git リポジトリがデータベースになり、プルリクエストで誰でも貢献できます。"
+  },
+  "publishHelp": {
+    "message": "リストの公開方法"
+  },
+  "publishStepDownload": {
+    "message": "下からマイリストをダウンロードします。先頭にある $1、$2、$3 の行を設定してください。"
+  },
+  "publishStepRepository": {
+    "message": "公開の GitHub リポジトリ（または gist）を作成し、ファイルを追加します（例：$1）。"
+  },
+  "publishStepIssues": {
+    "message": "$1 を追加すると、各結果のメニューから、ほかの人がリストにサイトを提案できるようになります。"
+  },
+  "publishStepShare": {
+    "message": "ファイルのリンクを共有します。受け取った人は「リスト」→「リストを追加」に貼り付けます。"
+  },
+  "publishStepDirectory": {
+    "message": "「その他のリスト」で全員に表示したい場合は、$1 に追加するプルリクエストを作成してください。"
+  },
+  "publishDownload": {
+    "message": "マイリストをダウンロード"
+  },
+  "publishFormat": {
+    "message": "リストの形式"
+  },
+  "importHeading": {
+    "message": "サイトをインポート"
+  },
+  "importIntro": {
+    "message": "uBlacklist や HOHSER から移行しますか？　ルールやエクスポートをここに貼り付けると、サイトがマイリストに追加されます。非表示は非表示のまま、HOHSER の部分的な非表示は「格下げ」になり、ハイライトの色はハイライトするタグになります。"
+  },
+  "importHelp": {
+    "message": "各ツールのルールの変換先"
+  },
+  "importPlaceholder": {
+    "message": "uBlacklist のルール、HOHSER のエクスポート、Goggle、または 1 行に 1 つのドメインを貼り付け"
+  },
+  "importLabel": {
+    "message": "インポートするサイト"
+  },
+  "importButton": {
+    "message": "インポート"
+  },
+  "importChooseFile": {
+    "message": "ファイルを選択"
+  },
+  "importSourceHohser": {
+    "message": "HOHSER のエクスポート"
+  },
+  "importSourceUblacklist": {
+    "message": "uBlacklist のルール"
+  },
+  "importSourceGoggle": {
+    "message": "Goggle 形式のリスト"
+  },
+  "importSourceAnubis": {
+    "message": "Anubis リスト"
+  },
+  "importSourceDomains": {
+    "message": "ドメインのリスト"
+  },
+  "importRead_other": {
+    "message": "$2として読み込みました：$1 件のサイトを追加し、$3 件を更新しました。"
+  },
+  "importSkipped_other": {
+    "message": "アドレスのパターンや未対応の構文を含む $1 件のルールを除外しました。それらを残すには、元のリストを購読してください。"
+  },
+  "importFailed": {
+    "message": "インポートできませんでした：$1"
+  },
+  "backupHeading": {
+    "message": "バックアップ"
+  },
+  "backupIntro": {
+    "message": "設定、タグの設定、購読リスト、マイリストのすべてを 1 つのファイルにまとめます。"
+  },
+  "backupExport": {
+    "message": "バックアップをエクスポート"
+  },
+  "backupRestore": {
+    "message": "バックアップから復元"
+  },
+  "backupRestored": {
+    "message": "バックアップを復元しました。"
+  },
+  "backupRestoreFailed": {
+    "message": "復元できませんでした：$1"
+  },
+  "resetButton": {
+    "message": "設定をリセット"
+  },
+  "resetDone": {
+    "message": "設定、タグ、購読リストをリセットしました。マイリストはそのままです。"
+  },
+  "settingsSections": {
+    "message": "設定のセクション"
+  },
+  "settingsPageTitle": {
+    "message": "$1 – Anubis"
+  },
+  "settingsBrandTitle": {
+    "message": "Anubis の Wiki を開く"
+  },
+  "settingsTagline": {
+    "message": "検索結果の非表示、ランク付け、タグ付け"
+  },
+  "settingsSource": {
+    "message": "GitHub のソースコード"
+  },
+  "sitesHeading": {
+    "message": "マイサイト"
+  },
+  "sitesHelp": {
+    "message": "ランク付けのしくみ"
+  },
+  "tagsHeading": {
+    "message": "タグ"
+  },
+  "tagsHelp": {
+    "message": "タグのしくみ"
+  },
+  "listsHeading": {
+    "message": "リスト"
+  },
+  "listsHelp": {
+    "message": "リストのしくみ"
+  },
+  "cleanupHeading": {
+    "message": "パネルの削除"
+  },
+  "cleanupHelp": {
+    "message": "パネル削除のしくみ"
+  },
+  "appearanceHelp": {
+    "message": "非表示の結果について"
+  },
+  "enginesHelp": {
+    "message": "対応している検索エンジン"
+  },
+  "syncHelp": {
+    "message": "同期のしくみ"
+  },
+  "shareHelp": {
+    "message": "ほかのツールからの移行"
+  },
+  "cleanupIntro": {
+    "message": "Anubis は、検索ページにある結果以外のパネルを削除できます。表示したくないものをそれぞれオンにしてください。結果の上にある「非表示の結果を表示」を押すと、その検索で元に戻ります。"
+  },
+  "cleanupEverySearch": {
+    "message": "すべての検索で"
+  },
+  "cleanupEverySearchHint": {
+    "message": "オンにすると Anubis が削除します。オフにするとページに残ります。"
+  },
+  "cleanupStillShows": {
+    "message": "パネルが表示されたままの場合"
+  },
+  "cleanupAll": {
+    "message": "すべて"
+  },
+  "cleanupAllHint": {
+    "message": "このセクションのすべてのスイッチをオンまたはオフにします。"
+  },
+  "cleanupOnGoogle": {
+    "message": "Google の場合"
+  },
+  "cleanupWebTab": {
+    "message": "常に「ウェブ」タブを開く"
+  },
+  "cleanupWebTabHint": {
+    "message": "Google の検索をすべて「ウェブ」タブで開きます。「AI による概要」や動画などのパネルがない、リンクだけの結果になり、Anubis が認識しないパネルも表示されません。1 回の検索だけ元に戻すには、結果の上にある「すべて」を選んでください。"
+  },
+  "cleanupAi": {
+    "message": "AI による回答"
+  },
+  "cleanupAiHint": {
+    "message": "Google の「AI による概要」と「AI モード」タブ、DuckDuckGo の AI による回答と Duck.ai、Bing の AI による回答、Brave の AI による回答。"
+  },
+  "cleanupVideos": {
+    "message": "動画パネル"
+  },
+  "cleanupVideosHint": {
+    "message": "結果の間にある、動画やショート動画のパネル。"
+  },
+  "cleanupQuestions": {
+    "message": "他の人はこちらも質問"
+  },
+  "cleanupQuestionsHint": {
+    "message": "回答を展開できる、ほかの人の質問のリスト。"
+  },
+  "cleanupDiscussions": {
+    "message": "ディスカッションのパネル"
+  },
+  "cleanupDiscussionsHint": {
+    "message": "Google の「ディスカッションとフォーラム」のような、結果の間にあるフォーラムのスレッドのパネル。結果に含まれるフォーラムのページは残ります。"
+  },
+  "cleanupNews": {
+    "message": "トップニュース"
+  },
+  "cleanupNewsHint": {
+    "message": "結果の間にあるニュースのパネル。"
+  },
+  "cleanupImages": {
+    "message": "画像の列"
+  },
+  "cleanupImagesHint": {
+    "message": "結果の間にある画像の列。「画像」タブは引き続き使えます。"
+  },
+  "cleanupRelated": {
+    "message": "関連する検索"
+  },
+  "cleanupRelatedHint": {
+    "message": "ほかの検索キーワードのリスト。通常はページの下部にあります。"
+  },
+  "cleanupElsewhere": {
+    "message": "ほかの検索エンジン"
+  },
+  "cleanupElsewhereHint": {
+    "message": "Brave の「Find elsewhere」のような、同じ検索をほかの検索エンジンで行うボタンの列。"
+  },
+  "cleanupAdRequests": {
+    "message": "広告の許可を求める表示"
+  },
+  "cleanupAdRequestsHint": {
+    "message": "Startpage の「Block creepy ads, not private search」のような、広告ブロッカーをオフにするか、広告を許可するよう求めるバナー。"
+  },
+  "sitesIntro": {
+    "message": "自分でランク付けまたは非表示にしたサイトです。ここでの設定は、購読しているどのリストよりも優先されます。検索結果のボタンを使うか、ここでサイトを追加してください。"
+  },
+  "sitesEditAsText": {
+    "message": "テキストで編集"
+  },
+  "sitesBackToTable": {
+    "message": "表に戻る"
+  },
+  "sitesTooBig": {
+    "message": "マイリストはブラウザの同期には大きすぎるため、この端末にのみ保存されています。コピーを残すには、ダウンロードしてください。"
+  },
+  "sitesAddPlaceholder": {
+    "message": "ドメインまたは URL（例：fandom.com）"
+  },
+  "sitesAdd": {
+    "message": "追加"
+  },
+  "sitesNotDomain": {
+    "message": "ドメインではないようです。"
+  },
+  "sitesAddHint": {
+    "message": "サイトとそのすべてのサブドメインに適用されます。"
+  },
+  "sitesAddHelp": {
+    "message": "サイトの範囲の選び方"
+  },
+  "sitesFilter_other": {
+    "message": "$1 件のサイトを絞り込み…"
+  },
+  "sitesFilterLabel": {
+    "message": "サイトを絞り込み"
+  },
+  "sitesAddTagTo": {
+    "message": "$1 にタグを追加"
+  },
+  "sitesKeptNormal": {
+    "message": "リストの設定に関係なく通常のまま"
+  },
+  "sitesRemoveTag": {
+    "message": "$2 から「$1」を外す"
+  },
+  "sitesForget": {
+    "message": "$1 を削除"
+  },
+  "sitesFirst500": {
+    "message": "最初の 500 件を表示しています。残りは絞り込んで探してください。"
+  },
+  "sitesNone": {
+    "message": "まだサイトがありません。上で追加するか、検索結果のボタンを使ってください。"
+  },
+  "sitesTextLabel": {
+    "message": "マイリスト（テキスト）"
+  },
+  "sitesTextIntro": {
+    "message": "Anubis リスト形式のマイリストです。Brave Goggles の構文にタグを加えた形式で、公開するファイルそのものです。表に表示できない行も、書いたとおりに保持されます。"
+  },
+  "sitesTextReadable": {
+    "message": "$1、$2。すべて読み取れます。"
+  },
+  "listInstructions_other": {
+    "message": "ルール $1 件"
+  },
+  "listErrorLine": {
+    "message": "$1 行目：$2"
+  },
+  "sitesSave": {
+    "message": "保存"
+  },
+  "sitesFormatReference": {
+    "message": "形式のリファレンス"
+  },
+  "listsIntro": {
+    "message": "サイトのタグ付け、並べ替え、非表示を行うリストを購読します。GitHub、GitLab、Codeberg、gist 上のテキストファイルなら何でも使えます。Anubis リスト、Brave Goggles、uBlacklist のルールセット、ドメインだけのリストに対応しています。"
+  },
+  "listsUpdateAll": {
+    "message": "すべて更新"
+  },
+  "listsUpdating": {
+    "message": "更新中…"
+  },
+  "listsAllChecked": {
+    "message": "すべてのリストの更新を確認しました。"
+  },
+  "listsAddHeading": {
+    "message": "リストを追加"
+  },
+  "listsAddHint": {
+    "message": "ファイルへのリンクを貼り付けてください。GitHub のページ、gist、Brave Goggle へのリンクも使えます。"
+  },
+  "listsAddHelp": {
+    "message": "使えるリスト"
+  },
+  "listsUrlLabel": {
+    "message": "リストの URL"
+  },
+  "listsNone": {
+    "message": "まだリストがありません。下のリストから選んでください。"
+  },
+  "listsMoreHeading": {
+    "message": "その他のリスト"
+  },
+  "listsMoreIntro": {
+    "message": "Anubis のディレクトリと、より広いコミュニティから。"
+  },
+  "listsShare": {
+    "message": "共有したいリストを作りましたか？　$1 へのプルリクエストで、ディレクトリに追加してください。"
+  },
+  "listsNeedHttps": {
+    "message": "リストは https で配信されている必要があります。"
+  },
+  "listsPermissionToDownload": {
+    "message": "このリストをダウンロードするには、$1 を読み取る権限が Anubis に必要です。"
+  },
+  "listsSubscribed": {
+    "message": "$1 を購読しました：$2、$3。"
+  },
+  "listsSubscribedBundled": {
+    "message": "$1 を購読しました（更新できるまでは、Anubis に同梱のコピーを使います）。"
+  },
+  "listsSubscribeFailed": {
+    "message": "購読できませんでした：$1"
+  },
+  "listsUse": {
+    "message": "$1 を使う"
+  },
+  "listsOn": {
+    "message": "オン"
+  },
+  "listsOff": {
+    "message": "オフ"
+  },
+  "listsUpdateFailed": {
+    "message": "$1：$2"
+  },
+  "listsUpToDate": {
+    "message": "$1 は最新です。"
+  },
+  "listsFacts": {
+    "message": "$1"
+  },
+  "listsLinks": {
+    "message": "$1"
+  },
+  "listsNotDownloaded": {
+    "message": "未ダウンロード"
+  },
+  "listsBy": {
+    "message": "作成者：$1"
+  },
+  "listsBundledCopy": {
+    "message": "Anubis に同梱のコピー"
+  },
+  "listsUpdated": {
+    "message": "更新：$1"
+  },
+  "listsHomepage": {
+    "message": "ホームページ"
+  },
+  "listsSuggestChanges": {
+    "message": "変更を提案"
+  },
+  "listsUsingBundled": {
+    "message": "更新できるまで、Anubis に同梱のコピーを使っています（$1）。"
+  },
+  "listsLastUpdateFailed": {
+    "message": "前回の更新に失敗しました：$1"
+  },
+  "listsSkippedLines_other": {
+    "message": "$1 行をスキップしました：Anubis はその構文をまだ読み取れません。"
+  },
+  "listsUpdateNow": {
+    "message": "今すぐ更新"
+  },
+  "listsUpdateOne": {
+    "message": "$1 を更新"
+  },
+  "listsViewFile": {
+    "message": "ファイルを表示"
+  },
+  "listsViewOne": {
+    "message": "$1 を表示"
+  },
+  "listsUnsubscribe": {
+    "message": "購読を解除"
+  },
+  "listsUnsubscribeOne": {
+    "message": "$1 の購読を解除"
+  },
+  "listLensTitle": {
+    "message": "レンズは、リストに記載のない結果を非表示にします"
+  },
+  "listKindLens": {
+    "message": "レンズ"
+  },
+  "listKindBuiltin": {
+    "message": "組み込み"
+  },
+  "listFormatAnubis": {
+    "message": "Anubis リスト"
+  },
+  "listFormatGoggle": {
+    "message": "Brave Goggle"
+  },
+  "listFormatUblacklist": {
+    "message": "uBlacklist ルールセット"
+  },
+  "listFormatDomains": {
+    "message": "ドメインリスト"
+  },
+  "timeJustNow": {
+    "message": "たった今"
+  },
+  "tagsIntro": {
+    "message": "リストは結果にラベルを付けます。各ラベルの動作は自分で決められます。リストに従う、表示だけする、ハイライトする、または付いている結果を固定、格上げ、格下げ、非表示にする、から選べます。同じタグ名を使うリストは、そのタグを共有します。"
+  },
+  "tagActionList": {
+    "message": "リストに従う"
+  },
+  "tagActionLabel": {
+    "message": "ラベルのみ"
+  },
+  "tagActionHighlight": {
+    "message": "ハイライト"
+  },
+  "tagActionFor": {
+    "message": "「$1」タグが付いた結果の動作"
+  },
+  "tagMarksNone": {
+    "message": "このタグが付いたサイトはまだありません。"
+  },
+  "tagMarks": {
+    "message": "$1に付いています。"
+  },
+  "tagMarksYours_other": {
+    "message": "マイサイト $1 件"
+  },
+  "tagMarksFromList_other": {
+    "message": "$2 のサイト $1 件"
+  },
+  "tagEffectLabel": {
+    "message": "$1ラベルのみで、ランクは変わりません。"
+  },
+  "tagEffectHighlight": {
+    "message": "$1タグの色でハイライトします。"
+  },
+  "tagEffectRaise": {
+    "message": "$1検索で格上げします。"
+  },
+  "tagEffectLower": {
+    "message": "$1検索で格下げします。"
+  },
+  "tagEffectPin": {
+    "message": "$1検索結果の上部に固定します。"
+  },
+  "tagEffectHide": {
+    "message": "$1検索結果で非表示にします。"
+  },
+  "tagEffectOneList": {
+    "message": "$1そのうち $2 が $3しています。"
+  },
+  "tagEffectLists": {
+    "message": "$1そのうちリストが $2しています。"
+  },
+  "tagListRaises_other": {
+    "message": "$1 件を格上げ"
+  },
+  "tagListLowers_other": {
+    "message": "$1 件を格下げ"
+  },
+  "tagListHides_other": {
+    "message": "$1 件を非表示に"
+  },
+  "tagListsRaise_other": {
+    "message": "$1 件を格上げ"
+  },
+  "tagListsLower_other": {
+    "message": "$1 件を格下げ"
+  },
+  "tagListsHide_other": {
+    "message": "$1 件を非表示に"
+  },
+  "tagSitesToTag": {
+    "message": "「$1」タグを付けるサイト"
+  },
+  "tagAddSite": {
+    "message": "サイトを追加"
+  },
+  "tagNotSite": {
+    "message": "「$1」はサイトではないようです。"
+  },
+  "tagTypeSite": {
+    "message": "fandom.com のように、サイトを入力してください。"
+  },
+  "tagSiteNote": {
+    "message": "$1：$2"
+  },
+  "tagMoreSites_other": {
+    "message": "ほか $1 件"
+  },
+  "tagFromList": {
+    "message": "$1：$2。"
+  },
+  "tagName": {
+    "message": "タグ名"
+  },
+  "tagNameShort": {
+    "message": "名前"
+  },
+  "tagDescription": {
+    "message": "説明"
+  },
+  "tagDescriptionPlaceholder": {
+    "message": "意味（任意）"
+  },
+  "tagMeaning": {
+    "message": "「$1」の意味"
+  },
+  "tagYourSites": {
+    "message": "このタグが付いたマイサイト"
+  },
+  "tagNoSites": {
+    "message": "まだありません。ここで追加するか、検索結果の ⚖ ボタンを使ってください。"
+  },
+  "tagFromYourLists": {
+    "message": "購読中のリストから"
+  },
+  "tagColour": {
+    "message": "色"
+  },
+  "tagColourOf": {
+    "message": "「$1」の色"
+  },
+  "tagShowUnder": {
+    "message": "結果の下に「$1」を表示"
+  },
+  "tagShowTitle": {
+    "message": "このタグを結果の下に表示"
+  },
+  "tagEdit": {
+    "message": "編集"
+  },
+  "tagDone": {
+    "message": "完了"
+  },
+  "tagEditLabel": {
+    "message": "「$1」とそのサイトを編集"
+  },
+  "tagDelete": {
+    "message": "「$1」を削除"
+  },
+  "tagNewHeading": {
+    "message": "新しいタグ"
+  },
+  "tagNewHint": {
+    "message": "タグはマイリストに保存されるため、マイリストを公開するとタグも一緒に公開されます。"
+  },
+  "tagNewHelp": {
+    "message": "タグにサイトを追加する"
+  },
+  "tagNewPlaceholder": {
+    "message": "名前（例：「AI 量産記事」）"
+  },
+  "tagNewColour": {
+    "message": "新しいタグの色"
+  },
+  "tagCreate": {
+    "message": "タグを作成"
+  },
+  "tagNameInvalid": {
+    "message": "文字か数字を 1 つ以上含む名前をタグに付けてください。"
+  },
+  "tagExists": {
+    "message": "「$1」というタグはすでにあります。"
+  },
+  "tagYoursHeading": {
+    "message": "マイタグ"
+  },
+  "tagListsHeading": {
+    "message": "リストのタグ"
+  },
+  "tagListsHint": {
+    "message": "これらは購読中のリストが定義しています。それぞれの動作を決めたり、自分のサイトを追加したりできます。マイサイトで使っているタグをリストがなくした場合、そのタグは「マイタグ」に移ります。"
+  },
+  "tagSourceLists": {
+    "message": "提供元：$1"
+  },
+  "tagNoneYours": {
+    "message": "自分のタグはまだありません。上で作成してください。"
+  },
+  "quoted": {
+    "message": "「$1」"
+  },
+  "reasonPins": {
+    "message": "固定"
+  },
+  "reasonKeepsNormal": {
+    "message": "通常のまま維持"
+  },
+  "reasonHides": {
+    "message": "非表示"
+  },
+  "reasonRaises": {
+    "message": "$1 段階格上げ"
+  },
+  "reasonLowers": {
+    "message": "$1 段階格下げ"
+  },
+  "reasonTags": {
+    "message": "$1のタグ付け"
+  },
+  "reasonMentions": {
+    "message": "記載のみ"
+  },
+  "reasonLens": {
+    "message": "記載がないため非表示"
+  },
+  "reasonYourTagSettings": {
+    "message": "タグの設定"
+  },
+  "menuReason": {
+    "message": "$1：$2"
+  },
+  "choicePin": {
+    "message": "$1により固定"
+  },
+  "choiceHide": {
+    "message": "$1により非表示"
+  },
+  "choiceRaise_other": {
+    "message": "$3によりタグごとに $2 段階格上げ"
+  },
+  "choiceLower_other": {
+    "message": "$3によりタグごとに $2 段階格下げ"
+  },
+  "choiceTotal": {
+    "message": "$1、$2"
+  },
+  "choiceNetUp_other": {
+    "message": "差し引き $1 段階の格上げ"
+  },
+  "choiceNetDown_other": {
+    "message": "差し引き $1 段階の格下げ"
+  },
+  "choiceNetSame": {
+    "message": "差し引きで変化なし"
+  },
+  "lineBadTagDefinition": {
+    "message": "タグの定義が正しくありません：$1"
+  },
+  "lineNeedsPattern": {
+    "message": "ルールにはパターンかサイトが必要です"
+  },
+  "lineTooLong": {
+    "message": "ルールが $1 文字を超えています"
+  },
+  "lineBadSite": {
+    "message": "サイトが正しくありません：$1"
+  },
+  "lineBadStrength": {
+    "message": "$1 は 1～$2 にしてください"
+  },
+  "lineBadTagId": {
+    "message": "タグ ID が正しくありません：$1"
+  },
+  "lineUnknownOption": {
+    "message": "不明なオプション：$1"
+  },
+  "lineEmptyPattern": {
+    "message": "パターンが空です"
+  },
+  "lineTooManyWildcards": {
+    "message": "ワイルドカード（*）は 1 つのルールにつき $1 個までです"
+  },
+  "lineTooManySeparators": {
+    "message": "区切り文字（^）は 1 つのルールにつき $1 個までです"
+  },
+  "lineIfGuard": {
+    "message": "@if ガードにはまだ対応していません"
+  },
+  "lineRegexTooLong": {
+    "message": "正規表現が $1 文字を超えています"
+  },
+  "lineRegexFreeze": {
+    "message": "正規表現が検索ページをフリーズさせるおそれがあります（繰り返すグループの中でさらに繰り返しています）：$1"
+  },
+  "lineBadRegex": {
+    "message": "正規表現が正しくありません：$1"
+  },
+  "lineUnsupported": {
+    "message": "未対応のルール：$1"
+  },
+  "lineBadHost": {
+    "message": "ホストが正しくありません：$1"
+  },
+  "lineMatchesEverything": {
+    "message": "ルールがすべてに一致します"
+  },
+  "lineNotDomain": {
+    "message": "ドメインではありません：$1"
+  },
+  "listTooBig": {
+    "message": "リストが $1 MB を超えています"
+  },
+  "listIsWebPage": {
+    "message": "リストではなくウェブページが返されました。ファイルの raw URL を使ってください。"
+  },
+  "listTimedOut": {
+    "message": "タイムアウトしました"
+  },
+  "listNoUsableRules": {
+    "message": "使えるルールがありません（$1 行目：$2）"
+  },
+  "listNoRules": {
+    "message": "ルールが見つかりません"
+  },
+  "backupNotBackup": {
+    "message": "Anubis のバックアップではありません。"
+  },
+  "themeAuto": {
+    "message": "自動"
+  },
+  "themeLight": {
+    "message": "ライト"
+  },
+  "themeDark": {
+    "message": "ダーク"
+  },
+  "themeAutoTitle": {
+    "message": "自動テーマ"
+  },
+  "themeLightTitle": {
+    "message": "ライトテーマ"
+  },
+  "themeDarkTitle": {
+    "message": "ダークテーマ"
+  },
+  "personalListName": {
+    "message": "マイリスト"
+  },
+  "importHighlightTag": {
+    "message": "ハイライト $1"
+  },
+  "tagDeleted_other": {
+    "message": "「$2」タグを削除し、$1 件のサイトから外しました。"
+  },
+  "listsUnsubscribed": {
+    "message": "$1 の購読を解除しました。"
+  }
+}

@@ -1,7 +1,7 @@
 # Getting started
 
 ::: warning Languages
-Anubis shows itself in your browser's language when it has a translation. Only English is fully supported: German, French, Spanish, and Brazilian Portuguese are machine translations, so use them with caution. To use Anubis in English, set your browser's language to English. [Help translate](./translate.md) says more.
+Anubis shows itself in your browser's language when it has a translation. Only English is fully supported: Arabic, Bengali, Chinese (Simplified), French, German, Hindi, Indonesian, Italian, Japanese, Korean, Brazilian Portuguese, Russian, Spanish, and Urdu are machine translations, so use them with caution. To use Anubis in English, set your browser's language to English. [Help translate](./translate.md) says more.
 :::
 
 ## Install in Firefox

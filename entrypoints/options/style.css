@@ -64,7 +64,7 @@ nav a[aria-current='page']::before {
   background: var(--gold);
 }
 nav .count {
-  margin-left: auto;
+  margin-inline-start: auto;
   font-size: 12.5px;
   font-weight: 400;
   color: var(--muted);
@@ -107,7 +107,7 @@ nav .foot .links svg,
 }
 .help-link svg {
   display: inline;
-  margin-left: 4px;
+  margin-inline-start: 4px;
   vertical-align: -1px;
 }
 
@@ -228,7 +228,7 @@ table.sites th {
   padding: 0 12px 6px 0;
   font-size: 12.5px;
   font-weight: 600;
-  text-align: left;
+  text-align: start;
   color: var(--muted);
 }
 table.sites td {
@@ -242,9 +242,9 @@ table.sites td.site {
 }
 table.sites td.actions {
   width: 1%;
-  padding-right: 0;
+  padding-inline-end: 0;
   white-space: nowrap;
-  text-align: right;
+  text-align: end;
 }
 .tag-picks {
   display: flex;
@@ -325,7 +325,7 @@ textarea.code {
 }
 .errors {
   margin: 8px 0 0;
-  padding-left: 18px;
+  padding-inline-start: 18px;
   font-size: 12.5px;
   color: var(--danger);
 }
@@ -365,7 +365,7 @@ textarea.code {
 .tag-row .controls .text-btn {
   min-width: 34px;
   font-size: 13px;
-  text-align: right;
+  text-align: end;
 }
 
 /* An open tag: its name and description, and the sites that carry it. */
@@ -491,7 +491,7 @@ textarea.code {
   font-weight: 600;
 }
 .list-row .kind {
-  margin-left: 8px;
+  margin-inline-start: 8px;
   font-size: 12.5px;
   font-weight: 400;
   color: var(--muted);
@@ -521,7 +521,7 @@ textarea.code {
   gap: 4px;
 }
 .list-row .side .switch {
-  margin-right: 8px;
+  margin-inline-end: 8px;
 }
 .list-row .err {
   margin-top: 6px;
@@ -537,7 +537,7 @@ textarea.code {
   font-size: 13px;
 }
 .panel.offer .kind {
-  margin-left: 8px;
+  margin-inline-start: 8px;
   font-size: 12.5px;
   color: var(--muted);
 }
@@ -565,7 +565,7 @@ textarea.code {
   font-weight: 600;
 }
 .discover-row .kind {
-  margin-left: 8px;
+  margin-inline-start: 8px;
   font-size: 12.5px;
   color: var(--muted);
 }
@@ -636,7 +636,7 @@ textarea.code {
 }
 .steps {
   margin: 10px 0 0;
-  padding-left: 20px;
+  padding-inline-start: 20px;
   max-width: 62ch;
 }
 .steps li {

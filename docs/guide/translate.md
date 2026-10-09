@@ -1,7 +1,7 @@
 # Help translate
 
 ::: warning Machine translated: use with caution
-Anubis is written in English, the only language it fully supports. It also comes in **German, French, Spanish, and Brazilian Portuguese**, but a machine made those translations and nobody who speaks the language has checked them yet. Some words may be wrong or unclear, so use them with caution. When you rank or hide sites, the ⚖ menu's **Why** and the summary above the results say exactly what happened; if a translation leaves you unsure, check the English. To see Anubis in English, set your browser's language to English.
+Anubis is written in English, the only language it fully supports. It also comes in **Arabic, Bengali, Chinese (Simplified), French, German, Hindi, Indonesian, Italian, Japanese, Korean, Brazilian Portuguese, Russian, Spanish, and Urdu**, but a machine made those translations and nobody who speaks the language has checked them yet. Some words may be wrong or unclear, so use them with caution. When you rank or hide sites, the ⚖ menu's **Why** and the summary above the results say exactly what happened; if a translation leaves you unsure, check the English. To see Anubis in English, set your browser's language to English.
 :::
 
 Anubis's interface is in English. Every word it shows can be translated: the toolbar popup, the settings, the welcome page, and what it adds to search pages. Your browser picks the translation for its own language, and anything a translation leaves out stays in English. In any language but English, Settings, the welcome page, and the toolbar popup say that the translation is a machine's, with a link to this page.
@@ -10,10 +10,22 @@ Anubis's interface is in English. Every word it shows can be translated: the too
 
 | Language | Folder | Checked by a speaker |
 | --- | --- | --- |
-| German | `de` | Not yet |
+| Arabic | `ar` | Not yet |
+| Bengali | `bn` | Not yet |
+| Chinese (Simplified) | `zh_CN` | Not yet |
 | French | `fr` | Not yet |
-| Spanish | `es` | Not yet |
+| German | `de` | Not yet |
+| Hindi | `hi` | Not yet |
+| Indonesian | `id` | Not yet |
+| Italian | `it` | Not yet |
+| Japanese | `ja` | Not yet |
+| Korean | `ko` | Not yet |
 | Portuguese (Brazil) | `pt_BR` | Not yet |
+| Russian | `ru` | Not yet |
+| Spanish | `es` | Not yet |
+| Urdu | `ur` | Not yet |
+
+Chrome has no Urdu interface of its own, so Urdu shows in Firefox only.
 
 They were machine translated from the English with a fixed set of words: the five rankings, "tag", "list", and the names search engines give their own panels in each language. When the English for a message changes, its translation is out of date, and Anubis shows that message in English until someone translates it again, so you never read an old meaning. Lists and the tags they give sites are written by their authors, usually in English, so tag names stay as the lists wrote them.
 
@@ -52,4 +64,4 @@ Change the `message` in `locales/<language>/messages.json`, and say in the pull 
 
 Build Anubis with your file in place (`npm run build`; see [`DEVELOPMENT.md`](https://github.com/Bishop-V/anubis/blob/main/DEVELOPMENT.md)), and load it in a browser set to your language; `ANUBIS_LANG=<code> node e2e/run.mjs responsive` checks Settings at phone widths in it. In Firefox, add your language under Settings → General → Language; in Chrome, choose it under Settings → Languages, or start Chrome with `--lang=<code>`. Look at the popup and the settings at a narrow width, since a longer word can push a button onto a second line.
 
-Languages written right to left get the right direction on Anubis's own pages; their layout hasn't been checked yet, so say so in your pull request.
+Arabic and Urdu are written right to left: Anubis's pages, and what it adds to search pages, turn to match. Check a right-to-left language at a narrow width too.

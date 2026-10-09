@@ -229,13 +229,13 @@ Wording follows the interface's conventions: labels say what happens in plain wo
 
 ### Translations
 
-German, French, Spanish, and Brazilian Portuguese are machine translations, and every page that shows one says so (`machineTranslationNote` in `utils/translated.ts`: Settings above each section, the welcome page, and the popup's foot). Keep the notes until a speaker has read a language through, and keep the docs saying so too: the README, the wiki's Introduction, Getting started, and Help translate, and the store description.
+Arabic, Bengali, Chinese (Simplified), French, German, Hindi, Indonesian, Italian, Japanese, Korean, Brazilian Portuguese, Russian, Spanish, and Urdu are machine translations, and every page that shows one says so (`machineTranslationNote` in `utils/translated.ts`: Settings above each section, the welcome page, and the popup's foot). Keep the notes until a speaker has read a language through, and keep the docs saying so too: the README, the wiki's Introduction, Getting started, and Help translate, and the store description.
 
 - **Changing English makes its translations stale.** The build then ships that message in English for each language until it's translated again, so nobody reads an old meaning. Nothing fails: `node scripts/locales.mjs status` lists what's stale in each language.
 - **After translating or correcting messages,** run `node scripts/locales.mjs record <lang> [key…]`, which records the English they came from. `tests/i18n.test.ts` fails on a translated message with no record, on one whose placeholders differ from English, and on a `langCode` that isn't its folder's name.
 - **New messages** show in English in every translation until someone adds them.
-- **Reviewing a language:** each has a project skill, `.claude/skills/review-<lang>/SKILL.md` (`review-de`, `review-fr`, `review-es`, `review-pt-br`), with its register, typography, glossary, the names browsers and Google use in it, and the mistakes machine translation makes there. Use it when correcting or retranslating messages.
-- `ANUBIS_LANG=<lang> node e2e/run.mjs responsive` runs the browser in a translation and checks Settings at phone widths; parts that read English text don't work that way. The ranking words in German and French carry soft hyphens, so the ⚖ menu's row of five can break them.
+- **Reviewing a language:** each has a project skill, `.claude/skills/review-<lang>/SKILL.md` (`review-ar`, `review-bn`, `review-de`, `review-es`, `review-fr`, `review-hi`, `review-id`, `review-it`, `review-ja`, `review-ko`, `review-pt-br`, `review-ru`, `review-ur`, and `review-zh-cn`), with its register, typography, glossary, the names browsers and Google use in it, and the mistakes machine translation makes there. Use it when correcting or retranslating messages.
+- `ANUBIS_LANG=<lang> node e2e/run.mjs responsive` runs the browser in a translation and checks Settings at phone widths; parts that read English text don't work that way. The ranking words in German and French carry soft hyphens, so the ⚖ menu's row of five can break them. Arabic and Urdu run right to left: style with start and end (`margin-inline-start`, `text-align: start`), not left and right, and `ANUBIS_LANG=ar` shows the result.
 
 ### Store something new
 

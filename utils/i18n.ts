@@ -41,7 +41,6 @@ let pluralRules: Intl.PluralRules | undefined;
 
 /** How long ago a time was, in the language's words: "just now", "5 minutes ago", "2 days ago". */
 export function tAgo(ms: number, now = Date.now()): string {
-  if (!ms) return t('timeNever');
   const s = Math.round((now - ms) / 1000);
   if (s < 60) return t('timeJustNow');
   const format = new Intl.RelativeTimeFormat(lang(), { numeric: 'auto' });
@@ -59,10 +58,27 @@ export function tn(key: PluralKey, count: number, ...subs: (string | number)[]):
   return getMessage(`${key}_${pluralRules.select(count)}`, args) || getMessage(`${key}_other`, args) || key;
 }
 
+// In some languages a `unit` list has nothing between its items (Chinese) or only a
+// space (Japanese, Korean, Russian), so a row of facts runs together; those get a comma.
+const LIST_COMMAS: Record<string, string> = { zh: '、', ja: '、', ar: '، ', fa: '، ', ur: '، ' };
+
+function listParts(items: string[], type: ListType): { type: string; value: string }[] {
+  const format = listFormat(type);
+  const separated = format.formatToParts(['a', 'b']).some((p) => p.type === 'literal' && p.value.trim());
+  if (type !== 'unit' || separated) return format.formatToParts(items);
+  const comma = LIST_COMMAS[lang().split('-')[0]!] ?? ', ';
+  return items.flatMap((value, i) => [...(i ? [{ type: 'literal' as const, value: comma }] : []), { type: 'element' as const, value }]);
+}
+
 /** Items joined the way the language joins a list: "a, b, and c" in English, or "a, b, c" for `unit`. */
 export function tJoin(items: string[], type: ListType = 'conjunction'): string {
-  return listFormat(type).format(items);
+  return listParts(items, type)
+    .map((p) => p.value)
+    .join('');
 }
+
+/** The space between two sentences or phrases: none in Chinese and Japanese, which don't use one. */
+export const gap = (): string => (/^(zh|ja)\b/.test(lang()) ? '' : ' ');
 
 // Stands in for the items while the message is looked up; a private-use
 // character, so it's never in a message.
@@ -75,7 +91,7 @@ const SLOT = '\uE000';
  */
 export function tList<T>(key: MessageKey, items: T[], type: ListType = 'conjunction'): (string | T)[] {
   const [before = '', after = ''] = t(key, SLOT).split(SLOT);
-  const parts = listFormat(type).formatToParts(items.map((_, i) => String(i)));
+  const parts = listParts(items.map((_, i) => String(i)), type);
   return [before, ...parts.map((p) => (p.type === 'element' ? items[Number(p.value)]! : p.value)), after];
 }
 
@@ -91,6 +107,13 @@ export function tParts<T>(key: MessageKey, ...items: (string | T)[]): (string | 
     .map((part) => (part.length === 1 && part >= '\uE000' && part <= '\uE0FF' ? items[part.charCodeAt(0) - SLOT.charCodeAt(0)]! : part));
 }
 
+// Languages written right to left. Chrome's own `@@bidi_dir` said "ltr" for Arabic, so
+// the direction follows the language the messages are in.
+const RTL = new Set(['ar', 'ckb', 'dv', 'fa', 'he', 'ps', 'sd', 'ug', 'ur', 'yi']);
+
+/** The interface's direction: "rtl" for Arabic, Urdu, Hebrew… */
+export const dir = (): 'ltr' | 'rtl' => (RTL.has(lang().split('-')[0]!) ? 'rtl' : 'ltr');
+
 /**
  * Fill a static page's text from messages: `data-i18n` sets the text, and
  * `data-i18n-title`, `data-i18n-aria-label` and `data-i18n-placeholder` set those
@@ -98,8 +121,7 @@ export function tParts<T>(key: MessageKey, ...items: (string | T)[]): (string | 
  */
 export function localizePage(root: Document = document): void {
   root.documentElement.lang = lang();
-  // The browser's own message: "rtl" for Arabic, Hebrew, Persian…
-  root.documentElement.dir = getMessage('@@bidi_dir', []) === 'rtl' ? 'rtl' : 'ltr';
+  root.documentElement.dir = dir();
   for (const el of root.querySelectorAll<HTMLElement>('[data-i18n]')) el.textContent = t(el.dataset.i18n as MessageKey);
   for (const attr of ['title', 'aria-label', 'placeholder']) {
     for (const el of root.querySelectorAll<HTMLElement>(`[data-i18n-${attr}]`)) {

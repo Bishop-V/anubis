@@ -195,7 +195,7 @@ export async function renderLists(): Promise<HTMLElement> {
                 { class: 'body' },
                 h('b', null, d.name),
                 h('span', { class: 'kind', title: d.lens ? t('listLensTitle') : undefined }, kindOf(d.format, d.lens)),
-                h('p', null, d.description),
+                h('p', { attrs: { dir: 'auto' } }, d.description),
               ),
               h(
                 'button',
@@ -225,7 +225,7 @@ function offerPanel(link: SubscribeLink, notice: HTMLElement | null): HTMLElemen
     'div',
     { class: 'panel offer' },
     h('h3', null, t('offerTitle', name)),
-    entry ? h('p', { class: 'muted' }, entry.description, h('span', { class: 'kind' }, kindOf(entry.format, entry.lens))) : null,
+    entry ? h('p', { class: 'muted' }, h('bdi', null, entry.description), h('span', { class: 'kind' }, kindOf(entry.format, entry.lens))) : null,
     h('p', { class: 'address' }, h('a', { href: url, target: '_blank', rel: 'noopener noreferrer' }, url)),
     // Directory lists have been looked at; a link can come from anyone.
     entry && !host ? null : h('p', { class: 'muted' }, [entry ? null : t('offerTrust'), host ? t('offerPermission', host) : null].filter(Boolean).join(' ')),
@@ -307,7 +307,8 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
     parsed ? tn('listInstructions', parsed.rules.length) : t('listsNotDownloaded'),
     parsed?.tags.length ? tn('popupTagCount', parsed.tags.length) : null,
     meta.author ? t('listsBy', meta.author) : null,
-    sub.builtin && !cached?.fetchedAt ? t('listsBundledCopy') : t('listsUpdated', tAgo(cached?.fetchedAt ?? 0)),
+    // A list never downloaded already says "not downloaded yet"; "updated never" read badly in most languages.
+    cached?.fetchedAt ? t('listsUpdated', tAgo(cached.fetchedAt)) : sub.builtin ? t('listsBundledCopy') : null,
     meta.license ?? null,
   ].filter(Boolean) as string[];
   const links = [
@@ -332,7 +333,8 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
           kindOf(parsed?.format, parsed?.lens, sub.builtin),
         ),
       ),
-      meta.description ? h('p', null, meta.description) : null,
+      // A list's own words, often English: laid out in their own direction in Arabic or Urdu.
+      meta.description ? h('p', { attrs: { dir: 'auto' } }, meta.description) : null,
       h(
         'div',
         { class: 'facts' },
