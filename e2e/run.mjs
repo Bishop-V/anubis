@@ -1348,16 +1348,25 @@ if (!only || only === 'pins' || checks) {
       accessibleName: ariaLabel.toLowerCase().includes('pinned'),
     });
   }
-  // Set "Great tutorial" to Raise: javascript.info's tag shows the raise sign in its diamond's place.
+  // Set "Great tutorial" to Raise, then Pin: javascript.info's tag shows that sign in
+  // its diamond's place, and with Pin the result is pinned.
   const sw = ctx.serviceWorkers()[0];
   const { tagPrefs: savedPrefs } = await sw.evaluate(() => chrome.storage.sync.get('tagPrefs'));
-  await sw.evaluate((prefs) => chrome.storage.sync.set({ tagPrefs: { ...prefs, tutorial: { action: 'raise' } } }), savedPrefs);
-  for (let i = 0; i < 40 && !retainedRankChips.tagMark; i++) {
-    await page.waitForTimeout(100);
-    const { root: now } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
-    const { nodeIds: hosts } = await cdp.send('DOM.querySelectorAll', { nodeId: now.nodeId, selector: 'anubis-chips' });
-    for (const hostId of hosts) retainedRankChips.tagMark ||= await hasInHost(cdp, hostId, '.gem-mark.raise');
-  }
+  const tagShows = async (action) => {
+    await sw.evaluate(({ prefs, action }) => chrome.storage.sync.set({ tagPrefs: { ...prefs, tutorial: { action } } }), { prefs: savedPrefs, action });
+    for (let i = 0; i < 40; i++) {
+      await page.waitForTimeout(100);
+      const { root: now } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+      const { nodeIds: hosts } = await cdp.send('DOM.querySelectorAll', { nodeId: now.nodeId, selector: 'anubis-chips' });
+      for (const hostId of hosts) if (await hasInHost(cdp, hostId, `.gem-mark.${action}`)) return true;
+    }
+    return false;
+  };
+  retainedRankChips.tagMark = await tagShows('raise');
+  retainedRankChips.pinMark = await tagShows('pin');
+  retainedRankChips.tagPins = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-anubis-state~="pin"]')].some((el) => el.textContent?.includes('The Modern JavaScript Tutorial')),
+  );
   await sw.evaluate((prefs) => chrome.storage.sync.set({ tagPrefs: prefs }), savedPrefs);
   await cdp.detach();
   console.log('\n== pinned results in a row:', JSON.stringify({ layout: await measure(), presentation: pinPresentation, retainedRankChips }));
@@ -1369,6 +1378,7 @@ if (!only || only === 'pins' || checks) {
       accessibleNameRetained: pinPresentation.every((pin) => pin.accessibleName),
       noRaisedOrLoweredChips: !retainedRankChips.raised && !retainedRankChips.lowered,
       tagMarkShown: retainedRankChips.tagMark,
+      pinTagPinsWithItsMark: retainedRankChips.pinMark && retainedRankChips.tagPins,
     });
   }
   await page.screenshot({ path: `${SHOTS}google-pins.png`, fullPage: true });

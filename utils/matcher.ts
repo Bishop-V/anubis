@@ -8,11 +8,11 @@ import { PERSONAL_NAME } from './personal';
 //
 // How a result is weighed:
 //   1. The user's per-tag choices ("hide everything tagged ai-slop"). Each tag counts
-//      once, however many lists give it; Hide hides, and Raise and Lower add up, five
-//      places each, so two raises and a lower make one raise. A rule carrying a tag
+//      once, however many lists give it; Hide hides, Pin pins, and Raise and Lower add
+//      up, five places each, so two raises and a lower make one raise. A rule carrying a tag
 //      with a choice leaves the ranking to the choices.
 //   2. The personal list (pin / raise / lower / hide / allow for a site) adds to the
-//      Raise and Lower tag choices, and replaces the subscribed lists' own instructions
+//      Pin, Raise, and Lower tag choices, and replaces the subscribed lists' own instructions
 //      and Hide tag choices: a site you ranked yourself isn't hidden by a tag.
 //   3. Without a personal ranking, the subscribed lists' own instructions add to the
 //      tag choices. Within one list, Goggles precedence applies: discard > boost >
@@ -22,7 +22,7 @@ export type Level = 'pin' | 'raise' | 'normal' | 'lower' | 'hide';
 export const LEVELS: Level[] = ['hide', 'lower', 'normal', 'raise', 'pin'];
 
 /** What the user wants done with results carrying a tag. `list` follows the list's own instructions. */
-export type TagAction = 'list' | 'label' | 'highlight' | 'raise' | 'lower' | 'hide';
+export type TagAction = 'list' | 'label' | 'highlight' | 'pin' | 'raise' | 'lower' | 'hide';
 
 export interface TagPref {
   action?: TagAction;
@@ -278,6 +278,7 @@ export function evaluate(
   let tagScore = 0;
   let listScore = 0;
   let highlight: string | undefined;
+  let tagPin = false;
   const hides: NonNullable<Verdict['hiddenBy']>[] = [];
   const hide = (by: NonNullable<Verdict['hiddenBy']>) => hides.push(by);
   // What the lists' own rules do to the tags you follow the lists for, strongest first.
@@ -296,6 +297,7 @@ export function evaluate(
       if (chosen.has(id)) continue;
       chosen.set(id, action);
       if (action === 'hide') hide({ kind: 'tag', name: id });
+      else if (action === 'pin') tagPin = true;
       else if (action === 'raise') tagScore += PERSONAL_STRENGTH;
       else if (action === 'lower') tagScore -= PERSONAL_STRENGTH;
       else if (action === 'highlight') highlight ??= id;
@@ -371,16 +373,18 @@ export function evaluate(
   const counted = new Map([...chosen].filter(([, action]) => !p || action !== 'hide'));
   const choices = describeChoices(counted, (id) => prefs[id]?.label ?? tagLabel(lists, id));
   if (choices) verdict.reasons.push({ list: t('reasonYourTagSettings'), listId: TAG_CHOICES, personal: true, text: choices, report: choices });
-  for (const [id, action] of counted) if (action === 'hide' || action === 'raise' || action === 'lower') verdict.tagEffects[id] = action;
+  for (const [id, action] of counted) if (action === 'hide' || action === 'pin' || action === 'raise' || action === 'lower') verdict.tagEffects[id] = action;
   if (!p) for (const [id, effect] of listEffects) if (effect !== 'normal') verdict.tagEffects[id] = effect;
 
   const hiddenBy = p ? undefined : hides[0];
   const own = p === 'pin' ? PIN_SCORE : p === 'raise' ? PERSONAL_STRENGTH : p === 'lower' ? -PERSONAL_STRENGTH : 0;
-  const score = tagScore + (p ? own : listScore);
+  // A Pin tag pins as your own Pin does, and the rest still order the pinned results.
+  const pinned = p === 'pin' || tagPin;
+  const score = tagScore + (p ? own : listScore) + (tagPin && p !== 'pin' ? PIN_SCORE : 0);
   verdict.hidden = !!hiddenBy;
   verdict.hiddenBy = hiddenBy;
   verdict.score = hiddenBy ? 0 : score;
-  verdict.level = hiddenBy ? 'hide' : p === 'pin' ? 'pin' : score > 0 ? 'raise' : score < 0 ? 'lower' : 'normal';
+  verdict.level = hiddenBy ? 'hide' : pinned ? 'pin' : score > 0 ? 'raise' : score < 0 ? 'lower' : 'normal';
   return verdict;
 }
 
@@ -402,14 +406,17 @@ function describeChoices(chosen: Map<string, TagAction>, label: (id: string) => 
   const ids = (action: TagAction) => [...chosen].filter(([, a]) => a === action).map(([id]) => t('quoted', label(id)));
   const hide = ids('hide');
   if (hide.length) return t('choiceHide', tJoin(hide));
+  const pin = ids('pin');
   const raise = ids('raise');
   const lower = ids('lower');
   const parts: string[] = [];
+  if (pin.length) parts.push(t('choicePin', tJoin(pin)));
   if (raise.length) parts.push(tn('choiceRaise', raise.length, PERSONAL_STRENGTH, tJoin(raise)));
   if (lower.length) parts.push(tn('choiceLower', lower.length, PERSONAL_STRENGTH, tJoin(lower)));
   if (!parts.length) return undefined;
   const moves = [...chosen.values()].filter((a) => a === 'raise' || a === 'lower');
-  if (moves.length < 2) return parts[0];
+  // A pinned result goes to the top, so how far the others move it doesn't add up to a place.
+  if (pin.length || moves.length < 2) return tJoin(parts);
   const net = moves.reduce((sum, a) => sum + (a === 'raise' ? PERSONAL_STRENGTH : -PERSONAL_STRENGTH), 0);
   const total = net > 0 ? tn('choiceNetUp', net) : net < 0 ? tn('choiceNetDown', -net) : t('choiceNetSame');
   return t('choiceTotal', tJoin(parts), total);

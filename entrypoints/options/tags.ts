@@ -14,6 +14,7 @@ const ACTIONS: { value: TagAction; label: string }[] = [
   { value: 'list', label: t('tagActionList') },
   { value: 'label', label: t('tagActionLabel') },
   { value: 'highlight', label: t('tagActionHighlight') },
+  { value: 'pin', label: LEVEL_LABELS.pin },
   { value: 'raise', label: LEVEL_LABELS.raise },
   { value: 'lower', label: LEVEL_LABELS.lower },
   { value: 'hide', label: LEVEL_LABELS.hide },
@@ -68,6 +69,8 @@ function effectSentence(tag: TagDef, action: TagAction, lists: CompiledList[], p
       return t('tagEffectLabel', carriers);
     case 'highlight':
       return t('tagEffectHighlight', carriers);
+    case 'pin':
+      return t('tagEffectPin', carriers);
     case 'raise':
       return t('tagEffectRaise', carriers);
     case 'lower':

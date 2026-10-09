@@ -97,6 +97,7 @@ const TAG_MARKS: Partial<Record<Level, string>> = {
   hide: mark('<path d="M1 5s1.5-3 4-3c.8 0 1.5.3 2.1.7M9 5S7.5 8 5 8c-.8 0-1.5-.3-2.1-.7"/><path d="M1.6 8.4l6.8-6.8"/>'),
   lower: mark('<path d="M2 3.4l3 3.2 3-3.2"/>'),
   raise: mark('<path d="M2 6.6l3-3.2 3 3.2"/>'),
+  pin: mark('<path d="M6.1 1.3l2.6 2.6-1.1.4-1.5 1.5.2 1.8-.8.8-3.9-3.9.8-.8 1.8.2 1.5-1.5z"/><path d="M3.4 6.6L1.3 8.7"/>'),
 };
 
 /** What a tag's mark means, for screen readers and its tooltip. */
@@ -104,6 +105,7 @@ export const TAG_EFFECTS: Partial<Record<Level, string>> = {
   hide: t('tagMarkHide'),
   lower: t('tagMarkLower'),
   raise: t('tagMarkRaise'),
+  pin: t('tagMarkPin'),
 };
 
 /** A tag's diamond, or, when the tag moves or hides the result (`effect`), the sign of what it does. */

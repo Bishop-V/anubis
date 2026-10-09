@@ -37,6 +37,7 @@ A list decides which sites get a tag. You decide what the tag does, in **Setting
 | **Follow the lists** | Whatever the list says (the default). Most lists only label. |
 | **Label only** | Show the label, never change the ranking. |
 | **Highlight** | Give the result a faint background in the tag's colour. |
+| **Pin** | Put the result at the top, as if you'd pinned its site. |
 | **Raise** / **Lower** | Move the result five places up or down. |
 | **Hide** | Hide the result, whichever list tagged it. |
 
@@ -44,7 +45,7 @@ Under each tag's name, one line says which sites carry it and what happens to th
 
 ### See what a tag does to a result
 
-Under a result, each tag starts with a diamond in its colour. When the tag moves or hides that result, an arrow up (it raises it), an arrow down (it lowers it), or a crossed-out eye (it hides it) takes the diamond's place. This shows your choice for the tag, or, when you follow the lists, what the list does. The same marks show in the result's ⚖ menu and in the toolbar popup.
+Under a result, each tag starts with a diamond in its colour. When the tag moves or hides that result, a pin (it pins it), an arrow up (it raises it), an arrow down (it lowers it), or a crossed-out eye (it hides it) takes the diamond's place. This shows your choice for the tag, or, when you follow the lists, what the list does. The same marks show in the result's ⚖ menu and in the toolbar popup.
 
 Turn off **Shown** to keep a tag working without showing its label under results. Press a tag's colour to change it. To see every tag in grey on search pages, choose **Plain** in **Settings → Appearance → Colours on search pages**. Tags are then told apart by their names.
 

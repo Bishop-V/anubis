@@ -57,7 +57,7 @@ export function toBackup(data: SyncData): Backup {
 
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 
-const TAG_ACTIONS: readonly TagAction[] = ['list', 'label', 'highlight', 'raise', 'lower', 'hide'];
+const TAG_ACTIONS: readonly TagAction[] = ['list', 'label', 'highlight', 'pin', 'raise', 'lower', 'hide'];
 
 /**
  * Tag choices from a file, keeping only what Settings could have saved. Search

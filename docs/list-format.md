@@ -75,7 +75,7 @@ Keep a tag's id once you've published it. To rename a tag, change its label: sub
 
 Your own list uses the same lines. When you add a list's tag to a site, Anubis copies the list's `! tag:` line into your list. A subscribed list's definition is the one shown, and your copy names the tag only once no list defines it.
 
-Lists label; subscribers decide. In **Settings → Tags** each person chooses what a tag does for them: follow the list's instructions, only show the label, highlight results, or raise, lower, or hide them. A list that tags without ranking (`$site=x.com,tag=paywall`) is the friendliest kind to publish.
+Lists label; subscribers decide. In **Settings → Tags** each person chooses what a tag does for them: follow the list's instructions, only show the label, highlight results, or pin, raise, lower, or hide them. A list that tags without ranking (`$site=x.com,tag=paywall`) is the friendliest kind to publish.
 
 ## Instructions
 
@@ -127,8 +127,8 @@ A line with nothing but `$discard` turns the list into a lens: every result the 
 
 For each result:
 
-1. **Your tag choices.** If you chose "Hide" for a tag, results carrying it are hidden, whichever list tagged them. Tags you set to "Raise" or "Lower" add up, five places each: two raises and a lower make one raise. Each tag counts once, however many lists give it, and a rule carrying a tag you chose for leaves the ranking to your choice instead of its own `boost` or `downrank`.
-2. **Your own list.** A site you pinned, raised, lowered, or kept at normal ignores what your subscriptions say and your tags set to "Hide", and its ranking adds to your "Raise" and "Lower" tags: raised with a tag set to "Lower", it stays in place. A site you hid stays hidden. The most specific entry wins, so `good.fandom.com` can be raised while `fandom.com` is hidden.
+1. **Your tag choices.** If you chose "Hide" for a tag, results carrying it are hidden, whichever list tagged them, and if you chose "Pin", they go to the top. Tags you set to "Raise" or "Lower" add up, five places each: two raises and a lower make one raise. Each tag counts once, however many lists give it, and a rule carrying a tag you chose for leaves the ranking to your choice instead of its own `boost` or `downrank`.
+2. **Your own list.** A site you pinned, raised, lowered, or kept at normal ignores what your subscriptions say and your tags set to "Hide", and its ranking adds to your "Pin", "Raise", and "Lower" tags: raised with a tag set to "Lower", it stays in place. A site you hid stays hidden. The most specific entry wins, so `good.fandom.com` can be raised while `fandom.com` is hidden.
 3. **Subscribed lists.** Used only for sites you haven't ranked yourself. Within one list, Goggles precedence applies: `discard` beats `boost`, which beats `downrank`. Across lists, boosts and downranks add up, and any list's `discard` hides the result.
 
 Reranking moves results within the page you're on (and within extra pages brought in with **Load more results**): each boost point moves a result up one place.
