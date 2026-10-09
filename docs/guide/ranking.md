@@ -24,6 +24,8 @@ The balance in the menu weighs everything together: your ranking, your tags, and
 | **Raise** | They move five places up. |
 | **Pin** | They go to the top, with a thin gold outline (grey with the Plain colours in **Settings → Appearance**). |
 
+To let your lists decide again, press the ranking you chose a second time. For Normal, that means pressing it once more.
+
 Your choice beats your lists. If a list lowers a site and you raise it, it's raised. Your choice adds to [the tags you set to Pin, Raise, or Lower](./tags.md#several-tags-on-one-result) rather than replacing them: a site you raise that carries a tag you set to Lower stays where the engine put it. A tag you set to Hide doesn't hide a site you ranked yourself, so ranking a site is how to keep one site that a Hide tag would hide. Without a choice of yours, the lists' rankings and your tags add up.
 
 After a change from the menu, the summary above the results says what you did ("Hid fandom.com.") with an **Undo** button. Undo puts the site back as it was before you opened its menu, tags included, even after several changes. It stays until your next search, or until you change another site.

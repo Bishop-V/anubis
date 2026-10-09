@@ -21,9 +21,12 @@ export function rankingOf(entry: SiteEntry | undefined, baseline: Verdict): Rank
   return { personal, pressed, fromLists: baseline.level };
 }
 
-/** What pressing a ranking stores. "Normal" has to beat the lists when they rank this site, so it becomes an explicit allow. */
+/**
+ * What pressing a ranking stores. "Normal" has to beat the lists when they rank this site, so it becomes an explicit allow;
+ * pressing it again lets the lists decide once more.
+ */
 export function nextLevel(level: Level, r: Ranking): PersonalLevel {
-  if (level === 'normal') return r.fromLists === 'normal' ? 'normal' : 'allow';
+  if (level === 'normal') return r.personal === 'allow' || r.fromLists === 'normal' ? 'normal' : 'allow';
   return r.pressed === level ? 'normal' : level;
 }
 
