@@ -47,7 +47,7 @@ Started: Anubis picks an engine's phone layout by user agent (`mobile` in `utils
 
 Ready for translators: every word of the interface is in `public/_locales/en/messages.json`, each with a description saying where it shows, and `tests/i18n-coverage.test.ts` fails on new text written straight into the code. How to add a language is in the wiki's [Help translate](docs/guide/translate.md). What was done and checked is in `docs/experiments/design.md`, "Translation". Next:
 
-- **Shipped (machine translated):** Arabic, Bengali, Chinese (Simplified), French, German, Hindi, Indonesian, Brazilian Portuguese, Russian, Spanish, and Urdu, with notes in the interface and docs that they aren't fully supported. Next: a speaker reads each through (Help translate's table says which), then the notes for that language can go.
+- **Shipped (machine translated):** Arabic, Bengali, Chinese (Simplified), French, German, Hindi, Indonesian, Japanese, Brazilian Portuguese, Russian, Spanish, and Urdu, with notes in the interface and docs that they aren't fully supported. Next: a speaker reads each through (Help translate's table says which), then the notes for that language can go.
 - **Open a hosted project:** Weblate (Hosted Weblate is free for open-source projects) or Crowdin, pointed at `public/_locales/en/messages.json` and `locales/<lang>/messages.json` with the `WebExtension JSON` format. Weblate marks a translation as needing review when its English changes, which `locales/<lang>/sources.json` does now; whichever keeps the record, the build must still leave stale messages out. Then change Help translate's "Until a hosted translation project opens" to a link to it.
 - **Later:** translated store listings (`store/README.md`), and the wiki.
 
