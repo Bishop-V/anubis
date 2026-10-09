@@ -879,6 +879,14 @@ body .VPContent .VPHome {
   min-height: 0;
   overflow: hidden;
 }
+/* A tag's diamond turns past its box, and a mark starts 2px before it: room for both
+   inside folds that clip, with the content where it was. */
+.summary-tags .fold-inner,
+.chips .fold-inner,
+.demo-result > .full > .fold-inner {
+  margin-inline: -4px;
+  padding-inline: 4px;
+}
 /* Padding would keep a closed fold open by that much. */
 .fold:not(.open) > .fold-inner {
   padding-top: 0 !important;

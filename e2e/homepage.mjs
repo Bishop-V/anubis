@@ -112,6 +112,35 @@ for (const [width, height] of [
   await page.close();
 }
 
+// Scrolled through, each tag's diamond or mark has to fit sideways in the fold that
+// clips it: a diamond turns past its box, and a mark starts before it.
+{
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto(url, { waitUntil: 'networkidle' });
+  const cut = new Set();
+  for (let i = 0; i < 40; i++) {
+    await page.mouse.wheel(0, 250);
+    await page.waitForTimeout(80);
+    const found = await page.evaluate(() =>
+      [...document.querySelectorAll('.demo-tag .diamond, .demo-tag .mark')].flatMap((mark) => {
+        const r = mark.getBoundingClientRect();
+        for (let el = mark.parentElement; el; el = el.parentElement) {
+          if (getComputedStyle(el).overflowX === 'visible') continue;
+          const box = el.getBoundingClientRect();
+          // A closed fold clips everything on purpose.
+          if (box.height < 1 || !r.width) return [];
+          return box.left - r.left > 0.2 || r.right - box.right > 0.2 ? [mark.closest('.demo-tag').textContent.trim()] : [];
+        }
+        return [];
+      }),
+    );
+    for (const name of found) cut.add(name);
+  }
+  console.log(`Tag marks cut off at the side: ${JSON.stringify([...cut])}`);
+  if (cut.size) failures.push(`the homepage demo cuts off the mark of ${[...cut].join(', ')}`);
+  await page.close();
+}
+
 // The Introduction's demo (hide-demo.ts) plays when it scrolls into view: the menu
 // opens, and it ends with the site gone, the summary saying so, and the menu closed.
 // With reduced motion it gets there too, without the pointer. The picture kept for
