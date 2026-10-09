@@ -1,3 +1,4 @@
+import { machineTranslationNote } from '@/utils/translated';
 import '@/assets/theme.css';
 import './style.css';
 import { browser } from '#imports';
@@ -378,6 +379,8 @@ $('#lists-summary').addEventListener('click', () => openSettings('lists'));
 
 async function main() {
   localizePage();
+  const note = machineTranslationNote(true);
+  if (note) $('footer').before(note);
   // Firefox for Android has no keyboard shortcuts.
   const commands = (await browser.commands?.getAll().catch(() => [])) ?? [];
   shortcuts = Object.fromEntries(commands.filter((c) => c.name && c.shortcut).map((c) => [c.name!, c.shortcut!]));

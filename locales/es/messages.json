@@ -1,0 +1,1706 @@
+{
+  "langCode": {
+    "message": "es"
+  },
+  "machineTranslatedTitle": {
+    "message": "Traducción automática."
+  },
+  "machineTranslatedNote": {
+    "message": "Anubis se tradujo automáticamente al idioma de tu navegador, y esta traducción no tiene soporte completo: algunas partes pueden estar mal o no ser claras, así que úsala con precaución. Para ver Anubis en inglés, pon tu navegador en inglés."
+  },
+  "machineTranslatedShort": {
+    "message": "Úsala con precaución."
+  },
+  "machineTranslatedHelp": {
+    "message": "Ayuda a corregirla"
+  },
+  "extDescription": {
+    "message": "Pesa tus resultados de búsqueda: etiqueta, reordena y oculta sitios, con listas que cualquiera puede publicar."
+  },
+  "commandToggleEnabled": {
+    "message": "Activar o desactivar Anubis"
+  },
+  "commandToggleHidden": {
+    "message": "Mostrar los resultados ocultos, u ocultarlos de nuevo"
+  },
+  "levelHide": {
+    "message": "Ocultar"
+  },
+  "levelLower": {
+    "message": "Bajar"
+  },
+  "levelNormal": {
+    "message": "Normal"
+  },
+  "levelRaise": {
+    "message": "Subir"
+  },
+  "levelPin": {
+    "message": "Fijar"
+  },
+  "chipHidden": {
+    "message": "Oculto"
+  },
+  "chipLowered": {
+    "message": "Bajado"
+  },
+  "chipRaised": {
+    "message": "Subido"
+  },
+  "chipPinned": {
+    "message": "Fijado"
+  },
+  "popupOn": {
+    "message": "Activado en tus búsquedas"
+  },
+  "popupOff": {
+    "message": "Desactivado. Las páginas de búsqueda quedan como están."
+  },
+  "popupOnLabel": {
+    "message": "Anubis activado"
+  },
+  "popupAddSite": {
+    "message": "Añadir un sitio"
+  },
+  "popupRanking": {
+    "message": "Clasificación"
+  },
+  "popupNoSites": {
+    "message": "Nada todavía. Usa el botón ⚖ de cualquier resultado de búsqueda para clasificar su sitio."
+  },
+  "popupKeptNormal": {
+    "message": "Mantenido en normal"
+  },
+  "popupListsAndTags": {
+    "message": "$1, $2"
+  },
+  "popupListCount_one": {
+    "message": "$1 lista"
+  },
+  "popupListCount_other": {
+    "message": "$1 listas"
+  },
+  "popupTagCount_one": {
+    "message": "$1 etiqueta"
+  },
+  "popupTagCount_other": {
+    "message": "$1 etiquetas"
+  },
+  "popupRankingFor": {
+    "message": "Clasificación de $1"
+  },
+  "popupRankHide": {
+    "message": "Ocultar $1 en los resultados de búsqueda"
+  },
+  "popupRankLower": {
+    "message": "Bajar $1 en los resultados de búsqueda"
+  },
+  "popupRankNormal": {
+    "message": "Clasificar $1 con normalidad en los resultados de búsqueda"
+  },
+  "popupRankRaise": {
+    "message": "Subir $1 en los resultados de búsqueda"
+  },
+  "popupRankPin": {
+    "message": "Fijar $1 arriba en los resultados de búsqueda"
+  },
+  "popupYourSites": {
+    "message": "Tus sitios"
+  },
+  "popupSeeAll": {
+    "message": "Ver los $1"
+  },
+  "popupOpenLists": {
+    "message": "Abrir los ajustes de listas"
+  },
+  "popupShowOnly": {
+    "message": "Mostrar solo"
+  },
+  "popupTags": {
+    "message": "Etiquetas"
+  },
+  "popupSite": {
+    "message": "Sitio"
+  },
+  "popupSiteChoice": {
+    "message": "Elige qué parte del sitio abarca"
+  },
+  "popupHintAllow": {
+    "message": "Normal, digan lo que digan tus listas."
+  },
+  "popupHintMine": {
+    "message": "Tu elección para $1, en cada búsqueda."
+  },
+  "popupHintMineTags": {
+    "message": "Tu elección para $1, en cada búsqueda, sumada a tus ajustes de etiquetas."
+  },
+  "popupHintLists": {
+    "message": "$1 por $2. Elige una clasificación para decidir tú."
+  },
+  "popupHintNone": {
+    "message": "Tu elección se aplica en cada búsqueda."
+  },
+  "popupYourTagSettings": {
+    "message": "tus ajustes de etiquetas"
+  },
+  "tagMarkRaise": {
+    "message": "Sube este resultado"
+  },
+  "tagMarkLower": {
+    "message": "Baja este resultado"
+  },
+  "tagMarkPin": {
+    "message": "Fija este resultado arriba"
+  },
+  "tagMarkHide": {
+    "message": "Oculta este resultado"
+  },
+  "tagMarkSpoken": {
+    "message": " ($1)"
+  },
+  "tagListsPickerHint": {
+    "message": "Añadir una solo cambia tu lista."
+  },
+  "tagFromSource": {
+    "message": "de $1"
+  },
+  "popupTagFrom": {
+    "message": "De $1"
+  },
+  "popupTagSite": {
+    "message": "Etiquetar $1 como «$2»"
+  },
+  "popupUntag": {
+    "message": "Quitar la etiqueta de $1"
+  },
+  "popupTagInvalid": {
+    "message": "Escribe un nombre de etiqueta con al menos una letra o un número."
+  },
+  "popupTagAlreadySet": {
+    "message": "Este sitio ya tiene esa etiqueta."
+  },
+  "tagSiteReason": {
+    "message": "Por qué este sitio encaja con la etiqueta «$1» (opcional)"
+  },
+  "popupThisPage": {
+    "message": "Esta página"
+  },
+  "popupThisPageOn": {
+    "message": "Esta página en $1"
+  },
+  "popupNotSearch": {
+    "message": "Busca en Google, DuckDuckGo, Bing, Brave u otro buscador compatible para ver qué cambia Anubis."
+  },
+  "showHidden": {
+    "message": "Mostrar ocultos"
+  },
+  "hideAgain": {
+    "message": "Ocultarlos de nuevo"
+  },
+  "loadMore": {
+    "message": "Cargar más resultados"
+  },
+  "loadMoreTitle": {
+    "message": "Añadir la siguiente página de resultados a esta y clasificarlos juntos"
+  },
+  "loading": {
+    "message": "Cargando…"
+  },
+  "loadMoreEmpty": {
+    "message": "$1 no envió resultados para la página $2. Puede que quiera que confirmes primero que no eres un robot."
+  },
+  "loadMoreRepeat": {
+    "message": "$1 volvió a enviar los mismos resultados para la página $2, así que no hay más."
+  },
+  "loadMoreBusy": {
+    "message": "$1 pidió a Anubis que fuera más despacio antes de la página $2. Vuelve a intentarlo en un minuto."
+  },
+  "loadMoreRefused": {
+    "message": "$1 se negó a enviar la página $2."
+  },
+  "loadMoreSlow": {
+    "message": "$1 tardó demasiado en enviar la página $2."
+  },
+  "loadMoreFailed": {
+    "message": "La página $2 de $1 no se cargó."
+  },
+  "loadMoreOpen": {
+    "message": "Abrir la página $1"
+  },
+  "loadMoreOpenTitle": {
+    "message": "Abrirla en una pestaña nueva para ver qué envió $1"
+  },
+  "chipFromPage": {
+    "message": "De la página $1"
+  },
+  "chipFromPageTitle": {
+    "message": "Añadido con «Cargar más resultados»"
+  },
+  "barHidden": {
+    "message": "oculto"
+  },
+  "barHiddenByYou": {
+    "message": "oculto por tu lista"
+  },
+  "barHiddenByTag": {
+    "message": "oculto porque tiene la etiqueta «$1»"
+  },
+  "barHiddenByLens": {
+    "message": "oculto porque $1 no lo incluye"
+  },
+  "barHiddenByList": {
+    "message": "oculto por $1"
+  },
+  "menuWhyHeading": {
+    "message": "Por qué"
+  },
+  "menuNewTagPlaceholder": {
+    "message": "Nueva etiqueta"
+  },
+  "menuNewTagLabel": {
+    "message": "Nombre de la nueva etiqueta"
+  },
+  "menuAddTagButton": {
+    "message": "Añadir etiqueta"
+  },
+  "menuSavedNote": {
+    "message": "Guardado en tu lista."
+  },
+  "menuCloseLabel": {
+    "message": "Cerrar"
+  },
+  "anubisSettings": {
+    "message": "Ajustes de Anubis"
+  },
+  "help": {
+    "message": "Ayuda"
+  },
+  "helpTitle": {
+    "message": "Abrir la wiki"
+  },
+  "reportProblem": {
+    "message": "Informar de un problema"
+  },
+  "reportProblemTitle": {
+    "message": "Abrir un informe de error en GitHub, con la versión de Anubis y tu navegador ya rellenados"
+  },
+  "summaryShowAll": {
+    "message": "Mostrar todo"
+  },
+  "summaryFilterLabel": {
+    "message": "Mostrar solo los resultados con la etiqueta"
+  },
+  "summaryFilterOn": {
+    "message": "Mostrar solo los resultados con la etiqueta «$1»"
+  },
+  "summaryFilterOff": {
+    "message": "Mostrar todos los resultados"
+  },
+  "summaryPinned": {
+    "message": "fijado $1"
+  },
+  "summaryRaised": {
+    "message": "subido $1"
+  },
+  "summaryLowered": {
+    "message": "bajado $1"
+  },
+  "summaryHid": {
+    "message": "ocultado $1"
+  },
+  "summaryActed": {
+    "message": "Anubis ha $1 de $2."
+  },
+  "summaryResults_one": {
+    "message": "$1 resultado"
+  },
+  "summaryResults_other": {
+    "message": "$1 resultados"
+  },
+  "summaryResultsPages_one": {
+    "message": "$1 resultado de $2 páginas"
+  },
+  "summaryResultsPages_other": {
+    "message": "$1 resultados de $2 páginas"
+  },
+  "summaryAlsoRemoved": {
+    "message": "También ha quitado $1."
+  },
+  "summaryRemovedOnly": {
+    "message": "Anubis ha quitado $1."
+  },
+  "summaryShortActed": {
+    "message": "Anubis ha cambiado $1 de $2."
+  },
+  "summaryShortActedRemoved": {
+    "message": "Anubis ha cambiado $1 de $2 y ha limpiado la página."
+  },
+  "summaryShortRemoved": {
+    "message": "Anubis ha limpiado la página."
+  },
+  "summaryDetails": {
+    "message": "Detalles"
+  },
+  "summaryFewerDetails": {
+    "message": "Menos detalles"
+  },
+  "summaryUnchanged_one": {
+    "message": "Anubis ha dejado este resultado como estaba."
+  },
+  "summaryUnchanged_other": {
+    "message": "Anubis ha dejado los $1 resultados como estaban."
+  },
+  "summaryUnchangedPages": {
+    "message": "Anubis ha dejado los $1 resultados de $2 páginas como estaban."
+  },
+  "summaryFiltered_one": {
+    "message": "Solo «$2»: $3 de $1 resultado."
+  },
+  "summaryFiltered_other": {
+    "message": "Solo «$2»: $3 de $1 resultados."
+  },
+  "summaryRemovedAi_one": {
+    "message": "una respuesta de IA"
+  },
+  "summaryRemovedAi_other": {
+    "message": "$1 respuestas de IA"
+  },
+  "summaryRemovedVideos_one": {
+    "message": "un panel de vídeos"
+  },
+  "summaryRemovedVideos_other": {
+    "message": "$1 paneles de vídeos"
+  },
+  "summaryRemovedQuestions_one": {
+    "message": "una lista de preguntas"
+  },
+  "summaryRemovedQuestions_other": {
+    "message": "$1 listas de preguntas"
+  },
+  "summaryRemovedDiscussions_one": {
+    "message": "un panel de debates"
+  },
+  "summaryRemovedDiscussions_other": {
+    "message": "$1 paneles de debates"
+  },
+  "summaryRemovedNews_one": {
+    "message": "un panel de noticias"
+  },
+  "summaryRemovedNews_other": {
+    "message": "$1 paneles de noticias"
+  },
+  "summaryRemovedImages_one": {
+    "message": "un panel de imágenes"
+  },
+  "summaryRemovedImages_other": {
+    "message": "$1 paneles de imágenes"
+  },
+  "summaryRemovedRelated_one": {
+    "message": "una lista de búsquedas relacionadas"
+  },
+  "summaryRemovedRelated_other": {
+    "message": "$1 listas de búsquedas relacionadas"
+  },
+  "summaryRemovedElsewhere_one": {
+    "message": "una fila de otros buscadores"
+  },
+  "summaryRemovedElsewhere_other": {
+    "message": "$1 filas de otros buscadores"
+  },
+  "summaryRemovedAdRequests_one": {
+    "message": "una petición de permitir anuncios"
+  },
+  "summaryRemovedAdRequests_other": {
+    "message": "$1 peticiones de permitir anuncios"
+  },
+  "withShortcut": {
+    "message": "$1 ($2)"
+  },
+  "toolbarOff": {
+    "message": "Anubis está desactivado"
+  },
+  "weighLabel": {
+    "message": "Ocultar, clasificar o etiquetar $1"
+  },
+  "weighLabelRanked": {
+    "message": "Ocultar, clasificar o etiquetar $1 ($2)"
+  },
+  "hiddenShow": {
+    "message": "Mostrar"
+  },
+  "hiddenShowSite": {
+    "message": "Mostrar $1"
+  },
+  "hiddenMore_one": {
+    "message": "y $1 más"
+  },
+  "hiddenMore_other": {
+    "message": "y $1 más"
+  },
+  "summaryChangedHide": {
+    "message": "$1 oculto."
+  },
+  "summaryChangedLower": {
+    "message": "$1 bajado."
+  },
+  "summaryChangedRaise": {
+    "message": "$1 subido."
+  },
+  "summaryChangedPin": {
+    "message": "$1 fijado."
+  },
+  "summaryChangedAllow": {
+    "message": "$1 puesto en Normal."
+  },
+  "summaryChangedNormal": {
+    "message": "Se quitó tu clasificación de $1."
+  },
+  "summaryChangedTagOn": {
+    "message": "$1 etiquetado como «$2»."
+  },
+  "summaryChangedTagOff": {
+    "message": "Se quitó la etiqueta «$2» de $1."
+  },
+  "summaryChangedSite": {
+    "message": "$1 cambiado en tu lista."
+  },
+  "summaryUndo": {
+    "message": "Deshacer"
+  },
+  "menuSuggest": {
+    "message": "¿Debería incluirlo una lista? Propónselo a $1."
+  },
+  "menuSuggestTitle": {
+    "message": "Proponer $1 a $2 en su gestor de incidencias"
+  },
+  "menuReport": {
+    "message": "¿Está mal? Avisa a $1."
+  },
+  "menuMatchedRule": {
+    "message": "Regla que coincide, línea $1"
+  },
+  "menuReportTitle": {
+    "message": "Decirle a $1 que se equivoca con este resultado, en su gestor de incidencias"
+  },
+  "offerTitle": {
+    "message": "¿Suscribirte a $1?"
+  },
+  "offerTrust": {
+    "message": "Una lista puede ocultar, clasificar y etiquetar sitios en tus resultados. Suscríbete solo a listas en las que confíes."
+  },
+  "offerPermission": {
+    "message": "Después, tu navegador te pedirá que dejes a Anubis leer de $1, el sitio donde está la lista."
+  },
+  "offerAlready": {
+    "message": "Ya estás suscrito a $1."
+  },
+  "offerSubscribe": {
+    "message": "Suscribirse"
+  },
+  "offerSubscribing": {
+    "message": "Suscribiendo…"
+  },
+  "offerCancel": {
+    "message": "Cancelar"
+  },
+  "welcomeTitle": {
+    "message": "Te damos la bienvenida a Anubis"
+  },
+  "welcomeHeading": {
+    "message": "Anubis está instalado"
+  },
+  "welcomeIntro": {
+    "message": "Etiqueta, reordena y oculta resultados de búsqueda, según tus propias decisiones y las listas a las que te suscribes."
+  },
+  "welcomePinHeading": {
+    "message": "Mantenlo en la barra de herramientas"
+  },
+  "welcomePinWhy": {
+    "message": "Su botón en la barra de herramientas muestra qué hizo Anubis en la página, lo activa o desactiva, y clasifica el sitio en el que estás."
+  },
+  "welcomePinChrome": {
+    "message": "Pulsa el botón de Extensiones (la pieza de puzle) junto a la barra de direcciones y luego la chincheta junto a Anubis."
+  },
+  "welcomePinEdge": {
+    "message": "Pulsa el botón de Extensiones (la pieza de puzle) junto a la barra de direcciones y luego el ojo junto a Anubis."
+  },
+  "welcomePinOpera": {
+    "message": "Pulsa el botón de Extensiones (el cubo) junto a la barra de direcciones y luego la chincheta junto a Anubis."
+  },
+  "welcomePinFirefox": {
+    "message": "Pulsa el botón de Extensiones (la pieza de puzle) junto a la barra de direcciones, luego el engranaje junto a Anubis, y elige «Fijar a la barra de herramientas»."
+  },
+  "welcomePinAndroid": {
+    "message": "Anubis está en el menú del navegador, en Extensiones."
+  },
+  "welcomePinned": {
+    "message": "Anubis está en tu barra de herramientas."
+  },
+  "welcomeSearchHeading": {
+    "message": "Prueba una búsqueda"
+  },
+  "welcomeSearchHow": {
+    "message": "Busca como siempre. Para ocultar, clasificar o etiquetar un sitio, señala uno de sus resultados y pulsa el botón ⚖."
+  },
+  "welcomeSearchFor": {
+    "message": "Busca «$1» para ver etiquetas de tus listas:"
+  },
+  "welcomeSearchOn": {
+    "message": "Buscar «$1» en $2"
+  },
+  "welcomeQuery": {
+    "message": "python list comprehension"
+  },
+  "welcomeListsHeading": {
+    "message": "Tus listas"
+  },
+  "welcomeListsIntro": {
+    "message": "Las listas etiquetan, suben, bajan u ocultan sitios por ti. Empiezas con estas:"
+  },
+  "welcomeListsNone": {
+    "message": "Las listas etiquetan, suben, bajan u ocultan sitios por ti. Todavía no estás suscrito a ninguna."
+  },
+  "welcomeListsMore": {
+    "message": "Desactívalas, o encuentra más listas, en los ajustes."
+  },
+  "welcomeListsOpen": {
+    "message": "Abrir los ajustes de listas"
+  },
+  "welcomeGuide": {
+    "message": "Wiki"
+  },
+  "welcomePrivacy": {
+    "message": "Privacidad"
+  },
+  "syncHeading": {
+    "message": "Sincronización"
+  },
+  "syncIntro": {
+    "message": "Tu lista y tus ajustes en tus otros ordenadores y en tus otros navegadores."
+  },
+  "syncBrowserHeading": {
+    "message": "Sincronización del navegador"
+  },
+  "syncFirefox": {
+    "message": "Tu lista, tus ajustes, tus elecciones de etiquetas y tus suscripciones se guardan en el almacenamiento sincronizado de Firefox. Firefox los copia a tus otros ordenadores cuando has iniciado sesión en Firefox con «Complementos» marcado en sus ajustes de sincronización. Sincroniza aproximadamente cada 10 minutos, o cuando eliges «Sincronizar ahora»."
+  },
+  "syncFirefoxAndroid": {
+    "message": "Firefox para Android no sincroniza los datos de los complementos, así que tu lista, tus ajustes, tus elecciones de etiquetas y tus suscripciones se quedan en este dispositivo. Para sincronizarlos, conecta un servidor WebDAV más abajo."
+  },
+  "syncChrome": {
+    "message": "Tu lista, tus ajustes, tus elecciones de etiquetas y tus suscripciones se guardan en el almacenamiento sincronizado del navegador. El navegador los copia a tus otros ordenadores cuando has iniciado sesión en él con la sincronización de extensiones activada."
+  },
+  "syncBrowserHelp": {
+    "message": "Qué ajustes del navegador revisar"
+  },
+  "syncUsage": {
+    "message": "Ocupan $1 KB de los $2 KB que tiene la sincronización."
+  },
+  "syncTooBig": {
+    "message": "Tu lista es demasiado grande para la sincronización, así que se guarda solo en este dispositivo. Tus ajustes, tus elecciones de etiquetas y tus suscripciones se siguen sincronizando."
+  },
+  "webdavHeading": {
+    "message": "Entre navegadores"
+  },
+  "webdavIntro": {
+    "message": "Firefox y Chrome no se sincronizan entre sí por sí solos. Para compartir entre ellos, puedes conectar el mismo almacenamiento WebDAV en cada uno. Koofr e InfiniCLOUD tienen planes gratuitos, y las opciones autoalojadas como Nextcloud también funcionan. Anubis guarda allí un archivo, anubis-sync.json, y combina los cambios de cada navegador."
+  },
+  "webdavHelp": {
+    "message": "Dónde conseguir una dirección y una contraseña"
+  },
+  "webdavAddress": {
+    "message": "Dirección"
+  },
+  "webdavAddressHint": {
+    "message": "La dirección WebDAV del servicio, empezando por https://"
+  },
+  "listPermissionDenied": {
+    "message": "Anubis necesita permiso para leer $1 y así actualizar esta lista."
+  },
+  "webdavUser": {
+    "message": "Nombre de usuario"
+  },
+  "webdavPassword": {
+    "message": "Contraseña"
+  },
+  "webdavPasswordHint": {
+    "message": "La mayoría de los servicios te dan una contraseña aparte para aplicaciones. Usa esa."
+  },
+  "webdavConnect": {
+    "message": "Conectar"
+  },
+  "webdavEncrypt": {
+    "message": "Cifrar de extremo a extremo el archivo de sincronización (recomendado)"
+  },
+  "webdavEncryptionPassphrase": {
+    "message": "Frase de contraseña de cifrado"
+  },
+  "webdavConfirmPassphrase": {
+    "message": "Confirmar la frase de contraseña"
+  },
+  "webdavEncryptionHint": {
+    "message": "Usa una frase de contraseña larga y única en cada navegador (al menos 12 caracteres). Se guarda solo en este navegador y nunca se envía al servidor. Si la olvidas, la copia del servidor no se podrá recuperar."
+  },
+  "webdavCorrectPassphrase": {
+    "message": "Escribe la frase de contraseña de cifrado correcta"
+  },
+  "webdavCorrectPassphraseHint": {
+    "message": "Usa la misma frase de contraseña que pusiste en el otro navegador. Se guarda solo aquí y nunca se envía al servidor."
+  },
+  "webdavSavePassphrase": {
+    "message": "Guardar la frase de contraseña y sincronizar"
+  },
+  "webdavChangePassphrase": {
+    "message": "Cambiar la frase de contraseña de cifrado"
+  },
+  "webdavChangePassphraseHint": {
+    "message": "Anubis comprueba la frase de contraseña actual antes de cambiar el archivo del servidor. Escribe la nueva en cada uno de los otros navegadores antes de su próxima sincronización."
+  },
+  "webdavChangePassphraseHelp": {
+    "message": "Qué pasa cuando la cambias"
+  },
+  "webdavEncryptionShort": {
+    "message": "Usa una frase de contraseña de cifrado de al menos 12 caracteres."
+  },
+  "webdavPassphraseMismatch": {
+    "message": "Las frases de contraseña no coinciden."
+  },
+  "webdavEncrypted": {
+    "message": "El archivo de sincronización está cifrado de extremo a extremo. Su frase de contraseña se guarda solo en este navegador; el servidor no puede leer el contenido. Usa la misma frase de contraseña en cada navegador. Si la olvidas, la copia del servidor no se podrá recuperar."
+  },
+  "webdavEncryptionPending": {
+    "message": "El cifrado está configurado aquí. La próxima sincronización correcta cifrará la copia del servidor. Usa la misma frase de contraseña en cada navegador."
+  },
+  "webdavEncryptionMissing": {
+    "message": "Este navegador no tiene frase de contraseña de cifrado. Usa la misma que en el otro navegador para leer un archivo cifrado. El operador del servidor puede leer un archivo de sincronización sin cifrar."
+  },
+  "webdavPrivacy": {
+    "message": "Con el cifrado activado, a este servidor solo van datos cifrados; tu frase de contraseña se guarda aquí y nunca se envía. Sin cifrado, el servidor puede leer el archivo de sincronización. Tu inicio de sesión de WebDAV se guarda aquí y se envía a este servidor para iniciar sesión."
+  },
+  "webdavBadAddress": {
+    "message": "Escribe la dirección WebDAV del servicio, empezando por https://"
+  },
+  "webdavMissingLogin": {
+    "message": "Escribe también el nombre de usuario y la contraseña."
+  },
+  "webdavDenied": {
+    "message": "Anubis necesita tu permiso para enviar tu lista a $1."
+  },
+  "webdavConnected": {
+    "message": "Sincronizando con $1 como $2."
+  },
+  "webdavWhen": {
+    "message": "Los cambios van al servidor unos segundos después de hacerlos. Los cambios de tus otros navegadores llegan cuando el navegador se inicia y cuando buscas, como mucho cada 5 minutos."
+  },
+  "webdavSyncing": {
+    "message": "Sincronizando…"
+  },
+  "webdavLastSync": {
+    "message": "Última sincronización: $1."
+  },
+  "webdavLastTried": {
+    "message": "Último intento: $1."
+  },
+  "webdavSyncNow": {
+    "message": "Sincronizar ahora"
+  },
+  "webdavDisconnect": {
+    "message": "Desconectar"
+  },
+  "webdavDisconnected": {
+    "message": "Desconectado. El archivo se queda en el servidor, y tu lista y tus ajustes se quedan aquí."
+  },
+  "webdavErrorAuth": {
+    "message": "El servidor no aceptó el nombre de usuario o la contraseña. Muchos servicios necesitan aquí una contraseña de aplicación, no la habitual."
+  },
+  "webdavErrorForbidden": {
+    "message": "El servidor no deja que esta cuenta guarde archivos ahí."
+  },
+  "webdavErrorFolder": {
+    "message": "No hay ninguna carpeta en esa dirección del servidor. Revisa la dirección."
+  },
+  "webdavErrorPermission": {
+    "message": "Anubis ya no tiene permiso para sincronizar con $1. Pulsa «Sincronizar ahora» para volver a permitirlo."
+  },
+  "webdavErrorNetwork": {
+    "message": "No se pudo conectar con $1. Revisa la dirección y tu conexión."
+  },
+  "webdavErrorFile": {
+    "message": "El archivo anubis-sync.json que hay ahí no es uno que Anubis pueda leer, así que no se ha tocado. Usa otra carpeta."
+  },
+  "webdavErrorNeedsPassphrase": {
+    "message": "Este archivo de sincronización está cifrado. Escribe su frase de contraseña; no se ha cambiado nada."
+  },
+  "webdavErrorWrongPassphrase": {
+    "message": "Esa frase de contraseña no pudo descifrar el archivo de sincronización. Revísala; el archivo del servidor no se ha cambiado."
+  },
+  "webdavErrorUnencrypted": {
+    "message": "Esta conexión estaba cifrada antes, pero el servidor tiene ahora un archivo de sincronización sin cifrar. No se ha cambiado. Revisa el archivo del servidor antes de volver a sincronizar."
+  },
+  "webdavErrorChanged": {
+    "message": "El archivo de sincronización cambió durante el cambio de frase de contraseña, o el servidor no puede protegerlo de ediciones simultáneas. No se ha sobrescrito nada. Vuelve a sincronizar y a intentarlo."
+  },
+  "webdavErrorUnconfirmed": {
+    "message": "La conexión con $1 se cortó mientras se guardaba el archivo, así que Anubis no sabe qué frase de contraseña tiene ahora. La antigua sigue guardada aquí. Si la próxima sincronización dice que es incorrecta, escribe la nueva."
+  },
+  "webdavErrorServer": {
+    "message": "El servidor respondió con un error (HTTP $1). Vuelve a intentarlo más tarde."
+  },
+  "webdavErrorFailed": {
+    "message": "La sincronización no terminó. Vuelve a intentarlo."
+  },
+  "appearanceHeading": {
+    "message": "Apariencia"
+  },
+  "appearanceIntro": {
+    "message": "Cómo se ve Anubis aquí y en las páginas de búsqueda."
+  },
+  "themeHeading": {
+    "message": "Esquema de colores"
+  },
+  "themeHint": {
+    "message": "«Automático» sigue a tu navegador aquí y en el menú de cada resultado, y al modo claro u oscuro de cada buscador en el resto de lo que Anubis añade a sus páginas."
+  },
+  "paletteHeading": {
+    "message": "Colores en las páginas de búsqueda"
+  },
+  "paletteHint": {
+    "message": "«Sobrio» dibuja todo lo que Anubis añade a las páginas de búsqueda en gris, sin dorado. Las etiquetas pierden sus colores y se distinguen por sus nombres. Los ajustes y la ventana de la barra de herramientas siguen en dorado."
+  },
+  "paletteGold": {
+    "message": "Dorado"
+  },
+  "palettePlain": {
+    "message": "Sobrio"
+  },
+  "hideStyleHeading": {
+    "message": "Resultados ocultos"
+  },
+  "hideStyleHint": {
+    "message": "«Quitar» los saca de la página; el resumen sobre los resultados los cuenta, y «Mostrar ocultos» los recupera. «Contraer» deja una línea fina por cada grupo de resultados ocultos. «Atenuar» los difumina."
+  },
+  "hideStyleRemove": {
+    "message": "Quitar"
+  },
+  "hideStyleCollapse": {
+    "message": "Contraer"
+  },
+  "hideStyleDim": {
+    "message": "Atenuar"
+  },
+  "rerankHeading": {
+    "message": "Reordenar resultados"
+  },
+  "rerankHint": {
+    "message": "Mover hacia arriba los resultados subidos y fijados, y hacia abajo los bajados, como un Brave Goggle."
+  },
+  "rerankHelp": {
+    "message": "Cómo funciona el reordenamiento"
+  },
+  "deeperAuto": {
+    "message": "Cargar más resultados automáticamente"
+  },
+  "deeperAutoHint": {
+    "message": "Añadir las siguientes páginas de resultados a la primera y clasificarlos juntos, para que un sitio que fijaste en la página 3 suba arriba. «Cargar más resultados» sobre los resultados hace lo mismo cuando lo pides. Escribe cuántas páginas añadir, de 0 (desactivado) a $1."
+  },
+  "deeperHelp": {
+    "message": "Cómo funciona cargar más"
+  },
+  "deeperUnit": {
+    "message": "páginas más"
+  },
+  "deeperTipOff": {
+    "message": "Desactivado: solo se cargan más resultados cuando pulsas «Cargar más resultados»."
+  },
+  "deeperTipTime_one": {
+    "message": "Añade unos $1 segundo a cada búsqueda."
+  },
+  "deeperTipTime_other": {
+    "message": "Añade unos $1 segundos a cada búsqueda."
+  },
+  "deeperTipFew": {
+    "message": "$1 A los buscadores rara vez les importan unas pocas páginas."
+  },
+  "deeperTipSome": {
+    "message": "$1 Algunos buscadores pueden empezar a pedirte que confirmes que no eres un robot."
+  },
+  "deeperTipMany": {
+    "message": "$1 Google y Bing suelen pedir que confirmes que no eres un robot después de tantas. Algunos buscadores se quedan sin páginas antes."
+  },
+  "chipsHeading": {
+    "message": "Etiquetas bajo los resultados"
+  },
+  "chipsHint": {
+    "message": "Mostrar etiquetas y clasificaciones bajo el título de cada resultado."
+  },
+  "summaryHeading": {
+    "message": "Resumen"
+  },
+  "summaryHint": {
+    "message": "Mostrar sobre los resultados un resumen de una línea de lo que cambió Anubis."
+  },
+  "enabledHeading": {
+    "message": "Anubis está activado"
+  },
+  "enabledHint": {
+    "message": "Desactívalo para dejar las páginas de búsqueda como están sin desinstalarlo."
+  },
+  "enginesHeading": {
+    "message": "Buscadores"
+  },
+  "enginesIntro": {
+    "message": "Anubis funciona con los resultados web de estos buscadores. Los resultados se encuentran por la estructura de la página cuando es posible, para que los pequeños rediseños no lo rompan."
+  },
+  "enginesTrouble": {
+    "message": "¿Anubis no hace nada en una página de búsqueda?"
+  },
+  "enginesTroubleHelp": {
+    "message": "Qué revisar"
+  },
+  "shareHeading": {
+    "message": "Copia de seguridad, importar y compartir"
+  },
+  "shareIntro": {
+    "message": "Guarda una copia de todo, trae tus sitios desde otra herramienta, o publica tu lista para que otros se suscriban."
+  },
+  "publishHeading": {
+    "message": "Publica tu lista"
+  },
+  "publishIntro": {
+    "message": "No hace falta servidor: un repositorio git público es la base de datos, y las pull requests son la forma de contribuir."
+  },
+  "publishHelp": {
+    "message": "Cómo publicar una lista"
+  },
+  "publishStepDownload": {
+    "message": "Descarga tu lista abajo. Rellena sus líneas $1, $2 y $3 al principio."
+  },
+  "publishStepRepository": {
+    "message": "Crea un repositorio público en GitHub (o un gist) y añade el archivo, p. ej. $1."
+  },
+  "publishStepIssues": {
+    "message": "Añade $1 para que la gente pueda proponer sitios a tu lista desde el menú de cada resultado."
+  },
+  "publishStepShare": {
+    "message": "Comparte el enlace del archivo. La gente lo pega en Listas → Añadir una lista."
+  },
+  "publishStepDirectory": {
+    "message": "¿Quieres que aparezca en Más listas para todos? Abre una pull request que la añada a $1."
+  },
+  "publishDownload": {
+    "message": "Descargar mi lista"
+  },
+  "publishFormat": {
+    "message": "Formato de listas"
+  },
+  "importHeading": {
+    "message": "Importar sitios"
+  },
+  "importIntro": {
+    "message": "¿Vienes de uBlacklist o HOHSER? Pega aquí tus reglas o tu exportación y los sitios se unirán a tu lista. Lo oculto sigue oculto, la ocultación parcial de HOHSER pasa a ser Bajar, y los colores de resaltado se convierten en etiquetas que resaltan."
+  },
+  "importHelp": {
+    "message": "En qué se convierten las reglas de cada herramienta"
+  },
+  "importPlaceholder": {
+    "message": "Pega reglas de uBlacklist, una exportación de HOHSER, un Goggle o un dominio por línea"
+  },
+  "importLabel": {
+    "message": "Sitios para importar"
+  },
+  "importButton": {
+    "message": "Importar"
+  },
+  "importChooseFile": {
+    "message": "Elegir un archivo"
+  },
+  "importSourceHohser": {
+    "message": "una exportación de HOHSER"
+  },
+  "importSourceUblacklist": {
+    "message": "reglas de uBlacklist"
+  },
+  "importSourceGoggle": {
+    "message": "un Goggle"
+  },
+  "importSourceAnubis": {
+    "message": "una lista de Anubis"
+  },
+  "importSourceDomains": {
+    "message": "una lista de dominios"
+  },
+  "importRead_one": {
+    "message": "Leído como $2: $1 sitio añadido y $3 actualizados."
+  },
+  "importRead_other": {
+    "message": "Leído como $2: $1 sitios añadidos y $3 actualizados."
+  },
+  "importSkipped_one": {
+    "message": "Se omitió $1 regla con patrones de dirección o sintaxis no compatible; suscríbete a la lista original para conservarla."
+  },
+  "importSkipped_other": {
+    "message": "Se omitieron $1 reglas con patrones de dirección o sintaxis no compatible; suscríbete a la lista original para conservarlas."
+  },
+  "importFailed": {
+    "message": "No se pudo importar: $1"
+  },
+  "backupHeading": {
+    "message": "Copia de seguridad"
+  },
+  "backupIntro": {
+    "message": "Todo en un archivo: ajustes, elecciones de etiquetas, suscripciones y tu lista."
+  },
+  "backupExport": {
+    "message": "Exportar copia de seguridad"
+  },
+  "backupRestore": {
+    "message": "Restaurar copia de seguridad"
+  },
+  "backupRestored": {
+    "message": "Copia de seguridad restaurada."
+  },
+  "backupRestoreFailed": {
+    "message": "No se pudo restaurar: $1"
+  },
+  "resetButton": {
+    "message": "Restablecer ajustes"
+  },
+  "resetDone": {
+    "message": "Ajustes, etiquetas y suscripciones restablecidos. Tu lista se conserva."
+  },
+  "settingsSections": {
+    "message": "Secciones de ajustes"
+  },
+  "settingsPageTitle": {
+    "message": "$1 – Anubis"
+  },
+  "settingsBrandTitle": {
+    "message": "Abrir la wiki de Anubis"
+  },
+  "settingsTagline": {
+    "message": "Oculta, clasifica y etiqueta resultados de búsqueda"
+  },
+  "settingsSource": {
+    "message": "Código fuente en GitHub"
+  },
+  "sitesHeading": {
+    "message": "Tus sitios"
+  },
+  "sitesHelp": {
+    "message": "Cómo funciona la clasificación"
+  },
+  "tagsHeading": {
+    "message": "Etiquetas"
+  },
+  "tagsHelp": {
+    "message": "Cómo funcionan las etiquetas"
+  },
+  "listsHeading": {
+    "message": "Listas"
+  },
+  "listsHelp": {
+    "message": "Cómo funcionan las listas"
+  },
+  "cleanupHeading": {
+    "message": "Quitar paneles"
+  },
+  "cleanupHelp": {
+    "message": "Cómo funciona quitar paneles"
+  },
+  "appearanceHelp": {
+    "message": "Sobre los resultados ocultos"
+  },
+  "enginesHelp": {
+    "message": "Qué buscadores funcionan"
+  },
+  "syncHelp": {
+    "message": "Cómo funciona la sincronización"
+  },
+  "shareHelp": {
+    "message": "Venir desde otras herramientas"
+  },
+  "cleanupIntro": {
+    "message": "Anubis puede quitar los paneles de las páginas de búsqueda que no son resultados. Activa cada uno que prefieras no ver. «Mostrar ocultos» sobre los resultados los recupera para esa búsqueda."
+  },
+  "cleanupEverySearch": {
+    "message": "En cada búsqueda"
+  },
+  "cleanupEverySearchHint": {
+    "message": "Activado: Anubis lo quita. Desactivado: se queda en la página."
+  },
+  "cleanupStillShows": {
+    "message": "Si un panel sigue apareciendo"
+  },
+  "cleanupAll": {
+    "message": "Todos"
+  },
+  "cleanupAllHint": {
+    "message": "Activa o desactiva todos los interruptores de esta sección."
+  },
+  "cleanupOnGoogle": {
+    "message": "En Google"
+  },
+  "cleanupWebTab": {
+    "message": "Abrir siempre la pestaña Web"
+  },
+  "cleanupWebTabHint": {
+    "message": "Envía cada búsqueda de Google a su pestaña Web: enlaces simples, sin Visión general creada por IA, vídeos ni otros paneles, incluso los que Anubis no reconoce. Para salir de ella en una búsqueda, elige Todo sobre los resultados."
+  },
+  "cleanupAi": {
+    "message": "Respuestas de IA"
+  },
+  "cleanupAiHint": {
+    "message": "La Visión general creada por IA y la pestaña Modo IA de Google, las respuestas asistidas por IA y Duck.ai de DuckDuckGo, las respuestas de IA de Bing y las de Brave."
+  },
+  "cleanupVideos": {
+    "message": "Paneles de vídeos"
+  },
+  "cleanupVideosHint": {
+    "message": "Paneles de vídeos y vídeos cortos entre los resultados."
+  },
+  "cleanupQuestions": {
+    "message": "Más preguntas"
+  },
+  "cleanupQuestionsHint": {
+    "message": "Listas de preguntas de otras personas con respuestas desplegables."
+  },
+  "cleanupDiscussions": {
+    "message": "Paneles de debates"
+  },
+  "cleanupDiscussionsHint": {
+    "message": "Paneles de hilos de foros entre los resultados, como «Debates y foros» de Google. Las páginas de foros entre los resultados se quedan."
+  },
+  "cleanupNews": {
+    "message": "Noticias destacadas"
+  },
+  "cleanupNewsHint": {
+    "message": "Paneles de noticias entre los resultados."
+  },
+  "cleanupImages": {
+    "message": "Filas de imágenes"
+  },
+  "cleanupImagesHint": {
+    "message": "Filas de imágenes entre los resultados. La pestaña Imágenes sigue funcionando."
+  },
+  "cleanupRelated": {
+    "message": "Búsquedas relacionadas"
+  },
+  "cleanupRelatedHint": {
+    "message": "Listas de otras búsquedas, normalmente al final de la página."
+  },
+  "cleanupElsewhere": {
+    "message": "Otros buscadores"
+  },
+  "cleanupElsewhereHint": {
+    "message": "Filas de botones que repiten tu búsqueda en otro buscador, como «Find elsewhere» de Brave."
+  },
+  "cleanupAdRequests": {
+    "message": "Peticiones de permitir anuncios"
+  },
+  "cleanupAdRequestsHint": {
+    "message": "Banners que te piden desactivar tu bloqueador de anuncios o permitir anuncios, como «Block creepy ads, not private search» de Startpage."
+  },
+  "sitesIntro": {
+    "message": "Sitios que has clasificado u ocultado tú. Tu elección gana a cualquier lista a la que te suscribas. Usa el botón de cualquier resultado de búsqueda, o añade sitios aquí."
+  },
+  "sitesEditAsText": {
+    "message": "Editar como texto"
+  },
+  "sitesBackToTable": {
+    "message": "Volver a la tabla"
+  },
+  "sitesTooBig": {
+    "message": "Tu lista es demasiado grande para la sincronización del navegador, así que se guarda solo en este dispositivo. Descárgala para tener una copia."
+  },
+  "sitesAddPlaceholder": {
+    "message": "Dominio o URL, p. ej. fandom.com"
+  },
+  "sitesAdd": {
+    "message": "Añadir"
+  },
+  "sitesNotDomain": {
+    "message": "Eso no parece un dominio."
+  },
+  "sitesAddHint": {
+    "message": "Se aplica al sitio y a todos sus subdominios."
+  },
+  "sitesAddHelp": {
+    "message": "Elegir qué parte de un sitio"
+  },
+  "sitesFilter_one": {
+    "message": "Filtrar $1 sitio…"
+  },
+  "sitesFilter_other": {
+    "message": "Filtrar $1 sitios…"
+  },
+  "sitesFilterLabel": {
+    "message": "Filtrar sitios"
+  },
+  "sitesAddTagTo": {
+    "message": "Añadir una etiqueta a $1"
+  },
+  "sitesKeptNormal": {
+    "message": "Mantenido en normal, digan lo que digan tus listas"
+  },
+  "sitesRemoveTag": {
+    "message": "Quitar «$1» de $2"
+  },
+  "sitesForget": {
+    "message": "Olvidar $1"
+  },
+  "sitesFirst500": {
+    "message": "Se muestran los 500 primeros. Filtra para encontrar el resto."
+  },
+  "sitesNone": {
+    "message": "Todavía no hay sitios. Añade uno arriba, o usa el botón de un resultado de búsqueda."
+  },
+  "sitesTextLabel": {
+    "message": "Tu lista como texto"
+  },
+  "sitesTextIntro": {
+    "message": "Tu lista en el formato de listas de Anubis: la sintaxis de Brave Goggles más etiquetas. Es exactamente el archivo que publicarías. Las líneas que la tabla no puede mostrar se mantienen tal como están escritas."
+  },
+  "sitesTextReadable": {
+    "message": "$1 y $2, todo legible."
+  },
+  "listInstructions_one": {
+    "message": "$1 instrucción"
+  },
+  "listInstructions_other": {
+    "message": "$1 instrucciones"
+  },
+  "listErrorLine": {
+    "message": "Línea $1: $2"
+  },
+  "sitesSave": {
+    "message": "Guardar"
+  },
+  "sitesFormatReference": {
+    "message": "Referencia del formato"
+  },
+  "listsIntro": {
+    "message": "Suscríbete a listas que etiquetan, reordenan u ocultan sitios. Cualquier archivo de texto en GitHub, GitLab, Codeberg o en un gist funciona: listas de Anubis, Brave Goggles, conjuntos de reglas de uBlacklist y listas simples de dominios."
+  },
+  "listsUpdateAll": {
+    "message": "Actualizar todas"
+  },
+  "listsUpdating": {
+    "message": "Actualizando…"
+  },
+  "listsAllChecked": {
+    "message": "Se comprobaron las actualizaciones de todas las listas."
+  },
+  "listsAddHeading": {
+    "message": "Añadir una lista"
+  },
+  "listsAddHint": {
+    "message": "Pega un enlace al archivo. Los enlaces a una página de GitHub, un gist o un Brave Goggle también funcionan."
+  },
+  "listsAddHelp": {
+    "message": "Qué listas funcionan"
+  },
+  "listsUrlLabel": {
+    "message": "URL de la lista"
+  },
+  "listsNone": {
+    "message": "Todavía no hay listas. Elige alguna de las de abajo."
+  },
+  "listsMoreHeading": {
+    "message": "Más listas"
+  },
+  "listsMoreIntro": {
+    "message": "Del directorio de Anubis y de la comunidad en general."
+  },
+  "listsShare": {
+    "message": "¿Has hecho una lista que merece compartirse? Añádela al directorio con una pull request a $1."
+  },
+  "listsNeedHttps": {
+    "message": "Las listas tienen que servirse por https."
+  },
+  "listsPermissionToDownload": {
+    "message": "Anubis necesita permiso para leer $1 y así descargar esta lista."
+  },
+  "listsSubscribed": {
+    "message": "Suscrito a $1: $2 y $3."
+  },
+  "listsSubscribedBundled": {
+    "message": "Suscrito a $1 (con la copia incluida en Anubis hasta que se pueda actualizar)."
+  },
+  "listsSubscribeFailed": {
+    "message": "No se pudo suscribir: $1"
+  },
+  "listsUse": {
+    "message": "Usar $1"
+  },
+  "listsOn": {
+    "message": "Activada"
+  },
+  "listsOff": {
+    "message": "Desactivada"
+  },
+  "listsUpdateFailed": {
+    "message": "$1: $2"
+  },
+  "listsUpToDate": {
+    "message": "$1 está al día."
+  },
+  "listsFacts": {
+    "message": "$1."
+  },
+  "listsLinks": {
+    "message": "$1"
+  },
+  "listsNotDownloaded": {
+    "message": "aún no descargada"
+  },
+  "listsBy": {
+    "message": "de $1"
+  },
+  "listsBundledCopy": {
+    "message": "la copia incluida en Anubis"
+  },
+  "listsUpdated": {
+    "message": "actualizada $1"
+  },
+  "listsHomepage": {
+    "message": "página principal"
+  },
+  "listsSuggestChanges": {
+    "message": "proponer cambios"
+  },
+  "listsUsingBundled": {
+    "message": "Usando la copia incluida en Anubis hasta que se pueda actualizar ($1)."
+  },
+  "listsLastUpdateFailed": {
+    "message": "La última actualización falló: $1."
+  },
+  "listsSkippedLines_one": {
+    "message": "$1 línea omitida: Anubis todavía no sabe leer esa sintaxis."
+  },
+  "listsSkippedLines_other": {
+    "message": "$1 líneas omitidas: Anubis todavía no sabe leer esa sintaxis."
+  },
+  "listsUpdateNow": {
+    "message": "Actualizar ahora"
+  },
+  "listsUpdateOne": {
+    "message": "Actualizar $1"
+  },
+  "listsViewFile": {
+    "message": "Ver el archivo"
+  },
+  "listsViewOne": {
+    "message": "Ver $1"
+  },
+  "listsUnsubscribe": {
+    "message": "Cancelar la suscripción"
+  },
+  "listsUnsubscribeOne": {
+    "message": "Cancelar la suscripción a $1"
+  },
+  "listLensTitle": {
+    "message": "Una lente oculta los resultados que la lista no menciona"
+  },
+  "listKindLens": {
+    "message": "lente"
+  },
+  "listKindBuiltin": {
+    "message": "integrada"
+  },
+  "listFormatAnubis": {
+    "message": "lista de Anubis"
+  },
+  "listFormatGoggle": {
+    "message": "Brave Goggle"
+  },
+  "listFormatUblacklist": {
+    "message": "conjunto de reglas de uBlacklist"
+  },
+  "listFormatDomains": {
+    "message": "lista de dominios"
+  },
+  "timeNever": {
+    "message": "nunca"
+  },
+  "timeJustNow": {
+    "message": "justo ahora"
+  },
+  "tagsIntro": {
+    "message": "Las listas etiquetan resultados. Tú decides qué hace cada etiqueta: seguir la lista, solo mostrarla, resaltarla, o fijar, subir, bajar u ocultar lo que la lleva. Las listas que usan el mismo nombre de etiqueta la comparten."
+  },
+  "tagActionList": {
+    "message": "Seguir las listas"
+  },
+  "tagActionLabel": {
+    "message": "Solo etiqueta"
+  },
+  "tagActionHighlight": {
+    "message": "Resaltar"
+  },
+  "tagActionFor": {
+    "message": "Qué hacer con los resultados con la etiqueta $1"
+  },
+  "tagMarksNone": {
+    "message": "Ningún sitio la lleva todavía."
+  },
+  "tagMarks": {
+    "message": "Marca $1."
+  },
+  "tagMarksYours_one": {
+    "message": "$1 de tus sitios"
+  },
+  "tagMarksYours_other": {
+    "message": "$1 de tus sitios"
+  },
+  "tagMarksFromList_one": {
+    "message": "$1 sitio de $2"
+  },
+  "tagMarksFromList_other": {
+    "message": "$1 sitios de $2"
+  },
+  "tagEffectLabel": {
+    "message": "$1 Solo una etiqueta: su clasificación no cambia."
+  },
+  "tagEffectHighlight": {
+    "message": "$1 Los resalta con el color de la etiqueta."
+  },
+  "tagEffectRaise": {
+    "message": "$1 Los sube en tus búsquedas."
+  },
+  "tagEffectLower": {
+    "message": "$1 Los baja en tus búsquedas."
+  },
+  "tagEffectPin": {
+    "message": "$1 Los fija arriba en tus búsquedas."
+  },
+  "tagEffectHide": {
+    "message": "$1 Los oculta en tus búsquedas."
+  },
+  "tagEffectOneList": {
+    "message": "$1 $2 $3 de ellos."
+  },
+  "tagEffectLists": {
+    "message": "$1 Las listas $2 de ellos."
+  },
+  "tagListRaises_one": {
+    "message": "sube $1"
+  },
+  "tagListRaises_other": {
+    "message": "sube $1"
+  },
+  "tagListLowers_one": {
+    "message": "baja $1"
+  },
+  "tagListLowers_other": {
+    "message": "baja $1"
+  },
+  "tagListHides_one": {
+    "message": "oculta $1"
+  },
+  "tagListHides_other": {
+    "message": "oculta $1"
+  },
+  "tagListsRaise_one": {
+    "message": "suben $1"
+  },
+  "tagListsRaise_other": {
+    "message": "suben $1"
+  },
+  "tagListsLower_one": {
+    "message": "bajan $1"
+  },
+  "tagListsLower_other": {
+    "message": "bajan $1"
+  },
+  "tagListsHide_one": {
+    "message": "ocultan $1"
+  },
+  "tagListsHide_other": {
+    "message": "ocultan $1"
+  },
+  "tagSitesToTag": {
+    "message": "Sitios para etiquetar como $1"
+  },
+  "tagAddSite": {
+    "message": "Añadir sitio"
+  },
+  "tagNotSite": {
+    "message": "«$1» no parece un sitio."
+  },
+  "tagTypeSite": {
+    "message": "Escribe un sitio, como fandom.com."
+  },
+  "tagSiteNote": {
+    "message": "$1: $2"
+  },
+  "tagMoreSites_one": {
+    "message": "$1 más"
+  },
+  "tagMoreSites_other": {
+    "message": "$1 más"
+  },
+  "tagFromList": {
+    "message": "$1: $2."
+  },
+  "tagName": {
+    "message": "Nombre de la etiqueta"
+  },
+  "tagNameShort": {
+    "message": "Nombre"
+  },
+  "tagDescription": {
+    "message": "Descripción"
+  },
+  "tagDescriptionPlaceholder": {
+    "message": "Qué significa, opcional"
+  },
+  "tagMeaning": {
+    "message": "Qué significa $1"
+  },
+  "tagYourSites": {
+    "message": "Tus sitios con esta etiqueta"
+  },
+  "tagNoSites": {
+    "message": "Ninguno todavía. Añade uno aquí, o usa el botón ⚖ de un resultado de búsqueda."
+  },
+  "tagFromYourLists": {
+    "message": "De tus listas"
+  },
+  "tagColour": {
+    "message": "Color"
+  },
+  "tagColourOf": {
+    "message": "Color de $1"
+  },
+  "tagShowUnder": {
+    "message": "Mostrar $1 bajo los resultados"
+  },
+  "tagShowTitle": {
+    "message": "Mostrar esta etiqueta bajo los resultados"
+  },
+  "tagEdit": {
+    "message": "Editar"
+  },
+  "tagDone": {
+    "message": "Listo"
+  },
+  "tagEditLabel": {
+    "message": "Editar $1 y sus sitios"
+  },
+  "tagDelete": {
+    "message": "Eliminar «$1»"
+  },
+  "tagNewHeading": {
+    "message": "Nueva etiqueta"
+  },
+  "tagNewHint": {
+    "message": "Tus etiquetas se guardan en tu lista, así que van con ella cuando la publicas."
+  },
+  "tagNewHelp": {
+    "message": "Añadir sitios a una etiqueta"
+  },
+  "tagNewPlaceholder": {
+    "message": "Nombre, como «Basura de IA»"
+  },
+  "tagNewColour": {
+    "message": "Color de la nueva etiqueta"
+  },
+  "tagCreate": {
+    "message": "Crear etiqueta"
+  },
+  "tagNameInvalid": {
+    "message": "Ponle a la etiqueta un nombre con al menos una letra o un número."
+  },
+  "tagExists": {
+    "message": "Ya hay una etiqueta llamada «$1»."
+  },
+  "tagYoursHeading": {
+    "message": "Tus etiquetas"
+  },
+  "tagListsHeading": {
+    "message": "Etiquetas de las listas"
+  },
+  "tagListsHint": {
+    "message": "Tus listas las definen. Decide qué hace cada una y añade tus propios sitios a cualquiera. Si una lista deja una etiqueta que usan tus sitios, pasa a Tus etiquetas."
+  },
+  "tagSourceLists": {
+    "message": "De $1"
+  },
+  "tagNoneYours": {
+    "message": "Todavía no tienes etiquetas propias. Crea una arriba."
+  },
+  "quoted": {
+    "message": "«$1»"
+  },
+  "reasonPins": {
+    "message": "lo fija"
+  },
+  "reasonKeepsNormal": {
+    "message": "lo mantiene en normal"
+  },
+  "reasonHides": {
+    "message": "lo oculta"
+  },
+  "reasonRaises": {
+    "message": "lo sube $1"
+  },
+  "reasonLowers": {
+    "message": "lo baja $1"
+  },
+  "reasonTags": {
+    "message": "lo etiqueta como $1"
+  },
+  "reasonMentions": {
+    "message": "lo menciona"
+  },
+  "reasonLens": {
+    "message": "no lo incluye, así que está oculto"
+  },
+  "reasonYourTagSettings": {
+    "message": "Tus ajustes de etiquetas"
+  },
+  "menuReason": {
+    "message": "$1 $2."
+  },
+  "choicePin": {
+    "message": "lo fijan por $1"
+  },
+  "choiceHide": {
+    "message": "lo ocultan por $1"
+  },
+  "choiceRaise_one": {
+    "message": "lo suben $2 por $3"
+  },
+  "choiceRaise_other": {
+    "message": "lo suben $2 cada una por $3"
+  },
+  "choiceLower_one": {
+    "message": "lo bajan $2 por $3"
+  },
+  "choiceLower_other": {
+    "message": "lo bajan $2 cada una por $3"
+  },
+  "choiceTotal": {
+    "message": "$1, $2"
+  },
+  "choiceNetUp_one": {
+    "message": "así que sube $1 puesto"
+  },
+  "choiceNetUp_other": {
+    "message": "así que sube $1 puestos"
+  },
+  "choiceNetDown_one": {
+    "message": "así que baja $1 puesto"
+  },
+  "choiceNetDown_other": {
+    "message": "así que baja $1 puestos"
+  },
+  "choiceNetSame": {
+    "message": "así que se queda donde estaba"
+  },
+  "lineBadTagDefinition": {
+    "message": "Definición de etiqueta no válida: $1"
+  },
+  "lineNeedsPattern": {
+    "message": "La instrucción necesita un patrón o un sitio"
+  },
+  "lineTooLong": {
+    "message": "La instrucción tiene más de $1 caracteres"
+  },
+  "lineBadSite": {
+    "message": "Sitio no válido: $1"
+  },
+  "lineBadStrength": {
+    "message": "$1 tiene que estar entre 1 y $2"
+  },
+  "lineBadTagId": {
+    "message": "Identificador de etiqueta no válido: $1"
+  },
+  "lineUnknownOption": {
+    "message": "Opción desconocida: $1"
+  },
+  "lineEmptyPattern": {
+    "message": "Patrón vacío"
+  },
+  "lineTooManyWildcards": {
+    "message": "Como máximo $1 comodines (*) por instrucción"
+  },
+  "lineTooManySeparators": {
+    "message": "Como máximo $1 separadores (^) por instrucción"
+  },
+  "lineIfGuard": {
+    "message": "Las condiciones @if todavía no son compatibles"
+  },
+  "lineRegexTooLong": {
+    "message": "La expresión regular tiene más de $1 caracteres"
+  },
+  "lineRegexFreeze": {
+    "message": "La expresión regular podría congelar las páginas de búsqueda (un grupo repetido se repite dentro): $1"
+  },
+  "lineBadRegex": {
+    "message": "Expresión regular no válida: $1"
+  },
+  "lineUnsupported": {
+    "message": "Regla no compatible: $1"
+  },
+  "lineBadHost": {
+    "message": "Host no válido: $1"
+  },
+  "lineMatchesEverything": {
+    "message": "La regla coincide con todo"
+  },
+  "lineNotDomain": {
+    "message": "No es un dominio: $1"
+  },
+  "listTooBig": {
+    "message": "La lista ocupa más de $1 MB"
+  },
+  "listIsWebPage": {
+    "message": "Se recibió una página web, no una lista. Usa la URL del archivo sin formato."
+  },
+  "listTimedOut": {
+    "message": "Se agotó el tiempo"
+  },
+  "listNoUsableRules": {
+    "message": "No hay reglas utilizables (línea $1: $2)"
+  },
+  "listNoRules": {
+    "message": "No se encontraron reglas"
+  },
+  "backupNotBackup": {
+    "message": "Esto no es una copia de seguridad de Anubis."
+  },
+  "themeAuto": {
+    "message": "Automático"
+  },
+  "themeLight": {
+    "message": "Claro"
+  },
+  "themeDark": {
+    "message": "Oscuro"
+  },
+  "themeAutoTitle": {
+    "message": "Tema automático"
+  },
+  "themeLightTitle": {
+    "message": "Tema claro"
+  },
+  "themeDarkTitle": {
+    "message": "Tema oscuro"
+  },
+  "personalListName": {
+    "message": "Tu lista"
+  },
+  "importHighlightTag": {
+    "message": "Resaltado $1"
+  },
+  "tagDeleted_one": {
+    "message": "Se eliminó la etiqueta «$2» y se quitó de $1 sitio."
+  },
+  "tagDeleted_other": {
+    "message": "Se eliminó la etiqueta «$2» y se quitó de $1 sitios."
+  },
+  "listsUnsubscribed": {
+    "message": "Cancelada la suscripción a $1."
+  }
+}

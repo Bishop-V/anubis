@@ -13,7 +13,7 @@ Record what was tried and what failed, not just what shipped, in `docs/experimen
 ## Stack
 
 - [WXT](https://wxt.dev) 0.21 with Vite and TypeScript, building Chrome MV3 and Firefox MV2 from one codebase. No UI framework: all DOM is built with `h()` from `utils/dom.ts`, and text from lists always goes in as text nodes.
-- Interface text lives in `public/_locales/en/messages.json`, used through `t()`, `tn()`, `tJoin()` and `localizePage()` from `utils/i18n.ts`. Put new text there, not in code.
+- Interface text lives in `public/_locales/en/messages.json`, used through `t()`, `tn()`, `tJoin()` and `localizePage()` from `utils/i18n.ts`. Put new text there, not in code. Translations in `locales/` are machine made and say so in the interface and docs; changing English leaves them stale, shown in English, until retranslated (`DEVELOPMENT.md`, "Translations").
 - Storage uses WXT's `storage` (`#imports`); the keys are in `DEVELOPMENT.md`, "Where things are stored".
 
 ## Commands

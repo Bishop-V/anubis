@@ -3,6 +3,10 @@
     "message": "en",
     "description": "This translation's language code (en, de, pt_BR…), used as the page's lang attribute."
   },
+  "machineTranslatedTitle": { "message": "Machine translated.", "description": "Starts the note shown on Anubis's own pages in any language but English. Say that a machine made this translation." },
+  "machineTranslatedNote": { "message": "A machine translated Anubis into your browser's language, and the translation isn't fully supported: some of it may be wrong or unclear, so use it with caution. To see Anubis in English, set your browser's language to English.", "description": "After machineTranslatedTitle, in Settings and on the welcome page, in any language but English." },
+  "machineTranslatedShort": { "message": "Use it with caution.", "description": "After machineTranslatedTitle at the bottom of the toolbar popup, in any language but English: a short form of machineTranslatedNote." },
+  "machineTranslatedHelp": { "message": "Help correct it", "description": "A link after the machine translation note, to the wiki page on translating Anubis." },
   "extDescription": {
     "message": "Weighs your search results: tag, rerank, and hide sites, with lists anyone can publish.",
     "description": "Shown in the stores and the browser's add-ons page. At most 132 characters."

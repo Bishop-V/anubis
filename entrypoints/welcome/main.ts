@@ -1,3 +1,4 @@
+import { machineTranslationNote } from '@/utils/translated';
 import '@/assets/theme.css';
 import './style.css';
 import { browser } from '#imports';
@@ -115,6 +116,8 @@ function renderScales() {
 
 async function main() {
   localizePage();
+  const note = machineTranslationNote();
+  if (note) $('main').prepend(note);
   renderScales();
   $<HTMLAnchorElement>('#guide').href = guide();
   $<HTMLAnchorElement>('#privacy').href = guide('guide/privacy');

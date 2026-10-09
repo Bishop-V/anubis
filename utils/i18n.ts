@@ -1,9 +1,10 @@
 import { browser } from '#imports';
 
-// Interface text lives in public/_locales/<language>/messages.json, the browsers'
-// own format, which translation tools (Weblate, Crowdin) read as they are. English
-// is the source. The browser picks the user's language, and any message a
-// translation lacks falls back to English.
+// Interface text lives in public/_locales/en/messages.json, the browsers' own format,
+// which translation tools (Weblate, Crowdin) read as they are. English is the source;
+// translations are in locales/<language>, and the build ships each message only while
+// its English is unchanged (scripts/locales.mjs). The browser picks the user's
+// language, and any message a translation lacks falls back to English.
 //
 // Counts use plural forms: `<key>_one`, `<key>_other`, plus `_zero`, `_two`,
 // `_few` or `_many` where a language needs them (Intl.PluralRules names them).
@@ -23,8 +24,8 @@ export function t(key: MessageKey, ...subs: (string | number)[]): string {
   return getMessage(key, subs.map(String)) || key;
 }
 
-/** The language the messages are in, as a BCP 47 tag (pt-BR) for Intl; English if a translation's code is wrong. */
-const lang = (): string => {
+/** The language the messages are in, as a BCP 47 tag (pt-BR) for Intl and `lang`; English if a translation's code is wrong. */
+export const lang = (): string => {
   try {
     return Intl.getCanonicalLocales(t('langCode').replace('_', '-'))[0] ?? 'en';
   } catch {

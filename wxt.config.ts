@@ -1,4 +1,5 @@
 import { defineConfig } from 'wxt';
+import { english, freshMessages, languages } from './scripts/locales.mjs';
 import { DOCS_URL } from './utils/links';
 
 // WXT generates manifest.json from this config + the files in entrypoints/.
@@ -13,9 +14,19 @@ export default defineConfig({
   zip: {
     excludeSources: ['docs/**', 'e2e/**', 'store/**', '.claude/**', 'CLAUDE.local.md'],
   },
+  hooks: {
+    // Translations (locales/<lang>) ship only the messages whose English hasn't changed
+    // since they were translated; the rest show in English (scripts/locales.mjs).
+    'build:publicAssets': (_wxt, files) => {
+      const en = english();
+      for (const lang of languages()) {
+        files.push({ relativeDest: `_locales/${lang}/messages.json`, contents: JSON.stringify(freshMessages(lang, en)) });
+      }
+    },
+  },
   manifest: ({ browser, manifestVersion }) => ({
     name: 'Anubis',
-    // Text in the manifest comes from public/_locales/<language>/messages.json.
+    // Text in the manifest comes from _locales/<language>/messages.json: English in public/, translations from locales/.
     default_locale: 'en',
     description: '__MSG_extDescription__',
     // The wiki: the browser links to it from the extension's details page.
