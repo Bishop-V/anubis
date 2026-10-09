@@ -53,7 +53,7 @@ The Chinese interface is `locales/zh_CN/messages.json`, machine translated from 
 
 ## Names to match
 
-- **Google (google.com in zh-CN):** “AI 概览”, “AI 模式”, “相关问题” (People also ask), “头条新闻” (Top stories), “讨论和论坛”, the tabs “网页”, “全部”, “图片”. “相关问题” is the least certain: check it against a live Google page in Chinese.
+- **Google (google.com in zh-CN):** “AI 概览”, “AI 模式”, “相关问题” (People also ask), “头条新闻” (Top stories), “讨论和论坛”, the tabs “网页”, “全部”, “图片”. For People also ask, keep “相关问题”: it matches how Google names the panel in other languages (Ähnliche Fragen, Похожие вопросы, 관련 질문), it is the name Chinese SEO write-ups give it, and Taiwanese ones note Google now shows 相關問題 there too. “其他人也问了以下问题” is a copy of the older Traditional heading (其他人也問了以下問題). Still confirm it on a live zh-CN Google page when one can be reached.
 - **Firefox:** “扩展” (the puzzle-piece button and the Android menu entry), “附加组件” (the sync option), “立即同步”, “固定到工具栏”.
 - **Chrome:** “扩展程序” (the puzzle piece). **Edge:** “扩展”. **Opera:** “扩展”.
 - Product names stay: Anubis, Brave Goggles, uBlacklist, HOHSER, Koofr, Nextcloud, Duck.ai, WebDAV. Brave's “Find elsewhere” and Startpage's “Block creepy ads, not private search” stay English, since those sites show no Chinese version.
@@ -68,7 +68,7 @@ The Chinese interface is `locales/zh_CN/messages.json`, machine translated from 
   - `tagEffectOneList`: “……网站。Official docs 提升其中 51 个和隐藏其中 3 个。”; `tagEffect*` name their subject, 这些网站, since the frame's first sentence ends in 。.
   - `menuReason` is “$1：$2。”, so it reads the same for a Latin list name and for 你的列表 or 你的标签设置: “Docs list：将其提升 3 位和为其加上“Docs”标签。”
   - `choiceRaise` and `choiceLower` have only an `_other` form, used for one tag too, so “each” is “（每个标签 $2 位）”, which still reads for one tag.
-  - `popupHintLists`: “已提升（由 Official docs 决定）。”, because `$1` is already a past-tense ranking (已…).
+  - `popupHintLists`: “已提升（依据：Official docs）。”, because `$1` is already a past-tense ranking (已…). `$2` is list names or 你的标签设置 (`popupYourTagSettings`), so the colon keeps it reading without a stray space either way; “由 $2 决定” gave “由 你的标签设置 决定”.
 - **Plural forms.** Chinese uses only `_other`. A count needs a measure word: 个 for sites, results, lists, tags, and panels; 条 for rules and instructions; 行 for lines; 页 for pages; 位 for places in a ranking; 排 for a row of buttons. Never write an `_one` form, and never make an `_other` message that reads wrongly for 1.
 - **Overused 被 and pronouns.** Machine output piles up 被 passives and 它/它们. Prefer 将其… for actions on one result, and name the subject (这些网站) where English says “them”.
 - **你的列表 versus 你订阅的列表.** English “your lists” (plural) means the subscribed lists; translated literally it collides with “your list”, the personal one. Check every “whatever your lists say”, “from your lists”, and “Your lists” heading.
