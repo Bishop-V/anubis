@@ -55,7 +55,7 @@ The Italian interface is `locales/it/messages.json`, machine translated from `pu
 ## Names to match
 
 - **Google (google.it):** «Panoramica AI», «Modalità AI», «Altre domande», «Notizie principali», «Discussioni e forum», the tabs «Web», «Tutti», «Immagini». These are the best-known names, not checked against a live Italian Google page: confirm them first.
-- **Firefox:** «Componenti aggiuntivi», «Sincronizza adesso», «Fissa nella barra degli strumenti», the «Estensioni» button (the puzzle piece) and the gear «ingranaggio». Firefox for Android: the menu's «Estensioni».
+- **Firefox** (checked against Firefox's Italian localisation): the sync option «Componenti aggiuntivi», «Sincronizza adesso», the extension menu's Pin to Toolbar «Aggiungi alla barra degli strumenti» (not «Fissa…»), the «Estensioni» button (the puzzle piece) and the gear «ingranaggio». Firefox for Android: the menu's «Estensioni».
 - **Chrome and Edge:** «Estensioni» (the puzzle piece, «il pezzo di puzzle»), the pin «la puntina», Edge's eye «l’occhio». Opera's cube is «il cubo».
 - Product names stay. Quoted English UI from other sites stays English when the site shows no Italian version: Brave's «Find elsewhere», Startpage's «Block creepy ads, not private search».
 
@@ -69,7 +69,9 @@ The Italian interface is `locales/it/messages.json`, machine translated from `pu
   - `tagMarks` with `tagEffect*`: «Contrassegna 2 dei tuoi siti e 60 siti di Official docs. Li alza nelle tue ricerche.» «Li» is the masculine plural for the sites.
   - `tagEffectOneList` is «$1 $2 ne $3.», and `tagEffectLists` «$1 Le liste ne $2.»: the partitive «ne» stands for «of them» and carries over every joined verb: «Official docs ne alza 51 e nasconde 3.», «Le liste ne alzano 51 e abbassano 1.» The `tagList*` parts are third person singular, the `tagLists*` parts plural.
   - `menuReason` with `reason*`: «Official docs lo alza di 3 e lo etichetta come «Docs» e «Ref».» «lo» is the result. After `reasonYourTagSettings` the `choice*` verbs are plural: «Le tue impostazioni delle etichette lo alzano di 5 ciascuna per «A» e «B» e lo abbassano di 5 per «C», quindi sale di 5 posizioni.» «ciascuna» agrees with «etichetta».
+  - `importRead` is «Letto come $2. Siti aggiunti: $1; aggiornati: $3.»: the plural follows $1, so a participle agreeing with $3 («e 1 aggiornati») would break.
   - `popupHintLists` is «$1 secondo $2.» on purpose: «da» would have to contract with the article of `popupYourTagSettings` («dalle tue impostazioni»), which a placeholder can't do. «Nascosto secondo Official docs e Copycats.», «Alzato secondo le tue impostazioni delle etichette.»
+  - `popupTagFrom` is «Secondo $1» for the same reason: its lists can include «La tua lista», and «Da La tua lista» can't contract.
   - `weighLabelRanked` takes a chip in lower case: «Nascondi, classifica o etichetta fandom.com (abbassato)».
 - **Articles before numbers.** «i 8» is wrong («gli 8», «gli 11»), and a placeholder can't choose. Messages avoid an article right before a number: «com’erano tutti e $1 i risultati», «$1 KB su $2 KB», «è più lunga di $1 caratteri». Keep it so in new messages.
 - **Prepositions before names.** «a A» needs a euphonic «ad», which a placeholder can't add. `menuSuggest` and `menuReport` say «a chi cura $1» (whoever maintains the lists), which also reads naturally. «ad Anubis» is written out, since the name is known.

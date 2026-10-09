@@ -207,7 +207,7 @@
     "message": "$1 が $2 ページ目にも同じ結果を返したため、これ以上の結果はありません。"
   },
   "loadMoreBusy": {
-    "message": "$2 ページ目の前に、$1 から速度を落とすよう求められました。1 分ほどしてからもう一度お試しください。"
+    "message": "$2 ページ目を読み込む前に、$1 から速度を落とすよう求められました。1 分ほどしてからもう一度お試しください。"
   },
   "loadMoreRefused": {
     "message": "$1 が $2 ページ目の送信を拒否しました。"
@@ -315,7 +315,7 @@
     "message": "また、$1を削除しました。"
   },
   "summaryRemovedOnly": {
-    "message": "Anubis は $1を削除しました。"
+    "message": "Anubis は、$1を削除しました。"
   },
   "summaryShortActed": {
     "message": "Anubis は $2中 $1 件を変更しました。"
@@ -420,13 +420,13 @@
     "message": "元に戻す"
   },
   "menuSuggest": {
-    "message": "リストに含めるべきですか？$1 に提案してください。"
+    "message": "リストに含めるべきですか？　$1 に提案してください。"
   },
   "menuSuggestTitle": {
     "message": "$2 の Issue トラッカーで $1 を提案します"
   },
   "menuReport": {
-    "message": "間違っていますか？$1 に報告してください。"
+    "message": "間違っていますか？　$1 に報告してください。"
   },
   "menuMatchedRule": {
     "message": "一致したルール（$1 行目）"
@@ -846,7 +846,7 @@
     "message": "サイトをインポート"
   },
   "importIntro": {
-    "message": "uBlacklist や HOHSER から移行しますか？ルールやエクスポートをここに貼り付けると、サイトがマイリストに追加されます。非表示は非表示のまま、HOHSER の部分的な非表示は「格下げ」になり、ハイライトの色はハイライトするタグになります。"
+    "message": "uBlacklist や HOHSER から移行しますか？　ルールやエクスポートをここに貼り付けると、サイトがマイリストに追加されます。非表示は非表示のまま、HOHSER の部分的な非表示は「格下げ」になり、ハイライトの色はハイライトするタグになります。"
   },
   "importHelp": {
     "message": "各ツールのルールの変換先"
@@ -870,7 +870,7 @@
     "message": "uBlacklist のルール"
   },
   "importSourceGoggle": {
-    "message": "Goggle"
+    "message": "Goggle 形式のリスト"
   },
   "importSourceAnubis": {
     "message": "Anubis リスト"
@@ -879,7 +879,7 @@
     "message": "ドメインのリスト"
   },
   "importRead_other": {
-    "message": "$2 として読み込みました：$1 件のサイトを追加し、$3 件を更新しました。"
+    "message": "$2として読み込みました：$1 件のサイトを追加し、$3 件を更新しました。"
   },
   "importSkipped_other": {
     "message": "アドレスのパターンや未対応の構文を含む $1 件のルールを除外しました。それらを残すには、元のリストを購読してください。"
@@ -1149,7 +1149,7 @@
     "message": "Anubis のディレクトリと、より広いコミュニティから。"
   },
   "listsShare": {
-    "message": "共有したいリストを作りましたか？$1 へのプルリクエストで、ディレクトリに追加してください。"
+    "message": "共有したいリストを作りましたか？　$1 へのプルリクエストで、ディレクトリに追加してください。"
   },
   "listsNeedHttps": {
     "message": "リストは https で配信されている必要があります。"

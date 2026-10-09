@@ -171,7 +171,7 @@
     "message": "da $1"
   },
   "popupTagFrom": {
-    "message": "Da $1"
+    "message": "Secondo $1"
   },
   "popupTagSite": {
     "message": "Etichetta $1 come «$2»"
@@ -606,7 +606,7 @@
     "message": "Premi il pulsante Estensioni (il cubo) accanto alla barra degli indirizzi, poi la puntina accanto ad Anubis."
   },
   "welcomePinFirefox": {
-    "message": "Premi il pulsante Estensioni (il pezzo di puzzle) accanto alla barra degli indirizzi, poi l’ingranaggio accanto ad Anubis, e scegli «Fissa nella barra degli strumenti»."
+    "message": "Premi il pulsante Estensioni (il pezzo di puzzle) accanto alla barra degli indirizzi, poi l’ingranaggio accanto ad Anubis, e scegli «Aggiungi alla barra degli strumenti»."
   },
   "welcomePinAndroid": {
     "message": "Anubis è nel menu del browser, sotto Estensioni."
@@ -1011,13 +1011,13 @@
     "message": "una lista di domini"
   },
   "importRead_one": {
-    "message": "Letto come $2: $1 sito aggiunto e $3 aggiornati."
+    "message": "Letto come $2. Siti aggiunti: $1; aggiornati: $3."
   },
   "importRead_other": {
-    "message": "Letto come $2: $1 siti aggiunti e $3 aggiornati."
+    "message": "Letto come $2. Siti aggiunti: $1; aggiornati: $3."
   },
   "importRead_many": {
-    "message": "Letto come $2: $1 siti aggiunti e $3 aggiornati."
+    "message": "Letto come $2. Siti aggiunti: $1; aggiornati: $3."
   },
   "importSkipped_one": {
     "message": "$1 regola con schemi di indirizzo o sintassi non supportata è stata esclusa; iscriviti alla lista originale per mantenerla."
