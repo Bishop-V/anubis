@@ -555,10 +555,10 @@
     "message": "Deine Listen"
   },
   "welcomeListsIntro": {
-    "message": "Listen taggen, werten auf, werten ab oder blenden Websites für dich aus. Du startest mit diesen:"
+    "message": "Listen taggen Websites für dich, werten sie auf oder ab oder blenden sie aus. Du startest mit diesen:"
   },
   "welcomeListsNone": {
-    "message": "Listen taggen, werten auf, werten ab oder blenden Websites für dich aus. Du hast noch keine abonniert."
+    "message": "Listen taggen Websites für dich, werten sie auf oder ab oder blenden sie aus. Du hast noch keine abonniert."
   },
   "welcomeListsMore": {
     "message": "Schalte diese in den Einstellungen aus oder finde dort weitere Listen."
@@ -594,7 +594,7 @@
     "message": "Welche Browser-Einstellungen du prüfen solltest"
   },
   "syncUsage": {
-    "message": "Sie belegen $1 KB der $2 KB, die die Synchronisierung bietet."
+    "message": "Das belegt $1 KB der $2 KB, die die Synchronisierung bietet."
   },
   "syncTooBig": {
     "message": "Deine Liste ist zu groß für die Synchronisierung und wird deshalb nur auf diesem Gerät gespeichert. Deine Einstellungen, Tag-Einstellungen und Abonnements werden weiterhin synchronisiert."
@@ -1359,7 +1359,7 @@
     "message": "$1 Websites aus $2"
   },
   "tagEffectLabel": {
-    "message": "$1 Nur eine Beschriftung: Ihre Einstufung bleibt gleich."
+    "message": "$1 Nur eine Beschriftung: Die Einstufung der Websites bleibt gleich."
   },
   "tagEffectHighlight": {
     "message": "$1 Hebt sie in der Farbe des Tags hervor."

@@ -159,7 +159,7 @@
     "message": " ($1)"
   },
   "tagListsPickerHint": {
-    "message": "Adicionar uma muda só a sua lista."
+    "message": "Adicionar uma delas muda só a sua lista."
   },
   "tagFromSource": {
     "message": "de $1"
@@ -1041,16 +1041,16 @@
     "message": "No Google"
   },
   "cleanupWebTab": {
-    "message": "Sempre abrir a guia Web"
+    "message": "Sempre abrir a aba Web"
   },
   "cleanupWebTabHint": {
-    "message": "Manda toda busca do Google para a guia Web: links simples, sem Visão geral criada por IA, vídeos ou outros painéis, mesmo os que o Anubis não reconhece. Para sair dela em uma busca, escolha Todas acima dos resultados."
+    "message": "Manda toda busca do Google para a aba Web: links simples, sem Visão geral criada por IA, vídeos ou outros painéis, mesmo os que o Anubis não reconhece. Para sair dela em uma busca, escolha Todas acima dos resultados."
   },
   "cleanupAi": {
     "message": "Respostas de IA"
   },
   "cleanupAiHint": {
-    "message": "A Visão geral criada por IA e a guia Modo IA do Google, as respostas assistidas por IA e o Duck.ai do DuckDuckGo, as respostas de IA do Bing e as do Brave."
+    "message": "A Visão geral criada por IA e a aba Modo IA do Google, as respostas assistidas por IA e o Duck.ai do DuckDuckGo, as respostas de IA do Bing e as do Brave."
   },
   "cleanupVideos": {
     "message": "Painéis de vídeos"
@@ -1080,7 +1080,7 @@
     "message": "Fileiras de imagens"
   },
   "cleanupImagesHint": {
-    "message": "Fileiras de imagens entre os resultados. A guia Imagens continua funcionando."
+    "message": "Fileiras de imagens entre os resultados. A aba Imagens continua funcionando."
   },
   "cleanupRelated": {
     "message": "Pesquisas relacionadas"
@@ -1188,7 +1188,7 @@
     "message": "Atualizando…"
   },
   "listsAllChecked": {
-    "message": "Todas as listas verificadas."
+    "message": "Todas as listas foram verificadas em busca de atualizações."
   },
   "listsAddHeading": {
     "message": "Adicionar uma lista"

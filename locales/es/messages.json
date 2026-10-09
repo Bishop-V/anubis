@@ -96,7 +96,7 @@
     "message": "Bajar $1 en los resultados de búsqueda"
   },
   "popupRankNormal": {
-    "message": "Clasificar $1 con normalidad en los resultados de búsqueda"
+    "message": "Clasificar $1 como normal en los resultados de búsqueda"
   },
   "popupRankRaise": {
     "message": "Subir $1 en los resultados de búsqueda"
@@ -438,31 +438,31 @@
     "message": "y $1 más"
   },
   "summaryChangedHide": {
-    "message": "$1 oculto."
+    "message": "Se ocultó $1."
   },
   "summaryChangedLower": {
-    "message": "$1 bajado."
+    "message": "Se bajó $1."
   },
   "summaryChangedRaise": {
-    "message": "$1 subido."
+    "message": "Se subió $1."
   },
   "summaryChangedPin": {
-    "message": "$1 fijado."
+    "message": "Se fijó $1."
   },
   "summaryChangedAllow": {
-    "message": "$1 puesto en Normal."
+    "message": "Se puso $1 en Normal."
   },
   "summaryChangedNormal": {
     "message": "Se quitó tu clasificación de $1."
   },
   "summaryChangedTagOn": {
-    "message": "$1 etiquetado como «$2»."
+    "message": "Se etiquetó $1 como «$2»."
   },
   "summaryChangedTagOff": {
     "message": "Se quitó la etiqueta «$2» de $1."
   },
   "summaryChangedSite": {
-    "message": "$1 cambiado en tu lista."
+    "message": "Se cambió $1 en tu lista."
   },
   "summaryUndo": {
     "message": "Deshacer"
@@ -576,19 +576,19 @@
     "message": "Sincronización"
   },
   "syncIntro": {
-    "message": "Tu lista y tus ajustes en tus otros ordenadores y en tus otros navegadores."
+    "message": "Tu lista y tus ajustes en tus otros equipos y en tus otros navegadores."
   },
   "syncBrowserHeading": {
     "message": "Sincronización del navegador"
   },
   "syncFirefox": {
-    "message": "Tu lista, tus ajustes, tus elecciones de etiquetas y tus suscripciones se guardan en el almacenamiento sincronizado de Firefox. Firefox los copia a tus otros ordenadores cuando has iniciado sesión en Firefox con «Complementos» marcado en sus ajustes de sincronización. Sincroniza aproximadamente cada 10 minutos, o cuando eliges «Sincronizar ahora»."
+    "message": "Tu lista, tus ajustes, tus elecciones de etiquetas y tus suscripciones se guardan en el almacenamiento sincronizado de Firefox. Firefox los copia a tus otros equipos cuando has iniciado sesión en Firefox con «Complementos» marcado en sus ajustes de sincronización. Sincroniza aproximadamente cada 10 minutos, o cuando eliges «Sincronizar ahora»."
   },
   "syncFirefoxAndroid": {
     "message": "Firefox para Android no sincroniza los datos de los complementos, así que tu lista, tus ajustes, tus elecciones de etiquetas y tus suscripciones se quedan en este dispositivo. Para sincronizarlos, conecta un servidor WebDAV más abajo."
   },
   "syncChrome": {
-    "message": "Tu lista, tus ajustes, tus elecciones de etiquetas y tus suscripciones se guardan en el almacenamiento sincronizado del navegador. El navegador los copia a tus otros ordenadores cuando has iniciado sesión en él con la sincronización de extensiones activada."
+    "message": "Tu lista, tus ajustes, tus elecciones de etiquetas y tus suscripciones se guardan en el almacenamiento sincronizado del navegador. El navegador los copia a tus otros equipos cuando has iniciado sesión en él con la sincronización de extensiones activada."
   },
   "syncBrowserHelp": {
     "message": "Qué ajustes del navegador revisar"
@@ -813,7 +813,7 @@
     "message": "Desactivado: solo se cargan más resultados cuando pulsas «Cargar más resultados»."
   },
   "deeperTipTime_one": {
-    "message": "Añade unos $1 segundo a cada búsqueda."
+    "message": "Añade aproximadamente $1 segundo a cada búsqueda."
   },
   "deeperTipTime_other": {
     "message": "Añade unos $1 segundos a cada búsqueda."
