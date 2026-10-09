@@ -48,6 +48,7 @@ The Indonesian interface is `locales/id/messages.json`, machine translated from 
 | Undo | Urungkan |
 | sync, backup | sinkronisasi (sinkronkan), cadangan (cadangkan) |
 | passphrase, password | frasa sandi, sandi |
+| end to end (encryption) | end-to-end (dienkripsi secara end-to-end), as Google and WhatsApp say; never *secara menyeluruh*, which means "thoroughly" |
 | settings | setelan |
 | tab | tab |
 | on / off | aktif / nonaktif (turn on: aktifkan) |
@@ -60,6 +61,7 @@ The Indonesian interface is `locales/id/messages.json`, machine translated from 
 - **Google (google.co.id):** "Ringkasan AI" (AI Overview), "Mode AI", "Orang lain juga bertanya", "Berita utama" (Top stories), "Diskusi dan forum", the tabs "Web", "Semua", "Gambar". Check these against a live google.co.id page with the interface in Indonesian before trusting them; Google renames its AI panels often.
 - **Firefox:** "Pengaya" (Add-ons, in the sync settings), "Sinkronkan Sekarang", "Ekstensi" (the puzzle-piece button), "Sematkan ke Bilah Alat", "bilah alamat".
 - **Chrome:** "Ekstensi" (the puzzle piece), "Sematkan", "kolom alamat", "Setelan". Edge and Opera say "bilah alamat".
+- **The address bar** has no one word right for every browser: Chrome says "kolom alamat"; Firefox, Edge, and Opera say "bilah alamat". Each `welcomePin*` message uses its own browser's word.
 - Product names stay: Anubis, Brave Goggles, uBlacklist, HOHSER, Koofr, InfiniCLOUD, Nextcloud, Duck.ai, WebDAV, GitHub. GitHub's own terms stay English ("pull request", "gist"), as GitHub doesn't translate them. Quoted English UI from sites with no Indonesian version stays English: Brave's “Find elsewhere”, Startpage's “Block creepy ads, not private search”.
 
 ## What machine translation gets wrong here

@@ -582,7 +582,7 @@
     "message": "Hubungkan"
   },
   "webdavEncrypt": {
-    "message": "Enkripsi file sinkronisasi secara menyeluruh (direkomendasikan)"
+    "message": "Enkripsi file sinkronisasi secara end-to-end (direkomendasikan)"
   },
   "webdavEncryptionPassphrase": {
     "message": "Frasa sandi enkripsi"
@@ -618,7 +618,7 @@
     "message": "Frasa sandi tidak cocok."
   },
   "webdavEncrypted": {
-    "message": "File sinkronisasi dienkripsi secara menyeluruh. Frasa sandinya hanya disimpan di browser ini; server tidak dapat membaca isinya. Gunakan frasa sandi yang sama di setiap browser. Jika Anda lupa, salinan di server tidak dapat dipulihkan."
+    "message": "File sinkronisasi dienkripsi secara end-to-end. Frasa sandinya hanya disimpan di browser ini; server tidak dapat membaca isinya. Gunakan frasa sandi yang sama di setiap browser. Jika Anda lupa, salinan di server tidak dapat dipulihkan."
   },
   "webdavEncryptionPending": {
     "message": "Enkripsi sudah disiapkan di sini. Sinkronisasi berikutnya yang berhasil akan mengenkripsi salinan di server. Gunakan frasa sandi yang sama di setiap browser."
@@ -717,7 +717,7 @@
     "message": "Warna di halaman penelusuran"
   },
   "paletteHint": {
-    "message": "Polos menampilkan semua yang ditambahkan Anubis ke halaman penelusuran dalam warna abu-abu, tanpa emas. Tag kehilangan warnanya dan dibedakan dari namanya. Setelan dan popup toolbar tetap berwarna emas."
+    "message": "Polos menampilkan semua yang ditambahkan Anubis ke halaman penelusuran dalam warna abu-abu, tanpa emas. Tag kehilangan warnanya dan dibedakan berdasarkan namanya. Setelan dan popup toolbar tetap berwarna emas."
   },
   "paletteGold": {
     "message": "Emas"
@@ -1416,7 +1416,7 @@
     "message": "Buat tag"
   },
   "tagNameInvalid": {
-    "message": "Beri tag nama dengan minimal satu huruf atau angka."
+    "message": "Beri nama tag dengan minimal satu huruf atau angka."
   },
   "tagExists": {
     "message": "Sudah ada tag bernama “$1”."
