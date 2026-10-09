@@ -22,11 +22,11 @@ export function rankingOf(entry: SiteEntry | undefined, baseline: Verdict): Rank
 }
 
 /**
- * What pressing a ranking stores. "Normal" has to beat the lists when they rank this site, so it becomes an explicit allow;
- * pressing it again lets the lists decide once more.
+ * What pressing a ranking stores. Your ranking sits on top of the lists, so taking it back (Normal after Raise) leaves them as they were.
+ * Only with no choice of yours does "Normal" have to beat lists that rank the site, as an explicit allow.
  */
 export function nextLevel(level: Level, r: Ranking): PersonalLevel {
-  if (level === 'normal') return r.personal === 'allow' || r.fromLists === 'normal' ? 'normal' : 'allow';
+  if (level === 'normal') return r.personal || r.fromLists === 'normal' ? 'normal' : 'allow';
   return r.pressed === level ? 'normal' : level;
 }
 

@@ -42,7 +42,9 @@ describe('nextLevel', () => {
   it('stores Normal as an allow when the lists rank the site, so it beats them', () => {
     expect(nextLevel('normal', rankingOf(undefined, verdict('lower')))).toBe('allow');
     expect(nextLevel('normal', rankingOf(undefined, verdict('normal')))).toBe('normal');
-    // Pressing Normal again hands the site back to the lists.
+    // Normal after Raise takes your choice back; the lists still apply.
+    expect(nextLevel('normal', rankingOf(site('raise'), verdict('raise')))).toBe('normal');
+    // Pressing Normal again on a kept-normal site clears it too.
     expect(nextLevel('normal', rankingOf(site('allow'), verdict('raise')))).toBe('normal');
   });
 
