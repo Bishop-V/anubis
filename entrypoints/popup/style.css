@@ -1,0 +1,361 @@
+/* Firefox sizes the popup to fit its content, and its window starts tiny: a width
+   tied to the window (vw, or a media query) collapses the popup to a sliver. */
+body {
+  width: 340px;
+  max-width: 100%;
+  padding: 14px 16px 12px;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 12px;
+}
+body.paused main {
+  opacity: 0.5;
+}
+/* The status line opens with a diamond: gold while Anubis is on, hollow when it's off. */
+#status {
+  --c: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+#status .gem.hollow {
+  --c: var(--muted);
+}
+
+section {
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+h2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--muted);
+}
+h2 .text-btn {
+  font-size: 12.5px;
+}
+.count {
+  font-variant-numeric: tabular-nums;
+}
+
+/* This page */
+.sentence {
+  margin: 0;
+}
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-top: 8px;
+  font-size: 13px;
+}
+.filters-label {
+  margin-top: 14px;
+}
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+}
+.filters button {
+  gap: 7px;
+  font-size: 12.5px;
+}
+.filters button[aria-pressed='true'] {
+  border-bottom-color: var(--c);
+}
+.filters .count {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* This site: the result menu's cartouche, balance and rankings. */
+.weigh {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 4px;
+}
+.cartouche {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  max-width: 100%;
+  padding: 5px 19px 6px;
+  border: 1.5px solid var(--gold);
+  border-radius: 999px;
+}
+.cartouche::after {
+  content: '';
+  position: absolute;
+  inset: 2.5px;
+  border: 0.75px solid var(--gold);
+  border-radius: 999px;
+  opacity: 0.55;
+  pointer-events: none;
+}
+.cartouche .name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 500 16px/1.3 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+}
+.cartouche.choosable .name {
+  padding-inline-end: 14px;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%) calc(100% - 4px) 55% / 4px 4px no-repeat,
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%) 100% 55% / 4px 4px no-repeat;
+}
+.cartouche select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  appearance: none;
+  cursor: pointer;
+}
+.cartouche:has(select:focus-visible) {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+.balance {
+  display: block;
+  width: 132px;
+  height: 40px;
+  margin: 10px auto 2px;
+  color: var(--gold);
+  overflow: visible;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .balance .beam,
+  .balance .pan {
+    transition: transform 0.45s cubic-bezier(0.34, 1.45, 0.5, 1);
+  }
+}
+.seg.levels {
+  display: grid;
+  /* Five equal columns; a ranking's word wraps, hyphenated, rather than push the row apart. */
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px 2px;
+}
+/* Each ranking's icon over its name: muted at rest, the ranking's colour once chosen. */
+.levels button {
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  padding: 2px 2px 4px;
+  text-align: center;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.levels .level-icon {
+  color: var(--muted);
+}
+.levels button:hover .level-icon,
+.levels button.from-list .level-icon {
+  color: inherit;
+}
+.levels button[aria-pressed='true'] .level-icon {
+  color: var(--text);
+}
+.levels button.raise[aria-pressed='true'] .level-icon,
+.levels button.pin[aria-pressed='true'] .level-icon {
+  color: var(--gold-ink);
+}
+.levels button.from-list:not([aria-pressed='true']) {
+  color: var(--gold-ink);
+}
+.hint {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  color: var(--muted);
+  text-align: center;
+}
+.here-tags {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.tag-groups {
+  display: grid;
+  gap: 8px;
+}
+/* Over your tags and those from lists, when there are both: quieter than the section's heading. */
+.tag-group-name {
+  margin: 0 0 3px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.tag-group-name + .tag-group-hint {
+  margin: -3px 0 3px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.tag-source {
+  min-width: 0;
+  font-size: 12.5px;
+  font-weight: 400;
+  color: var(--muted);
+  white-space: normal;
+}
+.tags .tag.fixed {
+  max-width: 100%;
+  white-space: nowrap;
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+.tags .tag {
+  font-size: 12.5px;
+}
+.tags button.tag {
+  min-height: 26px;
+  padding: 2px 6px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+}
+.tags button.tag.off {
+  color: var(--muted);
+}
+.tags button.tag[aria-pressed='true'] {
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: inset 0 -2px var(--c);
+}
+.tags button.tag:hover {
+  color: var(--text);
+  text-decoration: none;
+}
+.new-tag {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.new-tag input {
+  flex: 1;
+  min-width: 0;
+}
+.tag-error {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--danger);
+  font-size: 12.5px;
+}
+
+/* Add a site */
+#add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.add-levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.add-levels .btn {
+  flex: 1;
+}
+
+/* Your sites */
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 5px 0;
+}
+li + li {
+  border-top: 1px solid var(--line);
+}
+li .site {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+li .tag {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+/* Nothing in your list yet: the balance, level and empty, over the sentence. */
+li.empty {
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 8px 6px;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+li.empty svg {
+  width: 96px;
+  height: 30px;
+  margin: 0;
+  color: var(--muted);
+}
+li.empty p {
+  margin: 0;
+  max-width: 30ch;
+  text-wrap: balance;
+}
+li .level-note {
+  font-size: 12.5px;
+}
+
+footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
+}
+footer > * {
+  white-space: nowrap;
+}
+/* When the footer runs to two lines, Report a problem and Help go right, under the cog. */
+#report {
+  margin-inline-start: auto;
+}
+.spacer {
+  flex: 1;
+}
+footer a,
+.link-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+footer a:hover,
+.link-btn:hover {
+  color: var(--gold-ink);
+  text-decoration: underline;
+}
