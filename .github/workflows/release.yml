@@ -1,0 +1,156 @@
+name: Release
+
+# Push a tag like v0.3.0 to release that version. The tag has to match the
+# version in package.json. This runs the CI checks, builds the store zips,
+# creates a GitHub Release with them, then submits to each of the Chrome Web
+# Store, Firefox Add-ons (AMO), and Edge Add-ons that has its keys set.
+#
+# Configure the "release" environment with required-reviewer protection for
+# v* tags and store keys. No pull request or branch should be able to read them.
+
+on:
+  push:
+    tags:
+      - 'v*'
+      - '!v*-amo-submit'
+
+permissions:
+  contents: read
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.0 (Node 24)
+        with:
+          fetch-depth: 0
+      - name: Check the tag matches package.json
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME doesn't match package.json version $version (expected v$version)"
+            exit 1
+          fi
+      - name: Check the tagged commit is on main
+        run: |
+          git fetch --no-tags origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" FETCH_HEAD; then
+            echo "::error::Release tags must point to a commit already merged into main"
+            exit 1
+          fi
+
+  check:
+    needs: version
+    uses: ./.github/workflows/ci.yml
+
+  build:
+    needs: check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.0 (Node 24)
+      # AMO reviewers rebuild from the sources zip; store/README.md says to use Node 22.
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.1 (Node 24)
+        with:
+          node-version: 22
+          cache: npm
+      # No install scripts: npm worms spread through them. wxt prepare is the only one we need.
+      - run: npm ci --ignore-scripts
+      - run: npx wxt prepare
+      # Firefox zip plus the sources zip, then the Chrome zip (Edge takes it too).
+      - run: npm run zip
+      - run: npm run zip:chrome
+      - name: Add stable download names
+        run: |
+          version=${GITHUB_REF_NAME#v}
+          cp ".output/anubis-$version-firefox.zip" .output/anubis-firefox.zip
+          cp ".output/anubis-$version-sources.zip" .output/anubis-sources.zip
+          cp ".output/anubis-$version-chrome.zip" .output/anubis-chrome.zip
+          # upload-artifact excludes hidden directories unless explicitly opted in.
+          mkdir -p release-assets
+          cp \
+            ".output/anubis-$version-firefox.zip" \
+            ".output/anubis-$version-sources.zip" \
+            ".output/anubis-$version-chrome.zip" \
+            .output/anubis-firefox.zip \
+            .output/anubis-sources.zip \
+            .output/anubis-chrome.zip \
+            release-assets/
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: zips
+          path: release-assets/*.zip
+          if-no-files-found: error
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" .output/*.zip --title "$GITHUB_REF_NAME" --generate-notes --verify-tag
+
+  submit:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.0 (Node 24)
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.1 (Node 24)
+        with:
+          node-version: 22
+          cache: npm
+      # No install scripts: npm worms spread through them. wxt prepare is the only one we need.
+      - run: npm ci --ignore-scripts
+      - run: npx wxt prepare
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: zips
+          path: .output
+      - name: Submit to the stores
+        env:
+          CHROME_API_VERSION: v2
+          CHROME_EXTENSION_ID: ${{ vars.CHROME_EXTENSION_ID }}
+          CHROME_PUBLISHER_ID: ${{ vars.CHROME_PUBLISHER_ID }}
+          CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL: ${{ secrets.CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL }}
+          CHROME_SERVICE_ACCOUNT_PRIVATE_KEY: ${{ secrets.CHROME_SERVICE_ACCOUNT_PRIVATE_KEY }}
+          # AMO's API resolves this listing by slug; the submit tool strips
+          # braces from GUIDs, which makes this add-on's GUID lookup return 404.
+          FIREFOX_EXTENSION_ID: anubis-search
+          FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
+          FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
+          EDGE_PRODUCT_ID: ${{ vars.EDGE_PRODUCT_ID }}
+          EDGE_CLIENT_ID: ${{ secrets.EDGE_CLIENT_ID }}
+          EDGE_API_KEY: ${{ secrets.EDGE_API_KEY }}
+        # Submits only to the stores whose keys are all set, so a store can wait
+        # (Firefox shipped first). A store with only some of its keys set is a
+        # mistake, not a skip, and fails the release.
+        run: |
+          version=${GITHUB_REF_NAME#v}
+          args=()
+          # has <store> <variable names…>: true when all are set; fails when only some are.
+          has() {
+            local store=$1 found=0 missing=()
+            shift
+            for name in "$@"; do
+              if [ -n "${!name}" ]; then found=$((found + 1)); else missing+=("$name"); fi
+            done
+            if [ "$found" -eq "$#" ]; then return 0; fi
+            if [ "$found" -eq 0 ]; then
+              echo "::notice::Skipping $store: no keys in the release environment."
+              return 1
+            fi
+            echo "::error::$store is missing ${missing[*]} in the release environment."
+            exit 1
+          }
+          if has Firefox FIREFOX_JWT_ISSUER FIREFOX_JWT_SECRET; then
+            args+=(--firefox-zip ".output/anubis-$version-firefox.zip" --firefox-sources-zip ".output/anubis-$version-sources.zip")
+          fi
+          if has Chrome CHROME_EXTENSION_ID CHROME_PUBLISHER_ID CHROME_SERVICE_ACCOUNT_CLIENT_EMAIL CHROME_SERVICE_ACCOUNT_PRIVATE_KEY; then
+            args+=(--chrome-zip ".output/anubis-$version-chrome.zip")
+          fi
+          if has Edge EDGE_PRODUCT_ID EDGE_CLIENT_ID EDGE_API_KEY; then
+            args+=(--edge-zip ".output/anubis-$version-chrome.zip")
+          fi
+          if [ "${#args[@]}" -eq 0 ]; then
+            echo "::notice::No store credentials are configured; the GitHub Release packages were published without store submission."
+            exit 0
+          fi
+          npx wxt submit "${args[@]}"

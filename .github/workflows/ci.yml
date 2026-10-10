@@ -1,0 +1,47 @@
+name: CI
+
+# Type-check, test, build both browsers, and lint the Firefox build. The tests
+# parse every file in lists/, so a pull request that adds a site to a list is
+# checked too.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # release.yml runs these same checks before it builds a release.
+  workflow_call:
+  # engines.yml starts this on the pull requests it opens, which don't start it themselves.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.0 (Node 24)
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.1 (Node 24)
+        with:
+          node-version: 22
+          cache: npm
+      # No install scripts: npm worms spread through them. wxt prepare is the only one we need.
+      - run: npm ci --ignore-scripts
+      - run: npx wxt prepare
+      - run: npm run compile
+      - run: npm test
+      - run: npm run build
+      - name: Check Firefox minimum version
+        run: node -e "if (require('./.output/firefox-mv2/manifest.json').browser_specific_settings.gecko.strict_min_version !== '142.0') process.exit(1)"
+      - run: npm run build:chrome
+      - name: Install Chromium for responsive layout checks
+        run: npx playwright-core install --with-deps chromium
+      - name: Check Settings at phone widths
+        run: node e2e/run.mjs responsive
+      - name: Check popup tag selection and creation
+        run: node e2e/run.mjs popup-tags
+      - name: Check optional explanations on tagged sites
+        run: node e2e/run.mjs tag-notes
+      - name: Assert core search-page behavior
+        run: node e2e/run.mjs checks
+      - run: npx web-ext lint --source-dir .output/firefox-mv2 --warnings-as-errors
