@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" role="img" aria-labelledby="title description">
+  <title id="title">A search result, weighed</title>
+  <desc id="description">A spare gold balance holds a red heart on one pan and a feather on the other, on Anubis's dark background.</desc>
+  <rect width="1200" height="720" fill="#1b1a16"/>
+
+  <g fill="none" stroke="#d4a637" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M600 112v398" stroke-width="3"/>
+    <path d="M540 558h120M560 536h80l20 22H540z" stroke-width="3"/>
+    <circle cx="600" cy="178" r="13" fill="#1b1a16" stroke-width="3"/>
+    <path d="M600 178 326 224M600 178l274-46" stroke-width="5"/>
+    <path d="M326 224v178m548-224v178" stroke-width="2"/>
+    <path d="M262 402q64 57 128 0M810 356q64 57 128 0" stroke-width="3"/>
+    <path d="M276 402h100m448-46h100" stroke-width="2" opacity=".55"/>
+  </g>
+
+  <path d="M326 335c-12-19-40-11-40 11 0 21 40 46 40 46s40-25 40-46c0-22-28-30-40-11Z" fill="#e2735b"/>
+  <g fill="none" stroke="#a39b8c" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M874 276c-7 36-27 59-51 75 7-30 22-55 51-75Z" stroke-width="3"/>
+    <path d="M823 351c18-20 33-43 51-75M839 330l-4-25m18 6-1-24m-24 61-20-5" stroke-width="2"/>
+  </g>
+  <circle cx="600" cy="178" r="4" fill="#d4a637"/>
+
+  <g fill="#ece6da" text-anchor="middle">
+    <text x="600" y="628" font-family="Georgia, 'Times New Roman', serif" font-size="28">A search result, weighed</text>
+  </g>
+  <text x="600" y="663" fill="#a39b8c" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14">A visual study for Anubis</text>
+</svg>

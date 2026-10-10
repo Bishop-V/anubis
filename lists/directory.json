@@ -1,0 +1,183 @@
+{
+  "version": 1,
+  "description": "Lists Anubis offers under Settings → Lists → More lists. Add yours with a pull request.",
+  "lists": [
+    {
+      "id": "official-docs",
+      "name": "Official docs",
+      "description": "Tags first-party documentation and nudges it up.",
+      "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/official-docs.anubis",
+      "format": "anubis",
+      "builtin": true,
+      "default": true,
+      "overlaps": ["devdocs"]
+    },
+    {
+      "id": "discussions",
+      "name": "Discussions",
+      "description": "Tags forums, Q&A sites and issue threads.",
+      "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/discussions.anubis",
+      "format": "anubis",
+      "builtin": true,
+      "default": true
+    },
+    {
+      "id": "reference",
+      "name": "Reference",
+      "description": "Tags encyclopedias, archives and research papers.",
+      "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/reference.anubis",
+      "format": "anubis",
+      "builtin": true,
+      "default": true
+    },
+    {
+      "id": "paywalls",
+      "name": "Paywalls",
+      "description": "Labels sites that usually paywall their articles.",
+      "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/paywalls.anubis",
+      "format": "anubis",
+      "builtin": true,
+      "default": true
+    },
+    {
+      "id": "foss-tools",
+      "name": "FOSS tools",
+      "description": "Tags selected FOSS tools and provides FOSS and AI slop labels for your sites.",
+      "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/foss-tools.anubis",
+      "format": "anubis",
+      "builtin": true,
+      "default": true,
+      "overlaps": ["self-hosted-foss"]
+    },
+    {
+      "id": "ai-content",
+      "name": "AI content (HUGE AI Blocklist)",
+      "description": "Labels sites made of AI-generated content, or mixing it with authentic work, using the HUGE AI Blocklist by laylavish.",
+      "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/sources/ai-content.anubis",
+      "homepage": "https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist",
+      "format": "anubis",
+      "default": true,
+      "overlaps": ["huge-ai-blocklist"]
+    },
+    {
+      "id": "independent-wikis",
+      "name": "Independent wikis (Indie Wiki Buddy)",
+      "description": "Raises independent wikis and lowers the Fandom, Fextralife, and Neoseeker wikis they replace, using Indie Wiki Buddy's data.",
+      "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/sources/independent-wikis.anubis",
+      "homepage": "https://github.com/KevinPayravi/indie-wiki-buddy",
+      "format": "anubis",
+      "default": true
+    },
+    {
+      "id": "devdocs",
+      "name": "Official docs (DevDocs)",
+      "description": "Tags the documentation sites DevDocs collects, among them MDN and the Python, Rust, and React docs, and nudges them up.",
+      "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/sources/devdocs.anubis",
+      "homepage": "https://github.com/freeCodeCamp/devdocs",
+      "format": "anubis",
+      "default": true,
+      "overlaps": ["official-docs"]
+    },
+    {
+      "id": "self-hosted-foss",
+      "name": "Self-hosted FOSS (awesome-selfhosted)",
+      "description": "Labels the websites of about 1,000 free programs that awesome-selfhosted lists as FOSS. It never moves or hides anything.",
+      "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/sources/self-hosted-foss.anubis",
+      "homepage": "https://github.com/awesome-selfhosted/awesome-selfhosted-data",
+      "format": "anubis",
+      "default": true,
+      "overlaps": ["foss-tools"]
+    },
+    {
+      "id": "huge-ai-blocklist",
+      "name": "Huge AI Blocklist",
+      "description": "Hides AI-generated image and content farms. Community-maintained by laylavish. To label these sites instead, use AI content (HUGE AI Blocklist).",
+      "url": "https://raw.githubusercontent.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist/main/list_uBlacklist.txt",
+      "homepage": "https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist",
+      "format": "ublacklist",
+      "overlaps": ["ai-content"]
+    },
+    {
+      "id": "ai-content-farms",
+      "name": "AI content farms",
+      "description": "Hides AI-generated content farms that alvi-se adds by hand while browsing. Many are Italian sites.",
+      "url": "https://raw.githubusercontent.com/alvi-se/ai-ublock-blacklist/master/ublacklist.txt",
+      "homepage": "https://github.com/alvi-se/ai-ublock-blacklist",
+      "format": "ublacklist"
+    },
+    {
+      "id": "ai-answers",
+      "name": "AI news and answers",
+      "description": "Hides sites of AI-generated news and answers. It leaves discussion of AI alone, as well as AI work that's labelled as such. Maintained by agsimmons.",
+      "url": "https://raw.githubusercontent.com/agsimmons/ai-content-blocklist/main/uBlacklist.txt",
+      "homepage": "https://github.com/agsimmons/ai-content-blocklist",
+      "format": "ublacklist"
+    },
+    {
+      "id": "bad-websites",
+      "name": "Bad Website Blocklist",
+      "description": "Hides AI-generated articles, low-effort spam, and advertising posing as information. Each site has an issue explaining why it was added. Maintained by popcar2.",
+      "url": "https://raw.githubusercontent.com/popcar2/BadWebsiteBlocklist/main/uBlacklist.txt",
+      "homepage": "https://github.com/popcar2/BadWebsiteBlocklist",
+      "format": "ublacklist"
+    },
+    {
+      "id": "stackoverflow-copies",
+      "name": "Stack Overflow copies",
+      "description": "Hides sites that scrape and machine-translate Stack Overflow.",
+      "url": "https://raw.githubusercontent.com/arosh/ublacklist-stackoverflow-translation/master/uBlacklist.txt",
+      "homepage": "https://github.com/arosh/ublacklist-stackoverflow-translation",
+      "format": "ublacklist"
+    },
+    {
+      "id": "github-copies",
+      "name": "GitHub copies",
+      "description": "Hides sites that mirror GitHub repositories and issues.",
+      "url": "https://raw.githubusercontent.com/arosh/ublacklist-github-translation/master/uBlacklist.txt",
+      "homepage": "https://github.com/arosh/ublacklist-github-translation",
+      "format": "ublacklist"
+    },
+    {
+      "id": "dev-copies",
+      "name": "Developer site copies",
+      "description": "Hides sites that copy Stack Overflow, GitHub, npm, or Wikipedia, plus some SEO spam. Its Stack Overflow part is several times longer than Stack Overflow copies. Maintained by quenhus.",
+      "url": "https://raw.githubusercontent.com/quenhus/uBlock-Origin-dev-filter/main/dist/other_format/uBlacklist/global.txt",
+      "homepage": "https://github.com/quenhus/uBlock-Origin-dev-filter",
+      "format": "ublacklist"
+    },
+    {
+      "id": "brave-copycats",
+      "name": "Copycats removal",
+      "description": "Brave's Goggle that discards copycat content like translated Stack Overflow threads.",
+      "url": "https://raw.githubusercontent.com/brave/goggles-quickstart/main/goggles/copycats_removal.goggle",
+      "homepage": "https://github.com/brave/goggles-quickstart",
+      "format": "goggle"
+    },
+    {
+      "id": "brave-no-pinterest",
+      "name": "No Pinterest",
+      "description": "Brave's Goggle that discards Pinterest pages.",
+      "url": "https://raw.githubusercontent.com/brave/goggles-quickstart/main/goggles/no_pinterest.goggle",
+      "homepage": "https://github.com/brave/goggles-quickstart",
+      "format": "goggle"
+    },
+    {
+      "id": "brave-tech-blogs",
+      "name": "Tech blogs (lens)",
+      "description": "Brave's Goggle boosting ~1,400 tech blogs. It is a lens: results not on the list are hidden.",
+      "url": "https://raw.githubusercontent.com/brave/goggles-quickstart/main/goggles/tech_blogs.goggle",
+      "homepage": "https://github.com/brave/goggles-quickstart",
+      "format": "goggle",
+      "lens": true
+    },
+    {
+      "id": "brave-hacker-news",
+      "name": "Hacker News (lens)",
+      "description": "Brave's Goggle boosting sites popular on Hacker News. It is a lens: results not on the list are hidden.",
+      "url": "https://raw.githubusercontent.com/brave/goggles-quickstart/main/goggles/hacker_news.goggle",
+      "homepage": "https://github.com/brave/goggles-quickstart",
+      "format": "goggle",
+      "lens": true
+    }
+  ]
+}

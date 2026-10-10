@@ -1,0 +1,99 @@
+/* Page-level treatments for weighed results. Injected by the manifest, so it is in
+   place before the first result paints. Everything keys off data-anubis-* attributes
+   the content script sets; nothing here changes layout unless a verdict asks for it. */
+
+/* Weigh button: faint until the result is hovered or focused. */
+[data-anubis-result]:hover > anubis-weigh,
+[data-anubis-result]:focus-within > anubis-weigh {
+  --anubis-weigh-opacity: 0.92;
+}
+
+/* Hidden, "collapse" style: only the slim bar stays. */
+html[data-anubis-hide='collapse'] [data-anubis-state~='hide']:not([data-anubis-reveal]) > :not(anubis-bar) {
+  display: none !important;
+}
+/* Clean-up: AI answers, video panels and the like are gone until "Show hidden". */
+[data-anubis-removed]:not([data-anubis-reveal]) {
+  display: none !important;
+}
+/* Shown again: marked, so it's clear they're normally removed. The outline sits
+   just inside the block's own edge (and follows its rounded corners), so it
+   neither overlaps its neighbours nor stands off from the engine's panels. */
+[data-anubis-removed][data-anubis-reveal] {
+  outline: 1px dashed color-mix(in srgb, currentColor 30%, transparent);
+  outline-offset: -1px;
+}
+
+/* Hidden, "collapse" style: a run of hidden results in a row shares one line. */
+html[data-anubis-hide='collapse'] [data-anubis-grouped]:not([data-anubis-reveal]) {
+  display: none !important;
+}
+/* Hidden, "remove" style, and table layouts in every style. */
+html[data-anubis-hide='remove'] [data-anubis-state~='hide']:not([data-anubis-reveal]),
+[data-anubis-state~='hide'][data-anubis-row]:not([data-anubis-reveal]) {
+  display: none !important;
+}
+/* Hidden, "dim" style, and revealed hidden results in every style. */
+html[data-anubis-hide='dim'] [data-anubis-state~='hide'],
+[data-anubis-state~='hide'][data-anubis-reveal] {
+  opacity: 0.38 !important;
+  filter: grayscale(0.85);
+  transition:
+    opacity 0.15s,
+    filter 0.15s;
+}
+html[data-anubis-hide='dim'] [data-anubis-state~='hide']:hover,
+[data-anubis-state~='hide'][data-anubis-reveal]:hover {
+  opacity: 0.9 !important;
+  filter: none;
+}
+[data-anubis-state~='hide'][data-anubis-reveal] > anubis-bar,
+html[data-anubis-hide='dim'] [data-anubis-state~='hide'] > anubis-bar {
+  display: none !important;
+}
+
+/* Lowered results only move down: they aren't faded, since a lowered site is still
+   one you may want to read. The "Lowered" label under the title says why it moved. */
+
+/* Pinned: a thin gold frame drawn outside the box, so layout doesn't move. */
+[data-anubis-state~='pin'] {
+  border-radius: 10px;
+  outline: 1px solid rgb(212 166 55 / 0.55);
+  outline-offset: 7px;
+}
+/* Unless results sit too close for the frame: the content script then pushes the
+   next one down (makeRoomForPins). */
+[data-anubis-pin-room] {
+  margin-top: var(--anubis-pin-room) !important;
+}
+
+/* Tag highlight (HOHSER-style): a faint wash of the tag's colour. */
+[data-anubis-highlight] {
+  border-radius: 10px;
+  background-color: color-mix(in srgb, var(--anubis-hl) 7%, transparent) !important;
+  box-shadow: 0 0 0 7px color-mix(in srgb, var(--anubis-hl) 7%, transparent);
+}
+
+/* The plain palette: the pinned frame and highlights in the page's own text colour. */
+html[data-anubis-palette='plain'] [data-anubis-state~='pin'] {
+  outline-color: color-mix(in srgb, currentColor 35%, transparent);
+}
+html[data-anubis-palette='plain'] [data-anubis-highlight] {
+  background-color: color-mix(in srgb, currentColor 5%, transparent) !important;
+  box-shadow: 0 0 0 7px color-mix(in srgb, currentColor 5%, transparent);
+}
+
+/* Filtering by a tag from the summary: results without it step aside. */
+[data-anubis-filtered] {
+  display: none !important;
+}
+
+/* Reranking: results keep their place in the DOM (the page's scripts own it) and
+   move visually with CSS `order` instead. */
+[data-anubis-rerank] {
+  display: flex !important;
+  flex-direction: column !important;
+}
+[data-anubis-rerank] > * {
+  flex: none;
+}

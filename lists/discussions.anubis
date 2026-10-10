@@ -1,0 +1,34 @@
+! name: Discussions
+! description: Tags forums and Q&A threads, where people answer each other instead of selling to you.
+! author: Anubis contributors
+! homepage: https://github.com/Bishop-V/anubis/tree/main/lists
+! issues: https://github.com/Bishop-V/anubis/issues
+! license: CC0-1.0
+! avatar: #7a5aa6
+! expires: 7 days
+! tag: forum | Discussion | #7a5aa6 | Forums, Q&A sites and discussion threads.
+
+$site=reddit.com,tag=forum
+$site=news.ycombinator.com,tag=forum
+$site=lobste.rs,tag=forum
+$site=tildes.net,tag=forum
+$site=stackoverflow.com,tag=forum
+$site=stackexchange.com,tag=forum
+$site=superuser.com,tag=forum
+$site=serverfault.com,tag=forum
+$site=askubuntu.com,tag=forum
+$site=mathoverflow.net,tag=forum
+$site=discuss.python.org,tag=forum
+$site=users.rust-lang.org,tag=forum
+$site=discourse.nixos.org,tag=forum
+$site=bbs.archlinux.org,tag=forum
+$site=forums.debian.net,tag=forum
+$site=discussions.apple.com,tag=forum
+$site=community.home-assistant.io,tag=forum
+$site=forum.obsidian.md,tag=forum
+$site=quora.com,tag=forum
+
+! Issue trackers and discussions on code forges
+/issues/$site=github.com,tag=forum
+/discussions/$site=github.com,tag=forum
+/-/issues/$site=gitlab.com,tag=forum

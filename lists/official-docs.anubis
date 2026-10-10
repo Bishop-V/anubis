@@ -1,0 +1,41 @@
+! name: Official docs
+! description: Tags first-party documentation for languages, frameworks and tools, and nudges it up.
+! author: Anubis contributors
+! homepage: https://github.com/Bishop-V/anubis/tree/main/lists
+! issues: https://github.com/Bishop-V/anubis/issues
+! license: CC0-1.0
+! avatar: #2f5fae
+! expires: 7 days
+! tag: docs | Official docs | #2f5fae | Documentation published by the project or vendor itself.
+
+! Web platform
+$site=web.dev,tag=docs,boost=1
+$site=html.spec.whatwg.org,tag=docs,boost=1
+$site=w3.org,tag=docs
+
+! Languages
+$site=go.dev,tag=docs,boost=1
+$site=pkg.go.dev,tag=docs,boost=1
+$site=docs.swift.org,tag=docs,boost=1
+$site=ruby-doc.org,tag=docs,boost=1
+$site=hexdocs.pm,tag=docs,boost=1
+$site=hackage.haskell.org,tag=docs
+$site=learn.microsoft.com,tag=docs,boost=1
+
+! Frameworks and libraries
+$site=vitejs.dev,tag=docs,boost=1
+$site=guides.rubyonrails.org,tag=docs,boost=1
+$site=api.rubyonrails.org,tag=docs,boost=1
+$site=wxt.dev,tag=docs,boost=1
+
+! Tools and platforms
+$site=docs.github.com,tag=docs,boost=1
+$site=docs.gitlab.com,tag=docs,boost=1
+$site=dev.mysql.com,tag=docs
+$site=wiki.archlinux.org,tag=docs,boost=1
+$site=developer.chrome.com,tag=docs,boost=1
+$site=extensionworkshop.com,tag=docs,boost=1
+$site=developer.apple.com,tag=docs
+$site=developer.android.com,tag=docs
+$site=docs.aws.amazon.com,tag=docs
+$site=cloud.google.com,tag=docs

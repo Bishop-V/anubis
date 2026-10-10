@@ -1,0 +1,23 @@
+# Weekly updates for npm packages and GitHub Actions, grouped into one pull
+# request each. A release has to be a week old before it's offered, so a
+# compromised version is usually caught and pulled before it reaches us.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      npm:
+        patterns: ['*']
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ['*']

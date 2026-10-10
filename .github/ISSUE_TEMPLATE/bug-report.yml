@@ -1,0 +1,26 @@
+name: Report a problem
+description: Something in Anubis doesn't work as it should.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you saw, and what you expected instead. A screenshot helps a lot; paste or drag it here.
+    validations:
+      required: true
+  - type: input
+    id: engine
+    attributes:
+      label: Search engine
+      placeholder: Google, DuckDuckGo, Bing…
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      placeholder: Firefox 143 on Windows
+  - type: input
+    id: version
+    attributes:
+      label: Anubis version
+      description: Filled in when you use "Report a problem" in Anubis.

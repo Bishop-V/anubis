@@ -1,0 +1,1718 @@
+{
+  "langCode": {
+    "message": "hi"
+  },
+  "machineTranslatedTitle": {
+    "message": "मशीन से किया गया अनुवाद।"
+  },
+  "machineTranslatedNote": {
+    "message": "Anubis का आपके ब्राउज़र की भाषा में अनुवाद एक मशीन ने किया है, और यह अनुवाद पूरी तरह से समर्थित नहीं है: इसमें कुछ बातें गलत या अस्पष्ट हो सकती हैं, इसलिए इसे सावधानी से इस्तेमाल करें। Anubis को अंग्रेज़ी में देखने के लिए, अपने ब्राउज़र की भाषा अंग्रेज़ी पर सेट करें।"
+  },
+  "machineTranslatedShort": {
+    "message": "इसे सावधानी से इस्तेमाल करें।"
+  },
+  "machineTranslatedHelp": {
+    "message": "इसे ठीक करने में मदद करें"
+  },
+  "extDescription": {
+    "message": "आपके खोज नतीजों को तौलता है: साइटों को टैग करें, फिर से रैंक करें और छिपाएं, उन सूचियों से जिन्हें कोई भी प्रकाशित कर सकता है।"
+  },
+  "commandToggleEnabled": {
+    "message": "Anubis को चालू या बंद करें"
+  },
+  "commandToggleHidden": {
+    "message": "छिपे हुए नतीजे दिखाएं, या उन्हें फिर से छिपाएं"
+  },
+  "levelHide": {
+    "message": "छिपाएं"
+  },
+  "levelLower": {
+    "message": "नीचे करें"
+  },
+  "levelNormal": {
+    "message": "सामान्य"
+  },
+  "levelRaise": {
+    "message": "ऊपर करें"
+  },
+  "levelPin": {
+    "message": "पिन करें"
+  },
+  "chipHidden": {
+    "message": "छिपाया गया"
+  },
+  "chipLowered": {
+    "message": "नीचे किया गया"
+  },
+  "chipRaised": {
+    "message": "ऊपर किया गया"
+  },
+  "chipPinned": {
+    "message": "पिन किया गया"
+  },
+  "popupOn": {
+    "message": "आपकी खोजों के लिए चालू है"
+  },
+  "popupOff": {
+    "message": "बंद है। खोज पेज जैसे हैं, वैसे ही रहते हैं।"
+  },
+  "popupOnLabel": {
+    "message": "Anubis चालू"
+  },
+  "popupAddSite": {
+    "message": "साइट जोड़ें"
+  },
+  "popupRanking": {
+    "message": "रैंकिंग"
+  },
+  "popupNoSites": {
+    "message": "अभी कुछ नहीं है। किसी साइट को रैंक करने के लिए, उसके किसी भी खोज नतीजे पर ⚖ बटन का इस्तेमाल करें।"
+  },
+  "popupKeptNormal": {
+    "message": "सामान्य पर रखी गई"
+  },
+  "popupListsAndTags": {
+    "message": "$1, $2"
+  },
+  "popupListCount_one": {
+    "message": "$1 सूची"
+  },
+  "popupListCount_other": {
+    "message": "$1 सूचियां"
+  },
+  "popupTagCount_one": {
+    "message": "$1 टैग"
+  },
+  "popupTagCount_other": {
+    "message": "$1 टैग"
+  },
+  "popupRankingFor": {
+    "message": "$1 की रैंकिंग"
+  },
+  "popupRankHide": {
+    "message": "खोज नतीजों में $1 को छिपाएं"
+  },
+  "popupRankLower": {
+    "message": "खोज नतीजों में $1 को नीचे करें"
+  },
+  "popupRankNormal": {
+    "message": "खोज नतीजों में $1 को सामान्य रूप से रैंक करें"
+  },
+  "popupRankRaise": {
+    "message": "खोज नतीजों में $1 को ऊपर करें"
+  },
+  "popupRankPin": {
+    "message": "$1 को खोज नतीजों में सबसे ऊपर पिन करें"
+  },
+  "popupYourSites": {
+    "message": "आपकी साइटें"
+  },
+  "popupSeeAll": {
+    "message": "सभी $1 देखें"
+  },
+  "popupOpenLists": {
+    "message": "सूची की सेटिंग खोलें"
+  },
+  "popupShowOnly": {
+    "message": "सिर्फ़ ये दिखाएं"
+  },
+  "popupTags": {
+    "message": "टैग"
+  },
+  "popupSite": {
+    "message": "साइट"
+  },
+  "popupSiteChoice": {
+    "message": "चुनें कि यह साइट के कितने हिस्से पर लागू हो"
+  },
+  "popupHintAllow": {
+    "message": "सामान्य, चाहे आपकी सूचियां कुछ भी कहें।"
+  },
+  "popupHintMine": {
+    "message": "$1 के लिए आपकी पसंद, हर खोज में।"
+  },
+  "popupHintMineTags": {
+    "message": "$1 के लिए आपकी पसंद, हर खोज में, और आपकी टैग सेटिंग का असर भी इसमें जुड़ता है।"
+  },
+  "popupHintLists": {
+    "message": "$2 द्वारा $1। खुद तय करने के लिए कोई एक चुनें।"
+  },
+  "popupHintNone": {
+    "message": "आपकी पसंद हर खोज में लागू होती है।"
+  },
+  "popupYourTagSettings": {
+    "message": "आपकी टैग सेटिंग"
+  },
+  "tagMarkRaise": {
+    "message": "इस नतीजे को ऊपर करता है"
+  },
+  "tagMarkLower": {
+    "message": "इस नतीजे को नीचे करता है"
+  },
+  "tagMarkPin": {
+    "message": "इस नतीजे को पिन करता है"
+  },
+  "tagMarkHide": {
+    "message": "इस नतीजे को छिपाता है"
+  },
+  "tagMarkSpoken": {
+    "message": " ($1)"
+  },
+  "tagListsPickerHint": {
+    "message": "इनमें से कोई टैग जोड़ने पर सिर्फ़ आपकी सूची बदलती है।"
+  },
+  "tagFromSource": {
+    "message": "$1 से"
+  },
+  "popupTagFrom": {
+    "message": "$1 से"
+  },
+  "popupTagSite": {
+    "message": "$1 को “$2” टैग करें"
+  },
+  "popupUntag": {
+    "message": "$1 से टैग हटाएं"
+  },
+  "popupTagInvalid": {
+    "message": "टैग का ऐसा नाम डालें जिसमें कम से कम एक अक्षर या अंक हो।"
+  },
+  "popupTagAlreadySet": {
+    "message": "यह टैग इस साइट पर पहले से लगा है।"
+  },
+  "tagSiteReason": {
+    "message": "यह साइट “$1” टैग में क्यों आती है (ज़रूरी नहीं)"
+  },
+  "popupThisPage": {
+    "message": "यह पेज"
+  },
+  "popupThisPageOn": {
+    "message": "$1 पर यह पेज"
+  },
+  "popupNotSearch": {
+    "message": "Anubis क्या बदलता है, यह देखने के लिए Google, DuckDuckGo, Bing, Brave या किसी दूसरे समर्थित सर्च इंजन पर खोजें।"
+  },
+  "showHidden": {
+    "message": "छिपे हुए दिखाएं"
+  },
+  "hideAgain": {
+    "message": "इन्हें फिर से छिपाएं"
+  },
+  "loadMore": {
+    "message": "और नतीजे लोड करें"
+  },
+  "loadMoreTitle": {
+    "message": "नतीजों का अगला पेज इस पेज में जोड़ें और सबको एक साथ रैंक करें"
+  },
+  "loading": {
+    "message": "लोड हो रहा है…"
+  },
+  "loadMoreEmpty": {
+    "message": "$1 ने पेज $2 के लिए कोई नतीजा नहीं भेजा। हो सकता है कि वह पहले आपसे यह पुष्टि करवाना चाहता हो कि आप रोबोट नहीं हैं।"
+  },
+  "loadMoreRepeat": {
+    "message": "$1 ने पेज $2 के लिए वही नतीजे फिर से भेजे, इसलिए और नतीजे नहीं हैं।"
+  },
+  "loadMoreBusy": {
+    "message": "$1 ने पेज $2 से पहले Anubis को धीमा होने को कहा। एक मिनट बाद फिर से कोशिश करें।"
+  },
+  "loadMoreRefused": {
+    "message": "$1 ने पेज $2 भेजने से मना कर दिया।"
+  },
+  "loadMoreSlow": {
+    "message": "$1 ने पेज $2 भेजने में बहुत ज़्यादा समय लिया।"
+  },
+  "loadMoreFailed": {
+    "message": "$1 से पेज $2 लोड नहीं हुआ।"
+  },
+  "loadMoreOpen": {
+    "message": "पेज $1 खोलें"
+  },
+  "loadMoreOpenTitle": {
+    "message": "$1 ने क्या भेजा, यह देखने के लिए इसे नए टैब में खोलें"
+  },
+  "chipFromPage": {
+    "message": "पेज $1 से"
+  },
+  "chipFromPageTitle": {
+    "message": "“और नतीजे लोड करें” से जोड़ा गया"
+  },
+  "barHidden_one": {
+    "message": "का नतीजा छिपाया गया"
+  },
+  "barHidden_other": {
+    "message": "के नतीजे छिपाए गए"
+  },
+  "barHiddenByYou_one": {
+    "message": "का नतीजा आपकी सूची ने छिपाया"
+  },
+  "barHiddenByYou_other": {
+    "message": "के नतीजे आपकी सूची ने छिपाए"
+  },
+  "barHiddenByTag_one": {
+    "message": "का नतीजा छिपाया गया, क्योंकि उस पर “$2” टैग है"
+  },
+  "barHiddenByTag_other": {
+    "message": "के नतीजे छिपाए गए, क्योंकि उन पर “$2” टैग है"
+  },
+  "barHiddenByLens_one": {
+    "message": "का नतीजा छिपाया गया, क्योंकि $2 में यह शामिल नहीं है"
+  },
+  "barHiddenByLens_other": {
+    "message": "के नतीजे छिपाए गए, क्योंकि $2 में ये शामिल नहीं हैं"
+  },
+  "barHiddenByList_one": {
+    "message": "का नतीजा $2 ने छिपाया"
+  },
+  "barHiddenByList_other": {
+    "message": "के नतीजे $2 ने छिपाए"
+  },
+  "menuWhyHeading": {
+    "message": "क्यों"
+  },
+  "menuNewTagPlaceholder": {
+    "message": "नया टैग"
+  },
+  "menuNewTagLabel": {
+    "message": "नए टैग का नाम"
+  },
+  "menuAddTagButton": {
+    "message": "टैग जोड़ें"
+  },
+  "menuSavedNote": {
+    "message": "आपकी सूची में सेव किया गया।"
+  },
+  "menuCloseLabel": {
+    "message": "बंद करें"
+  },
+  "anubisSettings": {
+    "message": "Anubis की सेटिंग"
+  },
+  "help": {
+    "message": "सहायता"
+  },
+  "helpTitle": {
+    "message": "विकी खोलें"
+  },
+  "reportProblem": {
+    "message": "समस्या की शिकायत करें"
+  },
+  "reportProblemTitle": {
+    "message": "GitHub पर बग रिपोर्ट खोलें, जिसमें Anubis का वर्शन और आपका ब्राउज़र पहले से भरा हो"
+  },
+  "summaryShowAll": {
+    "message": "सभी दिखाएं"
+  },
+  "summaryFilterLabel": {
+    "message": "सिर्फ़ इस टैग वाले नतीजे दिखाएं"
+  },
+  "summaryFilterOn": {
+    "message": "सिर्फ़ “$1” टैग वाले नतीजे दिखाएं"
+  },
+  "summaryFilterOff": {
+    "message": "सभी नतीजे दिखाएं"
+  },
+  "summaryPinned": {
+    "message": "$1 को पिन किया"
+  },
+  "summaryRaised": {
+    "message": "$1 को ऊपर किया"
+  },
+  "summaryLowered": {
+    "message": "$1 को नीचे किया"
+  },
+  "summaryHid": {
+    "message": "$1 को छिपाया"
+  },
+  "summaryActed": {
+    "message": "Anubis ने $2 में से $1।"
+  },
+  "summaryResults_one": {
+    "message": "$1 नतीजे"
+  },
+  "summaryResults_other": {
+    "message": "$1 नतीजों"
+  },
+  "summaryResultsPages_one": {
+    "message": "$2 पेजों के $1 नतीजे"
+  },
+  "summaryResultsPages_other": {
+    "message": "$2 पेजों के $1 नतीजों"
+  },
+  "summaryAlsoRemoved": {
+    "message": "इसने $1 को भी हटाया।"
+  },
+  "summaryRemovedOnly": {
+    "message": "Anubis ने $1 को हटाया।"
+  },
+  "summaryShortActed": {
+    "message": "Anubis ने $2 में से $1 को बदला।"
+  },
+  "summaryShortActedRemoved": {
+    "message": "Anubis ने $2 में से $1 को बदला और पेज को साफ़ किया।"
+  },
+  "summaryShortRemoved": {
+    "message": "Anubis ने पेज को साफ़ किया।"
+  },
+  "summaryDetails": {
+    "message": "विवरण"
+  },
+  "summaryFewerDetails": {
+    "message": "कम विवरण"
+  },
+  "summaryUnchanged_one": {
+    "message": "Anubis ने यह नतीजा जैसा था, वैसा ही छोड़ दिया।"
+  },
+  "summaryUnchanged_other": {
+    "message": "Anubis ने सभी $1 नतीजे जैसे थे, वैसे ही छोड़ दिए।"
+  },
+  "summaryUnchangedPages": {
+    "message": "Anubis ने $2 पेजों के सभी $1 नतीजे जैसे थे, वैसे ही छोड़ दिए।"
+  },
+  "summaryFiltered_one": {
+    "message": "सिर्फ़ “$2” दिखाया जा रहा है: $1 नतीजे में से $3।"
+  },
+  "summaryFiltered_other": {
+    "message": "सिर्फ़ “$2” दिखाया जा रहा है: $1 नतीजों में से $3।"
+  },
+  "summaryRemovedAi_one": {
+    "message": "एक एआई जवाब"
+  },
+  "summaryRemovedAi_other": {
+    "message": "$1 एआई जवाबों"
+  },
+  "summaryRemovedVideos_one": {
+    "message": "एक वीडियो पैनल"
+  },
+  "summaryRemovedVideos_other": {
+    "message": "$1 वीडियो पैनलों"
+  },
+  "summaryRemovedQuestions_one": {
+    "message": "सवालों की एक सूची"
+  },
+  "summaryRemovedQuestions_other": {
+    "message": "सवालों की $1 सूचियों"
+  },
+  "summaryRemovedDiscussions_one": {
+    "message": "चर्चाओं का एक पैनल"
+  },
+  "summaryRemovedDiscussions_other": {
+    "message": "चर्चाओं के $1 पैनलों"
+  },
+  "summaryRemovedNews_one": {
+    "message": "खबरों का एक पैनल"
+  },
+  "summaryRemovedNews_other": {
+    "message": "खबरों के $1 पैनलों"
+  },
+  "summaryRemovedImages_one": {
+    "message": "इमेज का एक पैनल"
+  },
+  "summaryRemovedImages_other": {
+    "message": "इमेज के $1 पैनलों"
+  },
+  "summaryRemovedRelated_one": {
+    "message": "मिलती-जुलती खोजों की एक सूची"
+  },
+  "summaryRemovedRelated_other": {
+    "message": "मिलती-जुलती खोजों की $1 सूचियों"
+  },
+  "summaryRemovedElsewhere_one": {
+    "message": "दूसरे सर्च इंजनों की एक पंक्ति"
+  },
+  "summaryRemovedElsewhere_other": {
+    "message": "दूसरे सर्च इंजनों की $1 पंक्तियों"
+  },
+  "summaryRemovedAdRequests_one": {
+    "message": "विज्ञापनों की अनुमति मांगने वाला एक अनुरोध"
+  },
+  "summaryRemovedAdRequests_other": {
+    "message": "विज्ञापनों की अनुमति मांगने वाले $1 अनुरोधों"
+  },
+  "withShortcut": {
+    "message": "$1 ($2)"
+  },
+  "toolbarOff": {
+    "message": "Anubis बंद है"
+  },
+  "weighLabel": {
+    "message": "$1 को छिपाएं, रैंक करें या टैग करें"
+  },
+  "weighLabelRanked": {
+    "message": "$1 को छिपाएं, रैंक करें या टैग करें ($2)"
+  },
+  "hiddenShow": {
+    "message": "दिखाएं"
+  },
+  "hiddenShowSite": {
+    "message": "दिखाएं: $1"
+  },
+  "hiddenMore_one": {
+    "message": "और $1 अन्य"
+  },
+  "hiddenMore_other": {
+    "message": "और $1 अन्य"
+  },
+  "summaryChangedHide": {
+    "message": "$1 को छिपाया गया।"
+  },
+  "summaryChangedLower": {
+    "message": "$1 को नीचे किया गया।"
+  },
+  "summaryChangedRaise": {
+    "message": "$1 को ऊपर किया गया।"
+  },
+  "summaryChangedPin": {
+    "message": "$1 को पिन किया गया।"
+  },
+  "summaryChangedAllow": {
+    "message": "$1 को सामान्य पर सेट किया गया।"
+  },
+  "summaryChangedNormal": {
+    "message": "$1 के लिए आपकी रैंकिंग हटा दी गई।"
+  },
+  "summaryChangedTagOn": {
+    "message": "$1 को “$2” टैग किया गया।"
+  },
+  "summaryChangedTagOff": {
+    "message": "$1 से “$2” टैग हटाया गया।"
+  },
+  "summaryChangedSite": {
+    "message": "आपकी सूची में $1 को बदला गया।"
+  },
+  "summaryUndo": {
+    "message": "पहले जैसा करें"
+  },
+  "menuSuggest": {
+    "message": "क्या किसी सूची में यह होना चाहिए? इसे $1 को सुझाएं।"
+  },
+  "menuSuggestTitle": {
+    "message": "$2 के इश्यू ट्रैकर पर उसे $1 का सुझाव दें"
+  },
+  "menuReport": {
+    "message": "गलत है? इसकी शिकायत $1 से करें।"
+  },
+  "menuMatchedRule": {
+    "message": "मेल खाने वाला नियम, लाइन $1"
+  },
+  "menuReportTitle": {
+    "message": "$1 के इश्यू ट्रैकर पर बताएं कि वह इस नतीजे के बारे में गलत है"
+  },
+  "offerTitle": {
+    "message": "$1 की सदस्यता लें?"
+  },
+  "offerTrust": {
+    "message": "कोई सूची आपके नतीजों में साइटों को छिपा, रैंक और टैग कर सकती है। सिर्फ़ उन्हीं सूचियों की सदस्यता लें जिन पर आपको भरोसा है।"
+  },
+  "offerPermission": {
+    "message": "इसके बाद आपका ब्राउज़र पूछेगा कि क्या Anubis को $1 से पढ़ने दिया जाए। यह वह साइट है जिस पर सूची है।"
+  },
+  "offerAlready": {
+    "message": "आपने $1 की सदस्यता पहले से ली हुई है।"
+  },
+  "offerSubscribe": {
+    "message": "सदस्यता लें"
+  },
+  "offerSubscribing": {
+    "message": "सदस्यता ली जा रही है…"
+  },
+  "offerCancel": {
+    "message": "रद्द करें"
+  },
+  "welcomeTitle": {
+    "message": "Anubis में आपका स्वागत है"
+  },
+  "welcomeHeading": {
+    "message": "Anubis इंस्टॉल हो गया है"
+  },
+  "welcomeIntro": {
+    "message": "यह आपकी अपनी पसंद और आपकी सदस्यता वाली सूचियों के हिसाब से खोज नतीजों को टैग करता है, फिर से रैंक करता है और छिपाता है।"
+  },
+  "welcomePinHeading": {
+    "message": "इसे टूलबार में रखें"
+  },
+  "welcomePinWhy": {
+    "message": "इसका टूलबार बटन दिखाता है कि Anubis ने पेज पर क्या किया, इसे चालू या बंद करता है, और जिस साइट पर आप हैं उसे रैंक करता है।"
+  },
+  "welcomePinChrome": {
+    "message": "पता बार के पास एक्सटेंशन बटन (पज़ल के टुकड़े वाला) दबाएं, फिर Anubis के बगल में पिन दबाएं।"
+  },
+  "welcomePinEdge": {
+    "message": "पता बार के पास एक्सटेंशन बटन (पज़ल के टुकड़े वाला) दबाएं, फिर Anubis के बगल में आंख वाला आइकॉन दबाएं।"
+  },
+  "welcomePinOpera": {
+    "message": "पता बार के पास एक्सटेंशन बटन (क्यूब वाला) दबाएं, फिर Anubis के बगल में पिन दबाएं।"
+  },
+  "welcomePinFirefox": {
+    "message": "पता बार के पास एक्सटेंशन बटन (पज़ल के टुकड़े वाला) दबाएं, फिर Anubis के बगल में गियर दबाएं और “टूलबार पर पिन करें” चुनें।"
+  },
+  "welcomePinAndroid": {
+    "message": "Anubis ब्राउज़र के मेन्यू में, “एक्सटेंशन” में है।"
+  },
+  "welcomePinned": {
+    "message": "Anubis आपके टूलबार में है।"
+  },
+  "welcomeSearchHeading": {
+    "message": "कुछ खोजकर देखें"
+  },
+  "welcomeSearchHow": {
+    "message": "जैसे आप आम तौर पर खोजते हैं, वैसे ही खोजें। किसी साइट को छिपाने, रैंक करने या टैग करने के लिए, उसके किसी नतीजे पर पॉइंटर ले जाएं और ⚖ बटन दबाएं।"
+  },
+  "welcomeSearchFor": {
+    "message": "अपनी सूचियों के टैग देखने के लिए “$1” खोजें:"
+  },
+  "welcomeSearchOn": {
+    "message": "$2 पर “$1” खोजें"
+  },
+  "welcomeQuery": {
+    "message": "python list comprehension"
+  },
+  "welcomeListsHeading": {
+    "message": "आपकी सूचियां"
+  },
+  "welcomeListsIntro": {
+    "message": "सूचियां आपके लिए साइटों को टैग करती हैं, ऊपर या नीचे करती हैं, या छिपाती हैं। शुरुआत में आपके पास ये हैं:"
+  },
+  "welcomeListsNone": {
+    "message": "सूचियां आपके लिए साइटों को टैग करती हैं, ऊपर या नीचे करती हैं, या छिपाती हैं। आपने अभी तक किसी सूची की सदस्यता नहीं ली है।"
+  },
+  "welcomeListsMore": {
+    "message": "सेटिंग में इन्हें बंद करें या और सूचियां ढूंढें।"
+  },
+  "welcomeListsOpen": {
+    "message": "सूची की सेटिंग खोलें"
+  },
+  "welcomeGuide": {
+    "message": "विकी"
+  },
+  "welcomePrivacy": {
+    "message": "निजता"
+  },
+  "syncHeading": {
+    "message": "सिंक"
+  },
+  "syncIntro": {
+    "message": "आपकी सूची और सेटिंग, आपके दूसरे कंप्यूटरों पर और आपके दूसरे ब्राउज़रों में।"
+  },
+  "syncBrowserHeading": {
+    "message": "ब्राउज़र सिंक"
+  },
+  "syncFirefox": {
+    "message": "आपकी सूची, सेटिंग, टैग से जुड़ी पसंद और सदस्यताएं Firefox के सिंक स्टोरेज में सेव होती हैं। जब आप Firefox में साइन इन होते हैं और उसकी सिंक सेटिंग में “ऐड-ऑन” पर सही का निशान लगा होता है, तब Firefox इन्हें आपके दूसरे कंप्यूटरों पर कॉपी करता है। यह लगभग हर 10 मिनट में सिंक करता है, या तब, जब आप “अभी सिंक करें” चुनते हैं।"
+  },
+  "syncFirefoxAndroid": {
+    "message": "Android के लिए Firefox ऐड-ऑन का डेटा सिंक नहीं करता, इसलिए आपकी सूची, सेटिंग, टैग से जुड़ी पसंद और सदस्यताएं इसी डिवाइस पर रहती हैं। इन्हें सिंक करने के लिए, नीचे कोई WebDAV सर्वर कनेक्ट करें।"
+  },
+  "syncChrome": {
+    "message": "आपकी सूची, सेटिंग, टैग से जुड़ी पसंद और सदस्यताएं ब्राउज़र के सिंक स्टोरेज में सेव होती हैं। जब आप ब्राउज़र में साइन इन होते हैं और एक्सटेंशन सिंक हो रहे होते हैं, तब ब्राउज़र इन्हें आपके दूसरे कंप्यूटरों पर कॉपी करता है।"
+  },
+  "syncBrowserHelp": {
+    "message": "ब्राउज़र की कौन-सी सेटिंग जांचें"
+  },
+  "syncUsage": {
+    "message": "ये सिंक की $2 केबी जगह में से $1 केबी लेते हैं।"
+  },
+  "syncTooBig": {
+    "message": "आपकी सूची सिंक के लिए बहुत बड़ी है, इसलिए यह सिर्फ़ इसी डिवाइस पर सेव है। आपकी सेटिंग, टैग से जुड़ी पसंद और सदस्यताएं अब भी सिंक होती हैं।"
+  },
+  "webdavHeading": {
+    "message": "ब्राउज़रों के बीच"
+  },
+  "webdavIntro": {
+    "message": "Firefox और Chrome आपस में अपने-आप सिंक नहीं होते। इनके बीच शेयर करने के लिए, आप दोनों में एक ही WebDAV स्टोरेज कनेक्ट कर सकते हैं। Koofr और InfiniCLOUD के मुफ़्त प्लान हैं, और Nextcloud जैसे खुद होस्ट किए जाने वाले विकल्प भी काम करते हैं। Anubis वहां एक फ़ाइल, anubis-sync.json, रखता है और हर ब्राउज़र के बदलावों को आपस में मिलाता है।"
+  },
+  "webdavHelp": {
+    "message": "पता और पासवर्ड कहां से पाएं"
+  },
+  "webdavAddress": {
+    "message": "पता"
+  },
+  "webdavAddressHint": {
+    "message": "सेवा का WebDAV पता, जो https:// से शुरू होता है"
+  },
+  "listPermissionDenied": {
+    "message": "इस सूची को अपडेट करने के लिए, Anubis को $1 पढ़ने की अनुमति चाहिए।"
+  },
+  "webdavUser": {
+    "message": "उपयोगकर्ता नाम"
+  },
+  "webdavPassword": {
+    "message": "पासवर्ड"
+  },
+  "webdavPasswordHint": {
+    "message": "ज़्यादातर सेवाएं ऐप्लिकेशन के लिए अलग पासवर्ड देती हैं। वही इस्तेमाल करें।"
+  },
+  "webdavConnect": {
+    "message": "कनेक्ट करें"
+  },
+  "webdavEncrypt": {
+    "message": "सिंक फ़ाइल को एंड-टू-एंड एन्क्रिप्ट करें (सुझाया गया)"
+  },
+  "webdavEncryptionPassphrase": {
+    "message": "एन्क्रिप्शन पासफ़्रेज़"
+  },
+  "webdavConfirmPassphrase": {
+    "message": "पासफ़्रेज़ की पुष्टि करें"
+  },
+  "webdavEncryptionHint": {
+    "message": "हर ब्राउज़र में एक ही लंबा और अनोखा पासफ़्रेज़ इस्तेमाल करें (कम से कम 12 वर्ण)। यह सिर्फ़ इसी ब्राउज़र में सेव होता है, सर्वर पर कभी नहीं भेजा जाता। अगर आप इसे भूल गए, तो सर्वर वाली कॉपी वापस नहीं पाई जा सकती।"
+  },
+  "webdavCorrectPassphrase": {
+    "message": "सही एन्क्रिप्शन पासफ़्रेज़ डालें"
+  },
+  "webdavCorrectPassphraseHint": {
+    "message": "वही पासफ़्रेज़ इस्तेमाल करें जो आपने दूसरे ब्राउज़र में सेट किया था। यह सिर्फ़ यहीं सेव होता है और सर्वर पर कभी नहीं भेजा जाता।"
+  },
+  "webdavSavePassphrase": {
+    "message": "पासफ़्रेज़ सेव करें और सिंक करें"
+  },
+  "webdavChangePassphrase": {
+    "message": "एन्क्रिप्शन पासफ़्रेज़ बदलें"
+  },
+  "webdavChangePassphraseHint": {
+    "message": "सर्वर की फ़ाइल बदलने से पहले Anubis मौजूदा पासफ़्रेज़ की जांच करता है। हर दूसरे ब्राउज़र में, उसके अगले सिंक से पहले नया पासफ़्रेज़ डालें।"
+  },
+  "webdavChangePassphraseHelp": {
+    "message": "इसे बदलने पर क्या होता है"
+  },
+  "webdavEncryptionShort": {
+    "message": "कम से कम 12 वर्णों का एन्क्रिप्शन पासफ़्रेज़ इस्तेमाल करें।"
+  },
+  "webdavPassphraseMismatch": {
+    "message": "पासफ़्रेज़ मेल नहीं खाते।"
+  },
+  "webdavEncrypted": {
+    "message": "सिंक फ़ाइल एंड-टू-एंड एन्क्रिप्ट की गई है। इसका पासफ़्रेज़ सिर्फ़ इसी ब्राउज़र में सेव है; सर्वर इसकी सामग्री नहीं पढ़ सकता। हर ब्राउज़र में एक ही पासफ़्रेज़ इस्तेमाल करें। अगर आप इसे भूल गए, तो सर्वर वाली कॉपी वापस नहीं पाई जा सकती।"
+  },
+  "webdavEncryptionPending": {
+    "message": "एन्क्रिप्शन यहां सेट हो गया है। अगला सफल सिंक सर्वर वाली कॉपी को एन्क्रिप्ट करेगा। हर ब्राउज़र में एक ही पासफ़्रेज़ इस्तेमाल करें।"
+  },
+  "webdavEncryptionMissing": {
+    "message": "इस ब्राउज़र में कोई एन्क्रिप्शन पासफ़्रेज़ सेट नहीं है। एन्क्रिप्ट की गई फ़ाइल पढ़ने के लिए, वही पासफ़्रेज़ इस्तेमाल करें जो दूसरे ब्राउज़र में है। बिना एन्क्रिप्शन वाली सिंक फ़ाइल को सर्वर चलाने वाला पढ़ सकता है।"
+  },
+  "webdavPrivacy": {
+    "message": "एन्क्रिप्शन चालू होने पर, इस सर्वर पर सिर्फ़ एन्क्रिप्ट किया गया डेटा जाता है; आपका पासफ़्रेज़ यहीं सेव रहता है और कभी नहीं भेजा जाता। एन्क्रिप्शन के बिना, सर्वर सिंक फ़ाइल पढ़ सकता है। आपका WebDAV लॉगिन यहां सेव होता है और साइन इन करने के लिए इसी सर्वर पर भेजा जाता है।"
+  },
+  "webdavBadAddress": {
+    "message": "सेवा का WebDAV पता डालें, जो https:// से शुरू होता हो"
+  },
+  "webdavMissingLogin": {
+    "message": "उपयोगकर्ता नाम और पासवर्ड भी डालें।"
+  },
+  "webdavDenied": {
+    "message": "आपकी सूची $1 पर भेजने के लिए, Anubis को आपकी अनुमति चाहिए।"
+  },
+  "webdavConnected": {
+    "message": "$1 के साथ $2 के तौर पर सिंक हो रहा है।"
+  },
+  "webdavWhen": {
+    "message": "आपके बदलाव कुछ सेकंड बाद सर्वर पर चले जाते हैं। आपके दूसरे ब्राउज़रों के बदलाव तब आते हैं जब ब्राउज़र शुरू होता है और जब आप खोजते हैं, ज़्यादा से ज़्यादा हर 5 मिनट में एक बार।"
+  },
+  "webdavSyncing": {
+    "message": "सिंक हो रहा है…"
+  },
+  "webdavLastSync": {
+    "message": "आखिरी बार सिंक किया गया: $1।"
+  },
+  "webdavLastTried": {
+    "message": "आखिरी कोशिश: $1।"
+  },
+  "webdavSyncNow": {
+    "message": "अभी सिंक करें"
+  },
+  "webdavDisconnect": {
+    "message": "डिसकनेक्ट करें"
+  },
+  "webdavDisconnected": {
+    "message": "डिसकनेक्ट हो गया। फ़ाइल सर्वर पर बनी रहती है। आपकी सूची और सेटिंग यहां बनी रहती हैं।"
+  },
+  "webdavErrorAuth": {
+    "message": "सर्वर ने उपयोगकर्ता नाम या पासवर्ड स्वीकार नहीं किया। कई सेवाओं में यहां आपके सामान्य पासवर्ड की जगह ऐप पासवर्ड चाहिए होता है।"
+  },
+  "webdavErrorForbidden": {
+    "message": "सर्वर इस खाते को वहां फ़ाइलें सेव नहीं करने देता।"
+  },
+  "webdavErrorFolder": {
+    "message": "सर्वर पर उस पते पर कोई फ़ोल्डर नहीं है। पता जांचें।"
+  },
+  "webdavErrorPermission": {
+    "message": "Anubis के पास अब $1 के साथ सिंक करने की अनुमति नहीं है। फिर से अनुमति देने के लिए “अभी सिंक करें” दबाएं।"
+  },
+  "webdavErrorNetwork": {
+    "message": "$1 तक नहीं पहुंच सके। पता और अपना कनेक्शन जांचें।"
+  },
+  "webdavErrorFile": {
+    "message": "वहां मौजूद anubis-sync.json फ़ाइल ऐसी नहीं है जिसे Anubis पढ़ सके, इसलिए उसे छेड़ा नहीं गया। कोई दूसरा फ़ोल्डर इस्तेमाल करें।"
+  },
+  "webdavErrorNeedsPassphrase": {
+    "message": "यह सिंक फ़ाइल एन्क्रिप्ट की गई है। इसका पासफ़्रेज़ डालें; कुछ भी नहीं बदला गया।"
+  },
+  "webdavErrorWrongPassphrase": {
+    "message": "उस पासफ़्रेज़ से सिंक फ़ाइल डिक्रिप्ट नहीं हो सकी। इसे जांचें; सर्वर की फ़ाइल नहीं बदली गई।"
+  },
+  "webdavErrorUnencrypted": {
+    "message": "यह कनेक्शन पहले एन्क्रिप्ट किया गया था, लेकिन अब सर्वर पर बिना एन्क्रिप्शन वाली सिंक फ़ाइल है। उसे नहीं बदला गया। फिर से सिंक करने से पहले सर्वर की फ़ाइल जांचें।"
+  },
+  "webdavErrorChanged": {
+    "message": "पासफ़्रेज़ बदलते समय सिंक फ़ाइल बदल गई, या सर्वर उसे एक साथ होने वाले बदलावों से नहीं बचा सकता। कुछ भी ओवरराइट नहीं किया गया। फिर से सिंक करें और दोबारा कोशिश करें।"
+  },
+  "webdavErrorUnconfirmed": {
+    "message": "फ़ाइल सेव करते समय $1 से कनेक्शन टूट गया, इसलिए Anubis यह नहीं बता सकता कि अब उसमें कौन-सा पासफ़्रेज़ है। पुराना पासफ़्रेज़ अब भी यहां सेव है। अगर अगला सिंक कहे कि वह गलत है, तो नया पासफ़्रेज़ डालें।"
+  },
+  "webdavErrorServer": {
+    "message": "सर्वर ने गड़बड़ी के साथ जवाब दिया (HTTP $1)। बाद में फिर से कोशिश करें।"
+  },
+  "webdavErrorFailed": {
+    "message": "सिंक पूरा नहीं हुआ। फिर से कोशिश करें।"
+  },
+  "appearanceHeading": {
+    "message": "दिखावट"
+  },
+  "appearanceIntro": {
+    "message": "Anubis यहां और खोज पेजों पर कैसा दिखता है।"
+  },
+  "themeHeading": {
+    "message": "थीम"
+  },
+  "themeHint": {
+    "message": "“ऑटो” चुनने पर, यहां और हर नतीजे के मेन्यू में आपके ब्राउज़र की थीम अपनाई जाती है। Anubis खोज पेजों पर बाकी जो कुछ जोड़ता है, उसमें हर सर्च इंजन का अपना लाइट या डार्क मोड अपनाया जाता है।"
+  },
+  "paletteHeading": {
+    "message": "खोज पेजों पर रंग"
+  },
+  "paletteHint": {
+    "message": "“सादा” चुनने पर, Anubis खोज पेजों पर जो कुछ भी जोड़ता है, वह सब सुनहरे की जगह स्लेटी रंग में दिखता है। टैग के रंग हट जाते हैं और उन्हें उनके नाम से पहचाना जाता है। सेटिंग और टूलबार पॉप-अप सुनहरे ही रहते हैं।"
+  },
+  "paletteGold": {
+    "message": "सुनहरा"
+  },
+  "palettePlain": {
+    "message": "सादा"
+  },
+  "hideStyleHeading": {
+    "message": "छिपे हुए नतीजे"
+  },
+  "hideStyleHint": {
+    "message": "“हटाएं” उन्हें पेज से हटा देता है; नतीजों के ऊपर का सारांश उन्हें गिनता है, और “छिपे हुए दिखाएं” उन्हें वापस लाता है। “समेटें” लगातार छिपे हुए नतीजों के हर समूह के लिए एक पतली लाइन छोड़ता है। “फीका करें” उन्हें फीका कर देता है।"
+  },
+  "hideStyleRemove": {
+    "message": "हटाएं"
+  },
+  "hideStyleCollapse": {
+    "message": "समेटें"
+  },
+  "hideStyleDim": {
+    "message": "फीका करें"
+  },
+  "rerankHeading": {
+    "message": "नतीजों को फिर से रैंक करें"
+  },
+  "rerankHint": {
+    "message": "ऊपर किए गए और पिन किए गए नतीजों को ऊपर ले जाएं, और नीचे किए गए नतीजों को नीचे, Brave Goggle की तरह।"
+  },
+  "rerankHelp": {
+    "message": "फिर से रैंक करना कैसे काम करता है"
+  },
+  "deeperAuto": {
+    "message": "और नतीजे अपने-आप लोड करें"
+  },
+  "deeperAutoHint": {
+    "message": "नतीजों के अगले पेज पहले पेज में जोड़ें और सबको एक साथ रैंक करें, ताकि पेज 3 पर आपकी पिन की हुई साइट सबसे ऊपर आ जाए। नतीजों के ऊपर “और नतीजे लोड करें” आपके कहने पर यही करता है। कितने पेज जोड़ने हैं, यह 0 (बंद) से $1 तक लिखें।"
+  },
+  "deeperHelp": {
+    "message": "और नतीजे लोड करना कैसे काम करता है"
+  },
+  "deeperUnit": {
+    "message": "और पेज"
+  },
+  "deeperTipOff": {
+    "message": "बंद: और नतीजे सिर्फ़ तब लोड होते हैं, जब आप “और नतीजे लोड करें” दबाते हैं।"
+  },
+  "deeperTipTime_one": {
+    "message": "इससे हर खोज में लगभग $1 सेकंड ज़्यादा लगता है।"
+  },
+  "deeperTipTime_other": {
+    "message": "इससे हर खोज में लगभग $1 सेकंड ज़्यादा लगते हैं।"
+  },
+  "deeperTipFew": {
+    "message": "$1 कुछ पेजों से सर्च इंजनों को शायद ही कोई दिक्कत होती है।"
+  },
+  "deeperTipSome": {
+    "message": "$1 कुछ सर्च इंजन आपसे यह पुष्टि करने को कह सकते हैं कि आप रोबोट नहीं हैं।"
+  },
+  "deeperTipMany": {
+    "message": "$1 इतने पेजों के बाद Google और Bing अक्सर आपसे यह पुष्टि करने को कहते हैं कि आप रोबोट नहीं हैं। कुछ सर्च इंजनों के पेज इससे पहले ही खत्म हो जाते हैं।"
+  },
+  "chipsHeading": {
+    "message": "टैग लेबल"
+  },
+  "chipsHint": {
+    "message": "हर नतीजे के शीर्षक के नीचे टैग और रैंकिंग दिखाएं।"
+  },
+  "summaryHeading": {
+    "message": "सारांश"
+  },
+  "summaryHint": {
+    "message": "नतीजों के ऊपर एक लाइन में दिखाएं कि Anubis ने क्या बदला।"
+  },
+  "enabledHeading": {
+    "message": "Anubis चालू है"
+  },
+  "enabledHint": {
+    "message": "अनइंस्टॉल किए बिना खोज पेजों को जैसा है वैसा छोड़ने के लिए, इसे बंद करें।"
+  },
+  "enginesHeading": {
+    "message": "सर्च इंजन"
+  },
+  "enginesIntro": {
+    "message": "Anubis इन सर्च इंजनों के वेब नतीजों पर काम करता है। जहां हो सके, नतीजे पेज की बनावट से ढूंढे जाते हैं, ताकि डिज़ाइन में छोटे-मोटे बदलावों से यह खराब न हो।"
+  },
+  "enginesTrouble": {
+    "message": "क्या Anubis किसी खोज पेज पर कुछ नहीं कर रहा?"
+  },
+  "enginesTroubleHelp": {
+    "message": "क्या जांचें"
+  },
+  "shareHeading": {
+    "message": "बैकअप लें, इंपोर्ट करें और शेयर करें"
+  },
+  "shareIntro": {
+    "message": "हर चीज़ की कॉपी रखें, किसी दूसरे टूल से अपनी साइटें यहां लाएं, या अपनी सूची प्रकाशित करें ताकि दूसरे उसकी सदस्यता ले सकें।"
+  },
+  "publishHeading": {
+    "message": "अपनी सूची प्रकाशित करें"
+  },
+  "publishIntro": {
+    "message": "किसी सर्वर की ज़रूरत नहीं: एक सार्वजनिक git रिपॉज़िटरी ही डेटाबेस है, और लोग पुल रिक्वेस्ट से योगदान देते हैं।"
+  },
+  "publishHelp": {
+    "message": "सूची कैसे प्रकाशित करें"
+  },
+  "publishStepDownload": {
+    "message": "नीचे से अपनी सूची डाउनलोड करें। सबसे ऊपर उसकी $1, $2 और $3 लाइनें सेट करें।"
+  },
+  "publishStepRepository": {
+    "message": "GitHub पर एक सार्वजनिक रिपॉज़िटरी (या एक gist) बनाएं और उसमें फ़ाइल जोड़ें, जैसे $1।"
+  },
+  "publishStepIssues": {
+    "message": "$1 जोड़ें, ताकि लोग हर नतीजे के मेन्यू से आपकी सूची में साइटें सुझा सकें।"
+  },
+  "publishStepShare": {
+    "message": "फ़ाइल का लिंक शेयर करें। लोग इसे सूचियां → सूची जोड़ें में चिपकाते हैं।"
+  },
+  "publishStepDirectory": {
+    "message": "क्या आप चाहते हैं कि यह सबके लिए “और सूचियां” में दिखे? इसे $1 में जोड़ने वाला पुल रिक्वेस्ट खोलें।"
+  },
+  "publishDownload": {
+    "message": "मेरी सूची डाउनलोड करें"
+  },
+  "publishFormat": {
+    "message": "सूची का फ़ॉर्मैट"
+  },
+  "importHeading": {
+    "message": "साइटें इंपोर्ट करें"
+  },
+  "importIntro": {
+    "message": "uBlacklist या HOHSER से आ रहे हैं? अपने नियम या एक्सपोर्ट यहां चिपकाएं, और साइटें आपकी सूची में जुड़ जाएंगी। छिपी हुई साइटें छिपी ही रहती हैं, HOHSER का आंशिक रूप से छिपाना “नीचे करें” बन जाता है, और हाइलाइट के रंग ऐसे टैग बन जाते हैं जो हाइलाइट करते हैं।"
+  },
+  "importHelp": {
+    "message": "हर टूल के नियम क्या बन जाते हैं"
+  },
+  "importPlaceholder": {
+    "message": "uBlacklist नियम, HOHSER एक्सपोर्ट, कोई Goggle, या हर लाइन में एक डोमेन चिपकाएं"
+  },
+  "importLabel": {
+    "message": "इंपोर्ट करने के लिए साइटें"
+  },
+  "importButton": {
+    "message": "इंपोर्ट करें"
+  },
+  "importChooseFile": {
+    "message": "फ़ाइल चुनें"
+  },
+  "importSourceHohser": {
+    "message": "HOHSER एक्सपोर्ट"
+  },
+  "importSourceUblacklist": {
+    "message": "uBlacklist नियमों"
+  },
+  "importSourceGoggle": {
+    "message": "Goggle"
+  },
+  "importSourceAnubis": {
+    "message": "Anubis सूची"
+  },
+  "importSourceDomains": {
+    "message": "डोमेन की सूची"
+  },
+  "importRead_one": {
+    "message": "$2 के रूप में पढ़ा गया: $1 साइट जोड़ी गई और $3 अपडेट की गईं।"
+  },
+  "importRead_other": {
+    "message": "$2 के रूप में पढ़ा गया: $1 साइटें जोड़ी गईं और $3 अपडेट की गईं।"
+  },
+  "importSkipped_one": {
+    "message": "पते के पैटर्न या असमर्थित सिंटैक्स वाला $1 नियम छोड़ दिया गया; इसे रखने के लिए मूल सूची की सदस्यता लें।"
+  },
+  "importSkipped_other": {
+    "message": "पते के पैटर्न या असमर्थित सिंटैक्स वाले $1 नियम छोड़ दिए गए; इन्हें रखने के लिए मूल सूची की सदस्यता लें।"
+  },
+  "importFailed": {
+    "message": "इंपोर्ट नहीं हो सका: $1"
+  },
+  "backupHeading": {
+    "message": "बैकअप"
+  },
+  "backupIntro": {
+    "message": "सब कुछ एक फ़ाइल में: सेटिंग, टैग से जुड़ी पसंद, सदस्यताएं और आपकी सूची।"
+  },
+  "backupExport": {
+    "message": "बैकअप एक्सपोर्ट करें"
+  },
+  "backupRestore": {
+    "message": "बैकअप रीस्टोर करें"
+  },
+  "backupRestored": {
+    "message": "बैकअप रीस्टोर हो गया।"
+  },
+  "backupRestoreFailed": {
+    "message": "रीस्टोर नहीं हो सका: $1"
+  },
+  "resetButton": {
+    "message": "सेटिंग रीसेट करें"
+  },
+  "resetDone": {
+    "message": "सेटिंग, टैग और सदस्यताएं रीसेट हो गईं। आपकी सूची बनी रहेगी।"
+  },
+  "settingsSections": {
+    "message": "सेटिंग के सेक्शन"
+  },
+  "settingsPageTitle": {
+    "message": "$1 – Anubis"
+  },
+  "settingsBrandTitle": {
+    "message": "Anubis विकी खोलें"
+  },
+  "settingsTagline": {
+    "message": "खोज नतीजों को छिपाएं, रैंक करें और टैग करें"
+  },
+  "settingsSource": {
+    "message": "GitHub पर सोर्स कोड"
+  },
+  "sitesHeading": {
+    "message": "आपकी साइटें"
+  },
+  "sitesHelp": {
+    "message": "रैंकिंग कैसे काम करती है"
+  },
+  "tagsHeading": {
+    "message": "टैग"
+  },
+  "tagsHelp": {
+    "message": "टैग कैसे काम करते हैं"
+  },
+  "listsHeading": {
+    "message": "सूचियां"
+  },
+  "listsHelp": {
+    "message": "सूचियां कैसे काम करती हैं"
+  },
+  "cleanupHeading": {
+    "message": "पैनल हटाएं"
+  },
+  "cleanupHelp": {
+    "message": "पैनल हटाना कैसे काम करता है"
+  },
+  "appearanceHelp": {
+    "message": "छिपे हुए नतीजों के बारे में"
+  },
+  "enginesHelp": {
+    "message": "कौन-से सर्च इंजन काम करते हैं"
+  },
+  "syncHelp": {
+    "message": "सिंक कैसे काम करता है"
+  },
+  "shareHelp": {
+    "message": "दूसरे टूल से यहां आना"
+  },
+  "cleanupIntro": {
+    "message": "Anubis खोज पेजों पर वे पैनल हटा सकता है जो नतीजे नहीं हैं। जो पैनल आप नहीं देखना चाहते, उनमें से हर एक को चालू करें। नतीजों के ऊपर “छिपे हुए दिखाएं” उस खोज के लिए उन्हें वापस ले आता है।"
+  },
+  "cleanupEverySearch": {
+    "message": "हर खोज में"
+  },
+  "cleanupEverySearchHint": {
+    "message": "चालू होने पर Anubis इसे हटाता है। बंद होने पर यह पेज पर रहता है।"
+  },
+  "cleanupStillShows": {
+    "message": "अगर कोई पैनल अब भी दिखे"
+  },
+  "cleanupAll": {
+    "message": "ये सभी"
+  },
+  "cleanupAllHint": {
+    "message": "इस सेक्शन के हर स्विच को चालू या बंद करता है।"
+  },
+  "cleanupOnGoogle": {
+    "message": "Google पर"
+  },
+  "cleanupWebTab": {
+    "message": "हमेशा “वेब” टैब खोलें"
+  },
+  "cleanupWebTabHint": {
+    "message": "हर Google खोज को उसके “वेब” टैब पर भेजता है: सिर्फ़ लिंक, बिना “एआई से खास जानकारी”, वीडियो या दूसरे पैनलों के, उन पैनलों के भी बिना जिन्हें Anubis नहीं पहचानता। किसी एक खोज में इसे छोड़ने के लिए, नतीजों के ऊपर “सभी” चुनें।"
+  },
+  "cleanupAi": {
+    "message": "एआई जवाब"
+  },
+  "cleanupAiHint": {
+    "message": "Google की “एआई से खास जानकारी” और “एआई मोड” टैब, DuckDuckGo के एआई की मदद से बने जवाब और Duck.ai, Bing के एआई जवाब, और Brave के एआई जवाब।"
+  },
+  "cleanupVideos": {
+    "message": "वीडियो पैनल"
+  },
+  "cleanupVideosHint": {
+    "message": "नतीजों के बीच वीडियो और छोटे वीडियो वाले पैनल।"
+  },
+  "cleanupQuestions": {
+    "message": "लोग यह भी पूछते हैं"
+  },
+  "cleanupQuestionsHint": {
+    "message": "दूसरे लोगों के सवालों की सूचियां, जिनके जवाब खोलकर देखे जा सकते हैं।"
+  },
+  "cleanupDiscussions": {
+    "message": "चर्चा वाले पैनल"
+  },
+  "cleanupDiscussionsHint": {
+    "message": "नतीजों के बीच फ़ोरम थ्रेड के पैनल, जैसे Google का “चर्चाएं और फ़ोरम”। नतीजों में आने वाले फ़ोरम पेज बने रहते हैं।"
+  },
+  "cleanupNews": {
+    "message": "मुख्य खबरें"
+  },
+  "cleanupNewsHint": {
+    "message": "नतीजों के बीच खबरों के पैनल।"
+  },
+  "cleanupImages": {
+    "message": "इमेज की पंक्तियां"
+  },
+  "cleanupImagesHint": {
+    "message": "नतीजों के बीच इमेज की पंक्तियां। “इमेज” टैब फिर भी काम करता है।"
+  },
+  "cleanupRelated": {
+    "message": "मिलती-जुलती खोजें"
+  },
+  "cleanupRelatedHint": {
+    "message": "दूसरी खोजों की सूचियां, जो आम तौर पर पेज के सबसे नीचे होती हैं।"
+  },
+  "cleanupElsewhere": {
+    "message": "दूसरे सर्च इंजन"
+  },
+  "cleanupElsewhereHint": {
+    "message": "बटनों की पंक्तियां जो आपकी खोज को किसी दूसरे सर्च इंजन पर दोहराती हैं, जैसे Brave का “Find elsewhere”।"
+  },
+  "cleanupAdRequests": {
+    "message": "विज्ञापनों की अनुमति के अनुरोध"
+  },
+  "cleanupAdRequestsHint": {
+    "message": "ऐसे बैनर जो आपसे विज्ञापन ब्लॉकर बंद करने या विज्ञापनों की अनुमति देने को कहते हैं, जैसे Startpage का “Block creepy ads, not private search”।"
+  },
+  "sitesIntro": {
+    "message": "वे साइटें जिन्हें आपने खुद रैंक किया है या छिपाया है। आपकी पसंद आपकी सदस्यता वाली हर सूची से ऊपर रहती है। किसी भी खोज नतीजे पर बटन का इस्तेमाल करें, या यहां साइटें जोड़ें।"
+  },
+  "sitesEditAsText": {
+    "message": "टेक्स्ट के रूप में बदलें"
+  },
+  "sitesBackToTable": {
+    "message": "टेबल पर वापस जाएं"
+  },
+  "sitesTooBig": {
+    "message": "आपकी सूची ब्राउज़र सिंक के लिए बहुत बड़ी है, इसलिए यह सिर्फ़ इसी डिवाइस पर सेव है। इसकी कॉपी रखने के लिए इसे डाउनलोड करें।"
+  },
+  "sitesAddPlaceholder": {
+    "message": "डोमेन या यूआरएल, जैसे fandom.com"
+  },
+  "sitesAdd": {
+    "message": "जोड़ें"
+  },
+  "sitesNotDomain": {
+    "message": "यह डोमेन जैसा नहीं लगता।"
+  },
+  "sitesAddHint": {
+    "message": "यह साइट और उसके सभी सबडोमेन पर लागू होता है।"
+  },
+  "sitesAddHelp": {
+    "message": "साइट का कितना हिस्सा चुनें"
+  },
+  "sitesFilter_one": {
+    "message": "$1 साइट फ़िल्टर करें…"
+  },
+  "sitesFilter_other": {
+    "message": "$1 साइटें फ़िल्टर करें…"
+  },
+  "sitesFilterLabel": {
+    "message": "साइटें फ़िल्टर करें"
+  },
+  "sitesAddTagTo": {
+    "message": "$1 में टैग जोड़ें"
+  },
+  "sitesKeptNormal": {
+    "message": "सामान्य पर रखी गई, चाहे आपकी सूचियां कुछ भी कहें"
+  },
+  "sitesRemoveTag": {
+    "message": "$2 से “$1” हटाएं"
+  },
+  "sitesForget": {
+    "message": "$1 को भूल जाएं"
+  },
+  "sitesFirst500": {
+    "message": "पहली 500 दिखाई जा रही हैं। बाकी ढूंढने के लिए फ़िल्टर करें।"
+  },
+  "sitesNone": {
+    "message": "अभी कोई साइट नहीं है। ऊपर कोई साइट जोड़ें, या किसी खोज नतीजे पर बटन का इस्तेमाल करें।"
+  },
+  "sitesTextLabel": {
+    "message": "टेक्स्ट के रूप में आपकी सूची"
+  },
+  "sitesTextIntro": {
+    "message": "Anubis सूची फ़ॉर्मैट में आपकी सूची: Brave Goggles सिंटैक्स और साथ में टैग। यह ठीक वही फ़ाइल है जिसे आप प्रकाशित करेंगे। जिन लाइनों को टेबल नहीं दिखा सकती, वे जैसी लिखी हैं वैसी ही रखी जाती हैं।"
+  },
+  "sitesTextReadable": {
+    "message": "$1 और $2, सब पढ़े जा सकते हैं।"
+  },
+  "listInstructions_one": {
+    "message": "$1 निर्देश"
+  },
+  "listInstructions_other": {
+    "message": "$1 निर्देश"
+  },
+  "listErrorLine": {
+    "message": "लाइन $1: $2"
+  },
+  "sitesSave": {
+    "message": "सेव करें"
+  },
+  "sitesFormatReference": {
+    "message": "फ़ॉर्मैट की जानकारी"
+  },
+  "listsIntro": {
+    "message": "ऐसी सूचियों की सदस्यता लें जो साइटों को टैग करती हैं, फिर से रैंक करती हैं या छिपाती हैं। GitHub, GitLab, Codeberg या gist पर मौजूद कोई भी टेक्स्ट फ़ाइल काम करती है: Anubis सूचियां, Brave Goggles, uBlacklist नियमसेट और डोमेन की सादी सूचियां।"
+  },
+  "listsUpdateAll": {
+    "message": "सभी अपडेट करें"
+  },
+  "listsUpdating": {
+    "message": "अपडेट हो रहा है…"
+  },
+  "listsAllChecked": {
+    "message": "सभी सूचियों में अपडेट की जांच हो गई।"
+  },
+  "listsAddHeading": {
+    "message": "सूची जोड़ें"
+  },
+  "listsAddHint": {
+    "message": "फ़ाइल का लिंक चिपकाएं। GitHub पेज, gist या Brave Goggle के लिंक भी काम करते हैं।"
+  },
+  "listsAddHelp": {
+    "message": "कौन-सी सूचियां काम करती हैं"
+  },
+  "listsUrlLabel": {
+    "message": "सूची का यूआरएल"
+  },
+  "listsNone": {
+    "message": "अभी कोई सूची नहीं है। नीचे दी गई सूचियों में से कुछ चुनें।"
+  },
+  "listsMoreHeading": {
+    "message": "और सूचियां"
+  },
+  "listsMoreIntro": {
+    "message": "Anubis डायरेक्टरी और बड़े समुदाय से।"
+  },
+  "listsShare": {
+    "message": "कोई ऐसी सूची बनाई है जो शेयर करने लायक है? $1 में पुल रिक्वेस्ट भेजकर उसे डायरेक्टरी में जोड़ें।"
+  },
+  "listsNeedHttps": {
+    "message": "सूचियां https से ही मिलनी चाहिए।"
+  },
+  "listsPermissionToDownload": {
+    "message": "इस सूची को डाउनलोड करने के लिए, Anubis को $1 पढ़ने की अनुमति चाहिए।"
+  },
+  "listsSubscribed": {
+    "message": "$1 की सदस्यता ली: $2 और $3।"
+  },
+  "listsSubscribedBundled": {
+    "message": "$1 की सदस्यता ली (अपडेट हो पाने तक Anubis के साथ आई कॉपी इस्तेमाल हो रही है)।"
+  },
+  "listsSubscribeFailed": {
+    "message": "सदस्यता नहीं ली जा सकी: $1"
+  },
+  "listsUse": {
+    "message": "$1 इस्तेमाल करें"
+  },
+  "listsOn": {
+    "message": "चालू"
+  },
+  "listsOff": {
+    "message": "बंद"
+  },
+  "listsUpdateFailed": {
+    "message": "$1: $2"
+  },
+  "listsUpToDate": {
+    "message": "$1 अप-टू-डेट है।"
+  },
+  "listsFacts": {
+    "message": "$1।"
+  },
+  "listsLinks": {
+    "message": "$1"
+  },
+  "listsNotDownloaded": {
+    "message": "अभी डाउनलोड नहीं हुई"
+  },
+  "listsBy": {
+    "message": "$1 की ओर से"
+  },
+  "listsBundledCopy": {
+    "message": "Anubis के साथ आई कॉपी"
+  },
+  "listsUpdated": {
+    "message": "अपडेट: $1"
+  },
+  "listsHomepage": {
+    "message": "होमपेज"
+  },
+  "listsSuggestChanges": {
+    "message": "बदलाव सुझाएं"
+  },
+  "listsUsingBundled": {
+    "message": "अपडेट हो पाने तक Anubis के साथ आई कॉपी इस्तेमाल हो रही है ($1)।"
+  },
+  "listsLastUpdateFailed": {
+    "message": "पिछला अपडेट नहीं हो सका: $1।"
+  },
+  "listsSkippedLines_one": {
+    "message": "$1 लाइन छोड़ी गई: Anubis अभी वह सिंटैक्स नहीं पढ़ सकता।"
+  },
+  "listsSkippedLines_other": {
+    "message": "$1 लाइनें छोड़ी गईं: Anubis अभी वह सिंटैक्स नहीं पढ़ सकता।"
+  },
+  "listsUpdateNow": {
+    "message": "अभी अपडेट करें"
+  },
+  "listsUpdateOne": {
+    "message": "$1 अपडेट करें"
+  },
+  "listsViewFile": {
+    "message": "फ़ाइल देखें"
+  },
+  "listsViewOne": {
+    "message": "$1 देखें"
+  },
+  "listsUnsubscribe": {
+    "message": "सदस्यता छोड़ें"
+  },
+  "listsUnsubscribeOne": {
+    "message": "$1 की सदस्यता छोड़ें"
+  },
+  "listLensTitle": {
+    "message": "लेंस उन नतीजों को छिपाता है जिनका ज़िक्र सूची में नहीं है"
+  },
+  "listKindLens": {
+    "message": "लेंस"
+  },
+  "listKindBuiltin": {
+    "message": "पहले से शामिल"
+  },
+  "listFormatAnubis": {
+    "message": "Anubis सूची"
+  },
+  "listFormatGoggle": {
+    "message": "Brave Goggle"
+  },
+  "listFormatUblacklist": {
+    "message": "uBlacklist नियमसेट"
+  },
+  "listFormatDomains": {
+    "message": "डोमेन सूची"
+  },
+  "timeJustNow": {
+    "message": "अभी-अभी"
+  },
+  "tagsIntro": {
+    "message": "सूचियां नतीजों पर लेबल लगाती हैं। हर लेबल क्या करे, यह आप तय करते हैं: सूची के हिसाब से चले, सिर्फ़ दिखे, हाइलाइट करे, या जिन नतीजों पर यह लगा है उन्हें पिन करे, ऊपर करे, नीचे करे या छिपाए। जो सूचियां एक ही टैग नाम इस्तेमाल करती हैं, वे उसे साझा करती हैं।"
+  },
+  "tagActionList": {
+    "message": "सूचियों के हिसाब से"
+  },
+  "tagActionLabel": {
+    "message": "सिर्फ़ लेबल"
+  },
+  "tagActionHighlight": {
+    "message": "हाइलाइट करें"
+  },
+  "tagActionFor": {
+    "message": "$1 टैग वाले नतीजों का क्या करें"
+  },
+  "tagMarksNone": {
+    "message": "अभी किसी साइट पर यह टैग नहीं लगा है।"
+  },
+  "tagMarks": {
+    "message": "यह टैग $1 पर लगा है।"
+  },
+  "tagMarksYours_one": {
+    "message": "आपकी $1 साइट"
+  },
+  "tagMarksYours_other": {
+    "message": "आपकी $1 साइटों"
+  },
+  "tagMarksFromList_one": {
+    "message": "$2 की $1 साइट"
+  },
+  "tagMarksFromList_other": {
+    "message": "$2 की $1 साइटों"
+  },
+  "tagEffectLabel": {
+    "message": "$1 यह सिर्फ़ एक लेबल है: इनकी रैंकिंग वही रहती है।"
+  },
+  "tagEffectHighlight": {
+    "message": "$1 यह इन्हें टैग के रंग में हाइलाइट करता है।"
+  },
+  "tagEffectRaise": {
+    "message": "$1 यह आपकी खोजों में इन्हें ऊपर करता है।"
+  },
+  "tagEffectLower": {
+    "message": "$1 यह आपकी खोजों में इन्हें नीचे करता है।"
+  },
+  "tagEffectPin": {
+    "message": "$1 यह इन्हें आपकी खोजों में सबसे ऊपर पिन करता है।"
+  },
+  "tagEffectHide": {
+    "message": "$1 यह इन्हें आपकी खोजों से छिपाता है।"
+  },
+  "tagEffectOneList": {
+    "message": "$1 $2 इनमें से $3।"
+  },
+  "tagEffectLists": {
+    "message": "$1 सूचियां इनमें से $2।"
+  },
+  "tagListRaises_one": {
+    "message": "$1 को ऊपर करती है"
+  },
+  "tagListRaises_other": {
+    "message": "$1 को ऊपर करती है"
+  },
+  "tagListLowers_one": {
+    "message": "$1 को नीचे करती है"
+  },
+  "tagListLowers_other": {
+    "message": "$1 को नीचे करती है"
+  },
+  "tagListHides_one": {
+    "message": "$1 को छिपाती है"
+  },
+  "tagListHides_other": {
+    "message": "$1 को छिपाती है"
+  },
+  "tagListsRaise_one": {
+    "message": "$1 को ऊपर करती हैं"
+  },
+  "tagListsRaise_other": {
+    "message": "$1 को ऊपर करती हैं"
+  },
+  "tagListsLower_one": {
+    "message": "$1 को नीचे करती हैं"
+  },
+  "tagListsLower_other": {
+    "message": "$1 को नीचे करती हैं"
+  },
+  "tagListsHide_one": {
+    "message": "$1 को छिपाती हैं"
+  },
+  "tagListsHide_other": {
+    "message": "$1 को छिपाती हैं"
+  },
+  "tagSitesToTag": {
+    "message": "$1 टैग लगाने के लिए साइटें"
+  },
+  "tagAddSite": {
+    "message": "साइट जोड़ें"
+  },
+  "tagNotSite": {
+    "message": "“$1” साइट जैसा नहीं लगता।"
+  },
+  "tagTypeSite": {
+    "message": "कोई साइट लिखें, जैसे fandom.com।"
+  },
+  "tagSiteNote": {
+    "message": "$1: $2"
+  },
+  "tagMoreSites_one": {
+    "message": "$1 अन्य"
+  },
+  "tagMoreSites_other": {
+    "message": "$1 अन्य"
+  },
+  "tagFromList": {
+    "message": "$1: $2।"
+  },
+  "tagName": {
+    "message": "टैग का नाम"
+  },
+  "tagNameShort": {
+    "message": "नाम"
+  },
+  "tagDescription": {
+    "message": "ब्यौरा"
+  },
+  "tagDescriptionPlaceholder": {
+    "message": "इसका मतलब क्या है, ज़रूरी नहीं"
+  },
+  "tagMeaning": {
+    "message": "$1 का मतलब"
+  },
+  "tagYourSites": {
+    "message": "इस टैग वाली आपकी साइटें"
+  },
+  "tagNoSites": {
+    "message": "अभी कोई नहीं। यहां कोई साइट जोड़ें, या किसी खोज नतीजे पर ⚖ बटन का इस्तेमाल करें।"
+  },
+  "tagFromYourLists": {
+    "message": "आपकी सूचियों से"
+  },
+  "tagColour": {
+    "message": "रंग"
+  },
+  "tagColourOf": {
+    "message": "$1 का रंग"
+  },
+  "tagShowUnder": {
+    "message": "नतीजों के नीचे $1 दिखाएं"
+  },
+  "tagShowTitle": {
+    "message": "नतीजों के नीचे यह टैग दिखाएं"
+  },
+  "tagEdit": {
+    "message": "बदलाव करें"
+  },
+  "tagDone": {
+    "message": "हो गया"
+  },
+  "tagEditLabel": {
+    "message": "$1 और उसकी साइटों में बदलाव करें"
+  },
+  "tagDelete": {
+    "message": "“$1” मिटाएं"
+  },
+  "tagNewHeading": {
+    "message": "नया टैग"
+  },
+  "tagNewHint": {
+    "message": "आपके टैग आपकी सूची में सेव होते हैं, इसलिए सूची प्रकाशित करने पर वे भी उसके साथ जाते हैं।"
+  },
+  "tagNewHelp": {
+    "message": "टैग में साइटें जोड़ना"
+  },
+  "tagNewPlaceholder": {
+    "message": "नाम, जैसे “एआई कचरा”"
+  },
+  "tagNewColour": {
+    "message": "नए टैग का रंग"
+  },
+  "tagCreate": {
+    "message": "टैग बनाएं"
+  },
+  "tagNameInvalid": {
+    "message": "टैग को ऐसा नाम दें जिसमें कम से कम एक अक्षर या अंक हो।"
+  },
+  "tagExists": {
+    "message": "“$1” नाम का टैग पहले से मौजूद है।"
+  },
+  "tagYoursHeading": {
+    "message": "आपके टैग"
+  },
+  "tagListsHeading": {
+    "message": "सूचियों के टैग"
+  },
+  "tagListsHint": {
+    "message": "ये टैग आपकी सूचियों में तय किए गए हैं। तय करें कि हर टैग क्या करे, और इनमें से किसी में भी अपनी साइटें जोड़ें। अगर कोई सूची ऐसा टैग हटा देती है जो आपकी साइटों पर लगा है, तो वह “आपके टैग” में चला जाता है।"
+  },
+  "tagSourceLists": {
+    "message": "$1 से"
+  },
+  "tagNoneYours": {
+    "message": "अभी आपका अपना कोई टैग नहीं है। ऊपर एक टैग बनाएं।"
+  },
+  "quoted": {
+    "message": "“$1”"
+  },
+  "reasonPins": {
+    "message": "इसे पिन करती है"
+  },
+  "reasonKeepsNormal": {
+    "message": "इसे सामान्य पर रखती है"
+  },
+  "reasonHides": {
+    "message": "इसे छिपाती है"
+  },
+  "reasonRaises": {
+    "message": "इसे $1 स्थान ऊपर करती है"
+  },
+  "reasonLowers": {
+    "message": "इसे $1 स्थान नीचे करती है"
+  },
+  "reasonTags": {
+    "message": "इसे $1 टैग करती है"
+  },
+  "reasonMentions": {
+    "message": "इसका ज़िक्र करती है"
+  },
+  "reasonLens": {
+    "message": "इसे शामिल नहीं करती, इसलिए यह छिपा है"
+  },
+  "reasonYourTagSettings": {
+    "message": "आपकी टैग सेटिंग"
+  },
+  "menuReason": {
+    "message": "$1 $2।"
+  },
+  "choicePin": {
+    "message": "$1 के लिए इसे पिन करती है"
+  },
+  "choiceHide": {
+    "message": "$1 के लिए इसे छिपाती है"
+  },
+  "choiceRaise_one": {
+    "message": "$3 के लिए इसे $2 स्थान ऊपर करती है"
+  },
+  "choiceRaise_other": {
+    "message": "$3 में से हर एक के लिए इसे $2 स्थान ऊपर करती है"
+  },
+  "choiceLower_one": {
+    "message": "$3 के लिए इसे $2 स्थान नीचे करती है"
+  },
+  "choiceLower_other": {
+    "message": "$3 में से हर एक के लिए इसे $2 स्थान नीचे करती है"
+  },
+  "choiceTotal": {
+    "message": "$1, $2"
+  },
+  "choiceNetUp_one": {
+    "message": "इसलिए यह $1 स्थान ऊपर जाता है"
+  },
+  "choiceNetUp_other": {
+    "message": "इसलिए यह $1 स्थान ऊपर जाता है"
+  },
+  "choiceNetDown_one": {
+    "message": "इसलिए यह $1 स्थान नीचे जाता है"
+  },
+  "choiceNetDown_other": {
+    "message": "इसलिए यह $1 स्थान नीचे जाता है"
+  },
+  "choiceNetSame": {
+    "message": "इसलिए यह अपनी जगह पर रहता है"
+  },
+  "lineBadTagDefinition": {
+    "message": "टैग की गलत परिभाषा: $1"
+  },
+  "lineNeedsPattern": {
+    "message": "निर्देश में कोई पैटर्न या साइट होनी चाहिए"
+  },
+  "lineTooLong": {
+    "message": "निर्देश $1 वर्णों से लंबा है"
+  },
+  "lineBadSite": {
+    "message": "गलत साइट: $1"
+  },
+  "lineBadStrength": {
+    "message": "$1 का मान 1–$2 होना चाहिए"
+  },
+  "lineBadTagId": {
+    "message": "गलत टैग आईडी: $1"
+  },
+  "lineUnknownOption": {
+    "message": "अनजाना विकल्प: $1"
+  },
+  "lineEmptyPattern": {
+    "message": "खाली पैटर्न"
+  },
+  "lineTooManyWildcards": {
+    "message": "हर निर्देश में ज़्यादा से ज़्यादा $1 वाइल्डकार्ड (*)"
+  },
+  "lineTooManySeparators": {
+    "message": "हर निर्देश में ज़्यादा से ज़्यादा $1 सेपरेटर (^)"
+  },
+  "lineIfGuard": {
+    "message": "@if गार्ड अभी समर्थित नहीं हैं"
+  },
+  "lineRegexTooLong": {
+    "message": "रेगुलर एक्सप्रेशन $1 वर्णों से लंबा है"
+  },
+  "lineRegexFreeze": {
+    "message": "रेगुलर एक्सप्रेशन खोज पेजों को अटका सकता है (दोहराए जाने वाले ग्रुप के अंदर फिर दोहराव है): $1"
+  },
+  "lineBadRegex": {
+    "message": "गलत रेगुलर एक्सप्रेशन: $1"
+  },
+  "lineUnsupported": {
+    "message": "असमर्थित नियम: $1"
+  },
+  "lineBadHost": {
+    "message": "गलत होस्ट: $1"
+  },
+  "lineMatchesEverything": {
+    "message": "नियम हर चीज़ से मेल खाता है"
+  },
+  "lineNotDomain": {
+    "message": "डोमेन नहीं है: $1"
+  },
+  "listTooBig": {
+    "message": "सूची $1 एमबी से बड़ी है"
+  },
+  "listIsWebPage": {
+    "message": "सूची की जगह एक वेब पेज मिला। रॉ फ़ाइल का यूआरएल इस्तेमाल करें।"
+  },
+  "listTimedOut": {
+    "message": "समय खत्म हो गया"
+  },
+  "listNoUsableRules": {
+    "message": "इस्तेमाल करने लायक कोई नियम नहीं (लाइन $1: $2)"
+  },
+  "listNoRules": {
+    "message": "कोई नियम नहीं मिला"
+  },
+  "backupNotBackup": {
+    "message": "यह Anubis का बैकअप नहीं है।"
+  },
+  "themeAuto": {
+    "message": "ऑटो"
+  },
+  "themeLight": {
+    "message": "लाइट"
+  },
+  "themeDark": {
+    "message": "डार्क"
+  },
+  "themeAutoTitle": {
+    "message": "ऑटो थीम"
+  },
+  "themeLightTitle": {
+    "message": "लाइट थीम"
+  },
+  "themeDarkTitle": {
+    "message": "डार्क थीम"
+  },
+  "personalListName": {
+    "message": "आपकी सूची"
+  },
+  "importHighlightTag": {
+    "message": "हाइलाइट $1"
+  },
+  "tagDeleted_one": {
+    "message": "“$2” टैग मिटाया गया और उसे $1 साइट से हटाया गया।"
+  },
+  "tagDeleted_other": {
+    "message": "“$2” टैग मिटाया गया और उसे $1 साइटों से हटाया गया।"
+  },
+  "listsUnsubscribed": {
+    "message": "$1 की सदस्यता छोड़ दी।"
+  }
+}

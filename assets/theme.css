@@ -1,0 +1,458 @@
+/* Shared look for the popup and options page. Night is the brand default; the
+   light scheme is cool museum stone rather than paper. Controls are flat and quiet;
+   gold is kept for the few things that matter (primary action, focus, a choice made).
+   <html data-theme> is set by utils/theme.ts from the setting. */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #1b1a16;
+  --raised: #23211c;
+  --line: #35312a;
+  --line-strong: #4a453c;
+  --text: #ece6da;
+  --muted: #a39b8c;
+  --gold: #d4a637;
+  --gold-ink: #e0b54e;
+  --on-gold: #1b1a16;
+  --danger: #e2735b;
+  --ok: #7fb58f;
+}
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f2f3f1;
+  --raised: #fbfbfa;
+  --line: #dadcd7;
+  --line-strong: #c3c6bf;
+  --text: #1f1e1a;
+  --muted: #62615b;
+  --gold-ink: #8d6716;
+  --danger: #b4492f;
+  --ok: #3a7a52;
+}
+
+body {
+  margin: 0;
+  font: 14px/1.5 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+a {
+  color: var(--gold-ink);
+  text-underline-offset: 3px;
+}
+.serif {
+  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+}
+code,
+textarea.code {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+svg {
+  display: block;
+  flex: none;
+}
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+[hidden] {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------------ brand */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand h1 {
+  margin: 0;
+  font: 500 19px/1.2 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+  letter-spacing: 0.01em;
+}
+.brand p {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------- buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn:hover {
+  border-color: var(--gold);
+}
+.btn.primary {
+  border-color: var(--gold);
+  background: var(--gold);
+  color: var(--on-gold);
+  font-weight: 600;
+}
+.btn.primary:hover {
+  filter: brightness(1.06);
+}
+.btn.small {
+  height: 26px;
+  padding: 0 9px;
+  font-size: 12.5px;
+}
+.btn.danger {
+  color: var(--danger);
+}
+.btn.danger:hover {
+  border-color: var(--danger);
+}
+.btn svg {
+  width: 14px;
+  height: 14px;
+}
+.btn:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+.text-btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--gold-ink);
+  font: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.text-btn:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.text-btn.danger {
+  color: var(--danger);
+}
+.text-btn:disabled {
+  color: var(--muted);
+  cursor: progress;
+  text-decoration: none;
+}
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.icon-btn svg {
+  width: 15px;
+  height: 15px;
+}
+.icon-btn:hover {
+  color: var(--gold-ink);
+}
+.icon-btn.danger:hover {
+  color: var(--danger);
+}
+
+/* ----------------------------------------------------------------- inputs */
+input[type='text'],
+input[type='number'],
+input[type='url'],
+input[type='search'],
+input[type='password'],
+select,
+textarea {
+  height: 30px;
+  padding: 0 9px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--raised);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+}
+textarea {
+  height: auto;
+  padding: 10px;
+  line-height: 1.55;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+/* One caret for every select, the same as on the result menu's site name. */
+select {
+  appearance: none;
+  padding-inline-end: 26px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 55%,
+    calc(100% - 10px) 55%;
+  background-size: 4px 4px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+[dir='rtl'] select {
+  background-position:
+    10px 55%,
+    14px 55%;
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted);
+}
+input[type='color'] {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+  overflow: hidden;
+}
+input[type='color']::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input[type='color']::-webkit-color-swatch {
+  border: 0;
+  border-radius: 50%;
+}
+input[type='color']::-moz-color-swatch {
+  border: 0;
+  border-radius: 50%;
+}
+
+/* Switch: <label class="switch"><input type="checkbox"><span></span></label> */
+.switch {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: 30px;
+  height: 17px;
+}
+.switch input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.switch span {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: var(--line-strong);
+  transition: background 0.15s;
+  pointer-events: none;
+}
+.switch span::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  inset-inline-start: 2px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: var(--bg);
+  transition: transform 0.15s;
+}
+.switch input:checked + span {
+  background: var(--gold);
+}
+.switch input:checked + span::after {
+  transform: translateX(13px);
+}
+[dir='rtl'] .switch input:checked + span::after {
+  transform: translateX(-13px);
+}
+.switch input:focus-visible + span {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .switch span,
+  .switch span::after {
+    transition: none;
+  }
+}
+
+/* Choice row: <div class="seg"><button aria-pressed>…</button>…</div>.
+   The chosen option is underlined in gold, like the weigh menu on search pages. */
+.seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+}
+.seg button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 0 3px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.seg button:hover {
+  color: var(--text);
+}
+.seg button[aria-pressed='true'] {
+  color: var(--text);
+  font-weight: 600;
+  border-bottom-color: var(--gold);
+}
+/* Hide is grey, not red: hiding a site is a choice like any other, not an error. */
+.seg button.hide[aria-pressed='true'] {
+  border-bottom-color: var(--muted);
+}
+.seg button svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ------------------------------------------------------------ tags, levels */
+/* A tag: a small diamond in its colour, then its name. */
+.tag {
+  --c: var(--gold);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.gem {
+  width: 6px;
+  height: 6px;
+  margin: 0 1px;
+  transform: rotate(45deg);
+  background: var(--c);
+  flex: none;
+}
+.gem.hollow {
+  background: transparent;
+  box-shadow: inset 0 0 0 1.25px var(--c);
+}
+/* A tag that moves or hides the result: its ranking's sign in the tag's colour, in the diamond's place. */
+.gem-mark {
+  display: inline-flex;
+  width: 10px;
+  height: 10px;
+  margin: 0 -1px;
+  color: var(--c);
+  flex: none;
+}
+.gem-mark svg {
+  width: 10px;
+  height: 10px;
+}
+
+/* In a machine translation, on Anubis's own pages: what it is, and to use it with caution. */
+.machine-note {
+  margin: 0 0 20px;
+  padding: 10px 14px;
+  border: 1px solid var(--line-strong);
+  border-inline-start: 3px solid var(--gold);
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+}
+.machine-note a {
+  color: var(--gold-ink);
+  font-weight: 600;
+}
+.machine-note.short {
+  margin: 12px 0;
+  padding: 6px 10px;
+  font-size: 12.5px;
+}
+
+/* Read by screen readers, not shown. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+button.tag {
+  cursor: pointer;
+}
+button.tag:hover {
+  text-decoration: line-through;
+  text-decoration-color: var(--muted);
+}
+.level-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.level-note svg {
+  width: 13px;
+  height: 13px;
+}
+.level-note.pin,
+.level-note.raise {
+  color: var(--gold-ink);
+}
+.level-note.pin {
+  font-weight: 600;
+}
+.level-note.hide {
+  color: var(--muted);
+}
+
+/* A site's name with the ending it shares with other sites (.org, .co.uk) muted, so the name stands out. */
+.suffix {
+  color: var(--muted);
+  font-weight: 400;
+}
+.muted {
+  color: var(--muted);
+}
+.empty {
+  padding: 16px 0;
+  color: var(--muted);
+}
