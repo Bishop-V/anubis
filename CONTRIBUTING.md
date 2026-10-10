@@ -11,7 +11,7 @@ Thanks for helping. Everything happens on GitHub: issues for reports and ideas, 
 - **Report a security problem** privately, not in an issue. [SECURITY.md](SECURITY.md) says how.
 - **Fix a bug or build a feature.** For anything bigger than a small fix, open an issue first so the approach can be agreed before you spend time on it. [`ROADMAP.md`](ROADMAP.md) lists planned work.
 - **Improve the wiki** in [`docs/`](docs), which is published at [bishop-v.github.io/anubis](https://bishop-v.github.io/anubis/).
-- **Translate.** Every word of the interface comes from `public/_locales/en/messages.json`. Arabic, Bengali, Chinese (Simplified), French, German, Hindi, Indonesian, Italian, Japanese, Korean, Brazilian Portuguese, Russian, Spanish, and Urdu (in `locales/`) are machine translations nobody has checked yet; correcting one is the most useful translation work. [Help translate](https://bishop-v.github.io/anubis/guide/translate) in the wiki says how, and how to add a language.
+- **Translate.** Every word of the interface comes from `public/_locales/en/messages.json`. Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), French, German, Hindi, Indonesian, Italian, Japanese, Korean, Brazilian Portuguese, Russian, Spanish, Turkish, and Urdu (in `locales/`) are machine translations nobody has checked yet; correcting one is the most useful translation work. [Help translate](https://bishop-v.github.io/anubis/guide/translate) in the wiki says how, and how to add a language.
 
 ## Getting set up
 

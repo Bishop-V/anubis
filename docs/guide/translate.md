@@ -1,7 +1,7 @@
 # Help translate
 
 ::: warning Machine translated: use with caution
-Anubis is written in English, the only language it fully supports. It also comes in **Arabic, Bengali, Chinese (Simplified), French, German, Hindi, Indonesian, Italian, Japanese, Korean, Brazilian Portuguese, Russian, Spanish, and Urdu**, but a machine made those translations and nobody who speaks the language has checked them yet. Some words may be wrong or unclear, so use them with caution. When you rank or hide sites, the ⚖ menu's **Why** and the summary above the results say exactly what happened; if a translation leaves you unsure, check the English. To see Anubis in English, set your browser's language to English.
+Anubis is written in English, the only language it fully supports. It also comes in **Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), French, German, Hindi, Indonesian, Italian, Japanese, Korean, Brazilian Portuguese, Russian, Spanish, Turkish, and Urdu**, but a machine made those translations and nobody who speaks the language has checked them yet. Some words may be wrong or unclear, so use them with caution. When you rank or hide sites, the ⚖ menu's **Why** and the summary above the results say exactly what happened; if a translation leaves you unsure, check the English. To see Anubis in English, set your browser's language to English.
 :::
 
 Anubis's interface is in English. Every word it shows can be translated: the toolbar popup, the settings, the welcome page, and what it adds to search pages. Your browser picks the translation for its own language, and anything a translation leaves out stays in English. In any language but English, Settings, the welcome page, and the toolbar popup say that the translation is a machine's, with a link to this page.
@@ -13,6 +13,7 @@ Anubis's interface is in English. Every word it shows can be translated: the too
 | Arabic | `ar` | Not yet |
 | Bengali | `bn` | Not yet |
 | Chinese (Simplified) | `zh_CN` | Not yet |
+| Chinese (Traditional) | `zh_TW` | Not yet |
 | French | `fr` | Not yet |
 | German | `de` | Not yet |
 | Hindi | `hi` | Not yet |
@@ -23,6 +24,7 @@ Anubis's interface is in English. Every word it shows can be translated: the too
 | Portuguese (Brazil) | `pt_BR` | Not yet |
 | Russian | `ru` | Not yet |
 | Spanish | `es` | Not yet |
+| Turkish | `tr` | Not yet |
 | Urdu | `ur` | Not yet |
 
 Chrome has no Urdu interface of its own, so Urdu shows in Firefox only.
@@ -35,7 +37,7 @@ If you speak one of these languages, correcting it is the most useful thing to d
 
 A translation is a folder, `locales/<language>/` in [Anubis's repository](https://github.com/Bishop-V/anubis), holding `messages.json`, in the format browsers use for every extension, and `sources.json`, the English each message was translated from. Until a hosted translation project opens, send it as a pull request:
 
-1. Copy `public/_locales/en/messages.json` to `locales/<language>/messages.json`, in a folder named after your language's code, with an underscore before a region: `de`, `fr`, `pt_BR`, `zh_CN`. Browsers only use [the codes they know](https://developer.chrome.com/docs/extensions/reference/api/i18n#locales).
+1. Copy `public/_locales/en/messages.json` to `locales/<language>/messages.json`, in a folder named after your language's code, with an underscore before a region: `de`, `fr`, `pt_BR`, `zh_CN`, `zh_TW`. Browsers only use [the codes they know](https://developer.chrome.com/docs/extensions/reference/api/i18n#locales).
 2. Translate each `message`. You can drop the `description`s; in English, a description says where the text appears and what each `$1` or `$2` stands for.
 3. Set `langCode` to your language's code, the same as the folder's name.
 4. Run `node scripts/locales.mjs record <language>`. It writes `sources.json`, so Anubis can tell later when the English has changed.
