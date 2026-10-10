@@ -1,0 +1,72 @@
+name: Engine sync
+
+# Weekly: has uBlacklist changed how it finds results on an engine Anubis
+# supports? Its rules (serpinfo/*.yml in ublacklist/builtin) follow the engines'
+# markup closely, so a change there is an early warning. Anubis keeps a copy of
+# those files in upstream/serpinfo/; this updates the copy and opens a pull
+# request labelled "engines" (or adds to the one already open), whose diff shows
+# what moved upstream. CI then checks that Anubis still matches every address
+# uBlacklist does (tests/engine-watch.test.ts).
+#
+# Pull requests opened with the workflow's own token don't start other workflows,
+# so this asks CI to run on the branch itself. GitHub only lets a workflow open
+# pull requests when Settings → Actions → General → "Allow GitHub Actions to
+# create and approve pull requests" is on; without it, this opens an issue.
+# GitHub pauses scheduled workflows after 60 days without activity in the repo.
+
+on:
+  schedule:
+    - cron: '17 6 * * 1' # Mondays, 06:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+concurrency: engine-sync
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BRANCH: engines/serpinfo
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.0 (Node 24)
+        with:
+          fetch-depth: 0
+      - run: git clone --filter=blob:none --no-checkout https://github.com/ublacklist/builtin "$RUNNER_TEMP/builtin"
+      - name: Continue the open pull request, if there is one
+        id: open
+        run: |
+          number=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number')
+          echo "number=$number" >> "$GITHUB_OUTPUT"
+          if [ -n "$number" ]; then git checkout "$BRANCH"; else git checkout -B "$BRANCH"; fi
+      - id: sync
+        run: node .github/scripts/sync-serpinfo.mjs "$RUNNER_TEMP/builtin" "$RUNNER_TEMP/pr.md"
+      - if: steps.sync.outputs.title
+        env:
+          TITLE: ${{ steps.sync.outputs.title }}
+          NUMBER: ${{ steps.open.outputs.number }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add upstream
+          git commit -q -m "$TITLE"
+          gh label create engines --color d4a637 --description "Search engine layouts and selectors" 2>/dev/null || true
+          if [ -n "$NUMBER" ]; then
+            # The branch may carry fixes pushed since: add to it, never rewrite it.
+            git push origin "$BRANCH"
+            gh pr comment "$NUMBER" --body-file "$RUNNER_TEMP/pr.md"
+          else
+            # No open pull request: whatever the branch held before was merged or dropped.
+            git push --force origin "$BRANCH"
+            if ! gh pr create --base main --head "$BRANCH" --title "$TITLE" --body-file "$RUNNER_TEMP/pr.md" --label engines; then
+              echo "::warning::Couldn't open a pull request; opening an issue instead."
+              printf '\n\nThe updated copies are on the [%s branch](%s/compare/main...%s).\n' "$BRANCH" "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" "$BRANCH" >> "$RUNNER_TEMP/pr.md"
+              gh issue create --title "$TITLE" --body-file "$RUNNER_TEMP/pr.md" --label engines
+            fi
+          fi
+          gh workflow run ci.yml --ref "$BRANCH"

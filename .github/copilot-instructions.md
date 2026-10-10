@@ -1,0 +1,1 @@
+Follow the repository's [`AGENTS.md`](../AGENTS.md) before editing. It records the compatibility contracts, regression-test expectations, browser targets, and release safeguards. For code layout and workflows, use [`DEVELOPMENT.md`](../DEVELOPMENT.md); for interface work, use [`STYLEGUIDE.md`](../STYLEGUIDE.md) and [`ACCESSIBILITY.md`](../ACCESSIBILITY.md).

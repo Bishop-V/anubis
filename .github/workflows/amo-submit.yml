@@ -1,0 +1,60 @@
+name: Submit existing release to AMO
+
+# A one-off tag such as v0.2.1-amo-submit retries an AMO submission using
+# already-published GitHub Release packages, without rebuilding the release.
+on:
+  push:
+    tags: ['v*-amo-submit']
+
+permissions:
+  contents: read
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.0 (Node 24)
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.1 (Node 24)
+        with:
+          node-version: 22
+          cache: npm
+      - name: Verify retry tag and release commit
+        run: |
+          release_tag=${GITHUB_REF_NAME%-amo-submit}
+          expected_version=$(node -p "require('./package.json').version")
+          if [ "$release_tag" != "v$expected_version" ]; then
+            echo "::error::Retry tag $GITHUB_REF_NAME does not match package version $expected_version"
+            exit 1
+          fi
+          git fetch --no-tags origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" FETCH_HEAD; then
+            echo "::error::The retry tag must point to a commit already merged into main"
+            exit 1
+          fi
+      - run: npm ci --ignore-scripts
+      - run: npx wxt prepare
+      - name: Download published Firefox packages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          release_tag=${GITHUB_REF_NAME%-amo-submit}
+          version=${release_tag#v}
+          mkdir -p .output
+          gh release download "$release_tag" \
+            --pattern "anubis-$version-firefox.zip" \
+            --pattern "anubis-$version-sources.zip" \
+            --dir .output
+      - name: Submit to Firefox Add-ons
+        env:
+          FIREFOX_EXTENSION_ID: anubis-search
+          FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
+          FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
+        run: |
+          release_tag=${GITHUB_REF_NAME%-amo-submit}
+          version=${release_tag#v}
+          npx wxt submit \
+            --firefox-zip ".output/anubis-$version-firefox.zip" \
+            --firefox-sources-zip ".output/anubis-$version-sources.zip"
