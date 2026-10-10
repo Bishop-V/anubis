@@ -1,0 +1,1595 @@
+{
+  "langCode": {
+    "message": "zh_TW"
+  },
+  "machineTranslatedTitle": {
+    "message": "機器翻譯。"
+  },
+  "machineTranslatedNote": {
+    "message": "Anubis 由機器翻譯成你的瀏覽器語言，這份翻譯並未獲得完整支援：部分內容可能有誤或不清楚，請謹慎使用。如需查看英文版 Anubis，請將瀏覽器語言設為英語。"
+  },
+  "machineTranslatedShort": {
+    "message": "請謹慎使用。"
+  },
+  "machineTranslatedHelp": {
+    "message": "說明改進翻譯"
+  },
+  "extDescription": {
+    "message": "衡量你的搜尋結果：用人人都能發布的清單，給網站加標籤、重新排序和隱藏網站。"
+  },
+  "commandToggleEnabled": {
+    "message": "開啟或關閉 Anubis"
+  },
+  "commandToggleHidden": {
+    "message": "顯示已隱藏的結果，或重新隱藏它们"
+  },
+  "levelHide": {
+    "message": "隱藏"
+  },
+  "levelLower": {
+    "message": "降低"
+  },
+  "levelNormal": {
+    "message": "正常"
+  },
+  "levelRaise": {
+    "message": "提升"
+  },
+  "levelPin": {
+    "message": "釘選"
+  },
+  "chipHidden": {
+    "message": "已隱藏"
+  },
+  "chipLowered": {
+    "message": "已降低"
+  },
+  "chipRaised": {
+    "message": "已提升"
+  },
+  "chipPinned": {
+    "message": "已釘選"
+  },
+  "popupOn": {
+    "message": "已在你的搜尋中開啟"
+  },
+  "popupOff": {
+    "message": "已關閉。搜尋頁面保持原樣。"
+  },
+  "popupOnLabel": {
+    "message": "開啟 Anubis"
+  },
+  "popupAddSite": {
+    "message": "新增網站"
+  },
+  "popupRanking": {
+    "message": "排名"
+  },
+  "popupNoSites": {
+    "message": "還沒有。在任意搜尋結果上使用 ⚖ 按鈕，即可為它的網站設定排名。"
+  },
+  "popupKeptNormal": {
+    "message": "保持正常"
+  },
+  "popupListsAndTags": {
+    "message": "$1，$2"
+  },
+  "popupListCount_other": {
+    "message": "$1 個清單"
+  },
+  "popupTagCount_other": {
+    "message": "$1 個標籤"
+  },
+  "popupRankingFor": {
+    "message": "$1 的排名"
+  },
+  "popupRankHide": {
+    "message": "在搜尋結果中隱藏 $1"
+  },
+  "popupRankLower": {
+    "message": "在搜尋結果中降低 $1 的排名"
+  },
+  "popupRankNormal": {
+    "message": "讓 $1 在搜尋結果中正常排名"
+  },
+  "popupRankRaise": {
+    "message": "在搜尋結果中提升 $1 的排名"
+  },
+  "popupRankPin": {
+    "message": "在搜尋結果中將 $1 釘選至頂部"
+  },
+  "popupYourSites": {
+    "message": "你的網站"
+  },
+  "popupSeeAll": {
+    "message": "查看全部 $1 個"
+  },
+  "popupOpenLists": {
+    "message": "打開清單設定"
+  },
+  "popupShowOnly": {
+    "message": "仅顯示"
+  },
+  "popupTags": {
+    "message": "標籤"
+  },
+  "popupSite": {
+    "message": "網站"
+  },
+  "popupSiteChoice": {
+    "message": "選擇這項設定適用於網站的多大範圍"
+  },
+  "popupHintAllow": {
+    "message": "正常，無論你訂閱的清單怎麼說。"
+  },
+  "popupHintMine": {
+    "message": "你對 $1 的選擇，適用於每次搜尋。"
+  },
+  "popupHintMineTags": {
+    "message": "你對 $1 的選擇，適用於每次搜尋，並疊加你的標籤設定。"
+  },
+  "popupHintLists": {
+    "message": "$1（依據：$2）。選擇一項即可自己決定。"
+  },
+  "popupHintNone": {
+    "message": "你的選擇適用於每次搜尋。"
+  },
+  "popupYourTagSettings": {
+    "message": "你的標籤設定"
+  },
+  "tagMarkRaise": {
+    "message": "提升此結果"
+  },
+  "tagMarkLower": {
+    "message": "降低此結果"
+  },
+  "tagMarkPin": {
+    "message": "釘選此結果"
+  },
+  "tagMarkHide": {
+    "message": "隱藏此結果"
+  },
+  "tagMarkSpoken": {
+    "message": "（$1）"
+  },
+  "tagListsPickerHint": {
+    "message": "新增其中的標籤只會更改你的清單。"
+  },
+  "tagFromSource": {
+    "message": "來自 $1"
+  },
+  "popupTagFrom": {
+    "message": "來自 $1"
+  },
+  "popupTagSite": {
+    "message": "給 $1 加上“$2”標籤"
+  },
+  "popupUntag": {
+    "message": "移除 $1 的標籤"
+  },
+  "popupTagInvalid": {
+    "message": "請輸入至少包含一個字母或數字的標籤名稱。"
+  },
+  "popupTagAlreadySet": {
+    "message": "此網站已有這個標籤。"
+  },
+  "tagSiteReason": {
+    "message": "此網站為什麼適合“$1”標籤（可選）"
+  },
+  "popupThisPage": {
+    "message": "此頁面"
+  },
+  "popupThisPageOn": {
+    "message": "$1 上的此頁面"
+  },
+  "popupNotSearch": {
+    "message": "在 Google、DuckDuckGo、Bing、Brave 或其他受支援的搜尋引擎上搜尋，即可查看 Anubis 做了哪些更改。"
+  },
+  "showHidden": {
+    "message": "顯示已隱藏"
+  },
+  "hideAgain": {
+    "message": "重新隱藏"
+  },
+  "loadMore": {
+    "message": "加載更多結果"
+  },
+  "loadMoreTitle": {
+    "message": "將下一頁結果新增到此頁，並一起排序"
+  },
+  "loading": {
+    "message": "正在加載…"
+  },
+  "loadMoreEmpty": {
+    "message": "$1 沒有返回第 $2 頁的結果。它可能要你先確認自己不是機器人。"
+  },
+  "loadMoreRepeat": {
+    "message": "$1 在第 $2 頁再次返回了相同的結果，因此沒有更多結果了。"
+  },
+  "loadMoreBusy": {
+    "message": "$1 在第 $2 頁之前要求 Anubis 放慢速度。請過一分鐘再試。"
+  },
+  "loadMoreRefused": {
+    "message": "$1 拒絕發送第 $2 頁。"
+  },
+  "loadMoreSlow": {
+    "message": "$1 發送第 $2 頁的時間太長。"
+  },
+  "loadMoreFailed": {
+    "message": "來自 $1 的第 $2 頁未能加載。"
+  },
+  "loadMoreOpen": {
+    "message": "打開第 $1 頁"
+  },
+  "loadMoreOpenTitle": {
+    "message": "在新分頁中打開，查看 $1 返回了什麼"
+  },
+  "chipFromPage": {
+    "message": "來自第 $1 頁"
+  },
+  "chipFromPageTitle": {
+    "message": "由“加載更多結果”新增"
+  },
+  "barHidden_other": {
+    "message": "已隱藏"
+  },
+  "barHiddenByYou_other": {
+    "message": "已被你的清單隱藏"
+  },
+  "barHiddenByTag_other": {
+    "message": "已隱藏，因為帶有“$2”標籤"
+  },
+  "barHiddenByLens_other": {
+    "message": "已隱藏，因為不在 $2 之中"
+  },
+  "barHiddenByList_other": {
+    "message": "已被 $2 隱藏"
+  },
+  "menuWhyHeading": {
+    "message": "原因"
+  },
+  "menuNewTagPlaceholder": {
+    "message": "新標籤"
+  },
+  "menuNewTagLabel": {
+    "message": "新標籤名稱"
+  },
+  "menuAddTagButton": {
+    "message": "新增標籤"
+  },
+  "menuSavedNote": {
+    "message": "已保存在你的清單中。"
+  },
+  "menuCloseLabel": {
+    "message": "關閉"
+  },
+  "anubisSettings": {
+    "message": "Anubis 設定"
+  },
+  "help": {
+    "message": "說明"
+  },
+  "helpTitle": {
+    "message": "打開 Wiki"
+  },
+  "reportProblem": {
+    "message": "報告問題"
+  },
+  "reportProblemTitle": {
+    "message": "在 GitHub 上提交錯誤報告，並自動填入 Anubis 的版本和你的瀏覽器"
+  },
+  "summaryShowAll": {
+    "message": "顯示全部"
+  },
+  "summaryFilterLabel": {
+    "message": "仅顯示帶有以下標籤的結果"
+  },
+  "summaryFilterOn": {
+    "message": "仅顯示帶有“$1”標籤的結果"
+  },
+  "summaryFilterOff": {
+    "message": "顯示全部結果"
+  },
+  "summaryPinned": {
+    "message": "釘選了 $1 個"
+  },
+  "summaryRaised": {
+    "message": "提升了 $1 個"
+  },
+  "summaryLowered": {
+    "message": "降低了 $1 個"
+  },
+  "summaryHid": {
+    "message": "隱藏了 $1 個"
+  },
+  "summaryActed": {
+    "message": "Anubis 在 $2中$1。"
+  },
+  "summaryResults_other": {
+    "message": "$1 個結果"
+  },
+  "summaryResultsPages_other": {
+    "message": "$2 頁的 $1 個結果"
+  },
+  "summaryAlsoRemoved": {
+    "message": "它還移除了 $1。"
+  },
+  "summaryRemovedOnly": {
+    "message": "Anubis 移除了 $1。"
+  },
+  "summaryShortActed": {
+    "message": "Anubis 更改了 $2中的 $1 個。"
+  },
+  "summaryShortActedRemoved": {
+    "message": "Anubis 更改了 $2中的 $1 個，並清理了頁面。"
+  },
+  "summaryShortRemoved": {
+    "message": "Anubis 清理了頁面。"
+  },
+  "summaryDetails": {
+    "message": "詳情"
+  },
+  "summaryFewerDetails": {
+    "message": "收起詳情"
+  },
+  "summaryUnchanged_other": {
+    "message": "Anubis 未改動這 $1 個結果。"
+  },
+  "summaryUnchangedPages": {
+    "message": "Anubis 未改動這 $2 頁的 $1 個結果。"
+  },
+  "summaryFiltered_other": {
+    "message": "仅顯示“$2”：$1 個結果中的 $3 個。"
+  },
+  "summaryRemovedAi_other": {
+    "message": "$1 個 AI 回答"
+  },
+  "summaryRemovedVideos_other": {
+    "message": "$1 個視頻面板"
+  },
+  "summaryRemovedQuestions_other": {
+    "message": "$1 個問題清單"
+  },
+  "summaryRemovedDiscussions_other": {
+    "message": "$1 個討論面板"
+  },
+  "summaryRemovedNews_other": {
+    "message": "$1 個新聞面板"
+  },
+  "summaryRemovedImages_other": {
+    "message": "$1 個圖片面板"
+  },
+  "summaryRemovedRelated_other": {
+    "message": "$1 個相關搜尋清單"
+  },
+  "summaryRemovedElsewhere_other": {
+    "message": "$1 排其他搜尋引擎按鈕"
+  },
+  "summaryRemovedAdRequests_other": {
+    "message": "$1 個允許廣告的請求"
+  },
+  "withShortcut": {
+    "message": "$1（$2）"
+  },
+  "toolbarOff": {
+    "message": "Anubis 已關閉"
+  },
+  "weighLabel": {
+    "message": "隱藏 $1、設定其排名或給它加標籤"
+  },
+  "weighLabelRanked": {
+    "message": "隱藏 $1、設定其排名或給它加標籤（$2）"
+  },
+  "hiddenShow": {
+    "message": "顯示"
+  },
+  "hiddenShowSite": {
+    "message": "顯示 $1"
+  },
+  "hiddenMore_other": {
+    "message": "及另外 $1 個"
+  },
+  "summaryChangedHide": {
+    "message": "已隱藏 $1。"
+  },
+  "summaryChangedLower": {
+    "message": "已降低 $1 的排名。"
+  },
+  "summaryChangedRaise": {
+    "message": "已提升 $1 的排名。"
+  },
+  "summaryChangedPin": {
+    "message": "已將 $1 釘選至頂部。"
+  },
+  "summaryChangedAllow": {
+    "message": "已將 $1 設為正常。"
+  },
+  "summaryChangedNormal": {
+    "message": "已清除你對 $1 設定的排名。"
+  },
+  "summaryChangedTagOn": {
+    "message": "已給 $1 加上“$2”標籤。"
+  },
+  "summaryChangedTagOff": {
+    "message": "已從 $1 移除“$2”標籤。"
+  },
+  "summaryChangedSite": {
+    "message": "已在你的清單中更改 $1。"
+  },
+  "summaryUndo": {
+    "message": "復原"
+  },
+  "menuSuggest": {
+    "message": "應該收錄到清單中嗎？推薦給 $1。"
+  },
+  "menuSuggestTitle": {
+    "message": "在 $2 的問題跟蹤器上推薦 $1"
+  },
+  "menuReport": {
+    "message": "有誤？報告給 $1。"
+  },
+  "menuMatchedRule": {
+    "message": "匹配的規則，第 $1 行"
+  },
+  "menuReportTitle": {
+    "message": "在 $1 的問題跟蹤器上告訴它，它對此結果的判斷有誤"
+  },
+  "offerTitle": {
+    "message": "訂閱 $1？"
+  },
+  "offerTrust": {
+    "message": "清單可以在你的結果中隱藏網站、為網站設定排名和給網站加標籤。請只訂閱你信任的清單。"
+  },
+  "offerPermission": {
+    "message": "隨後你的瀏覽器會請求允許 Anubis 讀取 $1，也就是清單所在的網站。"
+  },
+  "offerAlready": {
+    "message": "你已訂閱 $1。"
+  },
+  "offerSubscribe": {
+    "message": "訂閱"
+  },
+  "offerSubscribing": {
+    "message": "正在訂閱…"
+  },
+  "offerCancel": {
+    "message": "取消"
+  },
+  "welcomeTitle": {
+    "message": "歡迎使用 Anubis"
+  },
+  "welcomeHeading": {
+    "message": "Anubis 已安裝"
+  },
+  "welcomeIntro": {
+    "message": "它會按照你自己的選擇和你訂閱的清單，給搜尋結果加標籤、重新排序和隱藏。"
+  },
+  "welcomePinHeading": {
+    "message": "把它留在工具列中"
+  },
+  "welcomePinWhy": {
+    "message": "它的工具列按鈕會顯示 Anubis 在當前頁面上做了什麼，可以開啟或關閉 Anubis，還能為你所在的網站設定排名。"
+  },
+  "welcomePinChrome": {
+    "message": "點擊地址欄旁的“擴充功能”按鈕（拼圖圖標），然後點擊 Anubis 旁邊的圖釘。"
+  },
+  "welcomePinEdge": {
+    "message": "點擊地址欄旁的“擴充功能”按鈕（拼圖圖標），然後點擊 Anubis 旁邊的眼睛圖標。"
+  },
+  "welcomePinOpera": {
+    "message": "點擊地址欄旁的“擴充功能”按鈕（立方體圖標），然後點擊 Anubis 旁邊的圖釘。"
+  },
+  "welcomePinFirefox": {
+    "message": "點擊地址欄旁的“擴充功能”按鈕（拼圖圖標），然後點擊 Anubis 旁邊的齒輪，並選擇“固定到工具列”。"
+  },
+  "welcomePinAndroid": {
+    "message": "Anubis 位於瀏覽器菜單的“擴充功能”下。"
+  },
+  "welcomePinned": {
+    "message": "Anubis 已在你的工具列中。"
+  },
+  "welcomeSearchHeading": {
+    "message": "試著搜尋一下"
+  },
+  "welcomeSearchHow": {
+    "message": "像平時一樣搜尋。要隱藏網站、為其設定排名或給它加標籤，請將鼠標指向它的某個結果，然後點擊 ⚖ 按鈕。"
+  },
+  "welcomeSearchFor": {
+    "message": "搜尋“$1”，查看你訂閱的清單給出的標籤："
+  },
+  "welcomeSearchOn": {
+    "message": "在 $2 上搜尋“$1”"
+  },
+  "welcomeQuery": {
+    "message": "python list comprehension"
+  },
+  "welcomeListsHeading": {
+    "message": "你訂閱的清單"
+  },
+  "welcomeListsIntro": {
+    "message": "清單會替你給網站加標籤，或提升、降低、隱藏網站。你一開始訂閱了這些："
+  },
+  "welcomeListsNone": {
+    "message": "清單會替你給網站加標籤，或提升、降低、隱藏網站。你還沒有訂閱任何清單。"
+  },
+  "welcomeListsMore": {
+    "message": "你可以在設定中關閉這些清單，或查找更多清單。"
+  },
+  "welcomeListsOpen": {
+    "message": "打開清單設定"
+  },
+  "welcomeGuide": {
+    "message": "Wiki"
+  },
+  "welcomePrivacy": {
+    "message": "隱私"
+  },
+  "syncHeading": {
+    "message": "同步"
+  },
+  "syncIntro": {
+    "message": "在你的其他電腦和其他瀏覽器上使用你的清單和設定。"
+  },
+  "syncBrowserHeading": {
+    "message": "瀏覽器同步"
+  },
+  "syncFirefox": {
+    "message": "你的清單、設定、標籤選擇和訂閱會保存在 Firefox 的同步存儲中。當你登入了 Firefox，並在其同步設定中勾選了“附加組件”時，Firefox 會把它们復製到你的其他電腦上。它大約每 10 分鐘同步一次，你也可以選擇“立即同步”。"
+  },
+  "syncFirefoxAndroid": {
+    "message": "Android 版 Firefox 不會同步附加組件的資料，因此你的清單、設定、標籤選擇和訂閱只保存在此設備上。如需同步，請在下方連接一個 WebDAV 伺服器。"
+  },
+  "syncChrome": {
+    "message": "你的清單、設定、標籤選擇和訂閱會保存在瀏覽器的同步存儲中。當你登入了瀏覽器並開啟了擴充功能同步時，瀏覽器會把它们復製到你的其他電腦上。"
+  },
+  "syncBrowserHelp": {
+    "message": "需要檢查哪些瀏覽器設定"
+  },
+  "syncUsage": {
+    "message": "它们佔用了同步空間 $2 KB 中的 $1 KB。"
+  },
+  "syncTooBig": {
+    "message": "你的清單太大，無法同步，因此只保存在此設備上。你的設定、標籤選擇和訂閱仍會同步。"
+  },
+  "webdavHeading": {
+    "message": "在瀏覽器之間"
+  },
+  "webdavIntro": {
+    "message": "Firefox 和 Chrome 之間無法直接同步。要在兩者之間共享，你可以在每個瀏覽器中連接同一個 WebDAV 存儲。Koofr 和 InfiniCLOUD 提供免費套餐，Nextcloud 等自託管方案也可以使用。Anubis 會在其中保存一個文件 anubis-sync.json，並合並來自每個瀏覽器的更改。"
+  },
+  "webdavHelp": {
+    "message": "在哪裡獲取地址和密碼"
+  },
+  "webdavAddress": {
+    "message": "地址"
+  },
+  "webdavAddressHint": {
+    "message": "服務的 WebDAV 地址，以 https:// 開頭"
+  },
+  "listPermissionDenied": {
+    "message": "Anubis 需要讀取 $1 的權限，才能更新此清單。"
+  },
+  "webdavUser": {
+    "message": "用戶名"
+  },
+  "webdavPassword": {
+    "message": "密碼"
+  },
+  "webdavPasswordHint": {
+    "message": "大多數服務會為應用單獨提供一個密碼。請使用那個密碼。"
+  },
+  "webdavConnect": {
+    "message": "連接"
+  },
+  "webdavEncrypt": {
+    "message": "對同步文件進行端到端加密（推薦）"
+  },
+  "webdavEncryptionPassphrase": {
+    "message": "加密密碼短語"
+  },
+  "webdavConfirmPassphrase": {
+    "message": "確認密碼短語"
+  },
+  "webdavEncryptionHint": {
+    "message": "請在每個瀏覽器中使用同一個足夠長、不與別處重復的密碼短語（至少 12 個字符）。它只保存在此瀏覽器中，絕不會發送到伺服器。如果你忘記了它，伺服器上的副本將無法恢復。"
+  },
+  "webdavCorrectPassphrase": {
+    "message": "輸入正確的加密密碼短語"
+  },
+  "webdavCorrectPassphraseHint": {
+    "message": "請使用你在另一個瀏覽器中設定的同一個密碼短語。它只保存在這裡，絕不會發送到伺服器。"
+  },
+  "webdavSavePassphrase": {
+    "message": "保存密碼短語並同步"
+  },
+  "webdavChangePassphrase": {
+    "message": "更改加密密碼短語"
+  },
+  "webdavChangePassphraseHint": {
+    "message": "Anubis 會先驗證當前的密碼短語，再更改伺服器上的文件。請在其他每個瀏覽器下次同步之前，在其中輸入新的密碼短語。"
+  },
+  "webdavChangePassphraseHelp": {
+    "message": "更改後會發生什麼"
+  },
+  "webdavEncryptionShort": {
+    "message": "請使用至少 12 個字符的加密密碼短語。"
+  },
+  "webdavPassphraseMismatch": {
+    "message": "兩次輸入的密碼短語不一致。"
+  },
+  "webdavEncrypted": {
+    "message": "同步文件已端到端加密。它的密碼短語只保存在此瀏覽器中；伺服器無法讀取其內容。請在每個瀏覽器中使用同一個密碼短語。如果你忘記了它，伺服器上的副本將無法恢復。"
+  },
+  "webdavEncryptionPending": {
+    "message": "已在此處設定加密。下一次同步成功時，伺服器上的副本將被加密。請在每個瀏覽器中使用同一個密碼短語。"
+  },
+  "webdavEncryptionMissing": {
+    "message": "此瀏覽器還沒有設定加密密碼短語。要讀取加密的文件，請使用與另一個瀏覽器相同的密碼短語。未加密的同步文件可以被伺服器的運營者讀取。"
+  },
+  "webdavPrivacy": {
+    "message": "開啟加密後，只有加密的資料會發送到此伺服器；你的密碼短語保存在這裡，絕不會被發送。不開啟加密時，伺服器可以讀取同步文件。你的 WebDAV 登入信息保存在這裡，並會發送到此伺服器用於登入。"
+  },
+  "webdavBadAddress": {
+    "message": "請輸入服務的 WebDAV 地址，以 https:// 開頭"
+  },
+  "webdavMissingLogin": {
+    "message": "還需要輸入用戶名和密碼。"
+  },
+  "webdavDenied": {
+    "message": "Anubis 需要你的許可，才能將你的清單發送到 $1。"
+  },
+  "webdavConnected": {
+    "message": "正在以 $2 的身份與 $1 同步。"
+  },
+  "webdavWhen": {
+    "message": "你做出更改幾秒鐘後，更改就會發送到伺服器。來自你其他瀏覽器的更改會在瀏覽器啟動時和你搜尋時獲取，最多每 5 分鐘一次。"
+  },
+  "webdavSyncing": {
+    "message": "正在同步…"
+  },
+  "webdavLastSync": {
+    "message": "上次同步：$1。"
+  },
+  "webdavLastTried": {
+    "message": "上次嘗試：$1。"
+  },
+  "webdavSyncNow": {
+    "message": "立即同步"
+  },
+  "webdavDisconnect": {
+    "message": "斷開連接"
+  },
+  "webdavDisconnected": {
+    "message": "已斷開連接。文件仍留在伺服器上，你的清單和設定仍留在這裡。"
+  },
+  "webdavErrorAuth": {
+    "message": "伺服器不接受此用戶名或密碼。許多服務在這裡需要使用應用密碼，而不是你平時用的密碼。"
+  },
+  "webdavErrorForbidden": {
+    "message": "伺服器不允許此帳戶在那裡保存文件。"
+  },
+  "webdavErrorFolder": {
+    "message": "伺服器上的這個地址沒有文件夾。請檢查地址。"
+  },
+  "webdavErrorPermission": {
+    "message": "Anubis 已不再擁有與 $1 同步的權限。點擊“立即同步”即可重新允許。"
+  },
+  "webdavErrorNetwork": {
+    "message": "無法連接到 $1。請檢查地址和你的網絡連接。"
+  },
+  "webdavErrorFile": {
+    "message": "那裡的 anubis-sync.json 文件不是 Anubis 能讀取的文件，因此沒有改動它。請使用其他文件夾。"
+  },
+  "webdavErrorNeedsPassphrase": {
+    "message": "此同步文件已加密。請輸入它的密碼短語；沒有做任何更改。"
+  },
+  "webdavErrorWrongPassphrase": {
+    "message": "這個密碼短語無法解密同步文件。請檢查一下；伺服器上的文件沒有改動。"
+  },
+  "webdavErrorUnencrypted": {
+    "message": "此連接之前是加密的，但伺服器上現在是一個未加密的同步文件。該文件沒有改動。請先檢查伺服器上的文件，再重新同步。"
+  },
+  "webdavErrorChanged": {
+    "message": "同步文件在更改密碼短語期間發生了變化，或者伺服器無法防止同時編輯。沒有覆蓋任何內容。請再次同步，然後重試。"
+  },
+  "webdavErrorUnconfirmed": {
+    "message": "保存文件時與 $1 的連接中斷了，因此 Anubis 無法確定它現在使用的是哪個密碼短語。舊密碼短語仍保存在這裡。如果下次同步提示密碼短語錯誤，請輸入新的密碼短語。"
+  },
+  "webdavErrorServer": {
+    "message": "伺服器返回了錯誤（HTTP $1）。請稍後再試。"
+  },
+  "webdavErrorFailed": {
+    "message": "同步未完成。請重試。"
+  },
+  "appearanceHeading": {
+    "message": "外觀"
+  },
+  "appearanceIntro": {
+    "message": "Anubis 在這裡和搜尋頁面上的外觀。"
+  },
+  "themeHeading": {
+    "message": "配色方案"
+  },
+  "themeHint": {
+    "message": "“自動”在這裡和每個結果的菜單中跟隨你的瀏覽器；對於 Anubis 新增到搜尋頁面上的其他內容，則跟隨各個搜尋引擎自己的淺色或深色模式。"
+  },
+  "paletteHeading": {
+    "message": "搜尋頁面上的顏色"
+  },
+  "paletteHint": {
+    "message": "“素色”會把 Anubis 在搜尋頁面上新增的所有內容都顯示為灰色，不使用金色。標籤將失去顏色，只能通過名稱區分。設定和工具列彈出窗口仍保持金色。"
+  },
+  "paletteGold": {
+    "message": "金色"
+  },
+  "palettePlain": {
+    "message": "素色"
+  },
+  "hideStyleHeading": {
+    "message": "已隱藏的結果"
+  },
+  "hideStyleHint": {
+    "message": "“移除”會把它们從頁面上拿掉；結果上方的摘要會統計它们，“顯示已隱藏”可以把它们找回來。“折疊”會為每一組連續的已隱藏結果只留下窄窄的一行。“淡化”會讓它们變淡。"
+  },
+  "hideStyleRemove": {
+    "message": "移除"
+  },
+  "hideStyleCollapse": {
+    "message": "折疊"
+  },
+  "hideStyleDim": {
+    "message": "淡化"
+  },
+  "rerankHeading": {
+    "message": "重新排序結果"
+  },
+  "rerankHint": {
+    "message": "將提升和釘選的結果上移，將降低的結果下移，就像 Brave Goggle 一樣。"
+  },
+  "rerankHelp": {
+    "message": "重新排序的原理"
+  },
+  "deeperAuto": {
+    "message": "自動加載更多結果"
+  },
+  "deeperAutoHint": {
+    "message": "將後面幾頁的結果新增到第一頁，並一起排序，這樣你在第 3 頁釘選的網站也會升到最上方。結果上方的“加載更多結果”會在你需要時做同樣的事。輸入要新增的頁數，從 0（關閉）到 $1。"
+  },
+  "deeperHelp": {
+    "message": "加載更多結果的原理"
+  },
+  "deeperUnit": {
+    "message": "頁"
+  },
+  "deeperTipOff": {
+    "message": "關閉：只有當你點擊“加載更多結果”時，才會加載更多結果。"
+  },
+  "deeperTipTime_other": {
+    "message": "每次搜尋約增加 $1 秒。"
+  },
+  "deeperTipFew": {
+    "message": "$1搜尋引擎很少會介意幾頁。"
+  },
+  "deeperTipSome": {
+    "message": "$1有些搜尋引擎可能會開始要求你確認自己不是機器人。"
+  },
+  "deeperTipMany": {
+    "message": "$1加載這麼多頁後，Google 和 Bing 常會要求你確認自己不是機器人。有些搜尋引擎在此之前就沒有更多頁面了。"
+  },
+  "chipsHeading": {
+    "message": "結果下方的標籤"
+  },
+  "chipsHint": {
+    "message": "在每個結果的標題下方顯示標籤和排名。"
+  },
+  "summaryHeading": {
+    "message": "摘要"
+  },
+  "summaryHint": {
+    "message": "在結果上方用一行摘要說明 Anubis 更改了什麼。"
+  },
+  "enabledHeading": {
+    "message": "Anubis 已開啟"
+  },
+  "enabledHint": {
+    "message": "關閉此項即可讓搜尋頁面保持原樣，無需卸載。"
+  },
+  "enginesHeading": {
+    "message": "搜尋引擎"
+  },
+  "enginesIntro": {
+    "message": "Anubis 適用於這些搜尋引擎的網頁結果。它會盡可能根據頁面結構識別結果，因此小的改版不會讓它失效。"
+  },
+  "enginesTrouble": {
+    "message": "Anubis 在搜尋頁面上沒有起作用？"
+  },
+  "enginesTroubleHelp": {
+    "message": "需要檢查什麼"
+  },
+  "shareHeading": {
+    "message": "備份、導入和分享"
+  },
+  "shareIntro": {
+    "message": "保留所有內容的副本，從其他工具遷移你的網站，或發布你的清單供他人訂閱。"
+  },
+  "publishHeading": {
+    "message": "發布你的清單"
+  },
+  "publishIntro": {
+    "message": "無需伺服器：公開的 git 倉庫就是資料庫，大家通過拉取請求來貢獻。"
+  },
+  "publishHelp": {
+    "message": "如何發布清單"
+  },
+  "publishStepDownload": {
+    "message": "在下方下載你的清單。設定文件頂部的 $1、$2 和 $3 行。"
+  },
+  "publishStepRepository": {
+    "message": "創建一個公開的 GitHub 倉庫（或 gist），並新增該文件，例如 $1。"
+  },
+  "publishStepIssues": {
+    "message": "新增 $1，讓大家可以通過每個結果上的菜單向你的清單推薦網站。"
+  },
+  "publishStepShare": {
+    "message": "分享文件的連結。其他人把它黏貼到“清單”→“新增清單”中即可。"
+  },
+  "publishStepDirectory": {
+    "message": "想讓所有人都能在“更多清單”中看到它？提交一個拉取請求，把它新增到 $1。"
+  },
+  "publishDownload": {
+    "message": "下載我的清單"
+  },
+  "publishFormat": {
+    "message": "清單格式"
+  },
+  "importHeading": {
+    "message": "導入網站"
+  },
+  "importIntro": {
+    "message": "從 uBlacklist 或 HOHSER 遷移過來？在這裡黏貼你的規則或導出內容，這些網站就會加入你的清單。已隱藏的仍然隱藏，HOHSER 的部分隱藏會變為“降低”，高亮顏色會變為帶高亮的標籤。"
+  },
+  "importHelp": {
+    "message": "各工具的規則會變成什麼"
+  },
+  "importPlaceholder": {
+    "message": "黏貼 uBlacklist 規則、HOHSER 導出內容、Goggle，或每行一個域名"
+  },
+  "importLabel": {
+    "message": "要導入的網站"
+  },
+  "importButton": {
+    "message": "導入"
+  },
+  "importChooseFile": {
+    "message": "選擇文件"
+  },
+  "importSourceHohser": {
+    "message": "HOHSER 導出內容"
+  },
+  "importSourceUblacklist": {
+    "message": "uBlacklist 規則"
+  },
+  "importSourceGoggle": {
+    "message": "Goggle"
+  },
+  "importSourceAnubis": {
+    "message": "Anubis 清單"
+  },
+  "importSourceDomains": {
+    "message": "域名清單"
+  },
+  "importRead_other": {
+    "message": "識別為：$2。已新增 $1 個網站，已更新 $3 個。"
+  },
+  "importSkipped_other": {
+    "message": "有 $1 條規則因包含地址模式或不支援的語法而被略過；如需保留它们，請訂閱原始清單。"
+  },
+  "importFailed": {
+    "message": "無法導入：$1"
+  },
+  "backupHeading": {
+    "message": "備份"
+  },
+  "backupIntro": {
+    "message": "所有內容都在一個文件中：設定、標籤選擇、訂閱和你的清單。"
+  },
+  "backupExport": {
+    "message": "導出備份"
+  },
+  "backupRestore": {
+    "message": "恢復備份"
+  },
+  "backupRestored": {
+    "message": "備份已恢復。"
+  },
+  "backupRestoreFailed": {
+    "message": "無法恢復：$1"
+  },
+  "resetButton": {
+    "message": "重置設定"
+  },
+  "resetDone": {
+    "message": "設定、標籤和訂閱已重置。你的清單已保留。"
+  },
+  "settingsSections": {
+    "message": "設定分區"
+  },
+  "settingsPageTitle": {
+    "message": "$1 – Anubis"
+  },
+  "settingsBrandTitle": {
+    "message": "打開 Anubis Wiki"
+  },
+  "settingsTagline": {
+    "message": "隱藏搜尋結果、設定排名、加標籤"
+  },
+  "settingsSource": {
+    "message": "GitHub 上的源代碼"
+  },
+  "sitesHeading": {
+    "message": "你的網站"
+  },
+  "sitesHelp": {
+    "message": "排名的原理"
+  },
+  "tagsHeading": {
+    "message": "標籤"
+  },
+  "tagsHelp": {
+    "message": "標籤的原理"
+  },
+  "listsHeading": {
+    "message": "清單"
+  },
+  "listsHelp": {
+    "message": "清單的原理"
+  },
+  "cleanupHeading": {
+    "message": "移除面板"
+  },
+  "cleanupHelp": {
+    "message": "移除面板的原理"
+  },
+  "appearanceHelp": {
+    "message": "關於已隱藏的結果"
+  },
+  "enginesHelp": {
+    "message": "支援哪些搜尋引擎"
+  },
+  "syncHelp": {
+    "message": "同步的原理"
+  },
+  "shareHelp": {
+    "message": "從其他工具遷移"
+  },
+  "cleanupIntro": {
+    "message": "Anubis 可以移除搜尋頁面上不屬於結果的面板。為每一種你不想看到的面板打開開關。結果上方的“顯示已隱藏”可以在那次搜尋中把它们找回來。"
+  },
+  "cleanupEverySearch": {
+    "message": "在每次搜尋中"
+  },
+  "cleanupEverySearchHint": {
+    "message": "開啟表示 Anubis 會移除它。關閉則把它留在頁面上。"
+  },
+  "cleanupStillShows": {
+    "message": "如果面板仍然顯示"
+  },
+  "cleanupAll": {
+    "message": "全部"
+  },
+  "cleanupAllHint": {
+    "message": "開啟或關閉此分區中的所有開關。"
+  },
+  "cleanupOnGoogle": {
+    "message": "在 Google 上"
+  },
+  "cleanupWebTab": {
+    "message": "始終打開“網頁”分頁"
+  },
+  "cleanupWebTabHint": {
+    "message": "將每次 Google 搜尋都轉到它的“網頁”分頁：只有普通連結，沒有 AI 總覽、視頻或其他面板，連 Anubis 無法識別的面板也沒有。如果想在某次搜尋中離開它，請選擇結果上方的“全部”。"
+  },
+  "cleanupAi": {
+    "message": "AI 回答"
+  },
+  "cleanupAiHint": {
+    "message": "Google 的 AI 總覽和 AI 模式分頁、DuckDuckGo 的 AI 輔助回答和 Duck.ai、Bing 的 AI 回答，以及 Brave 的 AI 回答。"
+  },
+  "cleanupVideos": {
+    "message": "視頻面板"
+  },
+  "cleanupVideosHint": {
+    "message": "結果之間的視頻和短視頻面板。"
+  },
+  "cleanupQuestions": {
+    "message": "相關問題"
+  },
+  "cleanupQuestionsHint": {
+    "message": "其他人提出的問題清單，答案可以展開。"
+  },
+  "cleanupDiscussions": {
+    "message": "討論面板"
+  },
+  "cleanupDiscussionsHint": {
+    "message": "結果之間的論壇貼子面板，例如 Google 的“討論和論壇”。結果中的論壇頁面會保留。"
+  },
+  "cleanupNews": {
+    "message": "焦點新聞"
+  },
+  "cleanupNewsHint": {
+    "message": "結果之間的新聞面板。"
+  },
+  "cleanupImages": {
+    "message": "圖片行"
+  },
+  "cleanupImagesHint": {
+    "message": "結果之間成行的圖片。“圖片”分頁仍可正常使用。"
+  },
+  "cleanupRelated": {
+    "message": "相關搜尋"
+  },
+  "cleanupRelatedHint": {
+    "message": "其他搜尋的清單，通常位於頁面底部。"
+  },
+  "cleanupElsewhere": {
+    "message": "其他搜尋引擎"
+  },
+  "cleanupElsewhereHint": {
+    "message": "在其他搜尋引擎上重復你的搜尋的一排按鈕，例如 Brave 的“Find elsewhere”。"
+  },
+  "cleanupAdRequests": {
+    "message": "允許廣告的請求"
+  },
+  "cleanupAdRequestsHint": {
+    "message": "要求你關閉廣告攔截器或允許廣告的橫幅，例如 Startpage 的“Block creepy ads, not private search”。"
+  },
+  "sitesIntro": {
+    "message": "你自己設定了排名或隱藏的網站。你的選擇優先於你訂閱的所有清單。在任意搜尋結果上使用按鈕，或在這裡新增網站。"
+  },
+  "sitesEditAsText": {
+    "message": "以文本編輯"
+  },
+  "sitesBackToTable": {
+    "message": "返回表格"
+  },
+  "sitesTooBig": {
+    "message": "你的清單太大，無法通過瀏覽器同步，因此只保存在此設備上。請下載它以保留一份副本。"
+  },
+  "sitesAddPlaceholder": {
+    "message": "域名或網址，例如 fandom.com"
+  },
+  "sitesAdd": {
+    "message": "新增"
+  },
+  "sitesNotDomain": {
+    "message": "這看起來不像域名。"
+  },
+  "sitesAddHint": {
+    "message": "它適用於該網站及其所有子域名。"
+  },
+  "sitesAddHelp": {
+    "message": "選擇網站的適用範圍"
+  },
+  "sitesFilter_other": {
+    "message": "篩選 $1 個網站…"
+  },
+  "sitesFilterLabel": {
+    "message": "篩選網站"
+  },
+  "sitesAddTagTo": {
+    "message": "給 $1 新增標籤"
+  },
+  "sitesKeptNormal": {
+    "message": "保持正常，無論你訂閱的清單怎麼說"
+  },
+  "sitesRemoveTag": {
+    "message": "從 $2 移除“$1”"
+  },
+  "sitesForget": {
+    "message": "移除 $1"
+  },
+  "sitesFirst500": {
+    "message": "仅顯示前 500 個。使用篩選查找其餘網站。"
+  },
+  "sitesNone": {
+    "message": "還沒有網站。在上方新增一個，或在搜尋結果上使用按鈕。"
+  },
+  "sitesTextLabel": {
+    "message": "你的清單（文本）"
+  },
+  "sitesTextIntro": {
+    "message": "以 Anubis 清單格式顯示的你的清單：Brave Goggles 語法加上標籤。它正是你會發布的那個文件。表格無法顯示的行會按原樣保留。"
+  },
+  "sitesTextReadable": {
+    "message": "$1和 $2，全部可讀。"
+  },
+  "listInstructions_other": {
+    "message": "$1 條指令"
+  },
+  "listErrorLine": {
+    "message": "第 $1 行：$2"
+  },
+  "sitesSave": {
+    "message": "保存"
+  },
+  "sitesFormatReference": {
+    "message": "格式參考"
+  },
+  "listsIntro": {
+    "message": "訂閱可以給網站加標籤、重新排序或隱藏網站的清單。GitHub、GitLab、Codeberg 或 gist 上的任何文本文件都可以：Anubis 清單、Brave Goggles、uBlacklist 規則集和普通域名清單。"
+  },
+  "listsUpdateAll": {
+    "message": "全部更新"
+  },
+  "listsUpdating": {
+    "message": "正在更新…"
+  },
+  "listsAllChecked": {
+    "message": "已檢查所有清單的更新。"
+  },
+  "listsAddHeading": {
+    "message": "新增清單"
+  },
+  "listsAddHint": {
+    "message": "黏貼文件的連結。GitHub 頁面、gist 或 Brave Goggle 的連結也可以。"
+  },
+  "listsAddHelp": {
+    "message": "支援哪些清單"
+  },
+  "listsUrlLabel": {
+    "message": "清單網址"
+  },
+  "listsNone": {
+    "message": "還沒有清單。從下方選擇一些。"
+  },
+  "listsMoreHeading": {
+    "message": "更多清單"
+  },
+  "listsMoreIntro": {
+    "message": "來自 Anubis 目錄和更廣泛的社區。"
+  },
+  "listsShare": {
+    "message": "做了一個值得分享的清單？向 $1 提交拉取請求，把它新增到目錄中。"
+  },
+  "listsNeedHttps": {
+    "message": "清單必須通過 https 提供。"
+  },
+  "listsPermissionToDownload": {
+    "message": "Anubis 需要讀取 $1 的權限，才能下載此清單。"
+  },
+  "listsSubscribed": {
+    "message": "已訂閱 $1：$2和 $3。"
+  },
+  "listsSubscribedBundled": {
+    "message": "已訂閱 $1（在能夠更新之前，先使用 Anubis 自帶的副本）。"
+  },
+  "listsSubscribeFailed": {
+    "message": "無法訂閱：$1"
+  },
+  "listsUse": {
+    "message": "使用 $1"
+  },
+  "listsOn": {
+    "message": "開"
+  },
+  "listsOff": {
+    "message": "關"
+  },
+  "listsUpdateFailed": {
+    "message": "$1：$2"
+  },
+  "listsUpToDate": {
+    "message": "$1 已是最新。"
+  },
+  "listsFacts": {
+    "message": "$1。"
+  },
+  "listsLinks": {
+    "message": "$1"
+  },
+  "listsNotDownloaded": {
+    "message": "尚未下載"
+  },
+  "listsBy": {
+    "message": "作者 $1"
+  },
+  "listsBundledCopy": {
+    "message": "Anubis 自帶的副本"
+  },
+  "listsUpdated": {
+    "message": "$1更新"
+  },
+  "listsHomepage": {
+    "message": "主頁"
+  },
+  "listsSuggestChanges": {
+    "message": "建議更改"
+  },
+  "listsUsingBundled": {
+    "message": "在能夠更新之前，先使用 Anubis 自帶的副本（$1）。"
+  },
+  "listsLastUpdateFailed": {
+    "message": "上次更新失敗：$1。"
+  },
+  "listsSkippedLines_other": {
+    "message": "跳過了 $1 行：Anubis 暫時還無法讀取該語法。"
+  },
+  "listsUpdateNow": {
+    "message": "立即更新"
+  },
+  "listsUpdateOne": {
+    "message": "更新 $1"
+  },
+  "listsViewFile": {
+    "message": "查看文件"
+  },
+  "listsViewOne": {
+    "message": "查看 $1"
+  },
+  "listsUnsubscribe": {
+    "message": "取消訂閱"
+  },
+  "listsUnsubscribeOne": {
+    "message": "取消訂閱 $1"
+  },
+  "listLensTitle": {
+    "message": "濾鏡會隱藏清單未提及的結果"
+  },
+  "listKindLens": {
+    "message": "濾鏡"
+  },
+  "listKindBuiltin": {
+    "message": "內置"
+  },
+  "listFormatAnubis": {
+    "message": "Anubis 清單"
+  },
+  "listFormatGoggle": {
+    "message": "Brave Goggle"
+  },
+  "listFormatUblacklist": {
+    "message": "uBlacklist 規則集"
+  },
+  "listFormatDomains": {
+    "message": "域名清單"
+  },
+  "timeJustNow": {
+    "message": "剛剛"
+  },
+  "tagsIntro": {
+    "message": "清單會給結果加上標籤。每個標籤起什麼作用由你決定：跟隨清單、仅作標籤、高亮顯示，或者將帶有它的結果釘選、提升、降低或隱藏。使用相同標籤名稱的清單會共用這個標籤。"
+  },
+  "tagActionList": {
+    "message": "跟隨清單"
+  },
+  "tagActionLabel": {
+    "message": "仅作標籤"
+  },
+  "tagActionHighlight": {
+    "message": "高亮顯示"
+  },
+  "tagActionFor": {
+    "message": "如何處理帶有 $1 標籤的結果"
+  },
+  "tagMarksNone": {
+    "message": "還沒有網站帶有此標籤。"
+  },
+  "tagMarks": {
+    "message": "標記了$1。"
+  },
+  "tagMarksYours_other": {
+    "message": "你的 $1 個網站"
+  },
+  "tagMarksFromList_other": {
+    "message": "來自 $2 的 $1 個網站"
+  },
+  "tagEffectLabel": {
+    "message": "$1仅作標籤：這些網站的排名保持不變。"
+  },
+  "tagEffectHighlight": {
+    "message": "$1這些網站會以標籤的顏色高亮顯示。"
+  },
+  "tagEffectRaise": {
+    "message": "$1這些網站會在你的搜尋中被提升。"
+  },
+  "tagEffectLower": {
+    "message": "$1這些網站會在你的搜尋中被降低。"
+  },
+  "tagEffectPin": {
+    "message": "$1這些網站會在你的搜尋中被釘選。"
+  },
+  "tagEffectHide": {
+    "message": "$1這些網站會在你的搜尋中被隱藏。"
+  },
+  "tagEffectOneList": {
+    "message": "$1清單 $2 $3。"
+  },
+  "tagEffectLists": {
+    "message": "$1這些清單$2。"
+  },
+  "tagListRaises_other": {
+    "message": "提升其中 $1 個"
+  },
+  "tagListLowers_other": {
+    "message": "降低其中 $1 個"
+  },
+  "tagListHides_other": {
+    "message": "隱藏其中 $1 個"
+  },
+  "tagListsRaise_other": {
+    "message": "提升其中 $1 個"
+  },
+  "tagListsLower_other": {
+    "message": "降低其中 $1 個"
+  },
+  "tagListsHide_other": {
+    "message": "隱藏其中 $1 個"
+  },
+  "tagSitesToTag": {
+    "message": "要加上 $1 標籤的網站"
+  },
+  "tagAddSite": {
+    "message": "新增網站"
+  },
+  "tagNotSite": {
+    "message": "“$1”看起來不像網站。"
+  },
+  "tagTypeSite": {
+    "message": "請輸入一個網站，例如 fandom.com。"
+  },
+  "tagSiteNote": {
+    "message": "$1：$2"
+  },
+  "tagMoreSites_other": {
+    "message": "另外 $1 個"
+  },
+  "tagFromList": {
+    "message": "$1：$2。"
+  },
+  "tagName": {
+    "message": "標籤名稱"
+  },
+  "tagNameShort": {
+    "message": "名稱"
+  },
+  "tagDescription": {
+    "message": "描述"
+  },
+  "tagDescriptionPlaceholder": {
+    "message": "它的含義（可選）"
+  },
+  "tagMeaning": {
+    "message": "$1 的含義"
+  },
+  "tagYourSites": {
+    "message": "你帶有此標籤的網站"
+  },
+  "tagNoSites": {
+    "message": "還沒有。在這裡新增一個，或在搜尋結果上使用 ⚖ 按鈕。"
+  },
+  "tagFromYourLists": {
+    "message": "來自你訂閱的清單"
+  },
+  "tagColour": {
+    "message": "顏色"
+  },
+  "tagColourOf": {
+    "message": "$1 的顏色"
+  },
+  "tagShowUnder": {
+    "message": "在結果下方顯示 $1"
+  },
+  "tagShowTitle": {
+    "message": "在結果下方顯示此標籤"
+  },
+  "tagEdit": {
+    "message": "編輯"
+  },
+  "tagDone": {
+    "message": "完成"
+  },
+  "tagEditLabel": {
+    "message": "編輯 $1 及其網站"
+  },
+  "tagDelete": {
+    "message": "刪除“$1”"
+  },
+  "tagNewHeading": {
+    "message": "新標籤"
+  },
+  "tagNewHint": {
+    "message": "你的標籤保存在你的清單中，因此發布清單時，它们也會一起發布。"
+  },
+  "tagNewHelp": {
+    "message": "將網站新增到標籤"
+  },
+  "tagNewPlaceholder": {
+    "message": "名稱，例如“AI 垃圾內容”"
+  },
+  "tagNewColour": {
+    "message": "新標籤的顏色"
+  },
+  "tagCreate": {
+    "message": "創建標籤"
+  },
+  "tagNameInvalid": {
+    "message": "請給標籤取一個至少包含一個字母或數字的名稱。"
+  },
+  "tagExists": {
+    "message": "已經有名為“$1”的標籤了。"
+  },
+  "tagYoursHeading": {
+    "message": "你的標籤"
+  },
+  "tagListsHeading": {
+    "message": "來自清單的標籤"
+  },
+  "tagListsHint": {
+    "message": "這些標籤由你訂閱的清單定義。你可以決定每個標籤的作用，也可以把自己的網站新增到任意一個標籤。如果某個清單不再使用你的網站所用的標籤，該標籤會移到“你的標籤”中。"
+  },
+  "tagSourceLists": {
+    "message": "來自 $1"
+  },
+  "tagNoneYours": {
+    "message": "還沒有你自己的標籤。在上方創建一個。"
+  },
+  "quoted": {
+    "message": "“$1”"
+  },
+  "reasonPins": {
+    "message": "將其釘選"
+  },
+  "reasonKeepsNormal": {
+    "message": "使其保持正常"
+  },
+  "reasonHides": {
+    "message": "將其隱藏"
+  },
+  "reasonRaises": {
+    "message": "將其提升 $1 位"
+  },
+  "reasonLowers": {
+    "message": "將其降低 $1 位"
+  },
+  "reasonTags": {
+    "message": "為其加上$1標籤"
+  },
+  "reasonMentions": {
+    "message": "提及了它"
+  },
+  "reasonLens": {
+    "message": "未收錄它，因此它被隱藏"
+  },
+  "reasonYourTagSettings": {
+    "message": "你的標籤設定"
+  },
+  "menuReason": {
+    "message": "$1：$2。"
+  },
+  "choicePin": {
+    "message": "因$1標籤將其釘選"
+  },
+  "choiceHide": {
+    "message": "因$1標籤將其隱藏"
+  },
+  "choiceRaise_other": {
+    "message": "因$3標籤將其提升（每個標籤 $2 位）"
+  },
+  "choiceLower_other": {
+    "message": "因$3標籤將其降低（每個標籤 $2 位）"
+  },
+  "choiceTotal": {
+    "message": "$1，$2"
+  },
+  "choiceNetUp_other": {
+    "message": "因此它上移 $1 位"
+  },
+  "choiceNetDown_other": {
+    "message": "因此它下移 $1 位"
+  },
+  "choiceNetSame": {
+    "message": "因此它的位置不變"
+  },
+  "lineBadTagDefinition": {
+    "message": "標籤定義有誤：$1"
+  },
+  "lineNeedsPattern": {
+    "message": "指令需要一個模式或網站"
+  },
+  "lineTooLong": {
+    "message": "指令超過 $1 個字符"
+  },
+  "lineBadSite": {
+    "message": "網站有誤：$1"
+  },
+  "lineBadStrength": {
+    "message": "$1 必須在 1–$2 之間"
+  },
+  "lineBadTagId": {
+    "message": "標籤 ID 有誤：$1"
+  },
+  "lineUnknownOption": {
+    "message": "未知選項：$1"
+  },
+  "lineEmptyPattern": {
+    "message": "模式為空"
+  },
+  "lineTooManyWildcards": {
+    "message": "每條指令最多 $1 個通配符（*）"
+  },
+  "lineTooManySeparators": {
+    "message": "每條指令最多 $1 個分隔符（^）"
+  },
+  "lineIfGuard": {
+    "message": "暫不支援 @if 條件"
+  },
+  "lineRegexTooLong": {
+    "message": "正則表達式超過 $1 個字符"
+  },
+  "lineRegexFreeze": {
+    "message": "正則表達式可能會讓搜尋頁面卡死（重復的分組裡又有重復）：$1"
+  },
+  "lineBadRegex": {
+    "message": "正則表達式有誤：$1"
+  },
+  "lineUnsupported": {
+    "message": "不支援的規則：$1"
+  },
+  "lineBadHost": {
+    "message": "主機名有誤：$1"
+  },
+  "lineMatchesEverything": {
+    "message": "規則會匹配所有內容"
+  },
+  "lineNotDomain": {
+    "message": "不是域名：$1"
+  },
+  "listTooBig": {
+    "message": "清單大於 $1 MB"
+  },
+  "listIsWebPage": {
+    "message": "收到的是網頁，而不是清單。請使用原始文件的網址。"
+  },
+  "listTimedOut": {
+    "message": "超時"
+  },
+  "listNoUsableRules": {
+    "message": "沒有可用的規則（第 $1 行：$2）"
+  },
+  "listNoRules": {
+    "message": "未找到規則"
+  },
+  "backupNotBackup": {
+    "message": "這不是 Anubis 備份。"
+  },
+  "themeAuto": {
+    "message": "自動"
+  },
+  "themeLight": {
+    "message": "淺色"
+  },
+  "themeDark": {
+    "message": "深色"
+  },
+  "themeAutoTitle": {
+    "message": "自動主題"
+  },
+  "themeLightTitle": {
+    "message": "淺色主題"
+  },
+  "themeDarkTitle": {
+    "message": "深色主題"
+  },
+  "personalListName": {
+    "message": "你的清單"
+  },
+  "importHighlightTag": {
+    "message": "高亮 $1"
+  },
+  "tagDeleted_other": {
+    "message": "已刪除“$2”標籤，並從 $1 個網站上移除了它。"
+  },
+  "listsUnsubscribed": {
+    "message": "已取消訂閱 $1。"
+  }
+}

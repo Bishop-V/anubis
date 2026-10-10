@@ -174,9 +174,9 @@ describe('in another language', () => {
 describe('lists of facts and gaps in other languages', () => {
   it('separates a list of facts in languages whose unit lists run together', () => {
     // Chinese joined "120 条指令3 个标签", Russian "12 инструкций 3 метки".
-    for (const [code, joined] of [['zh_CN', '120 条、3 个'], ['ru', '12, 3'], ['en', '12, 3']] as const) {
+    for (const [code, joined] of [['zh_CN', '120 条、3 个'], ['zh_TW', '120 條、3 個'], ['ru', '12, 3'], ['en', '12, 3']] as const) {
       fakeBrowser.i18n.getMessage = ((key: string) => (key === 'langCode' ? code : '')) as typeof fakeBrowser.i18n.getMessage;
-      const items = code === 'zh_CN' ? ['120 条', '3 个'] : ['12', '3'];
+      const items = code === 'zh_TW' ? ['120 條', '3 個'] : code === 'zh_CN' ? ['120 条', '3 个'] : ['12', '3'];
       expect(tJoin(items, 'unit'), code).toBe(joined);
     }
     installEnglish();

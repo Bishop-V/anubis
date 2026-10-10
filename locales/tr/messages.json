@@ -1,0 +1,1718 @@
+{
+  "anubisSettings": {
+    "message": "Anubis ayarları"
+  },
+  "appearanceHeading": {
+    "message": "Görünüm"
+  },
+  "appearanceHelp": {
+    "message": "Görünüm hakkında yardım"
+  },
+  "appearanceIntro": {
+    "message": "Anubis'in arama sayfalarında ve menülerde nasıl görüneceğini özelleştirin."
+  },
+  "backupExport": {
+    "message": "Yedeği dışa aktar"
+  },
+  "backupHeading": {
+    "message": "Yedekle ve Geri Yükle"
+  },
+  "backupIntro": {
+    "message": "Sitelerinizi, etiketlerinizi ve ayarlarınızı tek bir dosyaya kaydedin veya başka bir cihazdan geri yükleyin."
+  },
+  "backupNotBackup": {
+    "message": "Bu geçerli bir Anubis yedeği değil."
+  },
+  "backupRestore": {
+    "message": "Yedeği Geri Yükle"
+  },
+  "backupRestoreFailed": {
+    "message": "Geri yükleme başarısız oldu: $1"
+  },
+  "backupRestored": {
+    "message": "Yedek geri yüklendi."
+  },
+  "barHiddenByLens_one": {
+    "message": "$2 bunu içermediği için gizlendi"
+  },
+  "barHiddenByLens_other": {
+    "message": "$2 bunları içermediği için gizlendi"
+  },
+  "barHiddenByList_one": {
+    "message": "$2 tarafından gizlendi"
+  },
+  "barHiddenByList_other": {
+    "message": "$2 tarafından gizlendi"
+  },
+  "barHiddenByTag_one": {
+    "message": "“$2” etiketi nedeniyle gizlendi"
+  },
+  "barHiddenByTag_other": {
+    "message": "“$2” etiketi nedeniyle gizlendi"
+  },
+  "barHiddenByYou_one": {
+    "message": "listeniz tarafından gizlendi"
+  },
+  "barHiddenByYou_other": {
+    "message": "listeniz tarafından gizlendi"
+  },
+  "barHidden_one": {
+    "message": "gizlendi"
+  },
+  "barHidden_other": {
+    "message": "gizlendi"
+  },
+  "chipFromPage": {
+    "message": "Sayfa $1"
+  },
+  "chipFromPageTitle": {
+    "message": "“Daha fazla sonuç yükle” tarafından eklendi"
+  },
+  "chipHidden": {
+    "message": "Gizlendi"
+  },
+  "chipLowered": {
+    "message": "Düşürüldü"
+  },
+  "chipPinned": {
+    "message": "Sabitlendi"
+  },
+  "chipRaised": {
+    "message": "Yükseltildi"
+  },
+  "chipsHeading": {
+    "message": "Rozetler"
+  },
+  "chipsHint": {
+    "message": "Arama sonuçlarının altında durum rozetlerini (Sabitlendi, Yükseltildi vb.) gösterin."
+  },
+  "choiceHide": {
+    "message": "$1 için gizle"
+  },
+  "choiceLower_one": {
+    "message": "Etiket başına $2 ($3)"
+  },
+  "choiceLower_other": {
+    "message": "Etiket başına $2 ($3)"
+  },
+  "choiceNetDown_one": {
+    "message": "Toplamda $1 sıra aşağıda"
+  },
+  "choiceNetDown_other": {
+    "message": "Toplamda $1 sıra aşağıda"
+  },
+  "choiceNetSame": {
+    "message": "Net değişim yok"
+  },
+  "choiceNetUp_one": {
+    "message": "Toplamda $1 sıra yukarıda"
+  },
+  "choiceNetUp_other": {
+    "message": "Toplamda $1 sıra yukarıda"
+  },
+  "choicePin": {
+    "message": "$1 için sabitle"
+  },
+  "choiceRaise_one": {
+    "message": "Etiket başına $2 ($3)"
+  },
+  "choiceRaise_other": {
+    "message": "Etiket başına $2 ($3)"
+  },
+  "choiceTotal": {
+    "message": "$1, $2"
+  },
+  "cleanupAdRequests": {
+    "message": "Reklam isteklerini engelle"
+  },
+  "cleanupAdRequestsHint": {
+    "message": "Arama motoru reklam kutularını temizleyin."
+  },
+  "cleanupAi": {
+    "message": "Yapay zekâ genel bakışlarını gizle"
+  },
+  "cleanupAiHint": {
+    "message": "Arama sonuçlarının üstündeki yapay zekâ yanıtlarını kaldırın."
+  },
+  "cleanupAll": {
+    "message": "Tüm panelleri kaldır"
+  },
+  "cleanupAllHint": {
+    "message": "Arama sayfalarındaki tüm ek bilgi kutularını ve özetleri gizleyin."
+  },
+  "cleanupDiscussions": {
+    "message": "“Tartışmalar ve forumlar” panelini gizle"
+  },
+  "cleanupDiscussionsHint": {
+    "message": "Reddit ve forum gönderileri panelini gizleyin."
+  },
+  "cleanupElsewhere": {
+    "message": "“Diğer kaynaklar” panelini gizle"
+  },
+  "cleanupElsewhereHint": {
+    "message": "Harici arama motoru ve kaynak kutularını gizleyin."
+  },
+  "cleanupEverySearch": {
+    "message": "Her aramada temizle"
+  },
+  "cleanupEverySearchHint": {
+    "message": "Temizleme kurallarını her aramada otomatik olarak uygulayın."
+  },
+  "cleanupHeading": {
+    "message": "Arama Sayfalarını Temizle"
+  },
+  "cleanupHelp": {
+    "message": "Temizleme hakkında yardım"
+  },
+  "cleanupImages": {
+    "message": "Görsel panellerini gizle"
+  },
+  "cleanupImagesHint": {
+    "message": "Görsel bloklarını ve karusellerini gizleyin."
+  },
+  "cleanupIntro": {
+    "message": "Arama sayfalarındaki gereksiz panelleri, yapay zekâ özetlerini ve dikkat dağıtıcı öğeleri kaldırın."
+  },
+  "cleanupNews": {
+    "message": "“Başlıca haberler” panelini gizle"
+  },
+  "cleanupNewsHint": {
+    "message": "Haber kutularını ve manşetleri gizleyin."
+  },
+  "cleanupOnGoogle": {
+    "message": "Google arama sayfasında:"
+  },
+  "cleanupQuestions": {
+    "message": "“İlgili sorular” panelini gizle"
+  },
+  "cleanupQuestionsHint": {
+    "message": "Kullanıcıların sorduğu diğer sorular panelini gizleyin."
+  },
+  "cleanupRelated": {
+    "message": "İlgili aramaları gizle"
+  },
+  "cleanupRelatedHint": {
+    "message": "Sayfa altındaki ilgili arama önerilerini kaldırın."
+  },
+  "cleanupStillShows": {
+    "message": "Hâlâ istenmeyen paneller görünüyor mu?"
+  },
+  "cleanupVideos": {
+    "message": "Video panellerini gizle"
+  },
+  "cleanupVideosHint": {
+    "message": "Video karusellerini ve video sonuç bloklarını gizleyin."
+  },
+  "cleanupWebTab": {
+    "message": "Varsayılan olarak “Web” sekmesini aç"
+  },
+  "cleanupWebTabHint": {
+    "message": "Google aramalarında otomatik olarak sadece web sonuçlarına odaklanın."
+  },
+  "commandToggleEnabled": {
+    "message": "Anubis'i aç veya kapat"
+  },
+  "commandToggleHidden": {
+    "message": "Gizlenen sonuçları göster veya tekrar gizle"
+  },
+  "deeperAuto": {
+    "message": "Otomatik sayfalama"
+  },
+  "deeperAutoHint": {
+    "message": "Sonraki sonuç sayfalarını ilk sayfaya ekleyin ve birlikte sıralayın; böylece 3. sayfada sabitlediğiniz bir site en üste çıksın. Sonuçların üstündeki “Daha fazla sonuç yükle” de aynı işlemi yapar. 0 (kapalı) ile $1 arasında eklenecek sayfa sayısını girin."
+  },
+  "deeperHelp": {
+    "message": "Birden fazla sayfayı tek seferde görüntüleyin."
+  },
+  "deeperTipFew": {
+    "message": "$1 sayfa yüklendi."
+  },
+  "deeperTipMany": {
+    "message": "$1 sayfa yüklendi."
+  },
+  "deeperTipOff": {
+    "message": "Daha fazla sonuç yüklemek için tıklayın."
+  },
+  "deeperTipSome": {
+    "message": "$1 sayfa yüklendi."
+  },
+  "deeperTipTime_one": {
+    "message": "$1 saniye önce arandı"
+  },
+  "deeperTipTime_other": {
+    "message": "$1 saniye önce arandı"
+  },
+  "deeperUnit": {
+    "message": "sayfa"
+  },
+  "enabledHeading": {
+    "message": "Uzantı Durumu"
+  },
+  "enabledHint": {
+    "message": "Anubis'i genel olarak etkinleştirin veya devre dışı bırakın."
+  },
+  "enginesHeading": {
+    "message": "Arama Motorları"
+  },
+  "enginesHelp": {
+    "message": "Arama motorları hakkında yardım"
+  },
+  "enginesIntro": {
+    "message": "Anubis'in hangi arama motorlarında çalışacağını seçin."
+  },
+  "enginesTrouble": {
+    "message": "Arama motoru çalışmıyor mu?"
+  },
+  "enginesTroubleHelp": {
+    "message": "Arama motorlarının düzeni değiştiğinde güncelleme gerekebilir."
+  },
+  "extDescription": {
+    "message": "Arama sonuçlarınızı tartar: siteleri etiketleyin, yeniden sıralayın, gizleyin ve herkesin yayınlayabileceği listeleri kullanın."
+  },
+  "help": {
+    "message": "Yardım"
+  },
+  "helpTitle": {
+    "message": "Wiki'yi aç"
+  },
+  "hiddenMore_one": {
+    "message": "ve $1 gizli sonuç daha"
+  },
+  "hiddenMore_other": {
+    "message": "ve $1 gizli sonuç daha"
+  },
+  "hiddenShow": {
+    "message": "Göster"
+  },
+  "hiddenShowSite": {
+    "message": "$1 göster"
+  },
+  "hideAgain": {
+    "message": "Tekrar gizle"
+  },
+  "hideStyleCollapse": {
+    "message": "Tek satıra daralt"
+  },
+  "hideStyleDim": {
+    "message": "Soluklaştır"
+  },
+  "hideStyleHeading": {
+    "message": "Gizleme Stili"
+  },
+  "hideStyleHint": {
+    "message": "Gizlenen sonuçların arama sayfasında nasıl gösterileceğini belirleyin."
+  },
+  "hideStyleRemove": {
+    "message": "Tamamen kaldır"
+  },
+  "importButton": {
+    "message": "İçe Aktar"
+  },
+  "importChooseFile": {
+    "message": "Dosya Seç"
+  },
+  "importFailed": {
+    "message": "İçe aktarma başarısız oldu: $1"
+  },
+  "importHeading": {
+    "message": "İçe ve Dışa Aktar"
+  },
+  "importHelp": {
+    "message": "İçe aktarma biçimleri hakkında yardım"
+  },
+  "importHighlightTag": {
+    "message": "Vurgu $1"
+  },
+  "importIntro": {
+    "message": "Listelerinizi, kurallarınızı ve ayarlarınızı yedekleyin veya başka araçlardan aktarın."
+  },
+  "importLabel": {
+    "message": "İçe aktarılacak kurallar"
+  },
+  "importPlaceholder": {
+    "message": "Kuralları buraya yapıştırın veya bir dosya seçin…"
+  },
+  "importRead_one": {
+    "message": "$2 kaynağından $1 kural okundu ($3)."
+  },
+  "importRead_other": {
+    "message": "$2 kaynağından $1 kural okundu ($3)."
+  },
+  "importSkipped_one": {
+    "message": "$1 geçersiz kural atlandı"
+  },
+  "importSkipped_other": {
+    "message": "$1 geçersiz kural atlandı"
+  },
+  "importSourceAnubis": {
+    "message": "Anubis"
+  },
+  "importSourceDomains": {
+    "message": "Alan Adı Listesi"
+  },
+  "importSourceGoggle": {
+    "message": "Brave Goggles"
+  },
+  "importSourceHohser": {
+    "message": "HOHSER"
+  },
+  "importSourceUblacklist": {
+    "message": "uBlacklist"
+  },
+  "langCode": {
+    "message": "tr"
+  },
+  "levelHide": {
+    "message": "Gizle"
+  },
+  "levelLower": {
+    "message": "Düşür"
+  },
+  "levelNormal": {
+    "message": "Normal"
+  },
+  "levelPin": {
+    "message": "Sabitle"
+  },
+  "levelRaise": {
+    "message": "Yükselt"
+  },
+  "lineBadHost": {
+    "message": "Geçersiz ana bilgisayar adı: $1"
+  },
+  "lineBadRegex": {
+    "message": "Geçersiz düzenli ifade: $1"
+  },
+  "lineBadSite": {
+    "message": "Geçersiz site: $1"
+  },
+  "lineBadStrength": {
+    "message": "$1, 1–$2 arasında olmalıdır"
+  },
+  "lineBadTagDefinition": {
+    "message": "Geçersiz etiket tanımı: $1"
+  },
+  "lineBadTagId": {
+    "message": "Geçersiz etiket kimliği: $1"
+  },
+  "lineEmptyPattern": {
+    "message": "Boş desen"
+  },
+  "lineIfGuard": {
+    "message": "@if koşulları henüz desteklenmiyor"
+  },
+  "lineMatchesEverything": {
+    "message": "Bu kural her şeyle eşleşir."
+  },
+  "lineNeedsPattern": {
+    "message": "Kural için bir desen veya bir site gereklidir"
+  },
+  "lineNotDomain": {
+    "message": "Geçerli bir alan adı değil: $1"
+  },
+  "lineRegexFreeze": {
+    "message": "Düzenli ifade çok karmaşık ve tarayıcıyı dondurabilir ($1)"
+  },
+  "lineRegexTooLong": {
+    "message": "Düzenli ifade $1 karakterden daha uzun"
+  },
+  "lineTooLong": {
+    "message": "Kural $1 karakterden daha uzun"
+  },
+  "lineTooManySeparators": {
+    "message": "Kural başına en fazla $1 ayırıcı (^)"
+  },
+  "lineTooManyWildcards": {
+    "message": "Kural başına en fazla $1 joker karakter (*)"
+  },
+  "lineUnknownOption": {
+    "message": "Bilinmeyen seçenek: $1"
+  },
+  "lineUnsupported": {
+    "message": "Desteklenmeyen kural sözdizimi: $1"
+  },
+  "listErrorLine": {
+    "message": "$1. satırda hata: $2"
+  },
+  "listFormatAnubis": {
+    "message": "Anubis Biçimi"
+  },
+  "listFormatDomains": {
+    "message": "Düz Alan Adları"
+  },
+  "listFormatGoggle": {
+    "message": "Brave Goggles Biçimi"
+  },
+  "listFormatUblacklist": {
+    "message": "uBlacklist Biçimi"
+  },
+  "listInstructions_one": {
+    "message": "$1 kural"
+  },
+  "listInstructions_other": {
+    "message": "$1 kural"
+  },
+  "listIsWebPage": {
+    "message": "Bir liste yerine web sayfası alındı. Doğrudan (raw) dosya URL'sini kullanın."
+  },
+  "listKindBuiltin": {
+    "message": "Dahili"
+  },
+  "listKindLens": {
+    "message": "Mercek"
+  },
+  "listLensTitle": {
+    "message": "Mercek Listesi: Yalnızca eşleşen siteleri gösterir"
+  },
+  "listNoRules": {
+    "message": "Hiçbir kural bulunamadı"
+  },
+  "listNoUsableRules": {
+    "message": "Kullanılabilir kural yok (satır $1: $2)"
+  },
+  "listPermissionDenied": {
+    "message": "Anubis'in bu listeyi güncellemek için $1 adresini okuma iznine ihtiyacı var."
+  },
+  "listTimedOut": {
+    "message": "Zaman aşımına uğradı"
+  },
+  "listTooBig": {
+    "message": "Liste $1 MB boyutundan daha büyük"
+  },
+  "listsAddHeading": {
+    "message": "Yeni bir listeye abone ol"
+  },
+  "listsAddHelp": {
+    "message": "Anubis listeleri, Brave Goggles veya uBlacklist kuralları desteklenir."
+  },
+  "listsAddHint": {
+    "message": "Bir liste URL'si veya kuralları girin."
+  },
+  "listsAllChecked": {
+    "message": "Tüm listeler güncel."
+  },
+  "listsBundledCopy": {
+    "message": "Dahili kopya"
+  },
+  "listsBy": {
+    "message": "Yazar: $1"
+  },
+  "listsFacts": {
+    "message": "$1."
+  },
+  "listsHeading": {
+    "message": "Abonelik Listeleri"
+  },
+  "listsHelp": {
+    "message": "Listeler hakkında yardım"
+  },
+  "listsHomepage": {
+    "message": "Ana Sayfa"
+  },
+  "listsIntro": {
+    "message": "Topluluk tarafından sağlanan filtre listelerine abone olarak güvenilir siteleri öne çıkarın veya istenmeyenleri gizleyin."
+  },
+  "listsLastUpdateFailed": {
+    "message": "Son güncelleme başarısız oldu: $1"
+  },
+  "listsLinks": {
+    "message": "$1"
+  },
+  "listsMoreHeading": {
+    "message": "Daha Fazla Liste Bulun"
+  },
+  "listsMoreIntro": {
+    "message": "Topluluk listelerini keşfedin veya kendi listenizi yayınlayın."
+  },
+  "listsNeedHttps": {
+    "message": "Liste URL'si https:// ile başlamalıdır."
+  },
+  "listsNone": {
+    "message": "Henüz hiçbir listeye abone değilsiniz."
+  },
+  "listsNotDownloaded": {
+    "message": "Henüz indirilmedi"
+  },
+  "listsOff": {
+    "message": "Kapalı"
+  },
+  "listsOn": {
+    "message": "Açık"
+  },
+  "listsPermissionToDownload": {
+    "message": "$1 adresinden indirme izni verin"
+  },
+  "listsShare": {
+    "message": "Paylaşmaya değer bir liste mi oluşturdunuz? $1 adresine bir pull request göndererek listeyi dizine ekleyin."
+  },
+  "listsSkippedLines_one": {
+    "message": "$1 satır atlandı"
+  },
+  "listsSkippedLines_other": {
+    "message": "$1 satır atlandı"
+  },
+  "listsSubscribeFailed": {
+    "message": "Listeye abone olunamadı: $1"
+  },
+  "listsSubscribed": {
+    "message": "$2 kaynağından $1 kurala abone olundu ($3)."
+  },
+  "listsSubscribedBundled": {
+    "message": "$1 listesine abone olundu (güncellenene kadar Anubis ile birlikte gelen kopya kullanılıyor)."
+  },
+  "listsSuggestChanges": {
+    "message": "Değişiklik Öner"
+  },
+  "listsUnsubscribe": {
+    "message": "Abonelikten çık"
+  },
+  "listsUnsubscribeOne": {
+    "message": "“$1” aboneliğinden çık"
+  },
+  "listsUnsubscribed": {
+    "message": "$1 aboneliğinden çıkıldı."
+  },
+  "listsUpToDate": {
+    "message": "$1 güncel."
+  },
+  "listsUpdateAll": {
+    "message": "Tüm listeleri güncelle"
+  },
+  "listsUpdateFailed": {
+    "message": "Güncelleme başarısız oldu ($1): $2."
+  },
+  "listsUpdateNow": {
+    "message": "Şimdi güncelle"
+  },
+  "listsUpdateOne": {
+    "message": "“$1” listesini güncelle"
+  },
+  "listsUpdated": {
+    "message": "Güncellendi: $1"
+  },
+  "listsUpdating": {
+    "message": "Listeler güncelleniyor…"
+  },
+  "listsUrlLabel": {
+    "message": "Liste URL'si"
+  },
+  "listsUse": {
+    "message": "$1 listesini kullan"
+  },
+  "listsUsingBundled": {
+    "message": "Güncellenene kadar Anubis ile birlikte gelen kopya kullanılıyor ($1)."
+  },
+  "listsViewFile": {
+    "message": "Dosyayı görüntüle"
+  },
+  "listsViewOne": {
+    "message": "“$1” dosyasını görüntüle"
+  },
+  "loadMore": {
+    "message": "Daha fazla sonuç yükle"
+  },
+  "loadMoreBusy": {
+    "message": "$1, $2. sayfadan önce Anubis'ten yavaşlamasını istedi. Bir dakika sonra tekrar deneyin."
+  },
+  "loadMoreEmpty": {
+    "message": "$1, $2. sayfa için sonuç göndermedi. Önce robot olmadığınızı doğrulamanızı isteyebilir."
+  },
+  "loadMoreFailed": {
+    "message": "$1 kaynağından $2. sayfa yüklenemedi."
+  },
+  "loadMoreOpen": {
+    "message": "$1 sayfasını aç"
+  },
+  "loadMoreOpenTitle": {
+    "message": "$1 motorunun ne gönderdiğini görmek için yeni bir sekmede açın"
+  },
+  "loadMoreRefused": {
+    "message": "$1, $2. sayfayı göndermeyi reddetti."
+  },
+  "loadMoreRepeat": {
+    "message": "$1, $2. sayfa için aynı sonuçları tekrar gönderdi, bu nedenle başka sonuç yok."
+  },
+  "loadMoreSlow": {
+    "message": "$1, $2. sayfayı göndermekte çok gecikti."
+  },
+  "loadMoreTitle": {
+    "message": "Sonraki sonuç sayfasını bu sayfaya ekleyin ve birlikte sıralayın"
+  },
+  "loading": {
+    "message": "Yükleniyor…"
+  },
+  "machineTranslatedHelp": {
+    "message": "Düzeltmeye yardımcı olun"
+  },
+  "machineTranslatedNote": {
+    "message": "Anubis, tarayıcınızın diline bir makine tarafından çevrilmiştir ve henüz ana dili Türkçe olan biri tarafından kontrol edilmemiştir: bazı kısımları hatalı veya belirsiz olabilir, bu nedenle dikkatli kullanın. Anubis'i İngilizce görmek için tarayıcınızın dilini İngilizce yapın."
+  },
+  "machineTranslatedShort": {
+    "message": "Dikkatli kullanın."
+  },
+  "machineTranslatedTitle": {
+    "message": "Makine çevirisidir."
+  },
+  "menuAddTagButton": {
+    "message": "Etiket ekle"
+  },
+  "menuCloseLabel": {
+    "message": "Kapat"
+  },
+  "menuMatchedRule": {
+    "message": "Eşleşen kural, $1. satır"
+  },
+  "menuNewTagLabel": {
+    "message": "Yeni etiket adı"
+  },
+  "menuNewTagPlaceholder": {
+    "message": "Yeni etiket"
+  },
+  "menuReason": {
+    "message": "$1: $2"
+  },
+  "menuReport": {
+    "message": "Yanlış mı? $1 bildirin."
+  },
+  "menuReportTitle": {
+    "message": "Sorun takipçisinde bu sonuç hakkında $1 listesine hatalı olduğunu bildirin"
+  },
+  "menuSavedNote": {
+    "message": "Listenize kaydedildi."
+  },
+  "menuSuggest": {
+    "message": "Bir liste bunu içermeli mi? $1 için önerin."
+  },
+  "menuSuggestTitle": {
+    "message": "Sorun takipçisinde $2 için $1 önerin"
+  },
+  "menuWhyHeading": {
+    "message": "Neden"
+  },
+  "offerAlready": {
+    "message": "Zaten $1 listesine abonesiniz."
+  },
+  "offerCancel": {
+    "message": "İptal"
+  },
+  "offerPermission": {
+    "message": "Tarayıcınız daha sonra listenin bulunduğu site olan $1 üzerinden Anubis'in okuma yapmasına izin vermenizi isteyecektir."
+  },
+  "offerSubscribe": {
+    "message": "Abone Ol"
+  },
+  "offerSubscribing": {
+    "message": "Abone olunuyor…"
+  },
+  "offerTitle": {
+    "message": "$1 listesine abone olunsun mu?"
+  },
+  "offerTrust": {
+    "message": "Bir liste sonuçlarınızdaki siteleri gizleyebilir, sıralayabilir ve etiketleyebilir. Yalnızca güvendiğiniz listelere abone olun."
+  },
+  "paletteGold": {
+    "message": "Altın Sarısı"
+  },
+  "paletteHeading": {
+    "message": "Renk Paleti"
+  },
+  "paletteHint": {
+    "message": "Vurgu ve rozet renklerini seçin."
+  },
+  "palettePlain": {
+    "message": "Sade"
+  },
+  "personalListName": {
+    "message": "Listeniz"
+  },
+  "popupAddSite": {
+    "message": "Site ekle"
+  },
+  "popupHintAllow": {
+    "message": "Listeleriniz ne derse desin normal."
+  },
+  "popupHintLists": {
+    "message": "$2 tarafından $1."
+  },
+  "popupHintMine": {
+    "message": "Her aramada $1 için yaptığınız seçim."
+  },
+  "popupHintMineTags": {
+    "message": "Her aramada $1 için yaptığınız seçim, etiket ayarlarınıza eklendi."
+  },
+  "popupHintNone": {
+    "message": "Seçiminiz her aramada geçerlidir."
+  },
+  "popupKeptNormal": {
+    "message": "Normalde tutuldu"
+  },
+  "popupListCount_one": {
+    "message": "$1 liste"
+  },
+  "popupListCount_other": {
+    "message": "$1 liste"
+  },
+  "popupListsAndTags": {
+    "message": "$1, $2"
+  },
+  "popupNoSites": {
+    "message": "Henüz bir şey yok. Bir arama sonucundaki ⚖ düğmesini kullanarak sitesini sıralayın."
+  },
+  "popupNotSearch": {
+    "message": "Anubis'in neyi değiştirdiğini görmek için Google, DuckDuckGo, Bing, Brave veya desteklenen başka bir arama motorunda arama yapın."
+  },
+  "popupOff": {
+    "message": "Kapalı. Arama sayfaları olduğu gibi bırakılır."
+  },
+  "popupOn": {
+    "message": "Aramalarınız için açık"
+  },
+  "popupOnLabel": {
+    "message": "Anubis açık"
+  },
+  "popupOpenLists": {
+    "message": "Liste ayarlarını aç"
+  },
+  "popupRankHide": {
+    "message": "Arama sonuçlarında $1 gizle"
+  },
+  "popupRankLower": {
+    "message": "Arama sonuçlarında $1 düşür"
+  },
+  "popupRankNormal": {
+    "message": "Arama sonuçlarında $1 normal sırala"
+  },
+  "popupRankPin": {
+    "message": "Arama sonuçlarının en üstüne $1 sabitle"
+  },
+  "popupRankRaise": {
+    "message": "Arama sonuçlarında $1 yükselt"
+  },
+  "popupRanking": {
+    "message": "Sıralama"
+  },
+  "popupRankingFor": {
+    "message": "$1 için sıralama"
+  },
+  "popupSeeAll": {
+    "message": "Tüm $1 siteyi gör"
+  },
+  "popupShowOnly": {
+    "message": "Yalnızca göster"
+  },
+  "popupSite": {
+    "message": "Site"
+  },
+  "popupSiteChoice": {
+    "message": "Bunun sitenin ne kadarına uygulanacağını seçin"
+  },
+  "popupTagAlreadySet": {
+    "message": "Bu etiket zaten bu sitede var."
+  },
+  "popupTagCount_one": {
+    "message": "$1 etiket"
+  },
+  "popupTagCount_other": {
+    "message": "$1 etiket"
+  },
+  "popupTagFrom": {
+    "message": "$1 kaynağından"
+  },
+  "popupTagInvalid": {
+    "message": "En az bir harf veya rakam içeren bir etiket adı girin."
+  },
+  "popupTagSite": {
+    "message": "$1 sitesini “$2” olarak etiketle"
+  },
+  "popupTags": {
+    "message": "Etiketler"
+  },
+  "popupThisPage": {
+    "message": "Bu sayfa"
+  },
+  "popupThisPageOn": {
+    "message": "$1 üzerindeki bu sayfa"
+  },
+  "popupUntag": {
+    "message": "$1 üzerinden etiket kaldır"
+  },
+  "popupYourSites": {
+    "message": "Siteleriniz"
+  },
+  "popupYourTagSettings": {
+    "message": "etiket ayarlarınız"
+  },
+  "publishDownload": {
+    "message": "Listeyi indir"
+  },
+  "publishFormat": {
+    "message": "Liste biçimi belgeleri"
+  },
+  "publishHeading": {
+    "message": "Kendi Listenizi Yayınlayın"
+  },
+  "publishHelp": {
+    "message": "Liste yayınlama hakkında daha fazla bilgi"
+  },
+  "publishIntro": {
+    "message": "Herkesin abone olabileceği kurallar ve etiketler içeren bir liste oluşturun ve paylaşın."
+  },
+  "publishStepDirectory": {
+    "message": "Listenizi genel Anubis dizinine eklemek için $1 adresine bir PR gönderin."
+  },
+  "publishStepDownload": {
+    "message": "Listenizi aşağıdan indirin. En üstteki $1, $2 ve $3 satırlarını belirleyin."
+  },
+  "publishStepIssues": {
+    "message": "İnsanların sonuç menüsünden siteler önerebilmesi için $1 ekleyin."
+  },
+  "publishStepRepository": {
+    "message": "Genel bir GitHub deposu (veya bir gist) oluşturun ve dosyayı ekleyin, örn: $1."
+  },
+  "publishStepShare": {
+    "message": "Dosyanın doğrudan (raw) bağlantısını paylaşın."
+  },
+  "quoted": {
+    "message": "“$1”"
+  },
+  "reasonHides": {
+    "message": "bunu gizler"
+  },
+  "reasonKeepsNormal": {
+    "message": "bunu normal sırada tutar"
+  },
+  "reasonLens": {
+    "message": "bunu içermediği için gizlendi"
+  },
+  "reasonLowers": {
+    "message": "bunu $1 sıra düşürür"
+  },
+  "reasonMentions": {
+    "message": "ondan bahsediyor"
+  },
+  "reasonPins": {
+    "message": "bunu en üste sabitler"
+  },
+  "reasonRaises": {
+    "message": "bunu $1 sıra yükseltir"
+  },
+  "reasonTags": {
+    "message": "buna “$1” etiketini ekler"
+  },
+  "reasonYourTagSettings": {
+    "message": "etiket ayarlarınız"
+  },
+  "reportProblem": {
+    "message": "Sorun bildir"
+  },
+  "reportProblemTitle": {
+    "message": "Sorun bildir"
+  },
+  "rerankHeading": {
+    "message": "Yeniden Sıralama"
+  },
+  "rerankHelp": {
+    "message": "Sonuçların konumlarını ayarlayın."
+  },
+  "rerankHint": {
+    "message": "Yükseltilen ve düşürülen sitelerin nasıl sıralanacağını belirleyin."
+  },
+  "resetButton": {
+    "message": "Varsayılanlara Sıfırla"
+  },
+  "resetDone": {
+    "message": "Ayarlar sıfırlandı."
+  },
+  "settingsBrandTitle": {
+    "message": "Anubis"
+  },
+  "settingsPageTitle": {
+    "message": "$1 – Anubis"
+  },
+  "settingsSections": {
+    "message": "Bölümler"
+  },
+  "settingsSource": {
+    "message": "Kaynak Kodu"
+  },
+  "settingsTagline": {
+    "message": "Arama sonuçlarını tartan uzantı"
+  },
+  "shareHeading": {
+    "message": "Paylaş"
+  },
+  "shareHelp": {
+    "message": "Paylaşım hakkında yardım"
+  },
+  "shareIntro": {
+    "message": "Kurallarınızı ve etiketlerinizi başkalarıyla paylaşın."
+  },
+  "showHidden": {
+    "message": "Gizlenenleri göster"
+  },
+  "sitesAdd": {
+    "message": "Ekle"
+  },
+  "sitesAddHelp": {
+    "message": "Alan adları ve joker karakterler desteklenir."
+  },
+  "sitesAddHint": {
+    "message": "Örn: wikipedia.org veya *.example.com"
+  },
+  "sitesAddPlaceholder": {
+    "message": "alanadi.com"
+  },
+  "sitesAddTagTo": {
+    "message": "Etiket ekle: $1"
+  },
+  "sitesBackToTable": {
+    "message": "Tabloya geri dön"
+  },
+  "sitesEditAsText": {
+    "message": "Metin düzenle"
+  },
+  "sitesFilterLabel": {
+    "message": "Siteleri filtrele"
+  },
+  "sitesFilter_one": {
+    "message": "$1 site filtrelendi"
+  },
+  "sitesFilter_other": {
+    "message": "$1 site filtrelendi"
+  },
+  "sitesFirst500": {
+    "message": "İlk 500 site gösteriliyor."
+  },
+  "sitesForget": {
+    "message": "$1 sitesini unut"
+  },
+  "sitesFormatReference": {
+    "message": "Kural biçimi başvuru kılavuzu"
+  },
+  "sitesHeading": {
+    "message": "Siteleriniz"
+  },
+  "sitesHelp": {
+    "message": "Siteleri sıralama ve filtreleme hakkında yardım"
+  },
+  "sitesIntro": {
+    "message": "Kendi sıraladığınız veya gizlediğiniz siteler. Seçiminiz abone olduğunuz tüm listelerin önündedir. Herhangi bir arama sonucundaki düğmeyi kullanın veya buradan site ekleyin."
+  },
+  "sitesKeptNormal": {
+    "message": "Normalde tutuldu"
+  },
+  "sitesNone": {
+    "message": "Henüz site eklenmedi."
+  },
+  "sitesNotDomain": {
+    "message": "Bu bir alan adına benzemiyor."
+  },
+  "sitesRemoveTag": {
+    "message": "$2 üzerinden “$1” etiketini kaldır"
+  },
+  "sitesSave": {
+    "message": "Siteleri Kaydet"
+  },
+  "sitesTextIntro": {
+    "message": "Her satıra bir kural yazın:"
+  },
+  "sitesTextLabel": {
+    "message": "Site kuralları metni"
+  },
+  "sitesTextReadable": {
+    "message": "$1 ve $2, tümü okunabilir."
+  },
+  "sitesTooBig": {
+    "message": "Çok fazla site var, metin görünümü sınırlı."
+  },
+  "summaryActed": {
+    "message": "Anubis, $2 sonuçtan $1 değiştirdi."
+  },
+  "summaryAlsoRemoved": {
+    "message": "Ayrıca $1 kaldırıldı."
+  },
+  "summaryChangedAllow": {
+    "message": "$1 Normal olarak ayarlandı."
+  },
+  "summaryChangedHide": {
+    "message": "$1 gizlendi."
+  },
+  "summaryChangedLower": {
+    "message": "$1 düşürüldü."
+  },
+  "summaryChangedNormal": {
+    "message": "$1 için sıralamanız temizlendi."
+  },
+  "summaryChangedPin": {
+    "message": "$1 sabitlendi."
+  },
+  "summaryChangedRaise": {
+    "message": "$1 yükseltildi."
+  },
+  "summaryChangedSite": {
+    "message": "Listenizdeki $1 değiştirildi."
+  },
+  "summaryChangedTagOff": {
+    "message": "$1 üzerinden “$2” etiketi kaldırıldı."
+  },
+  "summaryChangedTagOn": {
+    "message": "$1 sitesi “$2” olarak etiketlendi."
+  },
+  "summaryDetails": {
+    "message": "Ayrıntılar"
+  },
+  "summaryFewerDetails": {
+    "message": "Daha az ayrıntı"
+  },
+  "summaryFilterLabel": {
+    "message": "Yalnızca şu şekilde etiketlenen sonuçları göster"
+  },
+  "summaryFilterOff": {
+    "message": "Tüm sonuçları göster"
+  },
+  "summaryFilterOn": {
+    "message": "Yalnızca “$1” olarak etiketlenen sonuçları göster"
+  },
+  "summaryFiltered_one": {
+    "message": "Anubis $2 sonuçtan $1 değiştirdi ($3)."
+  },
+  "summaryFiltered_other": {
+    "message": "Anubis $2 sonuçtan $1 değiştirdi ($3)."
+  },
+  "summaryHeading": {
+    "message": "Özet Çubuğu"
+  },
+  "summaryHid": {
+    "message": "$1 gizlendi"
+  },
+  "summaryHint": {
+    "message": "Arama sonuçlarının üstündeki değişiklik özet çubuğunu yapılandırın."
+  },
+  "summaryLowered": {
+    "message": "$1 düşürüldü"
+  },
+  "summaryPinned": {
+    "message": "$1 sabitlendi"
+  },
+  "summaryRaised": {
+    "message": "$1 yükseltildi"
+  },
+  "summaryRemovedAdRequests_one": {
+    "message": "1 reklam paneli"
+  },
+  "summaryRemovedAdRequests_other": {
+    "message": "$1 reklam paneli"
+  },
+  "summaryRemovedAi_one": {
+    "message": "1 yapay zekâ özeti"
+  },
+  "summaryRemovedAi_other": {
+    "message": "$1 yapay zekâ özeti"
+  },
+  "summaryRemovedDiscussions_one": {
+    "message": "1 tartışma paneli"
+  },
+  "summaryRemovedDiscussions_other": {
+    "message": "$1 tartışma paneli"
+  },
+  "summaryRemovedElsewhere_one": {
+    "message": "1 harici arama paneli"
+  },
+  "summaryRemovedElsewhere_other": {
+    "message": "$1 harici arama paneli"
+  },
+  "summaryRemovedImages_one": {
+    "message": "1 görsel paneli"
+  },
+  "summaryRemovedImages_other": {
+    "message": "$1 görsel paneli"
+  },
+  "summaryRemovedNews_one": {
+    "message": "1 haber paneli"
+  },
+  "summaryRemovedNews_other": {
+    "message": "$1 haber paneli"
+  },
+  "summaryRemovedOnly": {
+    "message": "Anubis $1 kaldırdı."
+  },
+  "summaryRemovedQuestions_one": {
+    "message": "1 soru paneli"
+  },
+  "summaryRemovedQuestions_other": {
+    "message": "$1 soru paneli"
+  },
+  "summaryRemovedRelated_one": {
+    "message": "1 ilgili arama paneli"
+  },
+  "summaryRemovedRelated_other": {
+    "message": "$1 ilgili arama paneli"
+  },
+  "summaryRemovedVideos_one": {
+    "message": "1 video paneli"
+  },
+  "summaryRemovedVideos_other": {
+    "message": "$1 video paneli"
+  },
+  "summaryResultsPages_one": {
+    "message": "$2 sayfadan $1 sonuç"
+  },
+  "summaryResultsPages_other": {
+    "message": "$2 sayfadan $1 sonuç"
+  },
+  "summaryResults_one": {
+    "message": "$1 sonuç"
+  },
+  "summaryResults_other": {
+    "message": "$1 sonuç"
+  },
+  "summaryShortActed": {
+    "message": "Anubis $2 sonuçtan $1 değiştirdi."
+  },
+  "summaryShortActedRemoved": {
+    "message": "Anubis $2 sonuçtan $1 değiştirdi ve sayfayı temizledi."
+  },
+  "summaryShortRemoved": {
+    "message": "Anubis sayfayı temizledi."
+  },
+  "summaryShowAll": {
+    "message": "Tümünü göster"
+  },
+  "summaryUnchangedPages": {
+    "message": "Anubis $2 sayfadaki tüm $1 sonucu olduğu gibi bıraktı."
+  },
+  "summaryUnchanged_one": {
+    "message": "Anubis bu sonucu olduğu gibi bıraktı."
+  },
+  "summaryUnchanged_other": {
+    "message": "$1 sonuç değişmedi"
+  },
+  "summaryUndo": {
+    "message": "Geri al"
+  },
+  "syncBrowserHeading": {
+    "message": "Tarayıcı senkronizasyonu"
+  },
+  "syncBrowserHelp": {
+    "message": "Tarayıcınızın kendi senkronizasyon hesabını kullanır."
+  },
+  "syncChrome": {
+    "message": "Chrome Uzantı Senkronizasyonu"
+  },
+  "syncFirefox": {
+    "message": "Firefox Eklenti Senkronizasyonu"
+  },
+  "syncFirefoxAndroid": {
+    "message": "Firefox Android senkronizasyonu desteklemez."
+  },
+  "syncHeading": {
+    "message": "Senkronizasyon"
+  },
+  "syncHelp": {
+    "message": "Senkronizasyon hakkında yardım"
+  },
+  "syncIntro": {
+    "message": "Sitelerinizi ve ayarlarınızı tarayıcınızın yerel senkronizasyonu veya harici bir WebDAV sunucusu ile senkronize edin."
+  },
+  "syncTooBig": {
+    "message": "Verileriniz tarayıcının senkronizasyon sınırını aşıyor."
+  },
+  "syncUsage": {
+    "message": "Kullanılan alan: $1 / $2"
+  },
+  "tagActionFor": {
+    "message": "$1 için eylem"
+  },
+  "tagActionHighlight": {
+    "message": "Vurgula"
+  },
+  "tagActionLabel": {
+    "message": "Etiket Eylemi"
+  },
+  "tagActionList": {
+    "message": "Liste Etiketi"
+  },
+  "tagAddSite": {
+    "message": "Site Ekle"
+  },
+  "tagColour": {
+    "message": "Etiket Rengi"
+  },
+  "tagColourOf": {
+    "message": "“$1” etiket rengi"
+  },
+  "tagCreate": {
+    "message": "Etiket oluştur"
+  },
+  "tagDelete": {
+    "message": "“$1” etiketini sil"
+  },
+  "tagDeleted_one": {
+    "message": "$2 üzerindeki $1 etiket silindi."
+  },
+  "tagDeleted_other": {
+    "message": "$2 üzerindeki $1 etiket silindi."
+  },
+  "tagDescription": {
+    "message": "Açıklama"
+  },
+  "tagDescriptionPlaceholder": {
+    "message": "Bu etiketin ne anlama geldiğini açıklayın…"
+  },
+  "tagDone": {
+    "message": "Tamam"
+  },
+  "tagEdit": {
+    "message": "Etiketi Düzenle"
+  },
+  "tagEditLabel": {
+    "message": "“$1” etiket adını düzenle"
+  },
+  "tagEffectHide": {
+    "message": "$1 Aramalarınızda onları gizler."
+  },
+  "tagEffectHighlight": {
+    "message": "$1 Onları etiketin renginde vurgular."
+  },
+  "tagEffectLabel": {
+    "message": "$1 Yalnızca bir etiket: sıralamaları aynı kalır."
+  },
+  "tagEffectLists": {
+    "message": "$1 Listeler onlardan $2."
+  },
+  "tagEffectLower": {
+    "message": "$1 Aramalarınızda onları düşürür."
+  },
+  "tagEffectOneList": {
+    "message": "$1 sitesi etkilendi. $2 bunu $3."
+  },
+  "tagEffectPin": {
+    "message": "$1 Aramalarınızda onları en üste sabitler."
+  },
+  "tagEffectRaise": {
+    "message": "$1 Aramalarınızda onları yükseltir."
+  },
+  "tagExists": {
+    "message": "Zaten “$1” adında bir etiket var."
+  },
+  "tagFromList": {
+    "message": "$1: $2."
+  },
+  "tagFromSource": {
+    "message": "$1 kaynağından"
+  },
+  "tagFromYourLists": {
+    "message": "Listelerinizden bu etikete sahip siteler"
+  },
+  "tagListHides_one": {
+    "message": "$1 siteyi gizler"
+  },
+  "tagListHides_other": {
+    "message": "$1 siteyi gizler"
+  },
+  "tagListLowers_one": {
+    "message": "bunu $1 sıra düşürür"
+  },
+  "tagListLowers_other": {
+    "message": "bunu $1 sıra düşürür"
+  },
+  "tagListRaises_one": {
+    "message": "bunu $1 sıra yükseltir"
+  },
+  "tagListRaises_other": {
+    "message": "bunu $1 sıra yükseltir"
+  },
+  "tagListsHeading": {
+    "message": "Listelerden gelen etiketler"
+  },
+  "tagListsHide_one": {
+    "message": "$1 siteyi gizler"
+  },
+  "tagListsHide_other": {
+    "message": "$1 siteyi gizler"
+  },
+  "tagListsHint": {
+    "message": "Bu etiketler abone olduğunuz listeler tarafından tanımlanmıştır. Her birinin arama sonuçlarınızda ne yapacağını belirleyin."
+  },
+  "tagListsLower_one": {
+    "message": "bunu $1 sıra düşürür"
+  },
+  "tagListsLower_other": {
+    "message": "bunu $1 sıra düşürür"
+  },
+  "tagListsPickerHint": {
+    "message": "Listelerden etiketler"
+  },
+  "tagListsRaise_one": {
+    "message": "bunu $1 sıra yükseltir"
+  },
+  "tagListsRaise_other": {
+    "message": "bunu $1 sıra yükseltir"
+  },
+  "tagMarkHide": {
+    "message": "gizler"
+  },
+  "tagMarkLower": {
+    "message": "düşürür"
+  },
+  "tagMarkPin": {
+    "message": "sabitler"
+  },
+  "tagMarkRaise": {
+    "message": "yükseltir"
+  },
+  "tagMarkSpoken": {
+    "message": "“$1” etiketi"
+  },
+  "tagMarks": {
+    "message": "$1 etiketlendi."
+  },
+  "tagMarksFromList_one": {
+    "message": "$2 listesindeki $1 site"
+  },
+  "tagMarksFromList_other": {
+    "message": "$2 listesindeki $1 site"
+  },
+  "tagMarksNone": {
+    "message": "Hiçbir site bu etiketi kullanmıyor."
+  },
+  "tagMarksYours_one": {
+    "message": "Listenizdeki $1 site"
+  },
+  "tagMarksYours_other": {
+    "message": "Listenizdeki $1 site"
+  },
+  "tagMeaning": {
+    "message": "$1 etiketinin anlamı"
+  },
+  "tagMoreSites_one": {
+    "message": "ve $1 site daha"
+  },
+  "tagMoreSites_other": {
+    "message": "ve $1 site daha"
+  },
+  "tagName": {
+    "message": "Etiket Adı"
+  },
+  "tagNameInvalid": {
+    "message": "Etikete en az bir harf veya rakam içeren bir ad verin."
+  },
+  "tagNameShort": {
+    "message": "Ad"
+  },
+  "tagNewColour": {
+    "message": "Yeni Etiket Rengi"
+  },
+  "tagNewHeading": {
+    "message": "Yeni Etiket Oluştur"
+  },
+  "tagNewHelp": {
+    "message": "Etiketler sonuç menüsünden sitelere atanabilir."
+  },
+  "tagNewHint": {
+    "message": "Özel bir etiket adı ve rengi belirleyin."
+  },
+  "tagNewPlaceholder": {
+    "message": "Etiket adı"
+  },
+  "tagNoSites": {
+    "message": "Bu etikete sahip henüz site yok."
+  },
+  "tagNoneYours": {
+    "message": "Listenizde bu etiket yok."
+  },
+  "tagNotSite": {
+    "message": "Geçersiz site: “$1”"
+  },
+  "tagShowTitle": {
+    "message": "Başlığın yanında göster"
+  },
+  "tagShowUnder": {
+    "message": "$1 etiketini sonuçların altında göster"
+  },
+  "tagSiteNote": {
+    "message": "$1: $2"
+  },
+  "tagSiteReason": {
+    "message": "Bu sitenin neden “$1” etiketine uyduğu (isteğe bağlı)"
+  },
+  "tagSitesToTag": {
+    "message": "$1 olarak etiketlenecek siteler"
+  },
+  "tagSourceLists": {
+    "message": "$1 kaynağından"
+  },
+  "tagTypeSite": {
+    "message": "Bir alan adı veya URL deseni yazın"
+  },
+  "tagYourSites": {
+    "message": "Bu etikete sahip siteleriniz"
+  },
+  "tagYoursHeading": {
+    "message": "Etiketleriniz"
+  },
+  "tagsHeading": {
+    "message": "Etiketler"
+  },
+  "tagsHelp": {
+    "message": "Etiketler hakkında yardım"
+  },
+  "tagsIntro": {
+    "message": "Etiketler, siteleri sınıflandırmanıza ve arama sonuçlarında nasıl görüneceklerini belirlemenize yardımcı olur."
+  },
+  "themeAuto": {
+    "message": "Otomatik"
+  },
+  "themeAutoTitle": {
+    "message": "Otomatik tema"
+  },
+  "themeDark": {
+    "message": "Koyu"
+  },
+  "themeDarkTitle": {
+    "message": "Koyu tema"
+  },
+  "themeHeading": {
+    "message": "Tema"
+  },
+  "themeHint": {
+    "message": "Açık, koyu veya sistem temasına uyumlu."
+  },
+  "themeLight": {
+    "message": "Açık"
+  },
+  "themeLightTitle": {
+    "message": "Açık tema"
+  },
+  "timeJustNow": {
+    "message": "az önce"
+  },
+  "toolbarOff": {
+    "message": "Anubis kapalı"
+  },
+  "webdavAddress": {
+    "message": "Adres"
+  },
+  "webdavAddressHint": {
+    "message": "Servisin https:// ile başlayan WebDAV adresi"
+  },
+  "webdavBadAddress": {
+    "message": "Adres https:// ile başlamalıdır."
+  },
+  "webdavChangePassphrase": {
+    "message": "Şifreleme parolasını de��iştir"
+  },
+  "webdavChangePassphraseHelp": {
+    "message": "Parolayı değiştirirseniz diğer tarayıcılarınızda da güncellemeniz gerekir."
+  },
+  "webdavChangePassphraseHint": {
+    "message": "Yeni bir parola belirleyin. Bu parola yalnızca bu tarayıcıya kaydedilir."
+  },
+  "webdavConfirmPassphrase": {
+    "message": "Şifreleme parolasını doğrulayın"
+  },
+  "webdavConnect": {
+    "message": "Bağlan"
+  },
+  "webdavConnected": {
+    "message": "$1 ile $2 olarak senkronize ediliyor."
+  },
+  "webdavCorrectPassphrase": {
+    "message": "Doğru şifreleme parolasını girin"
+  },
+  "webdavCorrectPassphraseHint": {
+    "message": "Diğer tarayıcıda belirlediğiniz parolanın aynısını kullanın. Yalnızca buraya kaydedilir ve asla sunucuya gönderilmez."
+  },
+  "webdavDenied": {
+    "message": "Anubis'in listenizi $1 adresine göndermek için izninize ihtiyacı var."
+  },
+  "webdavDisconnect": {
+    "message": "Bağlantıyı kes"
+  },
+  "webdavDisconnected": {
+    "message": "WebDAV bağlantısı kesildi."
+  },
+  "webdavEncrypt": {
+    "message": "Senkronizasyon dosyasını uçtan uca şifreleyin (önerilir)"
+  },
+  "webdavEncrypted": {
+    "message": "Sunucudaki dosya şifrelenmiştir."
+  },
+  "webdavEncryptionHint": {
+    "message": "Her tarayıcıda uzun ve benzersiz bir parola kullanın (en az 12 karakter). Bu parola yalnızca bu tarayıcıya kaydedilir, asla sunucuya gönderilmez. Unutursanız sunucudaki kopya kurtarılamaz."
+  },
+  "webdavEncryptionMissing": {
+    "message": "Şifreleme parolası girilmemiş."
+  },
+  "webdavEncryptionPassphrase": {
+    "message": "Şifreleme parolası"
+  },
+  "webdavEncryptionPending": {
+    "message": "Parola bekleniyor…"
+  },
+  "webdavEncryptionShort": {
+    "message": "Uçtan uca şifrelenmiş"
+  },
+  "webdavErrorAuth": {
+    "message": "Kullanıcı adı veya parola hatalı."
+  },
+  "webdavErrorChanged": {
+    "message": "Sunucudaki veriler başka bir cihaz tarafından değiştirildi."
+  },
+  "webdavErrorFailed": {
+    "message": "Senkronizasyon başarısız oldu."
+  },
+  "webdavErrorFile": {
+    "message": "Senkronizasyon dosyası okunamadı veya yazılamadı."
+  },
+  "webdavErrorFolder": {
+    "message": "WebDAV klasörü bulunamadı veya oluşturulamadı."
+  },
+  "webdavErrorForbidden": {
+    "message": "Bu WebDAV klasörüne erişim izni yok."
+  },
+  "webdavErrorNeedsPassphrase": {
+    "message": "Bu dosyanın şifresini çözmek için bir parola gerekiyor."
+  },
+  "webdavErrorNetwork": {
+    "message": "Sunucuya bağlanılamadı ($1). Adresi ve internet bağlantınızı kontrol edin."
+  },
+  "webdavErrorPermission": {
+    "message": "Anubis'in artık $1 ile senkronizasyon izni yok. Yeniden izin vermek için Şimdi senkronize et düğmesine basın."
+  },
+  "webdavErrorServer": {
+    "message": "Sunucu hatası ($1)."
+  },
+  "webdavErrorUnconfirmed": {
+    "message": "$1 adresindeki yeni parolayı onaylayın"
+  },
+  "webdavErrorUnencrypted": {
+    "message": "Sunucudaki veriler şifrelenmemiş, ancak bir parola belirlediniz."
+  },
+  "webdavErrorWrongPassphrase": {
+    "message": "Geçersiz şifreleme parolası. Verilerin şifresi çözülemedi."
+  },
+  "webdavHeading": {
+    "message": "Tarayıcılar arası senkronizasyon"
+  },
+  "webdavHelp": {
+    "message": "Adres ve parola nereden alınır"
+  },
+  "webdavIntro": {
+    "message": "Firefox ve Chrome birbirleriyle yerel olarak senkronize olmaz. Aralarında paylaşım yapmak için her iki tarayıcıda da aynı WebDAV depolama alanına bağlanabilirsiniz. Koofr ve InfiniCLOUD ücretsiz planlar sunar, ayrıca Nextcloud gibi kendi kendine barındırılan seçenekler de çalışır. Anubis orada tek bir dosya tutar (anubis-sync.json) ve her tarayıcıdan gelen değişiklikleri birleştirir."
+  },
+  "webdavLastSync": {
+    "message": "Son senkronizasyon: $1"
+  },
+  "webdavLastTried": {
+    "message": "Son deneme: $1"
+  },
+  "webdavMissingLogin": {
+    "message": "Kullanıcı adı ve parola gereklidir."
+  },
+  "webdavPassphraseMismatch": {
+    "message": "Bu parola dosyanın şifresini çözmedi. Lütfen tekrar deneyin."
+  },
+  "webdavPassword": {
+    "message": "Parola veya uygulama şifresi"
+  },
+  "webdavPasswordHint": {
+    "message": "Çoğu servis uygulamalar için ayrı bir parola verir. Onu kullanın."
+  },
+  "webdavPrivacy": {
+    "message": "Gizlilik: Verileriniz sunucuya gönderilmeden önce yerel olarak şifrelenir."
+  },
+  "webdavSavePassphrase": {
+    "message": "Parolayı kaydet ve senkronize et"
+  },
+  "webdavSyncNow": {
+    "message": "Şimdi senkronize et"
+  },
+  "webdavSyncing": {
+    "message": "Senkronize ediliyor…"
+  },
+  "webdavUser": {
+    "message": "Kullanıcı adı"
+  },
+  "webdavWhen": {
+    "message": "Değişiklikler yapıldıktan birkaç saniye sonra sunucuya iletilir. Diğer tarayıcılarınızdan gelen değişiklikler tarayıcı başladığında ve arama yaptığınızda (en fazla 5 dakikada bir) alınır."
+  },
+  "weighLabel": {
+    "message": "$1 gizle, sırala veya etiketle"
+  },
+  "weighLabelRanked": {
+    "message": "$1 gizle, sırala veya etiketle ($2)"
+  },
+  "welcomeGuide": {
+    "message": "Wiki"
+  },
+  "welcomeHeading": {
+    "message": "Anubis Kuruldu"
+  },
+  "welcomeIntro": {
+    "message": "Anubis, arama sonuçlarınızı filtrelemenize, etiketlemenize ve yeniden sıralamanıza yardımcı olur."
+  },
+  "welcomeListsHeading": {
+    "message": "Abonelik listeleriyle başlayın"
+  },
+  "welcomeListsIntro": {
+    "message": "Listeler arama sonuçlarınızı etiketler, güvenilir siteleri yükseltir ve istenmeyenleri gizler. Topluluk tarafından hazırlanan bu başlangıç listelerini deneyin:"
+  },
+  "welcomeListsMore": {
+    "message": "Bunları ayarlardan kapatabilir veya daha fazla liste bulabilirsiniz."
+  },
+  "welcomeListsNone": {
+    "message": "Listeler siteleri sizin için etiketler, yükseltir, düşürür veya gizler. Henüz hiçbir listeye abone değilsiniz."
+  },
+  "welcomeListsOpen": {
+    "message": "Liste ayarlarını aç"
+  },
+  "welcomePinAndroid": {
+    "message": "Anubis, tarayıcının menüsünde Uzantılar altındadır."
+  },
+  "welcomePinChrome": {
+    "message": "Adres çubuğunun yanındaki Uzantılar düğmesine (yapboz parçası) basın, ardından Anubis'in yanındaki raptiyeye tıklayın."
+  },
+  "welcomePinEdge": {
+    "message": "Adres çubuğunun yanındaki Uzantılar düğmesine (yapboz parçası) basın, ardından Anubis'in yanındaki göze tıklayın."
+  },
+  "welcomePinFirefox": {
+    "message": "Adres çubuğunun yanındaki Uzantılar düğmesine (yapboz parçası) basın, ardından Anubis'in yanındaki dişliye tıklayın ve Araç Çubuğuna Sabitle'yi seçin."
+  },
+  "welcomePinHeading": {
+    "message": "Araç çubuğunda tutun"
+  },
+  "welcomePinOpera": {
+    "message": "Adres çubuğunun yanındaki Uzantılar düğmesine (küp) basın, ardından Anubis'in yanındaki raptiyeye tıklayın."
+  },
+  "welcomePinWhy": {
+    "message": "Araç çubuğu düğmesi, Anubis'in sayfada ne yaptığını gösterir, açıp kapatır ve bulunduğunuz siteyi sıralar."
+  },
+  "welcomePinned": {
+    "message": "Anubis araç çubuğunuzda."
+  },
+  "welcomePrivacy": {
+    "message": "Gizlilik"
+  },
+  "welcomeQuery": {
+    "message": "python list comprehension"
+  },
+  "welcomeSearchFor": {
+    "message": "Listelerinizden etiketleri görmek için “$1” araması yapın:"
+  },
+  "welcomeSearchHeading": {
+    "message": "Bir arama deneyin"
+  },
+  "welcomeSearchHow": {
+    "message": "Her zamanki gibi arama yapın. Bir siteyi gizlemek, sıralamak veya etiketlemek için sonuçlarından birinin üzerine gelin ve ⚖ düğmesine basın."
+  },
+  "welcomeSearchOn": {
+    "message": "$2 üzerinde “$1” araması yapın"
+  },
+  "welcomeTitle": {
+    "message": "Anubis'e Hoş Geldiniz"
+  },
+  "withShortcut": {
+    "message": "$1 ($2)"
+  }
+}
