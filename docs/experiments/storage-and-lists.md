@@ -2,6 +2,16 @@
 
 Where things are stored, sync between browsers, and subscribing to lists. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Review findings on list parsing and subscriptions (2026-10-10)
+
+- **Source:** a whole-codebase review, split across six draft pull requests (#129 to #134, closed unmerged). Only the list-parsing one produced findings worth keeping; the rest held automated code-health comments and nothing else. None of the findings below has been reproduced or fixed yet.
+- **Unverified, possibly real:** `nestedRepeat` (`utils/listformat.ts`) only finds a repeated group that contains a quantifier, so a pattern that backtracks through alternation, like `/(a|aa)+$/`, passes the slow-pattern check from "Slow patterns" below. Reproduce with a timed match before changing it.
+- **Unverified, possibly real:** an exact-host uBlacklist rule imported into the personal list (`importIntoPersonal`, `utils/importers.ts`) becomes a site entry, which also matches subdomains, so the import widens the rule.
+- **Unverified, possibly real:** `refreshStale` (`utils/subscriptions.ts`) has no error handling per subscription, so one list that throws (for example when saving its cached text fails) stops the lists after it from refreshing.
+- **Already known:** `migrateDefaultLists` switches every default list back on, not only new ones. That was the project owner's choice (see "Existing installs").
+- **Smaller:** the import counts a site once per rule that covers it; the regex-escaping pattern is written out twice in `utils/listformat.ts`; turning a list off drops its compiled cache, so turning it back on parses it again.
+- **Code-health scores:** CodeScene flagged long, branching functions across the content script, options page, and list parser (`main.pass` at complexity 61, `parseList` at 36, `importIntoPersonal` at 20). Not acted on; the project has no complexity threshold.
+
 ## Whose tag is it: lists' tags on your sites (2026-10-08)
 
 - **Raised by the owner:** people see list tags beside their own in the tag picker, add them to sites, and expect their additions to be overwritten or go out of date. They never were overwritten: a list's update can't touch the personal list, and renaming a list's tag is saved as a tag choice. But they did go stale: tagging a site with a list's tag stored only the id, so when the list dropped or renamed the tag, or you unsubscribed, your sites kept a bare id with a made-up colour.
