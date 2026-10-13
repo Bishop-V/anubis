@@ -819,6 +819,18 @@ if (!only || only === 'mobile' || checks) {
         const centre = (b.top + b.bottom) / 2;
         return line && line.height < 60 && b.width && (centre < line.top - 1 || centre > line.bottom + 1) && b.top > line.bottom - 60;
       });
+      // In a column with the engine's ⋮ (its dots, not its box), or else at the end of the title's line.
+      const outOfLine = buttons.filter((host) => {
+        const b = host.getBoundingClientRect();
+        const result = host.parentElement;
+        if (!b.width || !firstLine(result)) return false;
+        const dots = result.querySelector('[role="button"] svg, button.menu');
+        if (dots) {
+          const d = dots.getBoundingClientRect();
+          return Math.abs((b.left + b.right) / 2 - (d.left + d.right) / 2) > 1;
+        }
+        return Math.abs(b.right - result.querySelector('h2, h3, [role="heading"]').getBoundingClientRect().right) > 1;
+      });
       const tagsOff = results.filter((r) => {
         const chips = r.querySelector('anubis-chips');
         const line = firstLine(r);
@@ -829,6 +841,18 @@ if (!only || only === 'mobile' || checks) {
         weighButtons: buttons.length,
         clash: clash.length,
         offLine: offLine.length,
+        outOfLine: outOfLine.length,
+        // A pinned frame on a result's own edge keeps the result's corners: Google's phone cards are square.
+        insideFrameRounded: (() => {
+          const r = results.find((el) => el.hasAttribute('data-anubis-frame-inside'));
+          if (!r) return false;
+          const own = getComputedStyle(r).borderTopLeftRadius;
+          const state = r.getAttribute('data-anubis-state');
+          r.setAttribute('data-anubis-state', 'pin');
+          const pinned = getComputedStyle(r).borderTopLeftRadius;
+          r.setAttribute('data-anubis-state', state);
+          return own !== pinned;
+        })(),
         tagsOff: tagsOff.length,
         tagged: results.filter((r) => r.querySelector('anubis-chips')).length,
         // Where a result reaches the window's edges, a pinned frame is drawn on its own edge, not cut off outside it.
@@ -891,6 +915,8 @@ if (!only || only === 'mobile' || checks) {
         everyResultHasWeighButton: found.weighButtons === found.results,
         weighButtonsClearOfControlsAndTitles: found.clash === 0,
         weighButtonsOnTitlesFirstLine: found.offLine === 0,
+        weighButtonsInLineWithMenuOrTitle: found.outOfLine === 0,
+        insideFrameKeepsResultsCorners: !found.insideFrameRounded,
         tagsStartWithTitles: found.tagged > 0 && found.tagsOff === 0,
         pinnedFrameFitsTheWindow: found.frameMisplaced === 0,
         summaryRendered: found.summary,
