@@ -67,9 +67,9 @@ Builds, tests, the end-to-end run, stores, and releases. Part of [Experiments an
 ## Final runtime and listing review (2026-09-29)
 
 - **Found:** the toolbar badge counted hidden results but not clean-up removals, and its last count could remain after a tab left search. "Update now" also proceeded when a list's host permission was denied. Storage changes could trigger rejected list reloads without a handler in the content script and popup.
-- **Fixed:** derive the badge from the shared hidden-count helper, clear it when navigation starts, stop list updates with a localized permission message when access is denied, and log reload errors while keeping the last working rules and popup state.
+- **Fixed:** derive the badge from the shared hidden-count helper, clear it when navigation starts, stop list updates with a localised permission message when access is denied, and log reload errors while keeping the last working rules and popup state.
 - **Checked:** the asserted Chromium checks now cover a badge that includes removed panels and clearing it on navigation; compile, unit tests, docs build, and those browser checks pass.
-- **Listing copy:** clarified that Bing's AI answer and video panel are not recognized yet, and aligned the WebDAV inventory with the privacy guide.
+- **Listing copy:** clarified that Bing's AI answer and video panel are not recognised yet, and aligned the WebDAV inventory with the privacy guide.
 
 ## Full end-to-end run stability (2026-09-29)
 
@@ -80,14 +80,14 @@ Builds, tests, the end-to-end run, stores, and releases. Part of [Experiments an
 ## Declared Node.js minimum (2026-09-29)
 
 - **Found:** `package.json` and setup docs allowed Node 20, but the locked WXT release requires Node 22 and Vitest requires Node 22.12 or later. The lockfile and store rebuild instructions already used Node 22, leaving the advertised minimum inconsistent with the actual toolchain.
-- **Fixed:** raised the package engine and all setup/rebuild instructions to Node 22.12 or later, then synchronized the lockfile. CI and the Nix shell already use Node 22.
+- **Fixed:** raised the package engine and all setup/rebuild instructions to Node 22.12 or later, then synchronised the lockfile. CI and the Nix shell already use Node 22.
 - **Checked:** the installed tool metadata confirms the WXT and Vitest engine requirements; the repository's compile, test, and build commands run on the pinned Node 22 toolchain.
 
 ## Asserted end-to-end checks (2026-09-29)
 
 - **Flaky `hostile google` failure (2026-10-07):** CI once counted 8 results but 6 visible weigh buttons, and passed on a re-run. Not a slow content script: results are marked and given their button in one synchronous pass, so an early look finds 0 results, never some without buttons. The two missing buttons were the hidden results, laid out with "Remove". On install, the extension's one-time move of a stored "Collapse" to "Remove" can read the settings just after the harness writes "Collapse", and then switch them. It happened in 1 of 30 fresh launches. A longer or polling wait would not have helped, since those buttons never appear with "Remove". The harness now waits for the move to finish before writing settings (0 of 40 flipped), and `hostile google` asserts "Collapse" is in effect, so a recurrence names its cause.
-- **Starting point:** the Chromium harness printed most findings but did not fail when behavior was wrong; only missing buttons stopped a run. CI checked Settings responsiveness, not what the extension did on search pages.
-- **Shipped:** `node e2e/run.mjs checks` asserts that hostile Google markup keeps visible weigh buttons and upright chips, grouped results retain sitelinks and the summary, opaque forum results are recognized and tagged, revealing a hidden result survives another page pass without a redundant chip, pins keep their accessible gold selector while Raise/Lower chips remain, DuckDuckGo's light/dark selector colors match its menu with gold hover, Google's phone layout has no horizontal overflow, and clean-up removes only the expected panels. It runs against local fixtures without search-engine network access; CI runs it alongside the responsive Settings test on pull requests.
+- **Starting point:** the Chromium harness printed most findings but did not fail when behaviour was wrong; only missing buttons stopped a run. CI checked Settings responsiveness, not what the extension did on search pages.
+- **Shipped:** `node e2e/run.mjs checks` asserts that hostile Google markup keeps visible weigh buttons and upright chips, grouped results retain sitelinks and the summary, opaque forum results are recognised and tagged, revealing a hidden result survives another page pass without a redundant chip, pins keep their accessible gold selector while Raise/Lower chips remain, DuckDuckGo's light/dark selector colours match its menu with gold hover, Google's phone layout has no horizontal overflow, and clean-up removes only the expected panels. It runs against local fixtures without search-engine network access; CI runs it alongside the responsive Settings test on pull requests.
 - **Not asserted yet:** the hostile fixture's `containersAreResults` is false because its off-screen "Sponsored offer" heading is detected as a result. The check was deliberately not promoted to an assertion until the desired treatment is decided; other parts still report findings without failing.
 
 ## Store listings

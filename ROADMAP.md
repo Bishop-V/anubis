@@ -24,7 +24,7 @@ Work that's planned but not started, or started and not finished. Each item says
 
 ## Testing
 
-- **Expand asserted e2e coverage.** The `checks` part now fails on regressions in hostile/grouped Google results, reveal state, forum links, and Google's phone layout; CI runs it on every pull request. Most other parts still only report findings. Add assertions for the remaining user-facing behavior, then consider uploading `e2e/shots/` when CI fails. Don't assert `hostile`'s `containersAreResults` yet: its off-screen "Sponsored offer" heading currently counts as a result, and that needs a deliberate fixture/finder decision first.
+- **Expand asserted e2e coverage.** The `checks` part now fails on regressions in hostile/grouped Google results, reveal state, forum links, and Google's phone layout; CI runs it on every pull request. Most other parts still only report findings. Add assertions for the remaining user-facing behaviour, then consider uploading `e2e/shots/` when CI fails. Don't assert `hostile`'s `containersAreResults` yet: its off-screen "Sponsored offer" heading currently counts as a result, and that needs a deliberate fixture/finder decision first.
 - **Checks to add to CI,** each small and each worth a trial first: `typos` with `locale = "en-gb"` for British spelling (exclude CSS and API names such as `color`), axe-core through Playwright on the settings, popup, and welcome pages, `zizmor` on the workflows (release and store submission hold secrets), OpenSSF Scorecard, and `lychee` for links outside the docs site, which `docs:build` doesn't check.
 
 ## Performance
