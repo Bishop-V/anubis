@@ -2,6 +2,15 @@
 
 Builds, tests, the end-to-end run, stores, and releases. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Spelling, workflow, link, accessibility, and supply-chain checks (2026-10-13)
+
+- **typos with `locale = "en-gb"`:** the first pass flagged 705 lines, nearly all `color` in CSS and code. Kept: British for prose (docs and the English interface text), American for code (`[type.code]` with `locale = "en"`), code spans and `color:` left alone. Left out: `LICENSE`, the translations, lists made from other projects, and `e2e/fixtures.mjs` (its mock markup copies the engines' own class names, which read as typos). Let through in either spelling: dialog, artifact, unparseable. It fixed about 25 American spellings in the docs.
+- **zizmor:** found credentials left in checkouts (`persist-credentials`), and npm caches in the release and store-submission jobs, which build what gets published. Fixed both. `engines.yml` and `sources.yml` push a branch, so they keep their credentials, and the release's call to `./.github/workflows/ci.yml` stays as it is; all three are listed with reasons in `.github/zizmor.yml`. It runs offline from a cloud session (`--offline`); its online audits only run in CI. The SHA comments on two pinned actions had their versions swapped (checkout is `v7.0.1`, setup-node `v7.0.0`); the pins are right and Dependabot rewrites the comments.
+- **axe-core:** found one problem, the Hide, Lower, Normal, Raise, and Pin labels beside "Add a site", dimmed to 55% opacity (2.3:1 in light, 2.8:1 in dark). Fixed by dropping the dimming on the labelled buttons only. It can't reach the search-page menu, which is in a closed shadow root.
+- **lychee:** web addresses can't be checked from a cloud session (the proxy answers 403 or refuses the connection), so pull requests check files and #headings offline and a weekly run checks the web. It found three real broken links (`getting-started.md#install`, which should be `#other-browsers`). `include_fragments` has to be `"full"` in the config, not `true`. **Unconfirmed:** the weekly web run, and which sites turn away link checkers.
+- **Scorecard:** not run from here. It runs on `main`, weekly, and when branch protection changes.
+- **Stacked branches:** the five pull requests each added a row to the same table in `DEVELOPMENT.md` and conflicted when the first merged. Rows put apart, with a line between them, don't conflict.
+
 ## The ⚖ button check depends on fonts (2026-10-08)
 
 - **Found:** in a cloud session, `node e2e/run.mjs checks` fails "the ⚖ button on the first row, never over text" on the DuckDuckGo mock, on `main` as well: a long title ("How do I return the response from an asy…") wraps under the button. CI, on Ubuntu with Playwright's fonts, passes. The cloud container's fallback font is wider.
