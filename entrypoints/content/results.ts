@@ -186,7 +186,8 @@ function build(
   } catch {
     // resolveUrl only returns parseable URLs
   }
-  const title = (titleEl.textContent ?? '').trim();
+  // A picture's title is only an attribute on its link.
+  const title = (titleEl.textContent ?? '').trim() || titleEl.getAttribute('title') || '';
   // Good enough for $indescription: everything in the result that isn't the title.
   const description = (container.textContent ?? '').replace(title, '').trim().slice(0, 600);
   const page = Number(container.getAttribute('data-anubis-page')) || undefined;

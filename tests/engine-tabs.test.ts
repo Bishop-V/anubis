@@ -47,3 +47,28 @@ describe('Google', () => {
     expect(findResults(google, document as unknown as Document)).toEqual([]);
   });
 });
+
+describe('Bing', () => {
+  const bing = engineFor('www.bing.com')!;
+
+  it('weighs the tab pages, which are on their own paths', () => {
+    expect(bing.isResultsPage(new URL('https://www.bing.com/search?q=anubis'))).toBe(true);
+    expect(bing.isResultsPage(new URL('https://www.bing.com/images/search?q=anubis'))).toBe(true);
+    expect(bing.isResultsPage(new URL('https://www.bing.com/videos/search?q=anubis'))).toBe(true);
+    expect(bing.isResultsPage(new URL('https://www.bing.com/news/search?q=anubis'))).toBe(true);
+    expect(bing.isResultsPage(new URL('https://www.bing.com/maps?q=anubis'))).toBe(false);
+    expect(bing.isResultsPage(new URL('https://www.bing.com/shop?q=anubis'))).toBe(false);
+  });
+
+  it.each([
+    ['images', 'https://www.bing.com/images/search?q=anubis'],
+    ['videos', 'https://www.bing.com/videos/search?q=anubis'],
+  ])('reads the address of each %s card from its attribute', (tab, address) => {
+    visit(address);
+    const { document } = parseHTML(engineTab('bing', tab, JS_RESULTS));
+    const found = findResults(bing, document as unknown as Document);
+    expect(found.map((r) => r.url)).toEqual(JS_RESULTS.map(([url]: [string]) => new URL(url).href));
+    expect(found.every((r) => r.card)).toBe(true);
+    expect(found[0]!.title).toBe(JS_RESULTS[0][1]);
+  });
+});
