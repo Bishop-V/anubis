@@ -227,6 +227,21 @@ export interface ChipContext {
   belowRow?: boolean;
 }
 
+/**
+ * Where the tags land outside the box that pads the title (Google's phone layout),
+ * they start where the title's words do, not at the result's edge.
+ */
+function lineUpWithTitle(host: HTMLElement, titleBlock: HTMLElement): void {
+  const title = titleBlock.querySelector<HTMLElement>('h1, h2, h3, h4, [role="heading"]') ?? titleBlock;
+  host.style.removeProperty('margin-inline-start');
+  const words = firstLineOf(title);
+  const box = host.getBoundingClientRect();
+  if (!words || !box.width) return;
+  const rtl = getComputedStyle(title).direction === 'rtl';
+  const indent = Math.round(rtl ? box.right - words.right : words.left - box.left);
+  if (indent > 2 && indent < 48) host.style.setProperty('margin-inline-start', `${indent}px`, 'important');
+}
+
 export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipContext, revealed: boolean): void {
   const { container, titleBlock } = result;
   // A hidden result's tags show only once it's revealed; a tag that hides it then shows so.
@@ -247,6 +262,7 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
   const anchor = ctx.belowRow ? outsideRow(outsideTransforms(titleBlock, container), container) : outsideTransforms(titleBlock, container);
   if (host.previousElementSibling !== anchor) anchor.after(host);
   keepUpright(host);
+  lineUpWithTitle(host, titleBlock);
   host.dataset.theme = ctx.theme;
 
   const key = JSON.stringify([tags.map((id) => [ctx.tags.get(id), effect(id)]), page]);
@@ -427,14 +443,15 @@ function lineUpWithHeader(host: HTMLElement, container: HTMLElement, titleBlock:
  */
 function placeOnTitle(host: HTMLElement, container: HTMLElement, titleBlock: HTMLElement): void {
   const title = titleBlock.querySelector<HTMLElement>('h1, h2, h3, h4, [role="heading"]') ?? titleBlock;
+  const box = container.getBoundingClientRect();
+  // A result that reaches the window's edge (Google's phone cards) has no room for a
+  // pinned frame outside it: page.css draws it on the result's edge instead.
+  container.toggleAttribute('data-anubis-frame-inside', box.left < 8 || box.right > window.innerWidth - 8);
   const b = host.getBoundingClientRect();
-  const range = document.createRange();
-  range.selectNodeContents(title);
-  const first = range.getClientRects()[0];
+  const first = firstLineOf(title);
   // A hidden result shows no title, only its one line: centred on that.
   if (!first?.height) return lineUpWithHeader(host, container, titleBlock);
   if (!b.height) return;
-  const box = container.getBoundingClientRect();
   const cs = getComputedStyle(container);
   const m = resultMenuOf(container)?.getBoundingClientRect();
   // Never over the menu button, where the title's line is close under it.
@@ -444,6 +461,23 @@ function placeOnTitle(host: HTMLElement, container: HTMLElement, titleBlock: HTM
     const right = box.right - parseFloat(cs.borderRightWidth) - (m.left + m.right) / 2 - b.width / 2;
     host.style.setProperty('right', `${Math.round(right)}px`, 'important');
   }
+}
+
+/**
+ * The first line of an element's words. A range over the whole element also reports
+ * the boxes of the elements inside it, which can span every line (Google's phone
+ * titles), so only text counts.
+ */
+function firstLineOf(el: HTMLElement): DOMRect | undefined {
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  const range = document.createRange();
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+    if (!node.textContent?.trim()) continue;
+    range.selectNodeContents(node);
+    const rect = [...range.getClientRects()].find((r) => r.width && r.height);
+    if (rect) return rect;
+  }
+  return undefined;
 }
 
 /** Whether the button sits over any of the result's text (a long address, a title). */

@@ -409,7 +409,7 @@ export default defineContentScript({
 
     const forget = (el: HTMLElement) => {
       detachResult(el);
-      for (const attr of ['data-anubis-result', 'data-anubis-state', 'data-anubis-reveal', 'data-anubis-highlight', 'data-anubis-row', 'data-anubis-filtered', 'data-anubis-grouped']) {
+      for (const attr of ['data-anubis-result', 'data-anubis-state', 'data-anubis-reveal', 'data-anubis-highlight', 'data-anubis-row', 'data-anubis-filtered', 'data-anubis-grouped', 'data-anubis-frame-inside']) {
         el.removeAttribute(attr);
       }
       el.style.removeProperty('--anubis-hl');

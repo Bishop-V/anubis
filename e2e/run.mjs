@@ -800,10 +800,42 @@ if (!only || only === 'mobile' || checks) {
         });
         return [...controls.map((el) => el.getBoundingClientRect()), ...words].some((r) => r.width && overlaps(b, r));
       });
+      // The first line of a result's title: its first piece of text, not a box inside it.
+      const firstLine = (result) => {
+        const title = result.querySelector('h2, h3, [role="heading"]');
+        const walker = title && document.createTreeWalker(title, NodeFilter.SHOW_TEXT);
+        const range = document.createRange();
+        for (let node = walker?.nextNode(); node; node = walker.nextNode()) {
+          range.selectNodeContents(node);
+          const r = [...range.getClientRects()].find((x) => x.width);
+          if (r) return r;
+        }
+        return undefined;
+      };
+      // Each ⚖ is centred on its title's first line, and each row of tags starts where the title's words do.
+      const offLine = buttons.filter((host) => {
+        const line = firstLine(host.parentElement);
+        const b = host.getBoundingClientRect();
+        const centre = (b.top + b.bottom) / 2;
+        return line && line.height < 60 && b.width && (centre < line.top - 1 || centre > line.bottom + 1) && b.top > line.bottom - 60;
+      });
+      const tagsOff = results.filter((r) => {
+        const chips = r.querySelector('anubis-chips');
+        const line = firstLine(r);
+        return chips && line && Math.abs(chips.getBoundingClientRect().left - line.left) > 2;
+      });
       return {
         results: results.length,
         weighButtons: buttons.length,
         clash: clash.length,
+        offLine: offLine.length,
+        tagsOff: tagsOff.length,
+        tagged: results.filter((r) => r.querySelector('anubis-chips')).length,
+        // Where a result reaches the window's edges, a pinned frame is drawn on its own edge, not cut off outside it.
+        frameMisplaced: results.filter((r) => {
+          const b = r.getBoundingClientRect();
+          return b.width && r.querySelector(':scope > anubis-weigh') && (b.left < 8 || b.right > innerWidth - 8) !== r.hasAttribute('data-anubis-frame-inside');
+        }).length,
         summary: !!document.querySelector('anubis-summary'),
         scrollsSideways: document.documentElement.scrollWidth > innerWidth,
         // What sticks out past the screen's edge, to say where to look when it does.
@@ -824,13 +856,24 @@ if (!only || only === 'mobile' || checks) {
       return { fixed: getComputedStyle(pop).position === 'fixed', left: Math.round(r.left), right: Math.round(r.right), bottom: Math.round(r.bottom), width: innerWidth, height: innerHeight };
     });
     if (open) await phone.screenshot({ path: `${SHOTS}${name}-mobile-sheet.png` });
+    // The sheet leaves most of the page in view: it's in a closed shadow root, so its height
+    // is read through the DevTools protocol.
+    if (open) {
+      const cdp = await ctx.newCDPSession(phone);
+      const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+      const all = (node) => [node, ...[...(node.children ?? []), ...(node.shadowRoots ?? [])].flatMap(all)];
+      const pop = all(root).find((n) => n.localName === 'div' && (n.attributes ?? []).join(' ').includes('pop'));
+      const { model } = await cdp.send('DOM.getBoxModel', { nodeId: pop.nodeId });
+      open.sheetHeight = Math.round(model.border[5] - model.border[1]);
+      await cdp.detach();
+    }
     // A tap on the page above the sheet closes it.
     await phone.mouse.click(200, 40);
     await phone.waitForTimeout(200);
     const closed = await phone.evaluate(() => !document.querySelector('anubis-popover'));
     return { open, closed };
   };
-  const along = (s) => !!s.open && s.open.fixed && s.open.left === 0 && s.open.right === s.open.width && s.open.bottom === s.open.height && s.closed;
+  const along = (s) => !!s.open && s.open.fixed && s.open.left === 0 && s.open.right === s.open.width && s.open.bottom === s.open.height && s.closed && s.open.sheetHeight <= s.open.height * 0.6 + 1;
   const phoneFailures = [];
   for (const [name, url, count] of [
     ['google', 'https://www.google.com/search?q=anubis&mobile=1', ANUBIS_RESULTS.length],
@@ -847,6 +890,9 @@ if (!only || only === 'mobile' || checks) {
         allExpectedResultsFound: found.results === count,
         everyResultHasWeighButton: found.weighButtons === found.results,
         weighButtonsClearOfControlsAndTitles: found.clash === 0,
+        weighButtonsOnTitlesFirstLine: found.offLine === 0,
+        tagsStartWithTitles: found.tagged > 0 && found.tagsOff === 0,
+        pinnedFrameFitsTheWindow: found.frameMisplaced === 0,
         summaryRendered: found.summary,
         noHorizontalOverflow: !found.scrollsSideways,
         menuIsSheetAlongTheBottom: along(menu),
