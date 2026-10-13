@@ -240,7 +240,7 @@ export const ENGINES: EngineDef[] = [
     name: 'Bing',
     matches: ['*://www.bing.com/*', '*://www2.bing.com/*', '*://www4.bing.com/*', '*://cn.bing.com/*'],
     host: /^(www[24]?|cn)\.bing\.com$/,
-    isResultsPage: (url) => url.pathname === '/search',
+    isResultsPage: (url) => /^\/(search|(images|videos|news)\/search)$/.test(url.pathname),
     item: '#b_results > li.b_algo',
     link: 'h2 a',
     title: 'h2',
@@ -248,6 +248,27 @@ export const ENGINES: EngineDef[] = [
     // Bing's AI answer (seen on a live page, 2026-09-29): the answer is in
     // .cht_container, with a .cht_disclaimer, and has no heading to go by.
     cleanupSelectors: { ai: '.cht_container, .cht_disclaimer' },
+    // The Images, Videos, and News tabs, from uBlacklist's rules (unverified on a live page). A picture's address is
+    // in the `purl` of its link's `m` data, and a video's in the `ourl` of its link.
+    cards: [
+      {
+        item: ':has(> .iuscp)',
+        link: '.iusc',
+        title: '.iusc',
+        address: [{ from: '.iusc', attr: 'm', match: /"purl":"([^"]+)/ }],
+        when: onPath(/^\/images\/search$/),
+        replacesResults: true,
+      },
+      {
+        item: ':has(> .mc_vtvc)',
+        link: '.mc_vtvc_con_rc',
+        title: '.mc_vtvc_title',
+        address: [{ from: '.mc_vtvc_con_rc', attr: 'ourl' }],
+        when: onPath(/^\/videos\/search$/),
+        replacesResults: true,
+      },
+      { item: '.news-card, .newscard', link: '.title', title: '.title', when: onPath(/^\/news\/search$/), replacesResults: true },
+    ],
     button: { top: '4px', right: '4px' },
     more: { kind: 'link', next: 'a.sb_pagN, a[title="Next page"]' },
   },
