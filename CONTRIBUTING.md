@@ -24,7 +24,7 @@ npm run dev          # opens Firefox with the extension loaded, reloading on sav
 npm run dev:chrome   # the same in Chrome
 ```
 
-[DEVELOPMENT.md](DEVELOPMENT.md#commands) has the rest of the commands, and [Getting started](docs/guide/getting-started.md#install) how to load a build by hand.
+[DEVELOPMENT.md](DEVELOPMENT.md#commands) has the rest of the commands, and [Getting started](docs/guide/getting-started.md#other-browsers) how to load a build by hand.
 
 ## Making a change
 
