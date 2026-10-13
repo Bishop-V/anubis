@@ -335,7 +335,8 @@ export function ensureWeighButton(
   // The menu opens beside the result unless the engine names a narrower card.
   popOuts.set(host, popOut ?? ':scope');
   host.style.setProperty('position', 'absolute', 'important');
-  const menu = (underMenu || besideMenu) && !onTitle && !result.card ? resultMenuOf(container) : undefined;
+  const byMenu = (underMenu || besideMenu) && !result.card;
+  const menu = byMenu && !onTitle ? resultMenuOf(container) : undefined;
   // Not hidden while the engine's menu is open: a menu closes without adding or
   // removing nodes, so no pass would show the button again. It sits under the menu instead.
   if (menu || result.card || onTitle) atEdge.delete(host);
@@ -1174,16 +1175,20 @@ const popOuts = new WeakMap<HTMLElement, string>();
 /** Where the result menu is a sheet along the bottom of the screen: phones, as the summary counts them (STYLEGUIDE.md). */
 const SHEET = '(max-width: 600px)';
 
-function position(host: HTMLElement, anchor: HTMLElement): void {
-  // On a phone the menu rises from the bottom of the screen, across its width: in
-  // reach of a thumb, and clear of the engine's own controls by the button.
+/** Makes the menu a sheet on a phone, or undoes that on a wider screen; says which. */
+function asSheet(host: HTMLElement): boolean {
   const sheet = window.matchMedia(SHEET).matches;
   host.toggleAttribute('data-sheet', sheet);
   for (const [prop, value] of [['position', 'fixed'], ['inset', '0']] as const) {
-    if (sheet) host.style.setProperty(prop, value, 'important');
-    else host.style.removeProperty(prop);
+    host.style.setProperty(prop, sheet ? value : '', sheet ? 'important' : '');
   }
-  if (sheet) return;
+  return sheet;
+}
+
+function position(host: HTMLElement, anchor: HTMLElement): void {
+  // On a phone the menu rises from the bottom of the screen, across its width: in
+  // reach of a thumb, and clear of the engine's own controls by the button.
+  if (asSheet(host)) return;
   const rect = anchor.getBoundingClientRect();
   const width = Math.min(312, window.innerWidth - 16);
   // Beside the card, level with its top, when there's room: like the engine's own menu.

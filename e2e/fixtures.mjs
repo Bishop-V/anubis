@@ -117,7 +117,8 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
     );
   const items = list.join('');
   const moreHtml = JSON.stringify(more.map((r, i) => item(r, 100 + i)).join(''));
-  return `<!doctype html><html lang="en"${mobile ? ' class="is-mobile"' : ''}><head><meta charset="utf-8">${mobile ? '<meta name="viewport" content="width=device-width,initial-scale=1">' : ''}<title>${esc(query)} at DuckDuckGo</title>
+  const phone = mobile ? ' class="is-mobile"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' : '><head><meta charset="utf-8">';
+  return `<!doctype html><html lang="en"${phone}<title>${esc(query)} at DuckDuckGo</title>
   <style>
     body{margin:0;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:${dark ? '#161616' : '#fff'};color:${dark ? '#eee' : '#333'}}
     .hdr{display:flex;align-items:center;gap:14px;padding:16px 28px;border-bottom:1px solid ${dark ? '#333' : '#eee'}}
@@ -557,15 +558,14 @@ export function bing(query, results, { inline = false, next, copilot = false } =
 // Bing's phone layout. uBlacklist's rules (serpinfo/bing.yml, "Web (mobile)") take the link
 // from .b_algoheader > a, which holds the site's name, its address, and the title's h2, and
 // which goes straight to the site. Laid out as a screenshot from Firefox for Android showed it
-// (2026-10): the site's name and address over the title, the snippet, then a column of the
-// site's own pages. The rest of the markup is a guess.
+// (2026-10): the site's name and address over the title, then the snippet. The rest of the
+// markup is a guess.
 export function bingMobile(query, results) {
   const items = results
     .map(([url, title, snippet], i) => `
       <li class="b_algo" data-tag="">
         <div class="b_algoheader"><a href="${url}" h="ID=SERP,${5000 + i}"><div class="b_tpcn"><div class="tpic"></div><div class="tptxt"><div class="tptt">${esc(hostOf(url))}</div><div class="b_attribution"><cite>${esc(url)}</cite></div></div></div><h2>${esc(title)}</h2></a></div>
-        <div class="b_caption"><p class="b_lineclamp3">${esc(snippet)}</p></div>${i === 0 ? `
-        <ul class="b_deep">${['Docs', 'Examples', 'FAQ'].map((d) => `<li><a href="${url}#${d.toLowerCase()}">${d}</a></li>`).join('')}</ul>` : ''}
+        <div class="b_caption"><p class="b_lineclamp3">${esc(snippet)}</p></div>
       </li>`)
     .join('');
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(query)} - Search</title>
@@ -578,7 +578,6 @@ export function bingMobile(query, results) {
     .b_tpcn{display:flex;gap:12px;align-items:center}.tpic{width:40px;height:40px;border-radius:50%;background:#202636}
     .tptxt{min-width:0}.tptt{font-size:15px}cite{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-style:normal;font-size:13px;color:#d0d0d0}
     h2{margin:12px 0 8px;font-size:22px;font-weight:400;color:#6cb6f2}
-    .b_deep{list-style:none;margin:12px 0 0;padding:0}.b_deep li{border-top:1px solid #444}.b_deep a{display:block;padding:16px 0;color:#6cb6f2;text-decoration:none;font-size:20px}
   </style></head><body>
   <div class="hdr"><div class="q">${esc(query)}</div></div>
   <main><ol id="b_results">${items}</ol></main>
