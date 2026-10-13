@@ -127,6 +127,7 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
     main.wide li{list-style:none}
     main.wide [data-testid=mainline]{max-width:620px}
     main.wide [data-area=sidebar]{position:absolute;top:18px;left:760px;width:300px;padding:12px;border:1px solid ${dark ? '#333' : '#e5e5e5'};border-radius:10px}
+    .is-mobile .hdr{padding:10px 12px}.is-mobile .tabs{padding:8px 16px 0}.is-mobile main{padding:14px 16px 60px}
     ol{list-style:none;margin:0;padding:0}
     li{margin:0 0 26px}
     article{position:relative}
@@ -172,6 +173,16 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
     }, 300));
   </script>
   </body></html>`;
+}
+
+// DuckDuckGo's phone layout, as Firefox for Android gets it, in the dark theme. uBlacklist's
+// rules (serpinfo/duckduckgo.yml) tell it apart by `:root.is-mobile` and find results with the
+// same selectors as on a computer. The narrower padding is a guess, not copied from a live page.
+export function duckduckgoMobile(query, results) {
+  return duckduckgo(query, results, true).replace(
+    '<html lang="en"><head><meta charset="utf-8">',
+    '<html lang="en" class="is-mobile"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">',
+  );
 }
 
 // ---------------------------------------------------------------- Google
@@ -457,6 +468,7 @@ export function googleMobile(query, results) {
     const href = i === 3 ? `/goto?url=CAESopaqueblob${i}` : url;
     return `
       <div class="MjjYud"><div class="vt6azd Ww4FFb"><div class="Z26q7c">
+        <div class="menu" role="button" tabindex="0" aria-label="About this result"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm0 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg></div>
         <a class="UBFage" href="${href}"><div class="v7jaNc" role="heading" aria-level="3">${esc(title)}</div>
           <div class="site"><span class="favicon"></span><span class="ob9lvb">${esc(`${u.hostname} › ${u.pathname.split('/').filter(Boolean)[0] ?? ''}`)}</span></div></a>
         </div><div class="snippet">${esc(snippet)}</div></div></div>`;
@@ -469,6 +481,9 @@ export function googleMobile(query, results) {
     .hdr{padding:12px 16px}.q{height:44px;border-radius:22px;box-shadow:0 1px 6px #20212447;padding:0 18px;display:flex;align-items:center}
     #rso{padding:8px 0}
     .MjjYud{margin:0 0 10px;padding:14px 16px;border-bottom:1px solid #ebebeb}
+    .Z26q7c{position:relative}
+    /* The ⋮ menu beside the site's name, as on a live phone page (2026-10, from a screenshot). */
+    .menu{position:absolute;top:0;right:-4px;display:grid;place-items:center;width:32px;height:32px;color:#5f6368}
     .UBFage{display:flex;flex-direction:column-reverse;text-decoration:none;color:#1a0dab}
     [role=heading][aria-level="3"]{font-size:18px;line-height:1.3}
     .site{display:flex;gap:8px;align-items:center;color:#202124;font-size:13px;margin-bottom:6px}
@@ -544,6 +559,35 @@ export function bing(query, results, { inline = false, next, copilot = false } =
       <li class="b_ans"><div id="brsv3"><h2>Related searches for <strong>${esc(query)}</strong></h2><ul class="b_vList">${['promise all', 'async await'].map((q) => `<li><a href="/search?q=${encodeURIComponent(q)}">${q}</a></li>`).join('')}</ul></div></li>` : ''}</ol>${copilot ? `
     <aside id="b_context"><li class="b_ans"><h2>Related searches based on your browsing</h2><ul>${['javascript closures', 'python generators'].map((q) => `<li><a href="/search?q=${encodeURIComponent(q)}">${q}</a></li>`).join('')}</ul></li></aside>` : ''}</main></div>
   ${inline ? `<script>setTimeout(() => { const rs = document.getElementById('inline_rs'); document.querySelectorAll('#b_results > li.b_algo')[1].append(rs); rs.classList.remove('b_hide'); }, 500);</script>` : ''}</body></html>`;
+}
+
+// Bing's phone layout. uBlacklist's rules (serpinfo/bing.yml, "Web (mobile)") take the link
+// from .b_algoheader > a, which holds the site's name, its address, and the title's h2, and
+// which goes straight to the site. Laid out as a screenshot from Firefox for Android showed it
+// (2026-10): the site's name and address over the title, then the snippet. The rest of the
+// markup is a guess.
+export function bingMobile(query, results) {
+  const items = results
+    .map(([url, title, snippet], i) => `
+      <li class="b_algo" data-tag="">
+        <div class="b_algoheader"><a href="${url}" h="ID=SERP,${5000 + i}"><div class="b_tpcn"><div class="tpic"></div><div class="tptxt"><div class="tptt">${esc(hostOf(url))}</div><div class="b_attribution"><cite>${esc(url)}</cite></div></div></div><h2>${esc(title)}</h2></a></div>
+        <div class="b_caption"><p class="b_lineclamp3">${esc(snippet)}</p></div>
+      </li>`)
+    .join('');
+  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(query)} - Search</title>
+  <style>
+    body{margin:0;font:16px/1.5 Roboto,Arial,sans-serif;background:#1c1c1c;color:#fff}
+    .hdr{padding:12px}.q{height:44px;border-radius:22px;background:#2f2f2f;padding:0 16px;display:flex;align-items:center}
+    #b_results{list-style:none;margin:0;padding:0}
+    .b_algo{padding:18px 24px;border-bottom:8px solid #111}
+    .b_algoheader a{display:block;text-decoration:none;color:inherit}
+    .b_tpcn{display:flex;gap:12px;align-items:center}.tpic{width:40px;height:40px;border-radius:50%;background:#202636}
+    .tptxt{min-width:0}.tptt{font-size:15px}cite{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-style:normal;font-size:13px;color:#d0d0d0}
+    h2{margin:12px 0 8px;font-size:22px;font-weight:400;color:#6cb6f2}
+  </style></head><body>
+  <div class="hdr"><div class="q">${esc(query)}</div></div>
+  <main><ol id="b_results">${items}</ol></main>
+  </body></html>`;
 }
 
 // Bing's robot check: "One last step", status 200, with no results. On a live page

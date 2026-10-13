@@ -410,6 +410,42 @@ button {
     transform: translateY(-3px);
   }
 }
+.scrim {
+  display: none;
+}
+/* On a phone (600px wide or less): a sheet along the bottom of the screen, over the
+   page dimmed, with room for a thumb on each ranking. */
+:host(anubis-popover[data-sheet]) .scrim {
+  display: block;
+  position: absolute;
+  inset: 0;
+  background: rgb(0 0 0 / 0.4);
+}
+:host(anubis-popover[data-sheet]) .pop {
+  position: absolute;
+  inset: auto 0 0;
+  width: auto;
+  max-width: none;
+  max-height: 85vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: 10px 10px 0 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+:host(anubis-popover[data-sheet]) .level {
+  min-height: 56px;
+  justify-content: center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  :host(anubis-popover[data-sheet]) .pop.opening {
+    animation: rise 0.18s ease-out;
+  }
+}
+@keyframes rise {
+  from {
+    transform: translateY(100%);
+  }
+}
 .head {
   display: flex;
   align-items: center;

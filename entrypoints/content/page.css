@@ -67,6 +67,12 @@ html[data-anubis-hide='dim'] [data-anubis-state~='hide'] > anubis-bar {
   margin-top: var(--anubis-pin-room) !important;
 }
 
+/* Phone layouts: the ⚖ button sits at the end of the title's first line, so titles
+   wrap before it (placeOnTitle in ui.ts). */
+html[data-anubis-title-room] [data-anubis-result] :is(h2, h3, [role='heading']) {
+  padding-inline-end: 40px !important;
+}
+
 /* Tag highlight (HOHSER-style): a faint wash of the tag's colour. */
 [data-anubis-highlight] {
   border-radius: 10px;

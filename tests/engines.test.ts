@@ -20,7 +20,26 @@ describe('engines', () => {
     expect(desktop.more).toBeDefined();
     expect(phone.more).toBeUndefined();
     // Engines without a phone layout are the same either way.
-    expect(engineFor('duckduckgo.com', true)).toBe(engineFor('duckduckgo.com'));
+    expect(engineFor('search.brave.com', true)).toBe(engineFor('search.brave.com'));
+  });
+
+  it('puts the button on the title line on phones, clear of the engine\'s menu', () => {
+    for (const host of ['www.google.com', 'duckduckgo.com', 'www.bing.com']) {
+      expect(engineFor(host, true)!.button?.onTitle).toBe(true);
+      expect(engineFor(host)!.button?.onTitle).toBeUndefined();
+    }
+  });
+
+  it('finds Bing results on phones, where the title is inside the link', () => {
+    const bing = engineFor('www.bing.com', true)!;
+    const { document } = parseHTML(`<body><ol id="b_results"><li class="b_algo">
+      <div class="b_algoheader"><a href="https://www.speedtest.net/"><div class="tptt">Speedtest</div><h2>Test</h2></a></div>
+    </li></ol></body>`);
+    const item = document.querySelector(bing.item!)!;
+    expect(item.querySelector(bing.link!)!.getAttribute('href')).toBe('https://www.speedtest.net/');
+    expect(item.querySelector(bing.title!)!.textContent).toBe('Test');
+    // The computer layout's link selector finds nothing there.
+    expect(item.querySelector(engineFor('www.bing.com')!.link!)).toBeNull();
   });
 });
 

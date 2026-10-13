@@ -330,15 +330,18 @@ export function ensureWeighButton(
     keepUpright(host);
     return;
   }
-  const { top, right, underMenu, besideMenu, popOut } = engine.button ?? { top: '2px', right: '2px' };
+  const { top, right, underMenu, besideMenu, popOut, onTitle: titleLine } = engine.button ?? { top: '2px', right: '2px' };
+  const onTitle = !!titleLine && !result.card;
   // The menu opens beside the result unless the engine names a narrower card.
   popOuts.set(host, popOut ?? ':scope');
   host.style.setProperty('position', 'absolute', 'important');
-  const menu = (underMenu || besideMenu) && !result.card ? resultMenuOf(container) : undefined;
+  const byMenu = (underMenu || besideMenu) && !result.card;
+  const menu = byMenu && !onTitle ? resultMenuOf(container) : undefined;
   // Not hidden while the engine's menu is open: a menu closes without adding or
   // removing nodes, so no pass would show the button again. It sits under the menu instead.
-  if (menu || result.card) atEdge.delete(host);
-  else atEdge.add(host);
+  const free = !menu && !result.card;
+  if (free && !onTitle) atEdge.add(host);
+  else atEdge.delete(host);
   if (menu) placeNextToMenu(host, container, menu, besideMenu ? 'beside' : 'under');
   else {
     for (const prop of MENU_LOOK) host.style.removeProperty(prop);
@@ -365,6 +368,12 @@ export function ensureWeighButton(
     host.style.setProperty('--anubis-weigh-opacity', '0.9');
     host.style.setProperty('top', '6px', 'important');
     host.style.setProperty('right', '6px', 'important');
+    return;
+  }
+  if (onTitle) {
+    // Titles make room for it (page.css); removeAllUi takes the room away again.
+    document.documentElement.toggleAttribute('data-anubis-title-room', true);
+    placeOnTitle(host, container, result.titleBlock);
     return;
   }
   if (!menu) {
@@ -408,6 +417,33 @@ function lineUpWithHeader(host: HTMLElement, container: HTMLElement, titleBlock:
   const box = container.getBoundingClientRect();
   const y = (top + bottom) / 2 - b.height / 2 - box.top - parseFloat(getComputedStyle(container).borderTopWidth);
   host.style.setProperty('top', `${Math.round(y)}px`, 'important');
+}
+
+/**
+ * On a phone: on the title's first line, at the result's right edge, and under the
+ * engine's own menu button where the result has one (Google's ⋮, DuckDuckGo's ⋯),
+ * so the two make a column and never overlap. Titles keep clear of it: page.css
+ * gives them room on that side while `data-anubis-title-room` is on the page.
+ */
+function placeOnTitle(host: HTMLElement, container: HTMLElement, titleBlock: HTMLElement): void {
+  const title = titleBlock.querySelector<HTMLElement>('h1, h2, h3, h4, [role="heading"]') ?? titleBlock;
+  const b = host.getBoundingClientRect();
+  const range = document.createRange();
+  range.selectNodeContents(title);
+  const first = range.getClientRects()[0];
+  // A hidden result shows no title, only its one line: centred on that.
+  if (!first?.height) return lineUpWithHeader(host, container, titleBlock);
+  if (!b.height) return;
+  const box = container.getBoundingClientRect();
+  const cs = getComputedStyle(container);
+  const m = resultMenuOf(container)?.getBoundingClientRect();
+  // Never over the menu button, where the title's line is close under it.
+  const y = Math.max((first.top + first.bottom) / 2 - b.height / 2, m ? m.bottom + 2 : -Infinity);
+  host.style.setProperty('top', `${Math.round(y - box.top - parseFloat(cs.borderTopWidth))}px`, 'important');
+  if (m) {
+    const right = box.right - parseFloat(cs.borderRightWidth) - (m.left + m.right) / 2 - b.width / 2;
+    host.style.setProperty('right', `${Math.round(right)}px`, 'important');
+  }
 }
 
 /** Whether the button sits over any of the result's text (a long address, a title). */
@@ -1008,6 +1044,7 @@ function settingsButton(open: () => void, focusKey?: string): HTMLButtonElement 
 
 export function removeAllUi(): void {
   document.querySelectorAll(HOST_TAGS).forEach((el) => el.remove());
+  document.documentElement.removeAttribute('data-anubis-title-room');
   summaryHost = undefined;
   buttonsInGutter = false;
   summaryColumn = undefined;
@@ -1070,7 +1107,9 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
 
   const opening = !popover;
   if (!popover) {
-    const { host } = makeHost('anubis-popover', data.theme);
+    const { host, root: shadow } = makeHost('anubis-popover', data.theme);
+    // Behind the sheet on a phone: the page, dimmed. A tap on it closes the menu.
+    shadow.append(h('div', { class: 'scrim', attrs: { 'aria-hidden': 'true' }, on: { click: () => closeAndReturn() } }));
     document.documentElement.append(host);
     // The button is inside a closed shadow root, so a press on it reaches the page
     // as a press on its host. That press is the button's to handle: it closes the menu.
@@ -1137,7 +1176,23 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
 /** The weigh buttons whose menu opens beside the result's card, and the selector of that card (`:scope` is the result). */
 const popOuts = new WeakMap<HTMLElement, string>();
 
+/** Where the result menu is a sheet along the bottom of the screen: phones, as the summary counts them (STYLEGUIDE.md). */
+const SHEET = '(max-width: 600px)';
+
+/** Makes the menu a sheet on a phone, or undoes that on a wider screen; says which. */
+function asSheet(host: HTMLElement): boolean {
+  const sheet = window.matchMedia(SHEET).matches;
+  host.toggleAttribute('data-sheet', sheet);
+  for (const [prop, value] of [['position', 'fixed'], ['inset', '0']] as const) {
+    host.style.setProperty(prop, sheet ? value : '', sheet ? 'important' : '');
+  }
+  return sheet;
+}
+
 function position(host: HTMLElement, anchor: HTMLElement): void {
+  // On a phone the menu rises from the bottom of the screen, across its width: in
+  // reach of a thumb, and clear of the engine's own controls by the button.
+  if (asSheet(host)) return;
   const rect = anchor.getBoundingClientRect();
   const width = Math.min(312, window.innerWidth - 16);
   // Beside the card, level with its top, when there's room: like the engine's own menu.

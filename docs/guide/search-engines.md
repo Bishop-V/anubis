@@ -16,6 +16,8 @@ Anubis works on the web results of these engines. Turn any of them off in **Sett
 | Yandex | Supported | Yes* | Yes |
 | Mojeek | Experimental | No | Not yet |
 
+On Firefox for Android, Google, DuckDuckGo, and Bing send phones a layout of their own, and Anubis reads each one. None of the phone layouts has been checked on a live phone yet.
+
 **Supported** means it has been tried on the live site. **Experimental** means it follows the layout other tools document but hasn't been tried on the live site yet, so some things may not work.
 
 \* Bing, Ecosia, Yahoo, and Yandex sometimes answer the request for the next page with a "confirm you're not a robot" check. Load more results then stops without saying why. If that happens, use the engine's own Next link.
