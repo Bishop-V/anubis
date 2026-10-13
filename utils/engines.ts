@@ -79,9 +79,12 @@ export interface EngineDef {
   /**
    * Result cards on the engine's other tabs (images, videos, news), found by
    * selector, as uBlacklist's rules find them. They're hidden and tagged, but not
-   * reranked, and hidden ones go without a line in their place.
+   * reranked, and hidden ones go without a line in their place. `path` limits a
+   * kind of card to the tab whose address path matches, where its selector would
+   * also match a panel on the web tab; `displayed` is where the site's name is
+   * when the link goes through the engine.
    */
-  cards?: { item: string; link: string; title: string }[];
+  cards?: { item: string; link: string; title: string; displayed?: string; path?: RegExp }[];
   /** How "Load more results" gets more results onto the page. */
   more?: MoreResults;
   /** Changes for the phone layout some engines send to mobile browsers (Firefox for Android). */
@@ -218,10 +221,17 @@ export const ENGINES: EngineDef[] = [
     name: 'Brave Search',
     matches: ['*://search.brave.com/*'],
     host: /^search\.brave\.com$/,
-    isResultsPage: (url) => url.pathname === '/search',
+    isResultsPage: (url) => /^\/(search|images|news|videos)$/.test(url.pathname),
     item: '.snippet[data-type="web"]',
     link: 'a',
     title: '.title',
+    // The Images, News, and Videos tabs, from uBlacklist's rules; the Videos panel on the web tab has the same
+    // `data-type`, so each is limited to its tab. Unverified on a live page.
+    cards: [
+      { item: '.image-result', link: 'a', title: '.image-metadata-title', displayed: '.image-metadata-source', path: /^\/images$/ },
+      { item: '.snippet[data-type="news"]', link: 'a', title: '.snippet-title', path: /^\/news$/ },
+      { item: '.snippet[data-type="videos"]', link: 'a', title: '.snippet-title', path: /^\/videos$/ },
+    ],
     // Live (2026-09-29): #llm-snippet in #mixed-top. #summarizer is the older name.
     cleanupSelectors: { ai: '#llm-snippet, #summarizer' },
     button: { top: '4px', right: '4px' },
@@ -241,6 +251,12 @@ export const ENGINES: EngineDef[] = [
     item: ':is(.w-gl, .w-bg) > .result',
     link: 'a.result-link',
     title: 'h2',
+    // Images, news, and videos are on the same pages as web results (uBlacklist's rules); unverified on a live page.
+    cards: [
+      { item: '.image-container', link: 'a', title: '.image-quick-details > div', displayed: '.image-quick-details > span' },
+      { item: '.article', link: 'a', title: 'h3' },
+      { item: '.vo-bg > .result', link: 'a', title: 'h3' },
+    ],
     button: { top: '4px', right: '4px' },
     // One post form per page number, each with the page in a hidden `page` field
     // (reported on a live page, 2026-10; unverified against the fetch itself).
@@ -252,7 +268,12 @@ export const ENGINES: EngineDef[] = [
     name: 'Ecosia',
     matches: ['*://www.ecosia.org/*'],
     host: /^www\.ecosia\.org$/,
-    isResultsPage: (url) => url.pathname === '/search',
+    isResultsPage: (url) => /^\/(search|images|news|videos)$/.test(url.pathname),
+    // The Images, News, and Videos tabs, from uBlacklist's rules; unverified on a live page.
+    cards: [
+      { item: '.image-result', link: 'a.image-result__details-link', title: 'h2', path: /^\/images$/ },
+      { item: '.result', link: 'a.result__link', title: 'h2', path: /^\/(news|videos)$/ },
+    ],
     // Each article sits alone in a wrapper, and the wrappers are what can be
     // reordered (reported on a live page, 2026-10). The area is the column
     // holding the definitions panel above them, so the summary goes above that.
@@ -269,7 +290,9 @@ export const ENGINES: EngineDef[] = [
     name: 'Kagi',
     matches: ['*://kagi.com/*'],
     host: /^kagi\.com$/,
-    isResultsPage: (url) => url.pathname === '/search',
+    isResultsPage: (url) => /^\/(search|images|videos|news|podcasts)$/.test(url.pathname),
+    // The other tabs carry the same classes (uBlacklist's rules); as cards they stay in their grids, unreranked.
+    cards: [{ item: '._ext_ub_r', link: '._ext_ub_u', title: '._ext_ub_t', path: /^\/(images|videos|news|podcasts)$/ }],
     // Kagi publishes these classes specifically for extensions. Its widgets (Blast
     // from the Past, Videos) have rows that carry them too, but aren't results. Their
     // class names come from a community stylesheet (unconfirmed against the live page).

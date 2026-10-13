@@ -22,6 +22,7 @@ import { tmpdir } from 'node:os';
 import { delimiter, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ANUBIS_PAGE2, ANUBIS_PAGE3, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, bingChallenge, brave, duckduckgo, google, googleMobile } from './fixtures.mjs';
+import { ENGINE_TABS, engineTab } from './tab-fixtures.mjs';
 
 const EXT = fileURLToPath(new URL('../.output/chrome-mv3', import.meta.url));
 /** A message as the build shows it, in ANUBIS_LANG's translation where it has the message. */
@@ -224,10 +225,11 @@ async function launch(settings = {}, ext = EXT) {
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
     'https://duckduckgo.com/?q=javascript+promises&iax=videos&ia=videos': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'videos' }),
     'https://duckduckgo.com/?q=javascript+promises&iax=images&ia=images': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'images' }),
+    ...Object.fromEntries(ENGINE_TABS.map(([url, engine, tab]) => [url, engineTab(engine, tab, JS_RESULTS)])),
     'https://duckduckgo.com/?q=javascript+promises&wide=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { wide: true }),
     'https://duckduckgo.com/?q=javascript+promises&unseen=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { unseen: true }),
   };
-  await ctx.route(/^https:\/\/((noai\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com)\//, (route) => {
+  await ctx.route(/^https:\/\/((noai\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com|www\.ecosia\.org|kagi\.com|www\.startpage\.com)\//, (route) => {
     const page = pages[route.request().url()];
     const body = typeof page === 'function' ? page(route.request()) : page;
     return body ? route.fulfill({ contentType: 'text/html; charset=utf-8', body }) : route.fulfill({ status: 204, body: '' });
@@ -1168,6 +1170,38 @@ if (!only || only === 'cleanup' || checks) {
         stillGrid: grid.stillGrid,
         noGaps: grid.noGaps,
         summaryAboveGrid: grid.summaryAbove,
+      });
+    }
+  }
+
+  // The same tabs on Brave, Ecosia, Kagi, and Startpage: every card found, some hidden without gaps,
+  // buttons on the cards, and the grid left as it was.
+  for (const [url, engine, tab] of ENGINE_TABS) {
+    await page.goto(url);
+    await page.waitForFunction(() => !!document.querySelector('.grid > [data-anubis-state~="hide"]') && !!document.querySelector('anubis-summary'), null, { timeout: 5000 }).catch(() => {});
+    await page.waitForTimeout(200);
+    const grid = await page.evaluate(() => {
+      const el = document.querySelector('.grid');
+      const cards = [...el.children];
+      const shown = cards.filter((c) => c.getBoundingClientRect().height > 0);
+      const buttons = [...document.querySelectorAll('anubis-weigh')].filter((b) => b.getBoundingClientRect().width);
+      return {
+        cards: cards.length,
+        found: cards.filter((c) => c.hasAttribute('data-anubis-result')).length,
+        hidden: cards.length - shown.length,
+        buttonsInCards: buttons.length > 0 && buttons.every((b) => cards.some((c) => c.contains(b))),
+        stillGrid: getComputedStyle(el).display === 'grid' && !el.hasAttribute('data-anubis-rerank'),
+        noGaps: new Set(shown.map((c) => Math.round(c.getBoundingClientRect().top))).size === Math.ceil(shown.length / 4),
+      };
+    });
+    console.log(`== ${engine} ${tab} tab:`, JSON.stringify(grid));
+    if (checks) {
+      assertChecks(`${engine} ${tab} tab`, {
+        allFound: grid.found === grid.cards,
+        hidesSome: grid.hidden > 0,
+        buttonsInCards: grid.buttonsInCards,
+        stillGrid: grid.stillGrid,
+        noGaps: grid.noGaps,
       });
     }
   }
