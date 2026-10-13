@@ -360,13 +360,24 @@ export const ENGINES: EngineDef[] = [
     name: 'Yandex',
     matches: [...YANDEX_TLDS.map((tld) => `*://yandex.${tld}/*`), '*://ya.ru/*'],
     host: new RegExp(`^(yandex\\.(${YANDEX_TLDS.join('|').replace(/\./g, '\\.')})|ya\\.ru)$`),
-    isResultsPage: (url) => /^\/search\/?$/.test(url.pathname),
+    isResultsPage: (url) => /^\/(search|video\/(touch\/)?search)\/?$/.test(url.pathname),
     item: 'li:has(> .Organic), .serp-item:has(.Organic)',
     link: '.Organic a',
     title: 'h2',
     // Yandex AI's answer: an `li` among the results named `neuro_answer`, with a `.FuturisSearch` card
     // inside (reported on a live page, 2026-10).
     cleanupSelectors: { ai: 'li[data-ilefbgq-name="neuro_answer"], .FuturisSearch' },
+    // The Videos tab, from uBlacklist's rules (unverified on a live page): each video's link goes through Yandex,
+    // and the site's name is in the card. The phone layout (`/video/touch/search`) has the same classes.
+    cards: [
+      {
+        item: '.VideoSnippetSerpFeature',
+        title: '.VideoSnippet-Title',
+        displayed: '.VideoHostExtended-Host',
+        when: onPath(/^\/video\/(touch\/)?search\/?$/),
+        replacesResults: true,
+      },
+    ],
     // Under Yandex's own ⋮ menu on each result, like DuckDuckGo's.
     button: { top: '4px', right: '24px', underMenu: true, popOut: '.Organic' },
     // Pages are `p=1`, `p=2`… (page 1 has none); seen in the pager's links on a live page.

@@ -25,6 +25,10 @@ const THUMB = '<div class="thumb"></div>';
 const kagiCard = (url, title) => `<div class="_ext_ub_r">${THUMB}<a class="_ext_ub_u" href="${url}"><span class="_ext_ub_t">${title}</span></a></div>`;
 /** One card's markup per engine and tab: `(address, title, index, site, tab) => html`. */
 const CARD_MARKUP = {
+  // Yandex's video cards link through Yandex and name the site in a line of their own (uBlacklist's rules).
+  yandex: {
+    other: (url, title, i, host) => `<div class="VideoSnippetSerpFeature"><a href="/video/preview/${i}?text=anubis">${THUMB}<div class="VideoSnippet-Title">${title}</div></a><div class="VideoHostExtended-Host">${host}</div></div>`,
+  },
   // Google's Images tab keeps a picture's address in `data-lpage`, and its link goes through Google;
   // its News tab is a list of clusters whose titles are ARIA headings (uBlacklist's rules).
   google: {
@@ -49,6 +53,7 @@ const CARD_MARKUP = {
 
 /** Where each engine's tab mocks live, as [address, engine, tab]. */
 export const ENGINE_TABS = [
+  ['https://yandex.com/video/search?text=javascript+promises', 'yandex', 'videos'],
   ['https://www.google.com/search?q=javascript+promises&udm=2', 'google', 'images'],
   ['https://www.google.com/search?q=javascript+promises&tbm=nws', 'google', 'news'],
   ['https://search.brave.com/images?q=javascript+promises', 'brave', 'images'],
