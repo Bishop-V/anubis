@@ -65,9 +65,20 @@ html[data-anubis-hide='dim'] [data-anubis-state~='hide'] > anubis-bar {
 }
 /* On a phone, a result that reaches the window's edge gets its frame on its own edge,
    where it isn't cut off (placeOnTitle in ui.ts), with the result's own corners: a
-   rounded frame cut into Google's square cards. */
+   rounded frame cut into Google's square cards. An outline there was 1px and lay under
+   the card's own background (DuckDuckGo showed only its bottom edge), so it's a 2px
+   border over the result instead. The result is positioned for its ⚖ button. */
 [data-anubis-state~='pin'][data-anubis-frame-inside] {
-  outline-offset: -1px;
+  outline: none;
+}
+[data-anubis-state~='pin'][data-anubis-frame-inside]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border: 2px solid rgb(212 166 55 / 0.7);
+  border-radius: inherit;
+  pointer-events: none;
 }
 /* Unless results sit too close for the frame: the content script then pushes the
    next one down (makeRoomForPins). */
@@ -91,6 +102,9 @@ html[data-anubis-title-room] [data-anubis-result] :is(h2, h3, [role='heading']) 
 /* The plain palette: the pinned frame and highlights in the page's own text colour. */
 html[data-anubis-palette='plain'] [data-anubis-state~='pin'] {
   outline-color: color-mix(in srgb, currentColor 35%, transparent);
+}
+html[data-anubis-palette='plain'] [data-anubis-state~='pin'][data-anubis-frame-inside]::after {
+  border-color: color-mix(in srgb, currentColor 35%, transparent);
 }
 html[data-anubis-palette='plain'] [data-anubis-highlight] {
   background-color: color-mix(in srgb, currentColor 5%, transparent) !important;

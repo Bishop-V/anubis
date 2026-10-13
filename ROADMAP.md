@@ -35,13 +35,13 @@ Fine as it is (content script 92 KB). One to measure:
 
 ## Firefox for Android
 
-Started: Anubis picks an engine's phone layout by user agent (`mobile` in `utils/engines.ts`), Google, DuckDuckGo, and Bing have phone layouts with mocks (`googleMobile`, `duckduckgoMobile`, and `bingMobile` in `e2e/fixtures.mjs`) checked by the `mobile` e2e part, the ⚖ button is bigger on touch screens and sits on the title's line on phones, the result menu is a sheet along the bottom on phones, and the keyboard shortcut code skips browsers without `commands`. Next:
+Experimental since the release after 0.4.0: `gecko_android` is in the manifest, and the wiki and README say support is experimental. Google, DuckDuckGo, and Bing were tried on a phone in Firefox for Android (2026-10-13). Built so far: Anubis picks an engine's phone layout by user agent (`mobile` in `utils/engines.ts`), Google, DuckDuckGo, and Bing have phone layouts with mocks (`googleMobile`, `duckduckgoMobile`, and `bingMobile` in `e2e/fixtures.mjs`) checked by the `mobile` e2e part, the ⚖ button is bigger on touch screens and sits on the title's line on phones, the result menu is a sheet along the bottom on phones, and the keyboard shortcut code skips browsers without `commands`. Next:
 
 1. Run it on a phone: turn on USB debugging on the phone and "Remote debugging via USB" in Firefox's settings, then `npm run build` and `npx web-ext run -s .output/firefox-mv2 -t firefox-android --adb-device <id> --firefox-apk org.mozilla.firefox` (`adb devices` lists the id; Firefox Nightly is `org.mozilla.fenix`).
 2. Check Google's phone markup against the mock: ARIA headings for titles, whether the link wraps the heading, `.ob9lvb` for the address, top stories cards, and how more results load (Load more results is off on Google phones until then).
 3. Check the other engines' phone layouts. DuckDuckGo's and Bing's follow uBlacklist's "Web (mobile)" rules and are unchecked on a live phone, like Google's. Add `mobile` overrides for the rest where they differ.
 4. Check the popup and settings, which open as full pages on Android, and the welcome page, whose toolbar steps don't apply there: Android keeps extensions in the browser's menu.
-5. Add `gecko_android: { strict_min_version: '120.0' }` to `browser_specific_settings` in `wxt.config.ts` (`permissions.request` needs 120). AMO offers the add-on on Android from the first version whose manifest has this key, so add it only once the steps above pass.
+5. Done: `gecko_android: { strict_min_version: '142.0' }` is in `browser_specific_settings` in `wxt.config.ts`, the same minimum as on a computer, for the data-consent flow. Support stays experimental until steps 2 to 4 are done for every engine and Load more results works on Google phones.
 
 ## Translation
 

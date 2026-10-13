@@ -69,6 +69,10 @@ export default defineConfig({
           strict_min_version: '142.0',
           data_collection_permissions: { required: ['none'], optional: ['browsingActivity'] },
         },
+        // Firefox for Android, experimental: AMO offers the add-on on Android from the first
+        // version whose manifest has this key. The same minimum as on a computer, for the
+        // data-consent flow.
+        gecko_android: { strict_min_version: '142.0' },
       },
     }),
   }),
