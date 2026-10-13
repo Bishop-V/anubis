@@ -25,6 +25,12 @@ const THUMB = '<div class="thumb"></div>';
 const kagiCard = (url, title) => `<div class="_ext_ub_r">${THUMB}<a class="_ext_ub_u" href="${url}"><span class="_ext_ub_t">${title}</span></a></div>`;
 /** One card's markup per engine and tab: `(address, title, index, site, tab) => html`. */
 const CARD_MARKUP = {
+  // Google's Images tab keeps a picture's address in `data-lpage`, and its link goes through Google;
+  // its News tab is a list of clusters whose titles are ARIA headings (uBlacklist's rules).
+  google: {
+    images: (url, title, i) => `<div class="kb0PBd"><div class="ivg-i" data-lpage="${url}">${THUMB}</div><a class="LBcIee" href="/imgres?imgurl=x${i}&imgrefurl=y"><div class="ddBkwd">${title}</div></a></div>`,
+    other: (url, title) => `<div data-news-cluster-id="${hostOf(url)}"><a href="${url}">${THUMB}<div role="heading" aria-level="3">${title}</div></a></div>`,
+  },
   brave: {
     images: (url, title, i, host) => `<div class="image-result"><a href="/images/view?i=${i}">${THUMB}</a><div class="image-metadata-title">${title}</div><div class="image-metadata-source">${host}</div></div>`,
     other: (url, title, i, host, tab) => `<div class="snippet" data-type="${tab}"><a href="${url}">${THUMB}<div class="snippet-title">${title}</div></a></div>`,
@@ -43,6 +49,8 @@ const CARD_MARKUP = {
 
 /** Where each engine's tab mocks live, as [address, engine, tab]. */
 export const ENGINE_TABS = [
+  ['https://www.google.com/search?q=javascript+promises&udm=2', 'google', 'images'],
+  ['https://www.google.com/search?q=javascript+promises&tbm=nws', 'google', 'news'],
   ['https://search.brave.com/images?q=javascript+promises', 'brave', 'images'],
   ['https://search.brave.com/news?q=javascript+promises', 'brave', 'news'],
   ['https://search.brave.com/videos?q=javascript+promises', 'brave', 'videos'],

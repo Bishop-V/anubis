@@ -1,5 +1,5 @@
 import { decodeBingRedirect, displayedDomainToUrl, siteNameToUrl, siteOf } from '@/utils/domain';
-import type { EngineDef } from '@/utils/engines';
+import type { CardDef, EngineDef } from '@/utils/engines';
 
 export interface FoundResult {
   /** The element representing the whole result. Reranking moves it; hiding hides it. */
@@ -25,31 +25,33 @@ export const OWN_TAGS = new Set(['ANUBIS-CHIPS', 'ANUBIS-WEIGH', 'ANUBIS-BAR', '
 
 /** Results in the live page, or in a fetched results page parsed with DOMParser. */
 export function findResults(engine: EngineDef, root: Document = document): FoundResult[] {
-  const out = engine.heading ? findStructural(engine, root) : findBySelector(engine, root);
-  for (const def of engine.cards ?? []) {
-    if (def.path && !def.path.test(location.pathname)) continue;
-    addCards(out, engine, def, root);
-  }
+  const here = new URL(location.href);
+  const tabs = (engine.cards ?? []).filter((def) => !def.when || def.when(here));
+  const out = tabs.some((def) => def.replacesResults) ? [] : findWeb(engine, root);
+  for (const def of tabs) addCards(out, engine, def, root);
   return out;
 }
 
+function findWeb(engine: EngineDef, root: Document): FoundResult[] {
+  return engine.heading ? findStructural(engine, root) : findBySelector(engine, root);
+}
+
 /** Adds one kind of card (see `EngineDef.cards`) to the results, skipping any already found. */
-function addCards(out: FoundResult[], engine: EngineDef, def: NonNullable<EngineDef['cards']>[number], root: Document): void {
+function addCards(out: FoundResult[], engine: EngineDef, def: CardDef, root: Document): void {
   // Where the engine's own item selector already matches the tab's cards (Kagi's), they're cards all the same.
-  if (def.path) for (const r of out) if (r.container.matches(def.item)) r.card = true;
-  for (const r of findBySelector({ ...engine, ...def, extraRows: 0 }, root)) {
+  if (def.when) for (const r of out) if (r.container.matches(def.item)) r.card = true;
+  for (const r of findBySelector({ ...engine, ...def, extraRows: 0 }, root, def.address)) {
     if (out.some((o) => o.container.contains(r.container))) continue;
     out.push({ ...r, card: true });
   }
 }
 
-function findBySelector(engine: EngineDef, root: Document): FoundResult[] {
+function findBySelector(engine: EngineDef, root: Document, address?: CardDef['address']): FoundResult[] {
   const out: FoundResult[] = [];
   for (const container of root.querySelectorAll<HTMLElement>(engine.item!)) {
-    const link = container.querySelector<HTMLAnchorElement>(engine.link ?? 'a[href]');
-    if (!link || !/^https?:$/.test(link.protocol)) continue;
-    const url = resolveUrl(link, container, engine);
-    if (!url) continue;
+    const found = locate(container, engine, address);
+    if (!found) continue;
+    const { link, url } = found;
     const titleEl = (engine.title && container.querySelector<HTMLElement>(engine.title)) || link;
     const extras: HTMLElement[] = [];
     let row = container.nextElementSibling;
@@ -62,6 +64,43 @@ function findBySelector(engine: EngineDef, root: Document): FoundResult[] {
     out.push(build(container, link, titleBlockFor(titleEl, link, container), url, titleEl, extras));
   }
   return out;
+}
+
+/**
+ * The link in a result and where it goes. A card whose address isn't a link (Google's
+ * images) names where to read it; its link is then the card's own link if it has one,
+ * else its title, which is only there to put the chips and button beside.
+ */
+function locate(container: HTMLElement, engine: EngineDef, address?: CardDef['address']): { link: HTMLAnchorElement; url: string } | null {
+  const link = container.querySelector<HTMLAnchorElement>(engine.link ?? 'a[href]');
+  const given = address && addressFrom(container, address);
+  if (given) {
+    const stand = link ?? (engine.title ? container.querySelector<HTMLElement>(engine.title) : null);
+    return stand ? { link: stand as HTMLAnchorElement, url: given } : null;
+  }
+  if (!link || !/^https?:$/.test(link.protocol)) return null;
+  const url = resolveUrl(link, container, engine);
+  return url ? { link, url } : null;
+}
+
+/** The first web address among the places a card keeps one (`CardDef.address`). */
+function addressFrom(container: HTMLElement, sources: NonNullable<CardDef['address']>): string | null {
+  for (const { from, attr, match } of sources) {
+    const raw = (from ? container.querySelector(from) : container)?.getAttribute(attr) ?? '';
+    const url = webAddress(match ? (match.exec(raw)?.[1] ?? '') : raw);
+    // An address on the engine's own site is never the result's.
+    if (url && siteOf(new URL(url).hostname) !== siteOf(location.hostname)) return url;
+  }
+  return null;
+}
+
+function webAddress(text: string): string | null {
+  try {
+    const url = new URL(text);
+    return /^https?:$/.test(url.protocol) ? url.href : null;
+  } catch {
+    return null;
+  }
 }
 
 // Structural detection, from the approach in the original content script: find

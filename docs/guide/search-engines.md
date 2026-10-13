@@ -20,7 +20,10 @@ Anubis works on the web results of these engines. Turn any of them off in **Sett
 
 \* Bing, Ecosia, Yahoo, and Yandex sometimes answer the request for the next page with a "confirm you're not a robot" check. Load more results then stops without saying why. If that happens, use the engine's own Next link.
 
-Only the main web results are changed. Image, video, news, and shopping tabs are left alone.
+The main web results are weighed everywhere. Beyond them:
+
+- **Images, Videos, and News tabs** are weighed on DuckDuckGo, Brave Search, Ecosia, Kagi, and Startpage, and on Google's Images and News tabs. Google's Videos tab lists results like the web does, so it's weighed like web results. Pictures and videos are tagged and hidden but not reordered, so the grid keeps its shape. Hidden ones leave no gap. None of these tabs has been checked on the live sites yet.
+- **Left alone:** the tabs of Bing, Yahoo, Yandex, and Mojeek, and every shopping tab.
 
 ## How results are found
 

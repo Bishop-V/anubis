@@ -15,6 +15,27 @@
 
 import type { CleanupKind } from './cleanup';
 
+/** One kind of card on an engine's other tabs (`EngineDef.cards`). */
+export interface CardDef {
+  item: string;
+  /** The link in the card, which the ⚖ button goes after. Defaults to the first link. */
+  link?: string;
+  title: string;
+  /** Where the site's name is, when the link goes through the engine. */
+  displayed?: string;
+  /** Limits this kind to the tab it's for, where its selector would also match a panel on the web tab. */
+  when?: (url: URL) => boolean;
+  /** On this tab the web results' finder doesn't run: the cards are all there is. */
+  replacesResults?: boolean;
+  /**
+   * Where the card's address is when it isn't a link: the first of these that holds a
+   * web address wins. `from` is a selector inside the card (the card itself when
+   * left out), `attr` the attribute, and `match` picks the address out of it (the
+   * first group).
+   */
+  address?: { from?: string; attr: string; match?: RegExp }[];
+}
+
 export interface EngineDef {
   id: string;
   name: string;
@@ -79,12 +100,9 @@ export interface EngineDef {
   /**
    * Result cards on the engine's other tabs (images, videos, news), found by
    * selector, as uBlacklist's rules find them. They're hidden and tagged, but not
-   * reranked, and hidden ones go without a line in their place. `path` limits a
-   * kind of card to the tab whose address path matches, where its selector would
-   * also match a panel on the web tab; `displayed` is where the site's name is
-   * when the link goes through the engine.
+   * reranked, and hidden ones go without a line in their place.
    */
-  cards?: { item: string; link: string; title: string; displayed?: string; path?: RegExp }[];
+  cards?: CardDef[];
   /** How "Load more results" gets more results onto the page. */
   more?: MoreResults;
   /** Changes for the phone layout some engines send to mobile browsers (Firefox for Android). */
@@ -117,6 +135,9 @@ sm sn so sr st td tg tl tm tn to tt vu ws`.split(/\s+/);
 const YANDEX_TLDS = 'az by co.il com com.am com.ge com.tr ee eu kz lt lv md ru tj tm uz'.split(' ');
 
 const hasQuery = (url: URL, ...keys: string[]) => keys.some((k) => url.searchParams.get(k));
+const googleImages = (url: URL) => /^(2|imgs)$/.test(url.searchParams.get('udm') ?? '');
+const googleNews = (url: URL) => url.searchParams.get('tbm') === 'nws';
+const onPath = (pattern: RegExp) => (url: URL) => pattern.test(url.pathname);
 
 export const ENGINES: EngineDef[] = [
   {
@@ -126,12 +147,26 @@ export const ENGINES: EngineDef[] = [
     // with the History API, and a script matching only /search* is never injected.
     matches: GOOGLE_TLDS.map((tld) => `*://www.google.${tld}/*`),
     host: /^www\.google\.[a-z.]+$/,
-    // Web results only; images (udm=2, tbm=isch) and shopping use other layouts.
+    // The web results, and the Images (udm=2) and News (tbm=nws) tabs, which have cards. Shopping and the
+    // other tabs use layouts nothing here has seen. Videos (udm=7) lists results the way the web does.
     isResultsPage: (url) =>
-      url.pathname === '/search' && !/^(2|28|imgs)$/.test(url.searchParams.get('udm') ?? '') && !url.searchParams.get('tbm'),
+      url.pathname === '/search' && (googleImages(url) || googleNews(url) || (url.searchParams.get('udm') !== '28' && !url.searchParams.get('tbm'))),
     heading: 'h3',
     boundary: '#search, #rso, #botstuff, main, [role="main"]',
     displayed: 'cite',
+    // The Images and News tabs, from uBlacklist's rules (unverified on a live page). An image's address is
+    // the link's if it goes to the site itself, else the `data-lpage` of its picture.
+    cards: [
+      {
+        item: '.kb0PBd:has(.ivg-i)',
+        link: '.LBcIee',
+        title: '.ddBkwd',
+        address: [{ from: '.LBcIee', attr: 'href' }, { from: '.ivg-i', attr: 'data-lpage' }],
+        when: googleImages,
+        replacesResults: true,
+      },
+      { item: '[data-news-cluster-id]', link: 'a', title: '[role="heading"][aria-level="3"]', when: googleNews, replacesResults: true },
+    ],
     // Seen on a live page (2026-09): div.A6K0A[data-rpos] inside each panel's div.MjjYud.
     blocks: '[data-rpos]',
     cleanupSelectors: { ai: '[data-attrid="AIOverview"], .M8OgIe, .YzCcne', questions: '.related-question-pair' },
@@ -228,9 +263,9 @@ export const ENGINES: EngineDef[] = [
     // The Images, News, and Videos tabs, from uBlacklist's rules; the Videos panel on the web tab has the same
     // `data-type`, so each is limited to its tab. Unverified on a live page.
     cards: [
-      { item: '.image-result', link: 'a', title: '.image-metadata-title', displayed: '.image-metadata-source', path: /^\/images$/ },
-      { item: '.snippet[data-type="news"]', link: 'a', title: '.snippet-title', path: /^\/news$/ },
-      { item: '.snippet[data-type="videos"]', link: 'a', title: '.snippet-title', path: /^\/videos$/ },
+      { item: '.image-result', link: 'a', title: '.image-metadata-title', displayed: '.image-metadata-source', when: onPath(/^\/images$/) },
+      { item: '.snippet[data-type="news"]', link: 'a', title: '.snippet-title', when: onPath(/^\/news$/) },
+      { item: '.snippet[data-type="videos"]', link: 'a', title: '.snippet-title', when: onPath(/^\/videos$/) },
     ],
     // Live (2026-09-29): #llm-snippet in #mixed-top. #summarizer is the older name.
     cleanupSelectors: { ai: '#llm-snippet, #summarizer' },
@@ -271,8 +306,8 @@ export const ENGINES: EngineDef[] = [
     isResultsPage: (url) => /^\/(search|images|news|videos)$/.test(url.pathname),
     // The Images, News, and Videos tabs, from uBlacklist's rules; unverified on a live page.
     cards: [
-      { item: '.image-result', link: 'a.image-result__details-link', title: 'h2', path: /^\/images$/ },
-      { item: '.result', link: 'a.result__link', title: 'h2', path: /^\/(news|videos)$/ },
+      { item: '.image-result', link: 'a.image-result__details-link', title: 'h2', when: onPath(/^\/images$/) },
+      { item: '.result', link: 'a.result__link', title: 'h2', when: onPath(/^\/(news|videos)$/) },
     ],
     // Each article sits alone in a wrapper, and the wrappers are what can be
     // reordered (reported on a live page, 2026-10). The area is the column
@@ -292,7 +327,7 @@ export const ENGINES: EngineDef[] = [
     host: /^kagi\.com$/,
     isResultsPage: (url) => /^\/(search|images|videos|news|podcasts)$/.test(url.pathname),
     // The other tabs carry the same classes (uBlacklist's rules); as cards they stay in their grids, unreranked.
-    cards: [{ item: '._ext_ub_r', link: '._ext_ub_u', title: '._ext_ub_t', path: /^\/(images|videos|news|podcasts)$/ }],
+    cards: [{ item: '._ext_ub_r', link: '._ext_ub_u', title: '._ext_ub_t', when: onPath(/^\/(images|videos|news|podcasts)$/) }],
     // Kagi publishes these classes specifically for extensions. Its widgets (Blast
     // from the Past, Videos) have rows that carry them too, but aren't results. Their
     // class names come from a community stylesheet (unconfirmed against the live page).
