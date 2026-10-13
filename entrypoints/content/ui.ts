@@ -457,11 +457,18 @@ function placeOnTitle(host: HTMLElement, container: HTMLElement, titleBlock: HTM
   // Never over the menu button, where the title's line is close under it.
   const y = Math.max((first.top + first.bottom) / 2 - b.height / 2, menu ? menu.getBoundingClientRect().bottom + 2 : -Infinity);
   host.style.setProperty('top', `${Math.round(y - box.top - parseFloat(cs.borderTopWidth))}px`, 'important');
-  // In a column with the menu's icon (Google's ⋮ sits off the centre of a wider box), or
-  // else at the end of the title's line, where the result's words end (Bing has no menu).
-  const m = (menu?.querySelector('svg') ?? menu)?.getBoundingClientRect();
-  const end = m ? (m.left + m.right) / 2 + b.width / 2 : title.getBoundingClientRect().right;
+  const end = columnEnd(menu, title, b.width);
   host.style.setProperty('right', `${Math.round(box.right - parseFloat(cs.borderRightWidth) - end)}px`, 'important');
+}
+
+/**
+ * Where the button's right edge goes on a phone: in a column with the menu's icon
+ * (Google's ⋮ sits off the centre of a wider box), or else at the end of the title's
+ * line, where the result's words end (Bing has no menu).
+ */
+function columnEnd(menu: HTMLElement | undefined, title: HTMLElement, width: number): number {
+  const m = (menu?.querySelector('svg') ?? menu)?.getBoundingClientRect();
+  return m ? (m.left + m.right) / 2 + width / 2 : title.getBoundingClientRect().right;
 }
 
 /**
