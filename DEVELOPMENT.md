@@ -11,9 +11,9 @@ How the extension is put together, and how to make the changes that come up most
 | Vitest | Unit tests in `tests/`, with WXT's fake browser so storage code runs in Node. |
 | Playwright (`playwright-core`) | Drives Chromium for the end-to-end checks in `e2e/`. |
 | `web-ext lint` | Mozilla's add-on linter. CI fails on any warning. |
-| [OpenSSF Scorecard](https://scorecard.dev) | Grades the repository's supply-chain habits (`.github/workflows/scorecard.yml`, weekly and on pushes to `main`). The result is on the [Scorecard viewer](https://scorecard.dev/viewer/?uri=github.com/Bishop-V/anubis) and in the Security tab; its checks name what to fix. |
 | [lychee](https://lychee.cli.rs) | Checks links in the Markdown files that `docs:build` doesn't cover (`lychee.toml`). Pull requests check links between files and their #headings; `lychee --offline --config lychee.toml './**/*.md'` runs that locally (it's in the Nix shell). A weekly run checks the web addresses too, and opens an issue for a dead one. |
 | VitePress | The wiki in `docs/`, published to GitHub Pages. |
+| [OpenSSF Scorecard](https://scorecard.dev) | Grades the repository's supply-chain habits (`.github/workflows/scorecard.yml`, weekly and on pushes to `main`). The result is on the [Scorecard viewer](https://scorecard.dev/viewer/?uri=github.com/Bishop-V/anubis) and in the Security tab; its checks name what to fix. |
 
 Node 22 is what CI and releases use; `flake.nix` pins it for `nix develop`. `npm install` runs `wxt prepare`, which writes `.wxt/` (generated types and the `tsconfig.json` the repo's own extends). Type-checking fails until it has run.
 
