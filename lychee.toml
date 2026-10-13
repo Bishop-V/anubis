@@ -1,0 +1,24 @@
+# Link check for the Markdown files outside the docs site build (`docs:build` only
+# checks links inside the site). Pull requests check links between files and their
+# #headings, offline; a weekly run also checks every address on the web
+# (.github/workflows/links.yml).
+
+exclude_path = ["node_modules", ".output", ".wxt", ".claude", "locales", "upstream", "docs/.vitepress"]
+include_fragments = "full"
+
+# Web addresses only: retries, and 429 (rate limited) isn't a dead link.
+max_retries = 2
+retry_wait_time = 5
+timeout = 20
+accept = ["200..=299", "429"]
+
+exclude = [
+  # Needs a signed-in GitHub account, so anonymous requests are refused.
+  '^https://github\.com/Bishop-V/anubis/security/advisories/new$',
+  # Turns away link checkers.
+  '^https://chromewebstore\.google\.com/',
+  # Examples and placeholders in the docs.
+  '^https?://localhost',
+  '^https?://127\.0\.0\.1',
+  '^https?://example\.(com|org|net)',
+]
