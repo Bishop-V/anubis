@@ -842,16 +842,20 @@ if (!only || only === 'mobile' || checks) {
         clash: clash.length,
         offLine: offLine.length,
         outOfLine: outOfLine.length,
-        // A pinned frame on a result's own edge keeps the result's corners: Google's phone cards are square.
-        insideFrameRounded: (() => {
+        // A pinned frame on a result's own edge keeps the result's corners (Google's phone cards
+        // are square), and is a 2px border drawn over the result, not an outline its own
+        // background can cover (DuckDuckGo showed only the bottom edge of one).
+        insideFrame: (() => {
           const r = results.find((el) => el.hasAttribute('data-anubis-frame-inside'));
-          if (!r) return false;
+          if (!r) return null;
           const own = getComputedStyle(r).borderTopLeftRadius;
           const state = r.getAttribute('data-anubis-state');
           r.setAttribute('data-anubis-state', 'pin');
-          const pinned = getComputedStyle(r).borderTopLeftRadius;
+          const cs = getComputedStyle(r);
+          const after = getComputedStyle(r, '::after');
+          const look = { rounded: own !== cs.borderTopLeftRadius, outline: cs.outlineStyle, border: after.borderTopWidth, over: after.zIndex };
           r.setAttribute('data-anubis-state', state);
-          return own !== pinned;
+          return look;
         })(),
         tagsOff: tagsOff.length,
         tagged: results.filter((r) => r.querySelector('anubis-chips')).length,
@@ -916,7 +920,8 @@ if (!only || only === 'mobile' || checks) {
         weighButtonsClearOfControlsAndTitles: found.clash === 0,
         weighButtonsOnTitlesFirstLine: found.offLine === 0,
         weighButtonsInLineWithMenuOrTitle: found.outOfLine === 0,
-        insideFrameKeepsResultsCorners: !found.insideFrameRounded,
+        insideFrameKeepsResultsCorners: !found.insideFrame?.rounded,
+        insideFrameIsTwoPixelsOverTheResult: !found.insideFrame || (found.insideFrame.outline === 'none' && found.insideFrame.border === '2px' && Number(found.insideFrame.over) > 0),
         tagsStartWithTitles: found.tagged > 0 && found.tagsOff === 0,
         pinnedFrameFitsTheWindow: found.frameMisplaced === 0,
         summaryRendered: found.summary,

@@ -89,7 +89,7 @@ Public, all regions.
 - **Summary:** from the manifest's `description` (at most 250 characters).
 - **Description:** [the shared description](#description-both-stores).
 - **Category:** Search Tools.
-- **Platforms:** Firefox for desktop. Leave Firefox for Android unticked until the work in [`ROADMAP.md`](../ROADMAP.md) is checked on a phone.
+- **Platforms:** Firefox for desktop and Firefox for Android. Android is experimental: the manifest's `gecko_android` key makes AMO offer it there, and the listing's description should say so ("Firefox for Android support is experimental: it works on Google, DuckDuckGo, and Bing").
 - **License:** GNU Affero General Public License v3.0 (the project is AGPL-3.0 or later; the lists in `lists/` are CC0).
 - **Homepage and support site:** as for Chrome.
 - **Privacy policy:** `https://bishop-v.github.io/anubis/guide/privacy`. The manifest declares no required data collection (`required: ['none']`), which Firefox shows on the listing and at install, and one optional category, `browsingActivity`, which Settings requests only when the user connects a WebDAV server to sync between browsers (their list is a set of sites). AMO requires the declaration of every add-on from 2026.
