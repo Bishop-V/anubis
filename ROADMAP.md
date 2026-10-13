@@ -35,7 +35,7 @@ Fine as it is (content script 92 KB). One to measure:
 
 ## Firefox for Android
 
-Started: Anubis picks an engine's phone layout by user agent (`mobile` in `utils/engines.ts`), Google, DuckDuckGo, and Bing have phone layouts with mocks (`googleMobile`, `duckduckgo(…, { mobile: true })`, and `bingMobile` in `e2e/fixtures.mjs`) checked by the `mobile` e2e part, the ⚖ button is bigger on touch screens and sits on the title's line on phones, the result menu is a sheet along the bottom on phones, and the keyboard shortcut code skips browsers without `commands`. Next:
+Started: Anubis picks an engine's phone layout by user agent (`mobile` in `utils/engines.ts`), Google, DuckDuckGo, and Bing have phone layouts with mocks (`googleMobile`, `duckduckgoMobile`, and `bingMobile` in `e2e/fixtures.mjs`) checked by the `mobile` e2e part, the ⚖ button is bigger on touch screens and sits on the title's line on phones, the result menu is a sheet along the bottom on phones, and the keyboard shortcut code skips browsers without `commands`. Next:
 
 1. Run it on a phone: turn on USB debugging on the phone and "Remote debugging via USB" in Firefox's settings, then `npm run build` and `npx web-ext run -s .output/firefox-mv2 -t firefox-android --adb-device <id> --firefox-apk org.mozilla.firefox` (`adb devices` lists the id; Firefox Nightly is `org.mozilla.fenix`).
 2. Check Google's phone markup against the mock: ARIA headings for titles, whether the link wraps the heading, `.ob9lvb` for the address, top stories cards, and how more results load (Load more results is off on Google phones until then).

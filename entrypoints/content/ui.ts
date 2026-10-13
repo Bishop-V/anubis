@@ -339,8 +339,9 @@ export function ensureWeighButton(
   const menu = byMenu && !onTitle ? resultMenuOf(container) : undefined;
   // Not hidden while the engine's menu is open: a menu closes without adding or
   // removing nodes, so no pass would show the button again. It sits under the menu instead.
-  if (menu || result.card || onTitle) atEdge.delete(host);
-  else atEdge.add(host);
+  const free = !menu && !result.card;
+  if (free && !onTitle) atEdge.add(host);
+  else atEdge.delete(host);
   if (menu) placeNextToMenu(host, container, menu, besideMenu ? 'beside' : 'under');
   else {
     for (const prop of MENU_LOOK) host.style.removeProperty(prop);
@@ -370,6 +371,8 @@ export function ensureWeighButton(
     return;
   }
   if (onTitle) {
+    // Titles make room for it (page.css); removeAllUi takes the room away again.
+    document.documentElement.toggleAttribute('data-anubis-title-room', true);
     placeOnTitle(host, container, result.titleBlock);
     return;
   }
@@ -1041,6 +1044,7 @@ function settingsButton(open: () => void, focusKey?: string): HTMLButtonElement 
 
 export function removeAllUi(): void {
   document.querySelectorAll(HOST_TAGS).forEach((el) => el.remove());
+  document.documentElement.removeAttribute('data-anubis-title-room');
   summaryHost = undefined;
   buttonsInGutter = false;
   summaryColumn = undefined;

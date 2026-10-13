@@ -86,10 +86,7 @@ const siteIcon = (svg) =>
 // `unseen`: text beside the ⋯ menu that doesn't show (a see-through layer). Reported
 // on a live page (2026-09-30): the button left the result for its right edge
 // although nothing showed beside the menu; what's there is a guess.
-// `mobile`: the phone layout, as Firefox for Android gets it. uBlacklist's rules (serpinfo/duckduckgo.yml)
-// tell it apart by `:root.is-mobile` and find results with the same selectors as on a computer.
-// The narrower padding is a guess, not copied from a live page.
-export function duckduckgo(query, results, dark = false, more = [], { ai = false, wide = false, tab, unseen = false, mobile = false } = {}) {
+export function duckduckgo(query, results, dark = false, more = [], { ai = false, wide = false, tab, unseen = false } = {}) {
   if (tab) return duckduckgoTab(query, results, tab);
   const item = ([url, title, snippet], i) => `
       <li data-layout="organic" class="wLL07_0Xnd1QZpzpfR4W">
@@ -117,8 +114,7 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
     );
   const items = list.join('');
   const moreHtml = JSON.stringify(more.map((r, i) => item(r, 100 + i)).join(''));
-  const phone = mobile ? ' class="is-mobile"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' : '><head><meta charset="utf-8">';
-  return `<!doctype html><html lang="en"${phone}<title>${esc(query)} at DuckDuckGo</title>
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${esc(query)} at DuckDuckGo</title>
   <style>
     body{margin:0;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:${dark ? '#161616' : '#fff'};color:${dark ? '#eee' : '#333'}}
     .hdr{display:flex;align-items:center;gap:14px;padding:16px 28px;border-bottom:1px solid ${dark ? '#333' : '#eee'}}
@@ -177,6 +173,16 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
     }, 300));
   </script>
   </body></html>`;
+}
+
+// DuckDuckGo's phone layout, as Firefox for Android gets it, in the dark theme. uBlacklist's
+// rules (serpinfo/duckduckgo.yml) tell it apart by `:root.is-mobile` and find results with the
+// same selectors as on a computer. The narrower padding is a guess, not copied from a live page.
+export function duckduckgoMobile(query, results) {
+  return duckduckgo(query, results, true).replace(
+    '<html lang="en"><head><meta charset="utf-8">',
+    '<html lang="en" class="is-mobile"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">',
+  );
 }
 
 // ---------------------------------------------------------------- Google

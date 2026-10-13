@@ -21,7 +21,7 @@ import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync
 import { tmpdir } from 'node:os';
 import { delimiter, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ANUBIS_PAGE2, ANUBIS_PAGE3, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, bingChallenge, bingMobile, brave, duckduckgo, google, googleMobile } from './fixtures.mjs';
+import { ANUBIS_PAGE2, ANUBIS_PAGE3, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, bingChallenge, bingMobile, brave, duckduckgo, duckduckgoMobile, google, googleMobile } from './fixtures.mjs';
 import { ENGINE_TABS, engineTab } from './tab-fixtures.mjs';
 
 const EXT = fileURLToPath(new URL('../.output/chrome-mv3', import.meta.url));
@@ -202,7 +202,7 @@ async function launch(settings = {}, ext = EXT) {
       ['https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then', 'Promise.prototype.then() - MDN', 'The then() method of Promise instances takes up to two arguments.'],
     ], { inner: true }),
     'https://www.google.com/search?q=anubis&mobile=1': googleMobile('anubis', ANUBIS_RESULTS),
-    'https://duckduckgo.com/?q=javascript+promises&mobile=1': duckduckgo('javascript promises', JS_RESULTS, true, [], { mobile: true }),
+    'https://duckduckgo.com/?q=javascript+promises&mobile=1': duckduckgoMobile('javascript promises', JS_RESULTS),
     'https://www.bing.com/search?q=javascript+promises&mobile=1': bingMobile('javascript promises', JS_RESULTS),
     // What an earlier copy of the extension leaves on the page when it reloads or
     // updates while the page is open (Firefox then runs the new copy in the same page).
