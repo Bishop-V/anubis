@@ -1,4 +1,7 @@
 # anubis
+
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Bishop-V/anubis/badge)](https://scorecard.dev/viewer/?uri=github.com/Bishop-V/anubis)
+
 Browser extension for filtering search results, and much more.
 
 In Egyptian myth, Anubis weighed each heart against a feather. This extension weighs search results: it tags them, raises the ones you trust, lowers or hides the ones you don't, and lets you subscribe to lists other people publish, the way Brave Goggles do, but on the search engine you already use.
