@@ -22,8 +22,8 @@ Anubis works on the web results of these engines. Turn any of them off in **Sett
 
 The main web results are weighed everywhere. Beyond them:
 
-- **Images, Videos, and News tabs** are weighed on DuckDuckGo, Bing, Brave Search, Ecosia, Kagi, and Startpage, and on Google's Images and News tabs. Google's Videos tab lists results like the web does, so it's weighed like web results. Pictures and videos are tagged and hidden but not reordered, so the grid keeps its shape. Hidden ones leave no gap. None of these tabs has been checked on the live sites yet.
-- **Left alone:** the tabs of Yahoo, Yandex, and Mojeek, and every shopping tab.
+- **Images, Videos, and News tabs** are weighed on DuckDuckGo, Bing, Brave Search, Ecosia, Kagi, Startpage, and Yandex (Videos only), and on Google's Images and News tabs. Google's Videos tab lists results like the web does, so it's weighed like web results. Pictures and videos are tagged and hidden but not reordered, so the grid keeps its shape. Hidden ones leave no gap. None of these tabs has been checked on the live sites yet.
+- **Left alone:** the tabs of Yahoo and Mojeek, Yandex's other tabs, and every shopping tab.
 
 ## How results are found
 

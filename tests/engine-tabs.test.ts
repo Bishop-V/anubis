@@ -48,6 +48,18 @@ describe('Google', () => {
   });
 });
 
+describe('Yandex', () => {
+  const yandex = engineFor('yandex.com')!;
+
+  it('weighs the Videos tab, on a computer and on a phone', () => {
+    expect(yandex.isResultsPage(new URL('https://yandex.com/search/?text=anubis'))).toBe(true);
+    expect(yandex.isResultsPage(new URL('https://yandex.com/video/search?text=anubis'))).toBe(true);
+    expect(yandex.isResultsPage(new URL('https://yandex.com/video/touch/search/?text=anubis'))).toBe(true);
+    expect(yandex.isResultsPage(new URL('https://yandex.com/images/search?text=anubis'))).toBe(false);
+    expect(yandex.isResultsPage(new URL('https://yandex.com/video/preview/123?text=anubis'))).toBe(false);
+  });
+});
+
 describe('Bing', () => {
   const bing = engineFor('www.bing.com')!;
 

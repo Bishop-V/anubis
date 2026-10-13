@@ -40,7 +40,8 @@ function findWeb(engine: EngineDef, root: Document): FoundResult[] {
 function addCards(out: FoundResult[], engine: EngineDef, def: CardDef, root: Document): void {
   // Where the engine's own item selector already matches the tab's cards (Kagi's), they're cards all the same.
   if (def.when) for (const r of out) if (r.container.matches(def.item)) r.card = true;
-  for (const r of findBySelector({ ...engine, ...def, extraRows: 0 }, root, def.address)) {
+  // The web results' link selector isn't the card's: a card that names none uses its first link.
+  for (const r of findBySelector({ ...engine, link: undefined, ...def, extraRows: 0 }, root, def.address)) {
     if (out.some((o) => o.container.contains(r.container))) continue;
     out.push({ ...r, card: true });
   }

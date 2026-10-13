@@ -2,10 +2,10 @@
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const hostOf = (u) => new URL(u).hostname.replace(/^www\./, '');
 
-// The Images, Videos, and News tabs of Google, Bing, Brave, Ecosia, Kagi, and Startpage: a grid of
+// The Images, Videos, and News tabs of Google, Bing, Brave, Ecosia, Kagi, Startpage, and Yandex: a grid of
 // cards, with each engine's selectors from uBlacklist's rules (utils/engines.ts).
 // The contents are made up, and the markup around the selectors is a guess.
-// `engine`: 'google' | 'bing' | 'brave' | 'ecosia' | 'kagi' | 'startpage'; `tab`: 'images' | 'videos' | 'news'.
+// `engine`: 'google' | 'bing' | 'brave' | 'ecosia' | 'kagi' | 'startpage' | 'yandex'; `tab`: 'images' | 'videos' | 'news'.
 export function engineTab(engine, tab, results) {
   const makeCard = CARD_MARKUP[engine][tab] ?? CARD_MARKUP[engine].other;
   const grid = results.map(([url, title], i) => makeCard(url, esc(title), i, hostOf(url), tab)).join('');
@@ -25,6 +25,10 @@ const THUMB = '<div class="thumb"></div>';
 const kagiCard = (url, title) => `<div class="_ext_ub_r">${THUMB}<a class="_ext_ub_u" href="${url}"><span class="_ext_ub_t">${title}</span></a></div>`;
 /** One card's markup per engine and tab: `(address, title, index, site, tab) => html`. */
 const CARD_MARKUP = {
+  // Yandex's video cards link through Yandex and name the site in a line of their own (uBlacklist's rules).
+  yandex: {
+    other: (url, title, i, host) => `<div class="VideoSnippetSerpFeature"><a href="/video/preview/${i}?text=anubis">${THUMB}<div class="VideoSnippet-Title">${title}</div></a><div class="VideoHostExtended-Host">${host}</div></div>`,
+  },
   // Bing's pictures and videos keep the address in an attribute (`m` JSON, `ourl`) on a link that
   // goes through Bing; the card is the parent of `.iuscp` or `.mc_vtvc` (uBlacklist's rules).
   bing: {
@@ -56,6 +60,7 @@ const CARD_MARKUP = {
 
 /** Where each engine's tab mocks live, as [address, engine, tab]. */
 export const ENGINE_TABS = [
+  ['https://yandex.com/video/search?text=javascript+promises', 'yandex', 'videos'],
   ['https://www.bing.com/images/search?q=javascript+promises', 'bing', 'images'],
   ['https://www.bing.com/videos/search?q=javascript+promises', 'bing', 'videos'],
   ['https://www.bing.com/news/search?q=javascript+promises', 'bing', 'news'],
