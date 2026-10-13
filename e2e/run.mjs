@@ -5,7 +5,7 @@
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
 //                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options,
-//                               responsive, welcome, sync, webdav, popup-tags, tag-notes, settings-undo, checks (layout, lifecycle, pin/hidden chips, DDG icon colors, Undo in Settings)
+//                               responsive, axe, welcome, sync, webdav, popup-tags, tag-notes, settings-undo, checks (layout, lifecycle, pin/hidden chips, DDG icon colors, Undo in Settings)
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slides
 //                               in docs/public/
 //
@@ -2011,6 +2011,39 @@ if (!only || only === 'welcome') {
   await welcome.screenshot({ path: `${SHOTS}welcome-phone.png`, fullPage: true });
   console.log('\n== welcome:', JSON.stringify({ opened, ...desktop, phoneScrollsSideways: (await check()).scrollsSideways }));
   await welcome.close();
+}
+
+if (!only || only === 'axe') {
+  // axe-core over Settings (every section), the popup, and the welcome page, in light and
+  // dark: missing names, roles, and contrast. It finds a share of the problems; the keyboard
+  // and screen-reader checks in ACCESSIBILITY.md still apply. Fixing a finding is better
+  // than excluding it; when one has to stay, name the rule and why next to AXE_ALLOWED.
+  const { AxeBuilder } = await import('@axe-core/playwright');
+  const AXE_ALLOWED = {};
+  const sections = ['sites', 'tags', 'lists', 'cleanup', 'appearance', 'engines', 'sync', 'share'];
+  const targets = [
+    ...sections.map((section) => [`Settings → ${section}`, `options.html#${section}`, 1180, 900]),
+    ['Popup', 'popup.html', 364, 620],
+    ['Welcome', 'welcome.html', 1180, 900],
+  ];
+  const page = await ctx.newPage();
+  const found = [];
+  for (const colorScheme of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme });
+    for (const [name, path, width, height] of targets) {
+      await page.setViewportSize({ width, height });
+      await page.goto(`chrome-extension://${extId}/${path}`);
+      await page.waitForTimeout(500);
+      const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+      for (const v of violations.filter((v) => !AXE_ALLOWED[v.id])) {
+        found.push(`${name} (${colorScheme}): ${v.id} [${v.impact}] ${v.help}: ${v.nodes.slice(0, 3).map((n) => n.target.join(' ')).join(' | ')}${v.nodes.length > 3 ? ` and ${v.nodes.length - 3} more` : ''}`);
+      }
+    }
+  }
+  await page.close();
+  console.log(`\n== axe: ${found.length ? found.length + ' findings' : 'no findings'}`);
+  for (const line of found) console.log('  ' + line);
+  if (found.length) throw new Error(`axe found ${found.length} accessibility problems`);
 }
 
 // Not part of a normal run: regenerates the screenshots in docs/img/ from

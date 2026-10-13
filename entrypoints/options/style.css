@@ -310,6 +310,8 @@ table.sites tr:not(:hover):not(:focus-within) select.add-tag {
   flex-wrap: wrap;
 }
 .levels.labelled button {
+  /* Words, not icons: at the dimmed 0.55 their contrast is under 4.5:1. */
+  opacity: 1;
   width: auto;
   padding: 0 4px;
   gap: 4px;

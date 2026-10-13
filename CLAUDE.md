@@ -23,7 +23,7 @@ Firefox is the default target; `:chrome` variants override it.
 - `npm run compile`: type-check. Run it after every change.
 - `npm test`: Vitest unit tests in `tests/`.
 - `npm run build` / `npm run build:chrome`; `npm run dev` / `npm run dev:chrome` open a browser with the extension.
-- `npm run e2e`, or `node e2e/run.mjs <part>` after `build:chrome`: checks against mock search pages (`e2e/fixtures.mjs`). `checks` and `responsive` are the parts CI runs.
+- `npm run e2e`, or `node e2e/run.mjs <part>` after `build:chrome`: checks against mock search pages (`e2e/fixtures.mjs`). `checks`, `responsive`, and `axe` (axe-core over Settings, the popup, and the welcome page) are among the parts CI runs.
 - `npx web-ext lint -s .output/firefox-mv2`: keep it at zero warnings.
 - `lychee --offline --config lychee.toml './**/*.md'`: links between the Markdown files and their #headings, which CI checks on pull requests; `docs:build` only covers the docs site. A weekly job also checks web addresses. Not in cloud sessions, where web addresses can't be reached anyway.
 - `npm run docs:build`: the documentation site; fails on a broken link. `node e2e/run.mjs docs` redraws its screenshots; commit only the ones a change affects.
