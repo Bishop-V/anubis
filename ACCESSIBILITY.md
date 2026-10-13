@@ -56,6 +56,7 @@ The optional reason field under **Settings → Tags** has a visible label that n
 
 ## Checking a change
 
+- Run `node e2e/run.mjs axe` (after `npm run build:chrome`). It checks Settings, the popup, and the welcome page in light and dark with axe-core against WCAG 2.2 AA, and CI runs it on every pull request. It finds missing names, bad roles, and low contrast, but not whether the thing makes sense, so the steps below still apply. It doesn't reach the search-page menu, which is in a closed shadow root.
 - Put the mouse away and do the thing with Tab, Shift+Tab, Enter, Space, and Escape. Watch where focus goes after each step.
 - Listen to it once. NVDA with Firefox on Windows, Orca on Linux, or VoiceOver with Chrome on a Mac are all free. On a search page, move through a few results and hear what Anubis adds to each.
 - Look at the accessibility tree: Firefox's Accessibility panel in DevTools, or Chrome's Accessibility pane in Elements. It shows each control's name, role, and state, and it can see inside the closed shadow roots.

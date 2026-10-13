@@ -12,6 +12,7 @@ How the extension is put together, and how to make the changes that come up most
 | Playwright (`playwright-core`) | Drives Chromium for the end-to-end checks in `e2e/`. |
 | `web-ext lint` | Mozilla's add-on linter. CI fails on any warning. |
 | [OpenSSF Scorecard](https://scorecard.dev) | Grades the repository's supply-chain habits (`.github/workflows/scorecard.yml`, weekly and on pushes to `main`). The result is on the [Scorecard viewer](https://scorecard.dev/viewer/?uri=github.com/Bishop-V/anubis) and in the Security tab; its checks name what to fix. |
+| [lychee](https://lychee.cli.rs) | Checks links in the Markdown files that `docs:build` doesn't cover (`lychee.toml`). Pull requests check links between files and their #headings; `lychee --offline --config lychee.toml './**/*.md'` runs that locally (it's in the Nix shell). A weekly run checks the web addresses too, and opens an issue for a dead one. |
 | VitePress | The wiki in `docs/`, published to GitHub Pages. |
 
 Node 22 is what CI and releases use; `flake.nix` pins it for `nix develop`. `npm install` runs `wxt prepare`, which writes `.wxt/` (generated types and the `tsconfig.json` the repo's own extends). Type-checking fails until it has run.
@@ -34,6 +35,7 @@ npm run build:chrome   # .output/chrome-mv3/
 npx web-ext lint -s .output/firefox-mv2
 npm run e2e            # Chrome build, then every end-to-end check (needs Chromium)
 node e2e/run.mjs responsive # Settings layout at 320px, 360px, 375px, 389px, and 390px
+node e2e/run.mjs axe        # axe-core over Settings, the popup, and the welcome page, light and dark
 npm run docs:dev       # the wiki, with live reload
 npm run docs:build     # the wiki; fails on a broken link
 npm run zip            # store packages (see "Releasing")
@@ -41,7 +43,7 @@ npm run zip:chrome
 npm run release:prep -- 0.3.0 # set the version, run every check above, make the Firefox zips
 ```
 
-Firefox is the default target; every `:chrome` variant overrides it. If the dev browser doesn't open on its own, build and load the extension by hand, as [Getting started](docs/guide/getting-started.md#install) describes.
+Firefox is the default target; every `:chrome` variant overrides it. If the dev browser doesn't open on its own, build and load the extension by hand, as [Getting started](docs/guide/getting-started.md#other-browsers) describes.
 
 ## How a build is made
 
@@ -307,7 +309,7 @@ The README's "What it does" and the Features in `docs/guide/introduction.md` lis
 
 ## Checking live pages
 
-The mocks can't prove a live engine still works. With the extension loaded (`npm run dev`, or a build loaded by hand as [Getting started](docs/guide/getting-started.md#install) describes), open a results page and look at:
+The mocks can't prove a live engine still works. With the extension loaded (`npm run dev`, or a build loaded by hand as [Getting started](docs/guide/getting-started.md#other-browsers) describes), open a results page and look at:
 
 - **What Anubis decided:** each result it found carries `data-anubis-result` and `data-anubis-state`; a reranked list carries `data-anubis-rerank`. Anubis's own elements show in DevTools with their shadow roots.
 - **Logs:** the content script logs to the tab's console, the background script to its own (`about:debugging` → Inspect in Firefox, the service worker link on `chrome://extensions` in Chrome). Anubis's messages start with `[anubis]`.

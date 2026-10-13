@@ -38,6 +38,8 @@ jobs:
         run: npx playwright-core install --with-deps chromium
       - name: Check Settings at phone widths
         run: node e2e/run.mjs responsive
+      - name: Check accessibility with axe-core
+        run: node e2e/run.mjs axe
       - name: Check popup tag selection and creation
         run: node e2e/run.mjs popup-tags
       - name: Check optional explanations on tagged sites
