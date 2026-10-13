@@ -469,7 +469,7 @@ export function googleMobile(query, results) {
     return `
       <div class="MjjYud"><div class="vt6azd Ww4FFb"><div class="Z26q7c">
         <div class="menu" role="button" tabindex="0" aria-label="About this result"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm0 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg></div>
-        <a class="UBFage" href="${href}"><div class="v7jaNc" role="heading" aria-level="3">${esc(title)}</div>
+        <a class="UBFage" href="${href}"><div class="v7jaNc" role="heading" aria-level="3"><span class="clamp">${esc(title)}</span></div>
           <div class="site"><span class="favicon"></span><span class="ob9lvb">${esc(`${u.hostname} › ${u.pathname.split('/').filter(Boolean)[0] ?? ''}`)}</span></div></a>
         </div><div class="snippet">${esc(snippet)}</div></div></div>`;
   });
@@ -480,10 +480,15 @@ export function googleMobile(query, results) {
     body{margin:0;font:16px/1.5 Arial,sans-serif;background:#fff;color:#202124}
     .hdr{padding:12px 16px}.q{height:44px;border-radius:22px;box-shadow:0 1px 6px #20212447;padding:0 18px;display:flex;align-items:center}
     #rso{padding:8px 0}
-    .MjjYud{margin:0 0 10px;padding:14px 16px;border-bottom:1px solid #ebebeb}
+    /* Seen in screenshots from a phone (2026-10): each result is a card across the window,
+       padded inside rather than around, and its title is cut off after two lines by a box of
+       its own inside the heading. */
+    .MjjYud{margin:0 0 10px;padding:14px 0;border-bottom:1px solid #ebebeb}
     .Z26q7c{position:relative}
-    /* The ⋮ menu beside the site's name, as on a live phone page (2026-10, from a screenshot). */
-    .menu{position:absolute;top:0;right:-4px;display:grid;place-items:center;width:32px;height:32px;color:#5f6368}
+    .UBFage,.snippet{padding:0 16px}
+    .clamp{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+    /* The ⋮ menu beside the site's name. */
+    .menu{position:absolute;top:0;right:12px;display:grid;place-items:center;width:32px;height:32px;color:#5f6368}
     .UBFage{display:flex;flex-direction:column-reverse;text-decoration:none;color:#1a0dab}
     [role=heading][aria-level="3"]{font-size:18px;line-height:1.3}
     .site{display:flex;gap:8px;align-items:center;color:#202124;font-size:13px;margin-bottom:6px}

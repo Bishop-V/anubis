@@ -426,7 +426,7 @@ button {
   inset: auto 0 0;
   width: auto;
   max-width: none;
-  max-height: 85vh;
+  max-height: 60vh;
   overflow-y: auto;
   overscroll-behavior: contain;
   border-radius: 10px 10px 0 0;

@@ -61,6 +61,11 @@ html[data-anubis-hide='dim'] [data-anubis-state~='hide'] > anubis-bar {
   outline: 1px solid rgb(212 166 55 / 0.55);
   outline-offset: 7px;
 }
+/* On a phone, a result that reaches the window's edge gets its frame on its own edge,
+   where it isn't cut off (placeOnTitle in ui.ts). */
+[data-anubis-state~='pin'][data-anubis-frame-inside] {
+  outline-offset: -1px;
+}
 /* Unless results sit too close for the frame: the content script then pushes the
    next one down (makeRoomForPins). */
 [data-anubis-pin-room] {
