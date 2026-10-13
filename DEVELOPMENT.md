@@ -13,6 +13,7 @@ How the extension is put together, and how to make the changes that come up most
 | `web-ext lint` | Mozilla's add-on linter. CI fails on any warning. |
 | [typos](https://github.com/crate-ci/typos) | Spell-checks the repository with British spelling in prose and American in code (`typos.toml`). Run `typos` (it's in the Nix shell); to accept a word, add it to `extend-words` there. Translations in `locales/` are left out. |
 | [lychee](https://lychee.cli.rs) | Checks links in the Markdown files that `docs:build` doesn't cover (`lychee.toml`). Pull requests check links between files and their #headings; `lychee --offline --config lychee.toml './**/*.md'` runs that locally (it's in the Nix shell). A weekly run checks the web addresses too, and opens an issue for a dead one. |
+| [zizmor](https://docs.zizmor.sh) | Audits the GitHub workflows for risky patterns. CI runs it when `.github/` changes; `pip install zizmor` and `zizmor .github` runs it locally. Findings let through are in `.github/zizmor.yml`, each with the reason. |
 | VitePress | The wiki in `docs/`, published to GitHub Pages. |
 
 Node 22 is what CI and releases use; `flake.nix` pins it for `nix develop`. `npm install` runs `wxt prepare`, which writes `.wxt/` (generated types and the `tsconfig.json` the repo's own extends). Type-checking fails until it has run.

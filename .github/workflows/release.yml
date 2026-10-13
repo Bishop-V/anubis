@@ -23,6 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.0 (Node 24)
         with:
+          persist-credentials: false
           fetch-depth: 0
       - name: Check the tag matches package.json
         run: |
@@ -50,11 +51,14 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.0 (Node 24)
+        with:
+          persist-credentials: false
       # AMO reviewers rebuild from the sources zip; store/README.md says to use Node 22.
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.1 (Node 24)
         with:
           node-version: 22
-          cache: npm
+          # No npm cache: this job builds what gets published, and a poisoned cache could change it.
+          package-manager-cache: false
       # No install scripts: npm worms spread through them. wxt prepare is the only one we need.
       - run: npm ci --ignore-scripts
       - run: npx wxt prepare
@@ -93,10 +97,13 @@ jobs:
     environment: release
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.0 (Node 24)
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.1 (Node 24)
         with:
           node-version: 22
-          cache: npm
+          # No npm cache: this job builds what gets published, and a poisoned cache could change it.
+          package-manager-cache: false
       # No install scripts: npm worms spread through them. wxt prepare is the only one we need.
       - run: npm ci --ignore-scripts
       - run: npx wxt prepare
