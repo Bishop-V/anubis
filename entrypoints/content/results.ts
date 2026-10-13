@@ -29,6 +29,9 @@ export function findResults(engine: EngineDef, root: Document = document): Found
   if (!engine.cards) return out;
   const seen = new Set(out.map((r) => r.container));
   for (const def of engine.cards) {
+    if (def.path && !def.path.test(location.pathname)) continue;
+    // Where the engine's own item selector already matches the tab's cards (Kagi's), they're cards all the same.
+    if (def.path) for (const r of out) if (r.container.matches(def.item)) r.card = true;
     for (const r of findBySelector({ ...engine, ...def, extraRows: 0 }, root)) {
       if (seen.has(r.container) || [...seen].some((c) => c.contains(r.container))) continue;
       seen.add(r.container);

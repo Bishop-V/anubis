@@ -651,3 +651,53 @@ function duckduckgoTab(query, results, tab) {
   <main><div data-testid="zci-${tab}"><ol>${results.map(card).join('')}</ol></div></main>
   </body></html>`;
 }
+
+// The Images, Videos, and News tabs of Brave, Ecosia, Kagi, and Startpage: a grid of
+// cards, with each engine's selectors from uBlacklist's rules (utils/engines.ts).
+// The contents are made up, and the markup around the selectors is a guess.
+// `engine`: 'brave' | 'ecosia' | 'kagi' | 'startpage'; `tab`: 'images' | 'videos' | 'news'.
+export function engineTab(engine, tab, results) {
+  const card = ([url, title], i) => {
+    const host = hostOf(url);
+    const thumb = `<div class="thumb"></div>`;
+    if (engine === 'brave') {
+      if (tab === 'images') return `<div class="image-result"><a href="/images/view?i=${i}">${thumb}</a><div class="image-metadata-title">${esc(title)}</div><div class="image-metadata-source">${host}</div></div>`;
+      return `<div class="snippet" data-type="${tab}"><a href="${url}">${thumb}<div class="snippet-title">${esc(title)}</div></a></div>`;
+    }
+    if (engine === 'ecosia') {
+      if (tab === 'images') return `<div class="image-result"><a class="image-result__link-wrapper" href="/images/view?i=${i}">${thumb}</a><a class="image-result__details-link" href="${url}"><h2>${esc(title)}</h2></a></div>`;
+      return `<div class="result"><a class="result__link" href="${url}">${thumb}<h2>${esc(title)}</h2></a></div>`;
+    }
+    if (engine === 'kagi') return `<div class="_ext_ub_r">${thumb}<a class="_ext_ub_u" href="${url}"><span class="_ext_ub_t">${esc(title)}</span></a></div>`;
+    if (tab === 'images') return `<div class="image-container"><a href="/do/image?i=${i}">${thumb}</a><div class="image-quick-details"><div>${esc(title)}</div><span>${host}</span></div></div>`;
+    if (tab === 'news') return `<div class="article"><a href="${url}">${thumb}<h3>${esc(title)}</h3></a></div>`;
+    return `<div class="result"><a href="${url}">${thumb}<h3>${esc(title)}</h3></a></div>`;
+  };
+  const grid = results.map(card).join('');
+  const body = engine === 'startpage' ? `<section id="main"><div class="grid${tab === 'videos' ? ' vo-bg' : ''}">${grid}</div></section>` : `<main id="main"><div class="grid">${grid}</div></main>`;
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>anubis</title>
+  <style>
+    body{margin:0;font:14px/1.45 -apple-system,sans-serif;background:#fff;color:#333}
+    nav{padding:14px 28px;border-bottom:1px solid #eee}
+    main,#main{display:block;padding:18px 28px}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    a{color:inherit;text-decoration:none}.thumb{height:120px;border-radius:8px;background:#c9ccd6}
+    h2,h3{margin:6px 0 2px;font-size:14px}
+  </style></head><body><nav>All <b>${tab}</b></nav>${body}</body></html>`;
+}
+
+/** Where each engine's tab mocks live, as [address, engine, tab]. */
+export const ENGINE_TABS = [
+  ['https://search.brave.com/images?q=javascript+promises', 'brave', 'images'],
+  ['https://search.brave.com/news?q=javascript+promises', 'brave', 'news'],
+  ['https://search.brave.com/videos?q=javascript+promises', 'brave', 'videos'],
+  ['https://www.ecosia.org/images?q=javascript+promises', 'ecosia', 'images'],
+  ['https://www.ecosia.org/news?q=javascript+promises', 'ecosia', 'news'],
+  ['https://www.ecosia.org/videos?q=javascript+promises', 'ecosia', 'videos'],
+  ['https://kagi.com/images?q=javascript+promises', 'kagi', 'images'],
+  ['https://kagi.com/videos?q=javascript+promises', 'kagi', 'videos'],
+  ['https://kagi.com/news?q=javascript+promises', 'kagi', 'news'],
+  ['https://www.startpage.com/sp/search?query=javascript+promises&cat=pics', 'startpage', 'images'],
+  ['https://www.startpage.com/sp/search?query=javascript+promises&cat=news', 'startpage', 'news'],
+  ['https://www.startpage.com/sp/search?query=javascript+promises&cat=video', 'startpage', 'videos'],
+];
