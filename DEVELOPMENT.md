@@ -11,6 +11,7 @@ How the extension is put together, and how to make the changes that come up most
 | Vitest | Unit tests in `tests/`, with WXT's fake browser so storage code runs in Node. |
 | Playwright (`playwright-core`) | Drives Chromium for the end-to-end checks in `e2e/`. |
 | `web-ext lint` | Mozilla's add-on linter. CI fails on any warning. |
+| [zizmor](https://docs.zizmor.sh) | Audits the GitHub workflows for risky patterns. CI runs it when `.github/` changes; `pip install zizmor` and `zizmor .github` runs it locally. Findings let through are in `.github/zizmor.yml`, each with the reason. |
 | VitePress | The wiki in `docs/`, published to GitHub Pages. |
 
 Node 22 is what CI and releases use; `flake.nix` pins it for `nix develop`. `npm install` runs `wxt prepare`, which writes `.wxt/` (generated types and the `tsconfig.json` the repo's own extends). Type-checking fails until it has run.

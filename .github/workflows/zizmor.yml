@@ -1,0 +1,29 @@
+name: Workflow security
+
+# zizmor audits the workflows and actions for risky patterns: untrusted input in
+# scripts, broad permissions, credentials left in checkouts, unpinned actions.
+# The release and store-submission workflows hold secrets, so this is worth a run
+# on every change to them. .github/zizmor.yml lists the findings let through, and why.
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/**']
+  pull_request:
+    paths: ['.github/**']
+
+permissions:
+  contents: read
+
+jobs:
+  zizmor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.0 (Node 24)
+        with:
+          persist-credentials: false
+      - uses: zizmorcore/zizmor-action@cc914d7f3750a2d13d75c7f184a1060aa0e9d482 # v0.6.4
+        with:
+          version: 1.30.1
+          advanced-security: false
+          annotations: true

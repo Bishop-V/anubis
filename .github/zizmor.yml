@@ -1,0 +1,10 @@
+rules:
+  artipacked:
+    ignore:
+      # These two push a branch with the checkout's credentials.
+      - engines.yml
+      - sources.yml
+  self-repository:
+    ignore:
+      # The release runs the same checks as CI by calling its workflow file.
+      - release.yml
