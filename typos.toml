@@ -1,0 +1,39 @@
+# Spell-check with British spelling in prose (docs, interface text). Code keeps
+# American spelling, as CSS and the web APIs do (`color`, `center`).
+[default]
+locale = "en-gb"
+# Words in code spans, and CSS properties in examples, are names, not prose.
+extend-ignore-re = ["`[^`\\n]*`", "color:"]
+
+[default.extend-words]
+# Fine in either: `<dialog>`, "dialog box", a build artifact.
+dialog = "dialog"
+dialogs = "dialogs"
+artifact = "artifact"
+artifacts = "artifacts"
+unparseable = "unparseable"
+# Short class names in selectors.
+ba = "ba"
+pn = "pn"
+
+[type.code]
+extend-glob = ["*.ts", "*.mjs", "*.js", "*.css", "*.html", "*.yml", "*.yaml", "*.json"]
+locale = "en"
+
+[type.prose]
+extend-glob = ["public/_locales/en/messages.json"]
+locale = "en-gb"
+
+[files]
+extend-exclude = [
+  "LICENSE",
+  # Machine translations, and lists made from other projects.
+  "locales/",
+  "public/_locales/[!e]*/",
+  "lists/sources/",
+  "upstream/",
+  # Mock pages copy the engines' own class names.
+  "e2e/fixtures.mjs",
+  "*.svg",
+  "package-lock.json",
+]

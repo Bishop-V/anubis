@@ -15,6 +15,7 @@
         devShells.default = pkgs.mkShell {
           packages = [
             pkgs.nodejs_22 # browsers come from the system, not the shell
+            pkgs.typos # spelling check, as CI runs it
           ];
           shellHook = ''
             [ -d node_modules ] || npm install
