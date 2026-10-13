@@ -1,0 +1,65 @@
+name: Links
+
+# Dead links in the Markdown files. `docs:build` only checks links inside the docs
+# site; this covers the README, the roadmap, the developer guides, and the rest.
+# lychee.toml says what is checked and what is let through.
+#
+# Pull requests check links between files and their #headings, offline, so a
+# website being down never fails a change. Weekly, every address on the web is
+# checked too, and a dead one opens an issue (or adds to the one already open).
+
+on:
+  push:
+    branches: [main]
+    paths: ['**.md', 'lychee.toml', '.github/workflows/links.yml']
+  pull_request:
+    paths: ['**.md', 'lychee.toml', '.github/workflows/links.yml']
+  schedule:
+    - cron: '23 7 * * 1' # Mondays, 07:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  files:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 (Node 24)
+        with:
+          persist-credentials: false
+      - uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          lycheeVersion: v0.24.2
+          args: --offline --no-progress --config lychee.toml './**/*.md'
+          fail: true
+
+  web:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 (Node 24)
+        with:
+          persist-credentials: false
+      - uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        id: lychee
+        with:
+          lycheeVersion: v0.24.2
+          args: --no-progress --config lychee.toml './**/*.md'
+          fail: false
+      - name: Report dead links
+        if: steps.lychee.outputs.exit_code != '0'
+        run: |
+          title='Dead links found'
+          number=$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number')
+          if [ -n "$number" ]; then
+            gh issue comment "$number" --body-file lychee/out.md
+          else
+            gh issue create --title "$title" --body-file lychee/out.md
+          fi
