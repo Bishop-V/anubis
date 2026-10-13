@@ -57,12 +57,15 @@ html[data-anubis-hide='dim'] [data-anubis-state~='hide'] > anubis-bar {
 
 /* Pinned: a thin gold frame drawn outside the box, so layout doesn't move. */
 [data-anubis-state~='pin'] {
-  border-radius: 10px;
   outline: 1px solid rgb(212 166 55 / 0.55);
   outline-offset: 7px;
 }
+[data-anubis-state~='pin']:not([data-anubis-frame-inside]) {
+  border-radius: 10px;
+}
 /* On a phone, a result that reaches the window's edge gets its frame on its own edge,
-   where it isn't cut off (placeOnTitle in ui.ts). */
+   where it isn't cut off (placeOnTitle in ui.ts), with the result's own corners: a
+   rounded frame cut into Google's square cards. */
 [data-anubis-state~='pin'][data-anubis-frame-inside] {
   outline-offset: -1px;
 }

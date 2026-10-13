@@ -487,8 +487,9 @@ export function googleMobile(query, results) {
     .Z26q7c{position:relative}
     .UBFage,.snippet{padding:0 16px}
     .clamp{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
-    /* The ⋮ menu beside the site's name. */
-    .menu{position:absolute;top:0;right:12px;display:grid;place-items:center;width:32px;height:32px;color:#5f6368}
+    /* The ⋮ menu beside the site's name: its dots sit in a wider box, off its centre, so a
+       button lined up with the box's centre was a few pixels off the dots (2026-10, a phone). */
+    .menu{position:absolute;top:0;right:4px;display:grid;place-items:center end;width:48px;height:32px;color:#5f6368}
     .UBFage{display:flex;flex-direction:column-reverse;text-decoration:none;color:#1a0dab}
     [role=heading][aria-level="3"]{font-size:18px;line-height:1.3}
     .site{display:flex;gap:8px;align-items:center;color:#202124;font-size:13px;margin-bottom:6px}
