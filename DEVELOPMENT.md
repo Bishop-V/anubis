@@ -33,6 +33,7 @@ npm run build:chrome   # .output/chrome-mv3/
 npx web-ext lint -s .output/firefox-mv2
 npm run e2e            # Chrome build, then every end-to-end check (needs Chromium)
 node e2e/run.mjs responsive # Settings layout at 320px, 360px, 375px, 389px, and 390px
+node e2e/run.mjs axe        # axe-core over Settings, the popup, and the welcome page, light and dark
 npm run docs:dev       # the wiki, with live reload
 npm run docs:build     # the wiki; fails on a broken link
 npm run zip            # store packages (see "Releasing")

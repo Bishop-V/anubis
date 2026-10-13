@@ -23,7 +23,7 @@ Firefox is the default target; `:chrome` variants override it.
 - `npm run compile`: type-check. Run it after every change.
 - `npm test`: Vitest unit tests in `tests/`.
 - `npm run build` / `npm run build:chrome`; `npm run dev` / `npm run dev:chrome` open a browser with the extension.
-- `npm run e2e`, or `node e2e/run.mjs <part>` after `build:chrome`: checks against mock search pages (`e2e/fixtures.mjs`). `checks` and `responsive` are the parts CI runs.
+- `npm run e2e`, or `node e2e/run.mjs <part>` after `build:chrome`: checks against mock search pages (`e2e/fixtures.mjs`). `checks`, `responsive`, and `axe` (axe-core over Settings, the popup, and the welcome page) are among the parts CI runs.
 - `npx web-ext lint -s .output/firefox-mv2`: keep it at zero warnings.
 - `npm run docs:build`: the documentation site; fails on a broken link. `node e2e/run.mjs docs` redraws its screenshots; commit only the ones a change affects.
 - `npm run release:prep -- <version>`: the checks before a release.
