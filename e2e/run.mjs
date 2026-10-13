@@ -21,7 +21,7 @@ import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync
 import { tmpdir } from 'node:os';
 import { delimiter, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ANUBIS_PAGE2, ANUBIS_PAGE3, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, bingChallenge, brave, duckduckgo, google, googleMobile } from './fixtures.mjs';
+import { ANUBIS_PAGE2, ANUBIS_PAGE3, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, bingChallenge, bingMobile, brave, duckduckgo, google, googleMobile } from './fixtures.mjs';
 import { ENGINE_TABS, engineTab } from './tab-fixtures.mjs';
 
 const EXT = fileURLToPath(new URL('../.output/chrome-mv3', import.meta.url));
@@ -202,6 +202,8 @@ async function launch(settings = {}, ext = EXT) {
       ['https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then', 'Promise.prototype.then() - MDN', 'The then() method of Promise instances takes up to two arguments.'],
     ], { inner: true }),
     'https://www.google.com/search?q=anubis&mobile=1': googleMobile('anubis', ANUBIS_RESULTS),
+    'https://duckduckgo.com/?q=javascript+promises&mobile=1': duckduckgo('javascript promises', JS_RESULTS, true, [], { mobile: true }),
+    'https://www.bing.com/search?q=javascript+promises&mobile=1': bingMobile('javascript promises', JS_RESULTS),
     // What an earlier copy of the extension leaves on the page when it reloads or
     // updates while the page is open (Firefox then runs the new copy in the same page).
     'https://www.google.com/search?q=anubis&leftover=1': google('anubis', ANUBIS_RESULTS).replace('<div id="rcnt">', '<anubis-summary style="display:block">old summary</anubis-summary><div id="rcnt">'),
@@ -775,6 +777,85 @@ if (!only || only === 'mobile' || checks) {
     phoneNothingUnderMark: folded.underMark.length === 0 && opened.underMark.length === 0,
     wideSummaryIsFull: wide.long === true && wide.short === false && wide.details === false,
   });
+
+  // Every engine's phone layout: each result gets a ⚖ button that sits clear of the
+  // engine's own controls (Google's ⋮ once lay under it) and of the title's words, and
+  // the result menu opens as a sheet along the bottom of the screen.
+  await phone.setViewportSize({ width: 412, height: 915 });
+  const phonePage = async (url) => {
+    await phone.goto(url);
+    await phone.waitForTimeout(700);
+    return phone.evaluate(() => {
+      const overlaps = (a, b) => a.left < b.right - 1 && a.right > b.left + 1 && a.top < b.bottom - 1 && a.bottom > b.top + 1;
+      const results = [...document.querySelectorAll('[data-anubis-result]')];
+      const buttons = results.map((r) => r.querySelector(':scope > anubis-weigh')).filter(Boolean);
+      const clash = buttons.filter((host) => {
+        const b = host.getBoundingClientRect();
+        const result = host.parentElement;
+        const controls = [...result.querySelectorAll('button, [role="button"], svg')].filter((el) => !el.closest('anubis-weigh, anubis-chips'));
+        const range = document.createRange();
+        const words = [...result.querySelectorAll('h2, h3, [role="heading"]')].flatMap((t) => {
+          range.selectNodeContents(t);
+          return [...range.getClientRects()];
+        });
+        return [...controls.map((el) => el.getBoundingClientRect()), ...words].some((r) => r.width && overlaps(b, r));
+      });
+      return {
+        results: results.length,
+        weighButtons: buttons.length,
+        clash: clash.length,
+        summary: !!document.querySelector('anubis-summary'),
+        scrollsSideways: document.documentElement.scrollWidth > innerWidth,
+        // What sticks out past the screen's edge, to say where to look when it does.
+        sticksOut: [...document.querySelectorAll('body *')]
+          .filter((el) => el.getBoundingClientRect().right > innerWidth + 1)
+          .slice(0, 3)
+          .map((el) => `${el.localName}${el.className && typeof el.className === 'string' ? `.${el.className.split(' ')[0]}` : ''}`),
+      };
+    });
+  };
+  const sheet = async (name) => {
+    await phone.locator('[data-anubis-result]:not([data-anubis-state~="hide"]) > anubis-weigh').first().click();
+    await phone.waitForTimeout(250);
+    const open = await phone.evaluate(() => {
+      const pop = document.querySelector('anubis-popover');
+      if (!pop) return null;
+      const r = pop.getBoundingClientRect();
+      return { fixed: getComputedStyle(pop).position === 'fixed', left: Math.round(r.left), right: Math.round(r.right), bottom: Math.round(r.bottom), width: innerWidth, height: innerHeight };
+    });
+    if (open) await phone.screenshot({ path: `${SHOTS}${name}-mobile-sheet.png` });
+    // A tap on the page above the sheet closes it.
+    await phone.mouse.click(200, 40);
+    await phone.waitForTimeout(200);
+    const closed = await phone.evaluate(() => !document.querySelector('anubis-popover'));
+    return { open, closed };
+  };
+  const along = (s) => !!s.open && s.open.fixed && s.open.left === 0 && s.open.right === s.open.width && s.open.bottom === s.open.height && s.closed;
+  const phoneFailures = [];
+  for (const [name, url, count] of [
+    ['google', 'https://www.google.com/search?q=anubis&mobile=1', ANUBIS_RESULTS.length],
+    ['duckduckgo', 'https://duckduckgo.com/?q=javascript+promises&mobile=1', JS_RESULTS.length],
+    ['bing', 'https://www.bing.com/search?q=javascript+promises&mobile=1', JS_RESULTS.length],
+  ]) {
+    const found = await phonePage(url);
+    await report(phone, `${name}-mobile`);
+    await phone.screenshot({ path: `${SHOTS}${name}-mobile-phone.png`, fullPage: true });
+    const menu = found.weighButtons ? await sheet(name) : { open: null, closed: false };
+    console.log(`\n== ${name} phone:`, JSON.stringify({ found, menu }));
+    try {
+      assertChecks(`${name} phone`, {
+        allExpectedResultsFound: found.results === count,
+        everyResultHasWeighButton: found.weighButtons === found.results,
+        weighButtonsClearOfControlsAndTitles: found.clash === 0,
+        summaryRendered: found.summary,
+        noHorizontalOverflow: !found.scrollsSideways,
+        menuIsSheetAlongTheBottom: along(menu),
+      });
+    } catch (e) {
+      phoneFailures.push(e.message);
+    }
+  }
+  if (phoneFailures.length) throw new Error(phoneFailures.join('; '));
   await phone.close();
 }
 

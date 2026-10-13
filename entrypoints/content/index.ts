@@ -121,6 +121,7 @@ export default defineContentScript({
 
       const theme = pageTheme(rules.settings.theme);
       document.documentElement.dataset.anubisHide = rules.settings.hideStyle;
+      if (engine.button?.onTitle) document.documentElement.dataset.anubisTitleRoom = '';
       applyTheme(theme);
       applyPalette(rules.settings.palette);
 
@@ -424,6 +425,7 @@ export default defineContentScript({
     const reset = () => {
       closePopover();
       removeAllUi();
+      delete document.documentElement.dataset.anubisTitleRoom;
       removed.forEach(unremove);
       removed = new Set();
       document.querySelectorAll<HTMLElement>('[data-anubis-result], [data-anubis-row]').forEach(forget);
@@ -707,6 +709,7 @@ function pageTheme(setting: Theme): PageTheme {
 /** Anubis's elements and attributes left on the page by an earlier copy of the extension. */
 function clearPreviousCopy(): void {
   removeAllUi();
+  delete document.documentElement.dataset.anubisTitleRoom;
   for (const el of document.querySelectorAll<HTMLElement>('[data-anubis-result], [data-anubis-row], [data-anubis-removed], [data-anubis-rerank], [data-anubis-pin-room]')) {
     for (const name of el.getAttributeNames()) if (name.startsWith('data-anubis-')) el.removeAttribute(name);
   }

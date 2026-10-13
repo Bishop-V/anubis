@@ -89,9 +89,12 @@ export interface EngineDef {
    * selector of the result's card, when it is narrower than the result: the result
    * menu opens to the right of the result (or the card), level with its top, and
    * falls back to under the button when the window has no room. With `besideMenu`, it sits just right of the engine's
-   * menu button instead, level with it, at its size and in its colour.
+   * menu button instead, level with it, at its size and in its colour. With `onTitle` (phone
+   * layouts), it sits on the title's first line instead, under the engine's menu button where
+   * the result has one, and titles keep clear of it: on a phone the corner is the engine's
+   * menu's, and the space beside it is off the screen.
    */
-  button?: { top: string; right: string; underMenu?: boolean; besideMenu?: boolean; popOut?: string };
+  button?: { top: string; right: string; underMenu?: boolean; besideMenu?: boolean; popOut?: string; onTitle?: boolean };
   /**
    * Tags go on their own line under the title's row, not in it. For engines whose
    * title row is a flex row that cuts the title off (with an ellipsis) to make room.
@@ -179,7 +182,7 @@ export const ENGINES: EngineDef[] = [
     mobile: {
       heading: 'h3, [role="heading"][aria-level="3"]:not([data-news-cluster-id] *)',
       displayed: 'cite, .ob9lvb',
-      button: { top: '12px', right: '12px' },
+      button: { top: '12px', right: '12px', onTitle: true },
       more: undefined,
     },
   },
@@ -209,6 +212,9 @@ export const ENGINES: EngineDef[] = [
     // it, the button sat on the thumbnails some results have below the menu.
     button: { top: '6px', right: '36px', besideMenu: true },
     more: { kind: 'click', button: '#more-results, button[data-testid="more-results"]' },
+    // On phones the results are found the same way (uBlacklist's "Web (mobile)" rules), but
+    // the ⋯ menu is at the screen's edge, so the button beside it was off the screen.
+    mobile: { button: { top: '10px', right: '0', onTitle: true } },
   },
   {
     id: 'duckduckgo-html',
@@ -245,6 +251,9 @@ export const ENGINES: EngineDef[] = [
     link: 'h2 a',
     title: 'h2',
     displayed: '.b_attribution cite, cite',
+    // On phones the title's h2 is inside the link, which also holds the site's name and
+    // address (uBlacklist's "Web (mobile)" rules; unverified on a live page).
+    mobile: { item: '.b_algo', link: '.b_algoheader > a, h2 a', button: { top: '0', right: '0', onTitle: true } },
     // Bing's AI answer (seen on a live page, 2026-09-29): the answer is in
     // .cht_container, with a .cht_disclaimer, and has no heading to go by.
     cleanupSelectors: { ai: '.cht_container, .cht_disclaimer' },
