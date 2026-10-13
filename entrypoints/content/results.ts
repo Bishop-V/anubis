@@ -26,19 +26,21 @@ export const OWN_TAGS = new Set(['ANUBIS-CHIPS', 'ANUBIS-WEIGH', 'ANUBIS-BAR', '
 /** Results in the live page, or in a fetched results page parsed with DOMParser. */
 export function findResults(engine: EngineDef, root: Document = document): FoundResult[] {
   const out = engine.heading ? findStructural(engine, root) : findBySelector(engine, root);
-  if (!engine.cards) return out;
-  const seen = new Set(out.map((r) => r.container));
-  for (const def of engine.cards) {
+  for (const def of engine.cards ?? []) {
     if (def.path && !def.path.test(location.pathname)) continue;
-    // Where the engine's own item selector already matches the tab's cards (Kagi's), they're cards all the same.
-    if (def.path) for (const r of out) if (r.container.matches(def.item)) r.card = true;
-    for (const r of findBySelector({ ...engine, ...def, extraRows: 0 }, root)) {
-      if (seen.has(r.container) || [...seen].some((c) => c.contains(r.container))) continue;
-      seen.add(r.container);
-      out.push({ ...r, card: true });
-    }
+    addCards(out, engine, def, root);
   }
   return out;
+}
+
+/** Adds one kind of card (see `EngineDef.cards`) to the results, skipping any already found. */
+function addCards(out: FoundResult[], engine: EngineDef, def: NonNullable<EngineDef['cards']>[number], root: Document): void {
+  // Where the engine's own item selector already matches the tab's cards (Kagi's), they're cards all the same.
+  if (def.path) for (const r of out) if (r.container.matches(def.item)) r.card = true;
+  for (const r of findBySelector({ ...engine, ...def, extraRows: 0 }, root)) {
+    if (out.some((o) => o.container.contains(r.container))) continue;
+    out.push({ ...r, card: true });
+  }
 }
 
 function findBySelector(engine: EngineDef, root: Document): FoundResult[] {

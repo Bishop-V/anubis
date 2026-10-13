@@ -657,23 +657,8 @@ function duckduckgoTab(query, results, tab) {
 // The contents are made up, and the markup around the selectors is a guess.
 // `engine`: 'brave' | 'ecosia' | 'kagi' | 'startpage'; `tab`: 'images' | 'videos' | 'news'.
 export function engineTab(engine, tab, results) {
-  const card = ([url, title], i) => {
-    const host = hostOf(url);
-    const thumb = `<div class="thumb"></div>`;
-    if (engine === 'brave') {
-      if (tab === 'images') return `<div class="image-result"><a href="/images/view?i=${i}">${thumb}</a><div class="image-metadata-title">${esc(title)}</div><div class="image-metadata-source">${host}</div></div>`;
-      return `<div class="snippet" data-type="${tab}"><a href="${url}">${thumb}<div class="snippet-title">${esc(title)}</div></a></div>`;
-    }
-    if (engine === 'ecosia') {
-      if (tab === 'images') return `<div class="image-result"><a class="image-result__link-wrapper" href="/images/view?i=${i}">${thumb}</a><a class="image-result__details-link" href="${url}"><h2>${esc(title)}</h2></a></div>`;
-      return `<div class="result"><a class="result__link" href="${url}">${thumb}<h2>${esc(title)}</h2></a></div>`;
-    }
-    if (engine === 'kagi') return `<div class="_ext_ub_r">${thumb}<a class="_ext_ub_u" href="${url}"><span class="_ext_ub_t">${esc(title)}</span></a></div>`;
-    if (tab === 'images') return `<div class="image-container"><a href="/do/image?i=${i}">${thumb}</a><div class="image-quick-details"><div>${esc(title)}</div><span>${host}</span></div></div>`;
-    if (tab === 'news') return `<div class="article"><a href="${url}">${thumb}<h3>${esc(title)}</h3></a></div>`;
-    return `<div class="result"><a href="${url}">${thumb}<h3>${esc(title)}</h3></a></div>`;
-  };
-  const grid = results.map(card).join('');
+  const makeCard = CARD_MARKUP[engine][tab] ?? CARD_MARKUP[engine].other;
+  const grid = results.map(([url, title], i) => makeCard(url, esc(title), i, hostOf(url), tab)).join('');
   const body = engine === 'startpage' ? `<section id="main"><div class="grid${tab === 'videos' ? ' vo-bg' : ''}">${grid}</div></section>` : `<main id="main"><div class="grid">${grid}</div></main>`;
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>anubis</title>
   <style>
@@ -685,6 +670,26 @@ export function engineTab(engine, tab, results) {
     h2,h3{margin:6px 0 2px;font-size:14px}
   </style></head><body><nav>All <b>${tab}</b></nav>${body}</body></html>`;
 }
+
+const THUMB = '<div class="thumb"></div>';
+const kagiCard = (url, title) => `<div class="_ext_ub_r">${THUMB}<a class="_ext_ub_u" href="${url}"><span class="_ext_ub_t">${title}</span></a></div>`;
+/** One card's markup per engine and tab: `(address, title, index, site, tab) => html`. */
+const CARD_MARKUP = {
+  brave: {
+    images: (url, title, i, host) => `<div class="image-result"><a href="/images/view?i=${i}">${THUMB}</a><div class="image-metadata-title">${title}</div><div class="image-metadata-source">${host}</div></div>`,
+    other: (url, title, i, host, tab) => `<div class="snippet" data-type="${tab}"><a href="${url}">${THUMB}<div class="snippet-title">${title}</div></a></div>`,
+  },
+  ecosia: {
+    images: (url, title, i) => `<div class="image-result"><a class="image-result__link-wrapper" href="/images/view?i=${i}">${THUMB}</a><a class="image-result__details-link" href="${url}"><h2>${title}</h2></a></div>`,
+    other: (url, title) => `<div class="result"><a class="result__link" href="${url}">${THUMB}<h2>${title}</h2></a></div>`,
+  },
+  kagi: { other: kagiCard },
+  startpage: {
+    images: (url, title, i, host) => `<div class="image-container"><a href="/do/image?i=${i}">${THUMB}</a><div class="image-quick-details"><div>${title}</div><span>${host}</span></div></div>`,
+    news: (url, title) => `<div class="article"><a href="${url}">${THUMB}<h3>${title}</h3></a></div>`,
+    other: (url, title) => `<div class="result"><a href="${url}">${THUMB}<h3>${title}</h3></a></div>`,
+  },
+};
 
 /** Where each engine's tab mocks live, as [address, engine, tab]. */
 export const ENGINE_TABS = [
