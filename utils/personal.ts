@@ -8,7 +8,7 @@ import { PERSONAL_STRENGTH, type Level } from './matcher';
 
 /** The personal list's id, and its name wherever Anubis shows it (a reason, a tag's source). */
 export const PERSONAL_ID = 'personal';
-export const PERSONAL_NAME = t('personalListName');
+export const personalListName = (): string => t('personalListName');
 
 // English on purpose: the start of a list file, which may be published as it is.
 export const PERSONAL_HEADER = `! name: My list

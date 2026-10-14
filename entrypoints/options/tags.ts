@@ -10,7 +10,7 @@ import { editPersonal, setTagPref } from '@/utils/storage';
 import { flash, flashed } from './flash';
 import { helpLink, pageTitle } from './parts';
 
-const ACTIONS: { value: TagAction; label: string }[] = [
+const actions = (): { value: TagAction; label: string }[] => [
   { value: 'list', label: t('tagActionList') },
   { value: 'label', label: t('tagActionLabel') },
   { value: 'highlight', label: t('tagActionHighlight') },
@@ -248,7 +248,7 @@ export async function renderTags(): Promise<HTMLElement> {
       const action = h(
         'select',
         { attrs: { 'aria-label': t('tagActionFor', tag.label) } },
-        ACTIONS.map((a) => h('option', { value: a.value, selected: (pref.action ?? 'list') === a.value }, a.label)),
+        actions().map((a) => h('option', { value: a.value, selected: (pref.action ?? 'list') === a.value }, a.label)),
       );
       action.addEventListener('change', () => void setTagPref(tag.id, { action: action.value === 'list' ? undefined : (action.value as TagAction) }));
 

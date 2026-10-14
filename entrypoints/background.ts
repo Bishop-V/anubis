@@ -1,5 +1,6 @@
 import { browser, defineBackground, storage } from '#imports';
 import { t } from '@/utils/i18n';
+import { languageItem, loadLanguage } from '@/utils/language';
 import { readSubscribeLink, subscribeQuery } from '@/utils/links';
 import { hiddenCount, sendToActiveTab, type Message } from '@/utils/messages';
 import {
@@ -43,8 +44,12 @@ export default defineBackground(() => {
     void action.setIcon({ path: { 16: `/${dir}/16.png`, 32: `/${dir}/32.png`, 48: `/${dir}/48.png` } });
     void action.setTitle({ title: enabled ? 'Anubis' : t('toolbarOff') });
   };
-  void getSettings().then((s) => showEnabled(s.enabled));
+  // The toolbar's words follow the language picked in Settings, so read it first.
+  void loadLanguage(true)
+    .then(() => getSettings())
+    .then((s) => showEnabled(s.enabled));
   settingsItem.watch((s) => showEnabled(s?.enabled !== false));
+  languageItem.watch(() => void loadLanguage().then(() => getSettings()).then((s) => showEnabled(s.enabled)));
 
   // Firefox's background page sees light or dark as the popup will. Chrome's service
   // worker can't (no matchMedia), but there search pages see the same.

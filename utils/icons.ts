@@ -1,5 +1,5 @@
 import { h, icon } from './dom';
-import { t } from './i18n';
+import { liveMessages, t } from './i18n';
 import type { Level } from './matcher';
 
 // Inline SVG icons, so no image files or extra requests are needed. All use
@@ -80,22 +80,22 @@ export function levelIcon(level: Level, steps: 1 | 2 = 1): string {
 }
 
 /** The five rankings, in the user's language. */
-export const LEVEL_LABELS = {
-  hide: t('levelHide'),
-  lower: t('levelLower'),
-  normal: t('levelNormal'),
-  raise: t('levelRaise'),
-  pin: t('levelPin'),
-};
+export const LEVEL_LABELS = liveMessages({
+  hide: 'levelHide',
+  lower: 'levelLower',
+  normal: 'levelNormal',
+  raise: 'levelRaise',
+  pin: 'levelPin',
+});
 
 /** Short past-tense labels for verdict chips. */
-export const LEVEL_CHIPS = {
-  hide: t('chipHidden'),
-  lower: t('chipLowered'),
+export const LEVEL_CHIPS = liveMessages({
+  hide: 'chipHidden',
+  lower: 'chipLowered',
   normal: '',
-  raise: t('chipRaised'),
-  pin: t('chipPinned'),
-};
+  raise: 'chipRaised',
+  pin: 'chipPinned',
+});
 
 /**
  * A tag's mark when the tag moves or hides the result: the ranking's icon, simplified to
@@ -111,12 +111,12 @@ const TAG_MARKS: Partial<Record<Level, string>> = {
 };
 
 /** What a tag's mark means, for screen readers and its tooltip. */
-export const TAG_EFFECTS: Partial<Record<Level, string>> = {
-  hide: t('tagMarkHide'),
-  lower: t('tagMarkLower'),
-  raise: t('tagMarkRaise'),
-  pin: t('tagMarkPin'),
-};
+export const TAG_EFFECTS: Partial<Record<Level, string>> = liveMessages({
+  hide: 'tagMarkHide',
+  lower: 'tagMarkLower',
+  raise: 'tagMarkRaise',
+  pin: 'tagMarkPin',
+});
 
 /** A tag's diamond, or, when the tag moves or hides the result (`effect`), the sign of what it does. */
 export function tagMark(effect?: Level, hollow = false): HTMLElement {

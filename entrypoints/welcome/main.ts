@@ -6,6 +6,7 @@ import { balanceSvg, swingBalance } from '@/utils/balance';
 import { h } from '@/utils/dom';
 import { ENGINES } from '@/utils/engines';
 import { localizePage, t, type MessageKey } from '@/utils/i18n';
+import { loadLanguage } from '@/utils/language';
 import { guide } from '@/utils/links';
 import { parseList } from '@/utils/listformat';
 import { getSettings, listCacheItem } from '@/utils/storage';
@@ -115,6 +116,7 @@ function renderScales() {
 }
 
 async function main() {
+  await loadLanguage(true);
   localizePage();
   const note = machineTranslationNote();
   if (note) $('main').prepend(note);

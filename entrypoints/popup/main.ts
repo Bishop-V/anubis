@@ -10,6 +10,7 @@ import { LEVELS, evaluate, listTagCards, listTagIds, type Level } from '@/utils/
 import { h, icon, siteName } from '@/utils/dom';
 import { ICON_GEAR, LEVEL_CHIPS, LEVEL_LABELS, levelIcon, tagEffectText, tagMark } from '@/utils/icons';
 import { localizePage, t, tJoin, tn, type MessageKey } from '@/utils/i18n';
+import { loadLanguage } from '@/utils/language';
 import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/messages';
 import { displayLevel, getSite, levelSteps, listSites, setSiteLevel, tagSite, upsertTagDef, type PersonalLevel } from '@/utils/personal';
@@ -379,6 +380,7 @@ $('#see-all').addEventListener('click', () => openSettings('sites'));
 $('#lists-summary').addEventListener('click', () => openSettings('lists'));
 
 async function main() {
+  await loadLanguage(true);
   localizePage();
   const note = machineTranslationNote(true);
   if (note) $('footer').before(note);

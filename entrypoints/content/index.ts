@@ -18,6 +18,7 @@ import {
   type SiteChange,
 } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
+import { loadLanguage } from '@/utils/language';
 import { clampDeeper, colorSchemeItem, editPersonal, type Theme } from '@/utils/storage';
 import { reportUrl, suggestionUrl } from '@/utils/subscriptions';
 import { changeSentence } from '@/utils/summary';
@@ -57,6 +58,7 @@ export default defineContentScript({
     // When the extension reloads or updates while this page is open, Firefox runs
     // the new copy in the same page, and the old copy's summary and tags stay behind.
     clearPreviousCopy();
+    await loadLanguage();
 
     let rules: RuleSet;
     try {

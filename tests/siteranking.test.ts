@@ -1,7 +1,7 @@
 import { parseHTML } from 'linkedom';
 import { beforeAll, describe, expect, it } from 'vitest';
 import { TAG_CHOICES, type Level, type Reason, type Verdict } from '@/utils/matcher';
-import { displayLevel, PERSONAL_NAME, type PersonalLevel, type SiteEntry } from '@/utils/personal';
+import { displayLevel, personalListName, type PersonalLevel, type SiteEntry } from '@/utils/personal';
 import { installEnglish } from './english';
 
 // The ranking chips are translated as utils/icons loads.
@@ -103,7 +103,7 @@ describe('rankingHint', () => {
 describe('tagOrder', () => {
   it('puts your tags first, then those from lists, then the rest, each by label', () => {
     const tags = new Map(['d', 'c', 'b', 'a'].map((id) => [id, { label: id.toUpperCase() }]));
-    const v = verdict('normal', [], { tags: ['c', 'd'], tagSources: { c: ['A list'], d: [PERSONAL_NAME] } });
+    const v = verdict('normal', [], { tags: ['c', 'd'], tagSources: { c: ['A list'], d: [personalListName()] } });
     const { mine, fromList, ids } = tagOrder(tags, site('normal', ['d']), v);
     expect(ids).toEqual(['d', 'c', 'a', 'b']);
     expect([...mine]).toEqual(['d']);

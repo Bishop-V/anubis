@@ -17,7 +17,32 @@ export type PluralKey = MessageKey extends infer K ? (K extends `${infer Base}_o
 // WXT types getMessage with one overload per key, which a key held in a variable
 // can't pick; MessageKey checks the keys instead.
 const getMessage = (key: string, subs: string[]): string =>
-  (browser.i18n.getMessage as (key: string, subs?: string[]) => string)(key, subs);
+  override
+    ? (override[key]?.replace(/\$(\d)/g, (_, n: string) => subs[Number(n) - 1] ?? '') ?? '')
+    : (browser.i18n.getMessage as (key: string, subs?: string[]) => string)(key, subs);
+
+// The browser always answers in its own language. When someone picks another in
+// Settings, utils/language.ts hands over that language's messages (English filling
+// any gap), and they are used instead.
+let override: Record<string, string> | undefined;
+
+/** Answer from these messages (key to text), or from the browser's own language when none. */
+export function setMessages(messages: Record<string, string> | undefined): void {
+  override = messages;
+  pluralRules = undefined;
+}
+
+/**
+ * Messages that read like plain properties (`LABELS.hide`) but are looked up when read,
+ * so they follow the language picked in Settings, which loads after modules do.
+ */
+export function liveMessages<K extends string>(keys: Record<K, MessageKey | ''>): Record<K, string> {
+  const out = {} as Record<K, string>;
+  for (const [name, key] of Object.entries(keys) as [K, MessageKey | ''][]) {
+    Object.defineProperty(out, name, { enumerable: true, get: () => (key ? t(key) : '') });
+  }
+  return out;
+}
 
 /** A message, with `$1`, `$2`… filled in. */
 export function t(key: MessageKey, ...subs: (string | number)[]): string {

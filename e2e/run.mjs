@@ -5,7 +5,7 @@
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
 //                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options,
-//                               responsive, axe, welcome, sync, webdav, popup-tags, tag-notes, settings-undo, checks (layout, lifecycle, pin/hidden chips, DDG icon colors, Undo in Settings)
+//                               responsive, axe, welcome, sync, webdav, popup-tags, tag-notes, settings-undo, language, checks (layout, lifecycle, pin/hidden chips, DDG icon colors, Undo in Settings)
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slides
 //                               in docs/public/
 //
@@ -2780,6 +2780,68 @@ if (!only || only === 'settings-undo' || checks) {
   });
   await options.close();
   console.log('\n== deleting in Settings with Undo passed');
+}
+
+if (!only || only === 'language' || checks) {
+  // The language picked in Settings replaces the browser's, on every page of the
+  // extension, in its toolbar title, and in what it adds to a search page. "Browser
+  // default" puts the browser's back.
+  const de = JSON.parse(readFileSync(join(EXT, '_locales', 'de', 'messages.json'), 'utf8'));
+  const worker = ctx.serviceWorkers()[0];
+  await page.goto('https://www.google.com/search?q=anubis');
+  await page.waitForTimeout(1500);
+  const summaryEn = await shadowText('anubis-summary');
+  const options = await ctx.newPage();
+  await options.goto(`chrome-extension://${extId}/options.html#appearance`);
+  const before = { heading: await options.locator('.page-title h2').first().textContent(), lang: await options.evaluate(() => document.documentElement.lang) };
+
+  await Promise.all([options.waitForEvent('load'), options.selectOption('#language', 'de')]);
+  await options.waitForSelector('#language');
+  const afterDe = {
+    heading: await options.locator('.page-title h2').first().textContent(),
+    lang: await options.evaluate(() => document.documentElement.lang),
+    picked: await options.inputValue('#language'),
+    hasNote: (await options.locator('.machine-note').count()) === 1,
+    title: await options.title(),
+  };
+  const popup = await ctx.newPage();
+  await popup.goto(`chrome-extension://${extId}/popup.html`);
+  await popup.waitForTimeout(500);
+  const popupLang = await popup.evaluate(() => document.documentElement.lang);
+  await popup.close();
+
+  await worker.evaluate(async () => {
+    const { settings } = await chrome.storage.sync.get('settings');
+    await chrome.storage.sync.set({ settings: { ...settings, enabled: false } });
+    await new Promise((r) => setTimeout(r, 300));
+  });
+  const toolbarDe = await worker.evaluate(() => chrome.action.getTitle({}));
+  await worker.evaluate(async () => {
+    const { settings } = await chrome.storage.sync.get('settings');
+    await chrome.storage.sync.set({ settings: { ...settings, enabled: true } });
+  });
+
+  await page.goto('https://www.google.com/search?q=anubis');
+  await page.waitForTimeout(1500);
+  const summaryDe = await shadowText('anubis-summary');
+
+  await options.reload();
+  await Promise.all([options.waitForEvent('load'), options.selectOption('#language', '')]);
+  await options.waitForSelector('#language');
+  const afterAuto = { heading: await options.locator('.page-title h2').first().textContent(), lang: await options.evaluate(() => document.documentElement.lang) };
+  await options.close();
+
+  assertChecks('choosing a language in Settings', {
+    startsInBrowserLanguage: before.lang === 'en',
+    settingsChange: afterDe.lang === 'de' && afterDe.picked === 'de' && afterDe.heading?.trim() === de.appearanceHeading.message,
+    titleChanges: afterDe.title.includes(de.appearanceHeading.message),
+    noteShown: afterDe.hasNote,
+    popupChanges: popupLang === 'de',
+    toolbarChanges: toolbarDe === de.toolbarOff.message,
+    searchPageChanges: summaryDe.length > 0 && summaryEn.length > 0 && summaryDe !== summaryEn,
+    browserDefaultReturns: afterAuto.lang === 'en' && afterAuto.heading?.trim() === before.heading?.trim(),
+  });
+  console.log('\n== choosing a language in Settings passed');
 }
 
 await ctx.close();

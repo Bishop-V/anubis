@@ -5,6 +5,7 @@ import { browser } from '#imports';
 import { h, icon } from '@/utils/dom';
 import { ICON_EXTERNAL } from '@/utils/icons';
 import { localizePage, t } from '@/utils/i18n';
+import { loadLanguage } from '@/utils/language';
 import { bugReportLink, describeBrowser, guide, REPO_URL } from '@/utils/links';
 import { listSites } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet } from '@/utils/ruleset';
@@ -29,7 +30,8 @@ interface Section {
   help?: [path: string, label: string];
 }
 
-const SECTIONS: Section[] = [
+// Built when needed, not when the file loads: the words follow the language picked in Settings.
+const sections = (): Section[] => [
   { id: 'sites', label: t('sitesHeading'), render: renderSites, help: ['guide/ranking', t('sitesHelp')] },
   { id: 'tags', label: t('tagsHeading'), render: renderTags, help: ['guide/tags', t('tagsHelp')] },
   { id: 'lists', label: t('listsHeading'), render: renderLists, help: ['guide/lists', t('listsHelp')] },
@@ -49,7 +51,7 @@ const main = document.querySelector<HTMLElement>('#main')!;
 
 function current(): Section {
   const id = location.hash.slice(1);
-  return SECTIONS.find((s) => s.id === id) ?? SECTIONS[0]!;
+  return sections().find((s) => s.id === id) ?? sections()[0]!;
 }
 
 async function renderNav() {
@@ -68,7 +70,7 @@ async function renderNav() {
       h('img', { src: '/anubis.svg', alt: '', width: 36, height: 36 }),
       h('div', null, h('h1', null, 'Anubis'), h('p', null, t('settingsTagline'))),
     ),
-    ...SECTIONS.map((s) =>
+    ...sections().map((s) =>
       h(
         'a',
         { href: `#${s.id}`, attrs: { 'aria-current': s.id === active ? 'page' : undefined } },
@@ -131,6 +133,7 @@ window.addEventListener('hashchange', () => {
 });
 
 async function start() {
+  await loadLanguage(true);
   localizePage();
   await initTheme();
   await Promise.all([renderNav(), renderMain()]);

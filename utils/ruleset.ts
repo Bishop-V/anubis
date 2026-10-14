@@ -1,6 +1,6 @@
 import { parseList, type ListMeta, type TagDef } from './listformat';
 import { collectTags, compileList, listTagCards, type CompiledList, type TagPref } from './matcher';
-import { keepTagDefs, PERSONAL_ID, PERSONAL_NAME } from './personal';
+import { keepTagDefs, PERSONAL_ID, personalListName } from './personal';
 import {
   editPersonal,
   getSettings,
@@ -68,7 +68,7 @@ export async function loadRuleSet(): Promise<RuleSet> {
   ]);
 
   const personal = parseList(personalText);
-  const lists: CompiledList[] = [compileList(PERSONAL_ID, personal, true, PERSONAL_NAME)];
+  const lists: CompiledList[] = [compileList(PERSONAL_ID, personal, true, personalListName())];
   const meta: Record<string, ListMeta> = { [PERSONAL_ID]: personal.meta };
   const trackers: Record<string, string> = {};
 

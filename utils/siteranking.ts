@@ -2,7 +2,7 @@ import { h } from './dom';
 import { LEVEL_CHIPS, tagEffectText, tagMark } from './icons';
 import { t, tJoin } from './i18n';
 import { TAG_CHOICES, type Level, type Verdict } from './matcher';
-import { displayLevel, levelSteps, PERSONAL_NAME, type PersonalLevel, type SiteEntry } from './personal';
+import { displayLevel, levelSteps, personalListName, type PersonalLevel, type SiteEntry } from './personal';
 
 // The pieces the result menu and the toolbar popup share when they rank a site.
 
@@ -78,13 +78,13 @@ export function yourListTag(entry: SiteEntry | undefined, classes: string[]): HT
   if (!entry || entry.level === 'normal') return null;
   const level = displayLevel(entry.level);
   const effect = level === 'normal' ? undefined : level;
-  return h('div', { class: 'tags' }, h('span', { class: classes.join(' '), style: '--c: var(--gold)' }, tagMark(effect), PERSONAL_NAME, tagEffectText(effect)));
+  return h('div', { class: 'tags' }, h('span', { class: classes.join(' '), style: '--c: var(--gold)' }, tagMark(effect), personalListName(), tagEffectText(effect)));
 }
 
 /** Your tags first, then those lists gave the site, then the rest, each by label. */
 export function tagOrder(tags: Map<string, { label: string }>, entry: SiteEntry | undefined, verdict: Verdict) {
   const mine = new Set(entry?.tags ?? []);
-  const fromList = new Set(verdict.tags.filter((id) => (verdict.tagSources[id] ?? []).some((s) => s !== PERSONAL_NAME)));
+  const fromList = new Set(verdict.tags.filter((id) => (verdict.tagSources[id] ?? []).some((s) => s !== personalListName())));
   const rank = (id: string) => (mine.has(id) ? 0 : fromList.has(id) ? 1 : 2);
   const ids = [...tags.keys()].sort((a, b) => rank(a) - rank(b) || tags.get(a)!.label.localeCompare(tags.get(b)!.label));
   return { mine, fromList, ids };
@@ -141,7 +141,7 @@ export function tagPicker(ids: string[], fromLists: Set<string>, item: (id: stri
 
 /** The lists that gave the site a tag, after its name where it can't be pressed: "from Paywalls". */
 export function tagSource(verdict: Verdict, id: string): HTMLElement | null {
-  const lists = (verdict.tagSources[id] ?? []).filter((name) => name !== PERSONAL_NAME);
+  const lists = (verdict.tagSources[id] ?? []).filter((name) => name !== personalListName());
   if (!lists.length) return null;
   const text = t('tagFromSource', tJoin(lists));
   // A long list name is cut short with an ellipsis; the whole of it is in the tooltip.

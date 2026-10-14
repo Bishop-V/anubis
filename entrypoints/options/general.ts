@@ -19,6 +19,7 @@ import {
 } from '@/utils/storage';
 import { applyData, collectData, readBackup, toBackup } from '@/utils/backup';
 import { t, tn, tParts } from '@/utils/i18n';
+import { chooseLanguage, LANGUAGES, languageItem } from '@/utils/language';
 import { importIntoPersonal } from '@/utils/importers';
 import { guide, REPO_URL } from '@/utils/links';
 import { themeSwitcher } from '@/utils/theme';
@@ -111,6 +112,33 @@ function segRow<T extends string>(
   return h('div', { class: 'setting' }, h('div', null, h('b', null, label), h('span', { class: 'muted' }, hint)), seg);
 }
 
+/** The language of Anubis's words: the browser's, or one picked here. Reloads the page in it. */
+async function languageRow(): Promise<HTMLElement> {
+  const current = (await languageItem.getValue())?.code ?? '';
+  const select = h(
+    'select',
+    { id: 'language' },
+    h('option', { value: '', selected: current === '' }, t('languageAuto')),
+    LANGUAGES.map((l) => h('option', { value: l.code, selected: l.code === current, attrs: { lang: l.code.replace('_', '-') } }, l.name)),
+  );
+  const failed = h('span', { class: 'tip warn', attrs: { role: 'alert' } });
+  select.addEventListener('change', () => {
+    failed.textContent = '';
+    chooseLanguage(select.value || null).then(
+      () => location.reload(),
+      () => {
+        failed.textContent = t('languageFailed');
+      },
+    );
+  });
+  return h(
+    'div',
+    { class: 'setting' },
+    h('div', null, h('label', { attrs: { for: 'language' } }, h('b', null, t('languageHeading'))), h('span', { class: 'muted' }, t('languageHint')), failed),
+    select,
+  );
+}
+
 export async function renderAppearance(): Promise<HTMLElement> {
   const settings = await getSettings();
   return h(
@@ -131,6 +159,7 @@ export async function renderAppearance(): Promise<HTMLElement> {
         ),
         themeSwitcher(settings.theme),
       ),
+      await languageRow(),
       segRow<Palette>(
         t('paletteHeading'),
         t('paletteHint'),

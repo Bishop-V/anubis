@@ -474,6 +474,12 @@ textarea.code {
   width: 170px;
 }
 
+/* The language list: language names are short, but a closed select shouldn't grow with them. */
+.setting select {
+  width: 200px;
+  max-width: 100%;
+}
+
 /* ------------------------------------------------------------------ lists */
 .list-row {
   display: grid;

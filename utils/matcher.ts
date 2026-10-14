@@ -2,7 +2,7 @@ import { andList } from './dom';
 import { hostSuffixes, normalizeHostname } from './domain';
 import { t, tJoin, tn } from './i18n';
 import { MAX_STRENGTH, parseDeferred, type DeferredRule, type ParsedList, type Rule, type TagDef } from './listformat';
-import { PERSONAL_NAME } from './personal';
+import { personalListName } from './personal';
 
 // Turns parsed lists into lookup tables and weighs search results against them.
 //
@@ -435,7 +435,7 @@ function describeChoices(chosen: Map<string, TagAction>, label: (id: string) => 
 }
 
 function personalName(lists: CompiledList[]): string {
-  return lists.find((l) => l.personal)?.name ?? PERSONAL_NAME;
+  return lists.find((l) => l.personal)?.name ?? personalListName();
 }
 
 /**
