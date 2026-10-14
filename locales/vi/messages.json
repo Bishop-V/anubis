@@ -1,0 +1,1601 @@
+{
+  "langCode": {
+    "message": "vi"
+  },
+  "machineTranslatedTitle": {
+    "message": "Bản dịch máy."
+  },
+  "machineTranslatedNote": {
+    "message": "Anubis được dịch máy sang ngôn ngữ của trình duyệt và bản dịch này chưa được hỗ trợ đầy đủ: một số chỗ có thể sai hoặc khó hiểu, vì vậy hãy dùng cẩn thận. Để xem Anubis bằng tiếng Anh, hãy đặt ngôn ngữ của trình duyệt thành tiếng Anh."
+  },
+  "machineTranslatedShort": {
+    "message": "Hãy dùng cẩn thận."
+  },
+  "machineTranslatedHelp": {
+    "message": "Giúp sửa bản dịch"
+  },
+  "extDescription": {
+    "message": "Cân nhắc kết quả tìm kiếm: gắn nhãn, xếp hạng lại và ẩn trang web bằng các danh sách mà ai cũng có thể xuất bản."
+  },
+  "commandToggleEnabled": {
+    "message": "Bật hoặc tắt Anubis"
+  },
+  "commandToggleHidden": {
+    "message": "Hiện kết quả đã ẩn hoặc ẩn lại"
+  },
+  "levelHide": {
+    "message": "Ẩn"
+  },
+  "levelLower": {
+    "message": "Hạ"
+  },
+  "levelNormal": {
+    "message": "Bình thường"
+  },
+  "levelRaise": {
+    "message": "Nâng"
+  },
+  "levelPin": {
+    "message": "Ghim"
+  },
+  "chipHidden": {
+    "message": "Đã ẩn"
+  },
+  "chipLowered": {
+    "message": "Đã hạ"
+  },
+  "chipRaised": {
+    "message": "Đã nâng"
+  },
+  "chipPinned": {
+    "message": "Đã ghim"
+  },
+  "popupOn": {
+    "message": "Đang bật cho các lần tìm kiếm của bạn"
+  },
+  "popupOff": {
+    "message": "Đang tắt. Trang tìm kiếm được giữ nguyên."
+  },
+  "popupOnLabel": {
+    "message": "Bật Anubis"
+  },
+  "popupAddSite": {
+    "message": "Thêm trang web"
+  },
+  "popupRanking": {
+    "message": "Thứ hạng"
+  },
+  "popupNoSites": {
+    "message": "Chưa có gì. Dùng nút ⚖ trên bất kỳ kết quả tìm kiếm nào để xếp hạng trang web của kết quả đó."
+  },
+  "popupKeptNormal": {
+    "message": "Giữ ở mức Bình thường"
+  },
+  "popupListsAndTags": {
+    "message": "$1, $2"
+  },
+  "popupListCount_other": {
+    "message": "$1 danh sách"
+  },
+  "popupTagCount_other": {
+    "message": "$1 nhãn"
+  },
+  "popupRankingFor": {
+    "message": "Thứ hạng của $1"
+  },
+  "popupRankHide": {
+    "message": "Ẩn $1 trong kết quả tìm kiếm"
+  },
+  "popupRankLower": {
+    "message": "Hạ $1 trong kết quả tìm kiếm"
+  },
+  "popupRankNormal": {
+    "message": "Xếp hạng $1 bình thường trong kết quả tìm kiếm"
+  },
+  "popupRankRaise": {
+    "message": "Nâng $1 trong kết quả tìm kiếm"
+  },
+  "popupRankPin": {
+    "message": "Ghim $1 lên đầu kết quả tìm kiếm"
+  },
+  "popupYourSites": {
+    "message": "Trang web của bạn"
+  },
+  "popupSeeAll": {
+    "message": "Xem tất cả $1"
+  },
+  "popupOpenLists": {
+    "message": "Mở cài đặt danh sách"
+  },
+  "popupShowOnly": {
+    "message": "Chỉ hiện"
+  },
+  "popupTags": {
+    "message": "Nhãn"
+  },
+  "popupSite": {
+    "message": "Trang web"
+  },
+  "popupSiteChoice": {
+    "message": "Chọn phạm vi của trang web mà lựa chọn này áp dụng"
+  },
+  "popupHintAllow": {
+    "message": "Bình thường, bất kể các danh sách của bạn nói gì."
+  },
+  "popupHintMine": {
+    "message": "Lựa chọn của bạn cho $1, áp dụng cho mọi lần tìm kiếm."
+  },
+  "popupHintMineTags": {
+    "message": "Lựa chọn của bạn cho $1, áp dụng cho mọi lần tìm kiếm, cộng thêm với cài đặt nhãn của bạn."
+  },
+  "popupHintLists": {
+    "message": "$1 bởi $2. Chọn một mức để tự quyết định."
+  },
+  "popupHintNone": {
+    "message": "Lựa chọn của bạn áp dụng cho mọi lần tìm kiếm."
+  },
+  "popupYourTagSettings": {
+    "message": "cài đặt nhãn của bạn"
+  },
+  "tagMarkRaise": {
+    "message": "Nâng kết quả này"
+  },
+  "tagMarkLower": {
+    "message": "Hạ kết quả này"
+  },
+  "tagMarkPin": {
+    "message": "Ghim kết quả này"
+  },
+  "tagMarkHide": {
+    "message": "Ẩn kết quả này"
+  },
+  "tagMarkSpoken": {
+    "message": " ($1)"
+  },
+  "tagsShowMore": {
+    "message": "Hiện thêm $1 nhãn"
+  },
+  "tagsShowFewer": {
+    "message": "Hiện ít nhãn hơn"
+  },
+  "tagListsPickerHint": {
+    "message": "Thêm một nhãn chỉ thay đổi danh sách của bạn."
+  },
+  "tagFromSource": {
+    "message": "từ $1"
+  },
+  "popupTagFrom": {
+    "message": "Từ $1"
+  },
+  "popupTagSite": {
+    "message": "Gắn nhãn “$2” cho $1"
+  },
+  "popupUntag": {
+    "message": "Gỡ nhãn khỏi $1"
+  },
+  "popupTagInvalid": {
+    "message": "Nhập tên nhãn có ít nhất một chữ cái hoặc chữ số."
+  },
+  "popupTagAlreadySet": {
+    "message": "Trang web này đã có nhãn đó."
+  },
+  "tagSiteReason": {
+    "message": "Lý do trang web này hợp với nhãn “$1” (không bắt buộc)"
+  },
+  "popupThisPage": {
+    "message": "Trang này"
+  },
+  "popupThisPageOn": {
+    "message": "Trang này trên $1"
+  },
+  "popupNotSearch": {
+    "message": "Tìm kiếm trên Google, DuckDuckGo, Bing, Brave hoặc một công cụ tìm kiếm khác được hỗ trợ để xem Anubis thay đổi những gì."
+  },
+  "showHidden": {
+    "message": "Hiện mục đã ẩn"
+  },
+  "hideAgain": {
+    "message": "Ẩn lại"
+  },
+  "loadMore": {
+    "message": "Tải thêm kết quả"
+  },
+  "loadMoreTitle": {
+    "message": "Thêm trang kết quả tiếp theo vào trang này và xếp hạng tất cả cùng nhau"
+  },
+  "loading": {
+    "message": "Đang tải…"
+  },
+  "loadMoreEmpty": {
+    "message": "$1 không gửi kết quả nào cho trang $2. Có thể trang đó muốn bạn xác nhận mình không phải là robot trước."
+  },
+  "loadMoreRepeat": {
+    "message": "$1 lại gửi đúng các kết quả cũ cho trang $2, nên không còn kết quả nào nữa."
+  },
+  "loadMoreBusy": {
+    "message": "$1 yêu cầu Anubis chậm lại trước trang $2. Hãy thử lại sau một phút."
+  },
+  "loadMoreRefused": {
+    "message": "$1 từ chối gửi trang $2."
+  },
+  "loadMoreSlow": {
+    "message": "$1 mất quá lâu để gửi trang $2."
+  },
+  "loadMoreFailed": {
+    "message": "Không tải được trang $2 từ $1."
+  },
+  "loadMoreOpen": {
+    "message": "Mở trang $1"
+  },
+  "loadMoreOpenTitle": {
+    "message": "Mở trong thẻ mới để xem $1 đã gửi gì"
+  },
+  "chipFromPage": {
+    "message": "Từ trang $1"
+  },
+  "chipFromPageTitle": {
+    "message": "Được thêm bằng “Tải thêm kết quả”"
+  },
+  "barHidden_other": {
+    "message": "bị ẩn"
+  },
+  "barHiddenByYou_other": {
+    "message": "bị ẩn bởi danh sách của bạn"
+  },
+  "barHiddenByTag_other": {
+    "message": "bị ẩn vì có nhãn “$2”"
+  },
+  "barHiddenByLens_other": {
+    "message": "bị ẩn vì $2 không bao gồm"
+  },
+  "barHiddenByList_other": {
+    "message": "bị ẩn bởi $2"
+  },
+  "menuWhyHeading": {
+    "message": "Lý do"
+  },
+  "menuNewTagPlaceholder": {
+    "message": "Nhãn mới"
+  },
+  "menuNewTagLabel": {
+    "message": "Tên nhãn mới"
+  },
+  "menuAddTagButton": {
+    "message": "Thêm nhãn"
+  },
+  "menuSavedNote": {
+    "message": "Đã lưu vào danh sách của bạn."
+  },
+  "menuCloseLabel": {
+    "message": "Đóng"
+  },
+  "anubisSettings": {
+    "message": "Cài đặt Anubis"
+  },
+  "help": {
+    "message": "Trợ giúp"
+  },
+  "helpTitle": {
+    "message": "Mở wiki"
+  },
+  "reportProblem": {
+    "message": "Báo cáo sự cố"
+  },
+  "reportProblemTitle": {
+    "message": "Mở báo cáo lỗi trên GitHub, đã điền sẵn phiên bản Anubis và trình duyệt của bạn"
+  },
+  "summaryShowAll": {
+    "message": "Hiện tất cả"
+  },
+  "summaryFilterLabel": {
+    "message": "Chỉ hiện kết quả có nhãn"
+  },
+  "summaryFilterOn": {
+    "message": "Chỉ hiện kết quả có nhãn “$1”"
+  },
+  "summaryFilterOff": {
+    "message": "Hiện tất cả kết quả"
+  },
+  "summaryPinned": {
+    "message": "ghim $1"
+  },
+  "summaryRaised": {
+    "message": "nâng $1"
+  },
+  "summaryLowered": {
+    "message": "hạ $1"
+  },
+  "summaryHid": {
+    "message": "ẩn $1"
+  },
+  "summaryActed": {
+    "message": "Anubis đã $1 trên tổng số $2."
+  },
+  "summaryResults_other": {
+    "message": "$1 kết quả"
+  },
+  "summaryResultsPages_other": {
+    "message": "$1 kết quả từ $2 trang"
+  },
+  "summaryAlsoRemoved": {
+    "message": "Anubis cũng đã gỡ $1."
+  },
+  "summaryRemovedOnly": {
+    "message": "Anubis đã gỡ $1."
+  },
+  "summaryShortActed": {
+    "message": "Anubis đã thay đổi $1 trên tổng số $2."
+  },
+  "summaryShortActedRemoved": {
+    "message": "Anubis đã thay đổi $1 trên tổng số $2 và dọn dẹp trang."
+  },
+  "summaryShortRemoved": {
+    "message": "Anubis đã dọn dẹp trang."
+  },
+  "summaryDetails": {
+    "message": "Chi tiết"
+  },
+  "summaryFewerDetails": {
+    "message": "Thu gọn chi tiết"
+  },
+  "summaryUnchanged_other": {
+    "message": "Anubis giữ nguyên $1 kết quả."
+  },
+  "summaryUnchangedPages": {
+    "message": "Anubis giữ nguyên tất cả $1 kết quả từ $2 trang."
+  },
+  "summaryFiltered_other": {
+    "message": "Chỉ hiện “$2”: $3 trên $1 kết quả."
+  },
+  "summaryRemovedAi_other": {
+    "message": "$1 câu trả lời AI"
+  },
+  "summaryRemovedVideos_other": {
+    "message": "$1 khung video"
+  },
+  "summaryRemovedQuestions_other": {
+    "message": "$1 danh sách câu hỏi"
+  },
+  "summaryRemovedDiscussions_other": {
+    "message": "$1 khung thảo luận"
+  },
+  "summaryRemovedNews_other": {
+    "message": "$1 khung tin tức"
+  },
+  "summaryRemovedImages_other": {
+    "message": "$1 khung hình ảnh"
+  },
+  "summaryRemovedRelated_other": {
+    "message": "$1 danh sách tìm kiếm liên quan"
+  },
+  "summaryRemovedElsewhere_other": {
+    "message": "$1 hàng công cụ tìm kiếm khác"
+  },
+  "summaryRemovedAdRequests_other": {
+    "message": "$1 yêu cầu cho phép quảng cáo"
+  },
+  "withShortcut": {
+    "message": "$1 ($2)"
+  },
+  "toolbarOff": {
+    "message": "Anubis đang tắt"
+  },
+  "weighLabel": {
+    "message": "Ẩn, xếp hạng hoặc gắn nhãn $1"
+  },
+  "weighLabelRanked": {
+    "message": "Ẩn, xếp hạng hoặc gắn nhãn $1 ($2)"
+  },
+  "hiddenShow": {
+    "message": "Hiện"
+  },
+  "hiddenShowSite": {
+    "message": "Hiện $1"
+  },
+  "hiddenMore_other": {
+    "message": "và $1 kết quả khác"
+  },
+  "summaryChangedHide": {
+    "message": "Đã ẩn $1."
+  },
+  "summaryChangedLower": {
+    "message": "Đã hạ $1."
+  },
+  "summaryChangedRaise": {
+    "message": "Đã nâng $1."
+  },
+  "summaryChangedPin": {
+    "message": "Đã ghim $1."
+  },
+  "summaryChangedAllow": {
+    "message": "Đã đặt $1 thành Bình thường."
+  },
+  "summaryChangedNormal": {
+    "message": "Đã bỏ thứ hạng bạn đặt cho $1."
+  },
+  "summaryChangedTagOn": {
+    "message": "Đã gắn nhãn “$2” cho $1."
+  },
+  "summaryChangedTagOff": {
+    "message": "Đã gỡ nhãn “$2” khỏi $1."
+  },
+  "summaryChangedSite": {
+    "message": "Đã thay đổi $1 trong danh sách của bạn."
+  },
+  "summaryUndo": {
+    "message": "Hoàn tác"
+  },
+  "menuSuggest": {
+    "message": "Danh sách nên có trang web này? Đề xuất với $1."
+  },
+  "menuSuggestTitle": {
+    "message": "Đề xuất $1 với $2 trên trình theo dõi vấn đề của danh sách đó"
+  },
+  "menuReport": {
+    "message": "Sai? Báo cáo với $1."
+  },
+  "menuMatchedRule": {
+    "message": "Quy tắc khớp, dòng $1"
+  },
+  "menuReportTitle": {
+    "message": "Báo với $1 rằng danh sách đã sai về kết quả này, trên trình theo dõi vấn đề của danh sách đó"
+  },
+  "offerTitle": {
+    "message": "Đăng ký $1?"
+  },
+  "offerTrust": {
+    "message": "Danh sách có thể ẩn, xếp hạng và gắn nhãn trang web trong kết quả của bạn. Chỉ đăng ký danh sách bạn tin tưởng."
+  },
+  "offerPermission": {
+    "message": "Sau đó trình duyệt sẽ hỏi bạn có cho phép Anubis đọc từ $1, trang web chứa danh sách, hay không."
+  },
+  "offerAlready": {
+    "message": "Bạn đã đăng ký $1."
+  },
+  "offerSubscribe": {
+    "message": "Đăng ký"
+  },
+  "offerSubscribing": {
+    "message": "Đang đăng ký…"
+  },
+  "offerCancel": {
+    "message": "Hủy"
+  },
+  "welcomeTitle": {
+    "message": "Chào mừng bạn đến với Anubis"
+  },
+  "welcomeHeading": {
+    "message": "Đã cài đặt Anubis"
+  },
+  "welcomeIntro": {
+    "message": "Anubis gắn nhãn, xếp hạng lại và ẩn kết quả tìm kiếm theo lựa chọn của bạn và các danh sách bạn đăng ký."
+  },
+  "welcomePinHeading": {
+    "message": "Giữ Anubis trên thanh công cụ"
+  },
+  "welcomePinWhy": {
+    "message": "Nút của Anubis trên thanh công cụ cho biết Anubis đã làm gì trên trang, bật hoặc tắt Anubis và xếp hạng trang web bạn đang xem."
+  },
+  "welcomePinChrome": {
+    "message": "Nhấn nút Tiện ích (mảnh ghép) cạnh thanh địa chỉ, rồi nhấn biểu tượng ghim bên cạnh Anubis."
+  },
+  "welcomePinEdge": {
+    "message": "Nhấn nút Tiện ích mở rộng (mảnh ghép) cạnh thanh địa chỉ, rồi nhấn biểu tượng con mắt bên cạnh Anubis."
+  },
+  "welcomePinOpera": {
+    "message": "Nhấn nút Tiện ích mở rộng (khối lập phương) cạnh thanh địa chỉ, rồi nhấn biểu tượng ghim bên cạnh Anubis."
+  },
+  "welcomePinFirefox": {
+    "message": "Nhấn nút Tiện ích mở rộng (mảnh ghép) cạnh thanh địa chỉ, rồi nhấn biểu tượng bánh răng bên cạnh Anubis và chọn Ghim vào thanh công cụ."
+  },
+  "welcomePinAndroid": {
+    "message": "Anubis nằm trong trình đơn của trình duyệt, ở mục Tiện ích mở rộng."
+  },
+  "welcomePinned": {
+    "message": "Anubis đã có trên thanh công cụ của bạn."
+  },
+  "welcomeSearchHeading": {
+    "message": "Thử tìm kiếm"
+  },
+  "welcomeSearchHow": {
+    "message": "Tìm kiếm như bình thường. Để ẩn, xếp hạng hoặc gắn nhãn một trang web, hãy trỏ vào một kết quả của trang web đó và nhấn nút ⚖."
+  },
+  "welcomeSearchFor": {
+    "message": "Tìm “$1” để xem nhãn từ các danh sách của bạn:"
+  },
+  "welcomeSearchOn": {
+    "message": "Tìm “$1” trên $2"
+  },
+  "welcomeQuery": {
+    "message": "python list comprehension"
+  },
+  "welcomeListsHeading": {
+    "message": "Các danh sách của bạn"
+  },
+  "welcomeListsIntro": {
+    "message": "Danh sách gắn nhãn, nâng, hạ hoặc ẩn trang web cho bạn. Bạn bắt đầu với các danh sách sau:"
+  },
+  "welcomeListsNone": {
+    "message": "Danh sách gắn nhãn, nâng, hạ hoặc ẩn trang web cho bạn. Bạn chưa đăng ký danh sách nào."
+  },
+  "welcomeListsMore": {
+    "message": "Tắt các danh sách này hoặc tìm thêm danh sách trong phần cài đặt."
+  },
+  "welcomeListsOpen": {
+    "message": "Mở cài đặt danh sách"
+  },
+  "welcomeGuide": {
+    "message": "Wiki"
+  },
+  "welcomePrivacy": {
+    "message": "Quyền riêng tư"
+  },
+  "syncHeading": {
+    "message": "Đồng bộ hóa"
+  },
+  "syncIntro": {
+    "message": "Danh sách và cài đặt của bạn trên các máy tính khác và trong các trình duyệt khác của bạn."
+  },
+  "syncBrowserHeading": {
+    "message": "Đồng bộ hóa của trình duyệt"
+  },
+  "syncFirefox": {
+    "message": "Danh sách, cài đặt, lựa chọn nhãn và gói đăng ký của bạn được lưu trong bộ nhớ đồng bộ hóa của Firefox. Firefox sao chép chúng sang các máy tính khác của bạn khi bạn đăng nhập Firefox và đã đánh dấu Tiện ích trong cài đặt đồng bộ hóa. Firefox đồng bộ hóa khoảng 10 phút một lần, hoặc khi bạn chọn Đồng bộ ngay."
+  },
+  "syncFirefoxAndroid": {
+    "message": "Firefox cho Android không đồng bộ hóa dữ liệu của tiện ích, nên danh sách, cài đặt, lựa chọn nhãn và gói đăng ký của bạn chỉ ở trên thiết bị này. Để đồng bộ hóa chúng, hãy kết nối một máy chủ WebDAV bên dưới."
+  },
+  "syncChrome": {
+    "message": "Danh sách, cài đặt, lựa chọn nhãn và gói đăng ký của bạn được lưu trong bộ nhớ đồng bộ hóa của trình duyệt. Trình duyệt sao chép chúng sang các máy tính khác của bạn khi bạn đăng nhập trình duyệt và bật đồng bộ hóa tiện ích."
+  },
+  "syncBrowserHelp": {
+    "message": "Cần kiểm tra cài đặt nào của trình duyệt"
+  },
+  "syncUsage": {
+    "message": "Chúng chiếm $1 KB trong số $2 KB mà bộ nhớ đồng bộ hóa có."
+  },
+  "syncTooBig": {
+    "message": "Danh sách của bạn quá lớn để đồng bộ hóa, nên chỉ được lưu trên thiết bị này. Cài đặt, lựa chọn nhãn và gói đăng ký của bạn vẫn được đồng bộ hóa."
+  },
+  "webdavHeading": {
+    "message": "Giữa các trình duyệt"
+  },
+  "webdavIntro": {
+    "message": "Firefox và Chrome không tự đồng bộ hóa với nhau. Để chia sẻ giữa hai trình duyệt, bạn có thể kết nối cùng một bộ nhớ WebDAV trong mỗi trình duyệt. Koofr và InfiniCLOUD có gói miễn phí, và các lựa chọn tự lưu trữ như Nextcloud cũng dùng được. Anubis giữ một tệp ở đó, anubis-sync.json, và kết hợp các thay đổi từ từng trình duyệt."
+  },
+  "webdavHelp": {
+    "message": "Lấy địa chỉ và mật khẩu ở đâu"
+  },
+  "webdavAddress": {
+    "message": "Địa chỉ"
+  },
+  "webdavAddressHint": {
+    "message": "Địa chỉ WebDAV của dịch vụ, bắt đầu bằng https://"
+  },
+  "listPermissionDenied": {
+    "message": "Anubis cần quyền đọc $1 để cập nhật danh sách này."
+  },
+  "webdavUser": {
+    "message": "Tên người dùng"
+  },
+  "webdavPassword": {
+    "message": "Mật khẩu"
+  },
+  "webdavPasswordHint": {
+    "message": "Hầu hết dịch vụ cung cấp một mật khẩu riêng cho ứng dụng. Hãy dùng mật khẩu đó."
+  },
+  "webdavConnect": {
+    "message": "Kết nối"
+  },
+  "webdavEncrypt": {
+    "message": "Mã hóa đầu cuối tệp đồng bộ hóa (nên dùng)"
+  },
+  "webdavEncryptionPassphrase": {
+    "message": "Cụm mật khẩu mã hóa"
+  },
+  "webdavConfirmPassphrase": {
+    "message": "Xác nhận cụm mật khẩu"
+  },
+  "webdavEncryptionHint": {
+    "message": "Dùng một cụm mật khẩu dài, không trùng với nơi khác, trong mọi trình duyệt (ít nhất 12 ký tự). Cụm mật khẩu chỉ được lưu trong trình duyệt này, không bao giờ được gửi tới máy chủ. Nếu bạn quên, bản sao trên máy chủ sẽ không khôi phục được."
+  },
+  "webdavCorrectPassphrase": {
+    "message": "Nhập đúng cụm mật khẩu mã hóa"
+  },
+  "webdavCorrectPassphraseHint": {
+    "message": "Dùng cùng cụm mật khẩu bạn đã đặt ở trình duyệt kia. Cụm mật khẩu chỉ được lưu ở đây và không bao giờ được gửi tới máy chủ."
+  },
+  "webdavSavePassphrase": {
+    "message": "Lưu cụm mật khẩu và đồng bộ hóa"
+  },
+  "webdavChangePassphrase": {
+    "message": "Đổi cụm mật khẩu mã hóa"
+  },
+  "webdavChangePassphraseHint": {
+    "message": "Anubis kiểm tra cụm mật khẩu hiện tại trước khi thay đổi tệp trên máy chủ. Hãy nhập cụm mật khẩu mới vào mọi trình duyệt khác trước lần đồng bộ hóa tiếp theo của trình duyệt đó."
+  },
+  "webdavChangePassphraseHelp": {
+    "message": "Điều gì xảy ra khi bạn đổi cụm mật khẩu"
+  },
+  "webdavEncryptionShort": {
+    "message": "Dùng cụm mật khẩu mã hóa có ít nhất 12 ký tự."
+  },
+  "webdavPassphraseMismatch": {
+    "message": "Các cụm mật khẩu không khớp."
+  },
+  "webdavEncrypted": {
+    "message": "Tệp đồng bộ hóa được mã hóa đầu cuối. Cụm mật khẩu của tệp chỉ được lưu trong trình duyệt này; máy chủ không đọc được nội dung. Hãy dùng cùng cụm mật khẩu trong mỗi trình duyệt. Nếu bạn quên, bản sao trên máy chủ sẽ không khôi phục được."
+  },
+  "webdavEncryptionPending": {
+    "message": "Đã thiết lập mã hóa ở đây. Lần đồng bộ hóa thành công tiếp theo sẽ mã hóa bản sao trên máy chủ. Hãy dùng cùng cụm mật khẩu trong mỗi trình duyệt."
+  },
+  "webdavEncryptionMissing": {
+    "message": "Trình duyệt này chưa đặt cụm mật khẩu mã hóa. Hãy dùng cùng cụm mật khẩu với trình duyệt kia để đọc tệp đã mã hóa. Người vận hành máy chủ có thể đọc tệp đồng bộ hóa không mã hóa."
+  },
+  "webdavPrivacy": {
+    "message": "Khi bật mã hóa, chỉ dữ liệu đã mã hóa được gửi tới máy chủ này; cụm mật khẩu được lưu ở đây và không bao giờ được gửi đi. Khi không mã hóa, máy chủ đọc được tệp đồng bộ hóa. Thông tin đăng nhập WebDAV của bạn được lưu ở đây và gửi tới máy chủ này để đăng nhập."
+  },
+  "webdavBadAddress": {
+    "message": "Nhập địa chỉ WebDAV của dịch vụ, bắt đầu bằng https://"
+  },
+  "webdavMissingLogin": {
+    "message": "Nhập cả tên người dùng và mật khẩu."
+  },
+  "webdavDenied": {
+    "message": "Anubis cần bạn cho phép để gửi danh sách của bạn tới $1."
+  },
+  "webdavConnected": {
+    "message": "Đang đồng bộ hóa với $1 dưới tên $2."
+  },
+  "webdavWhen": {
+    "message": "Thay đổi được gửi tới máy chủ vài giây sau khi bạn thực hiện. Thay đổi từ các trình duyệt khác được nhận khi trình duyệt khởi động và khi bạn tìm kiếm, nhiều nhất 5 phút một lần."
+  },
+  "webdavSyncing": {
+    "message": "Đang đồng bộ hóa…"
+  },
+  "webdavLastSync": {
+    "message": "Đồng bộ hóa lần cuối: $1."
+  },
+  "webdavLastTried": {
+    "message": "Thử lần cuối: $1."
+  },
+  "webdavSyncNow": {
+    "message": "Đồng bộ hóa ngay"
+  },
+  "webdavDisconnect": {
+    "message": "Ngắt kết nối"
+  },
+  "webdavDisconnected": {
+    "message": "Đã ngắt kết nối. Tệp vẫn ở trên máy chủ, còn danh sách và cài đặt của bạn vẫn ở đây."
+  },
+  "webdavErrorAuth": {
+    "message": "Máy chủ không chấp nhận tên người dùng hoặc mật khẩu. Nhiều dịch vụ cần mật khẩu ứng dụng ở đây, không phải mật khẩu thường dùng của bạn."
+  },
+  "webdavErrorForbidden": {
+    "message": "Máy chủ không cho phép tài khoản này lưu tệp ở đó."
+  },
+  "webdavErrorFolder": {
+    "message": "Không có thư mục nào ở địa chỉ đó trên máy chủ. Hãy kiểm tra địa chỉ."
+  },
+  "webdavErrorPermission": {
+    "message": "Anubis không còn quyền đồng bộ hóa với $1. Nhấn Đồng bộ hóa ngay để cho phép lại."
+  },
+  "webdavErrorNetwork": {
+    "message": "Không kết nối được với $1. Hãy kiểm tra địa chỉ và kết nối mạng của bạn."
+  },
+  "webdavErrorFile": {
+    "message": "Tệp anubis-sync.json ở đó không phải là tệp Anubis đọc được, nên đã được giữ nguyên. Hãy dùng thư mục khác."
+  },
+  "webdavErrorNeedsPassphrase": {
+    "message": "Tệp đồng bộ hóa này đã được mã hóa. Hãy nhập cụm mật khẩu của tệp; chưa có gì bị thay đổi."
+  },
+  "webdavErrorWrongPassphrase": {
+    "message": "Cụm mật khẩu đó không giải mã được tệp đồng bộ hóa. Hãy kiểm tra lại; tệp trên máy chủ vẫn được giữ nguyên."
+  },
+  "webdavErrorUnencrypted": {
+    "message": "Kết nối này trước đây đã được mã hóa, nhưng giờ máy chủ có một tệp đồng bộ hóa dạng văn bản thường. Tệp đó được giữ nguyên. Hãy kiểm tra tệp trên máy chủ trước khi đồng bộ hóa lại."
+  },
+  "webdavErrorChanged": {
+    "message": "Tệp đồng bộ hóa đã thay đổi trong lúc đổi cụm mật khẩu, hoặc máy chủ không thể bảo vệ tệp khỏi các chỉnh sửa đồng thời. Không có gì bị ghi đè. Hãy đồng bộ hóa lại rồi thử lại."
+  },
+  "webdavErrorUnconfirmed": {
+    "message": "Kết nối tới $1 bị ngắt trong lúc lưu tệp, nên Anubis không biết tệp hiện dùng cụm mật khẩu nào. Cụm mật khẩu cũ vẫn được lưu ở đây. Nếu lần đồng bộ hóa tiếp theo báo sai, hãy nhập cụm mật khẩu mới."
+  },
+  "webdavErrorServer": {
+    "message": "Máy chủ trả về lỗi (HTTP $1). Hãy thử lại sau."
+  },
+  "webdavErrorFailed": {
+    "message": "Đồng bộ hóa chưa hoàn tất. Hãy thử lại."
+  },
+  "appearanceHeading": {
+    "message": "Giao diện"
+  },
+  "appearanceIntro": {
+    "message": "Anubis trông như thế nào ở đây và trên trang tìm kiếm."
+  },
+  "themeHeading": {
+    "message": "Bảng màu"
+  },
+  "themeHint": {
+    "message": "Tự động theo trình duyệt của bạn ở đây và trong trình đơn trên mỗi kết quả, và theo chế độ sáng hoặc tối của từng công cụ tìm kiếm cho phần còn lại mà Anubis thêm vào trang."
+  },
+  "paletteHeading": {
+    "message": "Màu trên trang tìm kiếm"
+  },
+  "paletteHint": {
+    "message": "Đơn giản vẽ mọi thứ Anubis thêm vào trang tìm kiếm bằng màu xám, không có màu vàng kim. Nhãn mất màu và được phân biệt bằng tên. Cài đặt và cửa sổ bật lên trên thanh công cụ vẫn giữ màu vàng kim."
+  },
+  "paletteGold": {
+    "message": "Vàng kim"
+  },
+  "palettePlain": {
+    "message": "Đơn giản"
+  },
+  "hideStyleHeading": {
+    "message": "Kết quả bị ẩn"
+  },
+  "hideStyleHint": {
+    "message": "Gỡ bỏ đưa chúng ra khỏi trang; bản tóm tắt phía trên kết quả đếm chúng, và Hiện mục đã ẩn đưa chúng trở lại. Thu gọn để lại một dòng mảnh cho mỗi chuỗi kết quả bị ẩn. Làm mờ làm chúng nhạt đi."
+  },
+  "hideStyleRemove": {
+    "message": "Gỡ bỏ"
+  },
+  "hideStyleCollapse": {
+    "message": "Thu gọn"
+  },
+  "hideStyleDim": {
+    "message": "Làm mờ"
+  },
+  "rerankHeading": {
+    "message": "Xếp hạng lại kết quả"
+  },
+  "rerankHint": {
+    "message": "Đưa kết quả đã nâng và đã ghim lên trên, kết quả đã hạ xuống dưới, giống như Brave Goggle."
+  },
+  "rerankHelp": {
+    "message": "Cách xếp hạng lại hoạt động"
+  },
+  "deeperAuto": {
+    "message": "Tự động tải thêm kết quả"
+  },
+  "deeperAutoHint": {
+    "message": "Thêm các trang kết quả tiếp theo vào trang đầu tiên và xếp hạng tất cả cùng nhau, để một trang web bạn đã ghim ở trang 3 lên đầu. “Tải thêm kết quả” phía trên kết quả cũng làm như vậy khi bạn yêu cầu. Nhập số trang cần thêm, từ 0 (tắt) đến $1."
+  },
+  "deeperHelp": {
+    "message": "Cách tải thêm hoạt động"
+  },
+  "deeperUnit": {
+    "message": "trang nữa"
+  },
+  "deeperTipOff": {
+    "message": "Tắt: chỉ tải thêm kết quả khi bạn nhấn “Tải thêm kết quả”."
+  },
+  "deeperTipTime_other": {
+    "message": "Mỗi lần tìm kiếm mất thêm khoảng $1 giây."
+  },
+  "deeperTipFew": {
+    "message": "$1 Công cụ tìm kiếm hiếm khi phiền lòng vì vài trang."
+  },
+  "deeperTipSome": {
+    "message": "$1 Một số công cụ tìm kiếm có thể bắt đầu yêu cầu bạn xác nhận mình không phải là robot."
+  },
+  "deeperTipMany": {
+    "message": "$1 Google và Bing thường yêu cầu bạn xác nhận mình không phải là robot sau ngần ấy trang. Một số công cụ tìm kiếm hết trang trước đó."
+  },
+  "chipsHeading": {
+    "message": "Nhãn dưới kết quả"
+  },
+  "chipsHint": {
+    "message": "Hiện nhãn và thứ hạng dưới tiêu đề của mỗi kết quả."
+  },
+  "summaryHeading": {
+    "message": "Bản tóm tắt"
+  },
+  "summaryHint": {
+    "message": "Hiện một dòng tóm tắt những gì Anubis đã thay đổi, phía trên kết quả."
+  },
+  "enabledHeading": {
+    "message": "Anubis đang bật"
+  },
+  "enabledHint": {
+    "message": "Tắt mục này để giữ nguyên trang tìm kiếm mà không cần gỡ cài đặt."
+  },
+  "enginesHeading": {
+    "message": "Công cụ tìm kiếm"
+  },
+  "enginesIntro": {
+    "message": "Anubis hoạt động trên kết quả web từ các công cụ tìm kiếm này. Kết quả được tìm theo cấu trúc trang khi có thể, nên những thay đổi nhỏ về thiết kế không làm Anubis hỏng."
+  },
+  "enginesTrouble": {
+    "message": "Anubis không làm gì trên trang tìm kiếm?"
+  },
+  "enginesTroubleHelp": {
+    "message": "Những điều cần kiểm tra"
+  },
+  "shareHeading": {
+    "message": "Sao lưu, nhập và chia sẻ"
+  },
+  "shareIntro": {
+    "message": "Giữ một bản sao của mọi thứ, chuyển các trang web của bạn từ công cụ khác sang, hoặc xuất bản danh sách của bạn để người khác đăng ký."
+  },
+  "publishHeading": {
+    "message": "Xuất bản danh sách của bạn"
+  },
+  "publishIntro": {
+    "message": "Không cần máy chủ: một kho git công khai là cơ sở dữ liệu, và pull request là cách mọi người đóng góp."
+  },
+  "publishHelp": {
+    "message": "Cách xuất bản danh sách"
+  },
+  "publishStepDownload": {
+    "message": "Tải danh sách của bạn xuống bên dưới. Điền các dòng $1, $2 và $3 ở đầu tệp."
+  },
+  "publishStepRepository": {
+    "message": "Tạo một kho GitHub công khai (hoặc một gist) và thêm tệp vào, ví dụ $1."
+  },
+  "publishStepIssues": {
+    "message": "Thêm $1 để mọi người có thể đề xuất trang web cho danh sách của bạn từ trình đơn trên mỗi kết quả."
+  },
+  "publishStepShare": {
+    "message": "Chia sẻ liên kết của tệp. Mọi người dán liên kết vào Danh sách → Thêm danh sách."
+  },
+  "publishStepDirectory": {
+    "message": "Muốn danh sách có trong Danh sách khác cho mọi người? Mở một pull request thêm danh sách vào $1."
+  },
+  "publishDownload": {
+    "message": "Tải danh sách của tôi xuống"
+  },
+  "publishFormat": {
+    "message": "Định dạng danh sách"
+  },
+  "importHeading": {
+    "message": "Nhập trang web"
+  },
+  "importIntro": {
+    "message": "Chuyển từ uBlacklist hoặc HOHSER sang? Dán quy tắc hoặc tệp xuất của bạn vào đây và các trang web sẽ được thêm vào danh sách của bạn. Trang web bị ẩn vẫn bị ẩn, chế độ ẩn một phần của HOHSER trở thành Hạ, và màu tô sáng trở thành nhãn có tô sáng."
+  },
+  "importHelp": {
+    "message": "Quy tắc của từng công cụ trở thành gì"
+  },
+  "importPlaceholder": {
+    "message": "Dán quy tắc uBlacklist, tệp xuất HOHSER, một Goggle, hoặc mỗi dòng một tên miền"
+  },
+  "importLabel": {
+    "message": "Trang web cần nhập"
+  },
+  "importButton": {
+    "message": "Nhập"
+  },
+  "importChooseFile": {
+    "message": "Chọn tệp"
+  },
+  "importSourceHohser": {
+    "message": "tệp xuất HOHSER"
+  },
+  "importSourceUblacklist": {
+    "message": "quy tắc uBlacklist"
+  },
+  "importSourceGoggle": {
+    "message": "một Goggle"
+  },
+  "importSourceAnubis": {
+    "message": "danh sách Anubis"
+  },
+  "importSourceDomains": {
+    "message": "danh sách tên miền"
+  },
+  "importRead_other": {
+    "message": "Đọc dưới dạng $2: đã thêm $1 trang web và cập nhật $3."
+  },
+  "importSkipped_other": {
+    "message": "Đã bỏ qua $1 quy tắc có mẫu địa chỉ hoặc cú pháp không được hỗ trợ; hãy đăng ký danh sách gốc để giữ các quy tắc đó."
+  },
+  "importFailed": {
+    "message": "Không nhập được: $1"
+  },
+  "backupHeading": {
+    "message": "Sao lưu"
+  },
+  "backupIntro": {
+    "message": "Mọi thứ trong một tệp: cài đặt, lựa chọn nhãn, gói đăng ký và danh sách của bạn."
+  },
+  "backupExport": {
+    "message": "Xuất bản sao lưu"
+  },
+  "backupRestore": {
+    "message": "Khôi phục bản sao lưu"
+  },
+  "backupRestored": {
+    "message": "Đã khôi phục bản sao lưu."
+  },
+  "backupRestoreFailed": {
+    "message": "Không khôi phục được: $1"
+  },
+  "resetButton": {
+    "message": "Đặt lại cài đặt"
+  },
+  "resetDone": {
+    "message": "Đã đặt lại cài đặt, nhãn và gói đăng ký. Danh sách của bạn được giữ nguyên."
+  },
+  "settingsSections": {
+    "message": "Các mục cài đặt"
+  },
+  "settingsPageTitle": {
+    "message": "$1 – Anubis"
+  },
+  "settingsBrandTitle": {
+    "message": "Mở wiki của Anubis"
+  },
+  "settingsTagline": {
+    "message": "Ẩn, xếp hạng và gắn nhãn kết quả tìm kiếm"
+  },
+  "settingsSource": {
+    "message": "Mã nguồn trên GitHub"
+  },
+  "sitesHeading": {
+    "message": "Trang web của bạn"
+  },
+  "sitesHelp": {
+    "message": "Cách xếp hạng hoạt động"
+  },
+  "tagsHeading": {
+    "message": "Nhãn"
+  },
+  "tagsHelp": {
+    "message": "Cách nhãn hoạt động"
+  },
+  "listsHeading": {
+    "message": "Danh sách"
+  },
+  "listsHelp": {
+    "message": "Cách danh sách hoạt động"
+  },
+  "cleanupHeading": {
+    "message": "Gỡ khung"
+  },
+  "cleanupHelp": {
+    "message": "Cách gỡ khung hoạt động"
+  },
+  "appearanceHelp": {
+    "message": "Về kết quả bị ẩn"
+  },
+  "enginesHelp": {
+    "message": "Công cụ tìm kiếm nào hoạt động"
+  },
+  "syncHelp": {
+    "message": "Cách đồng bộ hóa hoạt động"
+  },
+  "shareHelp": {
+    "message": "Chuyển từ công cụ khác"
+  },
+  "cleanupIntro": {
+    "message": "Anubis có thể gỡ các khung trên trang tìm kiếm không phải là kết quả. Bật từng khung bạn không muốn thấy. “Hiện mục đã ẩn” phía trên kết quả đưa chúng trở lại cho lần tìm kiếm đó."
+  },
+  "cleanupEverySearch": {
+    "message": "Trong mọi lần tìm kiếm"
+  },
+  "cleanupEverySearchHint": {
+    "message": "Bật nghĩa là Anubis gỡ khung đó. Tắt thì khung vẫn ở trên trang."
+  },
+  "cleanupStillShows": {
+    "message": "Nếu một khung vẫn hiện"
+  },
+  "cleanupAll": {
+    "message": "Tất cả các mục này"
+  },
+  "cleanupAllHint": {
+    "message": "Bật hoặc tắt mọi nút gạt trong phần này."
+  },
+  "cleanupOnGoogle": {
+    "message": "Trên Google"
+  },
+  "cleanupWebTab": {
+    "message": "Luôn mở thẻ Web"
+  },
+  "cleanupWebTabHint": {
+    "message": "Chuyển mọi lần tìm kiếm trên Google tới thẻ Web: chỉ có liên kết, không có Tổng quan do AI tạo, video hay các khung khác, kể cả những khung Anubis không nhận ra. Để bỏ qua cho một lần tìm kiếm, hãy chọn Tất cả phía trên kết quả."
+  },
+  "cleanupAi": {
+    "message": "Câu trả lời AI"
+  },
+  "cleanupAiHint": {
+    "message": "Tổng quan do AI tạo và thẻ Chế độ AI của Google, câu trả lời có AI hỗ trợ và Duck.ai của DuckDuckGo, câu trả lời AI của Bing và câu trả lời AI của Brave."
+  },
+  "cleanupVideos": {
+    "message": "Khung video"
+  },
+  "cleanupVideosHint": {
+    "message": "Khung video và video ngắn xen giữa các kết quả."
+  },
+  "cleanupQuestions": {
+    "message": "Mọi người cũng hỏi"
+  },
+  "cleanupQuestionsHint": {
+    "message": "Danh sách câu hỏi của người khác với câu trả lời có thể mở rộng."
+  },
+  "cleanupDiscussions": {
+    "message": "Khung thảo luận"
+  },
+  "cleanupDiscussionsHint": {
+    "message": "Khung chủ đề diễn đàn xen giữa các kết quả, như “Thảo luận và diễn đàn” của Google. Các trang diễn đàn nằm trong kết quả vẫn được giữ."
+  },
+  "cleanupNews": {
+    "message": "Tin bài hàng đầu"
+  },
+  "cleanupNewsHint": {
+    "message": "Khung tin tức xen giữa các kết quả."
+  },
+  "cleanupImages": {
+    "message": "Hàng hình ảnh"
+  },
+  "cleanupImagesHint": {
+    "message": "Hàng hình ảnh xen giữa các kết quả. Thẻ Hình ảnh vẫn hoạt động."
+  },
+  "cleanupRelated": {
+    "message": "Tìm kiếm liên quan"
+  },
+  "cleanupRelatedHint": {
+    "message": "Danh sách các lượt tìm kiếm khác, thường ở cuối trang."
+  },
+  "cleanupElsewhere": {
+    "message": "Công cụ tìm kiếm khác"
+  },
+  "cleanupElsewhereHint": {
+    "message": "Hàng nút lặp lại lượt tìm kiếm của bạn trên công cụ tìm kiếm khác, như “Find elsewhere” của Brave."
+  },
+  "cleanupAdRequests": {
+    "message": "Yêu cầu cho phép quảng cáo"
+  },
+  "cleanupAdRequestsHint": {
+    "message": "Biểu ngữ yêu cầu bạn tắt trình chặn quảng cáo hoặc cho phép quảng cáo, như “Block creepy ads, not private search” của Startpage."
+  },
+  "sitesIntro": {
+    "message": "Các trang web bạn tự xếp hạng hoặc ẩn. Lựa chọn của bạn được ưu tiên hơn mọi danh sách bạn đăng ký. Dùng nút trên bất kỳ kết quả tìm kiếm nào, hoặc thêm trang web ở đây."
+  },
+  "sitesEditAsText": {
+    "message": "Chỉnh sửa dạng văn bản"
+  },
+  "sitesBackToTable": {
+    "message": "Quay lại bảng"
+  },
+  "sitesTooBig": {
+    "message": "Danh sách của bạn quá lớn để trình duyệt đồng bộ hóa, nên chỉ được lưu trên thiết bị này. Hãy tải xuống để giữ một bản sao."
+  },
+  "sitesAddPlaceholder": {
+    "message": "Tên miền hoặc URL, ví dụ fandom.com"
+  },
+  "sitesAdd": {
+    "message": "Thêm"
+  },
+  "sitesNotDomain": {
+    "message": "Đó có vẻ không phải là tên miền."
+  },
+  "sitesAddHint": {
+    "message": "Áp dụng cho trang web và mọi tên miền con của trang web đó."
+  },
+  "sitesAddHelp": {
+    "message": "Chọn phạm vi của trang web"
+  },
+  "sitesFilter_other": {
+    "message": "Lọc $1 trang web…"
+  },
+  "sitesFilterLabel": {
+    "message": "Lọc trang web"
+  },
+  "sitesAddTagTo": {
+    "message": "Thêm nhãn cho $1"
+  },
+  "sitesKeptNormal": {
+    "message": "Giữ ở mức Bình thường, bất kể các danh sách của bạn nói gì"
+  },
+  "sitesRemoveTag": {
+    "message": "Gỡ “$1” khỏi $2"
+  },
+  "sitesForget": {
+    "message": "Bỏ $1"
+  },
+  "sitesFirst500": {
+    "message": "Đang hiện 500 trang web đầu tiên. Hãy lọc để tìm phần còn lại."
+  },
+  "sitesNone": {
+    "message": "Chưa có trang web nào. Thêm một trang web ở trên, hoặc dùng nút trên một kết quả tìm kiếm."
+  },
+  "sitesTextLabel": {
+    "message": "Danh sách của bạn dạng văn bản"
+  },
+  "sitesTextIntro": {
+    "message": "Danh sách của bạn ở định dạng danh sách Anubis: cú pháp Brave Goggles cộng thêm nhãn. Đây chính là tệp bạn sẽ xuất bản. Những dòng bảng không hiện được vẫn được giữ nguyên như đã viết."
+  },
+  "sitesTextReadable": {
+    "message": "$1 và $2, tất cả đều đọc được."
+  },
+  "listInstructions_other": {
+    "message": "$1 chỉ thị"
+  },
+  "listErrorLine": {
+    "message": "Dòng $1: $2"
+  },
+  "sitesSave": {
+    "message": "Lưu"
+  },
+  "sitesFormatReference": {
+    "message": "Tham khảo định dạng"
+  },
+  "listsIntro": {
+    "message": "Đăng ký các danh sách gắn nhãn, xếp hạng lại hoặc ẩn trang web. Mọi tệp văn bản trên GitHub, GitLab, Codeberg hoặc gist đều dùng được: danh sách Anubis, Brave Goggles, bộ quy tắc uBlacklist và danh sách tên miền thuần."
+  },
+  "listsUpdateAll": {
+    "message": "Cập nhật tất cả"
+  },
+  "listsUpdating": {
+    "message": "Đang cập nhật…"
+  },
+  "listsAllChecked": {
+    "message": "Đã kiểm tra bản cập nhật cho mọi danh sách."
+  },
+  "listsAddHeading": {
+    "message": "Thêm danh sách"
+  },
+  "listsAddHint": {
+    "message": "Dán liên kết tới tệp. Liên kết tới một trang GitHub, một gist hoặc một Brave Goggle cũng dùng được."
+  },
+  "listsAddHelp": {
+    "message": "Danh sách nào dùng được"
+  },
+  "listsUrlLabel": {
+    "message": "URL của danh sách"
+  },
+  "listsNone": {
+    "message": "Chưa có danh sách nào. Hãy chọn vài danh sách bên dưới."
+  },
+  "listsMoreHeading": {
+    "message": "Danh sách khác"
+  },
+  "listsMoreIntro": {
+    "message": "Từ thư mục của Anubis và cộng đồng rộng lớn hơn."
+  },
+  "listsShare": {
+    "message": "Bạn đã tạo một danh sách đáng chia sẻ? Thêm danh sách vào thư mục bằng một pull request tới $1."
+  },
+  "listsNeedHttps": {
+    "message": "Danh sách phải được cung cấp qua https."
+  },
+  "listsPermissionToDownload": {
+    "message": "Anubis cần quyền đọc $1 để tải danh sách này xuống."
+  },
+  "listsSubscribed": {
+    "message": "Đã đăng ký $1: $2 và $3."
+  },
+  "listsSubscribedBundled": {
+    "message": "Đã đăng ký $1 (dùng bản đi kèm Anubis cho tới khi cập nhật được)."
+  },
+  "listsSubscribeFailed": {
+    "message": "Không đăng ký được: $1"
+  },
+  "listsUse": {
+    "message": "Dùng $1"
+  },
+  "listsOn": {
+    "message": "Bật"
+  },
+  "listsOff": {
+    "message": "Tắt"
+  },
+  "listsUpdateFailed": {
+    "message": "$1: $2"
+  },
+  "listsUpToDate": {
+    "message": "$1 đã được cập nhật mới nhất."
+  },
+  "listsFacts": {
+    "message": "$1."
+  },
+  "listsLinks": {
+    "message": "$1"
+  },
+  "listsNotDownloaded": {
+    "message": "chưa tải xuống"
+  },
+  "listsBy": {
+    "message": "do $1 tạo"
+  },
+  "listsBundledCopy": {
+    "message": "bản đi kèm Anubis"
+  },
+  "listsUpdated": {
+    "message": "cập nhật $1"
+  },
+  "listsHomepage": {
+    "message": "trang chủ"
+  },
+  "listsSuggestChanges": {
+    "message": "đề xuất thay đổi"
+  },
+  "listsUsingBundled": {
+    "message": "Đang dùng bản đi kèm Anubis cho tới khi cập nhật được ($1)."
+  },
+  "listsLastUpdateFailed": {
+    "message": "Lần cập nhật gần nhất không thành công: $1."
+  },
+  "listsSkippedLines_other": {
+    "message": "Đã bỏ qua $1 dòng: Anubis chưa đọc được cú pháp đó."
+  },
+  "listsUpdateNow": {
+    "message": "Cập nhật ngay"
+  },
+  "listsUpdateOne": {
+    "message": "Cập nhật $1"
+  },
+  "listsViewFile": {
+    "message": "Xem tệp"
+  },
+  "listsViewOne": {
+    "message": "Xem $1"
+  },
+  "listsUnsubscribe": {
+    "message": "Hủy đăng ký"
+  },
+  "listsUnsubscribeOne": {
+    "message": "Hủy đăng ký $1"
+  },
+  "listLensTitle": {
+    "message": "Lăng kính ẩn các kết quả mà danh sách không nhắc đến"
+  },
+  "listKindLens": {
+    "message": "lăng kính"
+  },
+  "listKindBuiltin": {
+    "message": "có sẵn"
+  },
+  "listFormatAnubis": {
+    "message": "Danh sách Anubis"
+  },
+  "listFormatGoggle": {
+    "message": "Brave Goggle"
+  },
+  "listFormatUblacklist": {
+    "message": "Bộ quy tắc uBlacklist"
+  },
+  "listFormatDomains": {
+    "message": "danh sách tên miền"
+  },
+  "timeJustNow": {
+    "message": "vừa xong"
+  },
+  "tagsIntro": {
+    "message": "Danh sách gắn nhãn cho kết quả. Bạn quyết định mỗi nhãn làm gì: theo danh sách, chỉ hiện nhãn, tô sáng, hoặc ghim, nâng, hạ hay ẩn những kết quả có nhãn đó. Các danh sách dùng cùng tên nhãn sẽ dùng chung nhãn đó."
+  },
+  "tagActionList": {
+    "message": "Theo các danh sách"
+  },
+  "tagActionLabel": {
+    "message": "Chỉ hiện nhãn"
+  },
+  "tagActionHighlight": {
+    "message": "Tô sáng"
+  },
+  "tagActionFor": {
+    "message": "Làm gì với kết quả có nhãn $1"
+  },
+  "tagMarksNone": {
+    "message": "Chưa có trang web nào có nhãn này."
+  },
+  "tagMarks": {
+    "message": "Gắn cho $1."
+  },
+  "tagMarksYours_other": {
+    "message": "$1 trang web của bạn"
+  },
+  "tagMarksFromList_other": {
+    "message": "$1 trang web từ $2"
+  },
+  "tagEffectLabel": {
+    "message": "$1 Chỉ là nhãn: thứ hạng của chúng không đổi."
+  },
+  "tagEffectHighlight": {
+    "message": "$1 Tô sáng chúng bằng màu của nhãn."
+  },
+  "tagEffectRaise": {
+    "message": "$1 Nâng chúng trong các lần tìm kiếm của bạn."
+  },
+  "tagEffectLower": {
+    "message": "$1 Hạ chúng trong các lần tìm kiếm của bạn."
+  },
+  "tagEffectPin": {
+    "message": "$1 Ghim chúng lên đầu các lần tìm kiếm của bạn."
+  },
+  "tagEffectHide": {
+    "message": "$1 Ẩn chúng khỏi các lần tìm kiếm của bạn."
+  },
+  "tagEffectOneList": {
+    "message": "$1 $2 $3 trong số đó."
+  },
+  "tagEffectLists": {
+    "message": "$1 Các danh sách $2 trong số đó."
+  },
+  "tagListRaises_other": {
+    "message": "nâng $1"
+  },
+  "tagListLowers_other": {
+    "message": "hạ $1"
+  },
+  "tagListHides_other": {
+    "message": "ẩn $1"
+  },
+  "tagListsRaise_other": {
+    "message": "nâng $1"
+  },
+  "tagListsLower_other": {
+    "message": "hạ $1"
+  },
+  "tagListsHide_other": {
+    "message": "ẩn $1"
+  },
+  "tagSitesToTag": {
+    "message": "Trang web cần gắn nhãn $1"
+  },
+  "tagAddSite": {
+    "message": "Thêm trang web"
+  },
+  "tagNotSite": {
+    "message": "“$1” có vẻ không phải là trang web."
+  },
+  "tagTypeSite": {
+    "message": "Nhập một trang web, ví dụ fandom.com."
+  },
+  "tagSiteNote": {
+    "message": "$1: $2"
+  },
+  "tagMoreSites_other": {
+    "message": "$1 trang web khác"
+  },
+  "tagFromList": {
+    "message": "$1: $2."
+  },
+  "tagName": {
+    "message": "Tên nhãn"
+  },
+  "tagNameShort": {
+    "message": "Tên"
+  },
+  "tagDescription": {
+    "message": "Mô tả"
+  },
+  "tagDescriptionPlaceholder": {
+    "message": "Ý nghĩa của nhãn, không bắt buộc"
+  },
+  "tagMeaning": {
+    "message": "Ý nghĩa của $1"
+  },
+  "tagYourSites": {
+    "message": "Trang web của bạn có nhãn này"
+  },
+  "tagNoSites": {
+    "message": "Chưa có. Thêm một trang web ở đây, hoặc dùng nút ⚖ trên một kết quả tìm kiếm."
+  },
+  "tagFromYourLists": {
+    "message": "Từ các danh sách của bạn"
+  },
+  "tagColour": {
+    "message": "Màu"
+  },
+  "tagColourOf": {
+    "message": "Màu của $1"
+  },
+  "tagShowUnder": {
+    "message": "Hiện $1 dưới kết quả"
+  },
+  "tagShowTitle": {
+    "message": "Hiện nhãn này dưới kết quả"
+  },
+  "tagEdit": {
+    "message": "Chỉnh sửa"
+  },
+  "tagDone": {
+    "message": "Xong"
+  },
+  "tagEditLabel": {
+    "message": "Chỉnh sửa $1 và các trang web của nhãn"
+  },
+  "tagDelete": {
+    "message": "Xóa “$1”"
+  },
+  "tagNewHeading": {
+    "message": "Nhãn mới"
+  },
+  "tagNewHint": {
+    "message": "Nhãn của bạn được lưu trong danh sách của bạn, nên sẽ đi kèm khi bạn xuất bản danh sách."
+  },
+  "tagNewHelp": {
+    "message": "Thêm trang web vào nhãn"
+  },
+  "tagNewPlaceholder": {
+    "message": "Tên, ví dụ “AI slop”"
+  },
+  "tagNewColour": {
+    "message": "Màu của nhãn mới"
+  },
+  "tagCreate": {
+    "message": "Tạo nhãn"
+  },
+  "tagNameInvalid": {
+    "message": "Đặt cho nhãn một tên có ít nhất một chữ cái hoặc chữ số."
+  },
+  "tagExists": {
+    "message": "Đã có nhãn tên “$1”."
+  },
+  "tagYoursHeading": {
+    "message": "Nhãn của bạn"
+  },
+  "tagListsHeading": {
+    "message": "Nhãn từ danh sách"
+  },
+  "tagListsHint": {
+    "message": "Các danh sách của bạn định nghĩa những nhãn này. Hãy quyết định mỗi nhãn làm gì và thêm trang web của riêng bạn vào bất kỳ nhãn nào. Nếu một danh sách bỏ một nhãn mà trang web của bạn đang dùng, nhãn đó sẽ chuyển sang Nhãn của bạn."
+  },
+  "tagSourceLists": {
+    "message": "Từ $1"
+  },
+  "tagNoneYours": {
+    "message": "Bạn chưa có nhãn riêng nào. Hãy tạo một nhãn ở trên."
+  },
+  "quoted": {
+    "message": "“$1”"
+  },
+  "reasonPins": {
+    "message": "ghim lên đầu"
+  },
+  "reasonKeepsNormal": {
+    "message": "giữ ở mức Bình thường"
+  },
+  "reasonHides": {
+    "message": "ẩn kết quả này"
+  },
+  "reasonRaises": {
+    "message": "nâng $1 bậc"
+  },
+  "reasonLowers": {
+    "message": "hạ $1 bậc"
+  },
+  "reasonTags": {
+    "message": "gắn nhãn $1"
+  },
+  "reasonMentions": {
+    "message": "có nhắc đến trang web này"
+  },
+  "reasonLens": {
+    "message": "không bao gồm trang web này, nên kết quả bị ẩn"
+  },
+  "reasonYourTagSettings": {
+    "message": "Cài đặt nhãn của bạn"
+  },
+  "menuReason": {
+    "message": "$1 $2."
+  },
+  "choicePin": {
+    "message": "ghim lên đầu vì $1"
+  },
+  "choiceHide": {
+    "message": "ẩn vì $1"
+  },
+  "choiceRaise_other": {
+    "message": "nâng $2 bậc với mỗi nhãn $3"
+  },
+  "choiceLower_other": {
+    "message": "hạ $2 bậc với mỗi nhãn $3"
+  },
+  "choiceTotal": {
+    "message": "$1, $2"
+  },
+  "choiceNetUp_other": {
+    "message": "nên kết quả này lên $1 bậc"
+  },
+  "choiceNetDown_other": {
+    "message": "nên kết quả này xuống $1 bậc"
+  },
+  "choiceNetSame": {
+    "message": "nên kết quả này giữ nguyên vị trí"
+  },
+  "lineBadTagDefinition": {
+    "message": "Định nghĩa nhãn không hợp lệ: $1"
+  },
+  "lineNeedsPattern": {
+    "message": "Chỉ thị cần một mẫu hoặc một trang web"
+  },
+  "lineTooLong": {
+    "message": "Chỉ thị dài hơn $1 ký tự"
+  },
+  "lineBadSite": {
+    "message": "Trang web không hợp lệ: $1"
+  },
+  "lineBadStrength": {
+    "message": "$1 phải trong khoảng 1–$2"
+  },
+  "lineBadTagId": {
+    "message": "Mã nhãn không hợp lệ: $1"
+  },
+  "lineUnknownOption": {
+    "message": "Tùy chọn không xác định: $1"
+  },
+  "lineEmptyPattern": {
+    "message": "Mẫu trống"
+  },
+  "lineTooManyWildcards": {
+    "message": "Tối đa $1 ký tự đại diện (*) mỗi chỉ thị"
+  },
+  "lineTooManySeparators": {
+    "message": "Tối đa $1 dấu phân cách (^) mỗi chỉ thị"
+  },
+  "lineIfGuard": {
+    "message": "Chưa hỗ trợ điều kiện @if"
+  },
+  "lineRegexTooLong": {
+    "message": "Biểu thức chính quy dài hơn $1 ký tự"
+  },
+  "lineRegexFreeze": {
+    "message": "Biểu thức chính quy có thể làm treo trang tìm kiếm (một nhóm lặp lại nằm trong một nhóm lặp lại khác): $1"
+  },
+  "lineBadRegex": {
+    "message": "Biểu thức chính quy không hợp lệ: $1"
+  },
+  "lineUnsupported": {
+    "message": "Quy tắc không được hỗ trợ: $1"
+  },
+  "lineBadHost": {
+    "message": "Máy chủ không hợp lệ: $1"
+  },
+  "lineMatchesEverything": {
+    "message": "Quy tắc khớp với mọi thứ"
+  },
+  "lineNotDomain": {
+    "message": "Không phải tên miền: $1"
+  },
+  "listTooBig": {
+    "message": "Danh sách lớn hơn $1 MB"
+  },
+  "listIsWebPage": {
+    "message": "Nhận được một trang web, không phải danh sách. Hãy dùng URL của tệp thô."
+  },
+  "listTimedOut": {
+    "message": "Hết thời gian chờ"
+  },
+  "listNoUsableRules": {
+    "message": "Không có quy tắc dùng được (dòng $1: $2)"
+  },
+  "listNoRules": {
+    "message": "Không tìm thấy quy tắc nào"
+  },
+  "backupNotBackup": {
+    "message": "Đây không phải là bản sao lưu của Anubis."
+  },
+  "themeAuto": {
+    "message": "Tự động"
+  },
+  "themeLight": {
+    "message": "Sáng"
+  },
+  "themeDark": {
+    "message": "Tối"
+  },
+  "themeAutoTitle": {
+    "message": "Giao diện tự động"
+  },
+  "themeLightTitle": {
+    "message": "Giao diện sáng"
+  },
+  "themeDarkTitle": {
+    "message": "Giao diện tối"
+  },
+  "personalListName": {
+    "message": "Danh sách của bạn"
+  },
+  "importHighlightTag": {
+    "message": "Tô sáng $1"
+  },
+  "tagDeleted_other": {
+    "message": "Đã xóa nhãn “$2” và gỡ nhãn khỏi $1 trang web."
+  },
+  "listsUnsubscribed": {
+    "message": "Đã hủy đăng ký $1."
+  }
+}

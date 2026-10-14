@@ -1,7 +1,7 @@
 # Help translate
 
 ::: warning Machine translated: use with caution
-Anubis is written in English, the only language it fully supports. It also comes in **Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), French, German, Hindi, Indonesian, Italian, Japanese, Korean, Brazilian Portuguese, Russian, Spanish, Turkish, and Urdu**, but a machine made those translations and nobody who speaks the language has checked them yet. Some words may be wrong or unclear, so use them with caution. When you rank or hide sites, the ⚖ menu's **Why** and the summary above the results say exactly what happened; if a translation leaves you unsure, check the English. To see Anubis in English, set your browser's language to English.
+Anubis is written in English, the only language it fully supports. It also comes in **Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), French, German, Hindi, Indonesian, Italian, Japanese, Korean, Brazilian Portuguese, Russian, Spanish, Turkish, Urdu, and Vietnamese**, but a machine made those translations and nobody who speaks the language has checked them yet. Some words may be wrong or unclear, so use them with caution. When you rank or hide sites, the ⚖ menu's **Why** and the summary above the results say exactly what happened; if a translation leaves you unsure, check the English. To see Anubis in English, set your browser's language to English.
 :::
 
 Anubis's interface is in English. Every word it shows can be translated: the toolbar popup, the settings, the welcome page, and what it adds to search pages. Your browser picks the translation for its own language, and anything a translation leaves out stays in English. In any language but English, Settings, the welcome page, and the toolbar popup say that the translation is a machine's, with a link to this page.
@@ -26,6 +26,7 @@ Anubis's interface is in English. Every word it shows can be translated: the too
 | Spanish | `es` | Not yet |
 | Turkish | `tr` | Not yet |
 | Urdu | `ur` | Not yet |
+| Vietnamese | `vi` | Not yet |
 
 Chrome has no Urdu interface of its own, so Urdu shows in Firefox only.
 
