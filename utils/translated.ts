@@ -1,6 +1,6 @@
 import { h } from './dom';
 import { gap, t } from './i18n';
-import { guide } from './links';
+import { wiki } from './wiki';
 
 // Every language but English is a machine translation, not checked by people who
 // speak it. Anubis's own pages say so wherever they show one (docs/guide/translate.md).
@@ -23,6 +23,6 @@ export function machineTranslationNote(short = false): HTMLElement | null {
     gap(),
     short ? t('machineTranslatedShort') : t('machineTranslatedNote'),
     gap(),
-    h('a', { href: guide('guide/translate'), target: '_blank', rel: 'noopener noreferrer' }, t('machineTranslatedHelp')),
+    h('a', { href: wiki('guide/translate'), target: '_blank', rel: 'noopener noreferrer' }, t('machineTranslatedHelp')),
   );
 }

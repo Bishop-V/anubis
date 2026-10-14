@@ -6,7 +6,7 @@ import { balanceSvg, swingBalance } from '@/utils/balance';
 import { h } from '@/utils/dom';
 import { ENGINES } from '@/utils/engines';
 import { localizePage, t, type MessageKey } from '@/utils/i18n';
-import { guide } from '@/utils/links';
+import { wiki } from '@/utils/wiki';
 import { parseList } from '@/utils/listformat';
 import { getSettings, listCacheItem } from '@/utils/storage';
 import { BUNDLED_DIRECTORY, displayName, getSubscriptions, listText } from '@/utils/subscriptions';
@@ -119,8 +119,8 @@ async function main() {
   const note = machineTranslationNote();
   if (note) $('main').prepend(note);
   renderScales();
-  $<HTMLAnchorElement>('#guide').href = guide();
-  $<HTMLAnchorElement>('#privacy').href = guide('guide/privacy');
+  $<HTMLAnchorElement>('#guide').href = wiki();
+  $<HTMLAnchorElement>('#privacy').href = wiki('guide/privacy');
   await initTheme();
   await Promise.all([renderPin(), renderSearch(), renderLists()]);
   // Pinning happens in the browser's toolbar, outside this page.

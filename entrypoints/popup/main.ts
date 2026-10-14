@@ -5,7 +5,8 @@ import { browser } from '#imports';
 import { balanceSvg, setBalance } from '@/utils/balance';
 import { domainChoices, normalizeDomain, siteOf } from '@/utils/domain';
 import { engineFor } from '@/utils/engines';
-import { bugReportLink, describeBrowser, guide } from '@/utils/links';
+import { bugReportLink, describeBrowser } from '@/utils/links';
+import { wiki } from '@/utils/wiki';
 import { LEVELS, evaluate, listTagCards, listTagIds, type Level } from '@/utils/matcher';
 import { h, icon, siteName } from '@/utils/dom';
 import { ICON_GEAR, LEVEL_CHIPS, LEVEL_LABELS, levelIcon, tagEffectText, tagMark } from '@/utils/icons';
@@ -366,8 +367,8 @@ $('#add-toggle').addEventListener('click', () => {
 });
 
 enabled.addEventListener('change', () => void updateSettings({ enabled: enabled.checked }));
-$<HTMLAnchorElement>('#help').href = guide();
-$<HTMLAnchorElement>('.brand').href = guide();
+$<HTMLAnchorElement>('#help').href = wiki();
+$<HTMLAnchorElement>('.brand').href = wiki();
 // Filled in with Anubis's version, the browser, and the search engine of this tab.
 const setReportLink = (engine?: string) => {
   $<HTMLAnchorElement>('#report').href = bugReportLink({ version: browser.runtime.getManifest().version, browser: describeBrowser(navigator.userAgent), engine });
