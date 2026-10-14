@@ -5,7 +5,8 @@ import { browser } from '#imports';
 import { h, icon } from '@/utils/dom';
 import { ICON_EXTERNAL } from '@/utils/icons';
 import { localizePage, t } from '@/utils/i18n';
-import { bugReportLink, describeBrowser, guide, REPO_URL } from '@/utils/links';
+import { bugReportLink, describeBrowser, REPO_URL } from '@/utils/links';
+import { wiki } from '@/utils/wiki';
 import { listSites } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet } from '@/utils/ruleset';
 import { getSubscriptions } from '@/utils/subscriptions';
@@ -64,7 +65,7 @@ async function renderNav() {
     // The name opens the wiki, where everything here is explained.
     h(
       'a',
-      { class: 'brand', href: guide(), target: '_blank', rel: 'noopener noreferrer', title: t('settingsBrandTitle') },
+      { class: 'brand', href: wiki(), target: '_blank', rel: 'noopener noreferrer', title: t('settingsBrandTitle') },
       h('img', { src: '/anubis.svg', alt: '', width: 36, height: 36 }),
       h('div', null, h('h1', null, 'Anubis'), h('p', null, t('settingsTagline'))),
     ),
@@ -83,7 +84,7 @@ async function renderNav() {
       h(
         'div',
         { class: 'links' },
-        external(guide(), t('welcomeGuide')),
+        external(wiki(), t('welcomeGuide')),
         external(bugReportLink({ version: browser.runtime.getManifest().version, browser: describeBrowser(navigator.userAgent) }), t('reportProblem'), t('reportProblemTitle')),
         external(REPO_URL, t('settingsSource')),
       ),

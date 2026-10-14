@@ -20,7 +20,8 @@ import {
 import { applyData, collectData, readBackup, toBackup } from '@/utils/backup';
 import { t, tn, tParts } from '@/utils/i18n';
 import { importIntoPersonal } from '@/utils/importers';
-import { guide, REPO_URL } from '@/utils/links';
+import { REPO_URL } from '@/utils/links';
+import { wiki } from '@/utils/wiki';
 import { themeSwitcher } from '@/utils/theme';
 import { flash, flashed, rerender } from './flash';
 import { download, helpLink, pageTitle, switchRow } from './parts';
@@ -311,7 +312,7 @@ export async function renderShare(): Promise<HTMLElement> {
         'div',
         { class: 'toolbar', style: 'margin-top:12px' },
         h('button', { class: 'btn primary', type: 'button', on: { click: () => download('my-anubis-list.anubis', rules.personalText) } }, icon(ICON_DOWNLOAD), t('publishDownload')),
-        h('a', { class: 'btn', href: guide('list-format'), target: '_blank', rel: 'noopener noreferrer' }, t('publishFormat')),
+        h('a', { class: 'btn', href: wiki('list-format'), target: '_blank', rel: 'noopener noreferrer' }, t('publishFormat')),
       ),
     ),
     h(

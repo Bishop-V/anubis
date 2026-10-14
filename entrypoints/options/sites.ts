@@ -2,7 +2,7 @@ import { normalizeDomain } from '@/utils/domain';
 import { h, icon, siteName } from '@/utils/dom';
 import { t, tn } from '@/utils/i18n';
 import { ICON_CLOSE, ICON_DOWNLOAD, ICON_EDIT, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
-import { guide } from '@/utils/links';
+import { wiki } from '@/utils/wiki';
 import { colorForTag, parseList } from '@/utils/listformat';
 import { LEVELS, type Level } from '@/utils/matcher';
 import { displayLevel, listSites, setSite, type SiteEntry } from '@/utils/personal';
@@ -278,7 +278,7 @@ function textEditor(rules: RuleSet): HTMLElement {
         },
         t('offerCancel'),
       ),
-      h('a', { class: 'text-btn', href: guide('list-format'), target: '_blank', rel: 'noopener noreferrer' }, t('sitesFormatReference')),
+      h('a', { class: 'text-btn', href: wiki('list-format'), target: '_blank', rel: 'noopener noreferrer' }, t('sitesFormatReference')),
     ),
   );
 }

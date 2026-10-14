@@ -10,9 +10,9 @@ function sources(dir: string): string[] {
   );
 }
 
-/** Every wiki path the extension links to: `guide('…')`, `helpLink('…'`, and the sections' `help: ['…'`. */
+/** Every wiki path the extension links to: `guide('…')`, `wiki('…')`, `helpLink('…'`, and the sections' `help: ['…'`. */
 const LINKS = sources('entrypoints').flatMap((file) =>
-  [...readFileSync(file, 'utf8').matchAll(/(?:guide\(|helpLink\(|help: \[)'([^']+)'/g)].map((m) => ({ file, path: m[1]! })),
+  [...readFileSync(file, 'utf8').matchAll(/(?:guide\(|wiki\(|helpLink\(|help: \[)'([^']+)'/g)].map((m) => ({ file, path: m[1]! })),
 );
 
 /** The anchor VitePress gives a heading. */

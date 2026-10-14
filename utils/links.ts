@@ -51,8 +51,43 @@ export function describeBrowser(userAgent: string): string | undefined {
   return undefined;
 }
 
-/** A page of the wiki, e.g. `guide('guide/lists')`. */
-export const guide = (path = ''): string => `${DOCS_URL}${path}`;
+/**
+ * The wiki pages that exist in another language (docs/<language>/), by language. The
+ * rest of the wiki, such as the list format, stays English. tests/links.test.ts checks
+ * this against the folders.
+ */
+export const TRANSLATED_PAGES: Record<string, readonly string[]> = {
+  vi: [
+    '',
+    ...[
+      'clean-up',
+      'getting-started',
+      'import-and-backup',
+      'introduction',
+      'lists',
+      'more-results',
+      'privacy',
+      'publish-a-list',
+      'ranking',
+      'search-engines',
+      'sync',
+      'tags',
+      'translate',
+      'troubleshooting',
+    ].map((page) => `guide/${page}`),
+  ],
+};
+
+/**
+ * A page of the wiki, e.g. `guide('guide/lists')`. With a `language` (the interface's,
+ * `t('langCode')`), a page that has a translation opens that, without the `#heading`
+ * after it: a translated heading has its own anchor. Any other page stays English.
+ */
+export function guide(path = '', language = 'en'): string {
+  const page = path.split('#')[0]!;
+  if (TRANSLATED_PAGES[language]?.includes(page)) return `${DOCS_URL}${language}/${page}`;
+  return `${DOCS_URL}${path}`;
+}
 
 /**
  * The page subscribe links point to. With Anubis installed, a content script there
