@@ -30,7 +30,8 @@ The full mock-page e2e run succeeded with Nix-provided Chromium. The first attem
 | Ecosia | Selectors from uBlacklist | Results verified live; `p` is right, but the fetched page is blocked (2026-09-29) |
 | Yahoo | Structural, not covered by uBlacklist | Results and `/RU=` decoding verified live; `a.next` is right, but the fetched page is blocked (2026-09-29) |
 | Kagi | Selectors from uBlacklist (`_ext_ub_*`), widgets left out, `main#main` as the boundary | Verified live in a person's browser (2026-10): results, tags under the title, the button beside the ⊕, the menu opening to the right, the summary above the onboarding banner, Blast from the Past left alone, and the video panel (`.headerVideos`) removed. No Load more results |
-| Yandex, Mojeek | Selectors from uBlacklist (Mojeek structural) | Unverified: each showed a human check to automated Chromium |
+| Yandex | Selectors from uBlacklist | Checked and working on the live site (noted in `ROADMAP.md` on 2026-10-14). Its Videos tab and Load more results are still unverified |
+| Mojeek | Structural | Unverified: it showed a human check to automated Chromium |
 
 Checked on live pages on 2026-09-29, with the Chrome build loaded in automated (headless) Chromium, clean-up fully on, and a test list that hid, lowered, raised, pinned, and tagged common sites. Engines treat automated browsers with more suspicion than a person's, so the blocks below may not all happen in everyday use.
 

@@ -16,7 +16,7 @@ Don't attach a page saved from a real search: it holds your account, your locati
 
 ## What happens next
 
-You'll get a reply on the report. Once the problem is confirmed, the fix goes out in a new release to the Chrome, Firefox, and Edge stores, and the advisory is published on GitHub with credit to you, if you'd like it. Store review can take a few days, so please keep the details private until the fixed version is available.
+You'll get a reply on the report. Once the problem is confirmed, the fix goes out in a new release to Firefox Add-ons and the Chrome Web Store, and the advisory is published on GitHub with credit to you, if you'd like it. Store review can take a few days, so please keep the details private until the fixed version is available.
 
 Only the latest release is supported. There are no fixes for older versions: the stores update the extension automatically.
 
