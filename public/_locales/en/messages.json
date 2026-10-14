@@ -350,7 +350,7 @@
 
   "settingsSections": { "message": "Settings sections", "description": "Screen reader label of the settings sidebar." },
   "settingsPageTitle": { "message": "$1 – Anubis", "description": "Tab title of the settings page. $1 is the open section, e.g. Tags." },
-  "settingsBrandTitle": { "message": "Open the Anubis wiki", "description": "Tooltip of Anubis’s name at the top of the settings sidebar." },
+  "settingsBrandTitle": { "message": "Open the Anubis wiki", "description": "Tooltip of Anubis’s name at the top of the settings sidebar and of the logo and name in the toolbar popup." },
   "settingsTagline": { "message": "Hide, rank, and tag search results", "description": "Under Anubis’s name at the top of the settings sidebar." },
   "settingsSource": { "message": "Source on GitHub", "description": "Link at the foot of the settings sidebar." },
   "sitesHeading": { "message": "Your sites", "description": "Settings → Your sites: the section’s heading, also in the sidebar." },
