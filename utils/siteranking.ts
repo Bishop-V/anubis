@@ -142,5 +142,8 @@ export function tagPicker(ids: string[], fromLists: Set<string>, item: (id: stri
 /** The lists that gave the site a tag, after its name where it can't be pressed: "from Paywalls". */
 export function tagSource(verdict: Verdict, id: string): HTMLElement | null {
   const lists = (verdict.tagSources[id] ?? []).filter((name) => name !== PERSONAL_NAME);
-  return lists.length ? h('span', { class: 'tag-source' }, t('tagFromSource', tJoin(lists))) : null;
+  if (!lists.length) return null;
+  const text = t('tagFromSource', tJoin(lists));
+  // A long list name is cut short with an ellipsis; the whole of it is in the tooltip.
+  return h('span', { class: 'tag-source', title: text }, text);
 }
