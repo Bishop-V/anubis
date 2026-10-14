@@ -20,6 +20,7 @@ export default defineComponent({
       const intro = frontmatter.value.intro as { title: string; lead: string; actions: Action[] } | undefined;
       const highlights = (frontmatter.value.highlights ?? []) as Highlight[];
       const closing = frontmatter.value.closing as Closing | undefined;
+      const highlightsLabel = (frontmatter.value.highlightsLabel as string | undefined) ?? 'What else Anubis does';
       if (!intro) return null;
       return h('div', { class: 'home' }, [
         h(ScrollDemo, null, () => [
@@ -34,7 +35,7 @@ export default defineComponent({
         highlights.length
           ? h(
               'section',
-              { class: 'home-highlights', 'aria-label': 'What else Anubis does' },
+              { class: 'home-highlights', 'aria-label': highlightsLabel },
               highlights.map((f) =>
                 h('div', { class: 'home-highlight' }, [
                   h('h2', f.title),

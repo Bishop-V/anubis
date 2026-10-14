@@ -27,8 +27,9 @@ locale = "en-gb"
 [files]
 extend-exclude = [
   "LICENSE",
-  # Machine translations, and lists made from other projects.
+  # Machine translations (the interface and the Vietnamese wiki), and lists made from other projects.
   "locales/",
+  "docs/vi/",
   "public/_locales/[!e]*/",
   "lists/sources/",
   "upstream/",
