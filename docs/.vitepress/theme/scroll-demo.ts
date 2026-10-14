@@ -1,3 +1,4 @@
+import { useData } from 'vitepress';
 import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, ref, type VNode } from 'vue';
 import { tagMark } from './demo-parts';
 
@@ -233,6 +234,12 @@ function renderPage(step: number): VNode {
 export default defineComponent({
   name: 'ScrollDemo',
   setup(_, { slots }) {
+    // The page's own words, for a translated home page (docs/vi/index.md): its front
+    // matter's `demo` has `cue`, `label`, and `steps`. The mock search page stays in
+    // English, like the screenshots.
+    const { frontmatter } = useData();
+    const words = () =>
+      (frontmatter.value.demo ?? {}) as { cue?: string; label?: string; steps?: { title: string; text: string }[] };
     const step = ref(1);
     const root = ref<HTMLElement>();
     const track = ref<HTMLElement>();
@@ -307,24 +314,25 @@ export default defineComponent({
       h('div', { ref: root, class: 'scroll-demo' }, [
         h('div', { class: ['demo-intro', { active: step.value === 1 }] }, [
           slots.default?.(),
-          h('p', { class: 'demo-cue' }, [h('span', { class: 'arrow', 'aria-hidden': 'true' }, '↓'), ' Scroll, and watch Anubis tidy up this search']),
+          h('p', { class: 'demo-cue' }, [h('span', { class: 'arrow', 'aria-hidden': 'true' }, '↓'), ` ${words().cue ?? 'Scroll, and watch Anubis tidy up this search'}`]),
         ]),
         h('div', { class: 'demo-stage' }, [renderPage(step.value)]),
         h('div', { ref: track, class: 'demo-track' }, [
           h('div', { ref: rail, class: 'demo-rail', 'aria-hidden': 'true' }, [h('span', { ref: fill, class: 'demo-rail-fill' })]),
           h(
             'ol',
-            { class: 'demo-steps', 'aria-label': 'What Anubis does to a search' },
-            STEPS.map((s, i) =>
-              h(
+            { class: 'demo-steps', 'aria-label': words().label ?? 'What Anubis does to a search' },
+            STEPS.map((english, i) => {
+              const s = words().steps?.[i] ?? english;
+              return h(
                 'li',
                 {
                   class: ['demo-step', { active: step.value === i + 2, reached: step.value >= i + 2 }],
                   'aria-current': step.value === i + 2 ? 'step' : undefined,
                 },
                 [h('h2', [h('span', { class: 'demo-marker', 'aria-hidden': 'true' }), h('span', { class: 'demo-step-title' }, s.title)]), h('p', s.text)],
-              ),
-            ),
+              );
+            }),
           ),
         ]),
       ]);
