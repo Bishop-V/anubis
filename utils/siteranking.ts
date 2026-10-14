@@ -90,15 +90,27 @@ export function tagOrder(tags: Map<string, { label: string }>, entry: SiteEntry 
   return { mine, fromList, ids };
 }
 
+/** More tags than this fold behind "Show more tags"; the ones on the site stay in view. */
+export const TAGS_SHOWN = 8;
+
 /**
  * The tags to choose from, yours apart from those lists give sites, each group under
  * its name when there are both. `item` draws one tag; `ids` comes in `tagOrder`'s order.
+ * Past `TAGS_SHOWN` tags, the rest fold away behind a button, except those on the site.
  */
 export function tagPicker(ids: string[], fromLists: Set<string>, item: (id: string) => HTMLElement): HTMLElement | null {
   if (!ids.length) return null;
+  const folded: HTMLElement[] = [];
+  const draw = (id: string) => {
+    const el = item(id);
+    if (ids.indexOf(id) >= TAGS_SHOWN && el.getAttribute('aria-pressed') !== 'true' && !el.classList.contains('fixed')) {
+      el.hidden = true;
+      folded.push(el);
+    }
+    return el;
+  };
   const yours = ids.filter((id) => !fromLists.has(id));
   const lists = ids.filter((id) => fromLists.has(id));
-  if (!lists.length) return h('div', { class: 'tags' }, ids.map(item));
   const group = (name: string, group: string[], hint?: string) =>
     h(
       'div',
@@ -106,18 +118,32 @@ export function tagPicker(ids: string[], fromLists: Set<string>, item: (id: stri
       h('p', { class: 'tag-group-name' }, name),
       // Adding a list's tag to a site never changes the list: said where it's done.
       hint ? h('p', { class: 'tag-group-hint' }, hint) : null,
-      h('div', { class: 'tags' }, group.map(item)),
+      h('div', { class: 'tags' }, group.map(draw)),
     );
-  return h(
-    'div',
-    { class: 'tag-groups' },
-    yours.length ? group(t('tagYoursHeading'), yours) : null,
-    group(t('tagListsHeading'), lists, t('tagListsPickerHint')),
-  );
+  const body = lists.length
+    ? h(
+        'div',
+        { class: 'tag-groups' },
+        yours.length ? group(t('tagYoursHeading'), yours) : null,
+        group(t('tagListsHeading'), lists, t('tagListsPickerHint')),
+      )
+    : h('div', { class: 'tags' }, ids.map(draw));
+  if (!folded.length) return body;
+  const more = h('button', { type: 'button', class: 'tags-more', attrs: { 'aria-expanded': 'false' } }, t('tagsShowMore', String(folded.length)));
+  more.addEventListener('click', () => {
+    const open = more.getAttribute('aria-expanded') !== 'true';
+    for (const el of folded) el.hidden = !open;
+    more.setAttribute('aria-expanded', String(open));
+    more.textContent = open ? t('tagsShowFewer') : t('tagsShowMore', String(folded.length));
+  });
+  return h('div', { class: 'tag-picker' }, body, more);
 }
 
 /** The lists that gave the site a tag, after its name where it can't be pressed: "from Paywalls". */
 export function tagSource(verdict: Verdict, id: string): HTMLElement | null {
   const lists = (verdict.tagSources[id] ?? []).filter((name) => name !== PERSONAL_NAME);
-  return lists.length ? h('span', { class: 'tag-source' }, t('tagFromSource', tJoin(lists))) : null;
+  if (!lists.length) return null;
+  const text = t('tagFromSource', tJoin(lists));
+  // A long list name is cut short with an ellipsis; the whole of it is in the tooltip.
+  return h('span', { class: 'tag-source', title: text }, text);
 }

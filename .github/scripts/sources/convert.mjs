@@ -180,7 +180,7 @@ function siteAndPath(base) {
 /**
  * Indie Wiki Buddy's data: wikis on Fandom, Fextralife, and Neoseeker, and the
  * independent wikis their topics have elsewhere. The first are lowered and
- * labelled "Independent wiki elsewhere", with a comment naming where; the
+ * labelled "Has independent wiki", with a comment naming where; the
  * independent ones are raised and labelled "Independent wiki".
  */
 export function indieWikis(data, { commit, licence }) {
@@ -223,7 +223,7 @@ export function indieWikis(data, { commit, licence }) {
         expires: '7 days',
         tag: [
           "independent-wiki | Independent wiki | #3a8a67 | A wiki run by its community or the game's developers, not a commercial wiki host.",
-          "independent-elsewhere | Independent wiki elsewhere | #8c6a4f | A wiki on Fandom, Fextralife, or Neoseeker whose topic has an independent wiki. The rule's comment names it.",
+          "independent-elsewhere | Has independent wiki | #8c6a4f | A wiki on Fandom, Fextralife, or Neoseeker whose topic has an independent wiki. The rule's comment names it.",
         ],
       },
       [

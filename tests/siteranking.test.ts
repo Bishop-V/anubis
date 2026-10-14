@@ -1,11 +1,12 @@
-import { describe, expect, it } from 'vitest';
+import { parseHTML } from 'linkedom';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { TAG_CHOICES, type Level, type Reason, type Verdict } from '@/utils/matcher';
 import { displayLevel, PERSONAL_NAME, type PersonalLevel, type SiteEntry } from '@/utils/personal';
 import { installEnglish } from './english';
 
 // The ranking chips are translated as utils/icons loads.
 installEnglish();
-const { fromListsClass, nextLevel, rankingHint, rankingOf, tagOrder } = await import('@/utils/siteranking');
+const { fromListsClass, nextLevel, rankingHint, rankingOf, tagOrder, tagPicker } = await import('@/utils/siteranking');
 
 const verdict = (level: Level, reasons: Partial<Reason>[] = [], extra: Partial<Verdict> = {}): Verdict => ({
   level,
@@ -107,5 +108,44 @@ describe('tagOrder', () => {
     expect(ids).toEqual(['d', 'c', 'a', 'b']);
     expect([...mine]).toEqual(['d']);
     expect([...fromList]).toEqual(['c']);
+  });
+});
+
+describe('tagPicker', () => {
+  const { document, Node } = parseHTML('<html><body></body></html>');
+  const draw = (pressed: string[]) => (id: string) => {
+    const el = document.createElement('button') as unknown as HTMLElement;
+    el.textContent = id;
+    if (pressed.includes(id)) el.setAttribute('aria-pressed', 'true');
+    return el;
+  };
+  const ids = Array.from({ length: 12 }, (_, i) => `t${i}`);
+  const hiddenOf = (root: HTMLElement) => [...root.querySelectorAll('button')].filter((b) => b.hidden && b.textContent?.startsWith('t')).length;
+
+  beforeAll(() => {
+    Object.assign(globalThis, { document, Node });
+  });
+
+  it('shows every tag when there are few', () => {
+    const picker = tagPicker(ids.slice(0, 8), new Set(), draw([]))!;
+    expect(picker.querySelector('.tags-more')).toBeNull();
+    expect(hiddenOf(picker)).toBe(0);
+  });
+
+  it('folds the rest behind a button that shows and hides them', () => {
+    const picker = tagPicker(ids, new Set(ids.slice(4)), draw([]))!;
+    const more = picker.querySelector('.tags-more') as HTMLElement;
+    expect(more.textContent).toBe('Show 4 more tags');
+    expect(hiddenOf(picker)).toBe(4);
+    more.click();
+    expect(hiddenOf(picker)).toBe(0);
+    expect(more.getAttribute('aria-expanded')).toBe('true');
+    more.click();
+    expect(hiddenOf(picker)).toBe(4);
+  });
+
+  it('keeps a tag on the site in view', () => {
+    const picker = tagPicker(ids, new Set(), draw(['t10']))!;
+    expect(hiddenOf(picker)).toBe(3);
   });
 });

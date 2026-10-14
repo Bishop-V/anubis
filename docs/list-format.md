@@ -51,7 +51,7 @@ When adding a tagged site rule to an Anubis list, put an explanation after `#` s
 ```
 
 - **id**: lowercase letters, digits, and hyphens, up to 32 characters. Lists that use the same id share the tag: if two lists both tag sites `ai-slop`, a subscriber sees one "AI slop" tag fed by both. Agreeing on ids is how communities build a shared vocabulary.
-- **Label**: what people see under results.
+- **Label**: what people see under results. Anubis's own lists keep labels to 20 characters so the tags stay short in the menus; yours can be any length.
 - **Colour**: a hex colour. Optional; Anubis picks one from the id otherwise.
 - **Description**: optional, shown on hover and in settings.
 
@@ -67,7 +67,7 @@ Keep a tag's id once you've published it. To rename a tag, change its label: sub
 | `docs` | Official docs |
 | `forum` | Discussion |
 | `foss` | FOSS |
-| `independent-elsewhere` | Independent wiki elsewhere |
+| `independent-elsewhere` | Has independent wiki |
 | `independent-wiki` | Independent wiki |
 | `paywall` | Paywalled |
 | `reference` | Reference |

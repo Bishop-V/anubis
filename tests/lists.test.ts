@@ -19,6 +19,14 @@ describe('bundled lists', () => {
     for (const tag of list.tags) expect(tag.label).not.toBe(tag.id);
   });
 
+  // Labels sit in a narrow menu and popup: the lists published from here keep them short. Lists by other people may not.
+  it('keeps every tag label to 20 characters', () => {
+    const dirs = ['lists', 'lists/sources'];
+    for (const file of dirs.flatMap((d) => readdirSync(d).filter((f) => f.endsWith('.anubis')).map((f) => `${d}/${f}`))) {
+      for (const tag of parseList(readFileSync(file, 'utf8')).tags) expect(tag.label.length, `${file}: ${tag.label}`).toBeLessThanOrEqual(20);
+    }
+  });
+
   it('has a directory entry for each built-in list', () => {
     for (const entry of BUNDLED_DIRECTORY.filter((e) => e.builtin)) {
       expect(BUILTIN_TEXT[`builtin:${entry.id}`]).toBeTruthy();

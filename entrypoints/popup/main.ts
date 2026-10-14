@@ -367,6 +367,7 @@ $('#add-toggle').addEventListener('click', () => {
 
 enabled.addEventListener('change', () => void updateSettings({ enabled: enabled.checked }));
 $<HTMLAnchorElement>('#help').href = guide();
+$<HTMLAnchorElement>('.brand').href = guide();
 // Filled in with Anubis's version, the browser, and the search engine of this tab.
 const setReportLink = (engine?: string) => {
   $<HTMLAnchorElement>('#report').href = bugReportLink({ version: browser.runtime.getManifest().version, browser: describeBrowser(navigator.userAgent), engine });
