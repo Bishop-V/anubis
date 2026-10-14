@@ -66,6 +66,8 @@
   "tagMarkPin": { "message": "Pins this result", "description": "Like tagMarkRaise, for a tag that pins the result to the top." },
   "tagMarkHide": { "message": "Hides this result", "description": "Like tagMarkRaise, for a tag that hides the result." },
   "tagMarkSpoken": { "message": " ($1)", "description": "Read by screen readers after a tag's name when the tag moves or hides the result. $1 is tagMarkPin, tagMarkRaise, tagMarkLower, or tagMarkHide." },
+  "tagsShowMore": { "message": "Show $1 more tags", "description": "In the toolbar popup and the menu on a result: button under a long list of tags that shows the ones folded away. $1 is how many." },
+  "tagsShowFewer": { "message": "Show fewer tags", "description": "In the toolbar popup and the menu on a result: the button that folds the extra tags away again, after tagsShowMore." },
   "tagListsPickerHint": { "message": "Adding one changes only your list.", "description": "In the toolbar popup and the menu on a result, under tagListsHeading over the tags from lists: adding one of them to a site is saved in your own list, not the list's." },
   "tagFromSource": { "message": "from $1", "description": "In the toolbar popup and the menu on a result, after the name of a tag a list gave the site, which you can't take off: $1 is the lists, joined." },
   "popupTagFrom": { "message": "From $1", "description": "$1 is the lists that tag this site." },
