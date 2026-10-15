@@ -1,5 +1,5 @@
 import { browser, defineContentScript } from '#imports';
-import { NO_CLEANUP } from '@/utils/cleanup';
+import { NO_CLEANUP, type Cleanup } from '@/utils/cleanup';
 import { engineFor, ENGINE_MATCHES, isMobileAgent, sameSearch, type EngineDef } from '@/utils/engines';
 import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { evaluate, listTagCards, listTagIds, type Verdict } from '@/utils/matcher';
@@ -219,7 +219,7 @@ export default defineContentScript({
       makeRoomForPins(new Set(engine.table || cards ? [] : pinned));
 
       if (rules.settings.showSummary && !engine.table) {
-        const ai = rules.settings.cleanup.ai ? clutter : findClutter(engine, results, { ...NO_CLEANUP, ai: true });
+        const ai = leadingBlocks(engine, results, rules.settings.cleanup, clutter);
         const changed = change && changeSentence(change, (id) => rules.tags.get(id)?.label ?? id);
         renderSummary(summaryPlace(results, engine, ai), stats, theme, {
           toggleReveal: () => {
@@ -468,11 +468,24 @@ export default defineContentScript({
         queuedFrame = undefined;
         observer.disconnect();
         try {
-          pass();
+          if (settled()) pass();
         } finally {
           observe();
         }
       });
+    }
+
+    // An engine that builds its page in the browser is left alone until it has loaded and had a moment to
+    // finish (`settle` in EngineDef); then one pass picks up everything that arrived meanwhile.
+    let settledAt = engine.settle === undefined ? 0 : Infinity;
+    const settled = () => performance.now() >= settledAt;
+    const settleSoon = () => {
+      settledAt = performance.now() + (engine.settle ?? 0);
+      setTimeout(schedule, (engine.settle ?? 0) + 20);
+    };
+    if (engine.settle !== undefined) {
+      if (document.readyState === 'complete') settleSoon();
+      else window.addEventListener('load', settleSoon, { once: true });
     }
 
     window.addEventListener('pagehide', () => {
@@ -488,7 +501,7 @@ export default defineContentScript({
       schedule();
     });
 
-    pass();
+    if (settled()) pass();
     // One early pass may run before the results exist; the observer catches the rest.
     document.addEventListener('DOMContentLoaded', () => schedule(), { once: true });
     // Your own press of the engine's "More results" button (DuckDuckGo's), as opposed to
@@ -668,20 +681,30 @@ function summaryAnchor(results: FoundResult[], engine: EngineDef): { before?: HT
  * results area, which is also the fallback if the page lays the first place out
  * somewhere else.
  */
+/** The blocks the summary goes above, found whether or not their switches are on. */
+function leadingBlocks(engine: EngineDef, results: FoundResult[], wanted: Cleanup, found: Clutter[]): Clutter[] {
+  return wanted.ai && wanted.ads ? found : findClutter(engine, results, { ...NO_CLEANUP, ai: true, ads: true });
+}
+
 /** The engine's paid blocks, when it names them (`ads` in `EngineDef`). */
 function adBlocks(engine: EngineDef): HTMLElement[] {
   return engine.ads ? [...document.querySelectorAll<HTMLElement>(engine.ads)] : [];
 }
 
+/** The AI answers and ads above `before`, top first: the summary goes above them, so the page opens with what Anubis did. */
+function blocksAbove(before: HTMLElement, engine: EngineDef, clutter: Clutter[]): HTMLElement[] {
+  const found = clutter.filter((c) => (c.kind === 'ai' || c.kind === 'ads') && !c.uncounted).map((c) => c.block);
+  return [...found, ...adBlocks(engine)]
+    .filter((b) => b.isConnected && !b.contains(before) && before.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_PRECEDING && !b.closest('aside, [role="complementary"], #rhs'))
+    .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
+}
+
 function summaryPlace(results: FoundResult[], engine: EngineDef, clutter: Clutter[]): SummaryPlace | undefined {
   const { before, area, column } = summaryAnchor(results, engine);
   if (!before) return undefined;
-  // The summary goes above an AI answer, and above an engine's ads: the page opens with what Anubis did.
-  const ai = [...clutter.filter((c) => c.kind === 'ai' && !c.uncounted).map((c) => c.block), ...adBlocks(engine)]
-    .filter((b) => b.isConnected && !b.contains(before) && before.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_PRECEDING && !b.closest('aside, [role="complementary"], #rhs'))
-    .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
+  const [first] = blocksAbove(before, engine, clutter);
   const titles = results.slice(0, 5).map((r) => r.titleBlock);
-  return ai[0] ? { before: ai[0], area, column, titles, fallback: before } : { before, area, column, titles };
+  return first ? { before: first, area, column, titles, fallback: before } : { before, area, column, titles };
 }
 
 /** The next result in the page after this one, skipping Anubis's own elements and blocks clean-up removed. */

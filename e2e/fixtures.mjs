@@ -516,7 +516,7 @@ export function googleMobile(query, results) {
 // .cht_container, a .cht_disclaimer, and no label but aria-label="AI Overview".
 // Also "Related searches based on your browsing" beside the results, and "Related
 // searches for …" with the query in bold at the bottom.
-export function bing(query, results, { inline = false, next, copilot = false, thumb = false } = {}) {
+export function bing(query, results, { inline = false, next, copilot = false, thumb = false, sponsored = false } = {}) {
   const b64 = (s) => Buffer.from(s).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const box = `
       <li class="b_ans" data-tag=""><div id="inline_rs" class="b_hide" data-priority=""><div class="rslist_head"><span class="rslist_title b_strong">People also search for</span><button type="button" aria-label="Close">×</button></div>
@@ -538,6 +538,9 @@ export function bing(query, results, { inline = false, next, copilot = false, th
   const shown = thumb && second > 0
     ? `${marker}${picture}${items.slice(marker.length, second)}<li class="bgap" style="position:absolute;left:810px;width:90px;height:420px;list-style:none"></li>${marker}${picture}${items.slice(second + marker.length)}`
     : items;
+  // Product carousels labelled "Sponsored", above the results and between them (a guess at the markup from a screenshot).
+  const shop = `<li class="b_ans"><div class="shopHead"><h2>See ${esc(query)}</h2><span>Sponsored</span></div><div class="shopRow">${[1, 2, 3].map((n) => `<a href="https://shop${n}.example/item?x=1">${esc(query)} item ${n}</a>`).join(' ')}</div></li>`;
+  const listed = sponsored ? `${shop}${shown}` : shown;
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(query)} - Search</title>
   <style>
     body{margin:0;font:14px/1.5 "Segoe UI",Arial,sans-serif;background:#fff;color:#444}
@@ -568,7 +571,7 @@ export function bing(query, results, { inline = false, next, copilot = false, th
       <div class="tp_rel"><h3>Related concepts</h3><a href="/search?q=map+function">Map Function</a><a href="/search?q=filter+function">Filter Function</a></div>
       <div class="tp_comm"><h3>Community support</h3><a href="https://www.geeksforgeeks.org/python-list-comprehension/">Python List Comprehension Syntax, Examples, and Use Cases</a></div>
       <div class="cht_chips"><a href="/search?q=examples">Python list comprehension examples</a><a href="/search?q=loops">List comprehension vs loops</a></div>
-    </div></div>` : ''}<ol id="b_results">${shown}${copilot ? `
+    </div></div>` : ''}<ol id="b_results">${listed}${copilot ? `
       <li class="b_ans"><div id="brsv3"><h2>Related searches for <strong>${esc(query)}</strong></h2><ul class="b_vList">${['promise all', 'async await'].map((q) => `<li><a href="/search?q=${encodeURIComponent(q)}">${q}</a></li>`).join('')}</ul></div></li>` : ''}</ol>${copilot ? `
     <aside id="b_context"><li class="b_ans"><h2>Related searches based on your browsing</h2><ul>${['javascript closures', 'python generators'].map((q) => `<li><a href="/search?q=${encodeURIComponent(q)}">${q}</a></li>`).join('')}</ul></li></aside>` : ''}</main></div>
   ${inline ? `<script>setTimeout(() => { const rs = document.getElementById('inline_rs'); document.querySelectorAll('#b_results > li.b_algo')[1].append(rs); rs.classList.remove('b_hide'); }, 500);</script>` : ''}</body></html>`;
@@ -746,4 +749,22 @@ export function yahoo(query, results, { ads = true, longTitle = false, rail = fa
   <div id="cols"><div id="web">${ads ? yahooTopAds(query) : ''}
     <ol class="reg searchCenterMiddle">${ads ? yahooMiddleAd(query) : ''}${items}</ol></div>${rail ? '<div style="width:260px;height:340px;margin-left:-30px"></div>' : ''}</div>
   </body></html>`;
+}
+
+// Ecosia, as the engine definition reads it. The page builds itself in the browser: the script records whether
+// anything of Anubis's was on the page when it did, since an element added then breaks the real page. (The
+// markup is a guess from screenshots; `--visible` is the class Ecosia's own script adds to reveal a result.)
+export function ecosia(query, results) {
+  const items = results
+    .map(([url, title, snippet]) => `<div class="mainline__result-wrapper"><article class="result"><a class="result__link" href="${url}"><h2>${esc(title)}</h2></a><p>${esc(snippet)}</p></article></div>`)
+    .join('');
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(query)} - Ecosia</title>
+  <style>body{margin:0;font:14px/1.5 Arial,sans-serif;background:#fff;color:#222}.mainline__content{width:620px;margin:24px 120px}.mainline__result-wrapper{margin:0 0 24px;position:relative}</style>
+  </head><body><main class="mainline__content">${items}</main>
+  <script>
+    window.addEventListener('load', () => setTimeout(() => {
+      window.__anubisBeforeBuild = !!document.querySelector('anubis-summary, [data-anubis-result], anubis-weigh');
+      window.__built = true;
+    }, 600));
+  </script></body></html>`;
 }

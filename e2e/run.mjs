@@ -21,7 +21,7 @@ import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync
 import { tmpdir } from 'node:os';
 import { delimiter, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ANUBIS_PAGE2, ANUBIS_PAGE3, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, bingChallenge, bingMobile, brave, duckduckgo, duckduckgoMobile, google, googleMobile, yahoo } from './fixtures.mjs';
+import { ANUBIS_PAGE2, ANUBIS_PAGE3, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, bingChallenge, bingMobile, brave, duckduckgo, duckduckgoMobile, google, googleMobile, ecosia, yahoo } from './fixtures.mjs';
 import { ENGINE_TABS, engineTab } from './tab-fixtures.mjs';
 
 const EXT = fileURLToPath(new URL('../.output/chrome-mv3', import.meta.url));
@@ -228,6 +228,8 @@ async function launch(settings = {}, ext = EXT) {
     'https://www.bing.com/search?q=javascript+promises&paged=1&first=11': (request) =>
       request.resourceType() === 'document' ? bing('javascript promises', JS_MORE) : bingChallenge(),
     'https://www.bing.com/search?q=javascript+promises&thumb=1': bing('javascript promises', JS_RESULTS, { thumb: true }),
+    'https://www.ecosia.org/search?q=javascript+promises': ecosia('javascript promises', JS_RESULTS),
+    'https://www.bing.com/search?q=javascript+promises&sponsored=1': bing('javascript promises', JS_RESULTS, { sponsored: true }),
     'https://search.yahoo.com/search?p=javascript+promises': yahoo('javascript promises', JS_RESULTS),
     'https://search.yahoo.com/search?p=javascript+promises&long=1': yahoo('javascript promises', JS_RESULTS, { longTitle: true, rail: true }),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
@@ -401,7 +403,7 @@ if (!only || only === 'pages') {
           level: Math.abs(a.top + a.height / 2 - (b.top + b.height / 2)) < 1,
           gap: Math.round(a.left - b.right),
           sameSize: Math.round(a.width) === Math.round(b.width) && Math.round(a.height) === Math.round(b.height),
-          asBright: Math.abs((parseFloat(getComputedStyle(host).getPropertyValue('--anubis-weigh-opacity')) || 0.35) - parseFloat(getComputedStyle(menu).opacity)) < 0.02,
+          asBright: Math.abs((parseFloat(getComputedStyle(host).getPropertyValue('--anubis-weigh-opacity')) || 0.7) - parseFloat(getComputedStyle(menu).opacity)) < 0.02,
         };
       }),
     );
@@ -1180,6 +1182,42 @@ if (!only || only === 'cleanup' || checks) {
   });
   console.log('== Bing buttons beside a picture:', JSON.stringify(bingButtons));
   if (checks) assertChecks('Bing picture', { buttonsInOneColumn: bingButtons.buttons > 0 && bingButtons.lefts.length === 1 });
+  // Bing: a carousel labelled "Sponsored" goes with the Ads switch, and the summary is above it either way.
+  const bingSponsored = async () => {
+    await page.goto('https://www.bing.com/search?q=javascript+promises&sponsored=1');
+    await page.waitForTimeout(1000);
+    return page.evaluate(() => {
+      const shops = [...document.querySelectorAll('.shopRow')];
+      const summary = document.querySelector('anubis-summary');
+      return {
+        shown: shops.some((el) => el.getBoundingClientRect().height > 0),
+        summaryAbove: !!summary && shops.every((el) => !!(el.compareDocumentPosition(summary) & Node.DOCUMENT_POSITION_PRECEDING)),
+      };
+    });
+  };
+  await setSettings({ cleanup: { ...all, ads: false } });
+  const bingSponsoredOff = await bingSponsored();
+  await setSettings({ cleanup: { ...all, ads: true } });
+  const bingSponsoredOn = await bingSponsored();
+  console.log('== Bing sponsored:', JSON.stringify({ bingSponsoredOff, bingSponsoredOn }));
+  if (checks) {
+    assertChecks('Bing sponsored', {
+      shownWhenOff: bingSponsoredOff.shown,
+      summaryAboveWhenOff: bingSponsoredOff.summaryAbove,
+      removedWhenOn: !bingSponsoredOn.shown,
+      summaryAboveWhenOn: bingSponsoredOn.summaryAbove,
+    });
+  }
+  // Ecosia builds its page in the browser: nothing of Anubis's is on it until it has, then Anubis arrives.
+  await page.goto('https://www.ecosia.org/search?q=javascript+promises');
+  await page.waitForTimeout(3500);
+  const ecosiaSettle = await page.evaluate(() => ({
+    built: window.__built === true,
+    beforeBuild: window.__anubisBeforeBuild,
+    results: document.querySelectorAll('[data-anubis-result]').length,
+  }));
+  console.log('== Ecosia settle:', JSON.stringify(ecosiaSettle));
+  if (checks) assertChecks('Ecosia settle', { builtUntouched: ecosiaSettle.built && ecosiaSettle.beforeBuild === false, thenWeighed: ecosiaSettle.results === JS_RESULTS.length });
   // Yahoo: its ads look like results but aren't weighed; the Ads switch removes them.
   const yahooAds = async () => {
     await page.goto('https://search.yahoo.com/search?p=javascript+promises');
