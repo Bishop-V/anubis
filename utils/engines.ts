@@ -36,6 +36,18 @@ export interface CardDef {
   address?: { from?: string; attr: string; match?: RegExp }[];
 }
 
+/** A site's icon that the engine's own script fetches and draws; results brought over by Load more results never get it. */
+export interface IconDef {
+  /** The element in a result the icon goes in. */
+  holder: string;
+  /** Where the icon comes from, for a result's site and the page's theme. */
+  src: (origin: string, dark: boolean) => string;
+  /** The class the engine gives its icon image. */
+  img: string;
+  /** A class on the holder that says no icon has loaded yet; the image takes it off. */
+  fallback?: string;
+}
+
 export interface EngineDef {
   id: string;
   name: string;
@@ -81,6 +93,8 @@ export interface EngineDef {
    * result until `--visible` is added), which never runs for results added this way.
    */
   loadedClass?: string;
+  /** How to draw each site's icon in results brought over by Load more results (Ecosia's own script does it for its own). */
+  icon?: IconDef;
   /**
    * Results brought over by Load more results are drawn with the classes of the
    * results already here. For engines that name their styles from a hash and render
@@ -363,6 +377,13 @@ export const ENGINES: EngineDef[] = [
     settle: 1500,
     item: '.mainline__result-wrapper:has(a.result__link)',
     loadedClass: 'mainline__result-wrapper--visible',
+    // Each result's icon is fetched by Ecosia's script (reported 2026-10-15: the address is in the page's resource timing).
+    icon: {
+      holder: '[data-test-id="web-result-favicon"]',
+      src: (origin, dark) => `https://api.ecosia.org/v2/favicons/fetch?domain=${encodeURIComponent(origin)}&fz=s&theme=${dark ? 'dark' : 'light'}`,
+      img: 'favicon',
+      fallback: 'favicon__container--fallback',
+    },
     link: 'a.result__link',
     title: 'h2',
     button: { top: '4px', right: '20px' },

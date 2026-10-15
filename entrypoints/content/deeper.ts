@@ -244,6 +244,7 @@ function importResults(engine: EngineDef, state: DeeperState, doc: Document, url
     sanitize(node);
     if (engine.restyle) restyle(node, book);
     if (engine.loadedClass) node.classList.add(engine.loadedClass);
+    addIcons(node, engine, result.url);
     node.setAttribute('data-anubis-page', String(state.pages + 1));
     after.after(node);
     after = node;
@@ -256,6 +257,33 @@ function importResults(engine: EngineDef, state: DeeperState, doc: Document, url
   }
   if (!added) throw new Stop('repeat', url);
   return added;
+}
+
+/** Whether the page is dark, by its background. */
+function pageIsDark(): boolean {
+  const [r = 255, g = 255, b = 255] = (getComputedStyle(document.body).backgroundColor.match(/\d+(\.\d+)?/g) ?? []).map(Number);
+  return (0.299 * r + 0.587 * g + 0.114 * b) / 255 < 0.5;
+}
+
+/**
+ * Draws the engine's site icon in a result brought over, for engines whose own script does it (Ecosia's
+ * `icon`): the engine's address for the result's site, with the placeholder back if it doesn't load.
+ */
+function addIcons(node: HTMLElement, engine: EngineDef, url: string): void {
+  const icon = engine.icon;
+  if (!icon) return;
+  const origin = URL.canParse(url) ? new URL(url).origin : undefined;
+  if (!origin) return;
+  for (const holder of node.querySelectorAll<HTMLElement>(icon.holder)) {
+    const placeholder = [...holder.childNodes];
+    const img = document.createElement('img');
+    img.className = icon.img;
+    img.alt = '';
+    img.src = icon.src(origin, pageIsDark());
+    img.addEventListener('error', () => holder.replaceChildren(...placeholder), { once: true });
+    holder.replaceChildren(img);
+    if (icon.fallback) holder.classList.remove(icon.fallback);
+  }
 }
 
 /**

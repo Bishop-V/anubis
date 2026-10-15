@@ -229,6 +229,7 @@ async function launch(settings = {}, ext = EXT) {
       request.resourceType() === 'document' ? bing('javascript promises', JS_MORE) : bingChallenge(),
     'https://www.bing.com/search?q=javascript+promises&thumb=1': bing('javascript promises', JS_RESULTS, { thumb: true }),
     'https://www.ecosia.org/search?q=javascript+promises': ecosia('javascript promises', JS_RESULTS),
+    'https://www.ecosia.org/search?q=javascript+promises&p=1': ecosia('javascript promises', JS_MORE),
     'https://www.bing.com/search?q=javascript+promises&sponsored=1': bing('javascript promises', JS_RESULTS, { sponsored: true }),
     'https://search.yahoo.com/search?p=javascript+promises': yahoo('javascript promises', JS_RESULTS),
     'https://search.yahoo.com/search?p=javascript+promises&long=1': yahoo('javascript promises', JS_RESULTS, { longTitle: true, rail: true }),
@@ -245,6 +246,10 @@ async function launch(settings = {}, ext = EXT) {
     const body = typeof page === 'function' ? page(route.request()) : page;
     return body ? route.fulfill({ contentType: 'text/html; charset=utf-8', body }) : route.fulfill({ status: 204, body: '' });
   });
+  // Ecosia's favicon service: a one-pixel picture for any site.
+  await ctx.route('https://api.ecosia.org/**', (route) =>
+    route.fulfill({ contentType: 'image/gif', body: Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64') }),
+  );
   return { ctx, extId };
 }
 
@@ -1229,9 +1234,22 @@ if (!only || only === 'cleanup' || checks) {
       return Math.abs(a.top + a.height / 2 - (b.top + b.height / 2));
     }),
   );
-  console.log('== Ecosia settle:', JSON.stringify({ ecosiaSettle, ecosiaLevel }));
+  // Results from Load more results get their site's icon drawn: Ecosia's own script isn't there to do it.
+  await sw.evaluate(async () => {
+    for (const tab of await chrome.tabs.query({})) await chrome.tabs.sendMessage(tab.id, { type: 'go-deeper' }).catch(() => {});
+  });
+  await page.waitForTimeout(3000);
+  const ecosiaIcons = await page.evaluate(() => {
+    const holders = [...document.querySelectorAll('[data-anubis-page] [data-test-id="web-result-favicon"]')];
+    return {
+      loaded: holders.length,
+      withIcon: holders.filter((h) => /^https:\/\/api\.ecosia\.org\/v2\/favicons\/fetch\?domain=https%3A%2F%2F[^&]+&fz=s&theme=(dark|light)$/.test(h.querySelector('img.favicon')?.getAttribute('src') ?? '')).length,
+    };
+  });
+  console.log('== Ecosia settle:', JSON.stringify({ ecosiaSettle, ecosiaLevel, ecosiaIcons }));
   if (checks) {
     assertChecks('Ecosia settle', { builtUntouched: ecosiaSettle.built && ecosiaSettle.beforeBuild === false, thenWeighed: ecosiaSettle.results === JS_RESULTS.length });
+    assertChecks('Ecosia icons', { drawnOnLoadedResults: ecosiaIcons.loaded > 0 && ecosiaIcons.withIcon === ecosiaIcons.loaded });
     assertChecks('Ecosia button', { levelWithTheMenu: ecosiaLevel.length > 0 && ecosiaLevel.every((d) => d < 2) });
   }
   // Yahoo: its ads look like results but aren't weighed; the Ads switch removes them.
