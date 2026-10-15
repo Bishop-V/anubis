@@ -440,20 +440,22 @@ function menuSpan(container: HTMLElement, t: DOMRect): Span | undefined {
 
 /** The lines of text above the title: the site's name and address, on most engines. */
 function textSpan(container: HTMLElement, title: HTMLElement, t: DOMRect): Span | undefined {
-  let top = Infinity;
-  let bottom = -Infinity;
+  const rects = textRectsAbove(container, title, t);
+  if (!rects.length) return undefined;
+  return { top: Math.min(...rects.map((r) => r.top)), bottom: Math.max(...rects.map((r) => r.bottom)) };
+}
+
+/** Where the result's text outside the title sits, when it's just above it. */
+function textRectsAbove(container: HTMLElement, title: HTMLElement, t: DOMRect): DOMRect[] {
+  const found: DOMRect[] = [];
   const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
   const range = document.createRange();
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
     if (!node.textContent?.trim() || title.contains(node)) continue;
     range.selectNodeContents(node);
-    for (const r of range.getClientRects()) {
-      if (!r.width || !justAbove(r, t, 60)) continue;
-      top = Math.min(top, r.top);
-      bottom = Math.max(bottom, r.bottom);
-    }
+    for (const r of range.getClientRects()) if (r.width && justAbove(r, t, 60)) found.push(r);
   }
-  return top === Infinity ? undefined : { top, bottom };
+  return found;
 }
 
 function firstLineSpan(title: HTMLElement): Span | undefined {
