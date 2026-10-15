@@ -113,27 +113,47 @@ describe('tagOrder', () => {
 
 describe('tagPicker', () => {
   const { document, Node } = parseHTML('<html><body></body></html>');
-  const draw = (pressed: string[]) => (id: string) => {
-    const el = document.createElement('button') as unknown as HTMLElement;
-    el.textContent = id;
-    if (pressed.includes(id)) el.setAttribute('aria-pressed', 'true');
-    return el;
+  // No layout here: each tag is given a row, four to a row, and the picker a width.
+  const perRow = 4;
+  const draw = (pressed: string[]) => {
+    let n = 0;
+    return (id: string) => {
+      const el = document.createElement('button') as unknown as HTMLElement;
+      el.textContent = id;
+      if (pressed.includes(id)) el.setAttribute('aria-pressed', 'true');
+      const row = Math.floor(n++ / perRow);
+      el.getBoundingClientRect = () => ({ top: row * 30, width: 40 }) as DOMRect;
+      return el;
+    };
   };
   const ids = Array.from({ length: 12 }, (_, i) => `t${i}`);
   const hiddenOf = (root: HTMLElement) => [...root.querySelectorAll('button')].filter((b) => b.hidden && b.textContent?.startsWith('t')).length;
+  const lay = (picker: HTMLElement) => {
+    picker.getBoundingClientRect = () => ({ width: 300 }) as DOMRect;
+    observed.forEach((cb) => cb());
+  };
+  const observed: (() => void)[] = [];
 
   beforeAll(() => {
-    Object.assign(globalThis, { document, Node });
+    class FakeObserver {
+      constructor(private cb: () => void) {}
+      observe() {
+        observed.push(this.cb);
+      }
+    }
+    Object.assign(globalThis, { document, Node, ResizeObserver: FakeObserver });
   });
 
-  it('shows every tag when there are few', () => {
+  it('shows every tag when they fit in two rows', () => {
     const picker = tagPicker(ids.slice(0, 8), new Set(), draw([]))!;
-    expect(picker.querySelector('.tags-more')).toBeNull();
+    lay(picker);
+    expect(picker.querySelector('.tags-more')!.hasAttribute('hidden')).toBe(true);
     expect(hiddenOf(picker)).toBe(0);
   });
 
-  it('folds the rest behind a button that shows and hides them', () => {
-    const picker = tagPicker(ids, new Set(ids.slice(4)), draw([]))!;
+  it('folds the rows past the second behind a button that shows and hides them', () => {
+    const picker = tagPicker(ids, new Set(), draw([]))!;
+    lay(picker);
     const more = picker.querySelector('.tags-more') as HTMLElement;
     expect(more.textContent).toBe('Show 4 more tags');
     expect(hiddenOf(picker)).toBe(4);
@@ -146,6 +166,7 @@ describe('tagPicker', () => {
 
   it('keeps a tag on the site in view', () => {
     const picker = tagPicker(ids, new Set(), draw(['t10']))!;
+    lay(picker);
     expect(hiddenOf(picker)).toBe(3);
   });
 });
