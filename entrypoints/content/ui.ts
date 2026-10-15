@@ -363,7 +363,7 @@ export function ensureWeighButton(
     for (const prop of MENU_LOOK) host.style.removeProperty(prop);
     host.style.removeProperty('--anubis-weigh-color');
     host.style.setProperty('top', top, 'important');
-    host.style.setProperty('right', result.card || onTitle ? right : alongColumn(right, container), 'important');
+    host.style.setProperty('right', alongColumn(right, container), 'important');
   }
   host.style.setProperty('left', 'auto', 'important');
   host.style.setProperty('bottom', 'auto', 'important');
