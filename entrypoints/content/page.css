@@ -2,6 +2,13 @@
    place before the first result paints. Everything keys off data-anubis-* attributes
    the content script sets; nothing here changes layout unless a verdict asks for it. */
 
+/* A result Anubis weighs is always drawn. Bing skips drawing results it takes to be off-screen
+   (content-visibility: auto, keeping a placeholder height); once Anubis had reordered them, some stayed
+   blank, every one the same height, until the page was reloaded. */
+[data-anubis-result] {
+  content-visibility: visible !important;
+}
+
 /* Weigh button: faint until the result is hovered or focused. */
 [data-anubis-result]:hover > anubis-weigh,
 [data-anubis-result]:focus-within > anubis-weigh {

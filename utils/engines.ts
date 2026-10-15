@@ -274,8 +274,9 @@ export const ENGINES: EngineDef[] = [
     matches: ['*://www.bing.com/*', '*://www2.bing.com/*', '*://www4.bing.com/*', '*://cn.bing.com/*'],
     host: /^(www[24]?|cn)\.bing\.com$/,
     isResultsPage: (url) => /^\/(search|(images|videos|news)\/search)$/.test(url.pathname),
-    // Paid blocks (a guess from EasyList's names); the product carousels labelled "Sponsored" are found by that label.
-    ads: '.b_ad, .b_adTop, .b_adBottom',
+    // Paid blocks: text ads (`li.b_ad.b_adBottom`) and product-ads carousels (`li.b_PolePAContainer` holding
+    // `.pa_carousel_mlo`, in `#b_pole` at the top), as a live page showed them (2026-10-15).
+    ads: '.b_ad, .b_adTop, .b_adBottom, .b_PolePAContainer, .pa_carousel_mlo',
     item: '#b_results > li.b_algo',
     link: 'h2 a',
     title: 'h2',

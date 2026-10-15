@@ -516,7 +516,38 @@ export function googleMobile(query, results) {
 // .cht_container, a .cht_disclaimer, and no label but aria-label="AI Overview".
 // Also "Related searches based on your browsing" beside the results, and "Related
 // searches for …" with the query in bold at the bottom.
-export function bing(query, results, { inline = false, next, copilot = false, thumb = false, sponsored = false } = {}) {
+// A picture in the first two results' corners, with something else in the gutter beside the second (the others'
+// buttons sit there); and a product carousel labelled "Sponsored" above the results (a guess at the markup from a
+// screenshot).
+function bingExtras(query, items, { thumb, sponsored }) {
+  const marker = '<li class="b_algo" data-tag="">';
+  const second = items.indexOf(marker, items.indexOf(marker) + 1);
+  const picture = '<img class="bthumb" alt="" width="108" height="108" style="position:absolute;top:0;right:0;border-radius:12px;background:#8884">';
+  const shown = thumb && second > 0
+    ? `${marker}${picture}${items.slice(marker.length, second)}<li class="bgap" style="position:absolute;left:810px;width:90px;height:420px;list-style:none"></li>${marker}${picture}${items.slice(second + marker.length)}`
+    : items;
+  const shop = `<li class="b_ans"><div class="shopHead"><h2>See ${esc(query)}</h2><span>Sponsored</span></div><div class="shopRow">${[1, 2, 3].map((n) => `<a href="https://shop${n}.example/item?x=1">${esc(query)} item ${n}</a>`).join(' ')}</div></li>`;
+  return sponsored ? `${shop}${shown}` : shown;
+}
+
+// Bing's top of the page. `copilot`: its AI answer across the top. `pole`: product-ads carousels labelled
+// "Sponsored", one at the very top (`#b_pole`, as a live page showed it, 2026-10-15) and one sharing the AI
+// answer's container, so neither switch should take the other's block.
+function bingTop(query, { copilot, pole }) {
+  const carousel = `<div class="pa_mlo pa_carousel_mlo"><div class="pa_ml pa_carousel_ml"><div class="b_adPATitleBlock"><h2>See ${esc(query)}</h2><span class="b_floatR">Sponsored</span></div><div class="poleRow">${[1, 2, 3].map((n) => `<a href="https://shop${n}.example/item?x=1">${esc(query)} item ${n}</a>`).join(' ')}</div></div></div>`;
+  const atTop = pole ? `<div id="b_pole"><div class="b_poleContent narrpole"><ul><li class="b_adLastChild b_PolePAContainer">${carousel}</li></ul></div></div>` : '';
+  const answer = copilot ? `
+    <div id="b_topw" class="b_topw"><div class="b_ans b_top b_topgrid" aria-label="AI Overview">
+      <div class="cht_container"><h2>Comprehensions in Python</h2><p>Comprehensions in Python provide a concise way to create new sequences by applying an expression to each item in an iterable.</p><button type="button">See more</button><div class="cht_disclaimer" hidden></div></div>
+      <div class="tp_vid"><a href="https://www.youtube.com/watch?v=1"><div class="vthumb"></div>Learn Python LIST COMPREHENSIONS</a></div>
+      <div class="tp_rel"><h3>Related concepts</h3><a href="/search?q=map+function">Map Function</a><a href="/search?q=filter+function">Filter Function</a></div>
+      <div class="tp_comm"><h3>Community support</h3><a href="https://www.geeksforgeeks.org/python-list-comprehension/">Python List Comprehension Syntax, Examples, and Use Cases</a></div>
+      <div class="cht_chips"><a href="/search?q=examples">Python list comprehension examples</a><a href="/search?q=loops">List comprehension vs loops</a></div>
+    </div>${pole ? carousel : ''}</div>` : '';
+  return atTop + answer;
+}
+
+export function bing(query, results, { inline = false, next, copilot = false, thumb = false, sponsored = false, skipped = false, pole = false } = {}) {
   const b64 = (s) => Buffer.from(s).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const box = `
       <li class="b_ans" data-tag=""><div id="inline_rs" class="b_hide" data-priority=""><div class="rslist_head"><span class="rslist_title b_strong">People also search for</span><button type="button" aria-label="Close">×</button></div>
@@ -531,16 +562,7 @@ export function bing(query, results, { inline = false, next, copilot = false, th
     .join('') + (inline ? box : '') +
     (next ? `
       <li class="b_pag"><nav role="navigation" aria-label="More results"><ul class="sb_pagF"><li><a class="sb_pagS">1</a></li><li><a href="${next}">2</a></li><li><a class="sb_pagN" title="Next page" href="${next}">Next</a></li></ul></nav></li>` : '');
-  // A picture in the first two results' corners, with something else in the gutter beside that result (the others' buttons sit there).
-  const marker = '<li class="b_algo" data-tag="">';
-  const second = items.indexOf(marker, items.indexOf(marker) + 1);
-  const picture = '<img class="bthumb" alt="" width="108" height="108" style="position:absolute;top:0;right:0;border-radius:12px;background:#8884">';
-  const shown = thumb && second > 0
-    ? `${marker}${picture}${items.slice(marker.length, second)}<li class="bgap" style="position:absolute;left:810px;width:90px;height:420px;list-style:none"></li>${marker}${picture}${items.slice(second + marker.length)}`
-    : items;
-  // Product carousels labelled "Sponsored", above the results and between them (a guess at the markup from a screenshot).
-  const shop = `<li class="b_ans"><div class="shopHead"><h2>See ${esc(query)}</h2><span>Sponsored</span></div><div class="shopRow">${[1, 2, 3].map((n) => `<a href="https://shop${n}.example/item?x=1">${esc(query)} item ${n}</a>`).join(' ')}</div></li>`;
-  const listed = sponsored ? `${shop}${shown}` : shown;
+  const listed = bingExtras(query, items, { thumb, sponsored });
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(query)} - Search</title>
   <style>
     body{margin:0;font:14px/1.5 "Segoe UI",Arial,sans-serif;background:#fff;color:#444}
@@ -562,16 +584,10 @@ export function bing(query, results, { inline = false, next, copilot = false, th
     #inline_rs{margin-top:14px;padding:14px 16px;border:1px solid #eee;border-radius:12px}.rslist_head{display:flex;justify-content:space-between;margin-bottom:10px}
     .rslist_title{font-size:18px;font-weight:600;color:#111}#inline_rs button{border:0;background:none;font-size:18px}
     #inline_rs ul{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;padding:0;list-style:none}#inline_rs li a{display:block;padding:8px 14px;border:1px solid #ddd;border-radius:20px;color:#111;text-decoration:none}
+    ${skipped ? '#b_results>li.b_algo{content-visibility:auto;contain-intrinsic-size:auto 247px}' : ''}
   </style></head><body>
   <div class="hdr"><span class="blogo">Bing</span><div class="q">${esc(query)}</div></div>
-  <div id="b_content"><main>${copilot ? `
-    <div id="b_topw" class="b_topw"><div class="b_ans b_top b_topgrid" aria-label="AI Overview">
-      <div class="cht_container"><h2>Comprehensions in Python</h2><p>Comprehensions in Python provide a concise way to create new sequences by applying an expression to each item in an iterable.</p><button type="button">See more</button><div class="cht_disclaimer" hidden></div></div>
-      <div class="tp_vid"><a href="https://www.youtube.com/watch?v=1"><div class="vthumb"></div>Learn Python LIST COMPREHENSIONS</a></div>
-      <div class="tp_rel"><h3>Related concepts</h3><a href="/search?q=map+function">Map Function</a><a href="/search?q=filter+function">Filter Function</a></div>
-      <div class="tp_comm"><h3>Community support</h3><a href="https://www.geeksforgeeks.org/python-list-comprehension/">Python List Comprehension Syntax, Examples, and Use Cases</a></div>
-      <div class="cht_chips"><a href="/search?q=examples">Python list comprehension examples</a><a href="/search?q=loops">List comprehension vs loops</a></div>
-    </div></div>` : ''}<ol id="b_results">${listed}${copilot ? `
+  <div id="b_content"><main>${bingTop(query, { copilot, pole })}<ol id="b_results">${listed}${copilot ? `
       <li class="b_ans"><div id="brsv3"><h2>Related searches for <strong>${esc(query)}</strong></h2><ul class="b_vList">${['promise all', 'async await'].map((q) => `<li><a href="/search?q=${encodeURIComponent(q)}">${q}</a></li>`).join('')}</ul></div></li>` : ''}</ol>${copilot ? `
     <aside id="b_context"><li class="b_ans"><h2>Related searches based on your browsing</h2><ul>${['javascript closures', 'python generators'].map((q) => `<li><a href="/search?q=${encodeURIComponent(q)}">${q}</a></li>`).join('')}</ul></li></aside>` : ''}</main></div>
   ${inline ? `<script>setTimeout(() => { const rs = document.getElementById('inline_rs'); document.querySelectorAll('#b_results > li.b_algo')[1].append(rs); rs.classList.remove('b_hide'); }, 500);</script>` : ''}</body></html>`;

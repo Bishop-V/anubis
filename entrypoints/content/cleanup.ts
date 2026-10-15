@@ -93,7 +93,7 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
       if (label) addInResult(el, result, kind);
       continue;
     }
-    if (el.closest(NOT_A_BLOCK)) continue;
+    if (el.closest(NOT_A_BLOCK) || insideAd(el, engine)) continue;
     // A label is the block's title: judge its level like a heading's. A marker sits
     // anywhere in the block, so only the column decides how far it reaches.
     if (label) addLabelled(labelledBlock(el, engine, column, levelOf(el.closest<HTMLElement>(HEADINGS) ?? el)), kind);
@@ -114,7 +114,7 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
   for (const [kind, selector] of Object.entries(selectors) as [CleanupKind, string][]) {
     if (!wanted[kind]) continue;
     for (const el of document.querySelectorAll<HTMLElement>(selector)) {
-      if (!el.closest('[data-anubis-result]')) add(blockAround(el, engine, column) ?? el, kind);
+      if (!el.closest('[data-anubis-result]')) add(kind === 'ads' ? el : (blockAround(el, engine, column) ?? el), kind);
     }
   }
 
@@ -211,11 +211,24 @@ function blockAround(start: HTMLElement, engine: EngineDef, column: Column, leve
     if (parent === column.list) return section ?? block;
     if (engine.boundary && parent.matches(engine.boundary)) return section ?? block;
     if ((!engine.boundary || parent.closest(engine.boundary)) && column.results.some((r) => parent.contains(r))) return section ?? block;
+    // An AI answer and the sponsored carousel beside it (Bing's) are separate blocks, each with its own switch.
+    if (holdsOtherAds(parent, block, engine)) return section ?? block;
     // A section holds more than its heading: a header row on its own isn't one.
     if (!section && level !== undefined && !headerOnly(block, labelLength) && hasSiblingSection(parent, block, level)) section = block;
     block = parent;
   }
   return undefined;
+}
+
+/** Inside one of the engine's ads, which the Ads switch removes by its selector, exactly. */
+function insideAd(el: Element, engine: EngineDef): boolean {
+  return !!engine.ads && !!el.closest(engine.ads);
+}
+
+/** `parent` holds an ad that `block` neither holds nor sits in: growing into it would take the ad too. */
+function holdsOtherAds(parent: HTMLElement, block: HTMLElement, engine: EngineDef): boolean {
+  if (!engine.ads) return false;
+  return [...parent.querySelectorAll(engine.ads)].some((ad) => !block.contains(ad) && !ad.contains(block));
 }
 
 /** h1–h6 by tag; `role="heading"` by `aria-level`, which defaults to 2. */

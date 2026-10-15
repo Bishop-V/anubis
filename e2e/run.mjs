@@ -211,6 +211,7 @@ async function launch(settings = {}, ext = EXT) {
     'https://www.google.com/search?q=anubis&aigrid=1': google('anubis', ANUBIS_RESULTS, { forum: true, grouped: true, aiAbove: 'grid', related: true, next: '/search?q=anubis&start=10' }),
     'https://www.bing.com/search?q=javascript+promises&inline=1': bing('javascript promises', JS_RESULTS, { inline: true }),
     'https://www.bing.com/search?q=javascript+promises&copilot=1': bing('javascript promises', JS_RESULTS, { copilot: true }),
+    'https://www.bing.com/search?q=javascript+promises&copilot=1&pole=1': bing('javascript promises', JS_RESULTS, { copilot: true, pole: true }),
     'https://search.brave.com/search?q=anubis&panels=1': brave('anubis', ANUBIS_RESULTS, { panels: true }),
     // Load more results with the engine's pager inside the results list.
     'https://search.brave.com/search?q=anubis&paged=1': brave('anubis', ANUBIS_RESULTS, { pager: '/search?q=anubis&paged=1&offset=1' }),
@@ -228,6 +229,7 @@ async function launch(settings = {}, ext = EXT) {
     'https://www.bing.com/search?q=javascript+promises&paged=1&first=11': (request) =>
       request.resourceType() === 'document' ? bing('javascript promises', JS_MORE) : bingChallenge(),
     'https://www.bing.com/search?q=javascript+promises&thumb=1': bing('javascript promises', JS_RESULTS, { thumb: true }),
+    'https://www.bing.com/search?q=javascript+promises&skipped=1': bing('javascript promises', JS_RESULTS, { skipped: true }),
     'https://www.ecosia.org/search?q=javascript+promises': ecosia('javascript promises', JS_RESULTS),
     'https://www.ecosia.org/search?q=javascript+promises&p=1': ecosia('javascript promises', JS_MORE),
     'https://www.bing.com/search?q=javascript+promises&sponsored=1': bing('javascript promises', JS_RESULTS, { sponsored: true }),
@@ -1213,6 +1215,13 @@ if (!only || only === 'cleanup' || checks) {
       summaryAboveWhenOn: bingSponsoredOn.summaryAbove,
     });
   }
+  // Bing skips drawing results it takes to be off-screen (content-visibility: auto, at a placeholder height). Reported
+  // blank until a reload, every result 247px tall: a result Anubis weighs is always drawn.
+  await page.goto('https://www.bing.com/search?q=javascript+promises&skipped=1');
+  await page.waitForTimeout(1000);
+  const bingDrawn = await page.evaluate(() => [...document.querySelectorAll('[data-anubis-result]')].map((el) => getComputedStyle(el).contentVisibility));
+  console.log('== Bing results drawn:', JSON.stringify(bingDrawn));
+  if (checks) assertChecks('Bing skipped results', { allDrawn: bingDrawn.length === JS_RESULTS.length && bingDrawn.every((v) => v === 'visible') });
   // Ecosia builds its page in the browser: nothing of Anubis's is on it until it has, then Anubis arrives.
   await page.goto('https://www.ecosia.org/search?q=javascript+promises');
   await page.waitForTimeout(3500);
@@ -1310,7 +1319,21 @@ if (!only || only === 'cleanup' || checks) {
   console.log('== Bing AI answer and related searches:', JSON.stringify({ ...bingPanels, summaryAbove: bingSummaryAbove }));
   console.log('   removed:', JSON.stringify((await statsNow())?.removed));
   await page.screenshot({ path: `${SHOTS}bing-copilot.png`, fullPage: false });
+  // Bing's sponsored carousels go with Ads and its AI answer with AI answers, even where they share a container.
+  const bingParts = async (cleanup) => {
+    await setSettings({ cleanup: { ...all, ...cleanup } });
+    await page.goto('https://www.bing.com/search?q=javascript+promises&copilot=1&pole=1');
+    await page.waitForTimeout(1200);
+    return visibleIn({ answer: '.cht_container', adsAtTop: '#b_pole .poleRow', adsBesideAnswer: '#b_topw .poleRow' });
+  };
+  const bingAdsOnly = await bingParts({ ai: false, ads: true });
+  const bingAiOnly = await bingParts({ ai: true, ads: false });
+  console.log('== Bing ads and AI answer apart:', JSON.stringify({ bingAdsOnly, bingAiOnly }));
   if (checks) {
+    assertChecks('Bing ads and AI answer apart', {
+      adsGoAnswerStays: bingAdsOnly.answer && !bingAdsOnly.adsAtTop && !bingAdsOnly.adsBesideAnswer,
+      answerGoesAdsStay: !bingAiOnly.answer && bingAiOnly.adsAtTop && bingAiOnly.adsBesideAnswer,
+    });
     assertChecks('Bing AI answer and related searches', {
       removesAnswer: !bingPanels.answer && !bingPanels.video && !bingPanels.chips,
       removesRelatedSearches: !bingPanels.related,
