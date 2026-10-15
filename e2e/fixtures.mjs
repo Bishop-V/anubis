@@ -516,7 +516,7 @@ export function googleMobile(query, results) {
 // .cht_container, a .cht_disclaimer, and no label but aria-label="AI Overview".
 // Also "Related searches based on your browsing" beside the results, and "Related
 // searches for …" with the query in bold at the bottom.
-export function bing(query, results, { inline = false, next, copilot = false, thumb = false, sponsored = false } = {}) {
+export function bing(query, results, { inline = false, next, copilot = false, thumb = false, sponsored = false, skipped = false } = {}) {
   const b64 = (s) => Buffer.from(s).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const box = `
       <li class="b_ans" data-tag=""><div id="inline_rs" class="b_hide" data-priority=""><div class="rslist_head"><span class="rslist_title b_strong">People also search for</span><button type="button" aria-label="Close">×</button></div>
@@ -562,6 +562,7 @@ export function bing(query, results, { inline = false, next, copilot = false, th
     #inline_rs{margin-top:14px;padding:14px 16px;border:1px solid #eee;border-radius:12px}.rslist_head{display:flex;justify-content:space-between;margin-bottom:10px}
     .rslist_title{font-size:18px;font-weight:600;color:#111}#inline_rs button{border:0;background:none;font-size:18px}
     #inline_rs ul{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;padding:0;list-style:none}#inline_rs li a{display:block;padding:8px 14px;border:1px solid #ddd;border-radius:20px;color:#111;text-decoration:none}
+    ${skipped ? '#b_results>li.b_algo{content-visibility:auto;contain-intrinsic-size:auto 247px}' : ''}
   </style></head><body>
   <div class="hdr"><span class="blogo">Bing</span><div class="q">${esc(query)}</div></div>
   <div id="b_content"><main>${copilot ? `

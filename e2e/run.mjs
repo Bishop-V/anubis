@@ -228,6 +228,7 @@ async function launch(settings = {}, ext = EXT) {
     'https://www.bing.com/search?q=javascript+promises&paged=1&first=11': (request) =>
       request.resourceType() === 'document' ? bing('javascript promises', JS_MORE) : bingChallenge(),
     'https://www.bing.com/search?q=javascript+promises&thumb=1': bing('javascript promises', JS_RESULTS, { thumb: true }),
+    'https://www.bing.com/search?q=javascript+promises&skipped=1': bing('javascript promises', JS_RESULTS, { skipped: true }),
     'https://www.ecosia.org/search?q=javascript+promises': ecosia('javascript promises', JS_RESULTS),
     'https://www.ecosia.org/search?q=javascript+promises&p=1': ecosia('javascript promises', JS_MORE),
     'https://www.bing.com/search?q=javascript+promises&sponsored=1': bing('javascript promises', JS_RESULTS, { sponsored: true }),
@@ -1213,6 +1214,13 @@ if (!only || only === 'cleanup' || checks) {
       summaryAboveWhenOn: bingSponsoredOn.summaryAbove,
     });
   }
+  // Bing skips drawing results it takes to be off-screen (content-visibility: auto, at a placeholder height). Reported
+  // blank until a reload, every result 247px tall: a result Anubis weighs is always drawn.
+  await page.goto('https://www.bing.com/search?q=javascript+promises&skipped=1');
+  await page.waitForTimeout(1000);
+  const bingDrawn = await page.evaluate(() => [...document.querySelectorAll('[data-anubis-result]')].map((el) => getComputedStyle(el).contentVisibility));
+  console.log('== Bing results drawn:', JSON.stringify(bingDrawn));
+  if (checks) assertChecks('Bing skipped results', { allDrawn: bingDrawn.length === JS_RESULTS.length && bingDrawn.every((v) => v === 'visible') });
   // Ecosia builds its page in the browser: nothing of Anubis's is on it until it has, then Anubis arrives.
   await page.goto('https://www.ecosia.org/search?q=javascript+promises');
   await page.waitForTimeout(3500);
