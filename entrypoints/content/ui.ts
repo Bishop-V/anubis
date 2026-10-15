@@ -591,6 +591,11 @@ function clearOfPictures(host: HTMLElement, container: HTMLElement): void {
   }
   const blocked = edge < b.right;
   if (!blocked && !buttonsInGutter) return;
+  // Past the picture is where the other results' buttons already are, so this one joins them whether or not something else is near.
+  if (blocked && buttonsInGutter) {
+    host.style.setProperty('right', `${-Math.round(b.width + 4)}px`, 'important');
+    return;
+  }
   if (intoGutter(host, container)) return;
   if (blocked) {
     host.style.setProperty('right', `${Math.round(box.right - edge + 6)}px`, 'important');

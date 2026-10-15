@@ -223,6 +223,7 @@ async function launch(settings = {}, ext = EXT) {
     // Page 2 answers a request with Bing's robot check, and a page load with results.
     'https://www.bing.com/search?q=javascript+promises&paged=1&first=11': (request) =>
       request.resourceType() === 'document' ? bing('javascript promises', JS_MORE) : bingChallenge(),
+    'https://www.bing.com/search?q=javascript+promises&thumb=1': bing('javascript promises', JS_RESULTS, { thumb: true }),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
     'https://duckduckgo.com/?q=javascript+promises&iax=videos&ia=videos': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'videos' }),
@@ -1164,6 +1165,15 @@ if (!only || only === 'cleanup' || checks) {
     });
   }
   console.log('   removed:', JSON.stringify((await statsNow())?.removed));
+  // Bing: a picture in a result's corner leaves the button in the column the others are in.
+  await page.goto('https://www.bing.com/search?q=javascript+promises&thumb=1');
+  await page.waitForTimeout(1000);
+  const bingButtons = await page.evaluate(() => {
+    const lefts = [...document.querySelectorAll('anubis-weigh')].map((el) => el.getBoundingClientRect()).filter((r) => r.width).map((r) => Math.round(r.left));
+    return { buttons: lefts.length, lefts: [...new Set(lefts)] };
+  });
+  console.log('== Bing buttons beside a picture:', JSON.stringify(bingButtons));
+  if (checks) assertChecks('Bing picture', { buttonsInOneColumn: bingButtons.buttons > 0 && bingButtons.lefts.length === 1 });
   await page.goto('https://www.bing.com/search?q=javascript+promises&inline=1');
   await page.waitForTimeout(1200);
   console.log('== Bing box inside a result:', JSON.stringify(await visibleIn({ box: '#inline_rs', title: 'li.b_algo:nth-child(2) h2', snippet: 'li.b_algo:nth-child(2) .b_caption' })));

@@ -516,7 +516,7 @@ export function googleMobile(query, results) {
 // .cht_container, a .cht_disclaimer, and no label but aria-label="AI Overview".
 // Also "Related searches based on your browsing" beside the results, and "Related
 // searches for …" with the query in bold at the bottom.
-export function bing(query, results, { inline = false, next, copilot = false } = {}) {
+export function bing(query, results, { inline = false, next, copilot = false, thumb = false } = {}) {
   const b64 = (s) => Buffer.from(s).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const box = `
       <li class="b_ans" data-tag=""><div id="inline_rs" class="b_hide" data-priority=""><div class="rslist_head"><span class="rslist_title b_strong">People also search for</span><button type="button" aria-label="Close">×</button></div>
@@ -531,6 +531,13 @@ export function bing(query, results, { inline = false, next, copilot = false } =
     .join('') + (inline ? box : '') +
     (next ? `
       <li class="b_pag"><nav role="navigation" aria-label="More results"><ul class="sb_pagF"><li><a class="sb_pagS">1</a></li><li><a href="${next}">2</a></li><li><a class="sb_pagN" title="Next page" href="${next}">Next</a></li></ul></nav></li>` : '');
+  // A picture in the first two results' corners, with something else in the gutter beside that result (the others' buttons sit there).
+  const marker = '<li class="b_algo" data-tag="">';
+  const second = items.indexOf(marker, items.indexOf(marker) + 1);
+  const picture = '<img class="bthumb" alt="" width="108" height="108" style="position:absolute;top:0;right:0;border-radius:12px;background:#8884">';
+  const shown = thumb && second > 0
+    ? `${marker}${picture}${items.slice(marker.length, second)}<li class="bgap" style="position:absolute;left:810px;width:90px;height:150px;list-style:none"></li>${marker}${picture}${items.slice(second + marker.length)}`
+    : items;
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(query)} - Search</title>
   <style>
     body{margin:0;font:14px/1.5 "Segoe UI",Arial,sans-serif;background:#fff;color:#444}
@@ -561,7 +568,7 @@ export function bing(query, results, { inline = false, next, copilot = false } =
       <div class="tp_rel"><h3>Related concepts</h3><a href="/search?q=map+function">Map Function</a><a href="/search?q=filter+function">Filter Function</a></div>
       <div class="tp_comm"><h3>Community support</h3><a href="https://www.geeksforgeeks.org/python-list-comprehension/">Python List Comprehension Syntax, Examples, and Use Cases</a></div>
       <div class="cht_chips"><a href="/search?q=examples">Python list comprehension examples</a><a href="/search?q=loops">List comprehension vs loops</a></div>
-    </div></div>` : ''}<ol id="b_results">${items}${copilot ? `
+    </div></div>` : ''}<ol id="b_results">${shown}${copilot ? `
       <li class="b_ans"><div id="brsv3"><h2>Related searches for <strong>${esc(query)}</strong></h2><ul class="b_vList">${['promise all', 'async await'].map((q) => `<li><a href="/search?q=${encodeURIComponent(q)}">${q}</a></li>`).join('')}</ul></div></li>` : ''}</ol>${copilot ? `
     <aside id="b_context"><li class="b_ans"><h2>Related searches based on your browsing</h2><ul>${['javascript closures', 'python generators'].map((q) => `<li><a href="/search?q=${encodeURIComponent(q)}">${q}</a></li>`).join('')}</ul></li></aside>` : ''}</main></div>
   ${inline ? `<script>setTimeout(() => { const rs = document.getElementById('inline_rs'); document.querySelectorAll('#b_results > li.b_algo')[1].append(rs); rs.classList.remove('b_hide'); }, 500);</script>` : ''}</body></html>`;
