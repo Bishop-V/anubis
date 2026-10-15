@@ -65,6 +65,59 @@ interface Words {
   };
 }
 
+function nav(p: string, w: Words) {
+  return [
+    { text: 'Wiki', link: `${p}/guide/introduction`, activeMatch: `^${p}/guide/(?!privacy)` },
+    { text: w.lists, link: '/lists' },
+    { text: w.listFormat, link: '/list-format' },
+    { text: w.privacy, link: `${p}/guide/privacy` },
+  ];
+}
+
+function sidebar(p: string, w: Words) {
+  return [
+    {
+      text: w.startHere,
+      items: [
+        { text: w.introduction, link: `${p}/guide/introduction` },
+        { text: w.gettingStarted, link: `${p}/guide/getting-started` },
+      ],
+    },
+    {
+      text: w.using,
+      items: [
+        { text: w.ranking, link: `${p}/guide/ranking` },
+        { text: w.tags, link: `${p}/guide/tags` },
+        { text: w.subscribing, link: `${p}/guide/lists` },
+        { text: w.panels, link: `${p}/guide/clean-up` },
+        { text: w.more, link: `${p}/guide/more-results` },
+        { text: w.moving, link: `${p}/guide/import-and-backup` },
+        { text: w.sync, link: `${p}/guide/sync` },
+      ],
+    },
+    {
+      text: w.publishing,
+      items: [
+        { text: w.publish, link: `${p}/guide/publish-a-list` },
+        { text: w.listFormat, link: '/list-format' },
+        { text: w.directory, link: '/lists' },
+      ],
+    },
+    {
+      text: w.about,
+      items: [
+        { text: w.engines, link: `${p}/guide/search-engines` },
+        { text: w.privacyFull, link: `${p}/guide/privacy` },
+        { text: w.troubleshooting, link: `${p}/guide/troubleshooting` },
+        { text: w.translate, link: `${p}/guide/translate` },
+        { text: w.experiments, link: '/experiments' },
+        { text: w.contributing, link: `${repo}/blob/main/CONTRIBUTING.md` },
+        { text: w.developing, link: `${repo}/blob/main/DEVELOPMENT.md` },
+      ],
+    },
+  ];
+}
+
 function locale(folder: string, w: Words) {
   const p = `/${folder}`;
   return {
@@ -73,53 +126,8 @@ function locale(folder: string, w: Words) {
     link: `${p}/`,
     description: w.description,
     themeConfig: {
-      nav: [
-        { text: 'Wiki', link: `${p}/guide/introduction`, activeMatch: `^${p}/guide/(?!privacy)` },
-        { text: w.lists, link: '/lists' },
-        { text: w.listFormat, link: '/list-format' },
-        { text: w.privacy, link: `${p}/guide/privacy` },
-      ],
-      sidebar: [
-        {
-          text: w.startHere,
-          items: [
-            { text: w.introduction, link: `${p}/guide/introduction` },
-            { text: w.gettingStarted, link: `${p}/guide/getting-started` },
-          ],
-        },
-        {
-          text: w.using,
-          items: [
-            { text: w.ranking, link: `${p}/guide/ranking` },
-            { text: w.tags, link: `${p}/guide/tags` },
-            { text: w.subscribing, link: `${p}/guide/lists` },
-            { text: w.panels, link: `${p}/guide/clean-up` },
-            { text: w.more, link: `${p}/guide/more-results` },
-            { text: w.moving, link: `${p}/guide/import-and-backup` },
-            { text: w.sync, link: `${p}/guide/sync` },
-          ],
-        },
-        {
-          text: w.publishing,
-          items: [
-            { text: w.publish, link: `${p}/guide/publish-a-list` },
-            { text: w.listFormat, link: '/list-format' },
-            { text: w.directory, link: '/lists' },
-          ],
-        },
-        {
-          text: w.about,
-          items: [
-            { text: w.engines, link: `${p}/guide/search-engines` },
-            { text: w.privacyFull, link: `${p}/guide/privacy` },
-            { text: w.troubleshooting, link: `${p}/guide/troubleshooting` },
-            { text: w.translate, link: `${p}/guide/translate` },
-            { text: w.experiments, link: '/experiments' },
-            { text: w.contributing, link: `${repo}/blob/main/CONTRIBUTING.md` },
-            { text: w.developing, link: `${repo}/blob/main/DEVELOPMENT.md` },
-          ],
-        },
-      ],
+      nav: nav(p, w),
+      sidebar: sidebar(p, w),
       editLink: { pattern: `${repo}/edit/main/docs/:path`, text: w.editLink },
       outline: { level: [2, 3] as [number, number], label: w.outline },
       footer: { message: w.footer },
