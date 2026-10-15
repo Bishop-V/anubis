@@ -516,6 +516,20 @@ export function googleMobile(query, results) {
 // .cht_container, a .cht_disclaimer, and no label but aria-label="AI Overview".
 // Also "Related searches based on your browsing" beside the results, and "Related
 // searches for …" with the query in bold at the bottom.
+// A picture in the first two results' corners, with something else in the gutter beside the second (the others'
+// buttons sit there); and a product carousel labelled "Sponsored" above the results (a guess at the markup from a
+// screenshot).
+function bingExtras(query, items, { thumb, sponsored }) {
+  const marker = '<li class="b_algo" data-tag="">';
+  const second = items.indexOf(marker, items.indexOf(marker) + 1);
+  const picture = '<img class="bthumb" alt="" width="108" height="108" style="position:absolute;top:0;right:0;border-radius:12px;background:#8884">';
+  const shown = thumb && second > 0
+    ? `${marker}${picture}${items.slice(marker.length, second)}<li class="bgap" style="position:absolute;left:810px;width:90px;height:420px;list-style:none"></li>${marker}${picture}${items.slice(second + marker.length)}`
+    : items;
+  const shop = `<li class="b_ans"><div class="shopHead"><h2>See ${esc(query)}</h2><span>Sponsored</span></div><div class="shopRow">${[1, 2, 3].map((n) => `<a href="https://shop${n}.example/item?x=1">${esc(query)} item ${n}</a>`).join(' ')}</div></li>`;
+  return sponsored ? `${shop}${shown}` : shown;
+}
+
 export function bing(query, results, { inline = false, next, copilot = false, thumb = false, sponsored = false, skipped = false } = {}) {
   const b64 = (s) => Buffer.from(s).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const box = `
@@ -531,16 +545,7 @@ export function bing(query, results, { inline = false, next, copilot = false, th
     .join('') + (inline ? box : '') +
     (next ? `
       <li class="b_pag"><nav role="navigation" aria-label="More results"><ul class="sb_pagF"><li><a class="sb_pagS">1</a></li><li><a href="${next}">2</a></li><li><a class="sb_pagN" title="Next page" href="${next}">Next</a></li></ul></nav></li>` : '');
-  // A picture in the first two results' corners, with something else in the gutter beside that result (the others' buttons sit there).
-  const marker = '<li class="b_algo" data-tag="">';
-  const second = items.indexOf(marker, items.indexOf(marker) + 1);
-  const picture = '<img class="bthumb" alt="" width="108" height="108" style="position:absolute;top:0;right:0;border-radius:12px;background:#8884">';
-  const shown = thumb && second > 0
-    ? `${marker}${picture}${items.slice(marker.length, second)}<li class="bgap" style="position:absolute;left:810px;width:90px;height:420px;list-style:none"></li>${marker}${picture}${items.slice(second + marker.length)}`
-    : items;
-  // Product carousels labelled "Sponsored", above the results and between them (a guess at the markup from a screenshot).
-  const shop = `<li class="b_ans"><div class="shopHead"><h2>See ${esc(query)}</h2><span>Sponsored</span></div><div class="shopRow">${[1, 2, 3].map((n) => `<a href="https://shop${n}.example/item?x=1">${esc(query)} item ${n}</a>`).join(' ')}</div></li>`;
-  const listed = sponsored ? `${shop}${shown}` : shown;
+  const listed = bingExtras(query, items, { thumb, sponsored });
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(query)} - Search</title>
   <style>
     body{margin:0;font:14px/1.5 "Segoe UI",Arial,sans-serif;background:#fff;color:#444}
