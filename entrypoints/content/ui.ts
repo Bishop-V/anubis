@@ -420,6 +420,12 @@ function lineUpWithHeader(host: HTMLElement, container: HTMLElement, titleBlock:
 
 type Span = { top: number; bottom: number };
 
+/** A menu button's size: small, and drawn. */
+const isMenuSized = (r: DOMRect): boolean => r.width > 0 && r.width <= 40 && r.height <= 40;
+
+/** Ends no lower than the title's top, and starts no more than `reach` pixels above it. */
+const justAbove = (r: DOMRect, title: DOMRect, reach: number): boolean => r.bottom <= title.top + 1 && r.top >= title.top - reach;
+
 /**
  * The engine's own small menu button in the lines above the title (Ecosia's and Bing's ⋮, beside the
  * address): the button goes level with it, since it's the one thing in that row the eye compares it to.
@@ -427,7 +433,7 @@ type Span = { top: number; bottom: number };
 function menuSpan(container: HTMLElement, t: DOMRect): Span | undefined {
   for (const menu of container.querySelectorAll<HTMLElement>('button, [role="button"]')) {
     const r = menu.getBoundingClientRect();
-    if (!r.width || r.width > 40 || r.height > 40 || r.bottom > t.top + 1 || r.top < t.top - 80) continue;
+    if (!isMenuSized(r) || !justAbove(r, t, 80)) continue;
     return { top: r.top, bottom: r.bottom };
   }
 }
@@ -442,7 +448,7 @@ function textSpan(container: HTMLElement, title: HTMLElement, t: DOMRect): Span 
     if (!node.textContent?.trim() || title.contains(node)) continue;
     range.selectNodeContents(node);
     for (const r of range.getClientRects()) {
-      if (!r.width || r.bottom > t.top + 1 || r.top < t.top - 60) continue;
+      if (!r.width || !justAbove(r, t, 60)) continue;
       top = Math.min(top, r.top);
       bottom = Math.max(bottom, r.bottom);
     }
