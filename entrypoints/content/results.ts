@@ -35,7 +35,7 @@ export function findResults(engine: EngineDef, root: Document = document): Found
 /** Paid blocks look like results but aren't: they're never weighed (the Ads switch removes them). */
 function withoutAds(found: FoundResult[], engine: EngineDef): FoundResult[] {
   const ads = engine.ads;
-  return ads ? found.filter((r) => !r.container.closest(ads)) : found;
+  return ads ? found.filter((r) => !r.container.closest(ads) && !r.container.querySelector(ads)) : found;
 }
 
 function findWeb(engine: EngineDef, root: Document): FoundResult[] {

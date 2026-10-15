@@ -19,7 +19,7 @@ Search pages carry a lot that isn't results: AI answers, video panels, "People a
 | **Ads** | Paid results and product carousels above or below the results. Only Yahoo's are found so far. Ads are never weighed or given a ⚖ button, whether this is on or off. |
 | **Requests to allow ads** | Banners asking you to turn off your ad blocker or allow ads, like Startpage's "Block creepy ads, not private search" with its **Allow Startpage ads** button. |
 
-All of them start off. **All of these**, at the top of each section, turns every switch in that section on or off at once.
+All of them start off. **All**, at the top of each section, turns every switch in that section on or off at once.
 
 ## What was removed
 
