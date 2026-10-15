@@ -154,6 +154,7 @@
   "summaryRemovedImages_other": { "message": "$1 image panels" },
   "summaryRemovedRelated_one": { "message": "a list of related searches", "description": "Like summaryRemovedAi, for lists of related searches." },
   "summaryRemovedRelated_other": { "message": "$1 lists of related searches" },
+  "summaryRemovedMore": { "message": "$1 more", "description": "Last item of the list of removed blocks in the summary when there are too many to name, e.g. “an AI answer, a video panel, a discussions panel, and 2 more”. $1 is how many kinds are left out (at least 2)." },
   "summaryRemovedElsewhere_one": { "message": "a row of other search engines", "description": "Like summaryRemovedAi, for rows of buttons that repeat the search on other engines." },
   "summaryRemovedElsewhere_other": { "message": "$1 rows of other search engines" },
   "summaryRemovedAdRequests_one": { "message": "a request to allow ads", "description": "Like summaryRemovedAi, for banners asking you to allow ads or turn off an ad blocker." },
