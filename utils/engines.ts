@@ -93,6 +93,11 @@ export interface EngineDef {
    * result until `--visible` is added), which never runs for results added this way.
    */
   loadedClass?: string;
+  /**
+   * False for engines that won't load in a frame, so Load more results doesn't try a page it was refused in a
+   * hidden one (Ecosia forbids framing: `frame-ancestors`, seen on a live page, 2026-10-15).
+   */
+  frames?: false;
   /** How to draw each site's icon in results brought over by Load more results (Ecosia's own script does it for its own). */
   icon?: IconDef;
   /**
@@ -389,6 +394,7 @@ export const ENGINES: EngineDef[] = [
     title: 'h2',
     button: { top: '4px', right: '20px' },
     more: { kind: 'param', name: 'p', first: 0, step: 1 },
+    frames: false,
   },
   {
     id: 'kagi',

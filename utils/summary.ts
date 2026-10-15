@@ -32,6 +32,7 @@ const STOPPED: Record<DeeperStop['reason'], MessageKey> = {
   empty: 'loadMoreEmpty',
   repeat: 'loadMoreRepeat',
   busy: 'loadMoreBusy',
+  robot: 'loadMoreRobot',
   refused: 'loadMoreRefused',
   slow: 'loadMoreSlow',
   failed: 'loadMoreFailed',

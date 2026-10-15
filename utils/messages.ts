@@ -32,10 +32,10 @@ export interface PageStats {
 /**
  * Why "Load more results" didn't bring in a page: the engine sent a page without
  * results (often a robot check), only results already here, asked to slow down,
- * refused, took too long, or the request failed. `url` is the page it tried.
+ * answered with a robot check (403), refused, took too long, or the request failed. `url` is the page it tried.
  */
 export interface DeeperStop {
-  reason: 'empty' | 'repeat' | 'busy' | 'refused' | 'slow' | 'failed';
+  reason: 'empty' | 'repeat' | 'busy' | 'robot' | 'refused' | 'slow' | 'failed';
   page: number;
   url?: string;
 }
