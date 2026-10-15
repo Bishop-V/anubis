@@ -1915,6 +1915,11 @@ if (!only || only === 'deeper' || checks) {
   const bingPages = await loadedPages();
   const bingPagerBelow = await pagerBelow();
   const bingFrameGone = await page.evaluate(() => !document.querySelector('anubis-frame'));
+  // Bing's site icons are placeholders its script fills in; results brought over get the image itself.
+  const bingIcons = await page.evaluate(() => {
+    const loaded = [...document.querySelectorAll('[data-anubis-page] .rms_iac')];
+    return loaded.length > 0 && loaded.every((el) => el.querySelector('img.rms_img')?.getAttribute('src')?.startsWith('https://www.bing.com/th?'));
+  });
 
   // Bing: a robot check however page 2 is asked for. The summary says so, links to
   // the page, and keeps offering to load it.
@@ -1931,7 +1936,7 @@ if (!only || only === 'deeper' || checks) {
   };
   await page.screenshot({ path: `${SHOTS}bing-deeper-stopped.png`, fullPage: false });
 
-  console.log('\n== load more results:', JSON.stringify({ googleByHand, afterRewrite, googleAuto, ddgAuto, ddgByHandPages, braveAuto, bravePagerBelow, bingPages, bingPagerBelow, bingFrameGone, bingStopped }));
+  console.log('\n== load more results:', JSON.stringify({ googleByHand, afterRewrite, googleAuto, ddgAuto, ddgByHandPages, braveAuto, bravePagerBelow, bingPages, bingPagerBelow, bingFrameGone, bingIcons, bingStopped }));
   if (checks) {
     assertChecks('load more results', {
       googleByHand: googleByHand === 1,
@@ -1945,6 +1950,7 @@ if (!only || only === 'deeper' || checks) {
       bingPageBehindRobotCheck: bingPages === 1,
       bingPagerBelowResults: bingPagerBelow,
       bingFrameRemoved: bingFrameGone,
+      bingIconsOnLoadedResults: bingIcons,
       bingSaysWhyItStopped: bingStopped.said && bingStopped.linked && bingStopped.offeredAgain,
     });
   }

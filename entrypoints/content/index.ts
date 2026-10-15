@@ -136,7 +136,7 @@ export default defineContentScript({
         change = undefined;
       }
 
-      const results = findResults(engine);
+      const results = revealResults(engine, findResults(engine));
       // A page you loaded with the engine's own button counts once its results arrive,
       // so the summary's count and the next Load more results start from the pages here.
       if (deeper.manualFrom !== undefined && !deeper.busy && results.length > deeper.manualFrom) {
@@ -712,3 +712,9 @@ function clearPreviousCopy(): void {
   }
 }
 
+/** Ecosia shows a result once its own script says so, which didn't always happen after we reordered the page. */
+function revealResults(engine: EngineDef, results: FoundResult[]): FoundResult[] {
+  const shown = engine.loadedClass;
+  if (shown) for (const { container } of results) container.classList.add(shown);
+  return results;
+}

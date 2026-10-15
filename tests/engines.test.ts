@@ -84,3 +84,14 @@ describe('sameSearch', () => {
     expect(sameSearch('https://www.google.com/search?q=anubis', 'https://www.google.com/webhp?q=anubis')).toBe(false);
   });
 });
+
+describe('Mojeek', () => {
+  it('loads more results by the number of the first result on each page', () => {
+    expect(engineFor('www.mojeek.com')!.more).toEqual({ kind: 'param', name: 's', first: 1, step: 10 });
+  });
+
+  it("tells one page of results from another by that number", () => {
+    expect(sameSearch('https://www.mojeek.com/search?q=terraria', 'https://www.mojeek.com/search?q=terraria&s=11')).toBe(false);
+    expect(sameSearch('https://www.mojeek.com/search?q=terraria&s=11', 'https://www.mojeek.com/search?q=terraria&s=11')).toBe(true);
+  });
+});
