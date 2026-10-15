@@ -90,23 +90,20 @@ export function tagOrder(tags: Map<string, { label: string }>, entry: SiteEntry 
   return { mine, fromList, ids };
 }
 
-/** More tags than this fold behind "Show more tags"; the ones on the site stay in view. */
-export const TAGS_SHOWN = 8;
+/** Tags past this many rows fold behind "Show more tags"; the ones on the site stay in view. */
+export const TAG_ROWS = 2;
 
 /**
  * The tags to choose from, yours apart from those lists give sites, each group under
  * its name when there are both. `item` draws one tag; `ids` comes in `tagOrder`'s order.
- * Past `TAGS_SHOWN` tags, the rest fold away behind a button, except those on the site.
+ * Past `TAG_ROWS` rows as laid out, the rest fold away behind a button, except those on the site.
  */
 export function tagPicker(ids: string[], fromLists: Set<string>, item: (id: string) => HTMLElement): HTMLElement | null {
   if (!ids.length) return null;
-  const folded: HTMLElement[] = [];
+  const items: HTMLElement[] = [];
   const draw = (id: string) => {
     const el = item(id);
-    if (ids.indexOf(id) >= TAGS_SHOWN && el.getAttribute('aria-pressed') !== 'true' && !el.classList.contains('fixed')) {
-      el.hidden = true;
-      folded.push(el);
-    }
+    items.push(el);
     return el;
   };
   const yours = ids.filter((id) => !fromLists.has(id));
@@ -128,15 +125,46 @@ export function tagPicker(ids: string[], fromLists: Set<string>, item: (id: stri
         group(t('tagListsHeading'), lists, t('tagListsPickerHint')),
       )
     : h('div', { class: 'tags' }, ids.map(draw));
-  if (!folded.length) return body;
-  const more = h('button', { type: 'button', class: 'tags-more', attrs: { 'aria-expanded': 'false' } }, t('tagsShowMore', String(folded.length)));
+  const more = h('button', { type: 'button', class: 'tags-more', attrs: { 'aria-expanded': 'false' }, hidden: true });
+  const picker = h('div', { class: 'tag-picker' }, body, more);
+  let folded: HTMLElement[] = [];
+  const kept = (el: HTMLElement) => el.getAttribute('aria-pressed') === 'true' || el.classList.contains('fixed');
+  // Rows depend on the width and the font, so they are counted from where the tags land.
+  const fold = () => {
+    for (const el of items) el.hidden = false;
+    folded = [];
+    let rows = 0;
+    let top: number | null = null;
+    for (const el of items) {
+      const y = Math.round(el.getBoundingClientRect().top);
+      if (y !== top) {
+        rows++;
+        top = y;
+      }
+      if (rows > TAG_ROWS && !kept(el)) folded.push(el);
+    }
+    for (const el of folded) el.hidden = true;
+    more.hidden = !folded.length;
+    more.setAttribute('aria-expanded', 'false');
+    more.textContent = t('tagsShowMore', String(folded.length));
+  };
   more.addEventListener('click', () => {
     const open = more.getAttribute('aria-expanded') !== 'true';
     for (const el of folded) el.hidden = !open;
     more.setAttribute('aria-expanded', String(open));
     more.textContent = open ? t('tagsShowFewer') : t('tagsShowMore', String(folded.length));
   });
-  return h('div', { class: 'tag-picker' }, body, more);
+  // Folds once the picker has a size, and again when its width changes, unless it is opened out.
+  if (typeof ResizeObserver !== 'undefined') {
+    let width = -1;
+    new ResizeObserver(() => {
+      const now = Math.round(picker.getBoundingClientRect().width);
+      if (now === width || !now) return;
+      width = now;
+      if (more.getAttribute('aria-expanded') !== 'true') fold();
+    }).observe(picker);
+  }
+  return picker;
 }
 
 /** The lists that gave the site a tag, after its name where it can't be pressed: "from Paywalls". */
