@@ -524,7 +524,7 @@ export function bing(query, results, { inline = false, next, copilot = false } =
   const items = results
     .map(([url, title, snippet], i) => `
       <li class="b_algo" data-tag="">
-        <div class="b_tpcn"><a class="tilk" href="https://www.bing.com/ck/a?!&&p=abc&u=a1${b64(url)}&ntb=1"><div class="tpic"></div><div class="tptxt"><div class="tptt">${esc(hostOf(url))}</div><div class="tpmeta"><div class="b_attribution"><cite>${esc(url)}</cite></div></div></div></a></div>
+        <div class="b_tpcn"><a class="tilk" href="https://www.bing.com/ck/a?!&&p=abc&u=a1${b64(url)}&ntb=1"><div class="tpic"><div class="rms_iac" data-src="https://www.bing.com/th?id=${encodeURIComponent(hostOf(url))}&pid=3.1" data-class="rms_img" data-width="16" data-height="16"></div></div><div class="tptxt"><div class="tptt">${esc(hostOf(url))}</div><div class="tpmeta"><div class="b_attribution"><cite>${esc(url)}</cite></div></div></div></a></div>
         <h2><a href="https://www.bing.com/ck/a?!&&p=abc&u=a1${b64(url)}&ntb=1">${esc(title)}</a></h2>
         <div class="b_caption"><p class="b_lineclamp2">${esc(snippet)}</p></div>
       </li>`)

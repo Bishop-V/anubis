@@ -264,6 +264,8 @@ export default defineContentScript({
       const { container } = result;
       const revealed = verdict.hidden && (reveal || shown.has(result.url));
       container.setAttribute('data-anubis-result', '');
+      // Ecosia shows a result once its own script says so, which didn't always happen after we reordered the page.
+      if (engine.loadedClass) container.classList.add(engine.loadedClass);
       const state: string[] = [verdict.level];
       if (verdict.tags.length) state.push('tagged');
       container.setAttribute('data-anubis-state', state.join(' '));

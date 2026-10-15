@@ -359,7 +359,16 @@ function sanitize(root: HTMLElement): void {
     for (const attr of [...el.attributes]) {
       if (/^on/i.test(attr.name)) el.removeAttribute(attr.name);
     }
-    // Lazy images keep their real source in data-src; show it now.
-    if (el instanceof HTMLImageElement && !el.getAttribute('src') && el.dataset.src) el.src = el.dataset.src;
+    // Lazy images keep their real source in data-src; show it now (a placeholder in src doesn't count).
+    if (el instanceof HTMLImageElement && el.dataset.src && !/^https?:/i.test(el.getAttribute('src') ?? '')) el.src = el.dataset.src;
+  }
+  // Bing draws each site's icon from a `.rms_iac` placeholder that its script turns into an image; nothing runs that for imported results.
+  for (const holder of root.querySelectorAll<HTMLElement>('.rms_iac[data-src]')) {
+    const img = document.createElement('img');
+    img.src = holder.dataset.src!;
+    img.alt = '';
+    img.className = holder.dataset.class || 'rms_img';
+    for (const size of ['width', 'height'] as const) if (holder.dataset[size]) img.setAttribute(size, holder.dataset[size]!);
+    holder.replaceChildren(img);
   }
 }

@@ -14,7 +14,7 @@ Anubis works on the web results of these engines. Turn any of them off in **Sett
 | Kagi | Supported | No | Yes |
 | Yahoo | Supported | Yes* | Yes |
 | Yandex | Supported | Yes* | Yes |
-| Mojeek | Experimental | No | Not yet |
+| Mojeek | Experimental | Yes | Results yes. Load more results not yet |
 
 On Firefox for Android, where support is experimental, Google, DuckDuckGo, and Bing send phones a layout of their own, and Anubis reads each one. These three have been tried on a phone; the other engines' phone layouts haven't yet.
 

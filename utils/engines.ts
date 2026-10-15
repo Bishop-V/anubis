@@ -422,6 +422,8 @@ export const ENGINES: EngineDef[] = [
     heading: 'h2',
     boundary: 'ul, main',
     button: { top: '2px', right: '2px' },
+    // Pages are `s=1`, `s=11`, `s=21`… (the number of the page's first result), page 1 having none.
+    more: { kind: 'param', name: 's', first: 1, step: 10 },
   },
 ];
 
@@ -441,7 +443,7 @@ export const isMobileAgent = (userAgent: string): boolean => /\bMobi/.test(userA
  * picked for it. Engines add other details (Google's tracking parameters) after
  * the page loads, which don't make a new search.
  */
-const SEARCH_PARAMS = ['q', 'p', 'text', 'query', 'udm', 'tbm', 'tbs', 'ia', 'iax', 'df', 'kl', 'filters', 'tf', 'offset', 'first', 'start'];
+const SEARCH_PARAMS = ['q', 'p', 'text', 'query', 'udm', 'tbm', 'tbs', 'ia', 'iax', 'df', 'kl', 'filters', 'tf', 'offset', 'first', 'start', 's'];
 
 /** Whether two results addresses are the same search. */
 export function sameSearch(a: string, b: string): boolean {
