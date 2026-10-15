@@ -411,6 +411,29 @@ function lineUpWithHeader(host: HTMLElement, container: HTMLElement, titleBlock:
   const b = host.getBoundingClientRect();
   const t = title.getBoundingClientRect();
   if (!b.height || !t.height) return;
+  const span = menuSpan(container, t) ?? textSpan(container, title, t) ?? firstLineSpan(title);
+  if (!span) return;
+  const box = container.getBoundingClientRect();
+  const y = (span.top + span.bottom) / 2 - b.height / 2 - box.top - parseFloat(getComputedStyle(container).borderTopWidth);
+  host.style.setProperty('top', `${Math.round(y)}px`, 'important');
+}
+
+type Span = { top: number; bottom: number };
+
+/**
+ * The engine's own small menu button in the lines above the title (Ecosia's and Bing's ⋮, beside the
+ * address): the button goes level with it, since it's the one thing in that row the eye compares it to.
+ */
+function menuSpan(container: HTMLElement, t: DOMRect): Span | undefined {
+  for (const menu of container.querySelectorAll<HTMLElement>('button, [role="button"]')) {
+    const r = menu.getBoundingClientRect();
+    if (!r.width || r.width > 40 || r.height > 40 || r.bottom > t.top + 1 || r.top < t.top - 80) continue;
+    return { top: r.top, bottom: r.bottom };
+  }
+}
+
+/** The lines of text above the title: the site's name and address, on most engines. */
+function textSpan(container: HTMLElement, title: HTMLElement, t: DOMRect): Span | undefined {
   let top = Infinity;
   let bottom = -Infinity;
   const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
@@ -424,15 +447,14 @@ function lineUpWithHeader(host: HTMLElement, container: HTMLElement, titleBlock:
       bottom = Math.max(bottom, r.bottom);
     }
   }
-  if (top === Infinity) {
-    range.selectNodeContents(title);
-    const first = range.getClientRects()[0];
-    if (!first) return;
-    ({ top, bottom } = first);
-  }
-  const box = container.getBoundingClientRect();
-  const y = (top + bottom) / 2 - b.height / 2 - box.top - parseFloat(getComputedStyle(container).borderTopWidth);
-  host.style.setProperty('top', `${Math.round(y)}px`, 'important');
+  return top === Infinity ? undefined : { top, bottom };
+}
+
+function firstLineSpan(title: HTMLElement): Span | undefined {
+  const range = document.createRange();
+  range.selectNodeContents(title);
+  const first = range.getClientRects()[0];
+  return first && { top: first.top, bottom: first.bottom };
 }
 
 /**

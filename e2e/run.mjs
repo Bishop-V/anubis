@@ -1216,8 +1216,24 @@ if (!only || only === 'cleanup' || checks) {
     beforeBuild: window.__anubisBeforeBuild,
     results: document.querySelectorAll('[data-anubis-result]').length,
   }));
-  console.log('== Ecosia settle:', JSON.stringify(ecosiaSettle));
-  if (checks) assertChecks('Ecosia settle', { builtUntouched: ecosiaSettle.built && ecosiaSettle.beforeBuild === false, thenWeighed: ecosiaSettle.results === JS_RESULTS.length });
+  // The button is level with the result's ⋮ menu, not between the site's name and its address.
+  const ecosiaLevel = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-anubis-result]')].map((el) => {
+      const host = el.querySelector(':scope > anubis-weigh');
+      const dots = el.querySelector('.dots');
+      const a = host?.getBoundingClientRect();
+      const b = dots?.getBoundingClientRect();
+      // A hidden result shows no menu.
+      if (b && !b.width) return 0;
+      if (!a || !b) return 99;
+      return Math.abs(a.top + a.height / 2 - (b.top + b.height / 2));
+    }),
+  );
+  console.log('== Ecosia settle:', JSON.stringify({ ecosiaSettle, ecosiaLevel }));
+  if (checks) {
+    assertChecks('Ecosia settle', { builtUntouched: ecosiaSettle.built && ecosiaSettle.beforeBuild === false, thenWeighed: ecosiaSettle.results === JS_RESULTS.length });
+    assertChecks('Ecosia button', { levelWithTheMenu: ecosiaLevel.length > 0 && ecosiaLevel.every((d) => d < 2) });
+  }
   // Yahoo: its ads look like results but aren't weighed; the Ads switch removes them.
   const yahooAds = async () => {
     await page.goto('https://search.yahoo.com/search?p=javascript+promises');
