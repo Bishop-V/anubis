@@ -229,7 +229,7 @@ async function launch(settings = {}, ext = EXT) {
       request.resourceType() === 'document' ? bing('javascript promises', JS_MORE) : bingChallenge(),
     'https://www.bing.com/search?q=javascript+promises&thumb=1': bing('javascript promises', JS_RESULTS, { thumb: true }),
     'https://search.yahoo.com/search?p=javascript+promises': yahoo('javascript promises', JS_RESULTS),
-    'https://search.yahoo.com/search?p=javascript+promises&long=1': yahoo('javascript promises', JS_RESULTS, { longTitle: true }),
+    'https://search.yahoo.com/search?p=javascript+promises&long=1': yahoo('javascript promises', JS_RESULTS, { longTitle: true, rail: true }),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
     'https://duckduckgo.com/?q=javascript+promises&iax=videos&ia=videos': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'videos' }),
@@ -1191,6 +1191,8 @@ if (!only || only === 'cleanup' || checks) {
         buttonsOnAds: ads?.querySelectorAll('anubis-weigh, [data-anubis-result]').length ?? 0,
         adsShown: !!ads && getComputedStyle(ads).display !== 'none' && ads.getBoundingClientRect().height > 0,
         middleAdShown: [...document.querySelectorAll('.midAd')].some((el) => el.getBoundingClientRect().height > 0),
+        // The summary is above the ads, not between them and the results.
+        summaryAboveAds: !!ads && !!document.querySelector('anubis-summary') && !!(ads.compareDocumentPosition(document.querySelector('anubis-summary')) & Node.DOCUMENT_POSITION_PRECEDING),
       };
     });
   };
@@ -1204,6 +1206,8 @@ if (!only || only === 'cleanup' || checks) {
     assertChecks('Yahoo ads', {
       adsAreNotResults: yahooAdsOff.results === JS_RESULTS.length && yahooAdsOff.buttonsOnAds === 0,
       adsShownWhenOff: yahooAdsOff.adsShown && yahooAdsOff.middleAdShown,
+      summaryAboveAdsWhenShown: yahooAdsOff.summaryAboveAds,
+      summaryAboveAdsWhenRemoved: yahooAdsOn.summaryAboveAds,
       adsRemovedWhenOn: !yahooAdsOn.adsShown && !yahooAdsOn.middleAdShown && yahooAdsOn.results === JS_RESULTS.length,
       summaryCountsThem: yahooRemoved?.ads === 2,
     });

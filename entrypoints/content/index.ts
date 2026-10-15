@@ -668,12 +668,16 @@ function summaryAnchor(results: FoundResult[], engine: EngineDef): { before?: HT
  * results area, which is also the fallback if the page lays the first place out
  * somewhere else.
  */
+/** The engine's paid blocks, when it names them (`ads` in `EngineDef`). */
+function adBlocks(engine: EngineDef): HTMLElement[] {
+  return engine.ads ? [...document.querySelectorAll<HTMLElement>(engine.ads)] : [];
+}
+
 function summaryPlace(results: FoundResult[], engine: EngineDef, clutter: Clutter[]): SummaryPlace | undefined {
   const { before, area, column } = summaryAnchor(results, engine);
   if (!before) return undefined;
-  const ai = clutter
-    .filter((c) => c.kind === 'ai' && !c.uncounted)
-    .map((c) => c.block)
+  // The summary goes above an AI answer, and above an engine's ads: the page opens with what Anubis did.
+  const ai = [...clutter.filter((c) => c.kind === 'ai' && !c.uncounted).map((c) => c.block), ...adBlocks(engine)]
     .filter((b) => b.isConnected && !b.contains(before) && before.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_PRECEDING && !b.closest('aside, [role="complementary"], #rhs'))
     .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
   const titles = results.slice(0, 5).map((r) => r.titleBlock);

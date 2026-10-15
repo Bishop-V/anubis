@@ -589,15 +589,16 @@ const edgeSlack = (box: DOMRect): number => {
  * Just past the result's right edge, if nothing else is there. The first button
  * to go takes the ones already placed at their results' edges with it.
  */
-function intoGutter(host: HTMLElement, container: HTMLElement): boolean {
+function intoGutter(host: HTMLElement, container: HTMLElement, force = false): boolean {
   const box = container.getBoundingClientRect();
   const b = host.getBoundingClientRect();
-  if (!gutterIsFree(container, { left: box.right + 4, right: box.right + 4 + b.width, top: b.top, bottom: b.bottom })) return false;
+  // Once the other buttons are in the column, so is this one: a wrapper that merely spans the spot (Yahoo's side column) doesn't keep it out.
+  if (!force && !gutterIsFree(container, { left: box.right + 4, right: box.right + 4 + b.width, top: b.top, bottom: b.bottom })) return false;
   host.style.setProperty('right', `${-Math.round(b.width + 4) - edgeSlack(box)}px`, 'important');
   if (!buttonsInGutter) {
     buttonsInGutter = true;
     for (const other of document.querySelectorAll<HTMLElement>('anubis-weigh')) {
-      if (other !== host && atEdge.has(other) && other.parentElement) intoGutter(other, other.parentElement);
+      if (other !== host && atEdge.has(other) && other.parentElement) intoGutter(other, other.parentElement, true);
     }
   }
   return true;
@@ -622,12 +623,7 @@ function clearOfPictures(host: HTMLElement, container: HTMLElement): void {
   }
   const blocked = edge < b.right;
   if (!blocked && !buttonsInGutter) return;
-  // Past the picture is where the other results' buttons already are, so this one joins them whether or not something else is near.
-  if (blocked && buttonsInGutter) {
-    host.style.setProperty('right', `${-Math.round(b.width + 4) - edgeSlack(box)}px`, 'important');
-    return;
-  }
-  if (intoGutter(host, container)) return;
+  if (intoGutter(host, container, buttonsInGutter)) return;
   if (blocked) {
     host.style.setProperty('right', `${Math.round(box.right - edge + 6)}px`, 'important');
   }
