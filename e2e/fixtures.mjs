@@ -470,7 +470,7 @@ export function googleMobile(query, results) {
       <div class="MjjYud"><div class="vt6azd Ww4FFb"><div class="Z26q7c">
         <div class="menu" role="button" tabindex="0" aria-label="About this result"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm0 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm0 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg></div>
         <a class="UBFage" href="${href}"><div class="v7jaNc" role="heading" aria-level="3"><span class="clamp">${esc(title)}</span></div>
-          <div class="site"><span class="favicon"></span><span class="ob9lvb">${esc(`${u.hostname} › ${u.pathname.split('/').filter(Boolean)[0] ?? ''}`)}</span></div></a>
+          <div class="site" style="line-height:24px"><span class="favicon"></span><span class="ob9lvb">${esc(`${u.hostname} › ${u.pathname.split('/').filter(Boolean)[0] ?? ''}`)}</span></div></a>
         </div><div class="snippet">${esc(snippet)}</div></div></div>`;
   });
   items.splice(2, 0, stories);
@@ -756,10 +756,10 @@ export function yahoo(query, results, { ads = true, longTitle = false, rail = fa
 // markup is a guess from screenshots; `--visible` is the class Ecosia's own script adds to reveal a result.)
 export function ecosia(query, results) {
   const items = results
-    .map(([url, title, snippet]) => `<div class="mainline__result-wrapper"><article class="result"><a class="result__link" href="${url}"><h2>${esc(title)}</h2></a><p>${esc(snippet)}</p></article></div>`)
+    .map(([url, title, snippet]) => `<div class="mainline__result-wrapper"><article class="result"><div class="site" style="line-height:24px">${esc(new URL(url).hostname)}</div><div class="urlrow"><span>${esc(url)}</span><button class="dots" type="button" aria-label="Menu" style="width:24px;height:24px;border:0;background:none">⋮</button></div><a class="result__link" href="${url}"><h2>${esc(title)}</h2></a><p>${esc(snippet)}</p></article></div>`)
     .join('');
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(query)} - Ecosia</title>
-  <style>body{margin:0;font:14px/1.5 Arial,sans-serif;background:#fff;color:#222}.mainline__content{width:620px;margin:24px 120px}.mainline__result-wrapper{margin:0 0 24px;position:relative}</style>
+  <style>body{margin:0;font:14px/1.5 Arial,sans-serif;background:#fff;color:#222}.mainline__content{width:620px;margin:24px 120px}.mainline__result-wrapper{margin:0 0 24px;position:relative}.mainline__result-wrapper h2{margin:4px 0;font-size:18px}</style>
   </head><body><main class="mainline__content">${items}</main>
   <script>
     window.addEventListener('load', () => setTimeout(() => {

@@ -411,28 +411,58 @@ function lineUpWithHeader(host: HTMLElement, container: HTMLElement, titleBlock:
   const b = host.getBoundingClientRect();
   const t = title.getBoundingClientRect();
   if (!b.height || !t.height) return;
-  let top = Infinity;
-  let bottom = -Infinity;
+  const span = menuSpan(container, t) ?? textSpan(container, title, t) ?? firstLineSpan(title);
+  if (!span) return;
+  const box = container.getBoundingClientRect();
+  const y = (span.top + span.bottom) / 2 - b.height / 2 - box.top - parseFloat(getComputedStyle(container).borderTopWidth);
+  host.style.setProperty('top', `${Math.round(y)}px`, 'important');
+}
+
+type Span = { top: number; bottom: number };
+
+/** A menu button's size: small, and drawn. */
+const isMenuSized = (r: DOMRect): boolean => r.width > 0 && r.width <= 40 && r.height <= 40;
+
+/** Ends no lower than the title's top, and starts no more than `reach` pixels above it. */
+const justAbove = (r: DOMRect, title: DOMRect, reach: number): boolean => r.bottom <= title.top + 1 && r.top >= title.top - reach;
+
+/**
+ * The engine's own small menu button in the lines above the title (Ecosia's and Bing's ⋮, beside the
+ * address): the button goes level with it, since it's the one thing in that row the eye compares it to.
+ */
+function menuSpan(container: HTMLElement, t: DOMRect): Span | undefined {
+  for (const menu of container.querySelectorAll<HTMLElement>('button, [role="button"]')) {
+    const r = menu.getBoundingClientRect();
+    if (!isMenuSized(r) || !justAbove(r, t, 80)) continue;
+    return { top: r.top, bottom: r.bottom };
+  }
+}
+
+/** The lines of text above the title: the site's name and address, on most engines. */
+function textSpan(container: HTMLElement, title: HTMLElement, t: DOMRect): Span | undefined {
+  const rects = textRectsAbove(container, title, t);
+  if (!rects.length) return undefined;
+  return { top: Math.min(...rects.map((r) => r.top)), bottom: Math.max(...rects.map((r) => r.bottom)) };
+}
+
+/** Where the result's text outside the title sits, when it's just above it. */
+function textRectsAbove(container: HTMLElement, title: HTMLElement, t: DOMRect): DOMRect[] {
+  const found: DOMRect[] = [];
   const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
   const range = document.createRange();
   for (let node = walker.nextNode(); node; node = walker.nextNode()) {
     if (!node.textContent?.trim() || title.contains(node)) continue;
     range.selectNodeContents(node);
-    for (const r of range.getClientRects()) {
-      if (!r.width || r.bottom > t.top + 1 || r.top < t.top - 60) continue;
-      top = Math.min(top, r.top);
-      bottom = Math.max(bottom, r.bottom);
-    }
+    for (const r of range.getClientRects()) if (r.width && justAbove(r, t, 60)) found.push(r);
   }
-  if (top === Infinity) {
-    range.selectNodeContents(title);
-    const first = range.getClientRects()[0];
-    if (!first) return;
-    ({ top, bottom } = first);
-  }
-  const box = container.getBoundingClientRect();
-  const y = (top + bottom) / 2 - b.height / 2 - box.top - parseFloat(getComputedStyle(container).borderTopWidth);
-  host.style.setProperty('top', `${Math.round(y)}px`, 'important');
+  return found;
+}
+
+function firstLineSpan(title: HTMLElement): Span | undefined {
+  const range = document.createRange();
+  range.selectNodeContents(title);
+  const first = range.getClientRects()[0];
+  return first && { top: first.top, bottom: first.bottom };
 }
 
 /**
