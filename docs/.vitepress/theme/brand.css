@@ -87,6 +87,9 @@ body .VPContent .VPHome {
   line-height: 44px;
   letter-spacing: -0.01em;
   color: var(--vp-c-text-1);
+  /* A long word, as in German, breaks at a syllable, not mid-letter. */
+  hyphens: auto;
+  overflow-wrap: break-word;
 }
 .home-lead {
   max-width: 30em;

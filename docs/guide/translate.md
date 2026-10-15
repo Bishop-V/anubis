@@ -61,7 +61,7 @@ Change the `message` in `locales/<language>/messages.json`, and say in the pull 
 
 - **Reports and suggestions sent to a list's maintainers.** When you report a list's mistake or suggest a site to it, the issue Anubis fills in is in English, since the list's maintainers may not read your language.
 - **List files.** Your own list, as Anubis starts it, and the lists you subscribe to are written by their authors.
-- **This wiki and the store listings.** They're translated separately. The wiki's home page and guide pages have a machine-translated Vietnamese version in `docs/vi/`, in the site's language menu, and which the extension's help links open when its interface is in Vietnamese; the pages for list publishers and contributors (the list format, the lists directory, the subscribe page, and the experiments) stay in English.
+- **This wiki and the store listings.** They're translated separately. The wiki's home page and guide pages have machine-translated Vietnamese, German, Chinese (Simplified), and Chinese (Traditional) versions (`docs/vi/`, `docs/de/`, `docs/zh-cn/`, `docs/zh-tw/`), in the site's language menu, and the extension's help links open them when its interface is in one of those languages; the pages for list publishers and contributors (the list format, the lists directory, the subscribe page, and the experiments) stay in English.
 
 ## Check your translation
 
