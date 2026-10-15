@@ -158,6 +158,8 @@
   "summaryRemovedElsewhere_other": { "message": "$1 rows of other search engines" },
   "summaryRemovedAdRequests_one": { "message": "a request to allow ads", "description": "Like summaryRemovedAi, for banners asking you to allow ads or turn off an ad blocker." },
   "summaryRemovedAdRequests_other": { "message": "$1 requests to allow ads" },
+  "summaryRemovedAds_one": { "message": "a block of ads", "description": "Like summaryRemovedAi, for a block of paid results and product carousels." },
+  "summaryRemovedAds_other": { "message": "$1 blocks of ads" },
   "withShortcut": { "message": "$1 ($2)", "description": "A button's description followed by its keyboard shortcut, e.g. Show hidden (Alt+Shift+H)." },
   "toolbarOff": { "message": "Anubis is off", "description": "Tooltip of the toolbar button while Anubis is turned off." },
   "weighLabel": { "message": "Hide, rank, or tag $1", "description": "Tooltip and screen reader label of the balance button on each result, and the name of the menu it opens. $1 is the result's site, e.g. fandom.com." },
@@ -393,6 +395,8 @@
   "cleanupElsewhereHint": { "message": "Rows of buttons that repeat your search on another engine, like Brave’s “Find elsewhere”.", "description": "Settings → Remove panels: explains cleanupElsewhere. “Find elsewhere” is Brave’s own name." },
   "cleanupAdRequests": { "message": "Requests to allow ads", "description": "Settings → Remove panels: a switch; on removes these panels from every search." },
   "cleanupAdRequestsHint": { "message": "Banners asking you to turn off your ad blocker or allow ads, like Startpage’s “Block creepy ads, not private search”.", "description": "Settings → Remove panels: explains cleanupAdRequests. “Block creepy ads, not private search” is Startpage’s own wording." },
+  "cleanupAds": { "message": "Ads", "description": "Settings → Remove panels: a switch; on removes these panels from every search." },
+  "cleanupAdsHint": { "message": "Paid results and product carousels above or below the results, like Yahoo’s. They are never weighed or ranked, whether this is on or off.", "description": "Settings → Remove panels: explains cleanupAds." },
 
   "sitesIntro": { "message": "Sites you’ve ranked or hidden yourself. Your choice beats every list you subscribe to. Use the button on any search result, or add sites here.", "description": "Settings → Your sites: under the heading." },
   "sitesEditAsText": { "message": "Edit as text", "description": "Settings → Your sites: a button that shows your list as text, and the heading over it." },

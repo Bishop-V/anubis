@@ -21,7 +21,7 @@ import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync
 import { tmpdir } from 'node:os';
 import { delimiter, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ANUBIS_PAGE2, ANUBIS_PAGE3, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, bingChallenge, bingMobile, brave, duckduckgo, duckduckgoMobile, google, googleMobile } from './fixtures.mjs';
+import { ANUBIS_PAGE2, ANUBIS_PAGE3, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, bingChallenge, bingMobile, brave, duckduckgo, duckduckgoMobile, google, googleMobile, yahoo } from './fixtures.mjs';
 import { ENGINE_TABS, engineTab } from './tab-fixtures.mjs';
 
 const EXT = fileURLToPath(new URL('../.output/chrome-mv3', import.meta.url));
@@ -217,6 +217,10 @@ async function launch(settings = {}, ext = EXT) {
     'https://search.brave.com/search?q=anubis&paged=1&offset=1': brave('anubis', ANUBIS_PAGE2, { pager: '/search?q=anubis&paged=1&offset=2' }),
     'https://search.brave.com/search?q=anubis&paged=1&offset=2': brave('anubis', ANUBIS_PAGE3, { pager: '/search?q=anubis&paged=1&offset=3' }),
     'https://www.bing.com/search?q=javascript+promises&paged=1': bing('javascript promises', JS_RESULTS, { next: '/search?q=javascript+promises&paged=1&first=11' }),
+    // A page reached by a redirect: its Next link carries `rdr=1`, and Bing answers that with the same page again.
+    'https://www.bing.com/search?q=javascript+promises&redirected=1': bing('javascript promises', JS_RESULTS, { next: '/search?q=javascript+promises&rdr=1&rdrig=ABC&first=11' }),
+    'https://www.bing.com/search?q=javascript+promises&rdr=1&rdrig=ABC&first=11': bing('javascript promises', JS_RESULTS),
+    'https://www.bing.com/search?q=javascript+promises&first=11': bing('javascript promises', JS_MORE),
     // Page 2 answers with Bing's robot check however it's asked for.
     'https://www.bing.com/search?q=javascript+promises&paged=2': bing('javascript promises', JS_RESULTS, { next: '/search?q=javascript+promises&paged=2&first=11' }),
     'https://www.bing.com/search?q=javascript+promises&paged=2&first=11': bingChallenge(),
@@ -224,6 +228,7 @@ async function launch(settings = {}, ext = EXT) {
     'https://www.bing.com/search?q=javascript+promises&paged=1&first=11': (request) =>
       request.resourceType() === 'document' ? bing('javascript promises', JS_MORE) : bingChallenge(),
     'https://www.bing.com/search?q=javascript+promises&thumb=1': bing('javascript promises', JS_RESULTS, { thumb: true }),
+    'https://search.yahoo.com/search?p=javascript+promises': yahoo('javascript promises', JS_RESULTS),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
     'https://duckduckgo.com/?q=javascript+promises&iax=videos&ia=videos': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'videos' }),
@@ -232,7 +237,7 @@ async function launch(settings = {}, ext = EXT) {
     'https://duckduckgo.com/?q=javascript+promises&wide=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { wide: true }),
     'https://duckduckgo.com/?q=javascript+promises&unseen=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { unseen: true }),
   };
-  await ctx.route(/^https:\/\/((noai\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com|www\.ecosia\.org|kagi\.com|www\.startpage\.com|yandex\.com)\//, (route) => {
+  await ctx.route(/^https:\/\/((noai\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com|www\.ecosia\.org|search\.yahoo\.com|kagi\.com|www\.startpage\.com|yandex\.com)\//, (route) => {
     const page = pages[route.request().url()];
     const body = typeof page === 'function' ? page(route.request()) : page;
     return body ? route.fulfill({ contentType: 'text/html; charset=utf-8', body }) : route.fulfill({ status: 204, body: '' });
@@ -1174,6 +1179,33 @@ if (!only || only === 'cleanup' || checks) {
   });
   console.log('== Bing buttons beside a picture:', JSON.stringify(bingButtons));
   if (checks) assertChecks('Bing picture', { buttonsInOneColumn: bingButtons.buttons > 0 && bingButtons.lefts.length === 1 });
+  // Yahoo: its ads look like results but aren't weighed; the Ads switch removes them.
+  const yahooAds = async () => {
+    await page.goto('https://search.yahoo.com/search?p=javascript+promises');
+    await page.waitForTimeout(1000);
+    return page.evaluate(() => {
+      const ads = document.querySelector('.searchCenterTopAds');
+      return {
+        results: document.querySelectorAll('[data-anubis-result]').length,
+        buttonsOnAds: ads?.querySelectorAll('anubis-weigh, [data-anubis-result]').length ?? 0,
+        adsShown: !!ads && getComputedStyle(ads).display !== 'none' && ads.getBoundingClientRect().height > 0,
+      };
+    });
+  };
+  await setSettings({ cleanup: { ...all, ads: false } });
+  const yahooAdsOff = await yahooAds();
+  await setSettings({ cleanup: { ...all, ads: true } });
+  const yahooAdsOn = await yahooAds();
+  const yahooRemoved = (await statsNow())?.removed;
+  console.log('== Yahoo ads:', JSON.stringify({ yahooAdsOff, yahooAdsOn, yahooRemoved }));
+  if (checks) {
+    assertChecks('Yahoo ads', {
+      adsAreNotResults: yahooAdsOff.results === JS_RESULTS.length && yahooAdsOff.buttonsOnAds === 0,
+      adsShownWhenOff: yahooAdsOff.adsShown,
+      adsRemovedWhenOn: !yahooAdsOn.adsShown && yahooAdsOn.results === JS_RESULTS.length,
+      summaryCountsThem: yahooRemoved?.ads === 1,
+    });
+  }
   await page.goto('https://www.bing.com/search?q=javascript+promises&inline=1');
   await page.waitForTimeout(1200);
   console.log('== Bing box inside a result:', JSON.stringify(await visibleIn({ box: '#inline_rs', title: 'li.b_algo:nth-child(2) h2', snippet: 'li.b_algo:nth-child(2) .b_caption' })));
@@ -1925,6 +1957,20 @@ if (!only || only === 'deeper' || checks) {
   const bingPages = await loadedPages();
   const bingPagerBelow = await pagerBelow();
   const bingFrameGone = await page.evaluate(() => !document.querySelector('anubis-frame'));
+  // Bing: a Next link that carries `rdr` gets page 1 again, so the address goes without it.
+  await page.goto('https://www.bing.com/search?q=javascript+promises&redirected=1');
+  await page.waitForTimeout(800);
+  await sw.evaluate(async () => {
+    for (const tab of await chrome.tabs.query({})) await chrome.tabs.sendMessage(tab.id, { type: 'go-deeper' }).catch(() => {});
+  });
+  await page.waitForTimeout(3500);
+  const bingRedirectedPages = await loadedPages();
+  await page.goto('https://www.bing.com/search?q=javascript+promises&paged=1');
+  await page.waitForTimeout(800);
+  await sw.evaluate(async () => {
+    for (const tab of await chrome.tabs.query({})) await chrome.tabs.sendMessage(tab.id, { type: 'go-deeper' }).catch(() => {});
+  });
+  await page.waitForTimeout(3500);
   // Bing's site icons are placeholders its script fills in; results brought over get the image itself.
   const bingIcons = await page.evaluate(() => {
     const loaded = [...document.querySelectorAll('[data-anubis-page] .rms_iac')];
@@ -1946,7 +1992,7 @@ if (!only || only === 'deeper' || checks) {
   };
   await page.screenshot({ path: `${SHOTS}bing-deeper-stopped.png`, fullPage: false });
 
-  console.log('\n== load more results:', JSON.stringify({ googleByHand, afterRewrite, googleAuto, ddgAuto, ddgByHandPages, braveAuto, bravePagerBelow, bingPages, bingPagerBelow, bingFrameGone, bingIcons, bingStopped }));
+  console.log('\n== load more results:', JSON.stringify({ googleByHand, afterRewrite, googleAuto, ddgAuto, ddgByHandPages, braveAuto, bravePagerBelow, bingPages, bingPagerBelow, bingFrameGone, bingRedirectedPages, bingIcons, bingStopped }));
   if (checks) {
     assertChecks('load more results', {
       googleByHand: googleByHand === 1,
@@ -1960,6 +2006,7 @@ if (!only || only === 'deeper' || checks) {
       bingPageBehindRobotCheck: bingPages === 1,
       bingPagerBelowResults: bingPagerBelow,
       bingFrameRemoved: bingFrameGone,
+      bingNextLinkWithoutRedirectFlag: bingRedirectedPages === 1,
       bingIconsOnLoadedResults: bingIcons,
       bingSaysWhyItStopped: bingStopped.said && bingStopped.linked && bingStopped.offeredAgain,
     });

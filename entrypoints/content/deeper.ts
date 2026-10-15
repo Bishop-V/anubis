@@ -131,7 +131,9 @@ function nextUrl(engine: EngineDef, state: DeeperState, doc: Document, base: str
     const href = doc.querySelector<HTMLAnchorElement>(more.next)?.getAttribute('href');
     if (!href) return undefined;
     try {
-      return new URL(href, base).href;
+      const url = new URL(href, base);
+      for (const key of more.drop ?? []) url.searchParams.delete(key);
+      return url.href;
     } catch {
       return undefined;
     }

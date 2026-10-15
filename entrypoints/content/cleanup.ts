@@ -110,7 +110,8 @@ export function findClutter(engine: EngineDef, results: FoundResult[], wanted: C
     else add(blockAround(el, engine, column), kind);
   }
 
-  for (const [kind, selector] of Object.entries(engine.cleanupSelectors ?? {}) as [CleanupKind, string][]) {
+  const selectors: Partial<Record<CleanupKind, string>> = { ...engine.cleanupSelectors, ...(engine.ads && { ads: engine.ads }) };
+  for (const [kind, selector] of Object.entries(selectors) as [CleanupKind, string][]) {
     if (!wanted[kind]) continue;
     for (const el of document.querySelectorAll<HTMLElement>(selector)) {
       if (!el.closest('[data-anubis-result]')) add(blockAround(el, engine, column) ?? el, kind);

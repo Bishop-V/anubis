@@ -8,11 +8,11 @@
 
 import { tJoin, tn, type MessageKey, type PluralKey } from './i18n';
 
-export type CleanupKind = 'ai' | 'videos' | 'questions' | 'discussions' | 'news' | 'images' | 'related' | 'elsewhere' | 'adRequests';
+export type CleanupKind = 'ai' | 'videos' | 'questions' | 'discussions' | 'news' | 'images' | 'related' | 'elsewhere' | 'adRequests' | 'ads';
 
 export type Cleanup = Record<CleanupKind, boolean>;
 
-export const NO_CLEANUP: Cleanup = { ai: false, videos: false, questions: false, discussions: false, news: false, images: false, related: false, elsewhere: false, adRequests: false };
+export const NO_CLEANUP: Cleanup = { ai: false, videos: false, questions: false, discussions: false, news: false, images: false, related: false, elsewhere: false, adRequests: false, ads: false };
 
 export interface CleanupDef {
   id: CleanupKind;
@@ -129,6 +129,13 @@ export const CLEANUP: CleanupDef[] = [
     headings: [],
     markers: ['Block creepy ads, not private search', 'Ads keep your private search results free', 'Ads keep Startpage free'],
   },
+  {
+    // Found by the engine's `ads` selector alone: a sponsored block has no heading text to match across engines.
+    id: 'ads',
+    label: 'cleanupAds',
+    hint: 'cleanupAdsHint',
+    headings: [],
+  },
 ];
 
 /**
@@ -180,6 +187,7 @@ const REMOVED = {
   related: 'summaryRemovedRelated',
   elsewhere: 'summaryRemovedElsewhere',
   adRequests: 'summaryRemovedAdRequests',
+  ads: 'summaryRemovedAds',
 } as const satisfies Record<CleanupKind, PluralKey>;
 
 /** "an AI answer and 2 video panels", or '' when nothing was removed. */
