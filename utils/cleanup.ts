@@ -6,7 +6,7 @@
 // a few selectors where a heading isn't enough. Keep this file free of browser
 // APIs: the options page and the content script both use it.
 
-import { tJoin, tn, type MessageKey, type PluralKey } from './i18n';
+import { t, tJoin, tn, type MessageKey, type PluralKey } from './i18n';
 
 export type CleanupKind = 'ai' | 'videos' | 'questions' | 'discussions' | 'news' | 'images' | 'related' | 'elsewhere' | 'adRequests' | 'ads';
 
@@ -190,8 +190,15 @@ const REMOVED = {
   ads: 'summaryRemovedAds',
 } as const satisfies Record<CleanupKind, PluralKey>;
 
+/** Most kinds the summary names; any more are counted ("and 2 more"), so the sentence stays short. */
+const MAX_REMOVED_NAMED = 3;
+
 /** "an AI answer and 2 video panels", or '' when nothing was removed. */
 export function describeRemoved(removed: Partial<Record<CleanupKind, number>>): string {
   const parts = CLEANUP.filter((def) => removed[def.id]).map((def) => tn(REMOVED[def.id], removed[def.id]!));
+  if (parts.length > MAX_REMOVED_NAMED + 1) {
+    const rest = parts.length - MAX_REMOVED_NAMED;
+    return tJoin([...parts.slice(0, MAX_REMOVED_NAMED), t('summaryRemovedMore', rest)]);
+  }
   return parts.length ? tJoin(parts) : '';
 }

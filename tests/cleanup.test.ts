@@ -86,6 +86,9 @@ describe('summary with clean-up', () => {
       'Anubis raised 1 and hid 2 of 9 results. It also removed an AI answer, a video panel, a question list, and an image panel.',
     );
     expect(summarySentence(stats({ removed: { questions: 1 } }))).toBe('Anubis removed a question list.');
+    expect(describeRemoved({ ai: 1, videos: 1, discussions: 1, related: 1, elsewhere: 1 })).toBe(
+      'an AI answer, a video panel, a discussions panel, and 2 more',
+    );
   });
 
   it('counts results and pages', () => {
