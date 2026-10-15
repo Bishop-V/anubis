@@ -137,6 +137,7 @@ export default defineContentScript({
       }
 
       const results = findResults(engine);
+      revealResults(engine, results);
       // A page you loaded with the engine's own button counts once its results arrive,
       // so the summary's count and the next Load more results start from the pages here.
       if (deeper.manualFrom !== undefined && !deeper.busy && results.length > deeper.manualFrom) {
@@ -264,8 +265,6 @@ export default defineContentScript({
       const { container } = result;
       const revealed = verdict.hidden && (reveal || shown.has(result.url));
       container.setAttribute('data-anubis-result', '');
-      // Ecosia shows a result once its own script says so, which didn't always happen after we reordered the page.
-      if (engine.loadedClass) container.classList.add(engine.loadedClass);
       const state: string[] = [verdict.level];
       if (verdict.tags.length) state.push('tagged');
       container.setAttribute('data-anubis-state', state.join(' '));
@@ -714,3 +713,8 @@ function clearPreviousCopy(): void {
   }
 }
 
+/** Ecosia shows a result once its own script says so, which didn't always happen after we reordered the page. */
+function revealResults(engine: EngineDef, results: FoundResult[]): void {
+  const shown = engine.loadedClass;
+  if (shown) for (const { container } of results) container.classList.add(shown);
+}
