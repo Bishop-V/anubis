@@ -536,7 +536,7 @@ export function bing(query, results, { inline = false, next, copilot = false, th
   const second = items.indexOf(marker, items.indexOf(marker) + 1);
   const picture = '<img class="bthumb" alt="" width="108" height="108" style="position:absolute;top:0;right:0;border-radius:12px;background:#8884">';
   const shown = thumb && second > 0
-    ? `${marker}${picture}${items.slice(marker.length, second)}<li class="bgap" style="position:absolute;left:810px;width:90px;height:150px;list-style:none"></li>${marker}${picture}${items.slice(second + marker.length)}`
+    ? `${marker}${picture}${items.slice(marker.length, second)}<li class="bgap" style="position:absolute;left:810px;width:90px;height:420px;list-style:none"></li>${marker}${picture}${items.slice(second + marker.length)}`
     : items;
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(query)} - Search</title>
   <style>
@@ -712,13 +712,24 @@ function duckduckgoTab(query, results, tab) {
 // Yahoo. The ads block is as a live page showed it (2026-10-15, trimmed): an `ol.searchCenterTopAds` holding a
 // product carousel, an "Ads related to" row, and text ads that carry an `h3` like results do. The organic
 // results' markup is a guess from a screenshot: a site line above an `h3` link, then the snippet.
-export function yahoo(query, results, { ads = true, longTitle = false } = {}) {
-  const ad = (host, title, text) => `<li><div class="dd ads AdTop" data-yga="{&quot;yModType&quot;:&quot;ad&quot;}"><div class="layoutMiddle"><div class="compTitle mb-2"><a class="va-bot" target="_blank" href="https://${host}?utm_source=bing&amp;msclkid=1"><div class="pt-3"><span class="ad-domain s-url">${host}/${esc(query)}</span></div><h3 class="title d-ib"><span class="fz-20">${title}</span></h3></a></div><div class="layoutCenter"><div class="compText"><p>${text}</p></div></div></div></div></li>`;
-  const carousel = `<li class="first"><div class="dd fst lst mb-28"><div class="compTitle"><h2 class="title"><span>Ads</span><span> · ${esc(query)}</span></h2></div><div class="grp grp-pla PlaWide"><ul class="compProductList carousel">${[1, 2, 3].map((n) => `<li class="plaItem"><a href="https://shop${n}.example/item?utm_source=bing"><div class="imagebox"><img alt="" width="116" height="116" src="https://sp.yimg.com/ib/th?id=${n}"></div><div class="text"><span>${esc(query)} item ${n}</span></div></a></li>`).join('')}</ul></div></div></li>`;
-  const items = results
-    .map(([url, title, snippet], i) => `
-      <li${longTitle && i === results.length - 1 ? ' style="width:max-content;min-width:100%"' : ''}><div class="dd algo algo-sr relsrch"><div class="compTitle"><div class="s-url-wrap"><span class="s-url">${esc(new URL(url).hostname)}</span></div><a href="${url}"><h3 class="title"${longTitle && i === results.length - 1 ? ' style="white-space:nowrap"' : ''}><span>${esc(longTitle && i === results.length - 1 ? `${title} - download it for Windows, macOS, Android, iOS, and more, free, today` : title)}</span></h3></a></div><div class="compText"><p>${esc(snippet)}</p></div></div></li>`)
-    .join('');
+const yahooAd = (query, host, title, text) => `<li><div class="dd ads AdTop" data-yga="{&quot;yModType&quot;:&quot;ad&quot;}"><div class="layoutMiddle"><div class="compTitle mb-2"><a class="va-bot" target="_blank" href="https://${host}?utm_source=bing&amp;msclkid=1"><div class="pt-3"><span class="ad-domain s-url">${host}/${esc(query)}</span></div><h3 class="title d-ib"><span class="fz-20">${title}</span></h3></a></div><div class="layoutCenter"><div class="compText"><p>${text}</p></div></div></div></div></li>`;
+
+const yahooTopAds = (query) => {
+  const item = (n) => `<li class="plaItem"><a href="https://shop${n}.example/item?utm_source=bing"><div class="imagebox"><img alt="" width="116" height="116" src="https://sp.yimg.com/ib/th?id=${n}"></div><div class="text"><span>${esc(query)} item ${n}</span></div></a></li>`;
+  const carousel = `<li class="first"><div class="dd fst lst mb-28"><div class="compTitle"><h2 class="title"><span>Ads</span><span> · ${esc(query)}</span></h2></div><div class="grp grp-pla PlaWide"><ul class="compProductList carousel">${[1, 2, 3].map(item).join('')}</ul></div></div></li>`;
+  const related = `<li><div class="dd mb-16 AdHdrTop"><div class="compTitle"><h2 class="title"><a href="https://help.yahoo.example/ads">Ads</a></h2> <span class="stxt"><span>related to: ${esc(query)}</span></span></div></div></li>`;
+  const texts = [yahooAd(query, 'example-shop.test', `${esc(query)} for free`, `Get ${esc(query)} today, free download.`), yahooAd(query, 'another-ad.test', `Free ${esc(query)} app`, `Install ${esc(query)} for all platforms.`)];
+  return `<ol class="reg scta searchCenterTopAds">${carousel}${related}${texts.join('')}</ol>`;
+};
+
+const yahooMiddleAd = (query) => yahooAd(query, 'middle-ad.test', `${esc(query)} deals`, 'An ad between the results, in no ads block of its own.').replace('<li>', '<li class="midAd">');
+
+/** One organic result; `long` stretches its box with a title that won't wrap. */
+const yahooResult = ([url, title, snippet], long) => `
+      <li${long ? ' style="width:max-content;min-width:100%"' : ''}><div class="dd algo algo-sr relsrch"><div class="compTitle"><div class="s-url-wrap"><span class="s-url">${esc(new URL(url).hostname)}</span></div><a href="${url}"><h3 class="title"${long ? ' style="white-space:nowrap"' : ''}><span>${esc(long ? `${title} - download it for Windows, macOS, Android, iOS, and more, free, today` : title)}</span></h3></a></div><div class="compText"><p>${esc(snippet)}</p></div></div></li>`;
+
+export function yahoo(query, results, { ads = true, longTitle = false, rail = false } = {}) {
+  const items = results.map((r, i) => yahooResult(r, longTitle && i === results.length - 1)).join('');
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(query)} - Yahoo Search Results</title>
   <style>
     body{margin:0;font:14px/1.5 Arial,sans-serif;background:#fff;color:#444}
@@ -732,8 +743,7 @@ export function yahoo(query, results, { ads = true, longTitle = false } = {}) {
     .compProductList{white-space:nowrap}
     .ads{cursor:pointer}
   </style></head><body>
-  <div id="cols"><div id="web">${ads ? `
-    <ol class="reg scta searchCenterTopAds">${carousel}<li><div class="dd mb-16 AdHdrTop"><div class="compTitle"><h2 class="title"><a href="https://help.yahoo.example/ads">Ads</a></h2> <span class="stxt"><span>related to: ${esc(query)}</span></span></div></div></li>${ad('example-shop.test', `${esc(query)} for free`, `Get ${esc(query)} today, free download.`)}${ad('another-ad.test', `Free ${esc(query)} app`, `Install ${esc(query)} for all platforms.`)}</ol>` : ''}
-    <ol class="reg searchCenterMiddle">${ads ? ad('middle-ad.test', `${esc(query)} deals`, 'An ad between the results, in no ads block of its own.').replace('<li>', '<li class="midAd">') : ''}${items}</ol></div></div>
+  <div id="cols"><div id="web">${ads ? yahooTopAds(query) : ''}
+    <ol class="reg searchCenterMiddle">${ads ? yahooMiddleAd(query) : ''}${items}</ol></div>${rail ? '<div style="width:260px;height:340px;margin-left:-30px"></div>' : ''}</div>
   </body></html>`;
 }
