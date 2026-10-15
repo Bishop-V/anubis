@@ -756,7 +756,7 @@ export function yahoo(query, results, { ads = true, longTitle = false, rail = fa
 // markup is a guess from screenshots; `--visible` is the class Ecosia's own script adds to reveal a result.)
 export function ecosia(query, results) {
   const items = results
-    .map(([url, title, snippet]) => `<div class="mainline__result-wrapper"><article class="result"><div class="site" style="line-height:24px">${esc(new URL(url).hostname)}</div><div class="urlrow"><span>${esc(url)}</span><button class="dots" type="button" aria-label="Menu" style="width:24px;height:24px;border:0;background:none">⋮</button></div><a class="result__link" href="${url}"><h2>${esc(title)}</h2></a><p>${esc(snippet)}</p></article></div>`)
+    .map(([url, title, snippet]) => `<div class="mainline__result-wrapper"><article class="result"><span data-test-id="web-result-favicon" class="favicon__container web-result__favicon favicon__container--fallback"><svg class="favicon__fallback" width="16" height="16"><circle cx="8" cy="8" r="6"/></svg></span><div class="site" style="line-height:24px">${esc(new URL(url).hostname)}</div><div class="urlrow"><span>${esc(url)}</span><button class="dots" type="button" aria-label="Menu" style="width:24px;height:24px;border:0;background:none">⋮</button></div><a class="result__link" href="${url}"><h2>${esc(title)}</h2></a><p>${esc(snippet)}</p></article></div>`)
     .join('');
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(query)} - Ecosia</title>
   <style>body{margin:0;font:14px/1.5 Arial,sans-serif;background:#fff;color:#222}.mainline__content{width:620px;margin:24px 120px}.mainline__result-wrapper{margin:0 0 24px;position:relative}.mainline__result-wrapper h2{margin:4px 0;font-size:18px}</style>
