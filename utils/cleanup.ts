@@ -130,11 +130,12 @@ export const CLEANUP: CleanupDef[] = [
     markers: ['Block creepy ads, not private search', 'Ads keep your private search results free', 'Ads keep Startpage free'],
   },
   {
-    // Found by the engine's `ads` selector alone: a sponsored block has no heading text to match across engines.
+    // Also found by the engine's `ads` selector, for the blocks that carry no label.
     id: 'ads',
     label: 'cleanupAds',
     hint: 'cleanupAdsHint',
-    headings: [],
+    // The label an engine puts on a paid block ("Sponsored" beside Bing's "See Terraria").
+    headings: ['Sponsored', 'Sponsored results', 'Sponsored products', 'Sponsored links', 'Advertisement', 'Gesponsert', 'Anzeige', 'Sponsorisé', 'Patrocinado', 'Sponsorizzato'],
   },
 ];
 

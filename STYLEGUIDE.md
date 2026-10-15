@@ -19,7 +19,7 @@ The screenshots below come from the wiki (`docs/img/`, regenerated with `node e2
 
 ![A search page with Anubis: the summary above the results, tags under titles, a hidden result folded into one line](docs/img/after.png)
 
-Everything Anubis adds here is in the page's font and colours except gold for what you can press: the summary's sentence and buttons, the tags under each title, the folded line for a hidden site, and the faint ⚖ button on each result.
+Everything Anubis adds here is in the page's font and colours except gold for what you can press: the summary's sentence and buttons, the tags under each title, the folded line for a hidden site, and the ⚖ button on each result, at 70% brightness at rest (an engine's own ⋮ menu sets it where the button sits beside one).
 
 ## Colour
 

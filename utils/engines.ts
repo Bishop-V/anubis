@@ -67,6 +67,12 @@ export interface EngineDef {
    * and carry no button, and the Ads switch in Settings → Remove panels removes them.
    */
   ads?: string;
+  /**
+   * Milliseconds to leave the page alone after it has loaded. For engines that build their page in the
+   * browser (Ecosia): an element added before it has finished breaks it, so results never arrive and
+   * the side panel is missing.
+   */
+  settle?: number;
   /** Engine-specific selectors for clean-up blocks that headings cannot identify. */
   cleanupSelectors?: Partial<Record<CleanupKind, string>>;
   /**
@@ -254,6 +260,8 @@ export const ENGINES: EngineDef[] = [
     matches: ['*://www.bing.com/*', '*://www2.bing.com/*', '*://www4.bing.com/*', '*://cn.bing.com/*'],
     host: /^(www[24]?|cn)\.bing\.com$/,
     isResultsPage: (url) => /^\/(search|(images|videos|news)\/search)$/.test(url.pathname),
+    // Paid blocks (a guess from EasyList's names); the product carousels labelled "Sponsored" are found by that label.
+    ads: '.b_ad, .b_adTop, .b_adBottom',
     item: '#b_results > li.b_algo',
     link: 'h2 a',
     title: 'h2',
@@ -350,6 +358,9 @@ export const ENGINES: EngineDef[] = [
     // reordered (reported on a live page, 2026-10). The area is the column
     // holding the definitions panel above them, so the summary goes above that.
     boundary: '.mainline__content',
+    // Reported 2026-10-15: with Anubis on, the page stayed on grey placeholders with no side panel, and
+    // loaded normally with Anubis off for Ecosia. Nothing is added to the page until it has settled.
+    settle: 1500,
     item: '.mainline__result-wrapper:has(a.result__link)',
     loadedClass: 'mainline__result-wrapper--visible',
     link: 'a.result__link',
