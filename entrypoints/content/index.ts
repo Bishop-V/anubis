@@ -691,15 +691,20 @@ function adBlocks(engine: EngineDef): HTMLElement[] {
   return engine.ads ? [...document.querySelectorAll<HTMLElement>(engine.ads)] : [];
 }
 
+/** The AI answers and ads above `before`, top first: the summary goes above them, so the page opens with what Anubis did. */
+function blocksAbove(before: HTMLElement, engine: EngineDef, clutter: Clutter[]): HTMLElement[] {
+  const found = clutter.filter((c) => (c.kind === 'ai' || c.kind === 'ads') && !c.uncounted).map((c) => c.block);
+  return [...found, ...adBlocks(engine)]
+    .filter((b) => b.isConnected && !b.contains(before) && before.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_PRECEDING && !b.closest('aside, [role="complementary"], #rhs'))
+    .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
+}
+
 function summaryPlace(results: FoundResult[], engine: EngineDef, clutter: Clutter[]): SummaryPlace | undefined {
   const { before, area, column } = summaryAnchor(results, engine);
   if (!before) return undefined;
-  // The summary goes above an AI answer, and above an engine's ads: the page opens with what Anubis did.
-  const ai = [...clutter.filter((c) => (c.kind === 'ai' || c.kind === 'ads') && !c.uncounted).map((c) => c.block), ...adBlocks(engine)]
-    .filter((b) => b.isConnected && !b.contains(before) && before.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_PRECEDING && !b.closest('aside, [role="complementary"], #rhs'))
-    .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
+  const [first] = blocksAbove(before, engine, clutter);
   const titles = results.slice(0, 5).map((r) => r.titleBlock);
-  return ai[0] ? { before: ai[0], area, column, titles, fallback: before } : { before, area, column, titles };
+  return first ? { before: first, area, column, titles, fallback: before } : { before, area, column, titles };
 }
 
 /** The next result in the page after this one, skipping Anubis's own elements and blocks clean-up removed. */
