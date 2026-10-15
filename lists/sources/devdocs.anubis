@@ -8,7 +8,7 @@
 ! tag: docs | Official docs | #2f5fae | Documentation published by the project or vendor itself.
 !
 ! Made from DevDocs's scrapers (https://github.com/freeCodeCamp/devdocs),
-! commit 8ea53dd09805b52755f9e1703dbd7ccbea0d78c4, whose code is under the Mozilla Public License 2.0
+! commit 9bb3d79e439cef30570435b2141e7632b63224b4, whose code is under the Mozilla Public License 2.0
 ! (https://mozilla.org/MPL/2.0/).
 ! Each rule is an address a scraper reads its docs from. A docs site's whole host
 ! is tagged; docs on a project's main site only under their path ("/docs").
@@ -82,6 +82,7 @@
 /docs^$site=svelte.dev,tag=docs,boost=1 # DevDocs collects the docs for Svelte here.
 /docs^$site=tailwindcss.com,tag=docs,boost=1 # DevDocs collects the docs for Tailwind CSS here.
 /docs^$site=threejs.org,tag=docs,boost=1 # DevDocs collects the docs for Three.js here.
+/docs^$site=typst.app,tag=docs,boost=1 # DevDocs collects the docs for Typst here.
 /docs^$site=vagrantup.com,tag=docs,boost=1 # DevDocs collects the docs for Vagrant here.
 /docs^$site=varnish-cache.org,tag=docs,boost=1 # DevDocs collects the docs for Varnish here.
 /docs^$site=vertx.io,tag=docs,boost=1 # DevDocs collects the docs for Vert.x here.
@@ -112,11 +113,13 @@
 /pandas-docs^$site=pandas.pydata.org,tag=docs,boost=1 # DevDocs collects the docs for pandas here.
 /pkg^$site=golang.org,tag=docs,boost=1 # DevDocs collects the docs for Go here.
 /projects^$site=daringfireball.net,tag=docs,boost=1 # DevDocs collects the docs for Markdown here.
+/query^$site=tanstack.com,tag=docs,boost=1 # DevDocs collects the docs for TanStack Query here.
 /rdoc^$site=nokogiri.org,tag=docs,boost=1 # DevDocs collects the docs for Nokogiri here.
 /registry^$site=khronos.org,tag=docs,boost=1 # DevDocs collects the docs for Vulkan here.
 /release^$site=docs-archive.chef.io,tag=docs,boost=1 # DevDocs collects the docs for Chef here.
 /releases^$site=sinonjs.org,tag=docs,boost=1 # DevDocs collects the docs for Sinon.JS here.
 /releases^$site=v2.ocaml.org,tag=docs,boost=1 # DevDocs collects the docs for OCaml here.
+/router^$site=tanstack.com,tag=docs,boost=1 # DevDocs collects the docs for TanStack Router here.
 /software^$site=gnu.org,tag=docs,boost=1 # DevDocs collects the docs for Bash, Elisp, GNU Make here.
 /tcllib^$site=core.tcl-lang.org,tag=docs,boost=1 # DevDocs collects the docs for Tcllib here.
 /user_guide^$site=codeigniter.com,tag=docs,boost=1 # DevDocs collects the docs for CodeIgniter here.
