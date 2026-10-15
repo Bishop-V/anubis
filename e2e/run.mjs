@@ -211,6 +211,7 @@ async function launch(settings = {}, ext = EXT) {
     'https://www.google.com/search?q=anubis&aigrid=1': google('anubis', ANUBIS_RESULTS, { forum: true, grouped: true, aiAbove: 'grid', related: true, next: '/search?q=anubis&start=10' }),
     'https://www.bing.com/search?q=javascript+promises&inline=1': bing('javascript promises', JS_RESULTS, { inline: true }),
     'https://www.bing.com/search?q=javascript+promises&copilot=1': bing('javascript promises', JS_RESULTS, { copilot: true }),
+    'https://www.bing.com/search?q=javascript+promises&copilot=1&pole=1': bing('javascript promises', JS_RESULTS, { copilot: true, pole: true }),
     'https://search.brave.com/search?q=anubis&panels=1': brave('anubis', ANUBIS_RESULTS, { panels: true }),
     // Load more results with the engine's pager inside the results list.
     'https://search.brave.com/search?q=anubis&paged=1': brave('anubis', ANUBIS_RESULTS, { pager: '/search?q=anubis&paged=1&offset=1' }),
@@ -1318,7 +1319,21 @@ if (!only || only === 'cleanup' || checks) {
   console.log('== Bing AI answer and related searches:', JSON.stringify({ ...bingPanels, summaryAbove: bingSummaryAbove }));
   console.log('   removed:', JSON.stringify((await statsNow())?.removed));
   await page.screenshot({ path: `${SHOTS}bing-copilot.png`, fullPage: false });
+  // Bing's sponsored carousels go with Ads and its AI answer with AI answers, even where they share a container.
+  const bingParts = async (cleanup) => {
+    await setSettings({ cleanup: { ...all, ...cleanup } });
+    await page.goto('https://www.bing.com/search?q=javascript+promises&copilot=1&pole=1');
+    await page.waitForTimeout(1200);
+    return visibleIn({ answer: '.cht_container', adsAtTop: '#b_pole .poleRow', adsBesideAnswer: '#b_topw .poleRow' });
+  };
+  const bingAdsOnly = await bingParts({ ai: false, ads: true });
+  const bingAiOnly = await bingParts({ ai: true, ads: false });
+  console.log('== Bing ads and AI answer apart:', JSON.stringify({ bingAdsOnly, bingAiOnly }));
   if (checks) {
+    assertChecks('Bing ads and AI answer apart', {
+      adsGoAnswerStays: bingAdsOnly.answer && !bingAdsOnly.adsAtTop && !bingAdsOnly.adsBesideAnswer,
+      answerGoesAdsStay: !bingAiOnly.answer && bingAiOnly.adsAtTop && bingAiOnly.adsBesideAnswer,
+    });
     assertChecks('Bing AI answer and related searches', {
       removesAnswer: !bingPanels.answer && !bingPanels.video && !bingPanels.chips,
       removesRelatedSearches: !bingPanels.related,

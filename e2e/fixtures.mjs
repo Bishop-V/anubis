@@ -530,7 +530,24 @@ function bingExtras(query, items, { thumb, sponsored }) {
   return sponsored ? `${shop}${shown}` : shown;
 }
 
-export function bing(query, results, { inline = false, next, copilot = false, thumb = false, sponsored = false, skipped = false } = {}) {
+// Bing's top of the page. `copilot`: its AI answer across the top. `pole`: product-ads carousels labelled
+// "Sponsored", one at the very top (`#b_pole`, as a live page showed it, 2026-10-15) and one sharing the AI
+// answer's container, so neither switch should take the other's block.
+function bingTop(query, { copilot, pole }) {
+  const carousel = `<div class="pa_mlo pa_carousel_mlo"><div class="pa_ml pa_carousel_ml"><div class="b_adPATitleBlock"><h2>See ${esc(query)}</h2><span class="b_floatR">Sponsored</span></div><div class="poleRow">${[1, 2, 3].map((n) => `<a href="https://shop${n}.example/item?x=1">${esc(query)} item ${n}</a>`).join(' ')}</div></div></div>`;
+  const atTop = pole ? `<div id="b_pole"><div class="b_poleContent narrpole"><ul><li class="b_adLastChild b_PolePAContainer">${carousel}</li></ul></div></div>` : '';
+  const answer = copilot ? `
+    <div id="b_topw" class="b_topw"><div class="b_ans b_top b_topgrid" aria-label="AI Overview">
+      <div class="cht_container"><h2>Comprehensions in Python</h2><p>Comprehensions in Python provide a concise way to create new sequences by applying an expression to each item in an iterable.</p><button type="button">See more</button><div class="cht_disclaimer" hidden></div></div>
+      <div class="tp_vid"><a href="https://www.youtube.com/watch?v=1"><div class="vthumb"></div>Learn Python LIST COMPREHENSIONS</a></div>
+      <div class="tp_rel"><h3>Related concepts</h3><a href="/search?q=map+function">Map Function</a><a href="/search?q=filter+function">Filter Function</a></div>
+      <div class="tp_comm"><h3>Community support</h3><a href="https://www.geeksforgeeks.org/python-list-comprehension/">Python List Comprehension Syntax, Examples, and Use Cases</a></div>
+      <div class="cht_chips"><a href="/search?q=examples">Python list comprehension examples</a><a href="/search?q=loops">List comprehension vs loops</a></div>
+    </div>${pole ? carousel : ''}</div>` : '';
+  return atTop + answer;
+}
+
+export function bing(query, results, { inline = false, next, copilot = false, thumb = false, sponsored = false, skipped = false, pole = false } = {}) {
   const b64 = (s) => Buffer.from(s).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const box = `
       <li class="b_ans" data-tag=""><div id="inline_rs" class="b_hide" data-priority=""><div class="rslist_head"><span class="rslist_title b_strong">People also search for</span><button type="button" aria-label="Close">×</button></div>
@@ -570,14 +587,7 @@ export function bing(query, results, { inline = false, next, copilot = false, th
     ${skipped ? '#b_results>li.b_algo{content-visibility:auto;contain-intrinsic-size:auto 247px}' : ''}
   </style></head><body>
   <div class="hdr"><span class="blogo">Bing</span><div class="q">${esc(query)}</div></div>
-  <div id="b_content"><main>${copilot ? `
-    <div id="b_topw" class="b_topw"><div class="b_ans b_top b_topgrid" aria-label="AI Overview">
-      <div class="cht_container"><h2>Comprehensions in Python</h2><p>Comprehensions in Python provide a concise way to create new sequences by applying an expression to each item in an iterable.</p><button type="button">See more</button><div class="cht_disclaimer" hidden></div></div>
-      <div class="tp_vid"><a href="https://www.youtube.com/watch?v=1"><div class="vthumb"></div>Learn Python LIST COMPREHENSIONS</a></div>
-      <div class="tp_rel"><h3>Related concepts</h3><a href="/search?q=map+function">Map Function</a><a href="/search?q=filter+function">Filter Function</a></div>
-      <div class="tp_comm"><h3>Community support</h3><a href="https://www.geeksforgeeks.org/python-list-comprehension/">Python List Comprehension Syntax, Examples, and Use Cases</a></div>
-      <div class="cht_chips"><a href="/search?q=examples">Python list comprehension examples</a><a href="/search?q=loops">List comprehension vs loops</a></div>
-    </div></div>` : ''}<ol id="b_results">${listed}${copilot ? `
+  <div id="b_content"><main>${bingTop(query, { copilot, pole })}<ol id="b_results">${listed}${copilot ? `
       <li class="b_ans"><div id="brsv3"><h2>Related searches for <strong>${esc(query)}</strong></h2><ul class="b_vList">${['promise all', 'async await'].map((q) => `<li><a href="/search?q=${encodeURIComponent(q)}">${q}</a></li>`).join('')}</ul></div></li>` : ''}</ol>${copilot ? `
     <aside id="b_context"><li class="b_ans"><h2>Related searches based on your browsing</h2><ul>${['javascript closures', 'python generators'].map((q) => `<li><a href="/search?q=${encodeURIComponent(q)}">${q}</a></li>`).join('')}</ul></li></aside>` : ''}</main></div>
   ${inline ? `<script>setTimeout(() => { const rs = document.getElementById('inline_rs'); document.querySelectorAll('#b_results > li.b_algo')[1].append(rs); rs.classList.remove('b_hide'); }, 500);</script>` : ''}</body></html>`;
