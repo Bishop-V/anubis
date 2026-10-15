@@ -372,7 +372,7 @@
   "cleanupEverySearch": { "message": "On every search", "description": "Settings → Remove panels: heading over the switches, one for each kind of panel." },
   "cleanupEverySearchHint": { "message": "On means Anubis removes it. Off leaves it on the page.", "description": "Settings → Remove panels: under cleanupEverySearch." },
   "cleanupStillShows": { "message": "If a panel still shows", "description": "Link to the wiki’s troubleshooting page." },
-  "cleanupAll": { "message": "All of these", "description": "Settings → Remove panels: the first switch in each section, which turns all the section’s switches on or off." },
+  "cleanupAll": { "message": "All", "description": "Settings → Remove panels: the first switch in each section, which turns all the section’s switches on or off." },
   "cleanupAllHint": { "message": "Turns every switch in this section on or off.", "description": "Settings → Remove panels: explains cleanupAll." },
   "cleanupOnGoogle": { "message": "On Google", "description": "Settings → Remove panels: heading over cleanupWebTab." },
   "cleanupWebTab": { "message": "Always open the Web tab", "description": "Settings → Remove panels: a switch. Google’s “Web” tab shows only links." },
