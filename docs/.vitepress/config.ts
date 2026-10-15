@@ -2,6 +2,7 @@ import { existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { defineConfig, type MarkdownEnv } from 'vitepress';
 import { REPO_URL as repo } from '../../utils/links';
+import { searchLocales, translatedLocales } from './locales';
 
 // The documentation site, built from the Markdown in docs/ with VitePress and
 // published to GitHub Pages by .github/workflows/docs.yml. The pages read fine on
@@ -32,78 +33,6 @@ export const darkWhenUnknown = `(() => {
   window.matchMedia = (media) => query(media.replace(/\\(\\s*prefers-color-scheme\\s*:\\s*dark\\s*\\)/g, '(min-width: 0px)'));
 })()`;
 
-// The Vietnamese wiki (docs/vi/): the home page and the guide. Pages for people who
-// publish lists or work on Anubis (the lists directory, the list format, the
-// subscribe page, and the experiments) stay in English, so these links lead to the
-// English pages.
-const vietnamese = {
-  label: 'Tiếng Việt',
-  lang: 'vi',
-  link: '/vi/',
-  description: 'Tiện ích mở rộng trình duyệt để ẩn, xếp hạng và gắn nhãn kết quả tìm kiếm, với các danh sách ai cũng có thể xuất bản.',
-  themeConfig: {
-    nav: [
-      { text: 'Wiki', link: '/vi/guide/introduction', activeMatch: '^/vi/guide/(?!privacy)' },
-      { text: 'Danh sách (tiếng Anh)', link: '/lists' },
-      { text: 'Định dạng danh sách (tiếng Anh)', link: '/list-format' },
-      { text: 'Quyền riêng tư', link: '/vi/guide/privacy' },
-    ],
-    sidebar: [
-      {
-        text: 'Bắt đầu',
-        items: [
-          { text: 'Giới thiệu', link: '/vi/guide/introduction' },
-          { text: 'Bắt đầu', link: '/vi/guide/getting-started' },
-        ],
-      },
-      {
-        text: 'Dùng Anubis',
-        items: [
-          { text: 'Xếp hạng trang web', link: '/vi/guide/ranking' },
-          { text: 'Nhãn', link: '/vi/guide/tags' },
-          { text: 'Đăng ký danh sách', link: '/vi/guide/lists' },
-          { text: 'Gỡ khung', link: '/vi/guide/clean-up' },
-          { text: 'Tải thêm kết quả', link: '/vi/guide/more-results' },
-          { text: 'Chuyển từ công cụ khác', link: '/vi/guide/import-and-backup' },
-          { text: 'Đồng bộ hóa giữa các máy tính', link: '/vi/guide/sync' },
-        ],
-      },
-      {
-        text: 'Xuất bản danh sách',
-        items: [
-          { text: 'Xuất bản danh sách', link: '/vi/guide/publish-a-list' },
-          { text: 'Định dạng danh sách (tiếng Anh)', link: '/list-format' },
-          { text: 'Thư mục danh sách (tiếng Anh)', link: '/lists' },
-        ],
-      },
-      {
-        text: 'Giới thiệu thêm',
-        items: [
-          { text: 'Công cụ tìm kiếm', link: '/vi/guide/search-engines' },
-          { text: 'Quyền riêng tư và quyền hạn', link: '/vi/guide/privacy' },
-          { text: 'Khắc phục sự cố', link: '/vi/guide/troubleshooting' },
-          { text: 'Giúp dịch', link: '/vi/guide/translate' },
-          { text: 'Thử nghiệm và quyết định (tiếng Anh)', link: '/experiments' },
-          { text: 'Đóng góp (tiếng Anh)', link: `${repo}/blob/main/CONTRIBUTING.md` },
-          { text: 'Phát triển Anubis (tiếng Anh)', link: `${repo}/blob/main/DEVELOPMENT.md` },
-        ],
-      },
-    ],
-    editLink: { pattern: `${repo}/edit/main/docs/:path`, text: 'Sửa trang này trên GitHub' },
-    outline: { level: [2, 3] as [number, number], label: 'Trên trang này' },
-    footer: { message: 'Phát hành theo GNU AGPL v3. Bản dịch máy, chưa được người nói tiếng Việt kiểm tra.' },
-    docFooter: { prev: 'Trang trước', next: 'Trang sau' },
-    lastUpdated: { text: 'Cập nhật lần cuối' },
-    langMenuLabel: 'Đổi ngôn ngữ',
-    returnToTopLabel: 'Về đầu trang',
-    sidebarMenuLabel: 'Menu',
-    darkModeSwitchLabel: 'Giao diện',
-    lightModeSwitchTitle: 'Chuyển sang giao diện sáng',
-    darkModeSwitchTitle: 'Chuyển sang giao diện tối',
-    skipToContentLabel: 'Chuyển đến nội dung',
-  },
-};
-
 export default defineConfig({
   title: 'Anubis',
   description: 'A browser extension that hides, ranks, and tags search results, with lists anyone can publish.',
@@ -111,7 +40,7 @@ export default defineConfig({
   base,
   cleanUrls: true,
   lastUpdated: true,
-  locales: { root: { label: 'English', lang: 'en' }, vi: vietnamese },
+  locales: { root: { label: 'English', lang: 'en' }, ...translatedLocales },
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}anubis.svg` }],
     ['script', { id: 'dark-when-unknown' }, darkWhenUnknown],
@@ -168,25 +97,7 @@ export default defineConfig({
     ],
     socialLinks: [{ icon: 'github', link: repo }],
     editLink: { pattern: `${repo}/edit/main/docs/:path`, text: 'Edit this page on GitHub' },
-    search: {
-      provider: 'local',
-      options: {
-        locales: {
-          vi: {
-            translations: {
-              button: { buttonText: 'Tìm kiếm', buttonAriaLabel: 'Tìm kiếm' },
-              modal: {
-                displayDetails: 'Hiện chi tiết',
-                resetButtonTitle: 'Xóa tìm kiếm',
-                backButtonTitle: 'Đóng tìm kiếm',
-                noResultsText: 'Không có kết quả cho',
-                footer: { selectText: 'chọn', selectKeyAriaLabel: 'enter', navigateText: 'di chuyển', navigateUpKeyAriaLabel: 'mũi tên lên', navigateDownKeyAriaLabel: 'mũi tên xuống', closeText: 'đóng', closeKeyAriaLabel: 'esc' },
-              },
-            },
-          },
-        },
-      },
-    },
+    search: { provider: 'local', options: { locales: searchLocales } },
     outline: { level: [2, 3], label: 'On this page' },
     footer: { message: 'Released under the GNU AGPL v3.' },
   },

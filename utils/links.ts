@@ -52,31 +52,36 @@ export function describeBrowser(userAgent: string): string | undefined {
 }
 
 /**
- * The wiki pages that exist in another language (docs/<language>/), by language. The
- * rest of the wiki, such as the list format, stays English. tests/links.test.ts checks
- * this against the folders.
+ * The languages that have a wiki of their own, by the interface's `langCode`, and the
+ * folder in docs/ (the path on the site) each one lives in. Add the language to
+ * docs/.vitepress/locales.ts too.
  */
-export const TRANSLATED_PAGES: Record<string, readonly string[]> = {
-  vi: [
-    '',
-    ...[
-      'clean-up',
-      'getting-started',
-      'import-and-backup',
-      'introduction',
-      'lists',
-      'more-results',
-      'privacy',
-      'publish-a-list',
-      'ranking',
-      'search-engines',
-      'sync',
-      'tags',
-      'translate',
-      'troubleshooting',
-    ].map((page) => `guide/${page}`),
-  ],
-};
+export const WIKI_FOLDERS: Record<string, string> = { vi: 'vi', de: 'de', zh_CN: 'zh-cn', zh_TW: 'zh-tw' };
+
+/**
+ * The wiki pages that exist in those languages, the same in each. The rest of the
+ * wiki, such as the list format, stays English. tests/links.test.ts checks this
+ * against the folders.
+ */
+export const TRANSLATED_PAGES: readonly string[] = [
+  '',
+  ...[
+    'clean-up',
+    'getting-started',
+    'import-and-backup',
+    'introduction',
+    'lists',
+    'more-results',
+    'privacy',
+    'publish-a-list',
+    'ranking',
+    'search-engines',
+    'sync',
+    'tags',
+    'translate',
+    'troubleshooting',
+  ].map((page) => `guide/${page}`),
+];
 
 /**
  * A page of the wiki, e.g. `guide('guide/lists')`. With a `language` (the interface's,
@@ -85,7 +90,8 @@ export const TRANSLATED_PAGES: Record<string, readonly string[]> = {
  */
 export function guide(path = '', language = 'en'): string {
   const page = path.split('#')[0]!;
-  if (TRANSLATED_PAGES[language]?.includes(page)) return `${DOCS_URL}${language}/${page}`;
+  const folder = WIKI_FOLDERS[language];
+  if (folder && TRANSLATED_PAGES.includes(page)) return `${DOCS_URL}${folder}/${page}`;
   return `${DOCS_URL}${path}`;
 }
 

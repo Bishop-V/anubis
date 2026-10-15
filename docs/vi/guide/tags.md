@@ -10,7 +10,7 @@ Nhãn là những nhãn nhỏ dưới tiêu đề của kết quả: “Official
 
 Trên bất kỳ trang web nào, hãy mở cửa sổ bật lên của Anubis trên thanh công cụ. Trong **Nhãn**, nhấn một nhãn để thêm nó vào trang web, hoặc nhấn lại để gỡ. Để tạo nhãn mới cho trang web, hãy nhập tên vào **Nhãn mới** và nhấn **Thêm nhãn**. Trên trang tìm kiếm, menu ⚖ trên mỗi kết quả có các điều khiển tương tự.
 
-Nhãn riêng của bạn nằm trong **Nhãn của bạn**, và các nhãn mà danh sách của bạn dùng nằm trong **Nhãn từ danh sách**. Bạn có thể thêm một nhãn từ danh sách vào bất kỳ trang web nào, và điều đó chỉ thay đổi danh sách của riêng bạn, không phải danh sách kia. Khi có hơn tám nhãn, phần còn lại được thu gọn sau **Hiện thêm nhãn**; các nhãn đang có trên trang web luôn hiện. Nhãn bạn gắn cho trang web được in đậm và gạch chân bằng màu của nó. Nhãn do danh sách gắn cho trang web ở dạng thường, kèm tên danh sách (“từ Paywalls”): chỉ danh sách đó mới gỡ được, và **Sai? Báo cáo** trong menu ⚖ báo cho những người duy trì danh sách.
+Nhãn riêng của bạn nằm trong **Nhãn của bạn**, và các nhãn mà danh sách của bạn dùng nằm trong **Nhãn từ danh sách**. Bạn có thể thêm một nhãn từ danh sách vào bất kỳ trang web nào, và điều đó chỉ thay đổi danh sách của riêng bạn, không phải danh sách kia. Khi có hơn tám nhãn, phần còn lại được thu gọn sau **Hiện thêm … nhãn**; các nhãn đang có trên trang web luôn hiện. Nhãn bạn gắn cho trang web được in đậm và gạch chân bằng màu của nó. Nhãn do danh sách gắn cho trang web ở dạng thường, kèm tên danh sách (“từ Paywalls”): chỉ danh sách đó mới gỡ được, và **Sai? Báo cáo** trong menu ⚖ báo cho những người duy trì danh sách.
 
 ## Nhãn thuộc về ai
 
