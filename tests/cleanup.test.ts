@@ -79,6 +79,8 @@ describe('summary with clean-up', () => {
   it('names what was removed', () => {
     expect(describeRemoved({ ai: 1, videos: 2 })).toBe('an AI answer and 2 video panels');
     expect(describeRemoved({})).toBe('');
+    expect(describeRemoved({ ads: 1 })).toBe('a block of ads');
+    expect(describeRemoved({ ads: 2 })).toBe('2 blocks of ads');
     expect(summarySentence(stats({ hidden: 2, removed: { ai: 1 } }))).toBe('Anubis hid 2 of 9 results. It also removed an AI answer.');
     expect(summarySentence(stats({ raised: 1, hidden: 2, removed: { ai: 1, videos: 1, questions: 1, images: 1 } }))).toBe(
       'Anubis raised 1 and hid 2 of 9 results. It also removed an AI answer, a video panel, a question list, and an image panel.',

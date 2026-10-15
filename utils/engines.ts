@@ -62,6 +62,11 @@ export interface EngineDef {
    * ask"). Clean-up removes the whole marked block around a heading it recognises.
    */
   blocks?: string;
+  /**
+   * The engine's paid blocks (Yahoo's top ads), which look like results but aren't: they are never weighed
+   * and carry no button, and the Ads switch in Settings → Remove panels removes them.
+   */
+  ads?: string;
   /** Engine-specific selectors for clean-up blocks that headings cannot identify. */
   cleanupSelectors?: Partial<Record<CleanupKind, string>>;
   /**
@@ -114,14 +119,16 @@ export interface EngineDef {
 
 /**
  * - `click`: press the engine's own "More results" button; the page loads them itself.
- * - `link`: fetch the page the "Next" link points to and bring its results over.
+ * - `link`: fetch the page the "Next" link points to and bring its results over. `drop` names address
+ *   parameters to leave out of it (Bing's `rdr` marks a page as already redirected, and Bing answers a
+ *   Next link that carries it with the same page again).
  * - `param`: same, building the next page's URL from a page-number parameter.
  * - `form`: the pager is a form per page number (Startpage, which posts its searches,
  *   so the address alone can't find page 2): post the one for the next page.
  */
 export type MoreResults =
   | { kind: 'click'; button: string }
-  | { kind: 'link'; next: string }
+  | { kind: 'link'; next: string; drop?: string[] }
   | { kind: 'form'; form: string }
   | { kind: 'param'; name: string; first: number; step: number };
 
@@ -279,7 +286,7 @@ export const ENGINES: EngineDef[] = [
       { item: '.news-card, .newscard', link: '.title', title: '.title', when: onPath(/^\/news\/search$/), replacesResults: true },
     ],
     button: { top: '4px', right: '4px' },
-    more: { kind: 'link', next: 'a.sb_pagN, a[title="Next page"]' },
+    more: { kind: 'link', next: 'a.sb_pagN, a[title="Next page"]', drop: ['rdr', 'rdrig'] },
   },
   {
     id: 'brave',
@@ -381,6 +388,8 @@ export const ENGINES: EngineDef[] = [
     isResultsPage: (url) => url.pathname.startsWith('/search'),
     heading: 'h3',
     boundary: '#web, ol, main',
+    // The top ads are an `ol.searchCenterTopAds` of their own (reported on a live page, 2026-10-15); the others' names are a guess.
+    ads: '.searchCenterTopAds, .searchCenterMiddleAds, .searchCenterBottomAds',
     displayed: '.compTitle span, cite',
     button: { top: '2px', right: '2px' },
     more: { kind: 'link', next: 'a.next' },

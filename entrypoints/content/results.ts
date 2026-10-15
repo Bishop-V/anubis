@@ -27,9 +27,15 @@ export const OWN_TAGS = new Set(['ANUBIS-CHIPS', 'ANUBIS-WEIGH', 'ANUBIS-BAR', '
 export function findResults(engine: EngineDef, root: Document = document): FoundResult[] {
   const here = new URL(location.href);
   const tabs = (engine.cards ?? []).filter((def) => !def.when || def.when(here));
-  const out = tabs.some((def) => def.replacesResults) ? [] : findWeb(engine, root);
+  const out = tabs.some((def) => def.replacesResults) ? [] : withoutAds(findWeb(engine, root), engine);
   for (const def of tabs) addCards(out, engine, def, root);
   return out;
+}
+
+/** Paid blocks look like results but aren't: they're never weighed (the Ads switch removes them). */
+function withoutAds(found: FoundResult[], engine: EngineDef): FoundResult[] {
+  const ads = engine.ads;
+  return ads ? found.filter((r) => !r.container.closest(ads)) : found;
 }
 
 function findWeb(engine: EngineDef, root: Document): FoundResult[] {

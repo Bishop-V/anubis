@@ -516,7 +516,7 @@ export function googleMobile(query, results) {
 // .cht_container, a .cht_disclaimer, and no label but aria-label="AI Overview".
 // Also "Related searches based on your browsing" beside the results, and "Related
 // searches for …" with the query in bold at the bottom.
-export function bing(query, results, { inline = false, next, copilot = false } = {}) {
+export function bing(query, results, { inline = false, next, copilot = false, thumb = false } = {}) {
   const b64 = (s) => Buffer.from(s).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const box = `
       <li class="b_ans" data-tag=""><div id="inline_rs" class="b_hide" data-priority=""><div class="rslist_head"><span class="rslist_title b_strong">People also search for</span><button type="button" aria-label="Close">×</button></div>
@@ -531,6 +531,13 @@ export function bing(query, results, { inline = false, next, copilot = false } =
     .join('') + (inline ? box : '') +
     (next ? `
       <li class="b_pag"><nav role="navigation" aria-label="More results"><ul class="sb_pagF"><li><a class="sb_pagS">1</a></li><li><a href="${next}">2</a></li><li><a class="sb_pagN" title="Next page" href="${next}">Next</a></li></ul></nav></li>` : '');
+  // A picture in the first two results' corners, with something else in the gutter beside that result (the others' buttons sit there).
+  const marker = '<li class="b_algo" data-tag="">';
+  const second = items.indexOf(marker, items.indexOf(marker) + 1);
+  const picture = '<img class="bthumb" alt="" width="108" height="108" style="position:absolute;top:0;right:0;border-radius:12px;background:#8884">';
+  const shown = thumb && second > 0
+    ? `${marker}${picture}${items.slice(marker.length, second)}<li class="bgap" style="position:absolute;left:810px;width:90px;height:150px;list-style:none"></li>${marker}${picture}${items.slice(second + marker.length)}`
+    : items;
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(query)} - Search</title>
   <style>
     body{margin:0;font:14px/1.5 "Segoe UI",Arial,sans-serif;background:#fff;color:#444}
@@ -561,7 +568,7 @@ export function bing(query, results, { inline = false, next, copilot = false } =
       <div class="tp_rel"><h3>Related concepts</h3><a href="/search?q=map+function">Map Function</a><a href="/search?q=filter+function">Filter Function</a></div>
       <div class="tp_comm"><h3>Community support</h3><a href="https://www.geeksforgeeks.org/python-list-comprehension/">Python List Comprehension Syntax, Examples, and Use Cases</a></div>
       <div class="cht_chips"><a href="/search?q=examples">Python list comprehension examples</a><a href="/search?q=loops">List comprehension vs loops</a></div>
-    </div></div>` : ''}<ol id="b_results">${items}${copilot ? `
+    </div></div>` : ''}<ol id="b_results">${shown}${copilot ? `
       <li class="b_ans"><div id="brsv3"><h2>Related searches for <strong>${esc(query)}</strong></h2><ul class="b_vList">${['promise all', 'async await'].map((q) => `<li><a href="/search?q=${encodeURIComponent(q)}">${q}</a></li>`).join('')}</ul></div></li>` : ''}</ol>${copilot ? `
     <aside id="b_context"><li class="b_ans"><h2>Related searches based on your browsing</h2><ul>${['javascript closures', 'python generators'].map((q) => `<li><a href="/search?q=${encodeURIComponent(q)}">${q}</a></li>`).join('')}</ul></li></aside>` : ''}</main></div>
   ${inline ? `<script>setTimeout(() => { const rs = document.getElementById('inline_rs'); document.querySelectorAll('#b_results > li.b_algo')[1].append(rs); rs.classList.remove('b_hide'); }, 500);</script>` : ''}</body></html>`;
@@ -699,5 +706,34 @@ function duckduckgoTab(query, results, tab) {
   </style></head><body>
   <div class="tabs">All <b>${tab === 'videos' ? 'Videos' : 'Images'}</b></div>
   <main><div data-testid="zci-${tab}"><ol>${results.map(card).join('')}</ol></div></main>
+  </body></html>`;
+}
+
+// Yahoo. The ads block is as a live page showed it (2026-10-15, trimmed): an `ol.searchCenterTopAds` holding a
+// product carousel, an "Ads related to" row, and text ads that carry an `h3` like results do. The organic
+// results' markup is a guess from a screenshot: a site line above an `h3` link, then the snippet.
+export function yahoo(query, results, { ads = true } = {}) {
+  const ad = (host, title, text) => `<li><div class="dd ads AdTop" data-yga="{&quot;yModType&quot;:&quot;ad&quot;}"><div class="layoutMiddle"><div class="compTitle mb-2"><a class="va-bot" target="_blank" href="https://${host}?utm_source=bing&amp;msclkid=1"><div class="pt-3"><span class="ad-domain s-url">${host}/${esc(query)}</span></div><h3 class="title d-ib"><span class="fz-20">${title}</span></h3></a></div><div class="layoutCenter"><div class="compText"><p>${text}</p></div></div></div></div></li>`;
+  const carousel = `<li class="first"><div class="dd fst lst mb-28"><div class="compTitle"><h2 class="title"><span>Ads</span><span> · ${esc(query)}</span></h2></div><div class="grp grp-pla PlaWide"><ul class="compProductList carousel">${[1, 2, 3].map((n) => `<li class="plaItem"><a href="https://shop${n}.example/item?utm_source=bing"><div class="imagebox"><img alt="" width="116" height="116" src="https://sp.yimg.com/ib/th?id=${n}"></div><div class="text"><span>${esc(query)} item ${n}</span></div></a></li>`).join('')}</ul></div></div></li>`;
+  const items = results
+    .map(([url, title, snippet]) => `
+      <li><div class="dd algo algo-sr relsrch"><div class="compTitle"><div class="s-url-wrap"><span class="s-url">${esc(new URL(url).hostname)}</span></div><a href="${url}"><h3 class="title"><span>${esc(title)}</span></h3></a></div><div class="compText"><p>${esc(snippet)}</p></div></div></li>`)
+    .join('');
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(query)} - Yahoo Search Results</title>
+  <style>
+    body{margin:0;font:14px/1.5 Arial,sans-serif;background:#fff;color:#444}
+    #cols{display:flex;gap:40px;padding:16px 136px}
+    #web{width:620px}
+    ol{list-style:none;margin:0;padding:0}
+    .dd{margin:0 0 24px}
+    h3{margin:2px 0;font-size:20px;font-weight:400;display:inline-block}
+    a{color:#1a0dab;text-decoration:none}
+    .plaItem{display:inline-block;width:116px;margin-right:9px;vertical-align:top}
+    .compProductList{white-space:nowrap}
+    .ads{cursor:pointer}
+  </style></head><body>
+  <div id="cols"><div id="web">${ads ? `
+    <ol class="reg scta searchCenterTopAds">${carousel}<li><div class="dd mb-16 AdHdrTop"><div class="compTitle"><h2 class="title"><a href="https://help.yahoo.example/ads">Ads</a></h2> <span class="stxt"><span>related to: ${esc(query)}</span></span></div></div></li>${ad('example-shop.test', `${esc(query)} for free`, `Get ${esc(query)} today, free download.`)}${ad('another-ad.test', `Free ${esc(query)} app`, `Install ${esc(query)} for all platforms.`)}</ol>` : ''}
+    <ol class="reg searchCenterMiddle">${items}</ol></div></div>
   </body></html>`;
 }
