@@ -363,7 +363,7 @@ export function ensureWeighButton(
     for (const prop of MENU_LOOK) host.style.removeProperty(prop);
     host.style.removeProperty('--anubis-weigh-color');
     host.style.setProperty('top', top, 'important');
-    host.style.setProperty('right', right, 'important');
+    host.style.setProperty('right', result.card || onTitle ? right : alongColumn(right, container), 'important');
   }
   host.style.setProperty('left', 'auto', 'important');
   host.style.setProperty('bottom', 'auto', 'important');
@@ -555,6 +555,37 @@ function moveOffText(host: HTMLElement, container: HTMLElement): void {
 let buttonsInGutter = false;
 
 /**
+ * Where most results' right edges are. A result whose box is wider or narrower (Yahoo's title that
+ * won't wrap stretches its result) puts its button at its own edge, off the others' column, so
+ * every button is placed against this one edge instead. Cached briefly: it's read for every
+ * button in a pass, and the buttons don't move the results.
+ */
+let columnEdgeCache: { at: number; edge: number } | undefined;
+function columnEdge(): number {
+  if (columnEdgeCache && performance.now() - columnEdgeCache.at < 100) return columnEdgeCache.edge;
+  const rights = [...document.querySelectorAll<HTMLElement>('[data-anubis-result]:not([data-anubis-row])')]
+    .map((el) => el.getBoundingClientRect())
+    .filter((r) => r.width)
+    .map((r) => Math.round(r.right))
+    .sort((a, b) => a - b);
+  const edge = rights.length ? rights[Math.floor(rights.length / 2)]! : 0;
+  columnEdgeCache = { at: performance.now(), edge };
+  return edge;
+}
+
+/** An engine's `right` for the button, moved so it sits where it would on a result that reaches the column's edge. */
+function alongColumn(right: string, container: HTMLElement): string {
+  const slack = edgeSlack(container.getBoundingClientRect());
+  return slack ? `calc(${right} + ${-slack}px)` : right;
+}
+
+/** How far a result's own right edge is inside (positive) or past (negative) the column's, rounded to whole pixels. */
+const edgeSlack = (box: DOMRect): number => {
+  const edge = columnEdge();
+  return edge ? Math.round(edge - box.right) : 0;
+};
+
+/**
  * Just past the result's right edge, if nothing else is there. The first button
  * to go takes the ones already placed at their results' edges with it.
  */
@@ -562,7 +593,7 @@ function intoGutter(host: HTMLElement, container: HTMLElement): boolean {
   const box = container.getBoundingClientRect();
   const b = host.getBoundingClientRect();
   if (!gutterIsFree(container, { left: box.right + 4, right: box.right + 4 + b.width, top: b.top, bottom: b.bottom })) return false;
-  host.style.setProperty('right', `${-Math.round(b.width + 4)}px`, 'important');
+  host.style.setProperty('right', `${-Math.round(b.width + 4) - edgeSlack(box)}px`, 'important');
   if (!buttonsInGutter) {
     buttonsInGutter = true;
     for (const other of document.querySelectorAll<HTMLElement>('anubis-weigh')) {
@@ -593,7 +624,7 @@ function clearOfPictures(host: HTMLElement, container: HTMLElement): void {
   if (!blocked && !buttonsInGutter) return;
   // Past the picture is where the other results' buttons already are, so this one joins them whether or not something else is near.
   if (blocked && buttonsInGutter) {
-    host.style.setProperty('right', `${-Math.round(b.width + 4)}px`, 'important');
+    host.style.setProperty('right', `${-Math.round(b.width + 4) - edgeSlack(box)}px`, 'important');
     return;
   }
   if (intoGutter(host, container)) return;

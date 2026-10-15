@@ -229,6 +229,7 @@ async function launch(settings = {}, ext = EXT) {
       request.resourceType() === 'document' ? bing('javascript promises', JS_MORE) : bingChallenge(),
     'https://www.bing.com/search?q=javascript+promises&thumb=1': bing('javascript promises', JS_RESULTS, { thumb: true }),
     'https://search.yahoo.com/search?p=javascript+promises': yahoo('javascript promises', JS_RESULTS),
+    'https://search.yahoo.com/search?p=javascript+promises&long=1': yahoo('javascript promises', JS_RESULTS, { longTitle: true }),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
     'https://duckduckgo.com/?q=javascript+promises&iax=videos&ia=videos': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'videos' }),
@@ -1189,6 +1190,7 @@ if (!only || only === 'cleanup' || checks) {
         results: document.querySelectorAll('[data-anubis-result]').length,
         buttonsOnAds: ads?.querySelectorAll('anubis-weigh, [data-anubis-result]').length ?? 0,
         adsShown: !!ads && getComputedStyle(ads).display !== 'none' && ads.getBoundingClientRect().height > 0,
+        middleAdShown: [...document.querySelectorAll('.midAd')].some((el) => el.getBoundingClientRect().height > 0),
       };
     });
   };
@@ -1201,11 +1203,20 @@ if (!only || only === 'cleanup' || checks) {
   if (checks) {
     assertChecks('Yahoo ads', {
       adsAreNotResults: yahooAdsOff.results === JS_RESULTS.length && yahooAdsOff.buttonsOnAds === 0,
-      adsShownWhenOff: yahooAdsOff.adsShown,
-      adsRemovedWhenOn: !yahooAdsOn.adsShown && yahooAdsOn.results === JS_RESULTS.length,
-      summaryCountsThem: yahooRemoved?.ads === 1,
+      adsShownWhenOff: yahooAdsOff.adsShown && yahooAdsOff.middleAdShown,
+      adsRemovedWhenOn: !yahooAdsOn.adsShown && !yahooAdsOn.middleAdShown && yahooAdsOn.results === JS_RESULTS.length,
+      summaryCountsThem: yahooRemoved?.ads === 2,
     });
   }
+  // Yahoo: one title that runs under the button's place takes every button to the same column.
+  await page.goto('https://search.yahoo.com/search?p=javascript+promises&long=1');
+  await page.waitForTimeout(1000);
+  const yahooColumn = await page.evaluate(() => {
+    const lefts = [...document.querySelectorAll('anubis-weigh')].map((el) => el.getBoundingClientRect()).filter((r) => r.width).map((r) => Math.round(r.left));
+    return { buttons: lefts.length, lefts: [...new Set(lefts)] };
+  });
+  console.log('== Yahoo buttons with a long title:', JSON.stringify(yahooColumn));
+  if (checks) assertChecks('Yahoo column', { buttonsInOneColumn: yahooColumn.buttons > 0 && yahooColumn.lefts.length === 1 });
   await page.goto('https://www.bing.com/search?q=javascript+promises&inline=1');
   await page.waitForTimeout(1200);
   console.log('== Bing box inside a result:', JSON.stringify(await visibleIn({ box: '#inline_rs', title: 'li.b_algo:nth-child(2) h2', snippet: 'li.b_algo:nth-child(2) .b_caption' })));

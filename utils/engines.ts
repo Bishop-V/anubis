@@ -388,8 +388,8 @@ export const ENGINES: EngineDef[] = [
     isResultsPage: (url) => url.pathname.startsWith('/search'),
     heading: 'h3',
     boundary: '#web, ol, main',
-    // The top ads are an `ol.searchCenterTopAds` of their own (reported on a live page, 2026-10-15); the others' names are a guess.
-    ads: '.searchCenterTopAds, .searchCenterMiddleAds, .searchCenterBottomAds',
+    // The top ads are an `ol.searchCenterTopAds` of their own, and every ad block carries `yModType: ad` in its `data-yga` (reported on a live page, 2026-10-15); the middle and bottom names are a guess.
+    ads: '.searchCenterTopAds, .searchCenterMiddleAds, .searchCenterBottomAds, [data-yga*=\'"yModType":"ad"\']',
     displayed: '.compTitle span, cite',
     button: { top: '2px', right: '2px' },
     more: { kind: 'link', next: 'a.next' },
