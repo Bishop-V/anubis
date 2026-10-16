@@ -47,7 +47,7 @@ Nó sao chép cấu trúc xung quanh tiêu đề của các khung đó: tên ph�
 
 ## Tải thêm kết quả không tải gì
 
-Bản tóm tắt cho biết lý do dưới dòng đầu tiên, kèm liên kết đến trang Anubis đã thử. Thường gặp nhất là công cụ tìm kiếm muốn bạn xác nhận mình không phải là robot: hãy mở trang, làm điều đó, rồi nhấn **Tải thêm kết quả** lần nữa. Xem [Tải thêm kết quả](./more-results.md).
+Bản tóm tắt cho biết lý do dưới dòng đầu tiên, kèm liên kết đến trang Anubis đã thử. Thường gặp nhất là công cụ tìm kiếm muốn bạn xác nhận mình không phải là robot: hãy mở trang, làm điều đó, rồi nhấn **Tải thêm kết quả** lần nữa. Ecosia thường xuyên yêu cầu điều này. Xem [Tải thêm kết quả](./more-results.md).
 
 ## Google luôn mở thẻ Web
 

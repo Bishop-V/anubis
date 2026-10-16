@@ -71,6 +71,7 @@
   "loadMoreEmpty": "$1 sent no results for page $2. It may want you to confirm you’re not a robot first.",
   "loadMoreRepeat": "$1 sent the same results again for page $2, so there are no more.",
   "loadMoreBusy": "$1 asked Anubis to slow down before page $2. Try again in a minute.",
+  "loadMoreRobot": "$1 wants to check you’re not a robot before it sends page $2.",
   "loadMoreRefused": "$1 refused to send page $2.",
   "loadMoreSlow": "$1 took too long to send page $2.",
   "loadMoreFailed": "Page $2 from $1 didn’t load.",

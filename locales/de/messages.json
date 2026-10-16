@@ -215,6 +215,9 @@
   "loadMoreBusy": {
     "message": "$1 hat Anubis vor Seite $2 gebeten, langsamer zu machen. Versuche es in einer Minute erneut."
   },
+  "loadMoreRobot": {
+    "message": "$1 will prüfen, ob du kein Roboter bist, bevor Seite $2 kommt."
+  },
   "loadMoreRefused": {
     "message": "$1 hat sich geweigert, Seite $2 zu schicken."
   },

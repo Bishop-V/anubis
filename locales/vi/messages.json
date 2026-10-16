@@ -215,6 +215,9 @@
   "loadMoreBusy": {
     "message": "$1 yêu cầu Anubis chậm lại trước trang $2. Hãy thử lại sau một phút."
   },
+  "loadMoreRobot": {
+    "message": "$1 muốn xác minh bạn không phải là robot trước khi gửi trang $2."
+  },
   "loadMoreRefused": {
     "message": "$1 từ chối gửi trang $2."
   },

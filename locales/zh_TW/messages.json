@@ -209,6 +209,9 @@
   "loadMoreBusy": {
     "message": "$1 在第 $2 頁之前要求 Anubis 放慢速度。請過一分鐘再試。"
   },
+  "loadMoreRobot": {
+    "message": "$1 想先確認你不是機器人，才會傳送第 $2 頁。"
+  },
   "loadMoreRefused": {
     "message": "$1 拒絕傳送第 $2 頁。"
   },

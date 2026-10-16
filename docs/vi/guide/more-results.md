@@ -14,8 +14,16 @@ Kết quả từ các trang sau được đánh dấu “Từ trang 2” và tư
 - **Google, Bing và Yahoo:** Anubis theo liên kết “Next” của trang trong nền và thêm các kết quả vào trang hiện tại.
 - **Brave Search và Ecosia:** Anubis yêu cầu trang tiếp theo theo cách các liên kết của chính trang đó làm.
 
-Các yêu cầu chỉ gửi đến công cụ tìm kiếm bạn đang dùng, và các trang được tải lần lượt từng trang với một khoảng nghỉ ngắn giữa chúng. Nếu công cụ tìm kiếm gửi một trang không có kết quả, thường là vì nó muốn bạn xác nhận mình không phải là robot, Anubis thử lại một lần bằng cách mở trang đó khuất tầm nhìn, như thể bạn tự mở, rồi đóng nó lại.
+Các yêu cầu chỉ gửi đến công cụ tìm kiếm bạn đang dùng, và các trang được tải lần lượt từng trang với một khoảng nghỉ ngắn giữa chúng. Nếu công cụ tìm kiếm gửi một trang không có kết quả, thường là vì nó muốn bạn xác nhận mình không phải là robot, Anubis thử lại một lần bằng cách mở trang đó khuất tầm nhìn, như thể bạn tự mở, rồi đóng nó lại. Ecosia không cho phép điều đó, nên ở đó Anubis dừng ngay.
 
 ## Khi nào nó dừng
 
-Khi một trang không đến, bản tóm tắt cho biết lý do dưới dòng đầu tiên, ví dụ “Bing không gửi kết quả nào cho trang 3”, và **Mở trang 3** mở trang đó trong một thẻ mới để bạn xem công cụ tìm kiếm đã gửi gì. Nếu nó yêu cầu bạn xác nhận mình không phải là robot, hãy làm điều đó ở đó, rồi nhấn **Tải thêm kết quả** lần nữa. Một công cụ tìm kiếm yêu cầu Anubis chậm lại sẽ được thử thêm một lần sau một lúc chờ ngắn. Khi công cụ tìm kiếm chỉ gửi những kết quả đã có trên trang, nghĩa là không còn thêm nữa, và nút biến mất. Startpage, Kagi, Yandex, Mojeek và các phiên bản HTML và Lite của DuckDuckGo chưa hỗ trợ tính năng này.
+Khi một trang không đến, bản tóm tắt cho biết lý do dưới dòng đầu tiên, ví dụ “Bing không gửi kết quả nào cho trang 3” hoặc “Ecosia muốn xác minh bạn không phải là robot trước khi gửi trang 2”, và **Mở trang 3** mở trang đó trong một thẻ mới để bạn xem công cụ tìm kiếm đã gửi gì. Nếu nó yêu cầu bạn xác nhận mình không phải là robot, hãy làm điều đó ở đó, rồi nhấn **Tải thêm kết quả** lần nữa (xem phần Kiểm tra robot bên dưới). Một công cụ tìm kiếm yêu cầu Anubis chậm lại sẽ được thử thêm một lần sau một lúc chờ ngắn. Khi công cụ tìm kiếm chỉ gửi những kết quả đã có trên trang, nghĩa là không còn thêm nữa, và nút biến mất. Startpage, Kagi, Yandex, Mojeek và các phiên bản HTML và Lite của DuckDuckGo chưa hỗ trợ tính năng này.
+
+## Kiểm tra robot
+
+Các công cụ tìm kiếm theo dõi lưu lượng trông giống tự động, và một yêu cầu lấy trang tiếp theo có thể trông như vậy đối với chúng. Khi một công cụ tìm kiếm muốn bạn xác nhận mình không phải là robot, Tải thêm kết quả dừng lại và cho biết điều đó, ví dụ “Ecosia muốn xác minh bạn không phải là robot trước khi gửi trang 2”. Anubis không bao giờ trả lời bước kiểm tra thay bạn hay tìm cách vượt qua nó.
+
+Để tiếp tục, hãy nhấn **Mở trang 2** (hoặc trang nào được nêu), xác nhận mình không phải là robot trên trang đó, rồi quay lại và nhấn **Tải thêm kết quả** lần nữa. Sau đó công cụ tìm kiếm thường cho các trang tiếp theo qua trong một thời gian. Nếu nó cứ hỏi mãi, hãy dùng liên kết Next của chính công cụ tìm kiếm, hoặc tự động tải ít trang hơn: mỗi trang là thêm một yêu cầu.
+
+Ecosia hỏi thường xuyên. Ecosia cũng không cho mở các trang của nó khuất tầm nhìn, nên trên Ecosia Anubis dừng ngay thay vì thử lại theo cách đó.

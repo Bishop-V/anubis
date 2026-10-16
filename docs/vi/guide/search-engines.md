@@ -20,7 +20,7 @@ Trên Firefox cho Android, nơi hỗ trợ còn ở mức thử nghiệm, Google
 
 **Được hỗ trợ** nghĩa là đã được thử trên trang thật. **Thử nghiệm** nghĩa là nó theo bố cục mà các công cụ khác có tài liệu mô tả nhưng chưa được thử trên trang thật, nên một số thứ có thể không hoạt động.
 
-\* Bing, Ecosia, Yahoo và Yandex đôi khi trả lời yêu cầu lấy trang tiếp theo bằng bước kiểm tra “xác nhận bạn không phải là robot”. Khi đó Tải thêm kết quả dừng lại mà không nói lý do. Nếu điều đó xảy ra, hãy dùng liên kết Next của chính công cụ tìm kiếm.
+\* Bing, Ecosia, Yahoo và Yandex đôi khi trả lời yêu cầu lấy trang tiếp theo bằng bước kiểm tra “xác nhận bạn không phải là robot”. Khi đó Tải thêm kết quả dừng lại và cho biết điều đó, kèm liên kết đến trang: hãy xác nhận bạn không phải là robot ở đó, rồi nhấn **Tải thêm kết quả** lần nữa, hoặc dùng liên kết Next của chính công cụ tìm kiếm. Ecosia hỏi thường xuyên. Xem [Tải thêm kết quả](./more-results.md).
 
 Kết quả web chính được cân nhắc ở mọi nơi. Ngoài ra:
 
