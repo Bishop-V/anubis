@@ -250,15 +250,19 @@ async function launch(settings = {}, ext = EXT) {
   };
   await ctx.route(/^https:\/\/((noai\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com|www\.ecosia\.org|search\.yahoo\.com|kagi\.com|www\.startpage\.com|yandex\.com)\//, (route) => {
     const page = pages[route.request().url()];
-    const answer = typeof page === 'function' ? page(route.request()) : page;
-    const { status = 200, body } = typeof answer === 'string' ? { body: answer } : (answer ?? {});
-    return body ? route.fulfill({ status, contentType: 'text/html; charset=utf-8', body }) : route.fulfill({ status: 204, body: '' });
+    return answerRoute(route, typeof page === 'function' ? page(route.request()) : page);
   });
   // Ecosia's favicon service: a one-pixel picture for any site.
   await ctx.route('https://api.ecosia.org/**', (route) =>
     route.fulfill({ contentType: 'image/gif', body: Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64') }),
   );
   return { ctx, extId };
+}
+
+/** Answer a mock page's route: a page's markup, `{ status, body }`, or nothing (204). */
+function answerRoute(route, answer) {
+  const { status = 200, body } = typeof answer === 'string' ? { body: answer } : (answer ?? {});
+  return body ? route.fulfill({ status, contentType: 'text/html; charset=utf-8', body }) : route.fulfill({ status: 204, body: '' });
 }
 
 async function report(page, label) {
