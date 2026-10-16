@@ -18,4 +18,12 @@ Requests only go to the search engine you're on, and pages are loaded one at a t
 
 ## When it stops
 
-When a page doesn't come, the summary says why under its first line, for example "Bing sent no results for page 3" or "Ecosia wants to check you're not a robot before it sends page 2", and **Open page 3** opens that page in a new tab so you can see what the engine sent. If it asks you to confirm you're not a robot, do that there, then press **Load more results** again. An engine that asks Anubis to slow down gets one more try after a short wait. When the engine sends only results that are already on the page, there are no more, and the button goes away. Startpage, Kagi, Yandex, Mojeek, and the DuckDuckGo HTML and Lite versions don't support it yet.
+When a page doesn't come, the summary says why under its first line, for example "Bing sent no results for page 3" or "Ecosia wants to check you're not a robot before it sends page 2", and **Open page 3** opens that page in a new tab so you can see what the engine sent. If it asks you to confirm you're not a robot, do that there, then press **Load more results** again (see [Robot checks](#robot-checks)). An engine that asks Anubis to slow down gets one more try after a short wait. When the engine sends only results that are already on the page, there are no more, and the button goes away. Startpage, Kagi, Yandex, Mojeek, and the DuckDuckGo HTML and Lite versions don't support it yet.
+
+## Robot checks
+
+Search engines watch for traffic that looks automated, and a request for the next page can look like that to them. When an engine wants you to confirm you're not a robot, Load more results stops and says so, for example "Ecosia wants to check you're not a robot before it sends page 2". Anubis never answers the check for you or tries to get around it.
+
+To carry on, press **Open page 2** (or whichever page it names), confirm you're not a robot on that page, then come back and press **Load more results** again. The engine usually lets the next pages through for a while after that. If it keeps asking, use the engine's own Next link instead, or load fewer pages automatically: each one is another request.
+
+Ecosia asks often. It also doesn't let its pages be opened out of sight, so on Ecosia Anubis stops at once instead of trying again that way.
