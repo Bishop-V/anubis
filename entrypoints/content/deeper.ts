@@ -176,8 +176,8 @@ async function fetchNext(engine: EngineDef, state: DeeperState): Promise<number>
     doc = await fetchPage(target.href, request && { method: 'POST', body: request.body, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
   } catch (error) {
     failed = error instanceof Stop ? error : new Stop('failed', target.href);
-    // An engine that asked to slow down wouldn't answer a frame either. One that
-    // refused a script's request (Ecosia's 403 robot check) may let a page load in a frame through.
+    // An engine that asked to slow down wouldn't answer a frame either. One that answered a
+    // script's request with a robot check may let a page load in a frame through, if it allows frames.
     if (failed.reason === 'busy') throw failed;
   }
   if (request) {
@@ -190,6 +190,7 @@ async function fetchNext(engine: EngineDef, state: DeeperState): Promise<number>
     return added;
   }
   if (!doc || !findResults(engine, doc).length) {
+    if (engine.frames === false) throw failed ?? new Stop('empty', target.href);
     const framed = await framePage(engine, target.href);
     // Why the request failed, when it did, says more than the frame's silence.
     if (!framed) throw failed ?? new Stop('empty', target.href);
@@ -330,6 +331,8 @@ async function fetchPage(url: string, init?: RequestInit): Promise<Document> {
       await wait(Math.min(MAX_RETRY_WAIT, Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : 3000));
       continue;
     }
+    // A 403 is a robot check (Ecosia's "Confirm you're not a robot"), which a page you open lets you pass.
+    if (res.status === 403) throw new Stop('robot', url);
     if (!res.ok) throw new Stop('refused', url);
     const text = await withTimeout(res.text(), FETCH_TIMEOUT).catch(() => {
       throw new Stop('slow', url);

@@ -87,6 +87,7 @@
   "loadMoreEmpty": { "message": "$1 sent no results for page $2. It may want you to confirm you’re not a robot first.", "description": "In the summary above the results, when Load more results got a page without results. $1 is the search engine, $2 the page number." },
   "loadMoreRepeat": { "message": "$1 sent the same results again for page $2, so there are no more.", "description": "In the summary above the results. $1 is the search engine, $2 the page number." },
   "loadMoreBusy": { "message": "$1 asked Anubis to slow down before page $2. Try again in a minute.", "description": "In the summary above the results, when the engine answered “too many requests”. $1 is the search engine, $2 the page number." },
+  "loadMoreRobot": { "message": "$1 wants to check you’re not a robot before it sends page $2.", "description": "In the summary above the results, when the engine answered with a robot check (status 403). $1 is the search engine, $2 the page number. loadMoreOpen follows it." },
   "loadMoreRefused": { "message": "$1 refused to send page $2.", "description": "In the summary above the results. $1 is the search engine, $2 the page number." },
   "loadMoreSlow": { "message": "$1 took too long to send page $2.", "description": "In the summary above the results. $1 is the search engine, $2 the page number." },
   "loadMoreFailed": { "message": "Page $2 from $1 didn’t load.", "description": "In the summary above the results, when the request failed. $1 is the search engine, $2 the page number." },

@@ -20,7 +20,7 @@ On Firefox for Android, where support is experimental, Google, DuckDuckGo, and B
 
 **Supported** means it has been tried on the live site. **Experimental** means it follows the layout other tools document but hasn't been tried on the live site yet, so some things may not work.
 
-\* Bing, Ecosia, Yahoo, and Yandex sometimes answer the request for the next page with a "confirm you're not a robot" check. Load more results then stops without saying why. If that happens, use the engine's own Next link.
+\* Bing, Ecosia, Yahoo, and Yandex sometimes answer the request for the next page with a "confirm you're not a robot" check. Load more results then stops and says so, with a link to the page: confirm you're not a robot there, then press **Load more results** again, or use the engine's own Next link.
 
 The main web results are weighed everywhere. Beyond them:
 

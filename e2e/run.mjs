@@ -232,6 +232,11 @@ async function launch(settings = {}, ext = EXT) {
     'https://www.bing.com/search?q=javascript+promises&skipped=1': bing('javascript promises', JS_RESULTS, { skipped: true }),
     'https://www.ecosia.org/search?q=javascript+promises': ecosia('javascript promises', JS_RESULTS),
     'https://www.ecosia.org/search?q=javascript+promises&p=1': ecosia('javascript promises', JS_MORE),
+    // Page 2 answers a request with Ecosia's robot check (a 403). A page load would get results, but the live site
+    // forbids frames, so Load more results mustn't count on one.
+    'https://www.ecosia.org/search?q=robot+check': ecosia('robot check', JS_RESULTS),
+    'https://www.ecosia.org/search?q=robot+check&p=1': (request) =>
+      request.resourceType() === 'document' ? ecosia('robot check', JS_MORE) : { status: 403, body: '<title>Confirm you’re not a robot</title>' },
     'https://www.bing.com/search?q=javascript+promises&sponsored=1': bing('javascript promises', JS_RESULTS, { sponsored: true }),
     'https://search.yahoo.com/search?p=javascript+promises': yahoo('javascript promises', JS_RESULTS),
     'https://search.yahoo.com/search?p=javascript+promises&long=1': yahoo('javascript promises', JS_RESULTS, { longTitle: true, rail: true }),
@@ -245,14 +250,19 @@ async function launch(settings = {}, ext = EXT) {
   };
   await ctx.route(/^https:\/\/((noai\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com|www\.ecosia\.org|search\.yahoo\.com|kagi\.com|www\.startpage\.com|yandex\.com)\//, (route) => {
     const page = pages[route.request().url()];
-    const body = typeof page === 'function' ? page(route.request()) : page;
-    return body ? route.fulfill({ contentType: 'text/html; charset=utf-8', body }) : route.fulfill({ status: 204, body: '' });
+    return answerRoute(route, typeof page === 'function' ? page(route.request()) : page);
   });
   // Ecosia's favicon service: a one-pixel picture for any site.
   await ctx.route('https://api.ecosia.org/**', (route) =>
     route.fulfill({ contentType: 'image/gif', body: Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64') }),
   );
   return { ctx, extId };
+}
+
+/** Answer a mock page's route: a page's markup, `{ status, body }`, or nothing (204). */
+function answerRoute(route, answer) {
+  const { status = 200, body } = typeof answer === 'string' ? { body: answer } : (answer ?? {});
+  return body ? route.fulfill({ status, contentType: 'text/html; charset=utf-8', body }) : route.fulfill({ status: 204, body: '' });
 }
 
 async function report(page, label) {
@@ -1255,11 +1265,27 @@ if (!only || only === 'cleanup' || checks) {
       withIcon: holders.filter((h) => /^https:\/\/api\.ecosia\.org\/v2\/favicons\/fetch\?domain=https%3A%2F%2F[^&]+&fz=s&theme=(dark|light)$/.test(h.querySelector('img.favicon')?.getAttribute('src') ?? '')).length,
     };
   });
-  console.log('== Ecosia settle:', JSON.stringify({ ecosiaSettle, ecosiaLevel, ecosiaIcons }));
+  // Ecosia answers Load more results with a robot check and can't be framed: the summary says so, with no frame tried.
+  const framed = [];
+  const onRequest = (r) => r.url().endsWith('q=robot+check&p=1') && r.resourceType() === 'document' && framed.push(r.url());
+  page.on('request', onRequest);
+  await page.goto('https://www.ecosia.org/search?q=robot+check');
+  await page.waitForTimeout(3000);
+  await clickShadowButton('anubis-summary', 'Load more results');
+  await page.waitForTimeout(2000);
+  page.off('request', onRequest);
+  const robotText = await shadowText('anubis-summary');
+  const ecosiaRobot = {
+    said: robotText.includes('Ecosia wants to check you’re not a robot before it sends page 2.'),
+    linked: (await shadowLinks('anubis-summary')).some((a) => a.text === 'Open page 2'),
+    noFrame: framed.length === 0,
+  };
+  console.log('== Ecosia settle:', JSON.stringify({ ecosiaSettle, ecosiaLevel, ecosiaIcons, ecosiaRobot }));
   if (checks) {
     assertChecks('Ecosia settle', { builtUntouched: ecosiaSettle.built && ecosiaSettle.beforeBuild === false, thenWeighed: ecosiaSettle.results === JS_RESULTS.length });
     assertChecks('Ecosia icons', { drawnOnLoadedResults: ecosiaIcons.loaded > 0 && ecosiaIcons.withIcon === ecosiaIcons.loaded });
     assertChecks('Ecosia button', { levelWithTheMenu: ecosiaLevel.length > 0 && ecosiaLevel.every((d) => d < 2) });
+    assertChecks('Ecosia robot check', ecosiaRobot);
   }
   // Yahoo: its ads look like results but aren't weighed; the Ads switch removes them.
   const yahooAds = async () => {
