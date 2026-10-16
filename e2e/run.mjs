@@ -392,6 +392,12 @@ async function weighButtonColors(page, selector) {
 }
 
 // The links inside the closed shadow roots of hosts with this tag, read the same way.
+/** Press a result's menu button: the dial's crown on its left, at its middle, or the button on a card. */
+async function pressWeigh(host) {
+  const box = await host.boundingBox();
+  await host.click({ position: { x: 12, y: box.height / 2 } });
+}
+
 async function shadowLinks(hostTag) {
   const cdp = await page.context().newCDPSession(page);
   const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
@@ -1212,7 +1218,7 @@ if (!only || only === 'cleanup' || checks) {
       removesDiscussions: !braveCleanup.discussions,
       removesRelatedQueries: !braveCleanup.relatedQueries,
       removesFindElsewhere: !braveCleanup.elsewhere,
-      buttonsInOneColumn: braveButtons.buttons > 0 && braveButtons.lefts.length === 1,
+      buttonsInOneColumn: braveButtons.buttons > 0 && Math.max(...braveButtons.lefts) - Math.min(...braveButtons.lefts) <= 2,
       buttonsClearOfThumbnail: braveButtons.clearOfThumb,
       keepsVideosTab: braveCleanup.videosTab,
     });
@@ -1226,7 +1232,8 @@ if (!only || only === 'cleanup' || checks) {
     return { buttons: lefts.length, lefts: [...new Set(lefts)] };
   });
   console.log('== Bing buttons beside a picture:', JSON.stringify(bingButtons));
-  if (checks) assertChecks('Bing picture', { buttonsInOneColumn: bingButtons.buttons > 0 && bingButtons.lefts.length === 1 });
+  // The dials follow the site icons, which can sit a pixel apart.
+  if (checks) assertChecks('Bing picture', { buttonsInOneColumn: bingButtons.buttons > 0 && Math.max(...bingButtons.lefts) - Math.min(...bingButtons.lefts) <= 2 });
   // Bing: a carousel labelled "Sponsored" goes with the Ads switch, and the summary is above it either way.
   const bingSponsored = async () => {
     await page.goto('https://www.bing.com/search?q=javascript+promises&sponsored=1');
@@ -1570,67 +1577,7 @@ if (!only || only === 'cleanup' || checks) {
   console.log('== summary over result cards:', JSON.stringify(cards));
   if (checks) assertChecks('summary lined up with result cards', { found: cards.found, linedUp: cards.found && Math.abs(cards.left - cards.titleLeft) <= 1 });
 
-  // The ⚖ button sits beside a result's first row, never over its text. On DuckDuckGo
-  // it always goes beside the ⋯ menu (the owner's choice, 2026-10-08), so the mock
-  // with whole, uncut addresses and titles that run under the menu isn't checked.
-  const covering = {};
-  for (const url of [
-    'https://duckduckgo.com/?q=javascript+promises',
-    'https://www.google.com/search?q=anubis',
-    'https://www.bing.com/search?q=javascript+promises',
-    'https://search.brave.com/search?q=anubis',
-  ]) {
-    await page.goto(url);
-    await page.waitForTimeout(800);
-    covering[url] = await page.evaluate(() => {
-      let buttons = 0;
-      const over = [];
-      const above = [];
-      for (const host of document.querySelectorAll('anubis-weigh')) {
-        const b = host.getBoundingClientRect();
-        if (!b.width) continue;
-        buttons++;
-        const walker = document.createTreeWalker(host.parentElement, NodeFilter.SHOW_TEXT);
-        const range = document.createRange();
-        // Not up in the space above the result's first line (the topmost text; Google
-        // draws its heading below the address that follows it).
-        const first = document.createTreeWalker(host.parentElement, NodeFilter.SHOW_TEXT);
-        let topmost = Infinity;
-        for (let node = first.nextNode(); node; node = first.nextNode()) {
-          if (!node.textContent.trim()) continue;
-          range.selectNodeContents(node);
-          for (const r of range.getClientRects()) if (r.width) topmost = Math.min(topmost, r.top);
-        }
-        if (topmost < Infinity && (b.top + b.bottom) / 2 < topmost) above.push(host.parentElement.textContent.trim().slice(0, 40));
-        // What text shows: a long address cut off with an ellipsis doesn't reach the button.
-        const clip = (el) => {
-          const c = { left: -Infinity, right: Infinity, top: -Infinity, bottom: Infinity };
-          for (let a = el; a && a !== host.parentElement.parentElement; a = a.parentElement) {
-            const cs = getComputedStyle(a);
-            const r = a.getBoundingClientRect();
-            if (cs.overflowX !== 'visible') Object.assign(c, { left: Math.max(c.left, r.left), right: Math.min(c.right, r.right) });
-            if (cs.overflowY !== 'visible') Object.assign(c, { top: Math.max(c.top, r.top), bottom: Math.min(c.bottom, r.bottom) });
-          }
-          return c;
-        };
-        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-          if (!node.textContent.trim()) continue;
-          range.selectNodeContents(node);
-          const c = clip(node.parentElement);
-          const shown = [...range.getClientRects()].map((r) => ({ left: Math.max(r.left, c.left), right: Math.min(r.right, c.right), top: Math.max(r.top, c.top), bottom: Math.min(r.bottom, c.bottom) }));
-          if (shown.some((r) => r.bottom > b.top + 1 && r.top < b.bottom - 1 && r.right > b.left + 1 && r.left < b.right - 1)) {
-            over.push(node.textContent.trim().slice(0, 40));
-            break;
-          }
-        }
-      }
-      return { buttons, over, above };
-    });
-  }
-  console.log('== buttons over text:', JSON.stringify(covering));
-  if (checks) {
-    assertChecks('the ⚖ button on the first row, never over text', Object.fromEntries(Object.entries(covering).map(([url, c]) => [url, c.buttons > 0 && c.over.length === 0 && c.above.length === 0])));
-  }
+  // Each dial's crown is over no text: checked with the dial (the `dial` part).
   if (checks) {
     assertChecks('summary as wide as the results', {
       found: wide.found,
@@ -1720,29 +1667,26 @@ if (!only || only === 'pins' || checks) {
   for (const [index, id] of nodeIds.entries()) {
     const { nodeId: hostId } = await cdp.send('DOM.querySelector', { nodeId: id, selector: 'anubis-weigh' });
     if (!hostId) {
-      pinPresentation.push({ chip: chips[index], goldIcon: false, accessibleName: false });
+      pinPresentation.push({ chip: chips[index], fullDial: false, accessibleName: false });
       continue;
     }
     const { node: host } = await cdp.send('DOM.describeNode', { nodeId: hostId, depth: -1, pierce: true });
     const shadow = host.shadowRoots?.[0];
     const { nodeId: buttonId } = shadow ? await cdp.send('DOM.querySelector', { nodeId: shadow.nodeId, selector: 'button.weigh' }) : {};
     if (!buttonId) {
-      pinPresentation.push({ chip: chips[index], goldIcon: false, accessibleName: false });
+      pinPresentation.push({ chip: chips[index], fullDial: false, accessibleName: false });
       continue;
     }
-    const [{ computedStyle: buttonStyle }, { computedStyle: hostStyle }, { attributes }] = await Promise.all([
-      cdp.send('CSS.getComputedStyleForNode', { nodeId: buttonId }),
-      cdp.send('CSS.getComputedStyleForNode', { nodeId: hostId }),
+    // The dial shows the pin by filling all of its scale.
+    const { nodeId: pinFillId } = await cdp.send('DOM.querySelector', { nodeId: shadow.nodeId, selector: '.fill.pin' });
+    const [{ computedStyle: fillStyle }, { attributes }] = await Promise.all([
+      pinFillId ? cdp.send('CSS.getComputedStyleForNode', { nodeId: pinFillId }) : { computedStyle: [] },
       cdp.send('DOM.getAttributes', { nodeId: buttonId }),
     ]);
-    const property = (style, name) => style.find((item) => item.name === name)?.value;
     const ariaLabel = attributes[attributes.indexOf('aria-label') + 1] ?? '';
-    const goldInk = property(hostStyle, '--gold-ink');
-    const hex = goldInk?.match(/^#([\da-f]{6})$/i)?.[1];
-    const goldRgb = hex && `rgb(${parseInt(hex.slice(0, 2), 16)}, ${parseInt(hex.slice(2, 4), 16)}, ${parseInt(hex.slice(4, 6), 16)})`;
     pinPresentation.push({
       chip: chips[index],
-      goldIcon: property(buttonStyle, 'color') === goldRgb,
+      fullDial: Number(fillStyle.find((item) => item.name === 'opacity')?.value) > 0.5,
       accessibleName: ariaLabel.toLowerCase().includes('pinned'),
     });
   }
@@ -1772,7 +1716,7 @@ if (!only || only === 'pins' || checks) {
     assertChecks('pinned result indicator', {
       pinnedResultsFound: pinPresentation.length > 0,
       noRedundantPinnedChip: pinPresentation.every((pin) => !pin.chip),
-      pinIconUsesGold: pinPresentation.every((pin) => pin.goldIcon),
+      pinFillsTheDial: pinPresentation.every((pin) => pin.fullDial),
       accessibleNameRetained: pinPresentation.every((pin) => pin.accessibleName),
       noRaisedOrLoweredChips: !retainedRankChips.raised && !retainedRankChips.lowered,
       tagMarkShown: retainedRankChips.tagMark,
@@ -1803,13 +1747,13 @@ if (!only || only === 'popover') {
     await page.waitForTimeout(600);
     const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
     await target.hover();
-    await target.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+    await pressWeigh(target.locator('anubis-weigh'));
     await page.waitForTimeout(300);
     await page.screenshot({ path: `${SHOTS}${name}.png`, fullPage: false });
     console.log(`\n== ${name}: popover open =`, await page.locator('anubis-popover').count());
     if (name === 'popover-dark') {
       // A second press on the button closes the menu it opened.
-      await target.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+      await pressWeigh(target.locator('anubis-weigh'));
       await page.waitForTimeout(300);
       const closedBySecondPress = (await page.locator('anubis-popover').count()) === 0;
       console.log('== second press closes the menu:', closedBySecondPress);
@@ -1844,7 +1788,7 @@ if (!only || only === 'popover') {
   await page.waitForTimeout(600);
   const tutorial = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
   await tutorial.hover();
-  await tutorial.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+  await pressWeigh(tutorial.locator('anubis-weigh'));
   await page.waitForTimeout(300);
   console.log('\n== auto theme, dark browser, light page:', JSON.stringify(await page.evaluate(() => ({
     menu: document.querySelector('anubis-popover')?.dataset.theme,
@@ -1861,7 +1805,7 @@ if (!only || only === 'popover') {
   await page.waitForTimeout(600);
   const mdn = page.locator('[data-anubis-result]', { hasText: 'Promise - JavaScript | MDN' });
   await mdn.hover();
-  await mdn.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+  await pressWeigh(mdn.locator('anubis-weigh'));
   await page.waitForTimeout(300);
   const explanation = await shadowText('anubis-popover');
   if (!explanation.includes('Matched rule, line ')) throw new Error('The result menu does not show the matching list rule');
@@ -1932,7 +1876,7 @@ if (!only || only === 'a11y') {
 
   const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
   await target.hover();
-  await target.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+  await pressWeigh(target.locator('anubis-weigh'));
   await page.waitForTimeout(300);
   // Focus starts on the chosen ranking; back up to × and press it.
   let steps = 0;
@@ -2432,7 +2376,7 @@ if (!only || only === 'sync') {
   await page.waitForTimeout(600);
   const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
   await target.hover();
-  await target.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+  await pressWeigh(target.locator('anubis-weigh'));
   await page.waitForTimeout(300);
   // Focus starts on the chosen weight (Raise); Tab to Pin and press it.
   await page.keyboard.press('Tab');
@@ -2652,7 +2596,7 @@ if (only === 'docs') {
     await page.waitForTimeout(700);
     const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
     await target.hover();
-    await target.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+    await pressWeigh(target.locator('anubis-weigh'));
     await page.waitForTimeout(300);
     await clip(`menu${suffix}`, ['anubis-popover', '[data-anubis-result]:has(a[href*="javascript.info"])'], 12);
     await page.keyboard.press('Escape');

@@ -562,8 +562,15 @@ function frameDial(host: HTMLElement, container: HTMLElement, pinned: boolean, b
 /** Where the dial's centre goes and how big the icon it goes round is. */
 function dialAnchor(result: FoundResult, container: HTMLElement): { x: number; y: number; size: number; blank: boolean } | undefined {
   // A hidden result folded into its one line: around that line's eye, which starts it.
+  // Where the page's other results go round plain discs, it keeps to their column instead,
+  // before the line. (Hidden lines are drawn after every dial is placed.)
   const bar = barHosts.get(container)?.getBoundingClientRect();
-  if (bar?.height) return { x: bar.left + BAR_EYE / 2, y: bar.top + bar.height / 2, size: BAR_EYE, blank: false };
+  if (bar?.height) {
+    const y = bar.top + bar.height / 2;
+    const others = [...document.querySelectorAll<HTMLElement>('anubis-weigh[data-shape="dial"]')].filter((h) => !barHosts.get(h.parentElement as HTMLElement)?.getBoundingClientRect().height);
+    if (others.length && others.every((h) => h.hasAttribute('data-blank'))) return { x: bar.left - BLANK / 2 - 10, y, size: BLANK, blank: true };
+    return { x: bar.left + BAR_EYE / 2, y, size: BAR_EYE, blank: false };
+  }
   const found = siteIconOf(container, result.titleBlock);
   if (found) return { x: (found.left + found.right) / 2, y: (found.top + found.bottom) / 2, size: Math.max(found.width, found.height), blank: false };
   const title = result.titleBlock.querySelector<HTMLElement>('h1, h2, h3, h4, [role="heading"]') ?? result.titleBlock;
