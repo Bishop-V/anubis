@@ -47,7 +47,7 @@ Es kopiert die Struktur um die Überschriften dieser Bereiche: Elementnamen, Kla
 
 ## Mehr Ergebnisse laden lädt nichts
 
-Die Zusammenfassung sagt unter ihrer ersten Zeile, warum, mit einem Link zur Seite, die Anubis versucht hat. Meist will die Suchmaschine, dass du bestätigst, kein Roboter zu sein: Öffne die Seite, tu das und klicke erneut auf **Mehr Ergebnisse laden**. Siehe [Mehr Ergebnisse laden](./more-results.md).
+Die Zusammenfassung sagt unter ihrer ersten Zeile, warum, mit einem Link zur Seite, die Anubis versucht hat. Meist will die Suchmaschine, dass du bestätigst, kein Roboter zu sein: Öffne die Seite, tu das und klicke erneut auf **Mehr Ergebnisse laden**. Ecosia fragt oft danach. Siehe [Mehr Ergebnisse laden](./more-results.md).
 
 ## Google öffnet immer den Tab „Web“
 

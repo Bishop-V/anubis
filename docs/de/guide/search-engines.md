@@ -20,7 +20,7 @@ In Firefox für Android, wo die Unterstützung experimentell ist, senden Google,
 
 **Unterstützt** heißt, dass es auf der echten Website ausprobiert wurde. **Experimentell** heißt, dass es dem Layout folgt, das andere Werkzeuge dokumentieren, aber noch nicht auf der echten Website ausprobiert wurde, sodass manches nicht funktionieren könnte.
 
-\* Bing, Ecosia, Yahoo und Yandex beantworten die Anfrage nach der nächsten Seite manchmal mit einer Prüfung „Bestätige, dass du kein Roboter bist“. Mehr Ergebnisse laden hört dann auf, ohne zu sagen, warum. Wenn das passiert, nutze den eigenen Link „Weiter“ der Suchmaschine.
+\* Bing, Ecosia, Yahoo und Yandex beantworten die Anfrage nach der nächsten Seite manchmal mit einer Prüfung „Bestätige, dass du kein Roboter bist“. Mehr Ergebnisse laden hört dann auf und sagt das, mit einem Link zur Seite: Bestätige dort, dass du kein Roboter bist, und klicke dann erneut auf **Mehr Ergebnisse laden**, oder nutze den eigenen Link „Weiter“ der Suchmaschine. Ecosia fragt oft. Siehe [Mehr Ergebnisse laden](./more-results.md).
 
 Die wichtigsten Web-Ergebnisse werden überall gewogen. Darüber hinaus:
 

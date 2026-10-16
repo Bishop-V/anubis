@@ -47,7 +47,7 @@ It copies the structure around those panels' headings: element names, classes, a
 
 ## Load more results loads nothing
 
-The summary says why under its first line, with a link to the page Anubis tried. Most often the engine wants you to confirm you're not a robot: open the page, do that, and press **Load more results** again. See [When it stops](./more-results.md#when-it-stops).
+The summary says why under its first line, with a link to the page Anubis tried. Most often the engine wants you to confirm you're not a robot: open the page, do that, and press **Load more results** again. Ecosia asks for this often. See [Robot checks](./more-results.md#robot-checks).
 
 ## Google always opens the Web tab
 
