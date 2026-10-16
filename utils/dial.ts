@@ -63,8 +63,11 @@ export function dialReading(level: Level, score = 0): { up: number; down: number
 
 const n = (x: number) => Math.round(x * 100) / 100;
 
-/** The dial's drawing. Its parts carry classes the stylesheet colours and the reading moves. */
-export function dialSvg(g: DialGeometry): string {
+/**
+ * The dial's drawing. Its parts carry classes the stylesheet colours and the reading moves.
+ * `blank` draws a plain disc where the site's icon would be, for results that show none.
+ */
+export function dialSvg(g: DialGeometry, blank = false): string {
   const { r, guard } = g;
   const a0 = Math.asin(Math.min(0.95, (KNOB_H / 2 + GUARD_CLEAR) / guard));
   const a1 = a0 + (GUARD_SPAN * Math.PI) / 180;
@@ -77,6 +80,7 @@ export function dialSvg(g: DialGeometry): string {
   const grips = [-4.2, 0, 4.2].map((y) => `M${n(knobLeft + 2.4)} ${y}H${n(knobRight - 2.4)}`).join('');
   const q = n(g.quarter);
   return `<svg xmlns="http://www.w3.org/2000/svg" class="dial" viewBox="${n(g.left)} ${n(g.top)} ${n(g.right - g.left)} ${n(g.bottom - g.top)}" width="${n(g.right - g.left)}" height="${n(g.bottom - g.top)}" aria-hidden="true" focusable="false" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    ${blank ? `<circle class="blank" r="${n(g.r - GAP)}"/>` : ''}
     <g class="crown"><rect class="knob" x="${n(knobRight)}" y="-2" width="${n(STEM + 0.4)}" height="4" rx="0.8"/><rect class="knob" x="${n(knobLeft)}" y="${-KNOB_H / 2}" width="${KNOB_W}" height="${KNOB_H}" rx="3"/><path class="grips" d="${grips}"/></g>
     <path class="guards" d="${guards}" stroke-width="${LINE}"/>
     <path class="track" d="${half}" stroke-width="${LINE}"/>
@@ -98,4 +102,24 @@ export function setDial(svg: Element, g: DialGeometry, level: Level, score = 0):
   set('.fill.up', up);
   set('.fill.down', down);
   svg.querySelector<SVGPathElement>('.fill.pin')?.style.setProperty('opacity', full ? '1' : '0');
+}
+
+// The gauge on an image or video card: the same crown and scale, upright on a small pill in
+// the picture's top-right corner, where it reads on any picture. Zero is the middle; Raise
+// fills up from it and Lower down, Pin all of it, and Hide leaves it empty.
+
+/** Half the gauge's scale: the most a raise or a lower can fill. */
+const GAUGE_HALF = 12;
+
+export const GAUGE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" class="gauge" viewBox="0 0 24 36" width="24" height="36" aria-hidden="true" focusable="false" fill="none" stroke-linecap="round">
+  <g class="crown"><rect class="knob" x="9" y="16.6" width="7" height="2.8" rx="0.6"/><rect class="knob" x="3.2" y="12" width="6" height="12" rx="2"/><path class="grips" d="M4.8 15h2.8M4.8 18h2.8M4.8 21h2.8"/></g>
+  <path class="track" d="M17 6V30" stroke-width="${LINE}"/>
+  <path class="fill pin" d="M17 6V30" stroke-width="${LINE}"/>
+  <path class="fill up" d="M17 18V6" stroke-width="${LINE}" stroke-dasharray="${GAUGE_HALF} ${GAUGE_HALF}" stroke-dashoffset="${GAUGE_HALF}"/>
+  <path class="fill down" d="M17 18V30" stroke-width="${LINE}" stroke-dasharray="${GAUGE_HALF} ${GAUGE_HALF}" stroke-dashoffset="${GAUGE_HALF}"/>
+</svg>`;
+
+/** The gauge's reading: as the dial's, over half its scale. */
+export function setGauge(svg: Element, level: Level, score = 0): void {
+  setDial(svg, { quarter: GAUGE_HALF } as DialGeometry, level, score);
 }

@@ -289,7 +289,7 @@ export default defineContentScript({
       if (rules.settings.showChips) renderChips(result, verdict, ctx, revealed);
       else renderChips(result, { ...verdict, tags: [] }, ctx, false);
 
-      ensureWeighButton(result, verdict.level, engine, theme, openWeigh);
+      ensureWeighButton(result, verdict.level, engine, theme, openWeigh, verdict.hidden ? 0 : verdict.score);
     };
 
     /**
@@ -409,7 +409,7 @@ export default defineContentScript({
 
     const forget = (el: HTMLElement) => {
       detachResult(el);
-      for (const attr of ['data-anubis-result', 'data-anubis-state', 'data-anubis-reveal', 'data-anubis-highlight', 'data-anubis-row', 'data-anubis-filtered', 'data-anubis-grouped', 'data-anubis-frame-inside']) {
+      for (const attr of ['data-anubis-result', 'data-anubis-state', 'data-anubis-reveal', 'data-anubis-highlight', 'data-anubis-row', 'data-anubis-filtered', 'data-anubis-grouped', 'data-anubis-frame-inside', 'data-anubis-dial-frame']) {
         el.removeAttribute(attr);
       }
       el.style.removeProperty('--anubis-hl');

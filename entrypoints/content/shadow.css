@@ -198,6 +198,139 @@ button {
   }
 }
 
+/* ---------------------------------------------------------------- the dial */
+/* Around the site's icon on each result (utils/dial.ts): the scale on the icon's left,
+   filled up for Raise and down for Lower, all of it for Pin, and none for Hide; the
+   crown on its left opens the result menu. In the page's greys: no gold, no fills. */
+.dial {
+  position: absolute;
+  left: 0;
+  top: var(--dial-top, 0px);
+  overflow: visible;
+  pointer-events: none;
+  opacity: var(--anubis-weigh-opacity, 0.78);
+  transition: opacity 0.15s;
+}
+.dial .track {
+  stroke: color-mix(in srgb, var(--muted) 45%, transparent);
+  transition: stroke 0.15s;
+}
+.dial .guards {
+  stroke: color-mix(in srgb, var(--muted) 80%, transparent);
+  transition: stroke 0.15s;
+}
+.dial .knob {
+  fill: color-mix(in srgb, var(--muted) 14%, transparent);
+  stroke: var(--muted);
+  stroke-width: 1.1;
+  transition:
+    fill 0.15s,
+    stroke 0.15s;
+}
+.dial .grips {
+  stroke: color-mix(in srgb, var(--muted) 70%, transparent);
+  stroke-width: 0.9;
+}
+.dial .crown {
+  transition: transform 0.16s ease-out;
+}
+.dial .blank {
+  fill: color-mix(in srgb, var(--muted) 20%, transparent);
+}
+.dial .fill,
+.gauge .fill {
+  opacity: 0;
+  transition:
+    stroke-dashoffset 0.32s cubic-bezier(0.3, 1.25, 0.5, 1),
+    opacity 0.16s;
+}
+.dial .fill {
+  stroke: var(--text);
+}
+/* Pointed at, focused, or with its menu open: the crown pulls out and the scale brightens. */
+.dial:has(~ .weigh:is(:hover, :focus-visible, [aria-expanded='true'])) {
+  opacity: 1;
+}
+.dial:has(~ .weigh:is(:hover, :focus-visible, [aria-expanded='true'])) .crown {
+  transform: translateX(-2.5px);
+}
+.dial:has(~ .weigh:is(:hover, :focus-visible, [aria-expanded='true'])) :is(.knob, .guards) {
+  stroke: var(--text);
+}
+.dial:has(~ .weigh:is(:hover, :focus-visible, [aria-expanded='true'])) .track {
+  stroke: color-mix(in srgb, var(--muted) 75%, transparent);
+}
+.weigh.dial,
+.weigh.dial:hover,
+.weigh.dial:focus-visible,
+.weigh.dial[aria-expanded='true'] {
+  position: absolute;
+  height: 28px;
+  padding: 0;
+  border-radius: 8px;
+  background: none;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* A pinned result's frame, drawn with the dial so it takes in the crown (frameDial in ui.ts). */
+.pin-frame {
+  position: absolute;
+  border: 1px solid color-mix(in srgb, var(--muted) 55%, transparent);
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+/* The gauge on an image or video card: the same crown and scale, upright on a dark pill in
+   the picture's corner, white so it reads on any picture. */
+.weigh.gauge,
+.weigh.gauge:hover,
+.weigh.gauge:focus-visible,
+.weigh.gauge[aria-expanded='true'] {
+  width: 26px;
+  height: 38px;
+  border-radius: 13px;
+  color: #fff;
+  background: rgb(20 20 22 / 0.62);
+  opacity: 1;
+}
+.weigh.gauge:is(:hover, :focus-visible, [aria-expanded='true']) {
+  background: rgb(20 20 22 / 0.85);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.35);
+}
+.weigh.gauge svg {
+  width: 24px;
+  height: 36px;
+}
+.gauge .track {
+  stroke: rgb(255 255 255 / 0.38);
+}
+.gauge .fill {
+  stroke: #fff;
+}
+.gauge .knob {
+  fill: #3a3b40;
+  stroke: #e8e8ea;
+  stroke-width: 1;
+}
+.gauge .grips {
+  stroke: rgb(255 255 255 / 0.6);
+  stroke-width: 0.8;
+}
+.gauge .crown {
+  transition: transform 0.16s ease-out;
+}
+.weigh.gauge:is(:hover, :focus-visible, [aria-expanded='true']) .crown {
+  transform: translateX(-1.5px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .dial,
+  .dial *,
+  .gauge * {
+    transition: none;
+  }
+}
+
 /* ------------------------------------------------------------ hidden line */
 :host(anubis-bar) {
   display: block;
