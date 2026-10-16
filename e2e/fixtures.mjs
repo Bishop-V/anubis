@@ -784,3 +784,45 @@ export function ecosia(query, results) {
     }, 600));
   </script></body></html>`;
 }
+
+// ---------------------------------------------------------------- DuckDuckGo (HTML) and (Lite)
+// The pages DuckDuckGo serves without scripts, after their markup (uBlacklist's serpinfo).
+// HTML shows each site's icon on the address line under the title; Lite is a table with
+// a number before each title and no icons at all.
+export function duckduckgoHtml(query, results) {
+  const icon = (url) => siteIcon(siteOf(hostOf(url))[2]).replace('class="XNo5Ab"', 'class="result__icon__img"').replace(/width="18" height="18"/, 'width="16" height="16"');
+  const items = results
+    .map(
+      ([url, title, snippet]) => `
+    <div class="result results_links results_links_deep web-result"><div class="links_main links_deep result__body">
+      <h2 class="result__title"><a rel="nofollow" class="result__a" href="${url}">${esc(title)}</a></h2>
+      <div class="result__extras"><div class="result__extras__url"><span class="result__icon"><a rel="nofollow" href="${url}">${icon(url)}</a></span><a class="result__url" href="${url}">${esc(hostOf(url))}</a></div></div>
+      <a class="result__snippet" href="${url}">${esc(snippet)}</a>
+    </div></div>`,
+    )
+    .join('');
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(query)} at DuckDuckGo</title>
+  <style>
+    body{margin:0;font:14px/1.4 Arial,sans-serif;background:#fff;color:#222}
+    .header{padding:14px 20px;border-bottom:1px solid #eee}
+    #links{max-width:640px;padding:16px 20px 40px 60px}
+    .result{margin:0 0 18px}.result__title{margin:0;font-size:16px;font-weight:400}.result__a{color:#1a0dab}
+    .result__extras__url{display:flex;align-items:center;gap:6px;margin:3px 0}.result__icon__img{display:block;width:16px;height:16px}
+    .result__url{color:#006621;font-size:13px;text-decoration:none}.result__snippet{display:block;color:#444;text-decoration:none}
+  </style></head><body><div class="header"><form><input name="q" value="${esc(query)}"></form></div><div id="links" class="results">${items}</div></body></html>`;
+}
+
+export function duckduckgoLite(query, results) {
+  const rows = results
+    .map(
+      ([url, title, snippet], i) => `
+      <tr><td valign="top">${i + 1}.&nbsp;</td><td><a rel="nofollow" href="${url}" class="result-link">${esc(title)}</a></td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;</td><td class="result-snippet">${esc(snippet)}</td></tr>
+      <tr><td>&nbsp;&nbsp;&nbsp;</td><td><span class="link-text">${esc(hostOf(url))}</span></td></tr>
+      <tr><td>&nbsp;</td><td>&nbsp;</td></tr>`,
+    )
+    .join('');
+  return `<!doctype html><html><head><meta charset="utf-8"><title>DuckDuckGo</title>
+  <style>body{margin:0;padding:12px 40px;font:14px/1.35 Arial,sans-serif;background:#fff;color:#222}.result-link{color:#1a0dab}.result-snippet{color:#444}.link-text{color:#006621}</style>
+  </head><body><form><input name="q" value="${esc(query)}"></form><table border="0">${rows}</table></body></html>`;
+}

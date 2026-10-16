@@ -71,8 +71,11 @@ html[data-anubis-hide='dim'] [data-anubis-state~='hide'] > anubis-bar {
 [data-anubis-state~='pin']:not([data-anubis-frame-inside]) {
   border-radius: 10px;
 }
-/* A result with the dial has its frame drawn with the dial, taking in the crown on its left. */
-[data-anubis-state~='pin'][data-anubis-dial-frame] {
+/* A result with the dial has its frame drawn with the dial, taking in the crown on its left.
+   A result in a table spans several rows, each of which would get its own frame: its full
+   dial says it's pinned instead. */
+[data-anubis-state~='pin'][data-anubis-dial-frame],
+tr[data-anubis-state~='pin'] {
   outline: none;
 }
 /* On a phone, a result that reaches the window's edge gets its frame on its own edge,

@@ -449,6 +449,8 @@ function shapeWeigh(host: HTMLElement, shape: WeighShape, geom?: DialGeometry, b
   parts.drawing = undefined;
   parts.geom = geom;
   host.dataset.shape = shape;
+  // Where the dial goes round a plain disc, no site icon was found: worth knowing when an engine changes.
+  host.toggleAttribute('data-blank', blank);
   button.className = `weigh ${shape}`;
   delete button.dataset.level;
   for (const prop of ['left', 'top', 'width']) button.style.removeProperty(prop);
@@ -493,6 +495,8 @@ function placeDial(host: HTMLElement, result: FoundResult, engine: EngineDef, le
     host.style.setProperty('vertical-align', 'middle', 'important');
     host.style.setProperty('height', '1em', 'important');
     host.style.setProperty('margin-inline-start', '6px', 'important');
+    // The disc reaches past the drawing's box on the right: keep the title clear of it.
+    host.style.setProperty('margin-inline-end', `${BLANK_TABLE / 2 + 6}px`, 'important');
     host.style.setProperty('--dial-top', `calc(0.5em + ${Math.round(geom.top)}px)`);
     keepUpright(host);
     return true;
@@ -547,7 +551,8 @@ function frameDial(host: HTMLElement, container: HTMLElement, pinned: boolean, b
   }
   const hostLeft = parseFloat(host.style.left) || 0;
   const hostTop = parseFloat(host.style.top) || 0;
-  const left = Math.min(-FRAME_OFF, Math.round(crownLeft) - 8);
+  // Clear of the crown, but inside the window.
+  const left = Math.max(Math.min(-FRAME_OFF, Math.round(crownLeft) - 8), Math.round(2 - box.left));
   frame.style.setProperty('left', `${left - hostLeft}px`);
   frame.style.setProperty('top', `${-FRAME_OFF - hostTop}px`);
   frame.style.setProperty('width', `${Math.round(box.width) + FRAME_OFF - left}px`);
@@ -574,11 +579,12 @@ function dialAnchor(result: FoundResult, container: HTMLElement): { x: number; y
 function siteIconOf(container: HTMLElement, titleBlock: HTMLElement): DOMRect | undefined {
   const box = container.getBoundingClientRect();
   if (!box.width) return undefined;
-  const heading = titleBlock.querySelector<HTMLElement>('h1, h2, h3, h4, [role="heading"]') ?? titleBlock;
-  const t = heading.getBoundingClientRect();
+  // The title's own heading; where it has none, the title block, which can hold the icon too (Brave's link).
+  const heading = titleBlock.querySelector<HTMLElement>('h1, h2, h3, h4, [role="heading"]');
+  const t = (heading ?? titleBlock).getBoundingClientRect();
   let best: DOMRect | undefined;
   for (const el of container.querySelectorAll<HTMLElement>('img, svg, [class*="icon" i], [class*="pic" i], [class*="logo" i]')) {
-    if (el.closest('button, [role="button"]') || heading.contains(el)) continue;
+    if (el.closest('button, [role="button"]') || heading?.contains(el)) continue;
     const r = el.getBoundingClientRect();
     if (r.width < 12 || r.height < 12 || r.width > 40 || r.height > 40 || Math.abs(r.width - r.height) > 6) continue;
     if (r.left < box.left - 8 || r.left > box.left + 56 || r.top > t.bottom || r.top > box.top + 90) continue;
