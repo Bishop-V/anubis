@@ -6,8 +6,6 @@ import { evaluate, listTagCards, listTagIds, type Verdict } from '@/utils/matche
 import { send, type Message, type PageStats } from '@/utils/messages';
 import {
   changeHolds,
-  formatSiteLine,
-  getSite,
   recordChange,
   setSiteLevel,
   keepTagDefs,
@@ -19,7 +17,6 @@ import {
 } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
 import { clampDeeper, colorSchemeItem, editPersonal, type Theme } from '@/utils/storage';
-import { reportUrl, suggestionUrl } from '@/utils/subscriptions';
 import { changeSentence } from '@/utils/summary';
 import { browserScheme } from '@/utils/theme';
 import { findClutter, mainColumn, redirectFor, watchAllTab, type Clutter } from './cleanup';
@@ -289,7 +286,7 @@ export default defineContentScript({
       if (rules.settings.showChips) renderChips(result, verdict, ctx, revealed);
       else renderChips(result, { ...verdict, tags: [] }, ctx, false);
 
-      ensureWeighButton(result, verdict.level, engine, theme, openWeigh, shownScore(verdict));
+      ensureWeighButton(result, verdict.level, engine, theme, openWeigh);
     };
 
     /**
@@ -352,16 +349,6 @@ export default defineContentScript({
       if (popoverAnchor() === anchor && !anchor.isConnected) return closePopover();
       const verdict = verdictFor(result);
       const baseline = evaluate({ url: result.url, title: result.title, description: result.description }, rules.lists.filter((l) => !l.personal), rules.prefs);
-      // Suggestions go only to lists that ask for them with `! issues:`; reports go to
-      // any list with a tracker, which most have as Git repositories.
-      const trackers = rules.lists
-        .filter((l) => !l.personal && rules.meta[l.id]?.issues)
-        .map((l) => ({ id: l.id, name: l.name, issues: rules.meta[l.id]!.issues!, tags: l.tags.map((t) => t.id) }));
-      const reports = rules.lists.flatMap((l) => {
-        const reasons = verdict.reasons.filter((r) => r.listId === l.id);
-        const href = !l.personal && reasons.length ? reportUrl(rules.trackers[l.id], l.name, result.url, reasons) : undefined;
-        return href ? [{ id: l.id, name: l.name, href }] : [];
-      });
       openPopover(
         anchor,
         {
@@ -371,8 +358,6 @@ export default defineContentScript({
           personalText: rules.personalText,
           tags: rules.tags,
           listTags: listTagIds(rules.lists),
-          trackers,
-          reports,
           theme: menuTheme(rules.settings.theme),
         },
         {
@@ -386,12 +371,6 @@ export default defineContentScript({
               return tagSite(withTag, domain, id, listTagCards(rules.lists), true);
             });
           },
-          suggest: (tracker, domain) => {
-            const entry = getSite(rules.personalText, domain);
-            const line = formatSiteLine(domain, entry?.level ?? 'normal', entry?.tags ?? []) ?? `$site=${domain}`;
-            return suggestionUrl(tracker.issues, tracker.name, domain, line, result.url);
-          },
-          settings: () => void send({ type: 'open-options' }),
         },
       );
     };
@@ -409,7 +388,7 @@ export default defineContentScript({
 
     const forget = (el: HTMLElement) => {
       detachResult(el);
-      for (const attr of ['data-anubis-result', 'data-anubis-state', 'data-anubis-reveal', 'data-anubis-highlight', 'data-anubis-row', 'data-anubis-filtered', 'data-anubis-grouped', 'data-anubis-frame-inside', 'data-anubis-dial-frame']) {
+      for (const attr of ['data-anubis-result', 'data-anubis-state', 'data-anubis-reveal', 'data-anubis-highlight', 'data-anubis-row', 'data-anubis-filtered', 'data-anubis-grouped', 'data-anubis-frame-inside', 'data-anubis-column-frame']) {
         el.removeAttribute(attr);
       }
       el.style.removeProperty('--anubis-hl');
@@ -568,9 +547,6 @@ export default defineContentScript({
     observe();
   },
 });
-
-/** How far a result moved, for its dial: none once it's hidden. */
-const shownScore = (verdict: Verdict): number => (verdict.hidden ? 0 : verdict.score);
 
 // Reranking moves results with CSS `order` inside a flex column, so the page's own
 // scripts (which own these nodes) never see them move. Each boost point moves a

@@ -266,9 +266,6 @@
   "barHiddenByList_other": {
     "message": "ocultos por $2"
   },
-  "menuWhyHeading": {
-    "message": "Por quê"
-  },
   "menuNewTagPlaceholder": {
     "message": "Nova etiqueta"
   },
@@ -277,9 +274,6 @@
   },
   "menuAddTagButton": {
     "message": "Adicionar etiqueta"
-  },
-  "menuSavedNote": {
-    "message": "Salvo na sua lista."
   },
   "menuCloseLabel": {
     "message": "Fechar"
@@ -481,21 +475,6 @@
   },
   "summaryUndo": {
     "message": "Desfazer"
-  },
-  "menuSuggest": {
-    "message": "Alguma lista deveria incluí-lo? Sugira a $1."
-  },
-  "menuSuggestTitle": {
-    "message": "Sugerir $1 a $2 no rastreador de issues dela"
-  },
-  "menuReport": {
-    "message": "Errado? Avise $1."
-  },
-  "menuMatchedRule": {
-    "message": "Regra correspondente, linha $1"
-  },
-  "menuReportTitle": {
-    "message": "Dizer a $1, no rastreador de issues dela, que ela erra sobre este resultado"
   },
   "offerTitle": {
     "message": "Assinar $1?"
@@ -1570,9 +1549,6 @@
   },
   "reasonYourTagSettings": {
     "message": "Suas configurações de etiquetas"
-  },
-  "menuReason": {
-    "message": "$1 $2."
   },
   "choicePin": {
     "message": "o fixam por $1"

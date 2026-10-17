@@ -254,9 +254,6 @@
   "barHiddenByList_other": {
     "message": "bị ẩn bởi $2"
   },
-  "menuWhyHeading": {
-    "message": "Lý do"
-  },
   "menuNewTagPlaceholder": {
     "message": "Nhãn mới"
   },
@@ -265,9 +262,6 @@
   },
   "menuAddTagButton": {
     "message": "Thêm nhãn"
-  },
-  "menuSavedNote": {
-    "message": "Đã lưu vào danh sách của bạn."
   },
   "menuCloseLabel": {
     "message": "Đóng"
@@ -427,21 +421,6 @@
   },
   "summaryUndo": {
     "message": "Hoàn tác"
-  },
-  "menuSuggest": {
-    "message": "Danh sách nên có trang web này? Đề xuất với $1."
-  },
-  "menuSuggestTitle": {
-    "message": "Đề xuất $1 với $2 trên trình theo dõi vấn đề của danh sách đó"
-  },
-  "menuReport": {
-    "message": "Sai? Báo cáo với $1."
-  },
-  "menuMatchedRule": {
-    "message": "Quy tắc khớp, dòng $1"
-  },
-  "menuReportTitle": {
-    "message": "Báo với $1 rằng danh sách đã sai về kết quả này, trên trình theo dõi vấn đề của danh sách đó"
   },
   "offerTitle": {
     "message": "Đăng ký $1?"
@@ -1471,9 +1450,6 @@
   },
   "reasonYourTagSettings": {
     "message": "Cài đặt nhãn của bạn"
-  },
-  "menuReason": {
-    "message": "$1 $2."
   },
   "choicePin": {
     "message": "ghim lên đầu vì $1"

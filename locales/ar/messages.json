@@ -350,9 +350,6 @@
   "barHiddenByList_other": {
     "message": "أخفتها قائمة $2"
   },
-  "menuWhyHeading": {
-    "message": "لماذا"
-  },
   "menuNewTagPlaceholder": {
     "message": "وسم جديد"
   },
@@ -361,9 +358,6 @@
   },
   "menuAddTagButton": {
     "message": "إضافة وسم"
-  },
-  "menuSavedNote": {
-    "message": "حُفظ في قائمتك."
   },
   "menuCloseLabel": {
     "message": "إغلاق"
@@ -733,21 +727,6 @@
   },
   "summaryUndo": {
     "message": "تراجع"
-  },
-  "menuSuggest": {
-    "message": "هل ينبغي أن تتضمنه قائمة؟ اقترحه على $1."
-  },
-  "menuSuggestTitle": {
-    "message": "اقتراح $1 على $2 في متتبع مشكلاتها"
-  },
-  "menuReport": {
-    "message": "خطأ؟ أبلِغ $1 بالخطأ."
-  },
-  "menuMatchedRule": {
-    "message": "القاعدة المطابقة، السطر $1"
-  },
-  "menuReportTitle": {
-    "message": "أخبر $1 أنها مخطئة بشأن هذه النتيجة، في متتبع مشكلاتها"
   },
   "offerTitle": {
     "message": "الاشتراك في $1؟"
@@ -2002,9 +1981,6 @@
   },
   "reasonYourTagSettings": {
     "message": "إعدادات وسومك"
-  },
-  "menuReason": {
-    "message": "$1 $2."
   },
   "choicePin": {
     "message": "تثبّتها بسبب $1"

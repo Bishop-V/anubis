@@ -248,9 +248,6 @@
   "barHiddenByList_other": {
     "message": "已被 $2 隱藏"
   },
-  "menuWhyHeading": {
-    "message": "原因"
-  },
   "menuNewTagPlaceholder": {
     "message": "新標籤"
   },
@@ -259,9 +256,6 @@
   },
   "menuAddTagButton": {
     "message": "新增標籤"
-  },
-  "menuSavedNote": {
-    "message": "已儲存在你的清單中。"
   },
   "menuCloseLabel": {
     "message": "關閉"
@@ -421,21 +415,6 @@
   },
   "summaryUndo": {
     "message": "復原"
-  },
-  "menuSuggest": {
-    "message": "應該收錄到清單中嗎？推薦給 $1。"
-  },
-  "menuSuggestTitle": {
-    "message": "在 $2 的問題追蹤器上推薦 $1"
-  },
-  "menuReport": {
-    "message": "有誤？報告給 $1。"
-  },
-  "menuMatchedRule": {
-    "message": "相符的規則，第 $1 行"
-  },
-  "menuReportTitle": {
-    "message": "在 $1 的問題追蹤器上告訴它，它對此結果的判斷有誤"
   },
   "offerTitle": {
     "message": "訂閱 $1？"
@@ -1465,9 +1444,6 @@
   },
   "reasonYourTagSettings": {
     "message": "你的標籤設定"
-  },
-  "menuReason": {
-    "message": "$1：$2。"
   },
   "choicePin": {
     "message": "因$1標籤將其釘選"

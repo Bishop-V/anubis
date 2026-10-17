@@ -287,9 +287,6 @@
   "barHiddenByList_many": {
     "message": "nascosti da $2"
   },
-  "menuWhyHeading": {
-    "message": "Perché"
-  },
   "menuNewTagPlaceholder": {
     "message": "Nuova etichetta"
   },
@@ -298,9 +295,6 @@
   },
   "menuAddTagButton": {
     "message": "Aggiungi etichetta"
-  },
-  "menuSavedNote": {
-    "message": "Salvato nella tua lista."
   },
   "menuCloseLabel": {
     "message": "Chiudi"
@@ -544,21 +538,6 @@
   },
   "summaryUndo": {
     "message": "Annulla"
-  },
-  "menuSuggest": {
-    "message": "Dovrebbe includerlo una lista? Suggeriscilo a chi cura $1."
-  },
-  "menuSuggestTitle": {
-    "message": "Proponi $1 a chi cura $2, aprendo una segnalazione"
-  },
-  "menuReport": {
-    "message": "Sbagliato? Segnalalo a chi cura $1."
-  },
-  "menuMatchedRule": {
-    "message": "Regola corrispondente, riga $1"
-  },
-  "menuReportTitle": {
-    "message": "Di’ a chi cura $1 che la lista sbaglia su questo risultato, aprendo una segnalazione"
   },
   "offerTitle": {
     "message": "Iscriverti a $1?"
@@ -1678,9 +1657,6 @@
   },
   "reasonYourTagSettings": {
     "message": "Le tue impostazioni delle etichette"
-  },
-  "menuReason": {
-    "message": "$1 $2."
   },
   "choicePin": {
     "message": "lo fissano per $1"

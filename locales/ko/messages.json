@@ -245,9 +245,6 @@
   "barHiddenByList_other": {
     "message": "$2에서 숨김"
   },
-  "menuWhyHeading": {
-    "message": "이유"
-  },
   "menuNewTagPlaceholder": {
     "message": "새 태그"
   },
@@ -256,9 +253,6 @@
   },
   "menuAddTagButton": {
     "message": "태그 추가"
-  },
-  "menuSavedNote": {
-    "message": "내 목록에 저장되었습니다."
   },
   "menuCloseLabel": {
     "message": "닫기"
@@ -418,21 +412,6 @@
   },
   "summaryUndo": {
     "message": "실행취소"
-  },
-  "menuSuggest": {
-    "message": "목록에 넣어야 할까요? $1에 제안하세요."
-  },
-  "menuSuggestTitle": {
-    "message": "이슈 트래커에서 $2에 $1 사이트 제안"
-  },
-  "menuReport": {
-    "message": "잘못되었나요? $1에 신고하세요."
-  },
-  "menuMatchedRule": {
-    "message": "일치한 규칙, $1번 줄"
-  },
-  "menuReportTitle": {
-    "message": "이 결과에 대한 $1의 판단이 잘못되었다고 이슈 트래커에서 알리기"
   },
   "offerTitle": {
     "message": "$1 목록을 구독할까요?"
@@ -1462,9 +1441,6 @@
   },
   "reasonYourTagSettings": {
     "message": "내 태그 설정"
-  },
-  "menuReason": {
-    "message": "$1: $2."
   },
   "choicePin": {
     "message": "$1 태그로 고정"

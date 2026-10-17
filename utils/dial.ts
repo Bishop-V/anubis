@@ -1,8 +1,9 @@
 import type { Level } from './matcher';
 
-// The dial on each result (desktop): a scale drawn as the left half of a ring around the
-// site's icon, read from 9 o'clock, with a watch crown on its left that opens the result
-// menu. Raise fills the ring upwards and Lower downwards, as far as the site moves; Pin
+// The dial the documentation's demos draw on each result, from before the button moved into
+// a column left of the results (entrypoints/content/column.ts): a scale drawn as the left half
+// of a ring around the site's icon, read from 9 o'clock, with a watch crown on its left that
+// opens the result menu. Raise fills the ring upwards and Lower downwards, as far as the site moves; Pin
 // fills all of it, and Hide leaves it empty. Sizes are in CSS pixels, with the icon's
 // centre at 0,0.
 

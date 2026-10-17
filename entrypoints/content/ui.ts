@@ -2,17 +2,16 @@ import { balanceSvg, setBalance } from '@/utils/balance';
 import { domainChoices, normalizeHostname, siteOf } from '@/utils/domain';
 import { h, icon } from '@/utils/dom';
 import type { EngineDef } from '@/utils/engines';
-import { ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_LABELS, levelIcon, TAG_EFFECTS, tagEffectText, tagMark, WEIGH_ICONS } from '@/utils/icons';
+import { ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_LABELS, levelIcon, stepsIcon, TAG_EFFECTS, tagEffectText, tagMark, WEIGH_ICONS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
 import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
-import { dir, gap, lang, t, tJoin, tList, tn, tParts } from '@/utils/i18n';
+import { dir, gap, lang, t, tJoin, tn } from '@/utils/i18n';
 import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, type PersonalLevel } from '@/utils/personal';
-import { ruleParts } from '@/utils/ruletext';
 import type { Palette } from '@/utils/storage';
-import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder, yourListTag, tagPicker, tagSource } from '@/utils/siteranking';
+import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder, tagPicker, tagSource, type Ranking } from '@/utils/siteranking';
 import { shortSummary, stoppedSentence, summarySentence } from '@/utils/summary';
-import { clearDialFrame, drawDial, firstLineOf, shapeWeigh, showReading, type Weigh } from './dial';
+import { centreOn, clearColumnFrame, firstLineOf, firstRowOf, frameColumn, toColumn, type Weigh } from './column';
 import { OWN_TAGS, type FoundResult } from './results';
 import shadowCss from './shadow.css?inline';
 
@@ -304,10 +303,9 @@ export function ensureWeighButton(
   engine: EngineDef,
   theme: PageTheme,
   onOpen: (button: HTMLElement, result: FoundResult) => void,
-  score = 0,
 ): void {
   const { container } = result;
-  weighCalls.set(container, () => ensureWeighButton(result, level, engine, theme, onOpen, score));
+  weighCalls.set(container, () => ensureWeighButton(result, level, engine, theme, onOpen));
   let host = weighHosts.get(container);
   if (!host) {
     const made = makeHost('anubis-weigh', theme, engine.table ? 'inline-block' : 'block');
@@ -328,7 +326,7 @@ export function ensureWeighButton(
   weighResult.set(host, result);
   host.dataset.theme = theme;
   // Named for its site, so a list of the page's buttons tells them apart, and for its
-  // ranking, which the dial or the icon shows.
+  // ranking, which its icon shows.
   const site = normalizeHostname(result.host);
   const label = level === 'normal' ? t('weighLabel', site) : t('weighLabelRanked', site, LEVEL_CHIPS[level].toLocaleLowerCase());
   const button = rendered.get(host) as HTMLElement | undefined;
@@ -337,7 +335,7 @@ export function ensureWeighButton(
     button.setAttribute('aria-label', label);
   }
 
-  if (drawWeigh({ host, button: button!, root: roots.get(host)! }, result, engine, { level, score })) return;
+  if (drawWeigh({ host, button: button!, root: roots.get(host)! }, result, engine, level)) return;
   if (engine.table) {
     // Table rows can't position children; sit inline after the title instead.
     host.style.setProperty('position', 'relative', 'important');
@@ -350,8 +348,8 @@ export function ensureWeighButton(
   }
   const { top, right, underMenu, besideMenu, popOut, onTitle: titleLine } = engine.button ?? { top: '2px', right: '2px' };
   const onTitle = !!titleLine && !result.card;
-  // The menu opens beside the result unless the engine names a narrower card.
-  popOuts.set(host, popOut ?? ':scope');
+  // The menu opens beside the result's card where the engine names one.
+  setPopOut(host, popOut);
   host.style.setProperty('position', 'absolute', 'important');
   const byMenu = (underMenu || besideMenu) && !result.card;
   const menu = byMenu && !onTitle ? resultMenuOf(container) : undefined;
@@ -403,40 +401,44 @@ export function ensureWeighButton(
 }
 
 // ---------------------------------------------------------------------------
-// The dial
+// The column
 
 /**
- * Draw the result's button: on a phone, the balance on the title's line; on a card, the
- * gauge in its corner; on every other result, the dial around its site's icon, or the
- * balance where there's no room for one. True when it's the dial, which is then in place.
+ * Draw the result's button with its ranking's icon: in the column left of the result where
+ * the window has room (true, and it's then in place), else on a card's dark tab, or plain.
  */
-function drawWeigh(weigh: Weigh, result: FoundResult, engine: EngineDef, { level, score }: { level: Level; score: number }): boolean {
+function drawWeigh(weigh: Weigh, result: FoundResult, engine: EngineDef, level: Level): boolean {
   const { host, button } = weigh;
-  const shape = result.card ? 'gauge' : !engine.button?.onTitle && placeDial(weigh, result, engine, level) ? 'dial' : 'button';
-  if (shape === 'dial') {
-    showReading(host, level, score);
-    return true;
-  }
-  clearDialFrame(weigh, result.container);
-  shapeWeigh(weigh, shape);
-  if (shape === 'gauge') showReading(host, level, score);
-  else if (button.dataset.level !== level) {
+  if (button.dataset.level !== level) {
     button.dataset.level = level;
     button.replaceChildren(icon(WEIGH_ICONS[level]));
   }
-  return false;
+  const column = !result.card && !engine.table && !engine.button?.onTitle && placeInColumn(weigh, result, engine, level);
+  host.dataset.shape = column ? 'column' : result.card ? 'tab' : 'button';
+  button.className = `weigh ${host.dataset.shape}`;
+  // A hidden result's line starts with an eye; beside the column's, it would be a second one.
+  barHosts.get(result.container)?.toggleAttribute('data-beside-column', column);
+  if (!column) clearColumnFrame(weigh, result.container);
+  return column;
 }
 
-/** The dial around the result's site icon (drawDial in dial.ts), or false where it has no room. */
-function placeDial(weigh: Weigh, result: FoundResult, engine: EngineDef, level: Level): boolean {
+/** The button in the column left of the result (column.ts), or false where there's no room. */
+function placeInColumn(weigh: Weigh, result: FoundResult, engine: EngineDef, level: Level): boolean {
   const { host } = weigh;
-  const bar = barHosts.get(result.container)?.getBoundingClientRect();
-  if (!drawDial(weigh, result, { table: !!engine.table, pinned: level === 'pin', bar: bar?.height ? bar : undefined })) return false;
+  const { container } = result;
+  if (!toColumn(weigh, result)) return false;
   keepUpright(host);
-  if (engine.table) return true;
-  popOuts.set(host, engine.button?.popOut ?? ':scope');
+  setPopOut(host, engine.button?.popOut);
   atEdge.delete(host);
   for (const prop of MENU_LOOK) host.style.removeProperty(prop);
+  for (const prop of ['--anubis-weigh-color', '--anubis-weigh-bg', '--anubis-weigh-opacity']) host.style.removeProperty(prop);
+  // A hidden result folded into its one line: level with that line.
+  const bar = barHosts.get(container)?.getBoundingClientRect();
+  const row = bar?.height ? bar : firstRowOf(container);
+  if (row) centreOn(host, container, row);
+  else lineUpWithHeader(host, container, result.titleBlock);
+  if (level === 'pin') frameColumn(weigh, container);
+  else clearColumnFrame(weigh, container);
   return true;
 }
 
@@ -739,7 +741,7 @@ function placeNextToMenu(host: HTMLElement, container: HTMLElement, menu: HTMLEl
   host.style.setProperty('--anubis-weigh-size', `${size}px`);
   host.style.setProperty('--anubis-weigh-radius', parseFloat(ms.borderTopLeftRadius) ? ms.borderTopLeftRadius : '50%');
   // In the menu button's own colour (its icon's fill, or its text colour), so the
-  // pair match in light and dark; hovering still turns it gold.
+  // pair match in light and dark; hovering still brightens it.
   // The drawn shape first (Yandex's dots are circles); the svg's own fill is the page default.
   const icon = menu.querySelector('path, circle, rect, polygon, ellipse') ?? menu.querySelector('svg');
   const fill = icon ? getComputedStyle(icon).fill : '';
@@ -839,7 +841,7 @@ export function renderHiddenBar(
   barMoved(container, wasShown);
 }
 
-/** A hidden result's line came or went: its dial goes round the line's eye, so place it again. */
+/** A hidden result's line came or went: its button lines up with the line, so place it again. */
 function barMoved(container: HTMLElement, wasShown: boolean): void {
   if (wasShown !== !!barHosts.get(container)?.isConnected) weighCalls.get(container)?.();
 }
@@ -1198,10 +1200,6 @@ export interface PopoverData {
   tags: Map<string, TagDef>;
   /** The tags subscribed lists give sites, which the menu shows apart from yours. */
   listTags: Set<string>;
-  /** Subscribed lists with an issue tracker, for "suggest" links, with the tag ids each defines. */
-  trackers: { id: string; name: string; issues: string; tags: string[] }[];
-  /** Pre-filled issues telling each list that weighed this result it's wrong. */
-  reports: { id: string; name: string; href: string }[];
   theme: PageTheme;
 }
 
@@ -1209,11 +1207,12 @@ export interface PopoverActions {
   setLevel(domain: string, level: PersonalLevel): void;
   toggleTag(domain: string, tag: string): void;
   createTag(domain: string, label: string): void;
-  suggest(tracker: PopoverData['trackers'][number], domain: string): string | undefined;
-  settings(): void;
 }
 
-let popover: { host: HTMLElement; anchor: HTMLElement; cleanup: () => void; domain?: string } | undefined;
+let popover: { host: HTMLElement; anchor: HTMLElement; cleanup: () => void; domain?: string; redraw?: () => void } | undefined;
+
+/** Draw the open menu again, as it was opened. */
+const refreshMenu = (): void => popover?.redraw?.();
 
 export function closePopover(): void {
   if (!popover) return;
@@ -1241,6 +1240,7 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
 
   const opening = !popover;
   if (!popover) {
+    allTags = false;
     const { host, root: shadow } = makeHost('anubis-popover', data.theme);
     // Behind the sheet on a phone: the page, dimmed. A tap on it closes the menu.
     shadow.append(h('div', { class: 'scrim', attrs: { 'aria-hidden': 'true' }, on: { click: () => closeAndReturn() } }));
@@ -1276,6 +1276,7 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
   const existing = choices.find((d) => getSite(data.personalText, d));
   const domain = keepDomain && choices.includes(keepDomain) ? keepDomain : (existing ?? siteOf(data.result.host));
   popover.domain = domain;
+  popover.redraw = () => openPopover(anchor, data, actions);
   popover.host.dataset.theme = data.theme;
 
   const root = roots.get(popover.host)!;
@@ -1310,6 +1311,12 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
 /** The weigh buttons whose menu opens beside the result's card, and the selector of that card (`:scope` is the result). */
 const popOuts = new WeakMap<HTMLElement, string>();
 
+/** Open the button's menu beside the card the engine names, or, without one, over the button. */
+function setPopOut(host: HTMLElement, selector: string | undefined): void {
+  if (selector) popOuts.set(host, selector);
+  else popOuts.delete(host);
+}
+
 /** Where the result menu is a sheet along the bottom of the screen: phones, as the summary counts them (STYLEGUIDE.md). */
 const SHEET = '(max-width: 600px)';
 
@@ -1323,45 +1330,48 @@ function asSheet(host: HTMLElement): boolean {
   return sheet;
 }
 
+/** The menu's width, and the gap between it and its button, which its arrow spans. */
+const MENU_WIDTH = 340;
+const MENU_GAP = 12;
+/** How far in from the menu's left edge its arrow points: at the button's centre, where it can. */
+const ARROW_IN = 22;
+
 function position(host: HTMLElement, anchor: HTMLElement): void {
+  host.removeAttribute('data-above');
+  host.removeAttribute('data-below');
   // On a phone the menu rises from the bottom of the screen, across its width: in
   // reach of a thumb, and clear of the engine's own controls by the button.
   if (asSheet(host)) return;
   const rect = anchor.getBoundingClientRect();
-  const width = Math.min(312, window.innerWidth - 16);
-  // Beside the card, level with its top, when there's room: like the engine's own menu.
-  const weigh = anchor.getRootNode() instanceof ShadowRoot ? (anchor.getRootNode() as ShadowRoot).host : undefined;
-  const selector = weigh && popOuts.get(weigh as HTMLElement);
-  const parent = selector ? weigh!.parentElement : undefined;
-  const card = parent && selector ? (parent.matches(selector) ? parent : parent.querySelector<HTMLElement>(selector)) ?? undefined : undefined;
-  if (card) {
-    const c = card.getBoundingClientRect();
-    // Not over the button itself, when it sits out past the card's edge.
-    const left = Math.max(c.right + 12, rect.right + 8);
-    if (left + width <= window.innerWidth - 8) {
-      host.style.left = `${left + window.scrollX}px`;
-      host.style.top = `${Math.max(window.scrollY + 8, c.top + window.scrollY)}px`;
-      return;
-    }
-  }
-  let left = rect.right - width + window.scrollX;
-  left = Math.max(window.scrollX + 8, Math.min(left, window.scrollX + window.innerWidth - width - 8));
-  host.style.left = `${left}px`;
-  host.style.top = `${rect.bottom + window.scrollY + 6}px`;
+  const width = Math.min(MENU_WIDTH, window.innerWidth - 16);
+  if (besideCard(host, anchor, width)) return;
+  // Over the button, its arrow pointing down at it, so the result stays in view; below it
+  // where there's no room above (the first result, at the top of the window).
+  const centre = rect.left + rect.width / 2;
+  const left = Math.max(8, Math.min(centre - ARROW_IN, window.innerWidth - width - 8));
+  host.style.left = `${left + window.scrollX}px`;
+  host.style.setProperty('--arrow-x', `${Math.round(centre - left)}px`);
+  const pop = rendered.get(host) as HTMLElement | undefined;
+  const above = rect.top - MENU_GAP - (pop?.offsetHeight ?? 0) >= 8;
+  host.setAttribute(above ? 'data-above' : 'data-below', '');
+  host.style.top = `${(above ? rect.top - MENU_GAP : rect.bottom + MENU_GAP) + window.scrollY}px`;
 }
 
-/** A list's rule, breaking only after a comma, with each option's name muted and its effect in its ranking's colour. */
-function ruleCode(raw: string): HTMLElement {
-  return h(
-    'code',
-    { class: 'rule' },
-    ruleParts(raw).map((part, i) => [
-      i ? ',' : null,
-      i ? h('wbr') : null,
-      part.key ? h('span', { class: 'key' }, part.key) : null,
-      h('span', { class: part.effect ? `value ${part.effect}` : 'value' }, part.value),
-    ]).flat(),
-  );
+/** Beside the card the engine names, level with its top, when there's room: like the engine's own menu. */
+function besideCard(host: HTMLElement, anchor: HTMLElement, width: number): boolean {
+  const root = anchor.getRootNode();
+  const weigh = root instanceof ShadowRoot ? (root.host as HTMLElement) : undefined;
+  const selector = weigh && popOuts.get(weigh);
+  const parent = selector ? weigh.parentElement : undefined;
+  const card = parent && selector ? ((parent.matches(selector) ? parent : parent.querySelector<HTMLElement>(selector)) ?? undefined) : undefined;
+  if (!card) return false;
+  const c = card.getBoundingClientRect();
+  // Not over the button itself, when it sits out past the card's edge.
+  const left = Math.max(c.right + 12, anchor.getBoundingClientRect().right + 8);
+  if (left + width > window.innerWidth - 8) return false;
+  host.style.left = `${left + window.scrollX}px`;
+  host.style.top = `${Math.max(window.scrollY + 8, c.top + window.scrollY)}px`;
+  return true;
 }
 
 function buildPopover(
@@ -1373,31 +1383,60 @@ function buildPopover(
   const entry = getSite(data.personalText, domain);
   const r = rankingOf(entry, data.baseline);
   const choices = domainChoices(data.result.host, (d) => !!getSite(data.personalText, d));
-
-  const cartouche = siteCartouche(domain, choices, switchDomain, 'site');
-
+  // Hide and Pin stand apart from Lower, Normal, and Raise, which move a site up or down.
   const levels = h(
     'div',
     { class: 'levels', attrs: { role: 'group', 'aria-label': t('popupRankingFor', domain) } },
-    LEVELS.map((level) =>
+    LEVELS.flatMap((level) => [
+      level === 'lower' || level === 'pin' ? h('span', { class: 'sep', attrs: { 'aria-hidden': 'true' } }) : null,
+      levelButton(level, r, () => actions.setLevel(domain, nextLevel(level, r))),
+    ]),
+  );
+  return h(
+    'div',
+    { class: 'pop', attrs: { role: 'dialog', 'aria-label': t('weighLabel', domain) } },
+    h(
+      'div',
+      { class: 'head' },
+      siteCartouche(domain, choices, switchDomain, 'site'),
       h(
         'button',
-        {
-          class: `level ${level}${fromListsClass(level, r)}`,
-          type: 'button',
-          attrs: { 'aria-pressed': String(r.pressed === level), 'data-focus-key': `level-${level}` },
-          on: { click: () => actions.setLevel(domain, nextLevel(level, r)) },
-        },
-        h('span', { class: 'level-icon' }, icon(levelIcon(level, r.pressed === level ? r.steps : 1))),
-        LEVEL_LABELS[level],
+        { class: 'icon-btn close', type: 'button', title: t('menuCloseLabel'), attrs: { 'aria-label': t('menuCloseLabel') }, on: { click: closeAndReturn } },
+        icon(ICON_CLOSE),
       ),
     ),
+    balanceSvg(),
+    levels,
+    // The same words as the popup's This site.
+    h('p', { class: 'hint' }, rankingHint(domain, data.baseline, r, data.verdict)),
+    menuTags(data, actions, domain),
   );
+}
 
-  // The same words as the popup's This site.
-  const hint = rankingHint(domain, data.baseline, r, data.verdict);
+/** One ranking's button. Raise and Lower show two arrows, lit one per press, so the unlit one says there's another step. */
+function levelButton(level: Level, r: Ranking, press: () => void): HTMLElement {
+  const pressed = r.pressed === level;
+  const drawing = level === 'raise' || level === 'lower' ? stepsIcon(level, pressed ? r.steps : 0) : levelIcon(level);
+  return h(
+    'button',
+    {
+      class: `level ${level}${fromListsClass(level, r)}`,
+      type: 'button',
+      attrs: { 'aria-pressed': String(pressed), 'data-focus-key': `level-${level}` },
+      on: { click: press },
+    },
+    h('span', { class: 'level-icon' }, icon(drawing)),
+    LEVEL_LABELS[level],
+  );
+}
 
-  const { mine, fromList, ids: tagIds } = tagOrder(data.tags, entry, data.verdict);
+/** Whether the menu shows every tag, and the field for a new one, or only the site's. Kept while the menu is open. */
+let allTags = false;
+
+/** The site's tags on one line, and + Tag, which shows every tag to choose from. */
+function menuTags(data: PopoverData, actions: PopoverActions, domain: string): HTMLElement {
+  const entry = getSite(data.personalText, domain);
+  const { mine, fromList, ids } = tagOrder(data.tags, entry, data.verdict);
   // Tags you set toggle; tags from lists are shown but fixed.
   const tagItem = (id: string) => {
     const tag = data.tags.get(id)!;
@@ -1426,8 +1465,30 @@ function buildPopover(
       on ? tagEffectText(data.verdict.tagEffects[id]) : null,
     );
   };
-  const tagItems = tagPicker(tagIds, data.listTags, tagItem);
+  const more = h(
+    'button',
+    {
+      class: 'text-btn more-tags',
+      type: 'button',
+      attrs: { 'aria-expanded': String(allTags), 'data-focus-key': 'more-tags' },
+      on: {
+        click: () => {
+          allTags = !allTags;
+          refreshMenu();
+        },
+      },
+    },
+    allTags ? t('menuTagsDone') : t('menuTagsMore'),
+  );
+  if (!allTags) {
+    const onSite = ids.filter((id) => mine.has(id) || fromList.has(id));
+    return h('div', { class: 'menu-tags' }, h('div', { class: 'tags' }, onSite.map(tagItem), more));
+  }
+  return h('div', { class: 'menu-tags open' }, tagPicker(ids, data.listTags, tagItem), newTag(actions, domain), more);
+}
 
+/** The field that names a new tag and puts it on the site. */
+function newTag(actions: PopoverActions, domain: string): HTMLElement {
   const input = h('input', {
     type: 'text',
     placeholder: t('menuNewTagPlaceholder'),
@@ -1444,89 +1505,5 @@ function buildPopover(
       create();
     }
   });
-
-  const link = (href: string, title: string, name: string) => h('a', { href, target: '_blank', rel: 'noopener noreferrer', title }, name);
-
-  // Every list that weighed the result can be told it's wrong about it.
-  const reportLinks = data.reports.map((r) => link(r.href, t('menuReportTitle', r.name), r.name));
-
-  // Once you've weighed a site yourself, offer to propose it to up to two of the
-  // lists that don't mention it yet: those that already use one of your tags come first.
-  const reported = new Set(data.reports.map((r) => r.id));
-  const ranked = entry
-    ? data.trackers
-        .filter((tr) => !reported.has(tr.id))
-        .sort((a, b) => Number(b.tags.some((id) => mine.has(id))) - Number(a.tags.some((id) => mine.has(id))))
-    : [];
-  const suggestLinks = ranked
-    .slice(0, 2)
-    .map((tr) => {
-      const href = actions.suggest(tr, domain);
-      return href ? link(href, t('menuSuggestTitle', domain, tr.name), tr.name) : null;
-    })
-    .filter((a): a is HTMLAnchorElement => a !== null);
-
-  const reasons = data.verdict.reasons.slice(0, 6);
-
-  const pop = h(
-    'div',
-    { class: 'pop', attrs: { role: 'dialog', 'aria-label': t('weighLabel', domain) } },
-    h(
-      'div',
-      { class: 'head' },
-      cartouche,
-      h(
-        'button',
-        { class: 'icon-btn close', type: 'button', title: t('menuCloseLabel'), attrs: { 'aria-label': t('menuCloseLabel') }, on: { click: closeAndReturn } },
-        icon(ICON_CLOSE),
-      ),
-    ),
-    balanceSvg(),
-    levels,
-    h('p', { class: 'hint' }, hint),
-    h(
-      'div',
-      { class: 'section' },
-      h('h3', null, t('popupTags')),
-      yourListTag(entry, ['fixed']),
-      tagItems,
-      h(
-        'div',
-        { class: 'new-tag' },
-        input,
-        h('button', { class: 'text-btn', type: 'button', on: { click: create } }, t('menuAddTagButton')),
-      ),
-    ),
-    reasons.length || suggestLinks.length
-      ? h(
-          'div',
-          { class: 'section' },
-          h('h3', null, t('menuWhyHeading')),
-          reasons.length
-            ? h(
-                'ul',
-                { class: 'reasons' },
-                reasons.map((r) =>
-                  h(
-                    'li',
-                    null,
-                    tParts('menuReason', h('b', null, r.list), r.text),
-                    r.rule ? h('small', null, t('menuMatchedRule', r.rule.line)) : null,
-                    r.rule ? ruleCode(r.rule.raw) : null,
-                  ),
-                ),
-              )
-            : null,
-          reportLinks.length ? h('p', { class: 'forge' }, tList('menuReport', reportLinks, 'disjunction')) : null,
-          suggestLinks.length ? h('p', { class: 'forge' }, tList('menuSuggest', suggestLinks, 'disjunction')) : null,
-        )
-      : null,
-    h(
-      'div',
-      { class: 'foot' },
-      h('span', null, entry ? t('menuSavedNote') : ''),
-      settingsButton(actions.settings),
-    ),
-  );
-  return pop;
+  return h('div', { class: 'new-tag' }, input, h('button', { class: 'text-btn', type: 'button', on: { click: create } }, t('menuAddTagButton')));
 }

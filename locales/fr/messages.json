@@ -266,9 +266,6 @@
   "barHiddenByList_other": {
     "message": "masqués par $2"
   },
-  "menuWhyHeading": {
-    "message": "Pourquoi"
-  },
   "menuNewTagPlaceholder": {
     "message": "Nouvelle étiquette"
   },
@@ -277,9 +274,6 @@
   },
   "menuAddTagButton": {
     "message": "Ajouter"
-  },
-  "menuSavedNote": {
-    "message": "Enregistré dans votre liste."
   },
   "menuCloseLabel": {
     "message": "Fermer"
@@ -481,21 +475,6 @@
   },
   "summaryUndo": {
     "message": "Annuler"
-  },
-  "menuSuggest": {
-    "message": "Une liste devrait-elle l’inclure ? Proposez-le à $1."
-  },
-  "menuSuggestTitle": {
-    "message": "Proposer $1 à $2 sur son outil de suivi"
-  },
-  "menuReport": {
-    "message": "Une erreur ? Signalez-la à $1."
-  },
-  "menuMatchedRule": {
-    "message": "Règle correspondante, ligne $1"
-  },
-  "menuReportTitle": {
-    "message": "Dire à $1 qu’il se trompe sur ce résultat, sur son outil de suivi"
   },
   "offerTitle": {
     "message": "S’abonner à $1 ?"
@@ -1570,9 +1549,6 @@
   },
   "reasonYourTagSettings": {
     "message": "Vos réglages d’étiquettes"
-  },
-  "menuReason": {
-    "message": "$1 $2."
   },
   "choicePin": {
     "message": "l’épinglent pour $1"

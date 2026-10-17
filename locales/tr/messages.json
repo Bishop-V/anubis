@@ -659,35 +659,11 @@
   "menuCloseLabel": {
     "message": "Kapat"
   },
-  "menuMatchedRule": {
-    "message": "Eşleşen kural, $1. satır"
-  },
   "menuNewTagLabel": {
     "message": "Yeni etiket adı"
   },
   "menuNewTagPlaceholder": {
     "message": "Yeni etiket"
-  },
-  "menuReason": {
-    "message": "$1: $2."
-  },
-  "menuReport": {
-    "message": "Yanlış mı? Bildirin: $1."
-  },
-  "menuReportTitle": {
-    "message": "Bu sonuç hakkında $1 listesinin hatalı olduğunu sorun takipçisinde bildirin"
-  },
-  "menuSavedNote": {
-    "message": "Listenize kaydedildi."
-  },
-  "menuSuggest": {
-    "message": "Bir listede yer almalı mı? Önerin: $1."
-  },
-  "menuSuggestTitle": {
-    "message": "$2 listesinin sorun takipçisinde $1 sitesini önerin"
-  },
-  "menuWhyHeading": {
-    "message": "Neden"
   },
   "offerAlready": {
     "message": "Zaten $1 listesine abonesiniz."

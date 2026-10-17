@@ -269,9 +269,6 @@
   "barHiddenByList_other": {
     "message": "von $2 ausgeblendet"
   },
-  "menuWhyHeading": {
-    "message": "Warum"
-  },
   "menuNewTagPlaceholder": {
     "message": "Neues Tag"
   },
@@ -280,9 +277,6 @@
   },
   "menuAddTagButton": {
     "message": "Tag hinzufügen"
-  },
-  "menuSavedNote": {
-    "message": "In deiner Liste gespeichert."
   },
   "menuCloseLabel": {
     "message": "Schließen"
@@ -484,21 +478,6 @@
   },
   "summaryUndo": {
     "message": "Rückgängig"
-  },
-  "menuSuggest": {
-    "message": "Sollte eine Liste sie aufnehmen? Schlage sie $1 vor."
-  },
-  "menuSuggestTitle": {
-    "message": "$1 im Issue-Tracker von $2 vorschlagen"
-  },
-  "menuReport": {
-    "message": "Falsch? Melde es $1."
-  },
-  "menuMatchedRule": {
-    "message": "Passende Regel, Zeile $1"
-  },
-  "menuReportTitle": {
-    "message": "Im Issue-Tracker von $1 melden, dass die Liste bei diesem Ergebnis falschliegt"
   },
   "offerTitle": {
     "message": "$1 abonnieren?"
@@ -1573,9 +1552,6 @@
   },
   "reasonYourTagSettings": {
     "message": "Deine Tag-Einstellungen"
-  },
-  "menuReason": {
-    "message": "$1 $2."
   },
   "choicePin": {
     "message": "heften es für $1 oben an"

@@ -308,9 +308,6 @@
   "barHiddenByList_other": {
     "message": "скрыты списком $2"
   },
-  "menuWhyHeading": {
-    "message": "Почему"
-  },
   "menuNewTagPlaceholder": {
     "message": "Новая метка"
   },
@@ -319,9 +316,6 @@
   },
   "menuAddTagButton": {
     "message": "Добавить метку"
-  },
-  "menuSavedNote": {
-    "message": "Сохранено в вашем списке."
   },
   "menuCloseLabel": {
     "message": "Закрыть"
@@ -607,21 +601,6 @@
   },
   "summaryUndo": {
     "message": "Отменить"
-  },
-  "menuSuggest": {
-    "message": "Стоит ли добавить его в список? Предложите его в $1."
-  },
-  "menuSuggestTitle": {
-    "message": "Предложить $1 для списка $2 в его трекере задач"
-  },
-  "menuReport": {
-    "message": "Неверно? Сообщите об этом в $1."
-  },
-  "menuMatchedRule": {
-    "message": "Сработавшее правило, строка $1"
-  },
-  "menuReportTitle": {
-    "message": "Сообщить в трекер задач $1, что этот результат обработан неверно"
   },
   "offerTitle": {
     "message": "Подписаться на $1?"
@@ -1786,9 +1765,6 @@
   },
   "reasonYourTagSettings": {
     "message": "Ваши настройки меток"
-  },
-  "menuReason": {
-    "message": "$1 $2."
   },
   "choicePin": {
     "message": "закрепляют его из-за $1"
