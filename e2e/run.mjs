@@ -1832,6 +1832,34 @@ if (!only || only === 'popover') {
     tagShowsEveryTag: !tagsBefore.includes('New tag') && tagsAfter.length > tagsBefore.length && tagsAfter.includes('Done'),
   });
   await page.screenshot({ path: `${SHOTS}popover-below.png`, fullPage: false });
+  // Lowering the first result moves it down the page: its open menu goes with it.
+  {
+    const result = page.locator('[data-anubis-result]', { hasText: 'Promise - JavaScript | MDN' });
+    // The menu over this result is still open from the placement checks.
+    const before =(await result.locator('anubis-weigh').boundingBox()).y;
+    await clickShadowButton('anubis-popover', 'Lower');
+    await page.waitForTimeout(900);
+    const button = await result.locator('anubis-weigh').boundingBox();
+    const follows = await page.evaluate((b) => {
+      const host = document.querySelector('anubis-popover');
+      if (!host) return { open: false };
+      const left = parseFloat(host.style.left) - scrollX;
+      return { open: true, pointsAtButton: Math.abs(left + parseFloat(host.style.getPropertyValue('--arrow-x')) - (b.x + b.width / 2)) <= 1 };
+    }, button);
+    const moved = Math.abs(button.y - before) > 1;
+    const verticallyAtButton = await page.evaluate((b) => {
+      const host = document.querySelector('anubis-popover');
+      if (!host) return false;
+      const top = parseFloat(host.style.top) - scrollY;
+      return host.hasAttribute('data-above') ? top <= b.y : top >= b.y;
+    }, button);
+    console.log('\n== menu after Lower:', JSON.stringify({ moved, follows, verticallyAtButton }));
+    assertChecks('the menu follows a reranked result', { moved, open: follows.open, pointsAtButton: follows.pointsAtButton, verticallyAtButton });
+    await page.keyboard.press('Escape');
+    // Undo, so the checks after this see the original order.
+    await clickShadowButton('anubis-summary', 'Undo');
+    await page.waitForTimeout(600);
+  }
   // The site name is text with the select unseen over it. Focus the select and
   // choose the whole site with the keyboard.
   {

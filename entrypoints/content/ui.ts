@@ -1220,7 +1220,15 @@ export interface PopoverActions {
   createTag(domain: string, label: string): void;
 }
 
-let popover: { host: HTMLElement; anchor: HTMLElement; cleanup: () => void; domain?: string; redraw?: () => void } | undefined;
+let popover:
+  | { host: HTMLElement; anchor: HTMLElement; cleanup: () => void; domain?: string; redraw?: () => void; anchorTop?: number }
+  | undefined;
+
+/** Whether the button is shown and at least partly on screen: a hidden or far-moved result takes its menu with it. */
+function anchorInView(anchor: HTMLElement): boolean {
+  const r = anchor.getBoundingClientRect();
+  return r.width > 0 && r.height > 0 && r.bottom > 0 && r.top < window.innerHeight;
+}
 
 /** Draw the open menu again, as it was opened. */
 const refreshMenu = (): void => popover?.redraw?.();
@@ -1309,9 +1317,16 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
   oldPop?.remove();
   root.append(pop);
   rendered.set(popover.host, pop);
-  // Position only on open: if the result moves when reranked, the menu stays put.
-  if (opening) position(popover.host, anchor);
+  // Place the menu on open, and again when a rerank has moved its button; otherwise
+  // only keep it anchored as it grows. A button that's gone or off screen closes it.
+  const top = anchor.getBoundingClientRect().top;
+  if (!opening && !popover.host.hasAttribute('data-sheet') && !anchorInView(anchor)) {
+    closePopover();
+    return;
+  }
+  if (opening || Math.abs(top - (popover.anchorTop ?? top)) > 1) position(popover.host, anchor);
   else keepAbove(popover.host);
+  popover.anchorTop = top;
   if (opening) setBalance(balance, 'normal');
   // The result's whole weight: your ranking, its tags, and its lists.
   requestAnimationFrame(() => requestAnimationFrame(() => setBalance(balance, data.verdict.level, data.verdict.score)));
