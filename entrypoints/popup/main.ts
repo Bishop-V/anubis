@@ -9,14 +9,14 @@ import { bugReportLink, describeBrowser } from '@/utils/links';
 import { wiki } from '@/utils/wiki';
 import { LEVELS, evaluate, listTagCards, listTagIds, type Level } from '@/utils/matcher';
 import { h, icon, siteName } from '@/utils/dom';
-import { ICON_GEAR, LEVEL_CHIPS, LEVEL_LABELS, levelIcon, tagEffectText, tagMark } from '@/utils/icons';
+import { ICON_GEAR, LEVEL_CHIPS, LEVEL_LABELS, levelIcon, rankIcon, tagEffectText, tagMark } from '@/utils/icons';
 import { localizePage, t, tJoin, tn, type MessageKey } from '@/utils/i18n';
 import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/messages';
 import { displayLevel, getSite, levelSteps, listSites, setSiteLevel, tagSite, upsertTagDef, type PersonalLevel } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet, type RuleSet } from '@/utils/ruleset';
 import { editPersonal, updateSettings } from '@/utils/storage';
-import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder, yourListTag, tagPicker, tagSource } from '@/utils/siteranking';
+import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder, yourListTag, tagPicker, tagSource, type Ranking } from '@/utils/siteranking';
 import { stoppedSentence, summarySentence } from '@/utils/summary';
 import { initTheme } from '@/utils/theme';
 
@@ -106,6 +106,36 @@ async function renderAll() {
   renderHere(rules);
 }
 
+/** The rankings for the site, as in the result menu: Hide | Lower, Normal, Raise | Pin. */
+function rankingButtons({ domain, r }: { domain: string; r: Ranking }): HTMLElement {
+  return h(
+    'div',
+    { class: 'seg levels', attrs: { role: 'group', 'aria-label': t('popupRankingFor', domain) } },
+    LEVELS.flatMap((level) => [
+      // Hide and Pin stand apart from Lower, Normal, and Raise.
+      level === 'lower' || level === 'pin' ? h('span', { class: 'sep', attrs: { 'aria-hidden': 'true' } }) : null,
+      h(
+        'button',
+        {
+          type: 'button',
+          class: `${level}${fromListsClass(level, r)}`,
+          title: t(RANK_TITLES[level], domain),
+          attrs: { 'aria-pressed': String(r.pressed === level) },
+          on: {
+            click: () => {
+              hereDomain = domain;
+              void editPersonal((text) => setSiteLevel(text, domain, nextLevel(level, r)));
+            },
+          },
+        },
+        // Raise and Lower light one arrow per press.
+        h('span', { class: 'level-icon' }, icon(rankIcon(level, r.pressed === level ? r.steps : 0))),
+        LEVEL_LABELS[level],
+      ),
+    ]),
+  );
+}
+
 /** The site in the current tab, when it isn't a search page: rank it for future searches. */
 function renderHere(rules: RuleSet) {
   const here = $('#here');
@@ -133,29 +163,7 @@ function renderHere(rules: RuleSet) {
     renderHere(rules);
   });
 
-  const levels = h(
-    'div',
-    { class: 'seg levels', attrs: { role: 'group', 'aria-label': t('popupRankingFor', domain) } },
-    LEVELS.map((level) =>
-      h(
-        'button',
-        {
-          type: 'button',
-          class: `${level}${fromListsClass(level, r)}`,
-          title: t(RANK_TITLES[level], domain),
-          attrs: { 'aria-pressed': String(r.pressed === level) },
-          on: {
-            click: () => {
-              hereDomain = domain;
-              void editPersonal((text) => setSiteLevel(text, domain, nextLevel(level, r)));
-            },
-          },
-        },
-        h('span', { class: 'level-icon' }, icon(levelIcon(level, r.pressed === level ? r.steps : 1))),
-        LEVEL_LABELS[level],
-      ),
-    ),
-  );
+  const levels = rankingButtons({ domain, r });
 
   const verdict = evaluate(result, rules.lists, rules.prefs);
   const hint = rankingHint(domain, baseline, r, verdict);

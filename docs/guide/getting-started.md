@@ -56,7 +56,7 @@ A one-line summary above the results says what Anubis did: which results it rais
 
 ## Hide a site
 
-Each result has a dial around its site's icon: a half circle with a small crown on its left. Press the crown, and in the menu, choose **Hide**. On image and video results, the crown is in the picture's top-right corner. On a phone, press the ⚖ button at the end of the result's title, and the menu rises from the bottom of the screen.
+Each result has a small round button in a column on its left, showing the site's ranking. Press it, and in the menu that opens above the result, choose **Hide**. On image and video results, the button is in the picture's top-right corner. On a phone, press the ⚖ button at the end of the result's title, and the menu rises from the bottom of the screen.
 
 ![The menu on a result: Hide, Lower, Normal, Raise, and Pin, with tags below](../img/menu.png)
 

@@ -11,49 +11,51 @@ The screenshots below come from the wiki (`docs/img/`, regenerated with `node e2
 ## Principles
 
 1. **Quiet on someone else's page.** On a search page Anubis is a guest. It uses the page's own font, muted text, hairlines, and no fills. It never moves, restyles, or covers the engine's content.
-2. **One flourish.** The result menu's cartouche (the gold oval around the site's name) and balance are the only decoration. The popup shows the same pair for the site you're on, since it does the same job there. The Anubis motif stays in the logo and the menu; it never names a function.
+2. **One flourish.** The result menu's balance is the only decoration. The popup shows it for the site you're on too, since it does the same job there. The Anubis motif stays in the logo and the balance; it never names a function.
 3. **Plain words over clever ones.** A label says what happens. The same word means the same thing everywhere.
 4. **Nothing without a trace.** What Anubis hid, removed, or reranked is stated in the summary, and "Show hidden" undoes it for the page. Deleting in Settings doesn't ask "Are you sure?" (a browser can be told to stop showing a page's dialogs, and then the answer is always no): it acts, says what it did, and offers Undo.
-5. **Gold is for what matters.** The primary action, focus, a choice that's been made, and the cartouche. Nothing else is gold.
+5. **Graphite: greys, with the text colour for what matters.** The primary action, focus, and a choice that's been made take the text colour (`--accent`); everything else is greys. No gold, except in the logo.
 6. **Red is for errors and deleting.** `--danger` marks an error or an action that throws something away, and nothing else. A ranking is never red: a chosen Hide is grey, like Lower and Normal, since hiding a site is a choice, not a mistake. `tests/palette.test.ts` fails when a Hide rule uses `--danger`.
 
 ![A search page with Anubis: the summary above the results, tags under titles, a hidden result folded into one line](docs/img/after.png)
 
-Everything Anubis adds here is in the page's font and colours except gold for what you can press: the summary's sentence and buttons, the tags under each title, the folded line for a hidden site, and, on a phone, the ⚖ button on each result, at 70% brightness at rest (an engine's own ⋮ menu sets it where the button sits beside one). On a computer, each result's [dial](#the-dial-on-each-result) is in greys only.
+Everything Anubis adds here is in the page's font and greys: the summary's sentence and buttons, the tags under each title, the folded line for a hidden site, and, on a phone, the ⚖ button on each result, at 70% brightness at rest (an engine's own ⋮ menu sets it where the button sits beside one). On a computer, each result's button sits in [a column on its left](#the-button-on-each-result).
 
 ## Colour
 
-One palette, defined twice: `assets/theme.css` for extension pages and `entrypoints/content/shadow.css` for search pages. The names and values are the same in both; keep them in step (`tests/palette.test.ts` fails when they drift). Hex values appear only in those two files, `utils/listformat.ts` (tag colours) and the docs theme (`docs/.vitepress/theme/brand.css`, the same values under VitePress's names).
+One palette, Graphite, defined twice: `assets/theme.css` for extension pages and `entrypoints/content/shadow.css` for search pages. The names and values are the same in both; keep them in step (`tests/palette.test.ts` fails when they drift, or when a stylesheet uses gold). Hex values appear only in those two files, `utils/listformat.ts` (tag colours) and the docs theme (`docs/.vitepress/theme/brand.css`, the same values under VitePress's names).
 
-| Token | Dark (brand default) | Light | Use |
+| Token | Dark (default) | Light | Use |
 | --- | --- | --- | --- |
-| `--bg` | `#1b1a16` | `#f2f3f1` | Page background (extension pages only; on search pages the engine owns it) |
-| `--raised` | `#23211c` | `#fbfbfa` | Inputs, the result menu's card |
-| `--line` | `#35312a` | `#dadcd7` | Hairlines between sections and rows |
-| `--line-strong` | `#4a453c` | `#c3c6bf` | Borders of inputs, selects, and buttons; a switch that's off |
-| `--text` | `#ece6da` | `#1f1e1a` | Body text |
-| `--muted` | `#a39b8c` | `#62615b` | Secondary text, section labels, unchosen options, icons at rest |
-| `--gold` | `#d4a637` | `#d4a637` | Fills and strokes: primary button, chosen underline, focus ring, cartouche, balance |
-| `--gold-ink` | `#e0b54e` | `#8d6716` | Gold text and icons, readable on the background: text buttons, links, Raise, and Pin |
-| `--on-gold` | `#1b1a16` | `#1b1a16` | Text on a gold fill |
+| `--bg` | `#1c1c1f` | `#f3f3f4` | Page background (extension pages only; on search pages the engine owns it) |
+| `--raised` | `#232326` | `#fcfcfd` | Inputs, the result menu's card |
+| `--line` | `#37373b` | `#dcdce0` | Hairlines between sections and rows; the separators between the rankings |
+| `--line-strong` | `#4a4a50` | `#c4c4ca` | Borders of inputs, selects, and buttons; a switch that's off; a chosen ranking's edge |
+| `--text` | `#e8e8ea` | `#1f1f22` | Body text |
+| `--muted` | `#9d9da3` | `#5f5f66` | Secondary text, section labels, unchosen options, icons at rest, the balance |
+| `--dim` | `#76767c` | `#85858c` | The rankings' icons while not chosen, and an unlit arrow: about 3.5:1 on `--raised`, above the 3:1 an icon needs |
+| `--chosen` | white at 9% | black at 6% | The faint fill under a chosen ranking, or one pointed at |
+| `--accent` | `#e8e8ea` | `#1f1f22` | Fills and strokes: primary button, chosen underline, focus ring, a switch that's on (extension pages only) |
+| `--accent-ink` | `#e8e8ea` | `#1f1f22` | Links and text buttons (extension pages only) |
+| `--on-accent` | `#1c1c1f` | `#fcfcfd` | Text on an accent fill |
 | `--danger` | `#e2735b` | `#b4492f` | Errors and destructive actions. Never a ranking: Hide is grey. |
 | `--ok` | `#7fb58f` | `#3a7a52` | Confirmations (settings only) |
 | `--shadow` | | | The result menu's shadow (search pages only), darker in the dark scheme |
 | `--tab` | `#141416` | `#141416` | The tab in the corner of an image or video result, at 62% (search pages only) |
-| `--on-tab` | `#fff` | `#fff` | The crown and scale on that tab |
+| `--on-tab` | `#fff` | `#fff` | The icon on that tab |
 
-- The light scheme is cool museum stone, not cream or paper.
-- Use `--gold` for anything filled or stroked and `--gold-ink` for anything read. Gold text in `--gold` fails contrast on light backgrounds.
-- Tags carry their own colour (`--c`), from the list or from `TAG_PALETTE` in `utils/listformat.ts`: muted Egyptian pigments (ochres, malachite, Egyptian blue, amethyst, turquoise, papyrus, umber) that sit quietly on light and dark pages.
-- On search pages, **Settings → Appearance → Colours on search pages** can switch to *Plain*. Hosts then carry `data-palette="plain"` and `<html>` carries `data-anubis-palette="plain"`: `--gold` becomes `--muted`, `--gold-ink` becomes `--text` and `--danger` becomes `--muted`. Tag marks are grey, and the pinned frame and highlights take the page's text colour. So a new colour on search pages goes through these tokens, never `--c` or a hex value alone, or it stays coloured in Plain. What you can press keeps its weight (600), so it still reads as a button. Extension pages stay gold.
+- Graphite is neutral, a little cool: no warm tint, so nothing Anubis draws outshines the results or the page. The accent is the text colour, so what matters stands out by weight and contrast, not hue.
+- Gold (`#d4a637` on `#1b1a16`) is the logo's, and the toolbar badge's beside it. It's never used in the interface.
+- Tags carry their own colour (`--c`), from the list or from `TAG_PALETTE` in `utils/listformat.ts`: muted Egyptian pigments (ochres, malachite, Egyptian blue, amethyst, turquoise, papyrus, umber) that sit quietly on light and dark pages. They're the only hues in the interface.
+- On search pages, **Settings → Appearance → Colours on search pages** can switch from *Tag colours* to *Plain*. Hosts then carry `data-palette="plain"` and `<html>` carries `data-anubis-palette="plain"`: `--danger` becomes `--muted`, tag marks are grey, and the pinned frame and highlights take the page's text colour. So a new colour on search pages goes through these tokens, never `--c` or a hex value alone, or it stays coloured in Plain. (The stored value of *Tag colours* is still `gold`, from before Graphite, so saved settings keep working.)
 - Every surface follows the theme setting (Auto, Light, Dark). On search pages, "Auto" follows the page's background for what sits on the page, and the browser's scheme for the result menu, which matches the popup.
 
 ```css
-/* Do: tokens, gold-ink for text you read */
-.list-facts a { color: var(--gold-ink); }
+/* Do: tokens */
+.list-facts a { color: var(--accent-ink); }
 .row + .row { border-top: 1px solid var(--line); }
 
-/* Don't: a new hex value, or --gold on text */
+/* Don't: a new hex value, or a hue of its own */
 .list-facts a { color: #d4a637; }
 .row { background: #2a2720; }
 ```
@@ -63,7 +65,7 @@ One palette, defined twice: `assets/theme.css` for extension pages and `entrypoi
 **Families**
 
 - Interface: `system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`, set once on `body` in `theme.css`. On search pages, the page's own font, except the result menu, which uses the interface stack.
-- Display: `'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif` (the `.serif` class). Only for the brand name, page and section titles on extension pages, and a site's name where it's the subject (the cartouche, the popup's site).
+- Display: `'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif` (the `.serif` class). Only for the brand name, and page and section titles on extension pages.
 - Code: `ui-monospace, 'SF Mono', Menlo, Consolas, monospace`, for list text and code.
 
 **Scale.** Use these sizes and no others.
@@ -74,12 +76,14 @@ One palette, defined twice: `assets/theme.css` for extension pages and `entrypoi
 | 30px serif | 400 | A settings section's title | "Your sites" |
 | 21px serif | 500 | A welcome section's title | "Keep it in the toolbar" |
 | 19px serif | 500 | The brand name beside the logo | "Anubis" in the popup's header |
-| 16px serif | 500 | A site's name as the subject | "javascript.info" in the cartouche |
 | 16px | 400 | The welcome page's lead | |
 | 15px | 600 | A heading inside a settings section, a list's name | "Paywalls" |
 | 14px | 400 | Body text on extension pages (`body`) | |
-| 13px | 400–600 | Controls, descriptions, the result menu, the summary | "Load more results" |
-| 12.5px | 400–600 | Small print: hints, counts, tags on results, list facts, section labels in the popup and menu | "4 lists, 7 tags" |
+| 14px | 600 | A site's name as the subject, in the popup | "javascript.info" |
+| 13px | 400–600 | Controls, descriptions, the summary; the site's name at the top of the result menu, at 600 | "Load more results" |
+| 12.5px | 400–600 | Small print: list facts, section labels in the popup; the result menu's text | "4 lists, 7 tags" |
+| 12px | 400–600 | The result menu's hint and tags, and the popup's ranking words | "Raised 5 places, on every search." |
+| 11.5px | 400 | The rankings' words in the result menu | "Raise" |
 
 - Weights are 400, 500, and 600. Bold (600) is for the chosen option, names, and primary and text buttons.
 - Sentence case everywhere. No ALL-CAPS labels, no letter-spaced eyebrows.
@@ -90,23 +94,23 @@ One palette, defined twice: `assets/theme.css` for extension pages and `entrypoi
 
 - Spacing comes in steps of 2px: 4, 6, 8, 10, 12, 14, 16, 18, 24, and so on. Items in a wrapping row of tags or links sit 14px apart; buttons in a row 8px.
 - Sections are divided by a 1px `--line` hairline and space, never boxed into cards. The result menu is the only card.
-- Corner radius: **6px** for controls (buttons, inputs, selects); **10px** for the result menu and the pinned result's frame; **999px** (a pill) for the cartouche, switches, and the tab on a picture; **50%** for round icon buttons on search pages and colour swatches. The focus ring's corners are 3px where the element has none of its own. Nothing else is rounded, and the logo carries its own rounded tile, so don't round or frame it.
+- Corner radius: **6px** for controls (buttons, inputs, selects); **8px** for a ranking's button in the result menu and the popup; **10px** for the pinned result's frame and the phone's sheet; **12px** for the result menu; **999px** (a pill) for switches; **50%** for round buttons on search pages (the column's, the tab on a picture), icon buttons there, and colour swatches. The focus ring's corners are 3px where the element has none of its own. Nothing else is rounded, and the logo carries its own rounded tile, so don't round or frame it.
 - Shadows only on the result menu (`--shadow`), which floats over the page.
 
 ## Layout
 
 | Surface | Layout |
 | --- | --- |
-| Popup | Up to 340px wide, shrinking to fit a narrower viewport. Header (logo, the status after a diamond that's gold while Anubis is on and hollow while it's off, on/off), then sections under hairlines with a muted label, then a footer. What shows depends on the tab: on a search page, what Anubis did there and its tags to show only; on any other site, that site in the cartouche over the balance, with the rankings, tag choices, and a field to add a tag; elsewhere, Add a site. The last few of your sites always follow. |
+| Popup | Up to 340px wide, shrinking to fit a narrower viewport. Header (logo, the status after a diamond that's filled while Anubis is on and hollow while it's off, on/off), then sections under hairlines with a muted label, then a footer. What shows depends on the tab: on a search page, what Anubis did there and its tags to show only; on any other site, that site's name over the balance, with the rankings as in the result menu, tag choices, and a field to add a tag; elsewhere, Add a site. The last few of your sites always follow. |
 | Settings | Two columns in 1040px: a 210px navigation column and sections up to 760px. One row per thing you can change. A tag's open panel has fields for its name and meaning, sites carrying it, and an optional note explaining why a site fits. Below 760px, one column with the navigation across the top. |
 | Welcome page | The same idea in 1040px: section titles in a 220px column, what to do beside them, lists two across. Below 900px, one column. |
-| Search pages | The summary sits above the results, lined up with them; on phones it's one short line, with Details for the rest. Tags go under each title. The result menu opens from the dial's crown (see [The dial on each result](#the-dial-on-each-result)), 312px wide. On phones (600px wide or less) it's a sheet along the bottom of the screen instead, and the ⚖ button sits at the end of the title's first line, under the engine's own menu button. |
+| Search pages | The summary sits above the results, lined up with them; on phones it's one short line, with Details for the rest. Tags go under each title. The result menu opens from the button in the column on the result's left (see [The button on each result](#the-button-on-each-result)), 340px wide, above the result. On phones (600px wide or less) it's a sheet along the bottom of the screen instead, and the ⚖ button sits at the end of the title's first line, under the engine's own menu button. |
 
 Every page works at phone width (390px) without scrolling sideways. Settings are also checked at 320px, 360px, 375px, and 389px: only the Your sites table may scroll inside its own wrapper below 390px. Its Add tag picker is at most 8em wide, because a closed select is as wide as its longest option and tag names come from lists. `node e2e/run.mjs responsive` checks all settings sections at those widths and at 390px in light and dark schemes; the `welcome` and `mobile` e2e parts cover their respective pages.
 
-<img src="docs/img/popup.png" alt="The popup on wikipedia.org: the site in the cartouche over the balance, the five rankings, tags, and your sites" width="340">
+<img src="docs/img/popup.png" alt="The popup on wikipedia.org: the site's name over the balance, the five rankings, tags, and your sites" width="340">
 
-The popup on a site that isn't a search page: header, the site in the cartouche over the balance and rankings, tags as a choice of coloured diamonds, a field to create and apply a tag, your last few sites with their ranking in words (or their tag, when a site has only a tag), and a footer of small print and text buttons. No section is boxed; hairlines divide them.
+The popup on a site that isn't a search page: header, the site's name over the balance and rankings, tags as a choice of coloured diamonds, a field to create and apply a tag, your last few sites with their ranking in words (or their tag, when a site has only a tag), and a footer of small print and text buttons. No section is boxed; hairlines divide them.
 
 ## Controls
 
@@ -114,21 +118,22 @@ All shared controls are in `assets/theme.css`; the search-page versions in `shad
 
 | Control | Class | Looks | Use it for |
 | --- | --- | --- | --- |
-| Button | `.btn` | 30px high, 1px `--line-strong` border, transparent, 13px/500; the border turns gold on hover | Actions that stand on their own: "Update all", "Export backup" |
+| Button | `.btn` | 30px high, 1px `--line-strong` border, transparent, 13px/500; the border turns `--accent` on hover | Actions that stand on their own: "Update all", "Export backup" |
 | Small button | `.btn.small` | 26px, 12.5px | Buttons among small print: the popup's Add a site rankings, the welcome page's "Open list settings" |
-| Primary button | `.btn.primary` | Gold fill, `--on-gold` text, 600 | The action the form exists for, at most one per form: "Add", "Subscribe", "Connect" |
+| Primary button | `.btn.primary` | `--accent` fill, `--on-accent` text, 600 | The action the form exists for, at most one per form: "Add", "Subscribe", "Connect" |
 | Destructive button | `.btn.danger` | `--danger` text; the border turns `--danger` on hover | Actions that throw something away: "Reset settings" |
-| Text button | `.text-btn` | No box, `--gold-ink`, 600, underline on hover; `.danger` for removing | Actions inside a sentence or row: "Show hidden", "Undo", "Add tag", "See all 9" |
-| Icon button | `.icon-btn` | 28px (24px and round on search pages), `--muted`, gold on hover; `.danger` turns red on hover | Only icons everyone knows: the cog, ×, and a list's update, view, and remove icons. Always with `aria-label` and `title`. |
-| Input | `input` | 30px, `--raised`, 1px `--line-strong` border, 6px radius, 13px; the border turns gold on focus | Placeholders in `--muted` give an example ("fandom.com"), not an instruction |
+| Text button | `.text-btn` | No box, `--accent-ink`, 600, underline on hover (on search pages, `--text` and always underlined, as Show is); `.danger` for removing | Actions inside a sentence or row: "Show hidden", "Undo", "Add tag", "See all 9" |
+| Icon button | `.icon-btn` | 28px (24px and round on search pages), `--muted`, `--text` on hover; `.danger` turns red on hover | Only icons everyone knows: the cog, ×, and a list's update, view, and remove icons. Always with `aria-label` and `title`. |
+| Input | `input` | 30px, `--raised`, 1px `--line-strong` border, 6px radius, 13px; the border turns `--accent` on focus | Placeholders in `--muted` give an example ("fandom.com"), not an instruction |
 | Amount | `.amount` + `.tip` | A 64px number input with its unit after it in `--muted`; a tip under the setting's description says what the amount costs, in `--muted`, or in `--text` when it warns | A number people choose: Load more results automatically |
 | Select | `select` | The same box as an input, with the one caret: a small `--muted` chevron drawn in CSS, 10px from the right edge | Never the browser's own arrow |
-| Switch | `.switch` | 30×17px pill, gold when on | Settings that take effect at once; no Save button |
-| Choice row | `.seg`, `.levels` | Plain words in `--muted`; the chosen one `--text`, 600, with a 2px underline in gold (`--muted` for Hide, the tag's colour for a tag filter). The rankings put each one's icon over its word: `--muted` at rest, and once chosen `--gold-ink` for Raise and Pin, `--text` for the rest | Choosing one of a few: the rankings, Appearance's options |
+| Switch | `.switch` | 30×17px pill, `--accent` when on | Settings that take effect at once; no Save button |
+| Choice row | `.seg` | Plain words in `--muted`; the chosen one `--text`, 600, with a 2px underline in `--accent` (`--muted` for Hide, the tag's colour for a tag filter) | Choosing one of a few: Appearance's options, Settings' Your sites |
+| Rankings | `.levels` | Hide, a 1px `--line` separator, Lower, Normal, Raise, a separator, Pin: each one's icon over its word, in buttons with 8px corners. Icons in `--dim` and words in `--muted` at rest; pointed at, a `--chosen` fill; chosen, a `--chosen` fill with a 1px `--line-strong` edge, and icon and word in `--text`. Raise and Lower always show two arrows, the one nearest the middle lit (`--text`) after one press and both after two (`rankIcon` in `utils/icons.ts`). The ranking a site's lists give it, while you haven't chosen one, is `--text` with a dotted underline | The result menu and the popup's This site |
 | Tag | `.tag` + `.gem` | A 6px diamond in the tag's colour, then its name; hollow for a tag you could add. When the tag pins, raises, lowers, or hides the result, `.gem-mark` takes the diamond's place: that ranking's icon, simplified to a 10px sign in the tag's colour (`tagMark` in `utils/icons.ts`), with its meaning for screen readers. In the popup, a selected tag also has bold text and a 2px underline in its colour. Where you pick tags (the popup and the result menu), your tags and those from lists are two groups under 12.5px `--muted` names, Your tags first; the lists' group says "Adding one changes only your list." (`tagPicker` in `utils/siteranking.ts`). In both, a tag you gave the site is bold and underlined in its colour, and one a list gave it is plain, not a button, followed by "from" and the list's name in 12.5px `--muted` (`tagSource`). | Tags everywhere. Never pills or chips with fills. |
 | Site name | `siteName()` + `.suffix` | The name in the row's colour, the ending it shares with other sites (`.org`, `.co.uk`) in `--muted` at 400 | A site as a row's subject: the popup's and Settings' Your sites |
-| Machine translation note | `.machine-note` | 1px `--line-strong` box, 6px radius, a 3px `--gold` left edge, 13px `--text` with the first words bold and a `--gold-ink` link; `.short` in the popup at 12.5px | Only in a translation: what it is and to use it with caution (`machineTranslationNote`) |
-| Ranking note | `.level-note` | Pin and Raise in `--gold-ink`, Hide, Lower, and Normal in `--muted`. Results have no ranking label: the button on each result shows the ranking, and tags show what they do | Naming a site's ranking in the popup's list of your sites |
+| Machine translation note | `.machine-note` | 1px `--line-strong` box, 6px radius, a 3px `--accent` left edge, 13px `--text` with the first words bold and an `--accent-ink` link; `.short` in the popup at 12.5px | Only in a translation: what it is and to use it with caution (`machineTranslationNote`) |
+| Ranking note | `.level-note` | Pin and Raise in `--accent-ink`, Hide, Lower, and Normal in `--muted`. Results have no ranking label: the button on each result shows the ranking, and tags show what they do | Naming a site's ranking in the popup's list of your sites |
 
 ```ts
 // A form: one primary button, the rest plain or text buttons.
@@ -151,9 +156,9 @@ h('span', { class: 'tag', style: `--c: ${tag.color}` }, h('i', { class: 'gem' })
 
 ## States
 
-- **Hover**: text goes from `--muted` to `--text`, or an outline turns gold. No background fills on hover, except the phone ⚖ button's faint gold wash on search pages. The dial turns `--text` and its crown slides out.
-- **Focus**: a 2px `--gold` outline, 2px offset, on `:focus-visible` only. Where a native control sits unseen over a styled one (the cartouche's select), the visible element shows the ring (`:has(select:focus-visible)`).
-- **Chosen**: the 2px underline above. Don't use fills, checkmarks, or bold alone.
+- **Hover**: text goes from `--muted` to `--text`, or an outline turns `--accent`. No background fills on hover, except a `--chosen` wash on the buttons on search pages and on the rankings.
+- **Focus**: a 2px `--accent` outline (`--text` on search pages), 2px offset, on `:focus-visible` only. Where a native control sits unseen over a styled one (the select over the site's name), the visible element shows the ring (`:has(select:focus-visible)`).
+- **Chosen**: the 2px underline above; for the rankings, a `--chosen` fill with a `--line-strong` edge. Don't use checkmarks, or bold alone.
 - **Disabled or busy**: `opacity: 0.6` and `cursor: progress` on buttons, `--muted` text on text buttons. Say what's happening ("Loading…").
 - **Off**: when Anubis is off, the popup's content fades to half and the toolbar icon turns grey, with "Anubis is off" as its tooltip.
 - **Hidden and removed on search pages**: hidden results leave the page, fold into one muted line with a Show button, or fade, as Settings → Appearance says; the summary counts them. Removed panels that "Show hidden" brings back are marked with a faint dashed outline.
@@ -164,7 +169,7 @@ h('span', { class: 'tag', style: `--c: ${tag.color}` }, h('i', { class: 'gem' })
 
 ![The summary: a sentence saying what Anubis did, then Show hidden, Load more results, the cog, and the page's tags with counts](docs/img/cleanup-summary.png)
 
-One line above the results, in the page's font at 13px, `--muted` for the sentence and `--gold-ink` text buttons after it:
+One line above the results, in the page's font at 13px, `--muted` for the sentence and underlined `--text` text buttons after it:
 
 1. **The mark**: the bare Anubis head, the only brand mark on a search page.
 2. **The sentence**: what Anubis did, in whole sentences built from messages (`summarySentence` in `utils/summary.ts`): "Anubis raised 1 and hid 2 of 7 results. It also removed an AI answer and a video panel." Clean-up gets its own sentence, never a clause tacked on after a comma.
@@ -174,28 +179,27 @@ One line above the results, in the page's font at 13px, `--muted` for the senten
 
 On phones (600px wide or less) the full sentence runs to several lines, so the summary says it in a few words (`shortSummary`): "Anubis changed 4 of 9 results and cleaned up the page.", then Show hidden and **Details**. Details shows the rest: the full sentence, Load more results, the cog, and the tags; it reads "Fewer details" while open. The last change and Undo always show. Where the full sentence is no longer than the short one ("Anubis hid 1 of 9 results.", only one tag's results shown, or nothing changed), it stands, and Details only appears for what else there is. On phones the mark hangs to the left and everything else lines up with the sentence: its buttons follow its words and wrap with them, so none is left alone on a line under the mark.
 
-## The dial on each result
+## The button on each result
 
-On a computer, each result shows its ranking in a dial around the site's icon, always in the same place: the left of the result. It's drawn by `utils/dial.ts`, placed by `entrypoints/content/dial.ts`, and styled in `shadow.css`.
+On a computer, each result has one small round button in a column on its left, always in the same place, that shows its ranking and opens the result menu. It's placed by `entrypoints/content/column.ts` and styled in `shadow.css`.
 
-- **The scale** is the left half of a ring 6px outside the icon, in a 2px line with round ends. Its zero is at 9 o'clock: Raise fills it upwards and Lower downwards, a quarter at most, further the more places the site moved (half a quarter for one Raise). Pin fills all of it; Normal and Hide leave it empty. The fill is the same for both directions, in `--text`; the empty line is `--muted` at 45%.
-- **The crown**, on the scale's left, opens the result menu: a rounded knob with three grip lines, on a short stem that meets the ring's outer edge. It sits a layer behind the scale, so the scale's line runs unbroken over the stem. Two short guards on a wider circle stand off above and below it, in the same 2px line. Only the crown takes the pointer; the rest of the dial lets clicks through to the icon, which the engine may use (DuckDuckGo searches the site with it).
-- **At rest** the dial is at 78% opacity in `--muted` greys, never gold. On hover or focus, or while its menu is open, it's at full strength in `--text`, and the crown slides out 2.5px.
-- **No icon:** where a result shows no site icon (Yahoo, DuckDuckGo's HTML and Lite pages), the dial goes round a plain grey disc before the title, in the same column on every result. A hidden result's folded line has its dial round the line's eye, or in that column where the page's results have no icons.
-- **Pinned:** the pinned result's frame is 1px `--muted` at 55%, 7px outside the result, and reaches left to take in the crown rather than cutting through it.
-- **Image and video results** have no room for a ring. They get the same parts upright on a small tab in the picture's top-right corner: 26×38px, a pill in `--tab` at 62%, with the crown on the left and a 2px scale on the right in `--on-tab`. Its zero is the middle: Raise fills up, Lower down, Pin all of it.
-- On a phone, the ⚖ button stays (see [The result menu](#the-result-menu)): a dial would be hard to press there and crowd the title.
+- **The button** is 28px and round, 12px left of where the result's words or site icon start (not its box, which an engine may pad), and centred on the result's first row: the site's icon or name, whichever is higher. It shows the ranking's icon at 16px: the balance, level for Normal and tipped for Raise and Lower, a crossed-out eye for Hide, and a pin for Pin. At rest it's `--muted`, and a pinned site's is `--text`; pointed at, focused, or with its menu open, a `--chosen` fill and `--text`.
+- **A hidden result's line** has its button in the same column, centred on the line, and the line drops its own eye and starts where the titles do.
+- **Pinned:** the pinned result's frame is 1px `--muted` at 55%, 7px outside the result and 10px round the button, so it takes the button in.
+- **No room:** where the window is too narrow for the column, the button goes back to the result's top-right corner.
+- **Image and video results** get the same icon on a 26px round tab in the picture's top-right corner, in `--on-tab` on `--tab` at 62%.
+- On a phone, the ⚖ button sits on the title's line instead (see [The result menu](#the-result-menu)).
 
 ## The result menu
 
-![The result menu open on javascript.info: the cartouche, the balance tilted to Raise, the rankings, tags, and why](docs/img/menu.png)
+![The result menu open over javascript.info: its name, the balance tilted to Raise, the rankings, the hint, and its tags](docs/img/menu.png)
 
-The one place with character. In order:
+A card 340px wide with 12px corners, a 1px `--line` edge, and `--shadow`, that opens above its button with a small arrow pointing down at it, so the result stays in view. Where there's no room above (the first result, at the top of the window), it opens below, the arrow pointing up. In order:
 
-1. **The cartouche**: the site's name, 16px serif, in a 1.5px gold oval, doubled by a 0.75px gold hairline 2.5px inside it at just over half strength, as carved cartouches are drawn. Where the rule can cover more or less of the site (`en.wikipedia.org` or `wikipedia.org`), a caret follows the name and the native select lies unseen over the whole oval, so the oval is exactly as wide as the name and it stays centred. There's no bar at the end of the oval: at this size it read as a text cursor.
-2. **The balance**: the site's pan on the left, the feather's on the right, tilting to the chosen ranking. It swings when the ranking changes, and holds still with reduced motion.
-3. **Rankings**: Hide, Lower, Normal, Raise, Pin as a choice row, each word under its icon, with a hint underneath that says whose choice it is ("Your choice for javascript.info, on every search.").
-4. **Tags**, **Why** (the rules that matched, and links to report or suggest changes to a list) and a footer, each under a hairline with a 12.5px label. Under Why, each rule follows "Matched rule, line 10" in the code face at 12.5px. It breaks only after a comma, with a hanging indent: option names in `--muted`, what they match in `--text`, an option that raises (`boost`, `pin`) in `--gold-ink` at 600, and one that hides (`discard`) in `--text` at 600. `ruleParts()` in `utils/ruletext.ts` splits it.
+1. **The site's name**, 13px at 600. Where the rule can cover more or less of the site (`en.wikipedia.org` or `wikipedia.org`), a caret follows the name and the native select lies unseen over it. The × closes the menu.
+2. **The balance**: 112×34px in `--muted`, the site's pan on the left and the feather's on the right, tilting to the site's whole weight. It swings when the ranking changes, and holds still with reduced motion.
+3. **The rankings** (see [Controls](#controls)): Hide | Lower, Normal, Raise | Pin, with one hint line under them in 12px `--muted`, centred, saying whose choice it is ("Your choice for javascript.info, on every search.").
+4. **Tags**, under a hairline: the site's tags on one line, then **+ Tag**, which shows every tag to choose from and the field for a new one (and reads **Done** while it does).
 
 On phones (600px wide or less) the menu is a sheet: it rises from the bottom of the screen, across its width and at most 60% of its height, so the result stays in view above it, with its top corners rounded at 10px, over the page dimmed by black at 40% (`.scrim`). That keeps it in reach of a thumb and off the engine's own controls. A tap on the page above it closes it, as Escape does. The rankings are 56px tall there, to be pressed with a finger.
 
@@ -204,17 +208,17 @@ On a phone the engine's menu button (Google's ⋮, DuckDuckGo's ⋯) takes the r
 ## Icons
 
 - Inline SVG from `utils/icons.ts`: a 16×16 grid, 1.6px stroke, round caps and joins, `currentColor`. Shown at 13–15px. Decorative, so `aria-hidden`.
-- Each ranking has one icon, used everywhere: an eye struck through (Hide), a chevron down (Lower), a feather (Normal), a chevron up (Raise), a pin (Pin). In the popup and the result menu it sits over the ranking's name.
-- The balance is drawn in three more places. In the popup it's in `--muted`, level and with empty pans, above Your sites while that list is empty: the only illustration. On the welcome page it sits in gold under the lead (see Motion).
+- Each ranking has one icon, used everywhere: an eye struck through (Hide), a chevron down (Lower), a feather (Normal), a chevron up (Raise), a pin (Pin). In the popup and the result menu it sits over the ranking's name, where Raise and Lower show two chevrons, lit one per press.
+- The balance is drawn in three more places. In the popup it's in `--muted`, level and with empty pans, above Your sites while that list is empty: the only illustration. On the welcome page it sits in `--muted` under the lead (see Motion).
 - The Anubis head is the brand mark: the logo tile on extension pages and in the toolbar. Search pages don't show it: the summary is plain text. It's never a button's icon.
-- On a phone, the button on each result shows the result menu's balance in small, tipped to the site's ranking: level for Normal, the site's (left) pan down for Lower, and up for Raise. A hidden site shows the ranking's crossed-out eye and a pinned one its pin. It's drawn in `--muted` like any icon at rest; the tilt, not a colour, shows the ranking, and its label says it too ("Hide, rank, or tag fandom.com (lowered)"). On a computer the dial shows the ranking instead (see [The dial on each result](#the-dial-on-each-result)), with the same label.
-- An icon without words only where the meaning is universal (the cog, ×, and the dial's crown or the ⚖ button on a result, which names the menu it opens in its tooltip). Everything else gets a word, with or without an icon.
+- The button on each result shows the result menu's balance in small, tipped to the site's ranking: level for Normal, the site's (left) pan down for Lower, and up for Raise. A hidden site shows the ranking's crossed-out eye and a pinned one its pin. It's drawn in `--muted` like any icon at rest; the tilt, not a colour, shows the ranking, and its label says it too ("Hide, rank, or tag fandom.com (lowered)").
+- An icon without words only where the meaning is universal (the cog, ×, and the button on a result, which names the menu it opens in its tooltip). Everything else gets a word, with or without an icon.
 
 ## Motion
 
-- Motion answers an action: the menu opens with a 120ms fade and 3px drop, the balance swings, switches slide.
+- Motion answers an action: the menu opens with a 120ms fade, the balance swings, switches slide.
 - Nothing moves on its own. The welcome page's balance swings only when clicked: a click on either side presses that pan down, and it settles level again. It's decoration, hidden from screen readers.
-- Movement (the menu's drop, the balance, switches, the welcome page's balance) stops under `prefers-reduced-motion`.
+- Movement (the menu's fade, the balance, switches, the welcome page's balance) stops under `prefers-reduced-motion`.
 
 ## Writing
 
@@ -240,7 +244,7 @@ On a phone the engine's menu button (Google's ⋮, DuckDuckGo's ⋯) takes the r
 
 ## Contrast and size
 
-- Text in `--text` and `--muted` meets WCAG AA on its background in both schemes; gold text uses `--gold-ink` for the same reason.
+- Text in `--text` and `--muted` meets WCAG AA on its background in both schemes. `--dim` is only for icons, which need 3:1.
 - Icon buttons are at least 24px, and 32px where the pointer is coarse (the ⚖ button on phones).
 - Everything else about the keyboard, focus, and screen readers is in [`ACCESSIBILITY.md`](ACCESSIBILITY.md).
 

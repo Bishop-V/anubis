@@ -1,5 +1,5 @@
 import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
-import { balance, dial, fold, html, ICON, LEVELS, tagMark, type Level } from './demo-parts';
+import { columnButton, fold, html, ICON, menu, placeMenu, tagMark, type Level, type MenuPlace } from './demo-parts';
 
 // The Introduction's demo: a drawn results page where a pointer opens the button
 // beside a result, presses Hide in its menu, and the page answers: the menu closes,
@@ -9,16 +9,15 @@ import { balance, dial, fold, html, ICON, LEVELS, tagMark, type Level } from './
 //
 // Like the homepage's demo (scroll-demo.ts, whose styles it shares), it copies what
 // the extension draws: the summary and its change line (utils/summary.ts, the
-// summary… messages), the button on each result and the result menu's cartouche,
-// balance, and rankings (entrypoints/content/ui.ts and shadow.css, utils/balance.ts,
-// utils/icons.ts). Update it with them.
+// summary… messages), the button on each result and the result menu (demo-parts.ts,
+// after entrypoints/content/ui.ts and shadow.css, utils/balance.ts, utils/icons.ts).
+// Update it with them.
 
 type Result = { id: string; site: string; url: string; icon: [string, string, string]; title: string; snippet: string; chip?: 'tag' | 'raised' };
 const RESULTS: Result[] = [
   { id: 'wiki', site: 'Wikipedia', url: 'en.wikipedia.org › wiki › Anubis', icon: ['#ffffff', '#000000', 'W'], title: 'Anubis - Wikipedia', snippet: 'Anubis is the god of funerary rites, protector of graves, and guide to the underworld.', chip: 'tag' },
   { id: 'fandom', site: 'Fandom', url: 'mythology.fandom.com › wiki › Anubis', icon: ['#fa005a', '#ffffff', 'F'], title: 'Anubis | Mythology Wiki | Fandom', snippet: 'Anubis is the Egyptian god of mummification and the afterlife.' },
   { id: 'whe', site: 'World History Encyclopedia', url: 'www.worldhistory.org › Anubis', icon: ['#8b1c1c', '#ffffff', 'W'], title: 'Anubis - World History Encyclopedia', snippet: 'Anubis is the Egyptian god of mummification and the afterlife, and guardian of the scales.', chip: 'raised' },
-  // Enough page below the menu that it opens over the results, not past the page.
   { id: 'brit', site: 'Britannica', url: 'www.britannica.com › topic › Anubis', icon: ['#0f4c81', '#ffffff', 'B'], title: 'Anubis | Egyptian God, Mythology, & Facts', snippet: 'Anubis, also called Anpu, ancient Egyptian god of the dead, represented by a jackal.', chip: 'tag' },
 ];
 
@@ -29,7 +28,7 @@ export default defineComponent({
     const root = ref<HTMLElement>();
     const weighRef = ref<HTMLElement>();
     const hideRef = ref<HTMLElement>();
-    const menuPos = reactive({ left: 0, top: 0, width: 312 });
+    let place: MenuPlace = { left: 0, width: 340, arrow: 22, below: false, edge: 0 };
     let run = 0;
     let observer: IntersectionObserver | undefined;
     const still = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -69,13 +68,8 @@ export default defineComponent({
       if (pointer) await moveTo(weighRef.value, 1000);
       if (!alive()) return;
       if (pointer) await click();
-      // The menu opens under the crown, its left edge on the crown's.
-      const b = root.value!.getBoundingClientRect();
-      const w = weighRef.value!.getBoundingClientRect();
-      const width = Math.min(312, b.width - 16);
-      menuPos.width = width;
-      menuPos.left = Math.max(8, Math.min(w.left - b.left, b.width - width - 8));
-      menuPos.top = w.bottom - b.top + 6;
+      // The menu opens over the button, pointing down at it.
+      place = placeMenu(root.value!, weighRef.value!);
       state.open = true;
       await nextTick();
       await sleep(pointer ? 700 : 1200);
@@ -125,10 +119,8 @@ export default defineComponent({
         return h('div', { class: 'demo-result', key: r.id }, [
           fold(!(weigh && state.hidden), 'full', [
             h('div', { class: 'site' }, [
-              dial(h('span', { class: 'favicon', style: { background: r.icon[0], color: r.icon[1] } }, r.icon[2]), r.chip === 'raised' ? 'raise' : 'normal', {
-                crown: weigh ? weighRef : undefined,
-                active: weigh && state.open,
-              }),
+              columnButton(r.chip === 'raised' ? 'raise' : 'normal', { button: weigh ? weighRef : undefined, active: weigh && state.open }),
+              h('span', { class: 'favicon', style: { background: r.icon[0], color: r.icon[1] } }, r.icon[2]),
               h('span', { class: 'site-name' }, r.site),
               h('span', { class: 'url' }, r.url),
             ]),
@@ -165,18 +157,9 @@ export default defineComponent({
             h('div', { class: 'demo-results' }, RESULTS.map(result)),
           ]),
           state.open
-            ? h('div', { class: 'hd-menu', style: { left: `${menuPos.left}px`, top: `${menuPos.top}px`, width: `${menuPos.width}px` }, 'aria-hidden': 'true' }, [
-                h('div', { class: 'hd-head' }, [h('span', { class: 'hd-cartouche' }, [h('span', { class: 'hd-name' }, 'fandom.com')]), html('span', 'hd-close', ICON.close)]),
-                balance(state.level),
-                h(
-                  'div',
-                  { class: 'hd-levels' },
-                  LEVELS.map(([level, name, icon]) =>
-                    h('span', { ref: level === 'hide' ? hideRef : undefined, class: ['hd-level', level, { pressed: state.level === level }] }, [html('span', 'hd-level-icon', icon), name]),
-                  ),
-                ),
-                h('p', { class: 'hd-hint' }, 'Your choice for fandom.com, on every search.'),
-              ])
+            ? menu(place, { site: 'fandom.com', level: state.level, hint: 'Your choice for fandom.com, on every search.' }, (level, el) => {
+                if (level === 'hide') hideRef.value = el instanceof HTMLElement ? el : undefined;
+              })
             : null,
           h('span', {
             class: ['hd-pointer', { shown: state.pointer, pressing: state.pressing }],

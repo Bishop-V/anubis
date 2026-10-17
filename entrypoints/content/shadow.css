@@ -443,13 +443,8 @@ button {
   font-size: 12.5px;
   line-height: 1.35;
 }
-/* Over its button the menu grows upwards from its arrow, which points down at the button;
-   below it, the arrow points up. position() in ui.ts sets which, and where the arrow is. */
-:host(anubis-popover[data-above]) .pop {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-}
+/* Over its button the menu's arrow points down at the button; below it, up. position()
+   in ui.ts sets which, and where the arrow is, and keepAbove grows the menu upwards. */
 :host(anubis-popover:is([data-above], [data-below])) .pop::after {
   content: '';
   position: absolute;

@@ -67,6 +67,7 @@ Where things are stored, sync between browsers, and subscribing to lists.
 
 The look, the wording, and Anubis's own pages.
 
+- The column on the left, in Graphite (2026-10-17)
 - The dial on each result (2026-10-16)
 - Tag marks and a balance that weighs (2026-10-08)
 - Undo instead of "Are you sure?" in Settings (2026-10-08)

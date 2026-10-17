@@ -1,9 +1,10 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-// The popup and settings (assets/theme.css) are drawn in the brand palette. Search pages
-// (entrypoints/content/shadow.css) are drawn in Graphite, neutral greys with no gold, so
-// nothing Anubis adds there outshines the results.
+// Graphite, neutral greys with no gold, everywhere Anubis draws: its own pages
+// (assets/theme.css) and what it adds to search pages (entrypoints/content/shadow.css),
+// written out twice because a shadow root can't see the page's variables. Only the logo,
+// and the toolbar badge beside it, keep the brand gold.
 
 const read = (path: string) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 
@@ -18,25 +19,46 @@ function tokens(css: string, selector: string): Record<string, string> {
 const theme = read('assets/theme.css');
 const shadow = read('entrypoints/content/shadow.css');
 const dark = tokens(theme, ":root[data-theme='dark']");
+const light = { ...dark, ...tokens(theme, ":root[data-theme='light']") };
 const shadowLight = tokens(shadow, ':host {');
-const shadowDark = tokens(shadow, ":host([data-theme='dark'])");
+const shadowDark = { ...shadowLight, ...tokens(shadow, ":host([data-theme='dark'])") };
+
+// The menu's shadow floats over someone else's page, so it's its own.
+const shared = (a: Record<string, string>, b: Record<string, string>) => Object.keys(a).filter((k) => k in b && k !== '--shadow');
+
+const GOLD = /--gold|#d4a637|#e0b54e|#8d6716/i;
+const SHEETS = [
+  'assets/theme.css',
+  'entrypoints/content/shadow.css',
+  'entrypoints/content/page.css',
+  'entrypoints/popup/style.css',
+  'entrypoints/options/style.css',
+  'entrypoints/welcome/style.css',
+  'docs/.vitepress/theme/brand.css',
+];
 
 describe('palette', () => {
-  it('draws nothing in gold on search pages', () => {
-    const css = shadow.replace(/\/\*[\s\S]*?\*\//g, '');
-    expect(css).not.toMatch(/--gold|#d4a637|#e0b54e|#8d6716/i);
+  it('matches between the extension pages and search pages, in light', () => {
+    const keys = shared(shadowLight, light);
+    expect(keys.length).toBeGreaterThanOrEqual(8);
+    for (const k of keys) expect([k, shadowLight[k]]).toEqual([k, light[k]]);
   });
 
-  it('gives search pages every colour in light and dark', () => {
-    const colours = Object.keys(shadowLight).filter((k) => !['--tab', '--on-tab'].includes(k));
-    expect(colours.length).toBeGreaterThanOrEqual(8);
-    expect(Object.keys(shadowDark).sort()).toEqual(colours.sort());
+  it('matches between the extension pages and search pages, in dark', () => {
+    for (const k of shared(shadowDark, dark)) expect([k, shadowDark[k]]).toEqual([k, dark[k]]);
   });
 
-  it('gives the toolbar badge the brand gold on the brand background', () => {
+  it.each(SHEETS)('%s draws nothing in gold', (path) => {
+    expect(read(path).replace(/\/\*[\s\S]*?\*\//g, '')).not.toMatch(GOLD);
+  });
+
+  it('gives the toolbar badge the logo\'s gold on its background', () => {
     const background = read('entrypoints/background.ts');
-    expect(background).toContain(`color: '${dark['--gold']}'`);
-    expect(background).toContain(`color: '${dark['--bg']}'`);
+    const logo = read('public/anubis.svg');
+    for (const color of ['#d4a637', '#1b1a16']) {
+      expect(logo).toContain(color);
+      expect(background).toContain(`color: '${color}'`);
+    }
   });
 });
 

@@ -1,6 +1,6 @@
 import { h, icon } from '@/utils/dom';
 import { t } from '@/utils/i18n';
-import { LEVEL_LABELS, levelIcon, stepsIcon, tagEffectText, tagMark } from '@/utils/icons';
+import { LEVEL_LABELS, rankIcon, tagEffectText, tagMark } from '@/utils/icons';
 import type { Level } from '@/utils/matcher';
 import { getSite } from '@/utils/personal';
 import { fromListsClass, tagOrder, tagPicker, tagSource, type Ranking } from '@/utils/siteranking';
@@ -11,7 +11,7 @@ import type { PopoverActions, PopoverData } from './ui';
 /** One ranking's button. Raise and Lower show two arrows, lit one per press, so the unlit one says there's another step. */
 export function levelButton(level: Level, r: Ranking, press: () => void): HTMLElement {
   const pressed = r.pressed === level;
-  const drawing = level === 'raise' || level === 'lower' ? stepsIcon(level, pressed ? r.steps : 0) : levelIcon(level);
+  const drawing = rankIcon(level, pressed ? r.steps : 0);
   return h(
     'button',
     {

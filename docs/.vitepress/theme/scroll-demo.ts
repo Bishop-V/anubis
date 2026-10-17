@@ -1,6 +1,6 @@
 import { useData } from 'vitepress';
 import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, ref, type VNode } from 'vue';
-import { dial, tagMark } from './demo-parts';
+import { columnButton, tagMark } from './demo-parts';
 
 // The homepage's demo: one search on a drawn results page that Anubis works through
 // as you scroll. The page's heading (the default slot, from home.ts) is the first
@@ -103,8 +103,8 @@ const SHORT = [
 
 const STEPS: { title: string; text: string }[] = [
   { title: 'Clutter out', text: 'Anubis strips AI answers, question lists, and the panels in between. You pick which.' },
-  { title: 'Done with a site?', text: 'Hide it from the dial beside any result. It’s gone from every search after that, and Show hidden brings it back.' },
-  { title: 'Your sites first', text: 'Pin or raise the sites you trust. Lower the ones you put up with. The dial by each one shows where it stands.' },
+  { title: 'Done with a site?', text: 'Hide it from the button beside any result. It’s gone from every search after that, and Show hidden brings it back.' },
+  { title: 'Your sites first', text: 'Pin or raise the sites you trust. Lower the ones you put up with. The button by each one shows where it stands.' },
   { title: 'Know before you click', text: 'Tags from lists mark reference sites, paywalls, and more. The summary says what changed, and Show hidden undoes it.' },
 ];
 
@@ -120,14 +120,14 @@ const STEPS: { title: string; text: string }[] = [
 // - the tags under a title: renderChips in ui.ts, tagMark in utils/icons.ts, and
 //   .chips and .gem-mark in shadow.css (a tag that raises or lowers the result shows
 //   that sign in its diamond's place; there's no separate Raised or Lowered label);
-// - the dial on each result: utils/dial.ts, drawn by dial() in demo-parts.ts, and
-//   .dial in shadow.css (greys only);
+// - the button on each result: column.ts and .weigh.column in shadow.css, drawn by
+//   columnButton() in demo-parts.ts (greys only);
 // - hidden results: gone from the page, as Remove (the default in Settings →
 //   Appearance) does, and counted in the summary. The one-line form (renderHiddenBar
 //   in entrypoints/content/ui.ts, .gone in shadow.css) is only for Collapse;
 // - what clean-up removes: CLEANUP in utils/cleanup.ts. Only draw panels of those
 //   kinds, named in the summary in that order;
-// - pinned results: .pin-frame in shadow.css (the frame, grey, taking in the crown). Lowered results only move, unfaded.
+// - pinned results: .pin-frame in shadow.css (the frame, grey, taking in the button). Lowered results only move, unfaded.
 
 type Level = 'lower' | 'normal' | 'raise' | 'pin';
 // The AI answer's mark: a plain four-pointed star in blue and violet, a sketch of
@@ -152,7 +152,8 @@ function renderResult(r: Result, step: number): VNode {
   return h('div', { class: ['demo-result', { lowered: r.lowered && step >= 4, pinned }] }, [
     fold(!hidden, 'full', [
       h('div', { class: 'site' }, [
-        dial(h('span', { class: 'favicon', style: { background: r.icon[0], color: r.icon[1] } }, r.icon[2]), level),
+        columnButton(level),
+        h('span', { class: 'favicon', style: { background: r.icon[0], color: r.icon[1] } }, r.icon[2]),
         h('span', { class: 'site-name' }, r.site),
         h('span', { class: 'url' }, r.url),
       ]),

@@ -2,9 +2,9 @@
 // them on fixtures; update-sources.mjs fetches the data and writes the files.
 //
 // Each list made here keeps its source's licence and credits it in its name and
-// header. Its `! homepage:` is the source's repository, so "Wrong? Report it"
-// reaches the people who maintain the data. It sets no `! issues:`: that offers
-// "Suggest it to…", which sends Anubis rules, and the sources never asked for those.
+// header. Its `! homepage:` is the source's repository, where the people who
+// maintain the data are. It sets no `! issues:`: that offers **suggest changes**
+// in Settings → Lists, and the sources never asked for Anubis's suggestions.
 
 /**
  * @typedef {{ instruction: string, comment?: string }} SourceRule

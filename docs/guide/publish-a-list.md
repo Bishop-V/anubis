@@ -35,9 +35,7 @@ For one click, share a [subscribe link](../subscribe.md#make-a-subscribe-link) i
 
 ## 4. Hear about mistakes, and let people suggest sites
 
-When your list gets a site wrong, subscribers can choose "Wrong? Report it to *your list*" in the menu on that result. It opens a pre-filled issue on your repository's issue tracker, with the rule that matched and the result's address, for them to send. This needs no setting for a list on GitHub, GitLab, or Codeberg.
-
-Set `! issues:` to your issue tracker to also let subscribers suggest sites: "Suggest it to *your list*" then appears in the menu on results your list doesn't mention. Reports go to `! issues:` too, so set it if your repository's own issues are turned off. Pull requests work as for any repository.
+Set `! issues:` to your issue tracker, and **Settings → Lists** shows **suggest changes** beside your list, which opens it: subscribers use it to tell you about a site your list gets wrong, or one it should include. Pull requests work as for any repository.
 
 ## 5. Add it to the directory
 

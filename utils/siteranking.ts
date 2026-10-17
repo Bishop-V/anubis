@@ -78,7 +78,7 @@ export function yourListTag(entry: SiteEntry | undefined, classes: string[]): HT
   if (!entry || entry.level === 'normal') return null;
   const level = displayLevel(entry.level);
   const effect = level === 'normal' ? undefined : level;
-  return h('div', { class: 'tags' }, h('span', { class: classes.join(' '), style: '--c: var(--gold)' }, tagMark(effect), PERSONAL_NAME, tagEffectText(effect)));
+  return h('div', { class: 'tags' }, h('span', { class: classes.join(' '), style: '--c: var(--text)' }, tagMark(effect), PERSONAL_NAME, tagEffectText(effect)));
 }
 
 /** Your tags first, then those lists gave the site, then the rest, each by label. */
