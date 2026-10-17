@@ -90,13 +90,19 @@ const mainClass = ({ wide, padded }) => (wide ? ' class="wide"' : padded ? ' cla
 // on a live page (2026-09-30): the button left the result for its right edge
 // although nothing showed beside the menu; what's there is a guess.
 // `padded`: each result's words inside a padded box, as on the live page (2026-10-17).
+/** A result's site line: the address alone, or (`padded`, as live) a name over the address beside a larger icon. */
+function ddgSite(url, { wide, padded }) {
+  const link = (text) => `<a href="${url}" rel="noopener" class="Rn_JXVtoPVAFyGkcaXyK"><span>${esc(text)}</span></a>`;
+  if (!padded) return link(wide ? url : crumbsOf(url));
+  return `<div class="site-lines"><span>${esc(hostOf(url).split('.').slice(-2, -1)[0])}</span>${link(crumbsOf(url))}</div>`;
+}
+
 export function duckduckgo(query, results, dark = false, more = [], { ai = false, wide = false, tab, unseen = false, padded } = {}) {
   if (tab) return duckduckgoTab(query, results, tab);
   const item = ([url, title, snippet], i) => `
       <li data-layout="organic" class="wLL07_0Xnd1QZpzpfR4W">
         <article id="r1-${i}" data-testid="result" data-nrn="result" class="yQDlj3B5DI5YO8c8Ulio CpkrTDP54mqzpuCSn1Fa SKlplDuh9FjtDprgoMxk">
-          <div class="OHr0VX9IuNcv6iakvT6A"><div class="favicon"></div>
-            <a href="${url}" rel="noopener" class="Rn_JXVtoPVAFyGkcaXyK"><span>${esc(wide ? url : crumbsOf(url))}</span></a>
+          <div class="OHr0VX9IuNcv6iakvT6A"><div class="favicon"></div>${ddgSite(url, { wide, padded })}
           </div>
           <h2 class="LnpumSThxEWMIsDdAT17 CXMyPcQ6nDv47DKFeywM"><a href="${url}" rel="noopener" data-testid="result-title-a" class="eVNpHGjtxRBq_gLOfGDr LQNqh2U1kzYxREs65IJu"><span class="EKtkFWMYpwzMKOYr0GYm LQVY1Jpkk8nyJ6HBWKAk">${esc(title)}</span></a></h2>
           <div data-result="snippet" class="OgdwYG6KE2qthn9XQWFC"><div><span class="kY2IgmnCmOGjharHErah">${esc(snippet)}</span></div></div>
@@ -136,6 +142,8 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
     li{margin:0 0 26px}
     article{position:relative}
     main.padded article{padding:0 11px}
+    main.padded .favicon{flex:none;width:32px;height:32px;border-radius:50%}
+    main.padded .site-lines{display:flex;flex-direction:column;min-width:0}
     .OHr0VX9IuNcv6iakvT6A{display:flex;align-items:center;gap:8px;font-size:13px;padding-right:72px}
     /* As on the live page, a long address is cut off with an ellipsis before the ⋯ menu. */
     .OHr0VX9IuNcv6iakvT6A a{color:${dark ? '#8ab4f8' : '#1f7a3a'};text-decoration:none;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
