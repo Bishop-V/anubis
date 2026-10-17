@@ -116,7 +116,7 @@ Plain text, so it reads the same in both dashboards. Don't list the search engin
 ```text
 Anubis hides, ranks, and tags search results, on the search engine you already use.
 
-Rank any site from the results. Press the ⚖ button on a result to hide, lower, raise, or pin that site, or to tag it. Your choices apply to every search.
+Rank any site from the results. Press the small crown beside a result's site icon to hide, lower, raise, or pin that site, or to tag it. Your choices apply to every search.
 
 Tags. Results carry small labels such as "Official docs", "Discussion", "Paywalled", "FOSS", or "AI slop", from your own tags and from lists you subscribe to. For each tag, choose whether it only shows, highlights results, or pins, raises, lowers, or hides them.
 
@@ -147,7 +147,7 @@ Take them in a fresh browser profile that isn't signed in, so no account picture
 In `store/screenshots/` now (2026-09-30, Chrome, Google in dark mode): `1-popup.jpg` (the toolbar popup over results, with a pinned result and the summary), and `2-menu.jpg` (the ⚖ menu open on the pinned result). Still to take: 1 and 3 above.
 
 1. Google results for a programming question: tags under titles, a pinned documentation result at the top, and the summary counting a hidden result.
-2. The ⚖ menu open on a result: the site's name, the five rankings, and its tags.
+2. The result menu open on a result: the site's name, the five rankings, and its tags.
 3. A results page after clean-up, with the summary saying an AI answer was removed.
 4. The toolbar popup over a results page.
 5. Settings → Lists, with the lists Anubis starts with and More lists.

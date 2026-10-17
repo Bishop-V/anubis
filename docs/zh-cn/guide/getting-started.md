@@ -10,7 +10,7 @@ Anubis 有翻译时，会用你浏览器的语言显示自己。只有英文得�
 
 ## 在 Android 版 Firefox 中安装
 
-对 Android 版 Firefox 的支持还处于实验阶段。请在手机上的 Firefox 中，从 [Firefox Add-ons 获取 Anubis](https://addons.mozilla.org/addon/anubis-search/)。它能读取 Google、DuckDuckGo 和 Bing 的手机版布局；其他搜索引擎在手机上可能还不能用。在手机上，⚖ 按钮位于每个结果标题的末尾，它的菜单会从屏幕底部升起。Android 版 Firefox 把附加组件放在菜单里，而不是工具栏上，所以请从那里打开 Anubis。如果有什么地方不对，请附上截图[报告问题](https://github.com/Bishop-V/anubis/issues)。
+对 Android 版 Firefox 的支持还处于实验阶段。请在手机上的 Firefox 中，从 [Firefox Add-ons 获取 Anubis](https://addons.mozilla.org/addon/anubis-search/)。它能读取 Google、DuckDuckGo 和 Bing 的手机版布局；其他搜索引擎在手机上可能还不能用。在手机上，每个结果的标题末尾都有一个 ⚖ 按钮，它的菜单会从屏幕底部升起。Android 版 Firefox 把附加组件放在菜单里，而不是工具栏上，所以请从那里打开 Anubis。如果有什么地方不对，请附上截图[报告问题](https://github.com/Bishop-V/anubis/issues)。
 
 ## 在 Chrome 中安装
 
@@ -56,7 +56,7 @@ npm run build:chrome   # for Chrome, Edge, and other Chromium browsers
 
 ## 隐藏一个网站
 
-把鼠标悬停在一个结果上，点击它右上角的 ⚖ 按钮。在菜单中选择**隐藏**。在手机上，⚖ 按钮位于结果标题的末尾，菜单会从屏幕底部升起。
+每个结果的网站图标周围都有一个刻度盘：一个半圆，左侧有一顶小皇冠。点击皇冠，然后在菜单中选择**隐藏**。在图片和视频结果上，皇冠位于图片的右上角。在手机上，请点击结果标题末尾的 ⚖ 按钮，菜单会从屏幕底部升起。
 
 ![结果上的菜单：隐藏、降低、正常、提升和置顶，下方是标签](../../img/menu.png)
 

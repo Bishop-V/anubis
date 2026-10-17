@@ -19,7 +19,7 @@ The screenshots below come from the wiki (`docs/img/`, regenerated with `node e2
 
 ![A search page with Anubis: the summary above the results, tags under titles, a hidden result folded into one line](docs/img/after.png)
 
-Everything Anubis adds here is in the page's font and colours except gold for what you can press: the summary's sentence and buttons, the tags under each title, the folded line for a hidden site, and the ⚖ button on each result, at 70% brightness at rest (an engine's own ⋮ menu sets it where the button sits beside one).
+Everything Anubis adds here is in the page's font and colours except gold for what you can press: the summary's sentence and buttons, the tags under each title, the folded line for a hidden site, and, on a phone, the ⚖ button on each result, at 70% brightness at rest (an engine's own ⋮ menu sets it where the button sits beside one). On a computer, each result's [dial](#the-dial-on-each-result) is in greys only.
 
 ## Colour
 
@@ -39,6 +39,8 @@ One palette, defined twice: `assets/theme.css` for extension pages and `entrypoi
 | `--danger` | `#e2735b` | `#b4492f` | Errors and destructive actions. Never a ranking: Hide is grey. |
 | `--ok` | `#7fb58f` | `#3a7a52` | Confirmations (settings only) |
 | `--shadow` | | | The result menu's shadow (search pages only), darker in the dark scheme |
+| `--tab` | `#141416` | `#141416` | The tab in the corner of an image or video result, at 62% (search pages only) |
+| `--on-tab` | `#fff` | `#fff` | The crown and scale on that tab |
 
 - The light scheme is cool museum stone, not cream or paper.
 - Use `--gold` for anything filled or stroked and `--gold-ink` for anything read. Gold text in `--gold` fails contrast on light backgrounds.
@@ -88,7 +90,7 @@ One palette, defined twice: `assets/theme.css` for extension pages and `entrypoi
 
 - Spacing comes in steps of 2px: 4, 6, 8, 10, 12, 14, 16, 18, 24, and so on. Items in a wrapping row of tags or links sit 14px apart; buttons in a row 8px.
 - Sections are divided by a 1px `--line` hairline and space, never boxed into cards. The result menu is the only card.
-- Corner radius: **6px** for controls (buttons, inputs, selects); **10px** for the result menu and the pinned result's frame; **999px** (a pill) for the cartouche and switches; **50%** for round icon buttons on search pages and colour swatches. The focus ring's corners are 3px where the element has none of its own. Nothing else is rounded, and the logo carries its own rounded tile, so don't round or frame it.
+- Corner radius: **6px** for controls (buttons, inputs, selects); **10px** for the result menu and the pinned result's frame; **999px** (a pill) for the cartouche, switches, and the tab on a picture; **50%** for round icon buttons on search pages and colour swatches. The focus ring's corners are 3px where the element has none of its own. Nothing else is rounded, and the logo carries its own rounded tile, so don't round or frame it.
 - Shadows only on the result menu (`--shadow`), which floats over the page.
 
 ## Layout
@@ -98,7 +100,7 @@ One palette, defined twice: `assets/theme.css` for extension pages and `entrypoi
 | Popup | Up to 340px wide, shrinking to fit a narrower viewport. Header (logo, the status after a diamond that's gold while Anubis is on and hollow while it's off, on/off), then sections under hairlines with a muted label, then a footer. What shows depends on the tab: on a search page, what Anubis did there and its tags to show only; on any other site, that site in the cartouche over the balance, with the rankings, tag choices, and a field to add a tag; elsewhere, Add a site. The last few of your sites always follow. |
 | Settings | Two columns in 1040px: a 210px navigation column and sections up to 760px. One row per thing you can change. A tag's open panel has fields for its name and meaning, sites carrying it, and an optional note explaining why a site fits. Below 760px, one column with the navigation across the top. |
 | Welcome page | The same idea in 1040px: section titles in a 220px column, what to do beside them, lists two across. Below 900px, one column. |
-| Search pages | The summary sits above the results, lined up with them; on phones it's one short line, with Details for the rest. Tags go under each title. The result menu opens under its ⚖ button, 312px wide. On phones (600px wide or less) it's a sheet along the bottom of the screen instead, and the ⚖ button sits at the end of the title's first line, under the engine's own menu button. |
+| Search pages | The summary sits above the results, lined up with them; on phones it's one short line, with Details for the rest. Tags go under each title. The result menu opens from the dial's crown (see [The dial on each result](#the-dial-on-each-result)), 312px wide. On phones (600px wide or less) it's a sheet along the bottom of the screen instead, and the ⚖ button sits at the end of the title's first line, under the engine's own menu button. |
 
 Every page works at phone width (390px) without scrolling sideways. Settings are also checked at 320px, 360px, 375px, and 389px: only the Your sites table may scroll inside its own wrapper below 390px. Its Add tag picker is at most 8em wide, because a closed select is as wide as its longest option and tag names come from lists. `node e2e/run.mjs responsive` checks all settings sections at those widths and at 390px in light and dark schemes; the `welcome` and `mobile` e2e parts cover their respective pages.
 
@@ -149,7 +151,7 @@ h('span', { class: 'tag', style: `--c: ${tag.color}` }, h('i', { class: 'gem' })
 
 ## States
 
-- **Hover**: text goes from `--muted` to `--text`, or an outline turns gold. No background fills on hover, except the ⚖ button's faint gold wash on search pages.
+- **Hover**: text goes from `--muted` to `--text`, or an outline turns gold. No background fills on hover, except the phone ⚖ button's faint gold wash on search pages. The dial turns `--text` and its crown slides out.
 - **Focus**: a 2px `--gold` outline, 2px offset, on `:focus-visible` only. Where a native control sits unseen over a styled one (the cartouche's select), the visible element shows the ring (`:has(select:focus-visible)`).
 - **Chosen**: the 2px underline above. Don't use fills, checkmarks, or bold alone.
 - **Disabled or busy**: `opacity: 0.6` and `cursor: progress` on buttons, `--muted` text on text buttons. Say what's happening ("Loading…").
@@ -172,6 +174,18 @@ One line above the results, in the page's font at 13px, `--muted` for the senten
 
 On phones (600px wide or less) the full sentence runs to several lines, so the summary says it in a few words (`shortSummary`): "Anubis changed 4 of 9 results and cleaned up the page.", then Show hidden and **Details**. Details shows the rest: the full sentence, Load more results, the cog, and the tags; it reads "Fewer details" while open. The last change and Undo always show. Where the full sentence is no longer than the short one ("Anubis hid 1 of 9 results.", only one tag's results shown, or nothing changed), it stands, and Details only appears for what else there is. On phones the mark hangs to the left and everything else lines up with the sentence: its buttons follow its words and wrap with them, so none is left alone on a line under the mark.
 
+## The dial on each result
+
+On a computer, each result shows its ranking in a dial around the site's icon, always in the same place: the left of the result. It's drawn by `utils/dial.ts`, placed by `entrypoints/content/dial.ts`, and styled in `shadow.css`.
+
+- **The scale** is the left half of a ring 6px outside the icon, in a 2px line with round ends. Its zero is at 9 o'clock: Raise fills it upwards and Lower downwards, a quarter at most, further the more places the site moved (half a quarter for one Raise). Pin fills all of it; Normal and Hide leave it empty. The fill is the same for both directions, in `--text`; the empty line is `--muted` at 45%.
+- **The crown**, on the scale's left, opens the result menu: a rounded knob with three grip lines, on a short stem that meets the ring's outer edge. It sits a layer behind the scale, so the scale's line runs unbroken over the stem. Two short guards on a wider circle stand off above and below it, in the same 2px line. Only the crown takes the pointer; the rest of the dial lets clicks through to the icon, which the engine may use (DuckDuckGo searches the site with it).
+- **At rest** the dial is at 78% opacity in `--muted` greys, never gold. On hover or focus, or while its menu is open, it's at full strength in `--text`, and the crown slides out 2.5px.
+- **No icon:** where a result shows no site icon (Yahoo, DuckDuckGo's HTML and Lite pages), the dial goes round a plain grey disc before the title, in the same column on every result. A hidden result's folded line has its dial round the line's eye, or in that column where the page's results have no icons.
+- **Pinned:** the pinned result's frame is 1px `--muted` at 55%, 7px outside the result, and reaches left to take in the crown rather than cutting through it.
+- **Image and video results** have no room for a ring. They get the same parts upright on a small tab in the picture's top-right corner: 26×38px, a pill in `--tab` at 62%, with the crown on the left and a 2px scale on the right in `--on-tab`. Its zero is the middle: Raise fills up, Lower down, Pin all of it.
+- On a phone, the ⚖ button stays (see [The result menu](#the-result-menu)): a dial would be hard to press there and crowd the title.
+
 ## The result menu
 
 ![The result menu open on javascript.info: the cartouche, the balance tilted to Raise, the rankings, tags, and why](docs/img/menu.png)
@@ -185,7 +199,7 @@ The one place with character. In order:
 
 On phones (600px wide or less) the menu is a sheet: it rises from the bottom of the screen, across its width and at most 60% of its height, so the result stays in view above it, with its top corners rounded at 10px, over the page dimmed by black at 40% (`.scrim`). That keeps it in reach of a thumb and off the engine's own controls. A tap on the page above it closes it, as Escape does. The rankings are 56px tall there, to be pressed with a finger.
 
-On a phone the engine's menu button (Google's ⋮, DuckDuckGo's ⋯) takes the result's top-right corner, and the space beside it is off the screen. So the ⚖ button sits at the end of the title's first line, under that menu button where there is one, and titles get 40px of room on that side so their words wrap before it (`onTitle` in `utils/engines.ts`). It's centred on the title's first line of words, in a column with the menu's icon (not its box), or where there's no menu, ending where the title's line does. Where a result reaches the window's edges, as Google's phone cards do, a pinned result's frame is drawn on its own edge rather than 7px outside it, where it would be cut off: a 2px border over the result at 70% gold, since a 1px outline there was too faint and lay under the card's own background, with the result's own corners rather than 10px ones.
+On a phone the engine's menu button (Google's ⋮, DuckDuckGo's ⋯) takes the result's top-right corner, and the space beside it is off the screen. So the ⚖ button sits at the end of the title's first line, under that menu button where there is one, and titles get 40px of room on that side so their words wrap before it (`onTitle` in `utils/engines.ts`). It's centred on the title's first line of words, in a column with the menu's icon (not its box), or where there's no menu, ending where the title's line does. Where a result reaches the window's edges, as Google's phone cards do, a pinned result's frame is drawn on its own edge rather than 7px outside it, where it would be cut off: a 2px border over the result in the page's text colour at 40%, since a 1px outline there was too faint and lay under the card's own background, with the result's own corners rather than 10px ones.
 
 ## Icons
 
@@ -193,8 +207,8 @@ On a phone the engine's menu button (Google's ⋮, DuckDuckGo's ⋯) takes the r
 - Each ranking has one icon, used everywhere: an eye struck through (Hide), a chevron down (Lower), a feather (Normal), a chevron up (Raise), a pin (Pin). In the popup and the result menu it sits over the ranking's name.
 - The balance is drawn in three more places. In the popup it's in `--muted`, level and with empty pans, above Your sites while that list is empty: the only illustration. On the welcome page it sits in gold under the lead (see Motion).
 - The Anubis head is the brand mark: the logo tile on extension pages and in the toolbar. Search pages don't show it: the summary is plain text. It's never a button's icon.
-- The button on each result shows the result menu's balance in small, tipped to the site's ranking: level for Normal, the site's (left) pan down for Lower, and up for Raise. A hidden site shows the ranking's crossed-out eye and a pinned one its pin. It's drawn in `--muted` like any icon at rest; the tilt, not a colour, shows the ranking, and its label says it too ("Hide, rank, or tag fandom.com (lowered)").
-- An icon without words only where the meaning is universal (the cog, ×, and the balance on a result, which names the menu it opens in its tooltip). Everything else gets a word, with or without an icon.
+- On a phone, the button on each result shows the result menu's balance in small, tipped to the site's ranking: level for Normal, the site's (left) pan down for Lower, and up for Raise. A hidden site shows the ranking's crossed-out eye and a pinned one its pin. It's drawn in `--muted` like any icon at rest; the tilt, not a colour, shows the ranking, and its label says it too ("Hide, rank, or tag fandom.com (lowered)"). On a computer the dial shows the ranking instead (see [The dial on each result](#the-dial-on-each-result)), with the same label.
+- An icon without words only where the meaning is universal (the cog, ×, and the dial's crown or the ⚖ button on a result, which names the menu it opens in its tooltip). Everything else gets a word, with or without an icon.
 
 ## Motion
 

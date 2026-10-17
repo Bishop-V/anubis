@@ -1,6 +1,6 @@
 # Ranking sites
 
-Every site has a *ranking*, which you choose from the ⚖ button on any of its results, from the toolbar popup, or in **Settings → Your sites**.
+Every site has a *ranking*, which you choose from the dial on any of its results, from the toolbar popup, or in **Settings → Your sites**.
 
 <!-- Maintainer: on the site, RankDemo (docs/.vitepress/theme/rank-demo.ts) draws a site being pinned and another lowered, and the picture below, for reading on GitHub, is hidden. The generated screenshots on this page come from mock pages. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark images and their descriptions together. -->
 
@@ -8,11 +8,11 @@ Every site has a *ranking*, which you choose from the ⚖ button on any of its r
 
 <div class="github-only">
 
-![A result with its tags and the ⚖ button](../img/result.png)
+![A result with its tags, and the dial around its site's icon](../img/result.png)
 
 </div>
 
-The button's balance tips with the site's ranking: down on the left for a lowered site, up for a raised one, and level for the rest. A pinned site's button shows a gold pin; a hidden site's (once you show it) shows a crossed-out eye. The result has no separate "Raised" or "Lowered" label, since the button already shows its ranking. A tag that moves or hides the result [shows that in place of its diamond](./tags.md#see-what-a-tag-does-to-a-result).
+On a computer, each result has a dial: a half circle around the site's icon, with a small crown on its left. Press the crown to open the result's menu. The half circle fills from its middle with the site's ranking: upwards for a raised site and downwards for a lowered one, further the more places the site moved, and all the way round for a pinned site. A normal or hidden site's stays empty. Where a result has no site icon, the dial goes round a plain grey disc. On image and video results, the dial is a small dark tab in the picture's top-right corner, with the same crown and an upright line that fills the same way. On a phone, the result has a ⚖ button at the end of its title instead, whose balance tips with the ranking. The result has no separate "Raised" or "Lowered" label, since the dial already shows its ranking. A tag that moves or hides the result [shows that in place of its diamond](./tags.md#see-what-a-tag-does-to-a-result).
 
 The balance in the menu weighs everything together: your ranking, your tags, and your lists. The further a result moves, the further it tips, so a site you raised twice, or one with two tags you set to Raise, tips further than a single raise.
 
@@ -22,7 +22,7 @@ The balance in the menu weighs everything together: your ranking, your tags, and
 | **Lower** | They move five places down. Choose it again for ten places, and the arrow gets a second arrow. A third press takes it back. |
 | **Normal** | Takes your own ranking back, so your tags and lists weigh the site as they would without it. |
 | **Raise** | They move five places up. Choose it again for ten places, and the arrow gets a second arrow. A third press takes it back. |
-| **Pin** | They go to the top, with a thin gold outline (grey with the Plain colours in **Settings → Appearance**). |
+| **Pin** | They go to the top, with a thin grey frame. |
 
 Raise and Lower add to everything else that weighs the site: your lists, and [the tags you set to Pin, Raise, or Lower](./tags.md#several-tags-on-one-result). If a list lowers a site by 3 and you raise it, it moves 2 places up, and a tag that raises it keeps its mark. Pin and Hide replace what the lists say. A tag you set to Hide doesn't hide a site you ranked yourself, so ranking a site is how to keep one site that a Hide tag would hide. Once you've ranked a site, **Your list** appears among its tags in the menu, with the mark of your ranking.
 

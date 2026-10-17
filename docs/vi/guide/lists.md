@@ -46,7 +46,7 @@ Một số danh sách trong thư mục được tạo từ dữ liệu mà các 
 | **Self-hosted FOSS** | [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted-data) của những người đóng góp (CC BY-SA 3.0) | Gắn nhãn **FOSS** cho trang web của khoảng 1.000 chương trình miễn phí bạn có thể tự chạy, cùng nhãn với danh sách FOSS tools. Các chương trình theo giấy phép không tự do bị loại. Danh sách không bao giờ di chuyển hay ẩn gì. |
 | **Independent wikis** | [Indie Wiki Buddy](https://github.com/KevinPayravi/indie-wiki-buddy) của Kevin Payravi (MIT) | Nâng các wiki độc lập, gắn nhãn **Independent wiki**, và hạ các wiki Fandom, Fextralife và Neoseeker mà chúng thay thế, gắn nhãn **Has independent wiki**. |
 
-Để thêm một trang web vào một trong các danh sách này, hoặc để gỡ một trang, hãy đóng góp cho dự án nguồn của nó qua các liên kết ở trên. Anubis sao chép dữ liệu nguyên trạng, và bản cập nhật hằng tuần tiếp theo sẽ đưa thay đổi vào. **Sai? Báo cáo** trong menu ⚖ mở một issue trên trình theo dõi vấn đề của dự án đó.
+Để thêm một trang web vào một trong các danh sách này, hoặc để gỡ một trang, hãy đóng góp cho dự án nguồn của nó qua các liên kết ở trên. Anubis sao chép dữ liệu nguyên trạng, và bản cập nhật hằng tuần tiếp theo sẽ đưa thay đổi vào. **Sai? Báo cáo** trong menu của kết quả mở một issue trên trình theo dõi vấn đề của dự án đó.
 
 Để ngừng dùng một danh sách, hãy hủy đăng ký hoặc tắt nó như mọi danh sách. Để giữ danh sách nhưng bỏ một nhãn của nó, hãy tắt nhãn đó trong **Cài đặt → Nhãn**, hoặc chọn nhãn làm gì ở đó.
 
@@ -56,10 +56,10 @@ Mỗi danh sách trong **Các danh sách của bạn** có một nút gạt đ�
 
 ## Báo cáo lỗi trong danh sách
 
-Nếu một danh sách ẩn, xếp hạng hoặc gắn nhãn sai một trang web, hãy mở menu ⚖ trên kết quả. Dưới **Lý do**, “Sai? Báo cáo với *tên danh sách*” mở một issue điền sẵn trên trình theo dõi vấn đề của danh sách, kèm quy tắc đã khớp và địa chỉ của kết quả. Hãy nói điều gì cần thay đổi, rồi gửi. Không có gì được gửi cho đến khi chính bạn gửi nó.
+Nếu một danh sách ẩn, xếp hạng hoặc gắn nhãn sai một trang web, hãy mở menu của kết quả. Dưới **Lý do**, “Sai? Báo cáo với *tên danh sách*” mở một issue điền sẵn trên trình theo dõi vấn đề của danh sách, kèm quy tắc đã khớp và địa chỉ của kết quả. Hãy nói điều gì cần thay đổi, rồi gửi. Không có gì được gửi cho đến khi chính bạn gửi nó.
 
 Điều này dùng được cho các danh sách xuất bản trong kho GitHub, GitLab hoặc Codeberg, và cho các danh sách tự nêu trình theo dõi vấn đề của mình. Để bác bỏ một danh sách ngay lập tức, hãy tự xếp hạng trang web; một báo cáo giúp danh sách được sửa cho mọi người.
 
 ## Đề xuất một trang web cho danh sách
 
-Khi bạn đã tự xếp hạng hoặc gắn nhãn cho một trang web, menu ⚖ đề xuất “Đề xuất với *tên danh sách*” cho các danh sách nhận đề xuất mà chưa nhắc đến trang web đó. Nó mở một issue điền sẵn trên GitHub, GitLab hoặc Codeberg để bạn kiểm tra và gửi. Không có gì được gửi cho đến khi chính bạn gửi nó.
+Khi bạn đã tự xếp hạng hoặc gắn nhãn cho một trang web, menu của kết quả đề xuất “Đề xuất với *tên danh sách*” cho các danh sách nhận đề xuất mà chưa nhắc đến trang web đó. Nó mở một issue điền sẵn trên GitHub, GitLab hoặc Codeberg để bạn kiểm tra và gửi. Không có gì được gửi cho đến khi chính bạn gửi nó.

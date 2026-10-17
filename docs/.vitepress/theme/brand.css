@@ -162,7 +162,8 @@ body .VPContent .VPHome {
 .demo-page {
   height: 100%;
   overflow: hidden;
-  padding: 16px 18px;
+  /* Room on the left for each result's dial. */
+  padding: 16px 18px 16px 46px;
   box-sizing: border-box;
   border: 1px solid var(--vp-c-divider);
   border-radius: 10px;
@@ -434,6 +435,11 @@ body .VPContent .VPHome {
 .demo-block > .fold-inner {
   padding-top: 14px;
 }
+/* Room above each result's dial, which stands taller than its row. */
+.demo-result > .full > .fold-inner,
+.rank-demo .demo-result {
+  padding-top: 22px;
+}
 .demo-result .site {
   display: flex;
   gap: 10px;
@@ -478,28 +484,73 @@ body .VPContent .VPHome {
 .demo-result .chip.on {
   opacity: 1;
 }
-/* The button on each result, as the extension's .weigh: muted, its balance tipping
-   with the ranking, and gold only for a pinned site. */
-.demo-weigh {
+/* The dial around each result's site icon, as the extension's .dial (shadow.css): the
+   scale on the icon's left, the crown that opens the menu on its left, all in greys.
+   It reaches 28px left of the icon, into the page's padding. */
+.demo-dial {
+  position: relative;
   display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  margin-left: auto;
   flex: none;
-  color: var(--vp-c-text-2);
-  opacity: 0.6;
 }
-.demo-weigh.pin {
-  color: var(--vp-c-brand-1);
+.demo-dial .dial-art {
+  position: absolute;
+  left: -28px;
+  top: -17px;
+  display: flex;
+  pointer-events: none;
+}
+.demo-dial .dial {
+  overflow: visible;
+  opacity: 0.78;
+  transition: opacity 0.15s;
+}
+.demo-dial .track {
+  stroke: color-mix(in srgb, var(--vp-c-text-2) 45%, transparent);
+}
+.demo-dial .guards {
+  stroke: color-mix(in srgb, var(--vp-c-text-2) 80%, transparent);
+}
+.demo-dial .knob {
+  fill: color-mix(in srgb, var(--vp-c-text-2) 14%, var(--demo-page));
+  stroke: var(--vp-c-text-2);
+  stroke-width: 1.1;
+}
+.demo-dial .grips {
+  stroke: color-mix(in srgb, var(--vp-c-text-2) 70%, transparent);
+  stroke-width: 0.9;
+}
+.demo-dial .fill {
+  stroke: var(--vp-c-text-1);
+  opacity: 0;
+}
+.demo-dial.active .dial {
   opacity: 1;
 }
+.demo-dial.active .crown {
+  transform: translateX(-2.5px);
+}
+.demo-dial.active :is(.knob, .guards) {
+  stroke: var(--vp-c-text-1);
+}
+/* Where the pointer presses: the crown. */
+.demo-dial .dial-crown {
+  position: absolute;
+  left: -27px;
+  top: -4px;
+  width: 12px;
+  height: 28px;
+}
+/* The extension's frame: grey, 7px outside the result, taking in the crown. */
 .demo-result.pinned {
-  margin: 8px -10px 0;
-  padding: 0 10px 12px;
-  /* The extension's frame: gold at 55%. */
-  border: 1px solid rgb(212 166 55 / 0.55);
+  margin: 8px -10px 0 -38px;
+  padding: 0 10px 12px 38px;
+  border: 1px solid color-mix(in srgb, var(--vp-c-text-2) 55%, transparent);
   border-radius: 10px;
+}
+/* Where the result has no fold to give it room, the frame takes in the dial's top. */
+.rank-demo .demo-result.pinned {
+  margin-top: 4px;
+  padding-top: 18px;
 }
 .demo-block .block-heading {
   display: flex;
@@ -525,7 +576,7 @@ body .VPContent .VPHome {
 }
 .hide-demo .hd-page {
   height: auto;
-  padding: 16px 18px 20px;
+  padding: 16px 18px 20px 46px;
   -webkit-mask-image: none;
   mask-image: none;
 }
@@ -554,14 +605,6 @@ body .VPContent .VPHome {
   gap: 2px 14px;
   margin-top: 2px;
   font-size: 12.5px;
-}
-.hd-weigh {
-  border-radius: 50%;
-}
-.hd-weigh.active {
-  color: var(--vp-c-brand-1);
-  opacity: 1;
-  background: rgb(212 166 55 / 0.14);
 }
 .hd-menu {
   position: absolute;
@@ -705,8 +748,13 @@ body .VPContent .VPHome {
   .hd-tilt {
     transition: transform 0.45s cubic-bezier(0.34, 1.45, 0.5, 1);
   }
-  .hd-weigh {
-    transition: background 0.15s, color 0.15s, opacity 0.15s;
+  .demo-dial .crown {
+    transition: transform 0.16s ease-out;
+  }
+  .demo-dial .fill {
+    transition:
+      stroke-dashoffset 0.32s cubic-bezier(0.3, 1.25, 0.5, 1),
+      opacity 0.16s;
   }
   .hd-pointer {
     transition:
@@ -890,15 +938,17 @@ body .VPContent .VPHome {
   margin-inline: -4px;
   padding-inline: 4px;
 }
+/* And for the dial, which reaches into the page's padding on the left. */
+.demo-result > .full > .fold-inner {
+  margin-inline-start: -36px;
+  padding-inline-start: 36px;
+}
 /* Padding would keep a closed fold open by that much. */
 .fold:not(.open) > .fold-inner {
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .demo-weigh {
-    animation: demo-tip 0.5s ease;
-  }
   .demo-cue .arrow {
     animation: demo-nudge 1.6s ease-in-out infinite;
   }
@@ -919,12 +969,6 @@ body .VPContent .VPHome {
   }
 }
 
-@keyframes demo-tip {
-  from {
-    opacity: 0;
-    transform: rotate(-20deg);
-  }
-}
 @keyframes demo-nudge {
   50% {
     transform: translateY(4px);

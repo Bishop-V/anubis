@@ -12,6 +12,7 @@ import { ruleParts } from '@/utils/ruletext';
 import type { Palette } from '@/utils/storage';
 import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder, yourListTag, tagPicker, tagSource } from '@/utils/siteranking';
 import { shortSummary, stoppedSentence, summarySentence } from '@/utils/summary';
+import { clearDialFrame, drawDial, firstLineOf, shapeWeigh, showReading, type Weigh } from './dial';
 import { OWN_TAGS, type FoundResult } from './results';
 import shadowCss from './shadow.css?inline';
 
@@ -196,6 +197,8 @@ const chipsHosts = new WeakMap<HTMLElement, HTMLElement>();
 const weighHosts = new WeakMap<HTMLElement, HTMLElement>();
 const barHosts = new WeakMap<HTMLElement, HTMLElement>();
 const weighResult = new WeakMap<HTMLElement, FoundResult>();
+/** Each result's last weigh-button call, to place its button again when its hidden line appears or goes. */
+const weighCalls = new WeakMap<HTMLElement, () => void>();
 const positioned = new WeakSet<HTMLElement>();
 /** Weigh buttons at their result's right edge (not on a card or by the engine's menu): they follow each other into the gutter. */
 const atEdge = new WeakSet<HTMLElement>();
@@ -301,8 +304,10 @@ export function ensureWeighButton(
   engine: EngineDef,
   theme: PageTheme,
   onOpen: (button: HTMLElement, result: FoundResult) => void,
+  score = 0,
 ): void {
   const { container } = result;
+  weighCalls.set(container, () => ensureWeighButton(result, level, engine, theme, onOpen, score));
   let host = weighHosts.get(container);
   if (!host) {
     const made = makeHost('anubis-weigh', theme, engine.table ? 'inline-block' : 'block');
@@ -323,7 +328,7 @@ export function ensureWeighButton(
   weighResult.set(host, result);
   host.dataset.theme = theme;
   // Named for its site, so a list of the page's buttons tells them apart, and for its
-  // ranking, which the icon shows: the balance tips with it.
+  // ranking, which the dial or the icon shows.
   const site = normalizeHostname(result.host);
   const label = level === 'normal' ? t('weighLabel', site) : t('weighLabelRanked', site, LEVEL_CHIPS[level].toLocaleLowerCase());
   const button = rendered.get(host) as HTMLElement | undefined;
@@ -331,11 +336,8 @@ export function ensureWeighButton(
     button.title = label;
     button.setAttribute('aria-label', label);
   }
-  if (button && button.dataset.level !== level) {
-    button.dataset.level = level;
-    button.replaceChildren(icon(WEIGH_ICONS[level]));
-  }
 
+  if (drawWeigh({ host, button: button!, root: roots.get(host)! }, result, engine, { level, score })) return;
   if (engine.table) {
     // Table rows can't position children; sit inline after the title instead.
     host.style.setProperty('position', 'relative', 'important');
@@ -398,6 +400,44 @@ export function ensureWeighButton(
   }
   // Under an engine's menu it stays put: the engine cuts its address off before the menu.
   if (!menu && coversText(host, container)) moveOffText(host, container);
+}
+
+// ---------------------------------------------------------------------------
+// The dial
+
+/**
+ * Draw the result's button: on a phone, the balance on the title's line; on a card, the
+ * gauge in its corner; on every other result, the dial around its site's icon, or the
+ * balance where there's no room for one. True when it's the dial, which is then in place.
+ */
+function drawWeigh(weigh: Weigh, result: FoundResult, engine: EngineDef, { level, score }: { level: Level; score: number }): boolean {
+  const { host, button } = weigh;
+  const shape = result.card ? 'gauge' : !engine.button?.onTitle && placeDial(weigh, result, engine, level) ? 'dial' : 'button';
+  if (shape === 'dial') {
+    showReading(host, level, score);
+    return true;
+  }
+  clearDialFrame(weigh, result.container);
+  shapeWeigh(weigh, shape);
+  if (shape === 'gauge') showReading(host, level, score);
+  else if (button.dataset.level !== level) {
+    button.dataset.level = level;
+    button.replaceChildren(icon(WEIGH_ICONS[level]));
+  }
+  return false;
+}
+
+/** The dial around the result's site icon (drawDial in dial.ts), or false where it has no room. */
+function placeDial(weigh: Weigh, result: FoundResult, engine: EngineDef, level: Level): boolean {
+  const { host } = weigh;
+  const bar = barHosts.get(result.container)?.getBoundingClientRect();
+  if (!drawDial(weigh, result, { table: !!engine.table, pinned: level === 'pin', bar: bar?.height ? bar : undefined })) return false;
+  keepUpright(host);
+  if (engine.table) return true;
+  popOuts.set(host, engine.button?.popOut ?? ':scope');
+  atEdge.delete(host);
+  for (const prop of MENU_LOOK) host.style.removeProperty(prop);
+  return true;
 }
 
 /**
@@ -499,23 +539,6 @@ function placeOnTitle(host: HTMLElement, container: HTMLElement, titleBlock: HTM
 function columnEnd(menu: HTMLElement | undefined, title: HTMLElement, width: number): number {
   const m = (menu?.querySelector('svg') ?? menu)?.getBoundingClientRect();
   return m ? (m.left + m.right) / 2 + width / 2 : title.getBoundingClientRect().right;
-}
-
-/**
- * The first line of an element's words. A range over the whole element also reports
- * the boxes of the elements inside it, which can span every line (Google's phone
- * titles), so only text counts.
- */
-function firstLineOf(el: HTMLElement): DOMRect | undefined {
-  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-  const range = document.createRange();
-  for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-    if (!node.textContent?.trim()) continue;
-    range.selectNodeContents(node);
-    const rect = [...range.getClientRects()].find((r) => r.width && r.height);
-    if (rect) return rect;
-  }
-  return undefined;
 }
 
 /** Whether the button sits over any of the result's text (a long address, a title). */
@@ -765,9 +788,10 @@ export function renderHiddenBar(
 ): void {
   const { container } = result;
   let host = barHosts.get(container);
+  const wasShown = !!host?.isConnected;
   if (!show) {
     host?.remove();
-    return;
+    return barMoved(container, wasShown);
   }
   if (!host) {
     host = makeHost('anubis-bar', theme).host;
@@ -812,6 +836,12 @@ export function renderHiddenBar(
       ),
     ),
   );
+  barMoved(container, wasShown);
+}
+
+/** A hidden result's line came or went: its dial goes round the line's eye, so place it again. */
+function barMoved(container: HTMLElement, wasShown: boolean): void {
+  if (wasShown !== !!barHosts.get(container)?.isConnected) weighCalls.get(container)?.();
 }
 
 // ---------------------------------------------------------------------------

@@ -18,7 +18,7 @@ Anubis funktioniert mit der Suchmaschine, die du ohnehin benutzt. Deine Entschei
 
 ## Funktionen
 
-- **Jede Website direkt im Ergebnis einstufen.** Blende eine Website mit der Schaltfläche an einem beliebigen Ergebnis aus, werte sie ab oder auf, oder hefte sie an. [Websites einstufen](./ranking.md)
+- **Jede Website direkt im Ergebnis einstufen.** Blende eine Website mit der Skala an einem beliebigen Ergebnis aus, werte sie ab oder auf, oder hefte sie an. [Websites einstufen](./ranking.md)
 - **Tags.** Ergebnisse tragen Beschriftungen wie „Official docs“, „Discussion“, „Paywalled“, „AI-generated“ oder „Independent wiki“. Du entscheidest, was jedes Tag bewirkt, von bloßer Beschriftung bis zum Ausblenden aller Ergebnisse mit diesem Tag. [Tags](./tags.md)
 - **Listen, die jeder veröffentlichen kann.** Abonniere Listen, die Websites für dich mit Tags versehen und einstufen. Eine Liste ist eine Textdatei in einem Git-Repository, also kann jeder eine veröffentlichen und Änderungen daran vorschlagen. Brave Goggles, uBlacklist-Regelsätze und einfache Domainlisten funktionieren unverändert. Einige Listen entstehen jede Woche aus den Daten anderer Projekte, etwa der HUGE AI Blocklist und Indie Wiki Buddy, und nennen diese als Quelle. [Listen abonnieren](./lists.md) und [Eine Liste veröffentlichen](./publish-a-list.md)
 - **Bereiche entfernen.** Nimm KI-Antworten, Videobereiche, „Ähnliche Fragen“ und mehr aus jeder Suche. [Bereiche entfernen](./clean-up.md)

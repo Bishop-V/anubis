@@ -1,7 +1,7 @@
 # Giúp dịch
 
 ::: warning Bản dịch máy: hãy dùng cẩn thận
-Anubis được viết bằng tiếng Anh, ngôn ngữ duy nhất nó hỗ trợ đầy đủ. Anubis cũng có bản **tiếng Ả Rập, Bengal, Trung (giản thể), Trung (phồn thể), Pháp, Đức, Hindi, Indonesia, Ý, Nhật, Hàn, Bồ Đào Nha (Brazil), Nga, Tây Ban Nha, Thổ Nhĩ Kỳ, Urdu và Việt**, nhưng các bản dịch đó do máy dịch và chưa có người nói ngôn ngữ ấy kiểm tra. Một số từ có thể sai hoặc khó hiểu, nên hãy dùng cẩn thận. Khi bạn xếp hạng hoặc ẩn các trang web, **Lý do** trong menu ⚖ và bản tóm tắt phía trên kết quả cho biết chính xác điều gì đã xảy ra; nếu bản dịch khiến bạn không chắc, hãy xem bản tiếng Anh. Để xem Anubis bằng tiếng Anh, hãy đặt ngôn ngữ của trình duyệt là tiếng Anh.
+Anubis được viết bằng tiếng Anh, ngôn ngữ duy nhất nó hỗ trợ đầy đủ. Anubis cũng có bản **tiếng Ả Rập, Bengal, Trung (giản thể), Trung (phồn thể), Pháp, Đức, Hindi, Indonesia, Ý, Nhật, Hàn, Bồ Đào Nha (Brazil), Nga, Tây Ban Nha, Thổ Nhĩ Kỳ, Urdu và Việt**, nhưng các bản dịch đó do máy dịch và chưa có người nói ngôn ngữ ấy kiểm tra. Một số từ có thể sai hoặc khó hiểu, nên hãy dùng cẩn thận. Khi bạn xếp hạng hoặc ẩn các trang web, **Lý do** trong menu của kết quả và bản tóm tắt phía trên kết quả cho biết chính xác điều gì đã xảy ra; nếu bản dịch khiến bạn không chắc, hãy xem bản tiếng Anh. Để xem Anubis bằng tiếng Anh, hãy đặt ngôn ngữ của trình duyệt là tiếng Anh.
 :::
 
 Giao diện của Anubis bằng tiếng Anh. Mọi từ nó hiển thị đều có thể dịch: cửa sổ bật lên trên thanh công cụ, phần cài đặt, trang chào mừng và những gì nó thêm vào trang tìm kiếm. Trình duyệt chọn bản dịch theo ngôn ngữ của chính nó, và bất cứ thứ gì bản dịch bỏ sót vẫn ở tiếng Anh. Ở mọi ngôn ngữ trừ tiếng Anh, Cài đặt, trang chào mừng và cửa sổ bật lên trên thanh công cụ đều nói rằng bản dịch là của máy, kèm liên kết đến trang này.
@@ -57,7 +57,7 @@ Hãy sửa `message` trong `locales/<ngôn ngữ>/messages.json`, và nói trong
 - **Ký hiệu giữ chỗ.** `$1`, `$2` và tiếp theo được điền bằng một trang web, một số hoặc một tên. Hãy giữ từng ký hiệu, theo thứ tự ngôn ngữ của bạn cần. Dấu đô la không phải ký hiệu giữ chỗ được viết là `$$`.
 - **Số đếm.** Các thông điệp kết thúc bằng `_one` và `_other` là các dạng của số đếm: “1 danh sách”, “2 danh sách”. Hãy thêm các dạng ngôn ngữ của bạn dùng, đặt tên theo [quy tắc số nhiều của Unicode](https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html): `_zero`, `_one`, `_two`, `_few`, `_many` và `_other`. Tiếng Việt chỉ có `_other`.
 - **Tên riêng.** Anubis, các công cụ tìm kiếm, các trình duyệt và những dự án khác (uBlacklist, HOHSER, Brave Goggles) giữ nguyên tên. Khi một thông điệp gọi tên một phần của trang công cụ tìm kiếm, như “AI Overview” hay “People also ask” của Google, hãy dùng tên mà công cụ hiện trong ngôn ngữ của bạn.
-- **Các từ chỉ thứ hạng.** Thứ hạng của một trang web luôn là Ẩn, Hạ, Bình thường, Nâng hoặc Ghim ở mọi nơi trong Anubis. Hãy chọn một từ cho mỗi thứ hạng và dùng nhất quán. Với ngôn ngữ có từ dài, hãy đặt dấu gạch nối mềm (U+00AD) trong đó, để hàng thứ hạng của menu ⚖ có thể ngắt chúng đúng chỗ.
+- **Các từ chỉ thứ hạng.** Thứ hạng của một trang web luôn là Ẩn, Hạ, Bình thường, Nâng hoặc Ghim ở mọi nơi trong Anubis. Hãy chọn một từ cho mỗi thứ hạng và dùng nhất quán. Với ngôn ngữ có từ dài, hãy đặt dấu gạch nối mềm (U+00AD) trong đó, để hàng thứ hạng trong menu của kết quả có thể ngắt chúng đúng chỗ.
 
 ## Những gì vẫn bằng tiếng Anh
 

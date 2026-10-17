@@ -21,7 +21,7 @@ import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync
 import { tmpdir } from 'node:os';
 import { delimiter, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ANUBIS_PAGE2, ANUBIS_PAGE3, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, bingChallenge, bingMobile, brave, duckduckgo, duckduckgoMobile, google, googleMobile, ecosia, yahoo } from './fixtures.mjs';
+import { ANUBIS_PAGE2, ANUBIS_PAGE3, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, bingChallenge, bingMobile, brave, duckduckgo, duckduckgoHtml, duckduckgoLite, duckduckgoMobile, google, googleMobile, ecosia, yahoo } from './fixtures.mjs';
 import { ENGINE_TABS, engineTab } from './tab-fixtures.mjs';
 
 const EXT = fileURLToPath(new URL('../.output/chrome-mv3', import.meta.url));
@@ -116,53 +116,9 @@ async function waitForWorker(sw, check, error) {
   throw new Error(error);
 }
 
-async function launch(settings = {}, ext = EXT) {
-  const ctx = await chromium.launchPersistentContext(mkdtempSync(join(tmpdir(), 'anubis-')), {
-    executablePath,
-    headless: true,
-    // ANUBIS_LANG=de runs the browser, and so Anubis, in a translation; checks that
-    // read English text then fail, but layout checks such as `responsive` still hold.
-    args: [`--disable-extensions-except=${ext}`, `--load-extension=${ext}`, ...proxyTrustArgs(), ...(process.env.ANUBIS_LANG ? [`--lang=${process.env.ANUBIS_LANG}`] : [])],
-    ...(process.env.ANUBIS_LANG && { locale: process.env.ANUBIS_LANG.replace('_', '-') }),
-    viewport: { width: 1180, height: 1000 },
-    // Sharper screenshots for the documentation site.
-    deviceScaleFactor: only === 'docs' ? 2 : 1,
-    // Behind a proxy (as in CI sandboxes), real list downloads need it too.
-    ...(process.env.HTTPS_PROXY && { proxy: { server: process.env.HTTPS_PROXY } }),
-  });
-  // Lists this repository publishes (and its directory) come from the checkout, so a
-  // run tests this branch's lists, not what main has, and doesn't wait on GitHub.
-  await ctx.route(/^https:\/\/raw\.githubusercontent\.com\/Bishop-V\/anubis\/main\/lists\/([\w./-]+)$/, (route) => {
-    const path = /\/lists\/(.+)$/.exec(route.request().url())[1];
-    const file = fileURLToPath(new URL(`../lists/${path}`, import.meta.url));
-    if (path.includes('..') || !existsSync(file)) return route.fulfill({ status: 404, body: '' });
-    return route.fulfill({ contentType: 'text/plain; charset=utf-8', body: readFileSync(file, 'utf8') });
-  });
-  let [sw] = ctx.serviceWorkers();
-  if (!sw) sw = await ctx.waitForEvent('serviceworker');
-  const extId = new URL(sw.url()).host;
-  await waitForWorker(sw, () => typeof chrome !== 'undefined' && !!chrome.storage, 'Extension storage API did not become ready');
-  await waitForWorker(sw, async () => !!(await chrome.storage.sync.get('personal')).personal, 'Extension personal-list migration did not finish');
-  // On install the extension moves a stored "Collapse" to "Remove" once. Writing the
-  // settings below while that runs can land between its reads, so the tests would
-  // run with "Remove": wait until it has set its flag.
-  await waitForWorker(sw, async () => (await chrome.storage.sync.get('hideStyleMoved')).hideStyleMoved === true, 'Extension settings migration did not finish');
-  // Then it subscribes saved subscriptions to every default list, once: wait for that too.
-  await waitForWorker(sw, async () => (await chrome.storage.sync.get('defaultListsAdded')).defaultListsAdded === true, 'Extension default-lists migration did not finish');
-  await sw.evaluate(
-    async ({ personal, settings }) => {
-      await chrome.storage.sync.set({
-        'personal.0': personal,
-        personal: { chunks: 1, updatedAt: Date.now() },
-        tagPrefs: { 'ai-slop': { action: 'hide' } },
-        // The tests use the "Collapse" style; keep the one-time move to "Remove" away.
-        hideStyleMoved: true,
-        settings: { enabled: true, theme: 'auto', hideStyle: 'collapse', rerank: true, showChips: true, showSummary: true, engines: {}, updateHours: 24, ...settings },
-      });
-    },
-    { personal: PERSONAL, settings },
-  );
-  const pages = {
+/** The mock search pages, by the address each answers. */
+function mockPages() {
+  return {
     'https://duckduckgo.com/?q=javascript+promises': duckduckgo('javascript promises', JS_RESULTS),
     'https://duckduckgo.com/?q=javascript+promises&dark=1': duckduckgo('javascript promises', JS_RESULTS, true),
     'https://www.google.com/search?q=anubis': google('anubis', ANUBIS_RESULTS),
@@ -247,8 +203,59 @@ async function launch(settings = {}, ext = EXT) {
     ...Object.fromEntries(ENGINE_TABS.map(([url, engine, tab]) => [url, engineTab(engine, tab, JS_RESULTS)])),
     'https://duckduckgo.com/?q=javascript+promises&wide=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { wide: true }),
     'https://duckduckgo.com/?q=javascript+promises&unseen=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { unseen: true }),
+    'https://html.duckduckgo.com/html/?q=javascript+promises': duckduckgoHtml('javascript promises', JS_RESULTS),
+    'https://lite.duckduckgo.com/lite/?q=javascript+promises': duckduckgoLite('javascript promises', JS_RESULTS),
   };
-  await ctx.route(/^https:\/\/((noai\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com|www\.ecosia\.org|search\.yahoo\.com|kagi\.com|www\.startpage\.com|yandex\.com)\//, (route) => {
+}
+
+async function launch(settings = {}, ext = EXT) {
+  const ctx = await chromium.launchPersistentContext(mkdtempSync(join(tmpdir(), 'anubis-')), {
+    executablePath,
+    headless: true,
+    // ANUBIS_LANG=de runs the browser, and so Anubis, in a translation; checks that
+    // read English text then fail, but layout checks such as `responsive` still hold.
+    args: [`--disable-extensions-except=${ext}`, `--load-extension=${ext}`, ...proxyTrustArgs(), ...(process.env.ANUBIS_LANG ? [`--lang=${process.env.ANUBIS_LANG}`] : [])],
+    ...(process.env.ANUBIS_LANG && { locale: process.env.ANUBIS_LANG.replace('_', '-') }),
+    viewport: { width: 1180, height: 1000 },
+    // Sharper screenshots for the documentation site.
+    deviceScaleFactor: only === 'docs' ? 2 : 1,
+    // Behind a proxy (as in CI sandboxes), real list downloads need it too.
+    ...(process.env.HTTPS_PROXY && { proxy: { server: process.env.HTTPS_PROXY } }),
+  });
+  // Lists this repository publishes (and its directory) come from the checkout, so a
+  // run tests this branch's lists, not what main has, and doesn't wait on GitHub.
+  await ctx.route(/^https:\/\/raw\.githubusercontent\.com\/Bishop-V\/anubis\/main\/lists\/([\w./-]+)$/, (route) => {
+    const path = /\/lists\/(.+)$/.exec(route.request().url())[1];
+    const file = fileURLToPath(new URL(`../lists/${path}`, import.meta.url));
+    if (path.includes('..') || !existsSync(file)) return route.fulfill({ status: 404, body: '' });
+    return route.fulfill({ contentType: 'text/plain; charset=utf-8', body: readFileSync(file, 'utf8') });
+  });
+  let [sw] = ctx.serviceWorkers();
+  if (!sw) sw = await ctx.waitForEvent('serviceworker');
+  const extId = new URL(sw.url()).host;
+  await waitForWorker(sw, () => typeof chrome !== 'undefined' && !!chrome.storage, 'Extension storage API did not become ready');
+  await waitForWorker(sw, async () => !!(await chrome.storage.sync.get('personal')).personal, 'Extension personal-list migration did not finish');
+  // On install the extension moves a stored "Collapse" to "Remove" once. Writing the
+  // settings below while that runs can land between its reads, so the tests would
+  // run with "Remove": wait until it has set its flag.
+  await waitForWorker(sw, async () => (await chrome.storage.sync.get('hideStyleMoved')).hideStyleMoved === true, 'Extension settings migration did not finish');
+  // Then it subscribes saved subscriptions to every default list, once: wait for that too.
+  await waitForWorker(sw, async () => (await chrome.storage.sync.get('defaultListsAdded')).defaultListsAdded === true, 'Extension default-lists migration did not finish');
+  await sw.evaluate(
+    async ({ personal, settings }) => {
+      await chrome.storage.sync.set({
+        'personal.0': personal,
+        personal: { chunks: 1, updatedAt: Date.now() },
+        tagPrefs: { 'ai-slop': { action: 'hide' } },
+        // The tests use the "Collapse" style; keep the one-time move to "Remove" away.
+        hideStyleMoved: true,
+        settings: { enabled: true, theme: 'auto', hideStyle: 'collapse', rerank: true, showChips: true, showSummary: true, engines: {}, updateHours: 24, ...settings },
+      });
+    },
+    { personal: PERSONAL, settings },
+  );
+  const pages = mockPages();
+  await ctx.route(/^https:\/\/((noai\.|html\.|lite\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com|www\.ecosia\.org|search\.yahoo\.com|kagi\.com|www\.startpage\.com|yandex\.com)\//, (route) => {
     const page = pages[route.request().url()];
     return answerRoute(route, typeof page === 'function' ? page(route.request()) : page);
   });
@@ -330,34 +337,39 @@ async function hasResultChip(cdp, resultId, level) {
   return hostId ? hasChipInHost(cdp, hostId, level) : false;
 }
 
-async function weighButtonColors(page, selector) {
+// The colour of a dial's crown, at rest and pointed at, and the palette's two golds, read from
+// inside the dial's closed shadow root with the DevTools protocol.
+async function dialColors(page, selector) {
   const cdp = await page.context().newCDPSession(page);
   await cdp.send('DOM.enable');
   await cdp.send('CSS.enable');
   const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
   const { nodeId: hostId } = await cdp.send('DOM.querySelector', { nodeId: root.nodeId, selector });
-  if (!hostId) throw new Error(`No weigh button host matches ${selector}`);
+  if (!hostId) throw new Error(`No dial host matches ${selector}`);
   const { node: host } = await cdp.send('DOM.describeNode', { nodeId: hostId, depth: -1, pierce: true });
   const shadow = host.shadowRoots?.[0];
-  if (!shadow) throw new Error(`No shadow root on ${selector}`);
+  const { nodeId: knobId } = await cdp.send('DOM.querySelector', { nodeId: shadow.nodeId, selector: '.dial .knob' });
   const { nodeId: buttonId } = await cdp.send('DOM.querySelector', { nodeId: shadow.nodeId, selector: 'button.weigh' });
-  if (!buttonId) throw new Error(`No weigh button inside ${selector}`);
+  if (!knobId || !buttonId) throw new Error(`No dial inside ${selector}`);
+  const property = (style, name) => style.find((item) => item.name === name)?.value;
+  const stroke = async () => property((await cdp.send('CSS.getComputedStyleForNode', { nodeId: knobId })).computedStyle, 'stroke');
+  const rest = await stroke();
   const { model } = await cdp.send('DOM.getBoxModel', { nodeId: buttonId });
   const [x1, y1, , , x3, y3] = model.content;
   await page.mouse.move((x1 + x3) / 2, (y1 + y3) / 2);
-  await page.waitForTimeout(200);
-  const [{ computedStyle: buttonStyle }, { computedStyle: hostStyle }] = await Promise.all([
-    cdp.send('CSS.getComputedStyleForNode', { nodeId: buttonId }),
-    cdp.send('CSS.getComputedStyleForNode', { nodeId: hostId }),
-  ]);
-  const property = (style, name) => style.find((item) => item.name === name)?.value;
-  const button = property(buttonStyle, 'color');
-  const goldInk = property(hostStyle, '--gold-ink')?.match(/^#([\da-f]{6})$/i)?.[1];
+  await page.waitForTimeout(250);
+  const hover = await stroke();
+  const { computedStyle: hostStyle } = await cdp.send('CSS.getComputedStyleForNode', { nodeId: hostId });
+  const rgb = (hex) => hex && `rgb(${parseInt(hex.slice(1, 3), 16)}, ${parseInt(hex.slice(3, 5), 16)}, ${parseInt(hex.slice(5, 7), 16)})`;
+  await page.mouse.move(1, 1);
   await cdp.detach();
-  return {
-    button,
-    goldInk: goldInk && `rgb(${parseInt(goldInk.slice(0, 2), 16)}, ${parseInt(goldInk.slice(2, 4), 16)}, ${parseInt(goldInk.slice(4, 6), 16)})`,
-  };
+  return { rest, hover, gold: [rgb(property(hostStyle, '--gold')), rgb(property(hostStyle, '--gold-ink'))] };
+}
+
+/** Press a result's menu button: the dial's crown on its left, at its middle, or the button on a card. */
+async function pressWeigh(host) {
+  const box = await host.boundingBox();
+  await host.click({ position: { x: 12, y: box.height / 2 } });
 }
 
 // The links inside the closed shadow roots of hosts with this tag, read the same way.
@@ -403,61 +415,77 @@ if (!only || only === 'pages') {
   await shoot('https://www.bing.com/search?q=javascript+promises', 'bing');
   await shoot('https://search.brave.com/search?q=anubis', 'brave');
 
-  // DuckDuckGo: the ⚖ button sits just right of each result's own ⋯ menu, level
-  // with it, at its size and shape, and as bright as the menu button (since 2026-10-05).
-  await page.goto('https://duckduckgo.com/?q=javascript+promises&dark=1');
-  await page.waitForTimeout(600);
-  await page.mouse.move(1, 1);
-  await page.waitForTimeout(250);
-  const pair = () =>
-    page.evaluate(() =>
-      [...document.querySelectorAll('li[data-anubis-result]:not([data-anubis-state~="hide"])')].map((li) => {
-        const host = li.querySelector(':scope > anubis-weigh');
-        const menu = li.querySelector('button.menu');
-        const a = host.getBoundingClientRect();
-        const b = menu.getBoundingClientRect();
-        return {
-          level: Math.abs(a.top + a.height / 2 - (b.top + b.height / 2)) < 1,
-          gap: Math.round(a.left - b.right),
-          sameSize: Math.round(a.width) === Math.round(b.width) && Math.round(a.height) === Math.round(b.height),
-          asBright: Math.abs((parseFloat(getComputedStyle(host).getPropertyValue('--anubis-weigh-opacity')) || 0.7) - parseFloat(getComputedStyle(menu).opacity)) < 0.02,
-        };
-      }),
-    );
-  const besideItsMenu = (p) => p.level && p.sameSize && p.gap >= 0 && p.gap <= 6 && p.asBright;
-  const pairs = await pair();
-  console.log('\n== ddg button beside its menu:', JSON.stringify({ results: pairs.length, all: pairs.every(besideItsMenu), failing: pairs.filter((p) => !besideItsMenu(p)) }));
-  assertChecks('DuckDuckGo button beside its menu', { everyResult: pairs.length > 0 && pairs.every(besideItsMenu) });
-  for (const variant of ['unseen', 'wide']) {
-    await page.goto(`https://duckduckgo.com/?q=javascript+promises&${variant}=1`);
-    await page.waitForTimeout(600);
-    const more = await pair();
-    console.log(`== ddg button beside its menu, ${variant}:`, JSON.stringify({ results: more.length, failing: more.filter((p) => !besideItsMenu(p)).length }));
-    assertChecks(`DuckDuckGo button beside its menu (${variant})`, { everyResult: more.length > 0 && more.every(besideItsMenu) });
+  await shoot('https://html.duckduckgo.com/html/?q=javascript+promises', 'ddg-html');
+  await shoot('https://lite.duckduckgo.com/lite/?q=javascript+promises', 'ddg-lite');
+}
+
+// The dial on each desktop result (utils/dial.ts): around the site's icon, or a plain disc
+// before the title where there's none, with its crown inside the window and over no text.
+if (!only || only === 'pages' || only === 'dial' || checks) {
+  const DIAL_PAGES = [
+    'https://duckduckgo.com/?q=javascript+promises',
+    'https://duckduckgo.com/?q=javascript+promises&dark=1',
+    'https://duckduckgo.com/?q=javascript+promises&wide=1',
+    'https://www.google.com/search?q=anubis',
+    'https://www.bing.com/search?q=javascript+promises',
+    'https://search.brave.com/search?q=anubis',
+    'https://www.ecosia.org/search?q=javascript+promises',
+    'https://search.yahoo.com/search?p=javascript+promises',
+    'https://html.duckduckgo.com/html/?q=javascript+promises',
+    'https://lite.duckduckgo.com/lite/?q=javascript+promises',
+  ];
+  for (const url of DIAL_PAGES) {
+    await page.goto(url);
+    // Ecosia builds its page in the browser first.
+    await page.waitForTimeout(url.includes('ecosia') ? 3500 : 700);
+    const found = await page.evaluate(() => {
+      const overlaps = (r, box) => r.width && r.right > box.left + 1 && r.left < box.right - 1 && r.bottom > box.top + 1 && r.top < box.bottom - 1;
+      // The words under the crown, leaving out the number cell DuckDuckGo Lite puts the dial in.
+      const wordsUnder = (result, box) => {
+        const walker = document.createTreeWalker(result, NodeFilter.SHOW_TEXT);
+        const range = document.createRange();
+        const words = [];
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          if (!node.textContent.trim() || node.parentElement.closest('td')?.cellIndex === 0) continue;
+          range.selectNodeContents(node);
+          if ([...range.getClientRects()].some((r) => overlaps(r, box))) words.push(node.textContent.trim().slice(0, 30));
+        }
+        return words;
+      };
+      const iconish = (el) => /^(IMG|svg|path|circle|rect|g)$/i.test(el.tagName) || /icon|pic|logo/i.test(el.className?.baseVal ?? el.className) || el.matches('td');
+      // The dial's centre is 2px in from its right edge: on the site's icon, or on its own disc.
+      const offIcon = (host, h) => {
+        if (host.hasAttribute('data-blank')) return undefined;
+        const at = document.elementFromPoint(h.right - 2, h.top + h.height / 2);
+        return !at || at === host || at.closest('anubis-weigh, anubis-bar') || iconish(at) ? undefined : `${at.tagName}.${at.className}`;
+      };
+      const results = [...document.querySelectorAll('[data-anubis-result]')].filter((r) => r.getBoundingClientRect().height);
+      const dials = results.map((result) => [result, result.querySelector('anubis-weigh')]).filter(([, host]) => host?.dataset.shape === 'dial');
+      const out = { results: results.length, dials: dials.length, blank: 0, offIcon: [], overText: [], outside: [] };
+      for (const [result, host] of dials) {
+        if (host.hasAttribute('data-blank')) out.blank++;
+        const h = host.getBoundingClientRect();
+        const site = result.querySelector('a[href]')?.href ?? '';
+        if (h.left < 0 || h.right > innerWidth) out.outside.push(site);
+        // The press area: the crown, 24px wide at the host's left.
+        out.overText.push(...wordsUnder(result, { left: h.left, right: h.left + 24, top: h.top + h.height / 2 - 14, bottom: h.top + h.height / 2 + 14 }));
+        const off = offIcon(host, h);
+        if (off) out.offIcon.push(`${site} → ${off}`);
+      }
+      return out;
+    });
+    console.log(`== dial on ${url}:`, JSON.stringify(found));
+    assertChecks(`the dial on ${url}`, {
+      everyResultHasADial: found.results > 0 && found.dials === found.results,
+      aroundTheIcon: found.offIcon.length === 0,
+      crownOverNoText: found.overText.length === 0,
+      insideTheWindow: found.outside.length === 0,
+    });
   }
-  // DuckDuckGo's open ⋯ menu is a role="menu" layer inside the result at z-index 1
-  // (read from the live page): where it reaches the button, it must cover it, not
-  // the other way round.
-  const underMenu = await page.evaluate(() => {
-    const li = document.querySelector('li[data-anubis-result]:not([data-anubis-state~="hide"])');
-    const host = li.querySelector(':scope > anubis-weigh');
-    const r = host.getBoundingClientRect();
-    const layer = document.createElement('div');
-    layer.style.cssText = 'position:absolute;top:0;right:0;width:220px;height:120px';
-    const menu = document.createElement('div');
-    menu.setAttribute('role', 'menu');
-    menu.style.cssText = 'position:absolute;inset:0;z-index:1;background:#333';
-    layer.append(menu);
-    li.querySelector('article').append(layer);
-    const l = layer.getBoundingClientRect();
-    const reaches = l.left < r.right && l.right > r.left && l.top < r.bottom && l.bottom > r.top;
-    const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
-    layer.remove();
-    return !reaches || top === menu;
-  });
-  assertChecks('ddg open menu', { coversButton: underMenu });
   // A menu that closes by a style change adds or removes no nodes, so no pass runs
   // after it: nothing a pass set while it was open may outlast it.
+  await page.goto('https://duckduckgo.com/?q=javascript+promises&dark=1');
+  await page.waitForTimeout(600);
   const afterMenu = await page.evaluate(async () => {
     const frame = () => new Promise((r) => requestAnimationFrame(() => setTimeout(r, 50)));
     const li = document.querySelector('li[data-anubis-result]:not([data-anubis-state~="hide"])');
@@ -470,39 +498,27 @@ if (!only || only === 'pages') {
     menu.style.display = 'none';
     await frame();
     const r = host.getBoundingClientRect();
-    const shown = getComputedStyle(host).visibility === 'visible' && document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2) === host;
+    const shown = getComputedStyle(host).visibility === 'visible' && document.elementFromPoint(r.left + 12, r.top + r.height / 2) === host;
     menu.remove();
     return shown;
   });
-  assertChecks('ddg closed menu', { buttonShows: afterMenu });
+  assertChecks('ddg closed menu', { dialShows: afterMenu });
   const first = page.locator('li[data-anubis-result]').first();
-  await first.locator('anubis-weigh').hover();
+  const dialBox = await first.locator('anubis-weigh').boundingBox();
+  await page.mouse.move(dialBox.x + 12, dialBox.y + dialBox.height / 2);
   await page.waitForTimeout(250);
-  const box = await first.locator('button.menu').boundingBox();
-  await page.screenshot({ path: `${SHOTS}ddg-menu-pair.png`, clip: { x: box.x - 60, y: box.y - 14, width: 110, height: 56 } });
+  await page.screenshot({ path: `${SHOTS}ddg-dial.png`, clip: { x: dialBox.x - 10, y: dialBox.y - 10, width: 260, height: dialBox.height + 20 } });
 }
 
+// The dial is drawn in the page's greys: no gold at rest or when pointed at.
 if (!only || only === 'ddg-colors' || checks) {
   for (const [mode, query] of [['light', ''], ['dark', '&dark=1']]) {
     await page.goto(`https://duckduckgo.com/?q=javascript+promises${query}`);
     await page.waitForTimeout(700);
     const selector = 'li[data-anubis-result]:not([data-anubis-state~="pin"]):not([data-anubis-state~="hide"]) > anubis-weigh';
-    const check = await page.evaluate(() =>
-      [...document.querySelectorAll('li[data-anubis-result]:not([data-anubis-state~="pin"]):not([data-anubis-state~="hide"])')].map((result) => {
-        const host = result.querySelector(':scope > anubis-weigh');
-        const menu = result.querySelector('button.menu');
-        return {
-          button: host?.style.getPropertyValue('--anubis-weigh-color').trim(),
-          menu: menu ? getComputedStyle(menu).color : '',
-        };
-      }),
-    );
-    console.log(`\n== DuckDuckGo ${mode} icon colors:`, JSON.stringify({ results: check.length, matching: check.filter((item) => item.button && item.button === item.menu).length }));
-    assertChecks(`DuckDuckGo ${mode} icon color`, {
-      allUnpinnedWeighIconsMatchMenu: check.length > 0 && check.every((item) => !!item.button && item.button === item.menu),
-    });
-    const hoverColor = await weighButtonColors(page, selector);
-    assertChecks(`DuckDuckGo ${mode} hover`, { hoverRemainsGold: hoverColor.button === hoverColor.goldInk });
+    const colors = await dialColors(page, selector);
+    console.log(`\n== DuckDuckGo ${mode} dial colors:`, JSON.stringify(colors));
+    assertChecks(`DuckDuckGo ${mode} dial`, { greyAtRest: !colors.gold.includes(colors.rest), greyPointedAt: !colors.gold.includes(colors.hover) });
   }
 }
 
@@ -1184,7 +1200,7 @@ if (!only || only === 'cleanup' || checks) {
       removesDiscussions: !braveCleanup.discussions,
       removesRelatedQueries: !braveCleanup.relatedQueries,
       removesFindElsewhere: !braveCleanup.elsewhere,
-      buttonsInOneColumn: braveButtons.buttons > 0 && braveButtons.lefts.length === 1,
+      buttonsInOneColumn: braveButtons.buttons > 0 && Math.max(...braveButtons.lefts) - Math.min(...braveButtons.lefts) <= 2,
       buttonsClearOfThumbnail: braveButtons.clearOfThumb,
       keepsVideosTab: braveCleanup.videosTab,
     });
@@ -1198,7 +1214,8 @@ if (!only || only === 'cleanup' || checks) {
     return { buttons: lefts.length, lefts: [...new Set(lefts)] };
   });
   console.log('== Bing buttons beside a picture:', JSON.stringify(bingButtons));
-  if (checks) assertChecks('Bing picture', { buttonsInOneColumn: bingButtons.buttons > 0 && bingButtons.lefts.length === 1 });
+  // The dials follow the site icons, which can sit a pixel apart.
+  if (checks) assertChecks('Bing picture', { buttonsInOneColumn: bingButtons.buttons > 0 && Math.max(...bingButtons.lefts) - Math.min(...bingButtons.lefts) <= 2 });
   // Bing: a carousel labelled "Sponsored" goes with the Ads switch, and the summary is above it either way.
   const bingSponsored = async () => {
     await page.goto('https://www.bing.com/search?q=javascript+promises&sponsored=1');
@@ -1240,19 +1257,6 @@ if (!only || only === 'cleanup' || checks) {
     beforeBuild: window.__anubisBeforeBuild,
     results: document.querySelectorAll('[data-anubis-result]').length,
   }));
-  // The button is level with the result's ⋮ menu, not between the site's name and its address.
-  const ecosiaLevel = await page.evaluate(() =>
-    [...document.querySelectorAll('[data-anubis-result]')].map((el) => {
-      const host = el.querySelector(':scope > anubis-weigh');
-      const dots = el.querySelector('.dots');
-      const a = host?.getBoundingClientRect();
-      const b = dots?.getBoundingClientRect();
-      // A hidden result shows no menu.
-      if (b && !b.width) return 0;
-      if (!a || !b) return 99;
-      return Math.abs(a.top + a.height / 2 - (b.top + b.height / 2));
-    }),
-  );
   // Results from Load more results get their site's icon drawn: Ecosia's own script isn't there to do it.
   await sw.evaluate(async () => {
     for (const tab of await chrome.tabs.query({})) await chrome.tabs.sendMessage(tab.id, { type: 'go-deeper' }).catch(() => {});
@@ -1280,11 +1284,10 @@ if (!only || only === 'cleanup' || checks) {
     linked: (await shadowLinks('anubis-summary')).some((a) => a.text === 'Open page 2'),
     noFrame: framed.length === 0,
   };
-  console.log('== Ecosia settle:', JSON.stringify({ ecosiaSettle, ecosiaLevel, ecosiaIcons, ecosiaRobot }));
+  console.log('== Ecosia settle:', JSON.stringify({ ecosiaSettle, ecosiaIcons, ecosiaRobot }));
   if (checks) {
     assertChecks('Ecosia settle', { builtUntouched: ecosiaSettle.built && ecosiaSettle.beforeBuild === false, thenWeighed: ecosiaSettle.results === JS_RESULTS.length });
     assertChecks('Ecosia icons', { drawnOnLoadedResults: ecosiaIcons.loaded > 0 && ecosiaIcons.withIcon === ecosiaIcons.loaded });
-    assertChecks('Ecosia button', { levelWithTheMenu: ecosiaLevel.length > 0 && ecosiaLevel.every((d) => d < 2) });
     assertChecks('Ecosia robot check', ecosiaRobot);
   }
   // Yahoo: its ads look like results but aren't weighed; the Ads switch removes them.
@@ -1556,67 +1559,7 @@ if (!only || only === 'cleanup' || checks) {
   console.log('== summary over result cards:', JSON.stringify(cards));
   if (checks) assertChecks('summary lined up with result cards', { found: cards.found, linedUp: cards.found && Math.abs(cards.left - cards.titleLeft) <= 1 });
 
-  // The ⚖ button sits beside a result's first row, never over its text. On DuckDuckGo
-  // it always goes beside the ⋯ menu (the owner's choice, 2026-10-08), so the mock
-  // with whole, uncut addresses and titles that run under the menu isn't checked.
-  const covering = {};
-  for (const url of [
-    'https://duckduckgo.com/?q=javascript+promises',
-    'https://www.google.com/search?q=anubis',
-    'https://www.bing.com/search?q=javascript+promises',
-    'https://search.brave.com/search?q=anubis',
-  ]) {
-    await page.goto(url);
-    await page.waitForTimeout(800);
-    covering[url] = await page.evaluate(() => {
-      let buttons = 0;
-      const over = [];
-      const above = [];
-      for (const host of document.querySelectorAll('anubis-weigh')) {
-        const b = host.getBoundingClientRect();
-        if (!b.width) continue;
-        buttons++;
-        const walker = document.createTreeWalker(host.parentElement, NodeFilter.SHOW_TEXT);
-        const range = document.createRange();
-        // Not up in the space above the result's first line (the topmost text; Google
-        // draws its heading below the address that follows it).
-        const first = document.createTreeWalker(host.parentElement, NodeFilter.SHOW_TEXT);
-        let topmost = Infinity;
-        for (let node = first.nextNode(); node; node = first.nextNode()) {
-          if (!node.textContent.trim()) continue;
-          range.selectNodeContents(node);
-          for (const r of range.getClientRects()) if (r.width) topmost = Math.min(topmost, r.top);
-        }
-        if (topmost < Infinity && (b.top + b.bottom) / 2 < topmost) above.push(host.parentElement.textContent.trim().slice(0, 40));
-        // What text shows: a long address cut off with an ellipsis doesn't reach the button.
-        const clip = (el) => {
-          const c = { left: -Infinity, right: Infinity, top: -Infinity, bottom: Infinity };
-          for (let a = el; a && a !== host.parentElement.parentElement; a = a.parentElement) {
-            const cs = getComputedStyle(a);
-            const r = a.getBoundingClientRect();
-            if (cs.overflowX !== 'visible') Object.assign(c, { left: Math.max(c.left, r.left), right: Math.min(c.right, r.right) });
-            if (cs.overflowY !== 'visible') Object.assign(c, { top: Math.max(c.top, r.top), bottom: Math.min(c.bottom, r.bottom) });
-          }
-          return c;
-        };
-        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-          if (!node.textContent.trim()) continue;
-          range.selectNodeContents(node);
-          const c = clip(node.parentElement);
-          const shown = [...range.getClientRects()].map((r) => ({ left: Math.max(r.left, c.left), right: Math.min(r.right, c.right), top: Math.max(r.top, c.top), bottom: Math.min(r.bottom, c.bottom) }));
-          if (shown.some((r) => r.bottom > b.top + 1 && r.top < b.bottom - 1 && r.right > b.left + 1 && r.left < b.right - 1)) {
-            over.push(node.textContent.trim().slice(0, 40));
-            break;
-          }
-        }
-      }
-      return { buttons, over, above };
-    });
-  }
-  console.log('== buttons over text:', JSON.stringify(covering));
-  if (checks) {
-    assertChecks('the ⚖ button on the first row, never over text', Object.fromEntries(Object.entries(covering).map(([url, c]) => [url, c.buttons > 0 && c.over.length === 0 && c.above.length === 0])));
-  }
+  // Each dial's crown is over no text: checked with the dial (the `dial` part).
   if (checks) {
     assertChecks('summary as wide as the results', {
       found: wide.found,
@@ -1706,29 +1649,26 @@ if (!only || only === 'pins' || checks) {
   for (const [index, id] of nodeIds.entries()) {
     const { nodeId: hostId } = await cdp.send('DOM.querySelector', { nodeId: id, selector: 'anubis-weigh' });
     if (!hostId) {
-      pinPresentation.push({ chip: chips[index], goldIcon: false, accessibleName: false });
+      pinPresentation.push({ chip: chips[index], fullDial: false, accessibleName: false });
       continue;
     }
     const { node: host } = await cdp.send('DOM.describeNode', { nodeId: hostId, depth: -1, pierce: true });
     const shadow = host.shadowRoots?.[0];
     const { nodeId: buttonId } = shadow ? await cdp.send('DOM.querySelector', { nodeId: shadow.nodeId, selector: 'button.weigh' }) : {};
     if (!buttonId) {
-      pinPresentation.push({ chip: chips[index], goldIcon: false, accessibleName: false });
+      pinPresentation.push({ chip: chips[index], fullDial: false, accessibleName: false });
       continue;
     }
-    const [{ computedStyle: buttonStyle }, { computedStyle: hostStyle }, { attributes }] = await Promise.all([
-      cdp.send('CSS.getComputedStyleForNode', { nodeId: buttonId }),
-      cdp.send('CSS.getComputedStyleForNode', { nodeId: hostId }),
+    // The dial shows the pin by filling all of its scale.
+    const { nodeId: pinFillId } = await cdp.send('DOM.querySelector', { nodeId: shadow.nodeId, selector: '.fill.pin' });
+    const [{ computedStyle: fillStyle }, { attributes }] = await Promise.all([
+      pinFillId ? cdp.send('CSS.getComputedStyleForNode', { nodeId: pinFillId }) : { computedStyle: [] },
       cdp.send('DOM.getAttributes', { nodeId: buttonId }),
     ]);
-    const property = (style, name) => style.find((item) => item.name === name)?.value;
     const ariaLabel = attributes[attributes.indexOf('aria-label') + 1] ?? '';
-    const goldInk = property(hostStyle, '--gold-ink');
-    const hex = goldInk?.match(/^#([\da-f]{6})$/i)?.[1];
-    const goldRgb = hex && `rgb(${parseInt(hex.slice(0, 2), 16)}, ${parseInt(hex.slice(2, 4), 16)}, ${parseInt(hex.slice(4, 6), 16)})`;
     pinPresentation.push({
       chip: chips[index],
-      goldIcon: property(buttonStyle, 'color') === goldRgb,
+      fullDial: Number(fillStyle.find((item) => item.name === 'opacity')?.value) > 0.5,
       accessibleName: ariaLabel.toLowerCase().includes('pinned'),
     });
   }
@@ -1758,7 +1698,7 @@ if (!only || only === 'pins' || checks) {
     assertChecks('pinned result indicator', {
       pinnedResultsFound: pinPresentation.length > 0,
       noRedundantPinnedChip: pinPresentation.every((pin) => !pin.chip),
-      pinIconUsesGold: pinPresentation.every((pin) => pin.goldIcon),
+      pinFillsTheDial: pinPresentation.every((pin) => pin.fullDial),
       accessibleNameRetained: pinPresentation.every((pin) => pin.accessibleName),
       noRaisedOrLoweredChips: !retainedRankChips.raised && !retainedRankChips.lowered,
       tagMarkShown: retainedRankChips.tagMark,
@@ -1789,13 +1729,13 @@ if (!only || only === 'popover') {
     await page.waitForTimeout(600);
     const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
     await target.hover();
-    await target.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+    await pressWeigh(target.locator('anubis-weigh'));
     await page.waitForTimeout(300);
     await page.screenshot({ path: `${SHOTS}${name}.png`, fullPage: false });
     console.log(`\n== ${name}: popover open =`, await page.locator('anubis-popover').count());
     if (name === 'popover-dark') {
       // A second press on the button closes the menu it opened.
-      await target.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+      await pressWeigh(target.locator('anubis-weigh'));
       await page.waitForTimeout(300);
       const closedBySecondPress = (await page.locator('anubis-popover').count()) === 0;
       console.log('== second press closes the menu:', closedBySecondPress);
@@ -1830,7 +1770,7 @@ if (!only || only === 'popover') {
   await page.waitForTimeout(600);
   const tutorial = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
   await tutorial.hover();
-  await tutorial.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+  await pressWeigh(tutorial.locator('anubis-weigh'));
   await page.waitForTimeout(300);
   console.log('\n== auto theme, dark browser, light page:', JSON.stringify(await page.evaluate(() => ({
     menu: document.querySelector('anubis-popover')?.dataset.theme,
@@ -1847,7 +1787,7 @@ if (!only || only === 'popover') {
   await page.waitForTimeout(600);
   const mdn = page.locator('[data-anubis-result]', { hasText: 'Promise - JavaScript | MDN' });
   await mdn.hover();
-  await mdn.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+  await pressWeigh(mdn.locator('anubis-weigh'));
   await page.waitForTimeout(300);
   const explanation = await shadowText('anubis-popover');
   if (!explanation.includes('Matched rule, line ')) throw new Error('The result menu does not show the matching list rule');
@@ -1918,7 +1858,7 @@ if (!only || only === 'a11y') {
 
   const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
   await target.hover();
-  await target.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+  await pressWeigh(target.locator('anubis-weigh'));
   await page.waitForTimeout(300);
   // Focus starts on the chosen ranking; back up to × and press it.
   let steps = 0;
@@ -2418,7 +2358,7 @@ if (!only || only === 'sync') {
   await page.waitForTimeout(600);
   const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
   await target.hover();
-  await target.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+  await pressWeigh(target.locator('anubis-weigh'));
   await page.waitForTimeout(300);
   // Focus starts on the chosen weight (Raise); Tab to Pin and press it.
   await page.keyboard.press('Tab');
@@ -2594,7 +2534,12 @@ if (only === 'docs') {
   const clip = async (name, selectors, pad = 14) => {
     const box = await page.evaluate(
       ({ selectors, pad }) => {
-        const rects = selectors.flatMap((s) => [...document.querySelectorAll(s)].slice(0, 1)).map((el) => el.getBoundingClientRect());
+        // A result's dial reaches past its left edge: take it in.
+        const rects = selectors
+          .flatMap((s) => [...document.querySelectorAll(s)].slice(0, 1))
+          .flatMap((el) => [el, el.querySelector(':scope > anubis-weigh')].filter(Boolean))
+          .map((el) => el.getBoundingClientRect())
+          .filter((r) => r.width);
         const x = Math.min(...rects.map((r) => r.left)) - pad;
         const y = Math.min(...rects.map((r) => r.top)) - pad;
         const right = Math.max(...rects.map((r) => r.right)) + pad;
@@ -2638,7 +2583,7 @@ if (only === 'docs') {
     await page.waitForTimeout(700);
     const target = page.locator('[data-anubis-result]', { hasText: 'The Modern JavaScript Tutorial' });
     await target.hover();
-    await target.locator('anubis-weigh').click({ position: { x: 13, y: 13 } });
+    await pressWeigh(target.locator('anubis-weigh'));
     await page.waitForTimeout(300);
     await clip(`menu${suffix}`, ['anubis-popover', '[data-anubis-result]:has(a[href*="javascript.info"])'], 12);
     await page.keyboard.press('Escape');

@@ -10,7 +10,7 @@ Anubis hiển thị bằng ngôn ngữ của trình duyệt khi có bản dịch
 
 ## Cài đặt trên Firefox cho Android
 
-Hỗ trợ Firefox cho Android còn ở mức thử nghiệm. Hãy lấy [Anubis từ Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/) trên điện thoại, trong Firefox. Anubis đọc được bố cục điện thoại của Google, DuckDuckGo và Bing; các công cụ tìm kiếm khác có thể chưa dùng được ở đó. Trên điện thoại, nút ⚖ nằm ở cuối tiêu đề mỗi kết quả, và menu của nó trượt lên từ cuối màn hình. Firefox cho Android để các tiện ích trong menu thay vì thanh công cụ, nên hãy mở Anubis từ đó. Nếu có gì trông sai, hãy [báo cáo](https://github.com/Bishop-V/anubis/issues) kèm ảnh chụp màn hình.
+Hỗ trợ Firefox cho Android còn ở mức thử nghiệm. Hãy lấy [Anubis từ Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/) trên điện thoại, trong Firefox. Anubis đọc được bố cục điện thoại của Google, DuckDuckGo và Bing; các công cụ tìm kiếm khác có thể chưa dùng được ở đó. Trên điện thoại, mỗi kết quả có một nút ⚖ ở cuối tiêu đề, và menu của nó trượt lên từ cuối màn hình. Firefox cho Android để các tiện ích trong menu thay vì thanh công cụ, nên hãy mở Anubis từ đó. Nếu có gì trông sai, hãy [báo cáo](https://github.com/Bishop-V/anubis/issues) kèm ảnh chụp màn hình.
 
 ## Cài đặt trên Chrome
 
@@ -56,7 +56,7 @@ Bản tóm tắt một dòng phía trên kết quả cho biết Anubis đã làm
 
 ## Ẩn một trang web
 
-Di chuột lên một kết quả và nhấn nút ⚖ ở góc trên bên phải của nó. Trong menu, chọn **Ẩn**. Trên điện thoại, nút ⚖ nằm ở cuối tiêu đề của kết quả, và menu trượt lên từ cuối màn hình.
+Mỗi kết quả có một vòng chỉ báo quanh biểu tượng của trang web: một nửa vòng tròn với một chiếc vương miện nhỏ ở bên trái. Nhấn vào vương miện, rồi trong menu, chọn **Ẩn**. Trên kết quả hình ảnh và video, vương miện nằm ở góc trên bên phải của ảnh. Trên điện thoại, hãy nhấn nút ⚖ ở cuối tiêu đề của kết quả, và menu trượt lên từ cuối màn hình.
 
 ![Menu trên một kết quả: Ẩn, Hạ, Bình thường, Nâng và Ghim, với các nhãn bên dưới](../../img/menu.png)
 

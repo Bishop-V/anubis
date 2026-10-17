@@ -46,7 +46,7 @@ Some lists in the directory are made from data other projects collect. Every wee
 | **Self-hosted FOSS** | [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted-data) by its contributors (CC BY-SA 3.0) | Labels the websites of about 1,000 free programs you can run yourself **FOSS**, the same label as the FOSS tools list. Programs under licences that aren't free are left out. It never moves or hides anything. |
 | **Independent wikis** | [Indie Wiki Buddy](https://github.com/KevinPayravi/indie-wiki-buddy) by Kevin Payravi (MIT) | Raises independent wikis, labelled **Independent wiki**, and lowers the Fandom, Fextralife, and Neoseeker wikis they replace, labelled **Has independent wiki**. |
 
-To add a site to one of these lists, or to have one removed, contribute to the project it comes from, through the links above. Anubis copies the data as it is, and its next weekly update brings in the change. **Wrong? Report it** in the ⚖ menu opens an issue on that project's tracker.
+To add a site to one of these lists, or to have one removed, contribute to the project it comes from, through the links above. Anubis copies the data as it is, and its next weekly update brings in the change. **Wrong? Report it** in the result's menu opens an issue on that project's tracker.
 
 To stop using one, unsubscribe or turn it off like any list. To keep a list but not one of its labels, turn that tag off in **Settings → Tags**, or choose what it does there.
 
@@ -56,10 +56,10 @@ Each list in **Your lists** has a switch to turn it off for a while and a button
 
 ## Report a mistake in a list
 
-If a list hides, ranks, or tags a site wrongly, open the ⚖ menu on the result. Under **Why**, "Wrong? Report it to *list name*" opens a pre-filled issue on the list's issue tracker, with the rule that matched and the result's address. Say what should change, then send it. Nothing is sent until you submit it yourself.
+If a list hides, ranks, or tags a site wrongly, open the result's menu. Under **Why**, "Wrong? Report it to *list name*" opens a pre-filled issue on the list's issue tracker, with the rule that matched and the result's address. Say what should change, then send it. Nothing is sent until you submit it yourself.
 
 This works for lists published in a GitHub, GitLab, or Codeberg repository, and for lists that name their own issue tracker. To overrule a list straight away, rank the site yourself; a report gets the list fixed for everyone.
 
 ## Suggest a site to a list
 
-Once you've ranked or tagged a site yourself, the ⚖ menu offers "Suggest it to *list name*" for lists that take suggestions and don't mention the site yet. It opens a pre-filled issue on GitHub, GitLab, or Codeberg for you to check and send. Nothing is sent until you submit it yourself.
+Once you've ranked or tagged a site yourself, the result's menu offers "Suggest it to *list name*" for lists that take suggestions and don't mention the site yet. It opens a pre-filled issue on GitHub, GitLab, or Codeberg for you to check and send. Nothing is sent until you submit it yourself.

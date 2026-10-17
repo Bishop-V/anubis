@@ -18,7 +18,7 @@ Anubis hoạt động trên công cụ tìm kiếm bạn vẫn dùng. Lựa ch�
 
 ## Tính năng
 
-- **Xếp hạng bất kỳ trang web nào từ kết quả.** Ẩn, hạ, nâng hoặc ghim một trang web bằng nút trên bất kỳ kết quả nào. [Xếp hạng trang web](./ranking.md)
+- **Xếp hạng bất kỳ trang web nào từ kết quả.** Ẩn, hạ, nâng hoặc ghim một trang web bằng vòng chỉ báo trên bất kỳ kết quả nào. [Xếp hạng trang web](./ranking.md)
 - **Nhãn.** Kết quả có các nhãn như “Official docs”, “Discussion”, “Paywalled”, “AI-generated” hoặc “Independent wiki”. Bạn quyết định mỗi nhãn làm gì, từ chỉ hiện nhãn đến ẩn mọi kết quả có nhãn đó. [Nhãn](./tags.md)
 - **Danh sách ai cũng có thể xuất bản.** Đăng ký các danh sách gắn nhãn và xếp hạng trang web giúp bạn. Danh sách là một tệp văn bản trong kho Git, nên ai cũng có thể xuất bản một danh sách và đề xuất thay đổi cho danh sách. Brave Goggles, bộ quy tắc uBlacklist và danh sách tên miền thuần túy dùng được nguyên trạng. Một số danh sách được tạo mỗi tuần từ dữ liệu của các dự án khác, như HUGE AI Blocklist và Indie Wiki Buddy, và ghi công các dự án đó. [Đăng ký danh sách](./lists.md) và [Xuất bản danh sách](./publish-a-list.md)
 - **Gỡ khung.** Gỡ câu trả lời AI, khung video, “Mọi người cũng hỏi” và nhiều thứ khác khỏi mọi lần tìm kiếm. [Gỡ khung](./clean-up.md)

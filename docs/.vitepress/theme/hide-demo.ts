@@ -1,5 +1,5 @@
 import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
-import { balance, fold, html, ICON, LEVELS, tagMark, type Level } from './demo-parts';
+import { balance, dial, fold, html, ICON, LEVELS, tagMark, type Level } from './demo-parts';
 
 // The Introduction's demo: a drawn results page where a pointer opens the button
 // beside a result, presses Hide in its menu, and the page answers: the menu closes,
@@ -69,12 +69,12 @@ export default defineComponent({
       if (pointer) await moveTo(weighRef.value, 1000);
       if (!alive()) return;
       if (pointer) await click();
-      // The menu opens under the button, its right edge on the button's.
+      // The menu opens under the crown, its left edge on the crown's.
       const b = root.value!.getBoundingClientRect();
       const w = weighRef.value!.getBoundingClientRect();
       const width = Math.min(312, b.width - 16);
       menuPos.width = width;
-      menuPos.left = Math.max(8, w.right - b.left - width);
+      menuPos.left = Math.max(8, Math.min(w.left - b.left, b.width - width - 8));
       menuPos.top = w.bottom - b.top + 6;
       state.open = true;
       await nextTick();
@@ -125,14 +125,12 @@ export default defineComponent({
         return h('div', { class: 'demo-result', key: r.id }, [
           fold(!(weigh && state.hidden), 'full', [
             h('div', { class: 'site' }, [
-              h('span', { class: 'favicon', style: { background: r.icon[0], color: r.icon[1] } }, r.icon[2]),
+              dial(h('span', { class: 'favicon', style: { background: r.icon[0], color: r.icon[1] } }, r.icon[2]), r.chip === 'raised' ? 'raise' : 'normal', {
+                crown: weigh ? weighRef : undefined,
+                active: weigh && state.open,
+              }),
               h('span', { class: 'site-name' }, r.site),
               h('span', { class: 'url' }, r.url),
-              h('span', {
-                ref: weigh ? weighRef : undefined,
-                class: ['demo-weigh', 'hd-weigh', r.chip === 'raised' ? 'raise' : 'normal', { active: weigh && state.open }],
-                innerHTML: r.chip === 'raised' ? ICON.raise : ICON.normal,
-              }),
             ]),
             h('div', { class: 'title' }, r.title),
             r.chip

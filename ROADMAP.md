@@ -65,7 +65,8 @@ Started: a weekly job (`.github/workflows/sources.yml`) turns other projects' da
 
 Not goals; nothing here is planned.
 
-- **Where a tag shows.** Give each tag a choice of "On the result" (the chip, as now), "In the menu only" (under **Why** in the ⚖ menu, still counting for filtering and ranking), or "Off", building on `muted` in `TagPref` (`utils/matcher.ts`). A list could suggest the starting choice for its tags, so broad categories start in the menu only.
+- **The dial on phones.** Phones keep the ⚖ button on the title's line, while computers have the dial round the site's icon (`docs/experiments/design.md`, "The dial on each result"). Try a dial there once it can be big enough to press without crowding the title.
+- **Where a tag shows.** Give each tag a choice of "On the result" (the chip, as now), "In the menu only" (under **Why** in the result menu, still counting for filtering and ranking), or "Off", building on `muted` in `TagPref` (`utils/matcher.ts`). A list could suggest the starting choice for its tags, so broad categories start in the menu only.
 
 ## Not planned
 

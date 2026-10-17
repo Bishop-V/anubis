@@ -62,13 +62,21 @@ html[data-anubis-hide='dim'] [data-anubis-state~='hide'] > anubis-bar {
 /* Lowered results only move down: they aren't faded, since a lowered site is still
    one you may want to read. The "Lowered" label under the title says why it moved. */
 
-/* Pinned: a thin gold frame drawn outside the box, so layout doesn't move. */
+/* Pinned: a thin frame in the page's own text colour, drawn outside the box, so layout
+   doesn't move. Grey like the dial, which shows the pin too. */
 [data-anubis-state~='pin'] {
-  outline: 1px solid rgb(212 166 55 / 0.55);
+  outline: 1px solid color-mix(in srgb, currentColor 30%, transparent);
   outline-offset: 7px;
 }
 [data-anubis-state~='pin']:not([data-anubis-frame-inside]) {
   border-radius: 10px;
+}
+/* A result with the dial has its frame drawn with the dial, taking in the crown on its left.
+   A result in a table spans several rows, each of which would get its own frame: its full
+   dial says it's pinned instead. */
+[data-anubis-state~='pin'][data-anubis-dial-frame],
+tr[data-anubis-state~='pin'] {
+  outline: none;
 }
 /* On a phone, a result that reaches the window's edge gets its frame on its own edge,
    where it isn't cut off (placeOnTitle in ui.ts), with the result's own corners: a
@@ -83,7 +91,7 @@ html[data-anubis-hide='dim'] [data-anubis-state~='hide'] > anubis-bar {
   position: absolute;
   inset: 0;
   z-index: 2;
-  border: 2px solid rgb(212 166 55 / 0.7);
+  border: 2px solid color-mix(in srgb, currentColor 40%, transparent);
   border-radius: inherit;
   pointer-events: none;
 }

@@ -11,7 +11,7 @@
 - **Sind es die Web-Ergebnisse?** Anubis lässt die Tabs für Bilder, Videos, News und Shopping in Ruhe.
 - **Ist die Erweiterung noch geladen?** Wenn sie aus dem Quellcode installiert ist, entfernt Firefox sie bei jedem Schließen. Lade sie erneut über `about:debugging`.
 
-## Manche Ergebnisse haben keine Tags oder keine Schaltfläche ⚖
+## Manche Ergebnisse haben keine Tags oder keine Skala
 
 Suchmaschinen ändern ihre Seiten ohne Vorankündigung, und ein neues Layout kann Ergebnisse vor Anubis verbergen. Bitte [melde es](https://github.com/Bishop-V/anubis/issues) mit:
 
@@ -61,4 +61,4 @@ Das ist **Einstellungen → Bereiche entfernen → Immer den Tab „Web“ öffn
 
 ## Etwas wurde ausgeblendet, und ich weiß nicht, warum
 
-Öffne das ⚖-Menü am Ergebnis. **Warum** listet jede Liste oder jedes Tag hinter der Entscheidung auf. Deine eigene Einstufung schlägt die Listen und die Tags, die du auf Ausblenden gesetzt hast, und addiert sich zu den Tags, die du auf Anheften, Aufwerten oder Abwerten gesetzt hast. Wenn eine Liste es falsch gemacht hat, sagt „Falsch? Melde es *Listenname*“ es den Betreuern der Liste ([Einen Fehler in einer Liste melden](./lists.md)).
+Öffne das Menü des Ergebnisses. **Warum** listet jede Liste oder jedes Tag hinter der Entscheidung auf. Deine eigene Einstufung schlägt die Listen und die Tags, die du auf Ausblenden gesetzt hast, und addiert sich zu den Tags, die du auf Anheften, Aufwerten oder Abwerten gesetzt hast. Wenn eine Liste es falsch gemacht hat, sagt „Falsch? Melde es *Listenname*“ es den Betreuern der Liste ([Einen Fehler in einer Liste melden](./lists.md)).

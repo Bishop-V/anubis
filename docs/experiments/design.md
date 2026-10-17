@@ -2,6 +2,27 @@
 
 The look, the wording, and Anubis's own pages. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## The dial on each result (2026-10-16)
+
+- **Asked for:** the ⚖ button in each result's top-right corner looked fine on DuckDuckGo but awkward against a pinned result's frame. It should be quiet, and always in the same place. Designs were drawn as mocks on a design canvas before any code.
+- **Tried and dropped:**
+  - the button beside the site's name, cut into the pinned frame, shown only on hover, or leading the tag line;
+  - a column on the left of the results, saying what moved;
+  - a badge on the site's icon. The icon itself can't be the button: DuckDuckGo uses it to search the site;
+  - a pocket-balance gauge, a weight dial, and five dots with one lit;
+  - the scale beside the icon rather than round it.
+- **Chosen: a scale round the site's icon, with a watch crown that opens the menu** (`utils/dial.ts`, `entrypoints/content/dial.ts`).
+  - The scale is the left half of a ring, in a 2px line with round ends. Its zero is at 9 o'clock, so up means raised and down lowered, matching the result's height on the page. Raise and Lower fill it the same way, by how far the site moved, a quarter at most.
+  - Pin fills the whole half circle, distinct from the most a raise can show. Hide is the empty line: a cross-out and a dashed line both read as noise.
+  - Greys only, no gold. The pinned frame turned grey too, and takes in the crown rather than cutting through it.
+  - The crown went through many rounds. Guards on the ring itself crowded it, so they moved to a wider circle, at the same 2px weight. The crown sits a layer behind the scale, so its tip never pokes through, and slides out on hover.
+- **Where there's no icon** (Yahoo, DuckDuckGo's HTML and Lite pages), the dial goes round a plain disc before the title. A hidden result's line has its dial round the line's eye, or in the discs' column where the page has no icons, so the column doesn't jump.
+- **Image and video results:** a ring has no room on a picture.
+  - Tried: moving the pictures to make room, a rail or a dial under the picture, a straight line inside it, the dial in the caption, and six wilder ideas.
+  - Chosen: the same crown and an upright scale on a small dark tab in the picture's top-right corner, where the ⚖ button was. The tab is white on 62% black, so it reads on any picture.
+- **Phones keep the ⚖ button** on the title's line for now: a dial there would be hard to press and would crowd the title. To be reconsidered.
+- **On Brave**, the crown reaches a few pixels past the card's left edge, since its icon sits close to it. It stays inside the window (`dial` e2e part).
+
 ## Tag marks and a balance that weighs (2026-10-08)
 
 - **Asked for, later the same day: a pin sign.** No tag could pin, so a sign alone would never show. Tags got a **Pin** choice in Settings → Tags: results carrying the tag go to the top as if you'd pinned the site, with the pinned frame, and the pin sign, a 10px version of the ranking's pin, takes the tag's diamond's place. Like Raise and Lower, it adds to your own ranking, so your Lower still orders a pinned result among the others; a Hide tag still hides, and your own ranking beats a Hide tag as before. Lists still can't pin.
