@@ -1,5 +1,5 @@
 /* The extension's colours: Graphite, neutral greys with the text colour as the accent
-   (assets/theme.css). Only the logo keeps the brand gold. */
+   (assets/theme.css), as the logo is. */
 :root {
   --vp-c-brand-1: #1f1f22;
   --vp-c-brand-2: #3a3a40;

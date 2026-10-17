@@ -128,11 +128,12 @@ export default defineBackground(() => {
         if (tabId === undefined) return;
         const n = hiddenCount(message.stats);
         void action.setBadgeText({ tabId, text: n ? String(n) : '' });
-        void action.setBadgeBackgroundColor({ tabId, color: '#d4a637' });
-        // Firefox only: dark text reads better on gold.
+        // A mid grey, Graphite's --muted, reads on light and dark toolbars alike.
+        void action.setBadgeBackgroundColor({ tabId, color: '#5f5f66' });
+        // Firefox only: Chrome chooses the text's colour itself.
         (action as { setBadgeTextColor?: (d: object) => Promise<void> }).setBadgeTextColor?.({
           tabId,
-          color: '#1b1a16',
+          color: '#ffffff',
         });
         return;
       }

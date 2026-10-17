@@ -1,8 +1,8 @@
 /* Shared look for the popup, Settings, and the welcome page: Graphite, neutral greys with
    no gold, the same palette as what Anubis adds to search pages (entrypoints/content/shadow.css).
    Night is the default. Controls are flat and quiet; the accent, the text colour itself, is
-   kept for the few things that matter (primary action, focus, a choice made). Only the logo
-   keeps the brand gold. <html data-theme> is set by utils/theme.ts from the setting. */
+   kept for the few things that matter (primary action, focus, a choice made). The logo is
+   Graphite too. <html data-theme> is set by utils/theme.ts from the setting. */
 
 *,
 *::before,

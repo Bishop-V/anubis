@@ -1011,7 +1011,7 @@ if (!only || only === 'off') {
 }
 
 if (!only || only === 'palette') {
-  // Plain colours: every host and the page say so, and the pinned frame loses its gold.
+  // Plain colours: every host and the page say so, and the pinned frame takes the page's text colour.
   const [sw] = ctx.serviceWorkers();
   const setPalette = (palette) =>
     sw.evaluate(async (palette) => {
@@ -2644,11 +2644,16 @@ if (only === 'docs') {
   // in docs/public so the site serves them at fixed addresses.
   const png = (name) => `data:image/png;base64,${readFileSync(`${DOCS_IMG}${name}.png`).toString('base64')}`;
   const logo = readFileSync(fileURLToPath(new URL('../public/anubis.svg', import.meta.url)), 'utf8');
-  // The jackal without its tile; the type is store/render.mjs's.
-  const jackal = logo.replace(/<rect[^>]*\/>/, '').replace('<svg ', '<svg width="46" height="46" ');
+  // The jackal without its tile, in the slide's text colour on its ground; the type is store/render.mjs's.
+  const jackal = (c) =>
+    logo
+      .replace(/<rect[^>]*\/>/, '')
+      .replace('<svg ', '<svg width="46" height="46" ')
+      .replaceAll('fill="#e8e8ea"', `fill="${c.name}"`)
+      .replace(/(<ellipse[^>]*fill=")[^"]*"/, `$1${c.ground}"`);
   const serif = `'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', 'Bitstream Charter', Charter, Georgia, serif`;
   const themes = {
-    // Graphite, as the extension draws (assets/theme.css); only the jackal keeps its gold.
+    // Graphite, as the extension and its logo are drawn (assets/theme.css).
     light: { ground: '#fcfcfd', name: '#1f1f22', text: '#3a3a40', label: '#5f5f66', note: '#85858c', rule: '#c4c4ca', edge: '#dcdce0', suffix: '' },
     dark: { ground: '#1c1c1f', name: '#e8e8ea', text: '#e8e8ea', label: '#9d9da3', note: '#76767c', rule: '#4a4a50', edge: '#37373b', suffix: '-dark' },
   };
@@ -2662,7 +2667,7 @@ if (only === 'docs') {
     await slide.setContent(`<!doctype html><meta charset="utf-8">
       <body style="margin:0;width:960px;height:540px;background:${c.ground};color:${c.text};font-family:${serif};overflow:hidden;position:relative">
         <div style="position:absolute;left:44px;right:48px;top:30px;display:flex;align-items:center;gap:12px">
-          ${jackal}
+          ${jackal(c)}
           <span style="color:${c.name};font-size:34px;line-height:1">Anubis</span>
           <span style="margin-left:14px;padding-left:18px;border-left:1px solid ${c.rule};font-size:19px;line-height:30px">Hide, rank, and tag search results</span>
           <span style="margin-left:auto;font-size:12px;color:${c.note}">Shown on a test page</span>

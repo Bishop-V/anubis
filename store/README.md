@@ -154,4 +154,4 @@ In `store/screenshots/` now (2026-09-30, Chrome, Google in dark mode): `1-popup.
 
 ## Images in this folder
 
-`icon-128.png` and `promo-440x280.png` are rendered from `public/anubis.svg`. After changing the logo, run `CHROMIUM_PATH=$(which chromium) node store/render.mjs`.
+`icon-128.png`, `promo-440x280.png`, `marquee-1400x560.png`, and the toolbar icons in `public/icon/` are rendered from `public/anubis.svg`, in Graphite. After changing the logo, copy it to `anubis.svg` and `docs/public/anubis.svg`, then run `CHROMIUM_PATH=$(which chromium) node store/render.mjs`.
