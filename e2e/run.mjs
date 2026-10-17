@@ -446,7 +446,7 @@ if (!only || only === 'pages' || only === 'column' || checks) {
     const found = await page.evaluate(() => {
       // Where a result's words or site icon start.
       const startOf = (result) => {
-        const lefts = [...result.querySelectorAll('img, svg, [class*="icon" i]')].map((el) => el.getBoundingClientRect()).filter((r) => r.width && r.width <= 40).map((r) => r.left);
+        const lefts = [...result.querySelectorAll('img, svg, [class*="icon" i], .tpic')].map((el) => el.getBoundingClientRect()).filter((r) => r.width && r.width <= 40).map((r) => r.left);
         const walker = document.createTreeWalker(result, NodeFilter.SHOW_TEXT);
         const range = document.createRange();
         for (let node = walker.nextNode(); node; node = walker.nextNode()) {
@@ -457,7 +457,7 @@ if (!only || only === 'pages' || only === 'column' || checks) {
         return Math.min(...lefts);
       };
       const results = [...document.querySelectorAll('[data-anubis-result]')].filter((r) => r.getBoundingClientRect().height);
-      const out = { results: results.length, inColumn: 0, notInColumn: [], outside: [], overText: [], notLevel: [], offGap: [], lefts: [] };
+      const out = { results: results.length, inColumn: 0, notInColumn: [], outside: [], overText: [], notLevel: [], offGap: [], offIcon: [], lefts: [] };
       for (const result of results) {
         const host = result.querySelector(':scope > anubis-weigh');
         const site = result.querySelector('a[href]')?.href ?? '';
@@ -476,6 +476,9 @@ if (!only || only === 'pages' || only === 'column' || checks) {
         // Only what's in view can be pointed at.
         const at = h.top >= 0 && h.bottom <= innerHeight ? document.elementFromPoint(h.left + h.width / 2, h.top + h.height / 2) : host;
         if (at !== host) out.overText.push(`${site} → ${at?.tagName}.${at?.className}`);
+        // Centred on the site's icon, where it has one: its name and address can be taller or shorter than it.
+        const icon = [...result.querySelectorAll('.favicon, .tpic')].map((el) => el.getBoundingClientRect()).find((r) => r.width >= 10 && r.width <= 40);
+        if (icon && icon.height && !result.matches('[data-anubis-state~="hide"]') && Math.abs((icon.top + icon.bottom) / 2 - (h.top + h.bottom) / 2) > 1) out.offIcon.push(`${site} ${Math.round((h.top + h.bottom - icon.top - icon.bottom) / 2)}`);
         // Within the result's first 80 pixels: on its first row, not halfway down it.
         if (h.top < box.top - 8 || h.bottom > box.top + 80) out.notLevel.push(site);
       }
@@ -488,6 +491,7 @@ if (!only || only === 'pages' || only === 'column' || checks) {
       overNothingElse: found.overText.length === 0,
       levelWithTheFirstRow: found.notLevel.length === 0,
       twelvePixelsFromTheResult: found.offGap.length === 0,
+      levelWithTheIcon: found.offIcon.length === 0,
       // Hidden results' lines included: one straight column.
       oneColumn: Math.max(...found.lefts) - Math.min(...found.lefts) <= 1,
     });
