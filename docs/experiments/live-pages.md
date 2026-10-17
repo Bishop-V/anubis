@@ -11,6 +11,10 @@ A screenshot of the Images tab showed pictures in rows of different widths, a ho
 - **Raise and Pin on cards.** Reranking forced a flex column, which breaks a grid, so cards were never moved. They now move with `order` alone (`data-anubis-rerank="order"` leaves the list's layout alone), and only where the list is a grid or flex container. **Not done:** a list whose places a script sets ignores `order`, so on DuckDuckGo's Images tab Raise and Pin probably still do nothing. Moving the pictures in the DOM would reorder them, but the page's own scripts own those nodes and it can't be tried without the live markup.
 - **The header "rendered very oddly"** was the summary above, in a cell of a row; not separately examined.
 
+## Startpage's sponsored result stayed (2026-10-17)
+
+The Ads switch left Startpage's paid result. Its "Sponsored" is a plain span inside `#adBlock` (`role="region"`, `aria-label="Sponsored Links"`, Google's ad markup), which the label search did not remove. A mock built from a label and a guessed structure passed before the fix, so the live markup was needed. Fixed with `ads: '#adBlock'`; the `checks` part asserts it. The ad is in the page itself, not an iframe.
+
 ## Reported from live pages: Startpage and DuckDuckGo (2026-10-08)
 
 Screenshots from use, not yet checked against the live markup, so each fix is modelled on what the screenshot shows.
