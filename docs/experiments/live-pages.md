@@ -2,6 +2,15 @@
 
 What was checked on real search pages, and what is still unverified. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Reported from live pages: DuckDuckGo Images (2026-10-17)
+
+A screenshot of the Images tab showed pictures in rows of different widths, a hole at the end of the first row where a picture was hidden, the summary as a small cell at the start of the fourth row, and Raise and Pin doing nothing. The live markup wasn't available (this environment can't reach DuckDuckGo), so the fixes are modelled on the screenshot: the `rows=1` Images mock places each picture with a script, on load and on resize, as the page seems to.
+
+- **Hole where a picture was hidden.** The page's script placed the rows before Anubis hid anything, and runs again only on a resize. When the pictures on show change (and on the first pass if some are already hidden), Anubis now dispatches a `resize` event (`nudgeLayout`). The `checks` part compares the rows before and after a resize and failed on the previous build. **Unconfirmed live:** that DuckDuckGo lays out again on a `resize` event rather than only on a size change it observes itself.
+- **Summary among the pictures.** Before the grid was found by `display: grid`; any card tab now puts it before the results area, not inside it.
+- **Raise and Pin on cards.** Reranking forced a flex column, which breaks a grid, so cards were never moved. They now move with `order` alone (`data-anubis-rerank="order"` leaves the list's layout alone), and only where the list is a grid or flex container. **Not done:** a list whose places a script sets ignores `order`, so on DuckDuckGo's Images tab Raise and Pin probably still do nothing. Moving the pictures in the DOM would reorder them, but the page's own scripts own those nodes and it can't be tried without the live markup.
+- **The header "rendered very oddly"** was the summary above, in a cell of a row; not separately examined.
+
 ## Reported from live pages: Startpage and DuckDuckGo (2026-10-08)
 
 Screenshots from use, not yet checked against the live markup, so each fix is modelled on what the screenshot shows.

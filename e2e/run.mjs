@@ -200,6 +200,7 @@ function mockPages() {
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
     'https://duckduckgo.com/?q=javascript+promises&iax=videos&ia=videos': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'videos' }),
     'https://duckduckgo.com/?q=javascript+promises&iax=images&ia=images': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'images' }),
+    'https://duckduckgo.com/?q=javascript+promises&iax=images&ia=images&rows=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'images', rows: true }),
     ...Object.fromEntries(ENGINE_TABS.map(([url, engine, tab]) => [url, engineTab(engine, tab, JS_RESULTS)])),
     'https://duckduckgo.com/?q=javascript+promises&wide=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { wide: true }),
     // As on the live page, each result's words start inside its padded box.
@@ -1491,7 +1492,7 @@ if (!only || only === 'cleanup' || checks) {
   });
   if (checks) assertChecks('DuckDuckGo side panel is not a result', { found: sidePanel.found, notAResult: !sidePanel.result });
 
-  // DuckDuckGo's Videos and Images tabs: cards in a grid, hidden and tagged, not reranked.
+  // DuckDuckGo's Videos and Images tabs: cards in a grid, hidden and tagged, and moved only with `order`.
   // Earlier parts change the personal list and tag choices, so start from the seeded ones.
   await ctx.serviceWorkers()[0].evaluate(
     (personal) => chrome.storage.sync.set({ 'personal.0': personal, personal: { chunks: 1, updatedAt: Date.now() }, tagPrefs: { 'ai-slop': { action: 'hide' } } }),
@@ -1516,7 +1517,7 @@ if (!only || only === 'cleanup' || checks) {
         states: cards.map((li) => li.getAttribute('data-anubis-state')).join('|'),
         hideStyle: document.documentElement.getAttribute('data-anubis-hide'),
         buttonsInCards: buttons.length > 0 && buttons.every((b) => b.closest('li')?.contains(b)),
-        stillGrid: getComputedStyle(ol).display === 'grid' && !ol.hasAttribute('data-anubis-rerank'),
+        stillGrid: getComputedStyle(ol).display === 'grid' && ['', 'order'].includes(ol.getAttribute('data-anubis-rerank') ?? ''),
         // Shown cards fill the grid's cells in order, with no gaps.
         noGaps: shown.every((li, i) => i === 0 || li.getBoundingClientRect().top >= shown[i - 1].getBoundingClientRect().top - 1) && new Set(shown.map((li) => Math.round(li.getBoundingClientRect().top))).size === Math.ceil(shown.length / 4),
         summaryAbove: !!summary && summary.bottom <= g.top + 1 && summary.width >= g.width - 1,
@@ -1536,6 +1537,27 @@ if (!only || only === 'cleanup' || checks) {
     }
   }
 
+  // DuckDuckGo's Images tab as the live page lays it out: pictures in rows a script places, not a CSS grid.
+  // The summary goes above the pictures, not among them, and hiding some leaves no hole in the rows.
+  await page.goto('https://duckduckgo.com/?q=javascript+promises&iax=images&ia=images&rows=1');
+  await page.waitForFunction(() => !!document.querySelector('ul.rows > li[data-anubis-state~="hide"]') && !!document.querySelector('anubis-summary'), null, { timeout: 5000 }).catch(() => {});
+  await page.waitForTimeout(300);
+  const rows = await page.evaluate(async () => {
+    const ul = document.querySelector('ul.rows');
+    const summary = document.querySelector('anubis-summary');
+    const places = () => [...ul.children].filter((li) => li.getBoundingClientRect().height > 0).map((li) => { const b = li.getBoundingClientRect(); return `${Math.round(b.left)},${Math.round(b.top)}`; }).join(' ');
+    const settled = places();
+    window.dispatchEvent(new Event('resize'));
+    return {
+      hidden: [...ul.children].filter((li) => li.getBoundingClientRect().height === 0).length,
+      summaryOutside: !!summary && !ul.contains(summary) && summary.getBoundingClientRect().bottom <= ul.getBoundingClientRect().top + 1,
+      noHole: settled === places(),
+    };
+  });
+  console.log('== DuckDuckGo images in rows:', JSON.stringify(rows));
+  await page.screenshot({ path: `${SHOTS}ddg-images-rows.png` });
+  if (checks) assertChecks('DuckDuckGo images in rows', { hidesSome: rows.hidden > 0, summaryOutside: rows.summaryOutside, noHole: rows.noHole });
+
   // The same tabs on Brave, Ecosia, Kagi, and Startpage: every card found, some hidden without gaps,
   // buttons on the cards, and the grid left as it was.
   for (const [url, engine, tab] of ENGINE_TABS) {
@@ -1552,7 +1574,7 @@ if (!only || only === 'cleanup' || checks) {
         found: cards.filter((c) => c.hasAttribute('data-anubis-result')).length,
         hidden: cards.length - shown.length,
         buttonsInCards: buttons.length > 0 && buttons.every((b) => cards.some((c) => c.contains(b))),
-        stillGrid: getComputedStyle(el).display === 'grid' && !el.hasAttribute('data-anubis-rerank'),
+        stillGrid: getComputedStyle(el).display === 'grid' && ['', 'order'].includes(el.getAttribute('data-anubis-rerank') ?? ''),
         noGaps: new Set(shown.map((c) => Math.round(c.getBoundingClientRect().top))).size === Math.ceil(shown.length / 4),
       };
     });

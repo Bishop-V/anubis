@@ -133,10 +133,10 @@ html[data-anubis-palette='plain'] [data-anubis-highlight] {
 
 /* Reranking: results keep their place in the DOM (the page's scripts own it) and
    move visually with CSS `order` instead. */
-[data-anubis-rerank] {
+[data-anubis-rerank]:not([data-anubis-rerank='order']) {
   display: flex !important;
   flex-direction: column !important;
 }
-[data-anubis-rerank] > * {
+[data-anubis-rerank]:not([data-anubis-rerank='order']) > * {
   flex: none;
 }

@@ -209,11 +209,13 @@ export default defineContentScript({
         for (const row of result.extras) row.toggleAttribute('data-anubis-filtered', out);
       }
 
-      // Cards sit in a grid, which reranking's flex column would break.
+      // Cards sit in a grid, which reranking's flex column would break: they move with `order` alone,
+      // and only where their list is a grid or a flex row (a script-placed layout ignores `order`).
       const cards = results.some((r) => r.card);
-      rerank(results, scores, rules.settings.rerank && !engine.table && !cards);
+      rerank(results, scores, rules.settings.rerank && !engine.table, cards);
       const pinned = results.filter((r) => verdictFor(r).level === 'pin' && !verdictFor(r).hidden).map((r) => r.container);
       makeRoomForPins(new Set(engine.table || cards ? [] : pinned));
+      nudgeLayout(results, (r) => !verdictFor(r).hidden || reveal || shown.has(r.url));
 
       if (rules.settings.showSummary && !engine.table) {
         const ai = leadingBlocks(engine, results, rules.settings.cleanup, clutter);
@@ -551,7 +553,16 @@ export default defineContentScript({
 // Reranking moves results with CSS `order` inside a flex column, so the page's own
 // scripts (which own these nodes) never see them move. Each boost point moves a
 // result up one position; pins go to the top.
-function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enabled: boolean) {
+/** Whether anything in this list moves. Cards keep the page's layout, so only a list that honours `order` can move them. */
+function movesList(parent: HTMLElement, scores: Map<HTMLElement, number>, enabled: boolean, cards: boolean): boolean {
+  const ordered = !cards || /flex|grid/.test(getComputedStyle(parent).display);
+  return enabled && ordered && [...parent.children].some((c) => (scores.get(c as HTMLElement) ?? 0) !== 0);
+}
+
+/** The value `order` on a reranked list leaves its own layout alone (page.css); the empty one makes it a flex column. */
+const rerankMark = (cards: boolean) => (cards ? 'order' : '');
+
+function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enabled: boolean, cards = false) {
   const parents = new Set<HTMLElement>();
   const containers = new Set<Element>(results.map((r) => r.container));
   for (const r of results) if (r.container.parentElement) parents.add(r.container.parentElement);
@@ -559,15 +570,14 @@ function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enable
 
   for (const parent of parents) {
     const children = [...parent.children] as HTMLElement[];
-    const moves = enabled && children.some((c) => (scores.get(c) ?? 0) !== 0);
-    if (!moves) {
+    if (!movesList(parent, scores, enabled, cards)) {
       if (parent.hasAttribute('data-anubis-rerank')) {
         parent.removeAttribute('data-anubis-rerank');
         for (const c of children) c.style.removeProperty('order');
       }
       continue;
     }
-    if (!parent.hasAttribute('data-anubis-rerank')) parent.setAttribute('data-anubis-rerank', '');
+    if (!parent.hasAttribute('data-anubis-rerank')) parent.setAttribute('data-anubis-rerank', rerankMark(cards));
     // What follows the last result (the engine's pager, related searches) stays
     // below them all, however far a result is lowered.
     let lastResult = -1;
@@ -586,6 +596,21 @@ function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enable
       if (child.style.order !== String(order)) child.style.setProperty('order', String(order));
     });
   }
+}
+
+// Some engines place cards with a script (DuckDuckGo's Images tab sets each picture's size and
+// place when it loads and when the window resizes), so a card that goes away leaves a hole until
+// the script runs again. When the cards on show change, say the window resized.
+let shownCards = '';
+function nudgeLayout(results: FoundResult[], isShown: (r: FoundResult) => boolean) {
+  if (!results.some((r) => r.card)) return;
+  const shown = results.filter(isShown);
+  const total = results.length;
+  const now = shown.map((r) => r.url).join('\n');
+  // The first pass counts when it has already hidden some: the script laid them out before that.
+  const changed = now !== shownCards && (shownCards !== '' || shown.length < total);
+  shownCards = now || '\0';
+  if (changed) window.dispatchEvent(new Event('resize'));
 }
 
 // A pinned result's frame is an outline 8px outside it (page.css), which moves
@@ -634,6 +659,11 @@ function makeRoomForPins(pinned: Set<HTMLElement>) {
   }
 }
 
+/** Cards, or any results in a CSS grid, where the summary would take a cell. Cards the engine places with a script (DuckDuckGo's pictures in rows) have no grid to go by. */
+function inGrid(results: FoundResult[], area: HTMLElement): boolean {
+  return results.some((r) => r.card) || /grid/.test(getComputedStyle(area).display);
+}
+
 /**
  * Where the summary goes: at the top of the results area, above the first result
  * and above any panels (images, videos) before it. The area is the list holding
@@ -646,7 +676,7 @@ function summaryAnchor(results: FoundResult[], engine: EngineDef): { before?: HT
   const area = (engine.boundary && main.closest<HTMLElement>(engine.boundary)) || main;
   // Results in a grid (DuckDuckGo's Videos and Images tabs): inside it, the summary
   // would take a cell, so it goes before the grid.
-  if (/grid/.test(getComputedStyle(area).display) && area.parentElement) return { before: area, area, column: main };
+  if (area.parentElement && inGrid(results, area)) return { before: area, area, column: main };
   for (const child of area.children) {
     if (child instanceof HTMLElement && !/^(ANUBIS-SUMMARY|SCRIPT|STYLE|TEMPLATE|LINK|META)$/.test(child.tagName)) return { before: child, area, column: main };
   }
