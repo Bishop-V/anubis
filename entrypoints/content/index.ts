@@ -554,9 +554,9 @@ export default defineContentScript({
 // scripts (which own these nodes) never see them move. Each boost point moves a
 // result up one position; pins go to the top.
 /** Whether anything in this list moves. Cards keep the page's layout, so only a list that honours `order` can move them. */
-function movesList(parent: HTMLElement, children: HTMLElement[], scores: Map<HTMLElement, number>, enabled: boolean, cards: boolean): boolean {
+function movesList(parent: HTMLElement, scores: Map<HTMLElement, number>, enabled: boolean, cards: boolean): boolean {
   const ordered = !cards || /flex|grid/.test(getComputedStyle(parent).display);
-  return enabled && ordered && children.some((c) => (scores.get(c) ?? 0) !== 0);
+  return enabled && ordered && [...parent.children].some((c) => (scores.get(c as HTMLElement) ?? 0) !== 0);
 }
 
 /** The value `order` on a reranked list leaves its own layout alone (page.css); the empty one makes it a flex column. */
@@ -570,7 +570,7 @@ function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enable
 
   for (const parent of parents) {
     const children = [...parent.children] as HTMLElement[];
-    if (!movesList(parent, children, scores, enabled, cards)) {
+    if (!movesList(parent, scores, enabled, cards)) {
       if (parent.hasAttribute('data-anubis-rerank')) {
         parent.removeAttribute('data-anubis-rerank');
         for (const c of children) c.style.removeProperty('order');
