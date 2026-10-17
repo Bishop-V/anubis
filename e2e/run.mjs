@@ -313,7 +313,7 @@ async function clickShadowButton(hostSelector, text, index = 0) {
   };
   const textOf = (node) => (node.nodeType === 3 ? node.nodeValue : (node.children ?? []).map(textOf).join(''));
   const buttons = (node) => [
-    ...(node.nodeName === 'BUTTON' && (text instanceof RegExp ? text.test(textOf(node).trim()) : textOf(node).trim() === text) ? [node] : []),
+    ...(node.nodeName === 'BUTTON' && textOf(node).trim() === text ? [node] : []),
     ...[...(node.children ?? []), ...(node.shadowRoots ?? [])].flatMap(buttons),
   ];
   const host = nodeIds[index] && find(root, nodeIds[index]);
@@ -2018,11 +2018,13 @@ if (!only || only === 'filter') {
   const shown = () =>
     page.evaluate(() => [...document.querySelectorAll('[data-anubis-result]')].filter((el) => getComputedStyle(el).display !== 'none').length);
   const all = await shown();
+  // The tag's button reads "Discussion" plus its effect, if any, so find its full name first.
+  const chipName = (await axTree()).find((n) => n.role === 'button' && n.name.startsWith('Discussion'))?.name;
   const pressDiscussion = async () => {
     const hosts = await page.locator('anubis-chips').count();
     for (let i = 0; i < hosts; i++) {
       try {
-        return await clickShadowButton('anubis-chips', /^Discussion/, i);
+        return await clickShadowButton('anubis-chips', chipName, i);
       } catch {}
     }
   };
