@@ -21,7 +21,7 @@ import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync
 import { tmpdir } from 'node:os';
 import { delimiter, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ANUBIS_PAGE2, ANUBIS_PAGE3, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, bingChallenge, bingMobile, brave, duckduckgo, duckduckgoHtml, duckduckgoLite, duckduckgoMobile, google, googleMobile, ecosia, yahoo } from './fixtures.mjs';
+import { ANUBIS_PAGE2, ANUBIS_PAGE3, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, bingChallenge, bingMobile, brave, duckduckgo, duckduckgoHtml, duckduckgoLite, duckduckgoMobile, google, googleMobile, ecosia, startpage, yahoo } from './fixtures.mjs';
 import { ENGINE_TABS, engineTab } from './tab-fixtures.mjs';
 
 const EXT = fileURLToPath(new URL('../.output/chrome-mv3', import.meta.url));
@@ -186,6 +186,7 @@ function mockPages() {
       request.resourceType() === 'document' ? bing('javascript promises', JS_MORE) : bingChallenge(),
     'https://www.bing.com/search?q=javascript+promises&thumb=1': bing('javascript promises', JS_RESULTS, { thumb: true }),
     'https://www.bing.com/search?q=javascript+promises&skipped=1': bing('javascript promises', JS_RESULTS, { skipped: true }),
+    'https://www.startpage.com/do/search?q=javascript+promises': startpage('javascript promises', JS_RESULTS),
     'https://www.ecosia.org/search?q=javascript+promises': ecosia('javascript promises', JS_RESULTS),
     'https://www.ecosia.org/search?q=javascript+promises&p=1': ecosia('javascript promises', JS_MORE),
     // Page 2 answers a request with Ecosia's robot check (a 403). A page load would get results, but the live site
@@ -1264,6 +1265,28 @@ if (!only || only === 'cleanup' || checks) {
       summaryAboveWhenOff: bingSponsoredOff.summaryAbove,
       removedWhenOn: !bingSponsoredOn.shown,
       summaryAboveWhenOn: bingSponsoredOn.summaryAbove,
+    });
+  }
+  // Startpage: the paid result goes with the Ads switch, and the results stay.
+  const startpageAds = async () => {
+    await page.goto('https://www.startpage.com/do/search?q=javascript+promises');
+    await page.waitForTimeout(1000);
+    return page.evaluate(() => ({
+      adShown: (document.querySelector('#adBlock')?.getBoundingClientRect().height ?? 0) > 0,
+      results: document.querySelectorAll('[data-anubis-result]').length,
+      resultsShown: [...document.querySelectorAll('.w-gl .result')].every((el) => el.getBoundingClientRect().height > 0),
+    }));
+  };
+  await setSettings({ cleanup: { ...all, ads: false } });
+  const startpageAdsOff = await startpageAds();
+  await setSettings({ cleanup: { ...all, ads: true } });
+  const startpageAdsOn = await startpageAds();
+  console.log('== Startpage ads:', JSON.stringify({ startpageAdsOff, startpageAdsOn }));
+  if (checks) {
+    assertChecks('Startpage ads', {
+      shownWhenOff: startpageAdsOff.adShown,
+      removedWhenOn: !startpageAdsOn.adShown,
+      resultsKept: startpageAdsOn.results === JS_RESULTS.length && startpageAdsOn.resultsShown,
     });
   }
   // Bing skips drawing results it takes to be off-screen (content-visibility: auto, at a placeholder height). Reported

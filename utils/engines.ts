@@ -357,6 +357,9 @@ export const ENGINES: EngineDef[] = [
       { item: '.article', link: 'a', title: 'h3' },
       { item: '.vo-bg > .result', link: 'a', title: 'h3' },
     ],
+    // The paid result: a `#adBlock` region labelled "Sponsored Links", ahead of the results, whose "Sponsored" is a
+    // plain span (reported on a live page, 2026-10-17).
+    ads: '#adBlock',
     button: { top: '4px', right: '4px' },
     // One post form per page number, each with the page in a hidden `page` field
     // (reported on a live page, 2026-10; unverified against the fetch itself).

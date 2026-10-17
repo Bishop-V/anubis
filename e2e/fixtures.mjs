@@ -817,6 +817,18 @@ export function ecosia(query, results) {
   </script></body></html>`;
 }
 
+// Startpage. The paid result is a `#adBlock` region around Google's ad markup, ahead of a "Web results" label
+// (reported on a live page, 2026-10-17, trimmed); the rest of the page is a guess.
+export function startpage(query, results) {
+  const items = results
+    .map(([url, title, snippet]) => `<div class="result css-1x2y3z"><a class="result-link" href="${url}"><span>${esc(url)}</span><h2>${esc(title)}</h2></a><p>${esc(snippet)}</p></div>`)
+    .join('');
+  const ad = `<div id="adBlock" aria-label="Sponsored Links" role="region"><div id="ssrad-master" class="parent_container"><div id="e1" class="i_ div clicktrackedAd_js"><div class="i_ div"><span class="p_ span">Sponsored</span></div><div><a class="a" href="https://syndicatedsearch.example/aclk?adurl=https://www.hillspet.example/">hillspet.example</a><a class="a" href="https://syndicatedsearch.example/aclk?adurl=https://www.hillspet.example/"><span>Six of the Friendliest ${esc(query)} Breeds</span></a><p>If you're looking for a friendly ${esc(query)} to welcome into your home.</p></div></div></div></div>`;
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(query)} - Startpage</title>
+  <style>body{margin:0;font:14px/1.5 Arial,sans-serif;background:#fff;color:#222}section#main{width:620px;margin:24px 120px}.result{margin:0 0 24px;position:relative}.result h2{margin:4px 0;font-size:18px}</style>
+  </head><body><section id="main"><div class="css-col">${ad}<div class="css-weblbl">Web results</div><div class="w-gl">${items}</div></div></section></body></html>`;
+}
+
 // ---------------------------------------------------------------- DuckDuckGo (HTML) and (Lite)
 // The pages DuckDuckGo serves without scripts, after their markup (uBlacklist's serpinfo).
 // HTML shows each site's icon on the address line under the title; Lite is a table with
