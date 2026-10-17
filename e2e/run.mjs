@@ -198,6 +198,7 @@ function mockPages() {
     'https://search.yahoo.com/search?p=javascript+promises': yahoo('javascript promises', JS_RESULTS),
     'https://search.yahoo.com/search?p=javascript+promises&long=1': yahoo('javascript promises', JS_RESULTS, { longTitle: true, rail: true }),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
+    'https://duckduckgo.com/?q=javascript+promises&ad=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ad: true }),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
     'https://duckduckgo.com/?q=javascript+promises&iax=videos&ia=videos': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'videos' }),
     'https://duckduckgo.com/?q=javascript+promises&iax=images&ia=images': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'images' }),
@@ -1345,6 +1346,33 @@ if (!only || only === 'cleanup' || checks) {
     assertChecks('Ecosia settle', { builtUntouched: ecosiaSettle.built && ecosiaSettle.beforeBuild === false, thenWeighed: ecosiaSettle.results === JS_RESULTS.length });
     assertChecks('Ecosia icons', { drawnOnLoadedResults: ecosiaIcons.loaded > 0 && ecosiaIcons.withIcon === ecosiaIcons.loaded });
     assertChecks('Ecosia robot check', ecosiaRobot);
+  }
+  // DuckDuckGo: a text ad looks like a result (an h2 and a link) but isn't weighed; the Ads switch removes it.
+  const ddgAds = async () => {
+    await page.goto('https://duckduckgo.com/?q=javascript+promises&ad=1');
+    await page.waitForTimeout(1000);
+    return page.evaluate(() => {
+      const ad = document.querySelector('[data-layout="ad"]');
+      return {
+        results: document.querySelectorAll('[data-anubis-result]').length,
+        buttonsOnAd: ad?.querySelectorAll('anubis-weigh, [data-anubis-result]').length ?? 0,
+        adShown: !!ad && getComputedStyle(ad).display !== 'none' && ad.getBoundingClientRect().height > 0,
+      };
+    });
+  };
+  await setSettings({ cleanup: { ...all, ads: false } });
+  const ddgAdsOff = await ddgAds();
+  await setSettings({ cleanup: { ...all, ads: true } });
+  const ddgAdsOn = await ddgAds();
+  const ddgRemoved = (await statsNow())?.removed;
+  console.log('== DuckDuckGo ads:', JSON.stringify({ ddgAdsOff, ddgAdsOn, ddgRemoved }));
+  if (checks) {
+    assertChecks('DuckDuckGo ads', {
+      adIsNotAResult: ddgAdsOff.results === JS_RESULTS.length && ddgAdsOff.buttonsOnAd === 0,
+      adShownWhenOff: ddgAdsOff.adShown,
+      adRemovedWhenOn: !ddgAdsOn.adShown && ddgAdsOn.results === JS_RESULTS.length,
+      summaryCountsIt: ddgRemoved?.ads === 1,
+    });
   }
   // Yahoo: its ads look like results but aren't weighed; the Ads switch removes them.
   const yahooAds = async () => {

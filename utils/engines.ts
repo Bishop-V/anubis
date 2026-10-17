@@ -240,6 +240,9 @@ export const ENGINES: EngineDef[] = [
       { item: '[data-testid="news-vertical"] li:has(> article)', link: 'article > a', title: 'h2' },
     ],
     cleanupSelectors: { ai: '[data-testid="duckassist-answer-content"], [data-react-module-id="wikinlp"]' },
+    // A text ad is a list item of its own (`data-layout="ad"`, reported on a live page, 2026-10-17) with an
+    // `h2` and a link like a result's, plus sitelinks.
+    ads: 'li[data-layout="ad"]',
     // Right of DuckDuckGo's own ⋯ menu on each result, as a second option: under
     // it, the button sat on the thumbnails some results have below the menu.
     button: { top: '6px', right: '36px', besideMenu: true },
