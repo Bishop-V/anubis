@@ -85,8 +85,8 @@ export function lineUpInColumn(host: HTMLElement, container: HTMLElement, bar: D
   return true;
 }
 
-/** What can be a site's icon: a picture, or a box named for one (DuckDuckGo's favicon). */
-const ICONS = 'img, svg, [class*="icon" i]';
+/** What can be a site's icon: a picture, or a box named for one (DuckDuckGo's favicon, Bing's tpic). */
+const ICONS = 'img, svg, [class*="icon" i], .tpic';
 
 /** Small and square, like a site's icon. */
 const iconSized = (r: DOMRect): boolean => Math.min(r.width, r.height) >= 10 && Math.max(r.width, r.height) <= 40 && Math.abs(r.width - r.height) <= 6;
@@ -102,7 +102,19 @@ const isIcon = (el: Element): boolean =>
 function firstRowOf(container: HTMLElement): Row | undefined {
   let row: Row | undefined = firstLineOf(container);
   for (const el of container.querySelectorAll(ICONS)) row = iconAbove(el, row) ?? row;
-  return row && { top: row.top, bottom: row.bottom, left: rowStart(container, row) };
+  if (!row) return undefined;
+  // An icon that leads the row sets its height: the words beside it (a name over an address) can sit off its middle.
+  const icon = leadingIcon(container, row);
+  return { top: icon?.top ?? row.top, bottom: icon?.bottom ?? row.bottom, left: rowStart(container, row) };
+}
+
+/** The site's icon that starts the row, level with its words and not above them. */
+function leadingIcon(container: HTMLElement, row: Row): DOMRect | undefined {
+  for (const el of container.querySelectorAll(ICONS)) {
+    const r = el.getBoundingClientRect();
+    if (iconInRow(el, row) !== undefined && r.left <= row.left) return r;
+  }
+  return undefined;
 }
 
 /** Where the row starts: at an icon that leads it, or at its words. */

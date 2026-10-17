@@ -4,6 +4,7 @@ The look, the wording, and Anubis's own pages. Part of [Experiments and decision
 
 ## The column on the left, in Graphite (2026-10-17)
 
+- **Level with the icon, not the first line of words (live DuckDuckGo and Bing):** both put a 28 to 32px site icon beside a name over an address, so the first line sat about 9px above the icon's middle and the button with it. The button now centres on the icon that starts the row. Bing's icon is a `.tpic` box, which no icon selector matched. The `column` check asserts it (`levelWithTheIcon`); the DuckDuckGo `padded` mock now has the live icon and two lines.
 - **Asked for:** the result menu was cluttered: a third of the size, a smaller title, no gold, and a new palette. Then the dial had to go too: it only works where a result shows an icon (Mojeek has none). Designs were drawn as mocks on a design canvas before any code, as for the dial.
 - **Tried and dropped, for the menu:**
   - horizontal strips above the result: too cramped, then too spread out, and hard to read;
