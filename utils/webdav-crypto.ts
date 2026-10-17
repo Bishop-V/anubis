@@ -1,5 +1,14 @@
 import { readBackup, toBackup, type SyncData } from './backup';
 
+// End-to-end encryption of the WebDAV sync file, with the browser's own Web Crypto,
+// so no third-party crypto library ships. AES-256-GCM encrypts the file and detects
+// tampering, with a fresh random IV on every write. The key comes from the user's
+// passphrase through PBKDF2-SHA-256 with a random salt, so there is no key file to
+// store or send. The passphrase stays in local extension storage, never in browser
+// sync or the file, so background sync can run; it isn't protected from someone with
+// access to the browser profile. This hides the file's contents only: the server can
+// still see connections, and delete, withhold, or replay an older copy.
+
 const ITERATIONS = 600_000;
 const SALT_BYTES = 16;
 const IV_BYTES = 12;

@@ -18,27 +18,27 @@ intro:
 
 highlights:
   - title: Rank any site from the results
-    details: Hide, lower, raise, or pin a site with the button beside any result. Your choice holds on every search.
+    details: Hide, lower, raise, or pin a site from any result. It holds on every search.
     link: /guide/ranking
     linkText: How ranking works
   - title: Tags you can act on
-    details: Results carry labels like “Official docs” or “Paywalled”. Decide what each tag does, from just a label to hiding every result that has it.
+    details: Labels like “Official docs” or “Paywalled”. You choose what each one does.
     link: /guide/tags
     linkText: About tags
   - title: Lists anyone can publish
-    details: A list is a text file in a Git repository. Brave Goggles and uBlacklist rulesets work unchanged.
+    details: A list is a text file. Brave Goggles and uBlacklist rulesets work too.
     link: /guide/lists
     linkText: Subscribing to lists
   - title: Remove panels
-    details: Remove AI answers, video panels, and “People also ask” on every search. You choose which.
+    details: Remove AI answers, video panels, and “People also ask”.
     link: /guide/clean-up
     linkText: What it removes
 
 closing:
   title: Nothing to sign up for
   details:
-    - Anubis has no server and collects nothing. Your choices stay in your browser, unless you connect a storage server of your own to sync between browsers.
-    - "It works on Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, and Yandex, in Firefox and Chrome. Mojeek and Edge are experimental: they haven't been tried on the live site or in the browser yet."
+    - Anubis has no server and collects nothing. Your choices stay in your browser.
+    - Works on Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo, and Yandex, in Firefox and Chrome.
   link: /guide/privacy
   linkText: Privacy and permissions
 ---

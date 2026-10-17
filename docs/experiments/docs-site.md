@@ -4,6 +4,7 @@ The documentation site and its screenshots. Part of [Experiments and decisions](
 
 ## Documentation site
 
+- **Shortened the wiki (2026-10-17):** the pages explained every edge case and read longer than the features are, about 17,000 words in English. They now say what each feature does and where to find it, in about 5,000. Headings that Settings or other pages link to were kept; detail that matters to maintainers moved to code comments (the sync encryption's rationale is in `utils/webdav-crypto.ts`). The German, Vietnamese, and Chinese pages were retranslated from the short English.
 - **Reported (2026-10-08): tags cut off on the left in the homepage demo.** Folds clip what overflows them so they can open and close, and a tag sits at the fold's left edge: its turned diamond reaches 1.2px past its box, and a raise or lower mark starts 2px before it, so both lost their left side. The folds holding tags now have 4px of padding each side, taken back by a negative margin, so nothing moves. `e2e/homepage.mjs` scrolls through the demo and fails if a mark crosses the side of the fold that clips it; it found all three tags cut on the previous build.
 Modelled on [uBlacklist's documentation](https://ublacklist.github.io/docs/introduction): an introduction, getting started with screenshots, then one page per feature, publishing, and a directory of lists.
 

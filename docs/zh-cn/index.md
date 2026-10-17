@@ -33,27 +33,27 @@ demo:
 
 highlights:
   - title: 直接在结果中为任何网站排名
-    details: 用任意结果旁边的按钮隐藏、降低、提升或置顶一个网站。你的选择对每次搜索都有效。
+    details: 在任意结果上隐藏、降低、提升或置顶一个网站。对每次搜索都有效。
     link: /zh-cn/guide/ranking
     linkText: 排名如何运作
   - title: 可以由你决定作用的标签
-    details: 结果带有“Official docs”或“Paywalled”之类的标签。每个标签有什么作用由你决定，从只显示标签，到隐藏带有该标签的所有结果。
+    details: “Official docs”或“Paywalled”之类的标签。每个标签的作用由你决定。
     link: /zh-cn/guide/tags
     linkText: 关于标签
   - title: 任何人都能发布的列表
-    details: 列表是 Git 仓库中的一个文本文件。Brave Goggles 和 uBlacklist 规则集无需修改即可使用。
+    details: 列表就是一个文本文件。Brave Goggles 和 uBlacklist 规则集也能用。
     link: /zh-cn/guide/lists
     linkText: 订阅列表
   - title: 移除面板
-    details: 在每次搜索中移除 AI 回答、视频面板和“相关问题”。移除哪些，由你选择。
+    details: 移除 AI 回答、视频面板和“相关问题”。
     link: /zh-cn/guide/clean-up
     linkText: 它会移除什么
 
 closing:
   title: 无需注册
   details:
-    - Anubis 没有服务器，也不收集任何内容。你的选择保存在你的浏览器中，除非你连接自己的存储服务器，在浏览器之间同步。
-    - "Anubis 支持 Google、DuckDuckGo、Bing、Brave Search、Startpage、Ecosia、Kagi、Yahoo 和 Yandex，可用于 Firefox 和 Chrome。Mojeek 和 Edge 还处于实验阶段：它们尚未在真实网站或浏览器中试过。"
+    - Anubis 没有服务器，也不收集任何内容。你的选择保存在你的浏览器中。
+    - 支持 Google、DuckDuckGo、Bing、Brave Search、Startpage、Ecosia、Kagi、Yahoo 和 Yandex，可用于 Firefox 和 Chrome。
   link: /zh-cn/guide/privacy
   linkText: 隐私与权限
 ---

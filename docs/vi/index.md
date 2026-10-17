@@ -33,27 +33,27 @@ demo:
 
 highlights:
   - title: Xếp hạng bất kỳ trang web nào từ kết quả
-    details: Ẩn, hạ, nâng hoặc ghim một trang web bằng nút bên cạnh bất kỳ kết quả nào. Lựa chọn của bạn áp dụng cho mọi lần tìm kiếm.
+    details: Ẩn, hạ, nâng hoặc ghim một trang web từ bất kỳ kết quả nào. Áp dụng cho mọi lần tìm kiếm.
     link: /vi/guide/ranking
     linkText: Cách xếp hạng hoạt động
   - title: Nhãn bạn có thể điều khiển
-    details: Kết quả có các nhãn như “Official docs” hay “Paywalled”. Bạn quyết định mỗi nhãn làm gì, từ chỉ hiện nhãn đến ẩn mọi kết quả có nhãn đó.
+    details: Các nhãn như “Official docs” hay “Paywalled”. Bạn chọn mỗi nhãn làm gì.
     link: /vi/guide/tags
     linkText: Về nhãn
   - title: Danh sách ai cũng có thể xuất bản
-    details: Danh sách là một tệp văn bản trong kho Git. Brave Goggles và bộ quy tắc uBlacklist dùng được nguyên trạng.
+    details: Danh sách là một tệp văn bản. Brave Goggles và bộ quy tắc uBlacklist cũng dùng được.
     link: /vi/guide/lists
     linkText: Đăng ký danh sách
   - title: Gỡ khung
-    details: Gỡ câu trả lời AI, khung video và “Mọi người cũng hỏi” khỏi mọi lần tìm kiếm. Bạn chọn gỡ những gì.
+    details: Gỡ câu trả lời AI, khung video và “Mọi người cũng hỏi”.
     link: /vi/guide/clean-up
     linkText: Anubis gỡ những gì
 
 closing:
   title: Không cần đăng ký gì cả
   details:
-    - Anubis không có máy chủ và không thu thập gì. Lựa chọn của bạn nằm trong trình duyệt của bạn, trừ khi bạn kết nối một máy chủ lưu trữ của riêng mình để đồng bộ hóa giữa các trình duyệt.
-    - "Anubis hoạt động trên Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo và Yandex, trong Firefox và Chrome. Mojeek và Edge còn ở mức thử nghiệm: chúng chưa được thử trên trang thật hay trong trình duyệt."
+    - Anubis không có máy chủ và không thu thập gì. Lựa chọn của bạn nằm trong trình duyệt của bạn.
+    - Hoạt động trên Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo và Yandex, trong Firefox và Chrome.
   link: /vi/guide/privacy
   linkText: Quyền riêng tư và quyền hạn
 ---

@@ -48,7 +48,7 @@ Read these only when the task touches them, and only the relevant section:
 - Wording follows `.claude/skills/ux-heuristics`: labels say what happens in plain words. The Anubis motif stays in the logo and the menu's balance, never in a function's name. One word per concept: a site's *ranking* is Hide, Lower, Normal, Raise, or Pin. Icons only where universally understood (`ICON_GEAR`, ×), and every icon-only button gets an `aria-label` and a tooltip.
 - Nothing is hidden or removed without a trace: the summary says what Anubis did, and "Show hidden" undoes it for the page.
 - Ask for as few permissions as possible.
-- Docs are for people who use the extension, in the interface's plain words. When a feature changes, update every relevant guide and reference, and `README.md` together with `docs/guide/introduction.md`'s Features (`tests/readme.test.ts`). Keep docs page paths and headings stable: settings link to them.
+- Docs are for people who use the extension, in the interface's plain words. Keep wiki pages short: say what a feature does and where to find it, in a few lines. How it works, edge cases, and rationale go in code comments or `DEVELOPMENT.md`. When a feature changes, update every relevant guide and reference, and `README.md` together with `docs/guide/introduction.md`'s Features (`tests/readme.test.ts`). Keep docs page paths and headings stable: settings link to them.
 - Search pages can only be checked for real in a browser; `npm run e2e` covers the logic against mocks.
 
 ## Working agreements
