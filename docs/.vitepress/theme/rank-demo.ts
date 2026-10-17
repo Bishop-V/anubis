@@ -1,5 +1,5 @@
 import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
-import { balance, fold, html, ICON, LEVELS, tagMark, type Level } from './demo-parts';
+import { balance, dial, fold, html, ICON, LEVELS, tagMark, type Level } from './demo-parts';
 
 // Ranking sites, played out: a pointer opens the button beside the last result and
 // presses Pin, and the result moves to the top in its gold frame. Then it lowers
@@ -100,8 +100,8 @@ export default defineComponent({
       const w = weighs.get(id)!.getBoundingClientRect();
       const width = Math.min(312, b.width - 16);
       menuPos.width = width;
-      menuPos.left = Math.max(8, w.right - b.left - width);
-      // Under the button, unless that runs past the page: then above it.
+      menuPos.left = Math.max(8, Math.min(w.left - b.left, b.width - width - 8));
+      // Under the crown, unless that runs past the page: then above it.
       const below = w.bottom - b.top + 6;
       menuPos.top = below + 250 > b.height ? Math.max(8, w.top - b.top - 256) : below;
       state.menuLevel = state.levels[id] ?? 'normal';
@@ -177,7 +177,6 @@ export default defineComponent({
       const sentence = parts.length ? `Anubis ${parts.join(' and ')} of 4 results.` : 'Anubis left all 4 results as they were.';
       const result = (r: Result) => {
         const level = state.levels[r.id] ?? 'normal';
-        const icon = level === 'pin' ? ICON.pin : level === 'lower' ? ICON.lower : ICON.normal;
         return h(
           'div',
           {
@@ -187,14 +186,12 @@ export default defineComponent({
           },
           [
             h('div', { class: 'site' }, [
-              h('span', { class: 'favicon', style: { background: r.icon[0], color: r.icon[1] } }, r.icon[2]),
+              dial(h('span', { class: 'favicon', style: { background: r.icon[0], color: r.icon[1] } }, r.icon[2]), level, {
+                crown: (el: unknown) => (el instanceof HTMLElement ? weighs.set(r.id, el) : weighs.delete(r.id)),
+                active: state.menuFor === r.id,
+              }),
               h('span', { class: 'site-name' }, r.site),
               h('span', { class: 'url' }, r.url),
-              h('span', {
-                ref: (el: unknown) => (el instanceof HTMLElement ? weighs.set(r.id, el) : weighs.delete(r.id)),
-                class: ['demo-weigh', 'hd-weigh', level, { active: state.menuFor === r.id }],
-                innerHTML: icon,
-              }),
             ]),
             h('div', { class: 'title' }, r.title),
             r.tag ? h('div', { class: 'hd-chips' }, [tagMark(r.tag[0], r.tag[1])]) : null,

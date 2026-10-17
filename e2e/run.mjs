@@ -2552,7 +2552,12 @@ if (only === 'docs') {
   const clip = async (name, selectors, pad = 14) => {
     const box = await page.evaluate(
       ({ selectors, pad }) => {
-        const rects = selectors.flatMap((s) => [...document.querySelectorAll(s)].slice(0, 1)).map((el) => el.getBoundingClientRect());
+        // A result's dial reaches past its left edge: take it in.
+        const rects = selectors
+          .flatMap((s) => [...document.querySelectorAll(s)].slice(0, 1))
+          .flatMap((el) => [el, el.querySelector(':scope > anubis-weigh')].filter(Boolean))
+          .map((el) => el.getBoundingClientRect())
+          .filter((r) => r.width);
         const x = Math.min(...rects.map((r) => r.left)) - pad;
         const y = Math.min(...rects.map((r) => r.top)) - pad;
         const right = Math.max(...rects.map((r) => r.right)) + pad;

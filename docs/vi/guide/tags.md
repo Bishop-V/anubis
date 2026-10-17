@@ -8,9 +8,9 @@ Nhãn là những nhãn nhỏ dưới tiêu đề của kết quả: “Official
 
 ## Tự gắn nhãn cho một trang web
 
-Trên bất kỳ trang web nào, hãy mở cửa sổ bật lên của Anubis trên thanh công cụ. Trong **Nhãn**, nhấn một nhãn để thêm nó vào trang web, hoặc nhấn lại để gỡ. Để tạo nhãn mới cho trang web, hãy nhập tên vào **Nhãn mới** và nhấn **Thêm nhãn**. Trên trang tìm kiếm, menu ⚖ trên mỗi kết quả có các điều khiển tương tự.
+Trên bất kỳ trang web nào, hãy mở cửa sổ bật lên của Anubis trên thanh công cụ. Trong **Nhãn**, nhấn một nhãn để thêm nó vào trang web, hoặc nhấn lại để gỡ. Để tạo nhãn mới cho trang web, hãy nhập tên vào **Nhãn mới** và nhấn **Thêm nhãn**. Trên trang tìm kiếm, menu của mỗi kết quả có các điều khiển tương tự.
 
-Nhãn riêng của bạn nằm trong **Nhãn của bạn**, và các nhãn mà danh sách của bạn dùng nằm trong **Nhãn từ danh sách**. Bạn có thể thêm một nhãn từ danh sách vào bất kỳ trang web nào, và điều đó chỉ thay đổi danh sách của riêng bạn, không phải danh sách kia. Khi có hơn tám nhãn, phần còn lại được thu gọn sau **Hiện thêm … nhãn**; các nhãn đang có trên trang web luôn hiện. Nhãn bạn gắn cho trang web được in đậm và gạch chân bằng màu của nó. Nhãn do danh sách gắn cho trang web ở dạng thường, kèm tên danh sách (“từ Paywalls”): chỉ danh sách đó mới gỡ được, và **Sai? Báo cáo** trong menu ⚖ báo cho những người duy trì danh sách.
+Nhãn riêng của bạn nằm trong **Nhãn của bạn**, và các nhãn mà danh sách của bạn dùng nằm trong **Nhãn từ danh sách**. Bạn có thể thêm một nhãn từ danh sách vào bất kỳ trang web nào, và điều đó chỉ thay đổi danh sách của riêng bạn, không phải danh sách kia. Khi có hơn tám nhãn, phần còn lại được thu gọn sau **Hiện thêm … nhãn**; các nhãn đang có trên trang web luôn hiện. Nhãn bạn gắn cho trang web được in đậm và gạch chân bằng màu của nó. Nhãn do danh sách gắn cho trang web ở dạng thường, kèm tên danh sách (“từ Paywalls”): chỉ danh sách đó mới gỡ được, và **Sai? Báo cáo** trong menu của kết quả báo cho những người duy trì danh sách.
 
 ## Nhãn thuộc về ai
 
@@ -45,7 +45,7 @@ Dưới tên mỗi nhãn, một dòng cho biết những trang web nào có nhã
 
 ### Xem nhãn làm gì với một kết quả
 
-Dưới một kết quả, mỗi nhãn bắt đầu bằng một hình thoi có màu của nó. Khi nhãn làm kết quả đó di chuyển hoặc bị ẩn, một chiếc ghim (nhãn ghim nó), mũi tên lên (nhãn nâng nó), mũi tên xuống (nhãn hạ nó) hoặc con mắt gạch chéo (nhãn ẩn nó) thế chỗ hình thoi. Dấu này cho thấy lựa chọn của bạn cho nhãn, hoặc, khi bạn theo các danh sách, điều danh sách làm. Các dấu tương tự hiện trong menu ⚖ của kết quả và trong cửa sổ bật lên trên thanh công cụ.
+Dưới một kết quả, mỗi nhãn bắt đầu bằng một hình thoi có màu của nó. Khi nhãn làm kết quả đó di chuyển hoặc bị ẩn, một chiếc ghim (nhãn ghim nó), mũi tên lên (nhãn nâng nó), mũi tên xuống (nhãn hạ nó) hoặc con mắt gạch chéo (nhãn ẩn nó) thế chỗ hình thoi. Dấu này cho thấy lựa chọn của bạn cho nhãn, hoặc, khi bạn theo các danh sách, điều danh sách làm. Các dấu tương tự hiện trong menu của kết quả và trong cửa sổ bật lên trên thanh công cụ.
 
 Tắt **Hiện** để nhãn vẫn hoạt động mà không hiện nhãn dưới kết quả. Nhấn vào màu của nhãn để đổi màu. Để xem mọi nhãn màu xám trên trang tìm kiếm, hãy chọn **Đơn giản** trong **Cài đặt → Giao diện → Màu trên trang tìm kiếm**. Khi đó các nhãn được phân biệt bằng tên.
 
@@ -58,7 +58,7 @@ Nhấn **Chỉnh sửa** bên cạnh một nhãn để mở nó. Ở đó bạn 
 - gắn nhãn cho thêm trang web: nhập một trang, hoặc nhiều trang cách nhau bằng dấu cách hoặc dấu phẩy, rồi nhấn **Thêm trang web**. Bạn có thể thêm một lời giải thích cho trang web hoặc các trang web đó; mỗi ghi chú được lưu cùng quy tắc của trang web dưới dạng chú thích;
 - xem những trang web đầu tiên mà mỗi danh sách của bạn gắn nhãn.
 
-Nút ⚖ trên một kết quả tìm kiếm gắn nhãn cho trang web của kết quả đó theo cách tương tự.
+Menu trên một kết quả tìm kiếm gắn nhãn cho trang web của kết quả đó theo cách tương tự.
 
 Biểu tượng thùng rác bên cạnh một nhãn của riêng bạn xóa nhãn và gỡ nó khỏi các trang web của bạn. Anubis không hỏi trước: nó cho biết đã xóa gì, kèm **Hoàn tác** bên cạnh trong vài giây.
 
@@ -75,7 +75,7 @@ Khi một kết quả có nhiều nhãn bạn đã đặt là **Nâng** hoặc *
 | Hai Nâng và một Hạ | Lên năm bậc, như thể có một Nâng |
 | Một Nâng và một Hạ | Ở nơi công cụ tìm kiếm đặt nó |
 
-Một nhãn chỉ được tính một lần, dù có bao nhiêu danh sách của bạn gắn nó. Nhãn đặt là **Ẩn** vẫn ẩn kết quả, bất kể các nhãn khác nói gì. **Lý do** trong menu ⚖ của kết quả cho thấy phần của từng nhãn và kết quả cuối cùng ở đâu (“nâng 5 bậc với mỗi nhãn “Official docs” và “Reference” và hạ 5 bậc với nhãn “Paywall”, nên kết quả này lên 5 bậc”).
+Một nhãn chỉ được tính một lần, dù có bao nhiêu danh sách của bạn gắn nó. Nhãn đặt là **Ẩn** vẫn ẩn kết quả, bất kể các nhãn khác nói gì. **Lý do** trong menu của kết quả cho thấy phần của từng nhãn và kết quả cuối cùng ở đâu (“nâng 5 bậc với mỗi nhãn “Official docs” và “Reference” và hạ 5 bậc với nhãn “Paywall”, nên kết quả này lên 5 bậc”).
 
 Thứ hạng bạn tự đặt cho một trang web được cộng vào các nhãn của nó. Nếu bạn đã nâng một trang web và nó có một nhãn đặt là Hạ, chúng triệt tiêu nhau. Nhãn đặt là Ẩn không ẩn trang web mà bạn đã tự xếp hạng, nên bạn có thể giữ lại một trang mà nhãn lẽ ra sẽ ẩn. Nếu bạn tự ẩn một trang web, nó vẫn bị ẩn bất kể các nhãn của nó nói gì.
 

@@ -1,6 +1,6 @@
 # Xếp hạng trang web
 
-Mỗi trang web có một *thứ hạng*, do bạn chọn từ nút ⚖ trên bất kỳ kết quả nào của nó, từ cửa sổ bật lên trên thanh công cụ, hoặc trong **Cài đặt → Trang web của bạn**.
+Mỗi trang web có một *thứ hạng*, do bạn chọn từ vòng chỉ báo trên bất kỳ kết quả nào của nó, từ cửa sổ bật lên trên thanh công cụ, hoặc trong **Cài đặt → Trang web của bạn**.
 
 <!-- Maintainer: Vietnamese translation of docs/guide/ranking.md. RankDemo (docs/.vitepress/theme/rank-demo.ts) draws a site being pinned and another lowered, and the picture below, for reading on GitHub, is hidden. The screenshots are the English ones. -->
 
@@ -8,11 +8,11 @@ Mỗi trang web có một *thứ hạng*, do bạn chọn từ nút ⚖ trên b�
 
 <div class="github-only">
 
-![Một kết quả với các nhãn và nút ⚖](../../img/result.png)
+![Một kết quả với các nhãn, và vòng chỉ báo quanh biểu tượng của trang web](../../img/result.png)
 
 </div>
 
-Chiếc cân trên nút nghiêng theo thứ hạng của trang web: nghiêng xuống bên trái với trang bị hạ, nghiêng lên với trang được nâng, và cân bằng với các trang còn lại. Nút của trang được ghim có một chiếc ghim vàng; nút của trang bị ẩn (khi bạn cho hiện nó ra) có con mắt bị gạch chéo. Kết quả không có nhãn “Đã nâng” hay “Đã hạ” riêng, vì nút đã cho thấy thứ hạng của nó. Một nhãn làm kết quả di chuyển hoặc bị ẩn [hiện điều đó thay cho hình thoi của nó](./tags.md).
+Trên máy tính, mỗi kết quả có một vòng chỉ báo: một nửa vòng tròn quanh biểu tượng của trang web, với một chiếc vương miện nhỏ ở bên trái. Nhấn vào vương miện để mở menu của kết quả. Nửa vòng tròn được tô từ giữa theo thứ hạng của trang web: lên trên với trang được nâng và xuống dưới với trang bị hạ, trang di chuyển càng nhiều bậc thì tô càng xa, và kín cả vòng với trang được ghim. Với trang Bình thường hoặc bị ẩn, nó để trống. Khi kết quả không có biểu tượng trang web, vòng chỉ báo bao quanh một hình tròn màu xám trơn. Trên kết quả hình ảnh và video, vòng chỉ báo là một ô nhỏ màu tối ở góc trên bên phải của ảnh, với cùng chiếc vương miện và một vạch dọc được tô theo cùng cách. Trên điện thoại, kết quả có một nút ⚖ ở cuối tiêu đề thay vào đó, với chiếc cân nghiêng theo thứ hạng. Kết quả không có nhãn “Đã nâng” hay “Đã hạ” riêng, vì vòng chỉ báo đã cho thấy thứ hạng của nó. Một nhãn làm kết quả di chuyển hoặc bị ẩn [hiện điều đó thay cho hình thoi của nó](./tags.md).
 
 Chiếc cân trong menu cân nhắc mọi thứ cùng nhau: thứ hạng của bạn, các nhãn của bạn và các danh sách của bạn. Kết quả di chuyển càng xa thì cân nghiêng càng nhiều, nên một trang web bạn đã nâng hai lần, hoặc có hai nhãn bạn đặt là Nâng, nghiêng nhiều hơn một lần nâng.
 
@@ -22,7 +22,7 @@ Chiếc cân trong menu cân nhắc mọi thứ cùng nhau: thứ hạng của b
 | **Hạ** | Chúng xuống năm bậc. Chọn lại để xuống mười bậc, và mũi tên có thêm mũi tên thứ hai. Lần nhấn thứ ba đưa về như cũ. |
 | **Bình thường** | Bỏ thứ hạng do bạn đặt, nên các nhãn và danh sách của bạn cân nhắc trang web như khi không có nó. |
 | **Nâng** | Chúng lên năm bậc. Chọn lại để lên mười bậc, và mũi tên có thêm mũi tên thứ hai. Lần nhấn thứ ba đưa về như cũ. |
-| **Ghim** | Chúng lên đầu, với viền vàng mảnh (màu xám nếu chọn Màu đơn giản trong **Cài đặt → Giao diện**). |
+| **Ghim** | Chúng lên đầu, với viền xám mảnh. |
 
 Nâng và Hạ cộng với mọi thứ khác cân nhắc trang web: các danh sách của bạn và [các nhãn bạn đặt là Ghim, Nâng hoặc Hạ](./tags.md). Nếu một danh sách hạ một trang web 3 bậc và bạn nâng nó, nó lên 2 bậc, và một nhãn nâng nó vẫn giữ dấu của mình. Ghim và Ẩn thay thế những gì các danh sách nói. Một nhãn bạn đặt là Ẩn không ẩn trang web mà bạn đã tự xếp hạng, nên xếp hạng một trang web là cách để giữ lại một trang mà nhãn Ẩn lẽ ra sẽ ẩn. Khi bạn đã xếp hạng một trang web, **Danh sách của bạn** xuất hiện trong các nhãn của nó trong menu, kèm dấu thứ hạng bạn đặt.
 

@@ -11,7 +11,7 @@
 - **Đó có phải kết quả web không?** Anubis để yên các thẻ hình ảnh, video, tin tức và mua sắm.
 - **Tiện ích có còn được tải không?** Khi cài từ mã nguồn, Firefox gỡ nó mỗi lần đóng. Hãy tải lại từ `about:debugging`.
 
-## Một số kết quả không có nhãn hoặc nút ⚖
+## Một số kết quả không có nhãn hoặc vòng chỉ báo
 
 Các công cụ tìm kiếm thay đổi trang của chúng mà không báo trước, và một bố cục mới có thể làm kết quả không còn thấy được với Anubis. Hãy [báo cáo](https://github.com/Bishop-V/anubis/issues) kèm:
 
@@ -61,4 +61,4 @@ Bản tóm tắt cho biết lý do dưới dòng đầu tiên, kèm liên kết 
 
 ## Có gì đó bị ẩn và tôi không biết vì sao
 
-Hãy mở menu ⚖ trên kết quả. **Lý do** liệt kê từng danh sách hoặc nhãn đứng sau quyết định. Thứ hạng do chính bạn đặt thắng các danh sách và các nhãn bạn đặt là Ẩn, và cộng với các nhãn bạn đặt là Ghim, Nâng hoặc Hạ. Nếu một danh sách làm sai, “Sai? Báo cáo với *tên danh sách*” báo cho những người duy trì danh sách đó ([Báo cáo lỗi trong danh sách](./lists.md)).
+Hãy mở menu của kết quả. **Lý do** liệt kê từng danh sách hoặc nhãn đứng sau quyết định. Thứ hạng do chính bạn đặt thắng các danh sách và các nhãn bạn đặt là Ẩn, và cộng với các nhãn bạn đặt là Ghim, Nâng hoặc Hạ. Nếu một danh sách làm sai, “Sai? Báo cáo với *tên danh sách*” báo cho những người duy trì danh sách đó ([Báo cáo lỗi trong danh sách](./lists.md)).

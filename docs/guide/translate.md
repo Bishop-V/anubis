@@ -1,7 +1,7 @@
 # Help translate
 
 ::: warning Machine translated: use with caution
-Anubis is written in English, the only language it fully supports. It also comes in **Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), French, German, Hindi, Indonesian, Italian, Japanese, Korean, Brazilian Portuguese, Russian, Spanish, Turkish, Urdu, and Vietnamese**, but a machine made those translations and nobody who speaks the language has checked them yet. Some words may be wrong or unclear, so use them with caution. When you rank or hide sites, the ⚖ menu's **Why** and the summary above the results say exactly what happened; if a translation leaves you unsure, check the English. To see Anubis in English, set your browser's language to English.
+Anubis is written in English, the only language it fully supports. It also comes in **Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), French, German, Hindi, Indonesian, Italian, Japanese, Korean, Brazilian Portuguese, Russian, Spanish, Turkish, Urdu, and Vietnamese**, but a machine made those translations and nobody who speaks the language has checked them yet. Some words may be wrong or unclear, so use them with caution. When you rank or hide sites, the result menu's **Why** and the summary above the results say exactly what happened; if a translation leaves you unsure, check the English. To see Anubis in English, set your browser's language to English.
 :::
 
 Anubis's interface is in English. Every word it shows can be translated: the toolbar popup, the settings, the welcome page, and what it adds to search pages. Your browser picks the translation for its own language, and anything a translation leaves out stays in English. In any language but English, Settings, the welcome page, and the toolbar popup say that the translation is a machine's, with a link to this page.
@@ -55,7 +55,7 @@ Change the `message` in `locales/<language>/messages.json`, and say in the pull 
 - **Placeholders.** `$1`, `$2`, and so on are filled in with a site, a number, or a name. Keep each one, in whatever order your language needs. A dollar sign that isn't a placeholder is written `$$`.
 - **Counts.** Messages ending in `_one` and `_other` are the forms of a count: "1 list", "2 lists". Add the forms your language uses, named as [Unicode's plural rules](https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html) name them: `_zero`, `_one`, `_two`, `_few`, `_many`, and `_other`.
 - **Names.** Anubis, the search engines, the browsers, and other projects (uBlacklist, HOHSER, Brave Goggles) keep their names. Where a message names part of a search engine's page, such as Google's "AI Overview" or "People also ask", use the name the engine shows in your language.
-- **The words for a ranking.** A site's ranking is Hide, Lower, Normal, Raise, or Pin everywhere in Anubis. Choose one word for each and use it throughout. In a language with long words, put soft hyphens (U+00AD) in them, so the ⚖ menu's row of rankings can break them where they should break.
+- **The words for a ranking.** A site's ranking is Hide, Lower, Normal, Raise, or Pin everywhere in Anubis. Choose one word for each and use it throughout. In a language with long words, put soft hyphens (U+00AD) in them, so the result menu's row of rankings can break them where they should break.
 
 ## What stays in English
 

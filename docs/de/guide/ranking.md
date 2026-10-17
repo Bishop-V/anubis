@@ -1,6 +1,6 @@
 # Websites einstufen
 
-Jede Website hat eine *Einstufung*, die du über die Schaltfläche ⚖ an einem ihrer Ergebnisse, im Symbolleisten-Popup oder unter **Einstellungen → Deine Websites** wählst.
+Jede Website hat eine *Einstufung*, die du über die Skala an einem ihrer Ergebnisse, im Symbolleisten-Popup oder unter **Einstellungen → Deine Websites** wählst.
 
 <!-- Maintainer: German translation of docs/guide/ranking.md. RankDemo (docs/.vitepress/theme/rank-demo.ts) draws a site being pinned and another lowered, and the picture below, for reading on GitHub, is hidden. The screenshots are the English ones. -->
 
@@ -8,11 +8,11 @@ Jede Website hat eine *Einstufung*, die du über die Schaltfläche ⚖ an einem 
 
 <div class="github-only">
 
-![Ein Ergebnis mit seinen Tags und der Schaltfläche ⚖](../../img/result.png)
+![Ein Ergebnis mit seinen Tags und der Skala um das Symbol seiner Website](../../img/result.png)
 
 </div>
 
-Die Waage der Schaltfläche neigt sich mit der Einstufung der Website: links nach unten bei einer abgewerteten Website, nach oben bei einer aufgewerteten und waagerecht bei allen anderen. Die Schaltfläche einer angehefteten Website zeigt eine goldene Stecknadel, die einer ausgeblendeten (sobald du sie zeigst) ein durchgestrichenes Auge. Das Ergebnis trägt kein eigenes Etikett „Aufgewertet“ oder „Abgewertet“, denn die Schaltfläche zeigt seine Einstufung bereits. Ein Tag, das das Ergebnis verschiebt oder ausblendet, [zeigt das anstelle seiner Raute](./tags.md).
+Am Computer hat jedes Ergebnis eine Skala: einen Halbkreis um das Symbol der Website, mit einer kleinen Krone links daran. Klicke auf die Krone, um das Menü des Ergebnisses zu öffnen. Der Halbkreis füllt sich von seiner Mitte aus mit der Einstufung der Website: nach oben bei einer aufgewerteten Website und nach unten bei einer abgewerteten, umso weiter, je mehr Plätze die Website gerückt ist, und ganz herum bei einer angehefteten. Bei einer normalen oder ausgeblendeten Website bleibt er leer. Hat ein Ergebnis kein Website-Symbol, läuft die Skala um eine schlichte graue Scheibe. Bei Bild- und Videoergebnissen ist die Skala eine kleine dunkle Lasche in der oberen rechten Ecke des Bildes, mit derselben Krone und einem senkrechten Strich, der sich genauso füllt. Auf dem Smartphone hat das Ergebnis stattdessen eine Schaltfläche ⚖ am Ende seines Titels, deren Waage sich mit der Einstufung neigt. Das Ergebnis trägt kein eigenes Etikett „Aufgewertet“ oder „Abgewertet“, denn die Skala zeigt seine Einstufung bereits. Ein Tag, das das Ergebnis verschiebt oder ausblendet, [zeigt das anstelle seiner Raute](./tags.md).
 
 Die Waage im Menü wägt alles zusammen: deine Einstufung, deine Tags und deine Listen. Je weiter sich ein Ergebnis bewegt, desto weiter neigt sie sich, also neigt sich eine Website, die du zweimal aufgewertet hast oder die zwei Tags mit Aufwerten hat, weiter als bei einer einzelnen Aufwertung.
 
@@ -22,7 +22,7 @@ Die Waage im Menü wägt alles zusammen: deine Einstufung, deine Tags und deine 
 | **Abwerten** | Sie rutschen fünf Plätze nach unten. Wähle es erneut für zehn Plätze, und der Pfeil bekommt einen zweiten Pfeil. Ein dritter Klick nimmt es zurück. |
 | **Normal** | Nimmt deine eigene Einstufung zurück, sodass deine Tags und Listen die Website so wägen, als gäbe es sie nicht. |
 | **Aufwerten** | Sie rücken fünf Plätze nach oben. Wähle es erneut für zehn Plätze, und der Pfeil bekommt einen zweiten Pfeil. Ein dritter Klick nimmt es zurück. |
-| **Anheften** | Sie wandern ganz nach oben, mit einem dünnen goldenen Rand (grau mit den schlichten Farben unter **Einstellungen → Darstellung**). |
+| **Anheften** | Sie wandern ganz nach oben, mit einem dünnen grauen Rahmen. |
 
 Aufwerten und Abwerten addieren sich zu allem anderen, was die Website wägt: deine Listen und [die Tags, die du auf Anheften, Aufwerten oder Abwerten gesetzt hast](./tags.md). Wenn eine Liste eine Website um 3 abwertet und du sie aufwertest, rückt sie 2 Plätze nach oben, und ein Tag, das sie aufwertet, behält sein Zeichen. Anheften und Ausblenden ersetzen, was die Listen sagen. Ein Tag, das du auf Ausblenden gesetzt hast, blendet keine Website aus, die du selbst eingestuft hast; eine Website einzustufen ist also der Weg, eine einzelne Website zu behalten, die ein Ausblenden-Tag ausblenden würde. Sobald du eine Website eingestuft hast, erscheint **Deine Liste** im Menü unter ihren Tags, mit dem Zeichen deiner Einstufung.
 

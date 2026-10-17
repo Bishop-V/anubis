@@ -8,9 +8,9 @@ Tags are small labels under a result's title: "Official docs", "Discussion", "Pa
 
 ## Tag a site yourself
 
-On any website, open the Anubis toolbar popup. Under **Tags**, press a tag to add it to the site, or press it again to remove it. To make a new tag for the site, type its name in **New tag** and press **Add tag**. On search pages, the ⚖ menu on each result offers the same controls.
+On any website, open the Anubis toolbar popup. Under **Tags**, press a tag to add it to the site, or press it again to remove it. To make a new tag for the site, type its name in **New tag** and press **Add tag**. On search pages, each result's menu offers the same controls.
 
-Your own tags are under **Your tags**, and the tags your lists use are under **Tags from lists**. You can add a tag from a list to any site, and that changes only your own list, not the list's. When the tags fill more than two rows, the rest fold away behind **Show more tags**; the ones on the site always stay in view. A tag you gave the site is in bold and underlined in its colour. A tag a list gave the site is plain, with the list's name after it ("from Paywalls"): only the list can take it off, and **Wrong? Report it** in the ⚖ menu tells its maintainers.
+Your own tags are under **Your tags**, and the tags your lists use are under **Tags from lists**. You can add a tag from a list to any site, and that changes only your own list, not the list's. When the tags fill more than two rows, the rest fold away behind **Show more tags**; the ones on the site always stay in view. A tag you gave the site is in bold and underlined in its colour. A tag a list gave the site is plain, with the list's name after it ("from Paywalls"): only the list can take it off, and **Wrong? Report it** in the result's menu tells its maintainers.
 
 ## Whose tag is it
 
@@ -45,7 +45,7 @@ Under each tag's name, one line says which sites carry it and what happens to th
 
 ### See what a tag does to a result
 
-Under a result, each tag starts with a diamond in its colour. When the tag moves or hides that result, a pin (it pins it), an arrow up (it raises it), an arrow down (it lowers it), or a crossed-out eye (it hides it) takes the diamond's place. This shows your choice for the tag, or, when you follow the lists, what the list does. The same marks show in the result's ⚖ menu and in the toolbar popup.
+Under a result, each tag starts with a diamond in its colour. When the tag moves or hides that result, a pin (it pins it), an arrow up (it raises it), an arrow down (it lowers it), or a crossed-out eye (it hides it) takes the diamond's place. This shows your choice for the tag, or, when you follow the lists, what the list does. The same marks show in the result's menu and in the toolbar popup.
 
 Turn off **Shown** to keep a tag working without showing its label under results. Press a tag's colour to change it. To see every tag in grey on search pages, choose **Plain** in **Settings → Appearance → Colours on search pages**. Tags are then told apart by their names.
 
@@ -58,7 +58,7 @@ Press **Edit** beside a tag to open it. There you can:
 - tag more sites: type one, or several separated by spaces or commas, and press **Add site**. You can optionally add one explanation for the site or sites; each note is saved with its site rule as a comment;
 - see the first sites each of your lists gives the tag.
 
-The ⚖ button on a search result tags that result's site the same way.
+The menu on a search result tags that result's site the same way.
 
 The bin beside one of your own tags deletes it and takes it off your sites. Anubis doesn't ask first: it says what it deleted, with **Undo** beside it for a few seconds.
 
@@ -75,7 +75,7 @@ When a result carries several tags you've set to **Raise** or **Lower**, Anubis 
 | Two Raise and one Lower | Five places up, as if it had one Raise |
 | One Raise and one Lower | Where the search engine put it |
 
-A tag counts once, however many of your lists give it. A tag set to **Hide** still hides the result, whatever the others say. **Why** in the result's ⚖ menu shows each tag's part and where the result ends up ("raise it by 5 each for “Official docs” and “Reference” and lower it by 5 for “Paywall”, so it moves 5 places up").
+A tag counts once, however many of your lists give it. A tag set to **Hide** still hides the result, whatever the others say. **Why** in the result's menu shows each tag's part and where the result ends up ("raise it by 5 each for “Official docs” and “Reference” and lower it by 5 for “Paywall”, so it moves 5 places up").
 
 A ranking you gave a site yourself adds to its tags. If you raised a site and it has a tag set to Lower, they cancel out. A tag set to Hide doesn't hide a site you ranked yourself, so you can keep one site that the tag would hide. If you hid a site yourself, it stays hidden whatever its tags say.
 

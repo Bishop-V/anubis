@@ -13,7 +13,7 @@ Anubis works in two places, and they need different care:
 
 **Reading order is the page's order.** Reranking moves results with CSS `order` and never moves the nodes (see Pitfalls in `CLAUDE.md`). Screen readers and Tab follow the DOM, so they meet results in the engine's order, not the reranked one. This can't be fixed without moving nodes the engine owns; keep it in mind, and don't make anything depend on the visual order being the reading order.
 
-**Everything Anubis adds is read aloud, on every result.** The shadow roots keep the page's CSS out, not screen readers: the chips, the ⚖ button, and the hidden-result line are read between each title and its snippet. Keep them short, and don't add text to a result that a sighted person wouldn't need either.
+**Everything Anubis adds is read aloud, on every result.** The shadow roots keep the page's CSS out, not screen readers: the chips, the result's menu button (the dial's crown, or the ⚖ button on a phone), and the hidden-result line are read between each title and its snippet. Keep them short, and don't add text to a result that a sighted person wouldn't need either.
 
 **A control has to make sense on its own.** Screen reader users often jump from button to button or pull up a list of them. A button repeated on every result should say which result it's for, and a text button's label should stand without the sentence around it.
 
@@ -23,7 +23,7 @@ Anubis works in two places, and they need different care:
 
 **Icons are decoration unless they're the only content.** Icons from `utils/icons.ts` carry `aria-hidden="true"` and `focusable="false"`, and so does every drawing of the balance. The welcome page's balance swings when clicked, but only as decoration, so it isn't a button and isn't in the tab order. A button whose only content is an icon gets an `aria-label` and a matching `title`.
 
-**State goes in attributes, not only in colour or shape.** Chosen options in a row of choices use `aria-pressed`, the rows use `role="group"` with a label, the settings navigation marks its page with `aria-current`, and the ⚖ button keeps `aria-expanded` in step with the menu. Follow the same patterns for new controls instead of inventing new ones.
+**State goes in attributes, not only in colour or shape.** Chosen options in a row of choices use `aria-pressed`, the rows use `role="group"` with a label, the settings navigation marks its page with `aria-current`, and the result's menu button keeps `aria-expanded` in step with the menu. The dial's drawing is `aria-hidden`: the button's label says the ranking ("Hide, rank, or tag fandom.com (lowered)"). Follow the same patterns for new controls instead of inventing new ones.
 
 **Leave the engine's own structure alone.** Clean-up removes content blocks (AI answers, video panels), never the page's navigation, search form, or landmarks (`NOT_A_BLOCK` in `entrypoints/content/cleanup.ts`). Keep it that way when adding a clean-up kind or an engine.
 

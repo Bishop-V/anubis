@@ -8,9 +8,9 @@ Tags sind kleine Beschriftungen unter dem Titel eines Ergebnisses: „Official d
 
 ## Eine Website selbst taggen
 
-Öffne auf einer beliebigen Website das Anubis-Popup in der Symbolleiste. Klicke unter **Tags** auf ein Tag, um es der Website hinzuzufügen, oder erneut, um es zu entfernen. Um ein neues Tag für die Website anzulegen, gib seinen Namen unter **Neues Tag** ein und klicke auf **Tag hinzufügen**. Auf Suchseiten bietet das ⚖-Menü an jedem Ergebnis dieselben Bedienelemente.
+Öffne auf einer beliebigen Website das Anubis-Popup in der Symbolleiste. Klicke unter **Tags** auf ein Tag, um es der Website hinzuzufügen, oder erneut, um es zu entfernen. Um ein neues Tag für die Website anzulegen, gib seinen Namen unter **Neues Tag** ein und klicke auf **Tag hinzufügen**. Auf Suchseiten bietet das Menü jedes Ergebnisses dieselben Bedienelemente.
 
-Deine eigenen Tags stehen unter **Deine Tags**, und die Tags, die deine Listen verwenden, unter **Tags aus Listen**. Du kannst jeder Website ein Tag aus einer Liste hinzufügen, und das ändert nur deine eigene Liste, nicht die der anderen. Bei mehr als acht Tags klappt der Rest hinter **Mehr Tags zeigen** weg; die Tags der Website bleiben immer sichtbar. Ein Tag, das du der Website gegeben hast, ist fett und in seiner Farbe unterstrichen. Ein Tag, das eine Liste der Website gegeben hat, steht normal, mit dem Namen der Liste dahinter („von Paywalls“): Nur die Liste kann es entfernen, und **Falsch? Melde es** im ⚖-Menü sagt es ihren Betreuern.
+Deine eigenen Tags stehen unter **Deine Tags**, und die Tags, die deine Listen verwenden, unter **Tags aus Listen**. Du kannst jeder Website ein Tag aus einer Liste hinzufügen, und das ändert nur deine eigene Liste, nicht die der anderen. Bei mehr als acht Tags klappt der Rest hinter **Mehr Tags zeigen** weg; die Tags der Website bleiben immer sichtbar. Ein Tag, das du der Website gegeben hast, ist fett und in seiner Farbe unterstrichen. Ein Tag, das eine Liste der Website gegeben hat, steht normal, mit dem Namen der Liste dahinter („von Paywalls“): Nur die Liste kann es entfernen, und **Falsch? Melde es** im Menü des Ergebnisses sagt es ihren Betreuern.
 
 ## Wem ein Tag gehört
 
@@ -45,7 +45,7 @@ Unter dem Namen jedes Tags sagt eine Zeile, welche Websites es tragen und was mi
 
 ### Sehen, was ein Tag mit einem Ergebnis macht
 
-Unter einem Ergebnis beginnt jedes Tag mit einer Raute in seiner Farbe. Wenn das Tag dieses Ergebnis verschiebt oder ausblendet, tritt eine Stecknadel (es heftet es an), ein Pfeil nach oben (es wertet es auf), ein Pfeil nach unten (es wertet es ab) oder ein durchgestrichenes Auge (es blendet es aus) an die Stelle der Raute. Das zeigt deine Wahl für das Tag oder, wenn du den Listen folgst, was die Liste tut. Dieselben Zeichen erscheinen im ⚖-Menü des Ergebnisses und im Symbolleisten-Popup.
+Unter einem Ergebnis beginnt jedes Tag mit einer Raute in seiner Farbe. Wenn das Tag dieses Ergebnis verschiebt oder ausblendet, tritt eine Stecknadel (es heftet es an), ein Pfeil nach oben (es wertet es auf), ein Pfeil nach unten (es wertet es ab) oder ein durchgestrichenes Auge (es blendet es aus) an die Stelle der Raute. Das zeigt deine Wahl für das Tag oder, wenn du den Listen folgst, was die Liste tut. Dieselben Zeichen erscheinen im Menü des Ergebnisses und im Symbolleisten-Popup.
 
 Schalte **Anzeigen** aus, damit ein Tag weiter wirkt, ohne seine Beschriftung unter den Ergebnissen zu zeigen. Klicke auf die Farbe eines Tags, um sie zu ändern. Um jedes Tag auf Suchseiten grau zu sehen, wähle **Schlicht** unter **Einstellungen → Darstellung → Farben auf Suchseiten**. Tags unterscheiden sich dann durch ihre Namen.
 
@@ -58,7 +58,7 @@ Klicke neben einem Tag auf **Bearbeiten**, um es zu öffnen. Dort kannst du:
 - weitere Websites taggen: Gib eine ein oder mehrere durch Leerzeichen oder Kommas getrennt und klicke auf **Website hinzufügen**. Du kannst optional eine Erklärung für die Website oder Websites hinzufügen; jede Notiz wird mit der Regel ihrer Website als Kommentar gespeichert;
 - die ersten Websites sehen, die jede deiner Listen dem Tag gibt.
 
-Die Schaltfläche ⚖ an einem Suchergebnis taggt die Website dieses Ergebnisses auf dieselbe Weise.
+Das Menü an einem Suchergebnis taggt die Website dieses Ergebnisses auf dieselbe Weise.
 
 Der Papierkorb neben einem deiner eigenen Tags löscht es und nimmt es von deinen Websites. Anubis fragt nicht vorher: Es sagt, was es gelöscht hat, mit **Rückgängig** daneben für ein paar Sekunden.
 
@@ -75,7 +75,7 @@ Wenn ein Ergebnis mehrere Tags trägt, die du auf **Aufwerten** oder **Abwerten*
 | Zweimal Aufwerten und einmal Abwerten | Fünf Plätze nach oben, als hätte es ein Aufwerten |
 | Einmal Aufwerten und einmal Abwerten | Dort, wo die Suchmaschine es platziert hat |
 
-Ein Tag zählt einmal, egal wie viele deiner Listen es geben. Ein Tag, das auf **Ausblenden** steht, blendet das Ergebnis trotzdem aus, was die anderen auch sagen. **Warum** im ⚖-Menü des Ergebnisses zeigt den Anteil jedes Tags und wo das Ergebnis landet („wertet es um 5 auf für jedes Tag „Official docs“ und „Reference“ und ab um 5 für „Paywall“, also rückt es 5 Plätze nach oben“).
+Ein Tag zählt einmal, egal wie viele deiner Listen es geben. Ein Tag, das auf **Ausblenden** steht, blendet das Ergebnis trotzdem aus, was die anderen auch sagen. **Warum** im Menü des Ergebnisses zeigt den Anteil jedes Tags und wo das Ergebnis landet („wertet es um 5 auf für jedes Tag „Official docs“ und „Reference“ und ab um 5 für „Paywall“, also rückt es 5 Plätze nach oben“).
 
 Eine Einstufung, die du einer Website selbst gegeben hast, addiert sich zu ihren Tags. Wenn du eine Website aufgewertet hast und sie ein Tag mit Abwerten hat, heben sie sich auf. Ein Tag mit Ausblenden blendet keine Website aus, die du selbst eingestuft hast, sodass du eine Website behalten kannst, die das Tag ausblenden würde. Wenn du eine Website selbst ausgeblendet hast, bleibt sie ausgeblendet, was ihre Tags auch sagen.
 

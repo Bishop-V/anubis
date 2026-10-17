@@ -10,7 +10,7 @@ For the normal install, get [Anubis from Firefox Add-ons](https://addons.mozilla
 
 ## Install in Firefox for Android
 
-Support for Firefox for Android is experimental. Get [Anubis from Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/) on your phone, in Firefox. It reads the phone layouts of Google, DuckDuckGo, and Bing; the other search engines may not work there yet. On a phone, the ⚖ button is at the end of each result's title, and its menu rises from the bottom of the screen. Firefox for Android keeps add-ons in its menu rather than a toolbar, so open Anubis from there. If something looks wrong, [report it](https://github.com/Bishop-V/anubis/issues) with a screenshot.
+Support for Firefox for Android is experimental. Get [Anubis from Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/) on your phone, in Firefox. It reads the phone layouts of Google, DuckDuckGo, and Bing; the other search engines may not work there yet. On a phone, each result has a ⚖ button at the end of its title, and its menu rises from the bottom of the screen. Firefox for Android keeps add-ons in its menu rather than a toolbar, so open Anubis from there. If something looks wrong, [report it](https://github.com/Bishop-V/anubis/issues) with a screenshot.
 
 ## Install in Chrome
 
@@ -56,7 +56,7 @@ A one-line summary above the results says what Anubis did: which results it rais
 
 ## Hide a site
 
-Hover a result and press the ⚖ button at its top-right corner. In the menu, choose **Hide**. On a phone, the ⚖ button is at the end of the result's title, and the menu rises from the bottom of the screen.
+Each result has a dial around its site's icon: a half circle with a small crown on its left. Press the crown, and in the menu, choose **Hide**. On image and video results, the crown is in the picture's top-right corner. On a phone, press the ⚖ button at the end of the result's title, and the menu rises from the bottom of the screen.
 
 ![The menu on a result: Hide, Lower, Normal, Raise, and Pin, with tags below](../img/menu.png)
 

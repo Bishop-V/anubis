@@ -10,7 +10,7 @@ Für die normale Installation hol dir [Anubis von Firefox Add-ons](https://addon
 
 ## In Firefox für Android installieren
 
-Die Unterstützung für Firefox für Android ist experimentell. Hol dir [Anubis von Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/) auf deinem Smartphone, in Firefox. Es liest die Smartphone-Layouts von Google, DuckDuckGo und Bing; die anderen Suchmaschinen funktionieren dort womöglich noch nicht. Auf dem Smartphone steht die Schaltfläche ⚖ am Ende des Titels jedes Ergebnisses, und ihr Menü fährt vom unteren Bildschirmrand herauf. Firefox für Android legt Add-ons in sein Menü statt in eine Symbolleiste, also öffne Anubis von dort. Wenn etwas falsch aussieht, [melde es](https://github.com/Bishop-V/anubis/issues) mit einem Screenshot.
+Die Unterstützung für Firefox für Android ist experimentell. Hol dir [Anubis von Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/) auf deinem Smartphone, in Firefox. Es liest die Smartphone-Layouts von Google, DuckDuckGo und Bing; die anderen Suchmaschinen funktionieren dort womöglich noch nicht. Auf dem Smartphone hat jedes Ergebnis eine Schaltfläche ⚖ am Ende seines Titels, und ihr Menü fährt vom unteren Bildschirmrand herauf. Firefox für Android legt Add-ons in sein Menü statt in eine Symbolleiste, also öffne Anubis von dort. Wenn etwas falsch aussieht, [melde es](https://github.com/Bishop-V/anubis/issues) mit einem Screenshot.
 
 ## In Chrome installieren
 
@@ -56,7 +56,7 @@ Eine einzeilige Zusammenfassung über den Ergebnissen sagt, was Anubis getan hat
 
 ## Eine Website ausblenden
 
-Fahre mit der Maus über ein Ergebnis und klicke auf die Schaltfläche ⚖ in seiner oberen rechten Ecke. Wähle im Menü **Ausblenden**. Auf dem Smartphone steht die Schaltfläche ⚖ am Ende des Ergebnistitels, und das Menü fährt vom unteren Bildschirmrand herauf.
+Jedes Ergebnis hat eine Skala um das Symbol seiner Website: einen Halbkreis mit einer kleinen Krone links daran. Klicke auf die Krone und wähle im Menü **Ausblenden**. Bei Bild- und Videoergebnissen sitzt die Krone in der oberen rechten Ecke des Bildes. Auf dem Smartphone tippst du auf die Schaltfläche ⚖ am Ende des Ergebnistitels, und das Menü fährt vom unteren Bildschirmrand herauf.
 
 ![Das Menü an einem Ergebnis: Ausblenden, Abwerten, Normal, Aufwerten und Anheften, mit Tags darunter](../../img/menu.png)
 

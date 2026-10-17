@@ -46,7 +46,7 @@ Einige Listen im Verzeichnis entstehen aus Daten, die andere Projekte sammeln. J
 | **Self-hosted FOSS** | [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted-data) von seinen Mitwirkenden (CC BY-SA 3.0) | Beschriftet die Websites von etwa 1.000 freien Programmen, die du selbst betreiben kannst, als **FOSS**, dasselbe Tag wie die Liste FOSS tools. Programme unter nicht freien Lizenzen bleiben außen vor. Sie verschiebt oder blendet nie etwas aus. |
 | **Independent wikis** | [Indie Wiki Buddy](https://github.com/KevinPayravi/indie-wiki-buddy) von Kevin Payravi (MIT) | Wertet unabhängige Wikis auf, beschriftet als **Independent wiki**, und wertet die Fandom-, Fextralife- und Neoseeker-Wikis ab, die sie ersetzen, beschriftet als **Has independent wiki**. |
 
-Um eine Website zu einer dieser Listen hinzuzufügen oder entfernen zu lassen, trage über die obigen Links zum Projekt bei, aus dem sie stammt. Anubis kopiert die Daten unverändert, und das nächste wöchentliche Update bringt die Änderung. **Falsch? Melde es** im ⚖-Menü öffnet ein Issue im Tracker dieses Projekts.
+Um eine Website zu einer dieser Listen hinzuzufügen oder entfernen zu lassen, trage über die obigen Links zum Projekt bei, aus dem sie stammt. Anubis kopiert die Daten unverändert, und das nächste wöchentliche Update bringt die Änderung. **Falsch? Melde es** im Menü des Ergebnisses öffnet ein Issue im Tracker dieses Projekts.
 
 Um eine nicht mehr zu verwenden, bestelle sie ab oder schalte sie aus wie jede Liste. Um eine Liste zu behalten, aber nicht eine ihrer Beschriftungen, schalte dieses Tag unter **Einstellungen → Tags** aus oder wähle dort, was es bewirkt.
 
@@ -56,10 +56,10 @@ Jede Liste unter **Deine Listen** hat einen Schalter, um sie eine Zeit lang ausz
 
 ## Einen Fehler in einer Liste melden
 
-Wenn eine Liste eine Website falsch ausblendet, einstuft oder taggt, öffne das ⚖-Menü am Ergebnis. Unter **Warum** öffnet „Falsch? Melde es *Listenname*“ ein vorausgefülltes Issue im Issue-Tracker der Liste, mit der Regel, die gegriffen hat, und der Adresse des Ergebnisses. Sage, was sich ändern sollte, und sende es dann ab. Nichts wird gesendet, bevor du es selbst abschickst.
+Wenn eine Liste eine Website falsch ausblendet, einstuft oder taggt, öffne das Menü des Ergebnisses. Unter **Warum** öffnet „Falsch? Melde es *Listenname*“ ein vorausgefülltes Issue im Issue-Tracker der Liste, mit der Regel, die gegriffen hat, und der Adresse des Ergebnisses. Sage, was sich ändern sollte, und sende es dann ab. Nichts wird gesendet, bevor du es selbst abschickst.
 
 Das funktioniert für Listen, die in einem GitHub-, GitLab- oder Codeberg-Repository veröffentlicht sind, und für Listen, die ihren eigenen Issue-Tracker nennen. Um eine Liste sofort zu überstimmen, stufe die Website selbst ein; eine Meldung sorgt dafür, dass die Liste für alle korrigiert wird.
 
 ## Einer Liste eine Website vorschlagen
 
-Sobald du eine Website selbst eingestuft oder getaggt hast, bietet das ⚖-Menü „Schlage es *Listenname* vor“ für Listen an, die Vorschläge annehmen und die Website noch nicht nennen. Es öffnet ein vorausgefülltes Issue auf GitHub, GitLab oder Codeberg, das du prüfst und absendest. Nichts wird gesendet, bevor du es selbst abschickst.
+Sobald du eine Website selbst eingestuft oder getaggt hast, bietet das Menü des Ergebnisses „Schlage es *Listenname* vor“ für Listen an, die Vorschläge annehmen und die Website noch nicht nennen. Es öffnet ein vorausgefülltes Issue auf GitHub, GitLab oder Codeberg, das du prüfst und absendest. Nichts wird gesendet, bevor du es selbst abschickst.

@@ -10,7 +10,7 @@ Anubis 有翻譯時，會用你瀏覽器的語言顯示自己。只有英文得�
 
 ## 在 Android 版 Firefox 中安裝
 
-對 Android 版 Firefox 的支援還處於實驗階段。請在手機上的 Firefox 中，從 [Firefox Add-ons 獲取 Anubis](https://addons.mozilla.org/addon/anubis-search/)。它能讀取 Google、DuckDuckGo 和 Bing 的手機版佈局；其他搜尋引擎在手機上可能還不能用。在手機上，⚖ 按鈕位於每個結果標題的末尾，它的選單會從螢幕底部升起。Android 版 Firefox 把附加元件放在選單裡，而不是工具列上，所以請從那裡開啟 Anubis。如果有什麼地方不對，請附上截圖[報告問題](https://github.com/Bishop-V/anubis/issues)。
+對 Android 版 Firefox 的支援還處於實驗階段。請在手機上的 Firefox 中，從 [Firefox Add-ons 獲取 Anubis](https://addons.mozilla.org/addon/anubis-search/)。它能讀取 Google、DuckDuckGo 和 Bing 的手機版佈局；其他搜尋引擎在手機上可能還不能用。在手機上，每個結果的標題末尾都有一個 ⚖ 按鈕，它的選單會從螢幕底部升起。Android 版 Firefox 把附加元件放在選單裡，而不是工具列上，所以請從那裡開啟 Anubis。如果有什麼地方不對，請附上截圖[報告問題](https://github.com/Bishop-V/anubis/issues)。
 
 ## 在 Chrome 中安裝
 
@@ -56,7 +56,7 @@ npm run build:chrome   # for Chrome, Edge, and other Chromium browsers
 
 ## 隱藏一個網站
 
-把滑鼠懸停在一個結果上，點選它右上角的 ⚖ 按鈕。在選單中選擇**隱藏**。在手機上，⚖ 按鈕位於結果標題的末尾，選單會從螢幕底部升起。
+每個結果的網站圖示周圍都有一個刻度盤：一個半圓，左側有一頂小皇冠。點選皇冠，然後在選單中選擇**隱藏**。在圖片和影片結果上，皇冠位於圖片的右上角。在手機上，請點選結果標題末尾的 ⚖ 按鈕，選單會從螢幕底部升起。
 
 ![結果上的選單：隱藏、降低、正常、提升和釘選，下方是標籤](../../img/menu.png)
 
