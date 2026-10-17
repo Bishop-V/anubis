@@ -1,40 +1,34 @@
 # Removing panels
 
-Search pages carry a lot that isn't results: AI answers, video panels, "People also ask". **Settings → Remove panels** removes the ones you turn on, on every search: a switch that's on means Anubis removes that part, and off leaves it on the page.
+**Settings → Remove panels** takes the parts you choose off every search page. All start off.
 
 <!-- Maintainer: the generated screenshots on this page come from mock pages. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark images and their descriptions together. -->
 
 ![Settings, Clean up](../img/options-cleanup.png)
 
-| Switch | What it removes |
+| Switch | Removes |
 | --- | --- |
-| **AI answers** | Google's AI Overview and its AI Mode tab, DuckDuckGo's AI-assisted answers and its Duck.ai tab and buttons, Bing's AI answer across the top of the page (with the video and links beside it), and Brave's AI answers. |
-| **Video panels** | Video and short-video panels between the results, like Bing's "Videos of…". |
-| **People also ask** | Lists of other people's questions with expandable answers. |
-| **Discussion panels** | Panels of forum threads between the results, like Google's "Discussions and forums" and Brave's "Discussions". Forum pages among the results stay. |
-| **Top stories** | News panels between the results. |
-| **Image rows** | Rows of images between the results. The Images tab still works. |
-| **Related searches** | Lists of other searches, usually at the bottom of the page, Bing's "Related searches based on your browsing", and the "People also search for" box Bing and Google add under a result you went to and came back from. The links to later pages stay. |
-| **Other search engines** | Rows of buttons that repeat your search on another engine, like Brave's "Find elsewhere" with Google, Bing, and Mojeek. |
-| **Ads** | Paid results and product carousels above or below the results: Yahoo's ads, Bing's ad blocks and product carousels, and any block an engine labels "Sponsored". An AI answer and an ad beside it are removed separately, each by its own switch. Ads on Yahoo are never weighed or given a dial, whether this is on or off. |
-| **Requests to allow ads** | Banners asking you to turn off your ad blocker or allow ads, like Startpage's "Block creepy ads, not private search" with its **Allow Startpage ads** button. |
-
-All of them start off. **All**, at the top of each section, turns every switch in that section on or off at once.
+| **AI answers** | Google's AI Overview and AI Mode, Duck.ai, and Bing's and Brave's AI answers. |
+| **Video panels** | Video and short-video panels. |
+| **People also ask** | Expandable question lists. |
+| **Discussion panels** | Forum panels. Forum results stay. |
+| **Top stories** | News panels. |
+| **Image rows** | Rows of images. |
+| **Related searches** | "Related searches" and "People also search for". |
+| **Other search engines** | Buttons that repeat your search elsewhere. |
+| **Ads** | Sponsored results and product carousels. |
+| **Requests to allow ads** | Banners asking you to allow ads. |
 
 ## What was removed
 
-The summary above the results, or above an AI answer when there is one, says what went: "It also removed an AI answer and a video panel." **Show hidden** brings removed panels back on that page, with a dashed outline so you can tell them apart.
+The summary says what went. **Show hidden** brings it back, outlined.
 
 ![The summary after cleaning up](../img/cleanup-summary.png)
 
 ## How panels are found
 
-Anubis recognises a panel by its heading ("AI Overview", "Videos", "People also ask") rather than by the engine's internal names for it, which change often. It only removes panels between the results. The side panel on the right of Google's results is left alone, and so is anything containing a result, the search box, or the links to later pages.
-
-Headings are recognised in English and some common translations (French, German, Spanish, Portuguese, Italian, and Dutch). If a panel in your language isn't removed, [open an issue](https://github.com/Bishop-V/anubis/issues) with the heading's exact text.
+By their headings, in English, French, German, Spanish, Portuguese, Italian, and Dutch. If one isn't removed in your language, [open an issue](https://github.com/Bishop-V/anubis/issues) with its heading.
 
 ## Stopping AI answers at the source
 
-Removing a panel after the engine sends it depends on recognising it. Google has its own view without AI, and Anubis can use it:
-
-- **Google:** **Always open the Web tab** opens Google's own "Web" view (the one under **More → Web**), which shows plain links with no AI Overview and no panels at all. This is a separate switch because it removes everything that isn't a link, including panels you might want. To see the usual page for one search, choose **All** above the results.
+On Google, **Always open the Web tab** opens Google's plain list of links, with no AI and no panels. Choose **All** above the results for the usual page.

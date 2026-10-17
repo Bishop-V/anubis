@@ -301,7 +301,7 @@ Each thing is explained in one place, and everything else links to it:
 
 | Where | For | What it holds |
 | --- | --- | --- |
-| The wiki, [`docs/`](docs) | People who use Anubis | How every feature works, installing, search engines, privacy and permissions, troubleshooting, and the list format. The extension links to its pages. |
+| The wiki, [`docs/`](docs) | People who use Anubis | What each feature does and where to find it, installing, search engines, privacy and permissions, troubleshooting, and the list format, each page kept short. How things work, edge cases, and rationale go in code comments or this file. The extension links to its pages. |
 | [`README.md`](README.md) | Anyone landing on the repository | What Anubis is, one line per feature linking to its wiki page, the few commands to start developing, and links to everything below. Nothing it could link to instead. |
 | `DEVELOPMENT.md` (this file), [`CONTRIBUTING.md`](CONTRIBUTING.md), [`AGENTS.md`](AGENTS.md), [`CLAUDE.md`](CLAUDE.md) | People and agents changing the code | How it's built and tested, the conventions, and releasing. `CLAUDE.md` is the condensed version for agents. |
 | [`store/README.md`](store/README.md) | Releasing | The store listings, privacy answers, and the checklist before each release. |

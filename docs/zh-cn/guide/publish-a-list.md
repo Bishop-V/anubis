@@ -1,10 +1,10 @@
 # 发布列表
 
-列表是一个任何人都能订阅的文本文件。你不需要服务器，也不需要 Anubis 的账号：一个公开的 Git 仓库就是数据库，issue 和 pull request 就是别人参与贡献的方式。
+列表是公开代码仓库中的一个文本文件。大家通过 issue 和拉取请求来贡献。
 
-## 1. 编写列表
+## 1. 编写
 
-最快的开始方式是用你自己的列表。**设置 → 备份 → 下载我的列表**会保存你排过名和加过标签的每个网站。或者从头写一个：
+从**设置 → 备份 → 下载我的列表**开始，或者自己写一个：
 
 ```
 ! name: Official docs
@@ -17,28 +17,20 @@ $site=developer.mozilla.org,tag=docs,boost=1 # MDN publishes first-party web pla
 $site=docs.python.org,tag=docs,boost=1 # This is Python's official documentation.
 ```
 
-标题部分之后的每一行都是一条指令：针对哪些网站，以及对它们做什么。请为你添加的每条网站标签规则加上一条简短的 `#` 注释，说明这个网站为什么合适。[列表格式](../../list-format.md)（英文）有详细说明。
-
-只加标签、把排名留给每位订阅者自己决定的列表，是最容易发布的：订阅者可以在**设置 → 标签**中决定你的标签是提升、高亮还是隐藏。
-
-如果其他列表已有合适的标签 ID，请重复使用，这样订阅者看到的就是一个标签，而不是两个含义相同的标签；[列表格式](../../list-format.md#tags)列出了 Anubis 的列表所使用的那些。发布之后，请保持每个 ID 不变：若要重命名标签，请更改它的显示名称。
+给每个加了标签的网站写一条 `#` 注释说明原因。只加标签的列表最友好：订阅者自己决定标签的作用。在合适的地方复用 [已有的标签 ID](../../list-format.md#tags)，ID 一旦发布就不要更改。参见 [列表格式](../../list-format.md)（英文）。
 
 ## 2. 放到网上
 
-在 GitHub、GitLab 或 Codeberg 上创建一个公开仓库，或者创建一个 gist，然后添加这个文件。任何文件名都可以；以 `.anubis` 结尾有助于人们认出它。
+把它加到 GitHub、GitLab 或 Codeberg 上的公开代码仓库，或一个 gist 中。以 `.anubis` 结尾的文件名更容易识别。
 
 ## 3. 分享链接
 
-人们会把链接粘贴到**设置 → 列表 → 添加列表**中。指向文件页面的链接也可以；Anubis 会找到原始文件。GitHub 和 gist 上的列表无需额外权限即可下载。
+大家可以把它粘贴到**设置 → 列表 → 添加列表**中，或使用一键 [订阅链接](../../subscribe.md#make-a-subscribe-link)。
 
-若想一键订阅，请改为分享[订阅链接](../../subscribe.md#make-a-subscribe-link)：它会打开 Anubis 的设置，并填好你的列表。
+## 4. 了解错误，接受推荐
 
-## 4. 了解错误，并让人们推荐网站
-
-当你的列表把某个网站弄错时，订阅者可以在该结果的菜单中选择“有误？报告给 *你的列表*”。它会在你的仓库的问题跟踪器上打开一个预先填好的 issue，其中有匹配的规则和结果的地址，供他们发送。对于 GitHub、GitLab 或 Codeberg 上的列表，这无需任何设置。
-
-把 `! issues:` 设为你的问题跟踪器，订阅者还可以推荐网站：“推荐给 *你的列表*”随后会出现在你的列表没有提到的结果的菜单中。报告也会发到 `! issues:`，所以如果你的仓库自己的 issue 已关闭，请设置它。Pull request 的用法和任何仓库一样。
+把 `! issues:` 设为你的问题跟踪器，订阅者就会看到**建议更改**按钮。
 
 ## 5. 加入目录
 
-若要让你的列表出现在每个人的**设置 → 列表 → 更多列表**中，请提交一个 pull request，把它添加到 [`lists/directory.json`](https://github.com/Bishop-V/anubis/blob/main/lists/directory.json)。[列表目录](../../lists.md)页面（英文）会显示目前有什么。
+提交一个拉取请求，把它加到 [`lists/directory.json`](https://github.com/Bishop-V/anubis/blob/main/lists/directory.json) 中。参见 [列表目录](../../lists.md)。

@@ -2,23 +2,21 @@
 
 ## Websites importieren
 
-Du kommst von uBlacklist, HOHSER oder einem Brave Goggle? Öffne **Einstellungen → Sicherung → Websites importieren**, füge deine Regeln ein (oder klicke auf **Datei wählen**) und klicke auf **Importieren**. Die Websites kommen in deine eigene Liste.
+**Einstellungen → Sicherung → Websites importieren** nimmt deine Regeln: Füge sie ein oder wähle eine Datei, dann drücke **Importieren**.
 
-| Von | Was du bekommst |
+| Aus | Du bekommst |
 | --- | --- |
-| **uBlacklist**-Regeln | Gesperrte Websites werden ausgeblendet. Entsperr-Regeln (`@…`) halten eine Website auf Normal. Hervorhebungsregeln werden zu Tags, die hervorheben. |
-| **HOHSER**-Export | Ausgeblendet bleibt ausgeblendet, teilweises Ausblenden wird zu Abwerten, und Hervorhebungsfarben werden zu Tags, die hervorheben. |
-| **Brave Goggle** | Discards werden ausgeblendet, Boosts aufgewertet, Downranks abgewertet. |
-| **Eine Liste von Domains** | Jede Domain wird ausgeblendet. |
+| **uBlacklist** | Blockierte Websites ausgeblendet; Hervorhebungen werden Tags. |
+| **HOHSER** | Ausgeblendet bleibt ausgeblendet, teilweise ausgeblendet wird Abwerten, Hervorhebungen werden Tags. |
+| **Brave Goggle** | Discards ausgeblendet, Boosts aufgewertet, Downranks abgewertet. |
+| **Eine Liste von Domains** | Jede Domain ausgeblendet. |
 
-Anubis sagt, was es gelesen hat („Gelesen als HOHSER-Export: 2 Websites hinzugefügt und 0 aktualisiert.“). Regeln, die mehr als einen Websitenamen brauchen, etwa Pfade oder die Titelausdrücke von uBlacklist, werden übersprungen und gezählt.
-
-Eine Liste, die jemand anderes veröffentlicht, musst du nicht importieren. [Abonniere sie](./lists.md) stattdessen, und du bekommst ihre Updates.
+Regeln, die mehr als einen Websitenamen brauchen, werden übersprungen. Eine Liste, die jemand anderes veröffentlicht, [abonnierst](./lists.md) du besser, um ihre Aktualisierungen zu bekommen.
 
 ## Sichern
 
-**Sicherung exportieren** speichert alles in einer Datei: Einstellungen, Tag-Entscheidungen, Abonnements und deine Liste. **Sicherung wiederherstellen** lädt diese Datei, in diesem Browser oder einem anderen. Das ist auch ein Weg, einmal zwischen Firefox und Chrome zu wechseln; um sie auf dem gleichen Stand zu halten, [verbinde einen Sync-Server](./sync.md). **Einstellungen zurücksetzen** setzt Einstellungen, Tag-Entscheidungen und Abonnements auf den Stand der Installation zurück und behält deine Liste. **Rückgängig** neben der folgenden Meldung bringt sie für ein paar Sekunden zurück.
+**Sicherung exportieren** speichert alles in einer Datei, und **Sicherung wiederherstellen** lädt sie in jedem Browser. **Einstellungen zurücksetzen** geht zurück zum Ausgangszustand, behält aber deine Websites.
 
 ## Deine Liste teilen
 
-Deine eigene Liste ist eine einfache Textdatei. **Meine Liste herunterladen** speichert sie, bereit zum [Veröffentlichen](./publish-a-list.md).
+**Meine Liste herunterladen** speichert deine Websites als Textdatei, bereit zum [Veröffentlichen](./publish-a-list.md).

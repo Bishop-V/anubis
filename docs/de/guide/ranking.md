@@ -1,6 +1,6 @@
 # Websites einstufen
 
-Jede Website hat eine *Einstufung*, die du über die Skala an einem ihrer Ergebnisse, im Symbolleisten-Popup oder unter **Einstellungen → Deine Websites** wählst.
+Jede Website hat eine *Einstufung*. Lege sie über die Schaltfläche neben einem Ergebnis fest, im Pop-up der Symbolleiste oder unter **Einstellungen → Deine Websites**.
 
 <!-- Maintainer: German translation of docs/guide/ranking.md. RankDemo (docs/.vitepress/theme/rank-demo.ts) draws a site being pinned and another lowered, and the picture below, for reading on GitHub, is hidden. The screenshots are the English ones. -->
 
@@ -8,50 +8,40 @@ Jede Website hat eine *Einstufung*, die du über die Skala an einem ihrer Ergebn
 
 <div class="github-only">
 
-![Ein Ergebnis mit seinen Tags und der Skala um das Symbol seiner Website](../../img/result.png)
+![Ein Ergebnis mit seinen Tags und seiner Schaltfläche in der Spalte links davon](../../img/result.png)
 
 </div>
 
-Am Computer hat jedes Ergebnis eine Skala: einen Halbkreis um das Symbol der Website, mit einer kleinen Krone links daran. Klicke auf die Krone, um das Menü des Ergebnisses zu öffnen. Der Halbkreis füllt sich von seiner Mitte aus mit der Einstufung der Website: nach oben bei einer aufgewerteten Website und nach unten bei einer abgewerteten, umso weiter, je mehr Plätze die Website gerückt ist, und ganz herum bei einer angehefteten. Bei einer normalen oder ausgeblendeten Website bleibt er leer. Hat ein Ergebnis kein Website-Symbol, läuft die Skala um eine schlichte graue Scheibe. Bei Bild- und Videoergebnissen ist die Skala eine kleine dunkle Lasche in der oberen rechten Ecke des Bildes, mit derselben Krone und einem senkrechten Strich, der sich genauso füllt. Auf dem Smartphone hat das Ergebnis stattdessen eine Schaltfläche ⚖ am Ende seines Titels, deren Waage sich mit der Einstufung neigt. Das Ergebnis trägt kein eigenes Etikett „Aufgewertet“ oder „Abgewertet“, denn die Skala zeigt seine Einstufung bereits. Ein Tag, das das Ergebnis verschiebt oder ausblendet, [zeigt das anstelle seiner Raute](./tags.md).
+Die Schaltfläche links neben jedem Ergebnis zeigt seine Einstufung und öffnet das Menü. Bei Bildern und Videos sitzt sie oben rechts, auf dem Smartphone ist es das ⚖ nach dem Titel.
 
-Die Waage im Menü wägt alles zusammen: deine Einstufung, deine Tags und deine Listen. Je weiter sich ein Ergebnis bewegt, desto weiter neigt sie sich, also neigt sich eine Website, die du zweimal aufgewertet hast oder die zwei Tags mit Aufwerten hat, weiter als bei einer einzelnen Aufwertung.
-
-| Einstufung | Was mit den Ergebnissen der Website passiert |
+| Einstufung | Was passiert |
 | --- | --- |
-| **Ausblenden** | Sie verschwinden oder schrumpfen zu einer Zeile, die du öffnen kannst (siehe den Abschnitt „Ausgeblendete Ergebnisse“ weiter unten). |
-| **Abwerten** | Sie rutschen fünf Plätze nach unten. Wähle es erneut für zehn Plätze, und der Pfeil bekommt einen zweiten Pfeil. Ein dritter Klick nimmt es zurück. |
-| **Normal** | Nimmt deine eigene Einstufung zurück, sodass deine Tags und Listen die Website so wägen, als gäbe es sie nicht. |
-| **Aufwerten** | Sie rücken fünf Plätze nach oben. Wähle es erneut für zehn Plätze, und der Pfeil bekommt einen zweiten Pfeil. Ein dritter Klick nimmt es zurück. |
-| **Anheften** | Sie wandern ganz nach oben, mit einem dünnen grauen Rahmen. |
+| **Ausblenden** | Die Ergebnisse der Website werden ausgeblendet. |
+| **Abwerten** | Fünf Plätze nach unten. Noch einmal drücken für zehn, ein drittes Mal zum Zurücknehmen. |
+| **Normal** | Hebt deine Einstufung auf; Tags und Listen gelten weiter. |
+| **Aufwerten** | Fünf Plätze nach oben. Noch einmal drücken für zehn, ein drittes Mal zum Zurücknehmen. |
+| **Anheften** | Ganz nach oben. |
 
-Aufwerten und Abwerten addieren sich zu allem anderen, was die Website wägt: deine Listen und [die Tags, die du auf Anheften, Aufwerten oder Abwerten gesetzt hast](./tags.md). Wenn eine Liste eine Website um 3 abwertet und du sie aufwertest, rückt sie 2 Plätze nach oben, und ein Tag, das sie aufwertet, behält sein Zeichen. Anheften und Ausblenden ersetzen, was die Listen sagen. Ein Tag, das du auf Ausblenden gesetzt hast, blendet keine Website aus, die du selbst eingestuft hast; eine Website einzustufen ist also der Weg, eine einzelne Website zu behalten, die ein Ausblenden-Tag ausblenden würde. Sobald du eine Website eingestuft hast, erscheint **Deine Liste** im Menü unter ihren Tags, mit dem Zeichen deiner Einstufung.
-
-Nach einer Änderung aus dem Menü sagt die Zusammenfassung über den Ergebnissen, was du getan hast („fandom.com ausgeblendet.“), mit einer Schaltfläche **Rückgängig**. Rückgängig setzt die Website so zurück, wie sie war, bevor du ihr Menü geöffnet hast, Tags eingeschlossen, auch nach mehreren Änderungen. Sie bleibt bis zu deiner nächsten Suche oder bis du eine andere Website änderst.
+Aufwerten und Abwerten kommen zu dem hinzu, was deine Listen und Tags bewirken. Anheften und Ausblenden haben Vorrang vor ihnen. **Rückgängig** in der Zusammenfassung nimmt deine letzte Änderung zurück.
 
 ## Wie viel von der Website
 
-Eine Einstufung deckt eine Website und alle ihre Subdomains ab. Der Name oben im Menü wählt die Ebene: `wikipedia.org` deckt die Wikipedia jeder Sprache ab, `en.wikipedia.org` nur die englische. Die spezifischste Wahl gewinnt, du kannst also `fandom.com` ausblenden und `minecraft.fandom.com` trotzdem aufwerten.
-
-Bei Diensten, auf denen jeder seine eigene Website veröffentlichen kann, wie `github.io` oder `blogspot.com`, enden die Auswahlmöglichkeiten bei der Website dieser Person: `someone.github.io` bietet nicht das ganze `github.io` an. Wenn du den ganzen Dienst schon eingestuft hattest, wird er weiterhin angeboten, damit du ihn ändern kannst.
+Eine Einstufung gilt für die Website und ihre Subdomains. Der Name oben im Menü wählt die Ebene, etwa `en.wikipedia.org` oder ganz `wikipedia.org`. Die genaueste gewinnt.
 
 ## Neu ordnen
 
-Anubis ordnet die Ergebnisse neu, die schon auf der Seite sind; es kann keine Ergebnisse holen, die die Suchmaschine nicht gesendet hat. Ein aufgewertetes Ergebnis vom Ende von Seite 1 rückt nach oben, aber eine Website, die nur auf Seite 3 steht, braucht zuerst [Mehr Ergebnisse laden](./more-results.md).
-
-Um die Reihenfolge der Suchmaschine zu behalten und nur Tags und Ausblenden zu nutzen, schalte **Einstellungen → Darstellung → Ergebnisse neu ordnen** aus.
+Anubis ordnet nur Ergebnisse neu, die schon auf der Seite stehen. Für spätere Seiten verwende [Mehr Ergebnisse laden](./more-results.md). Um die Reihenfolge der Suchmaschine zu behalten, schalte **Einstellungen → Darstellung → Ergebnisse neu ordnen** aus.
 
 ## Ausgeblendete Ergebnisse
 
-**Einstellungen → Darstellung → Ausgeblendete Ergebnisse** legt fest, wie ausgeblendete Ergebnisse aussehen:
+**Einstellungen → Darstellung → Ausgeblendete Ergebnisse** legt fest, wie sie aussehen:
 
-- **Entfernen** (Standard): von der Seite verschwunden. Die Zusammenfassung über den Ergebnissen zählt sie, und **Ausgeblendete zeigen** holt sie zurück.
-- **Einklappen**: eine Zeile mit dem Namen der Website und dem Grund fürs Ausblenden, mit einer Schaltfläche **Zeigen**. Aufeinanderfolgende ausgeblendete Ergebnisse teilen sich eine Zeile („fandom.com und 5 weitere von deiner Liste ausgeblendet“), und ihr **Zeigen** bringt alle zurück.
-- **Abblenden**: bleiben an ihrem Platz, abgeblendet.
+- **Entfernen** (Standard): weg, und in der Zusammenfassung gezählt.
+- **Einklappen**: eine Zeile mit einer Schaltfläche **Zeigen**.
+- **Abblenden**: blass an ihrem Platz.
 
 ## Deine Websites
 
-**Einstellungen → Deine Websites** listet jede Website auf, die du eingestuft hast, mit ihren Tags. Ändere dort eine Einstufung, füge eine Website per Namen hinzu oder bearbeite die ganze Liste als Text.
+**Einstellungen → Deine Websites** listet jede Website, die du eingestuft hast. Bearbeite sie dort einzeln oder als Text. Die Liste wird mit deinem Browser synchronisiert und kann [veröffentlicht](./publish-a-list.md) werden.
 
 ![Einstellungen, Deine Websites](../../img/options-sites.png)
-
-Deine Websites werden als Liste im [Anubis-Listenformat](../../list-format.md) (diese Seite ist auf Englisch) gespeichert, sodass du sie [veröffentlichen](./publish-a-list.md) kannst, damit andere sie abonnieren. Sie liegt im Sync-Speicher deines Browsers und folgt dir daher auf andere Computer, auf denen du mit demselben Browserkonto angemeldet bist ([mehr zur Synchronisierung](./sync.md)).

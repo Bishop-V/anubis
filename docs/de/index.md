@@ -33,27 +33,27 @@ demo:
 
 highlights:
   - title: Jede Website direkt im Ergebnis einstufen
-    details: Blende eine Website mit der Schaltfläche neben einem beliebigen Ergebnis aus, werte sie ab oder auf, oder hefte sie an. Deine Wahl gilt für jede Suche.
+    details: Blende eine Website an jedem Ergebnis aus, werte sie ab oder auf, oder hefte sie an. Das gilt für jede Suche.
     link: /de/guide/ranking
     linkText: So funktioniert das Einstufen
   - title: Tags, mit denen du etwas bewirken kannst
-    details: Ergebnisse tragen Beschriftungen wie „Official docs“ oder „Paywalled“. Du entscheidest, was jedes Tag bewirkt, von bloßer Beschriftung bis zum Ausblenden aller Ergebnisse mit diesem Tag.
+    details: Beschriftungen wie „Official docs“ oder „Paywalled“. Du entscheidest, was jedes bewirkt.
     link: /de/guide/tags
     linkText: Über Tags
   - title: Listen, die jeder veröffentlichen kann
-    details: Eine Liste ist eine Textdatei in einem Git-Repository. Brave Goggles und uBlacklist-Regelsätze funktionieren unverändert.
+    details: Eine Liste ist eine Textdatei. Brave Goggles und uBlacklist-Regelsätze funktionieren auch.
     link: /de/guide/lists
     linkText: Listen abonnieren
   - title: Bereiche entfernen
-    details: Entferne KI-Antworten, Videobereiche und „Ähnliche Fragen“ aus jeder Suche. Du wählst, was.
+    details: Entferne KI-Antworten, Videobereiche und „Ähnliche Fragen“.
     link: /de/guide/clean-up
     linkText: Was entfernt wird
 
 closing:
   title: Keine Anmeldung nötig
   details:
-    - Anubis hat keinen Server und sammelt nichts. Deine Entscheidungen bleiben in deinem Browser, es sei denn, du verbindest einen eigenen Speicherserver, um zwischen Browsern zu synchronisieren.
-    - "Anubis funktioniert mit Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo und Yandex, in Firefox und Chrome. Mojeek und Edge sind experimentell: Sie wurden noch nicht auf der echten Website oder im Browser ausprobiert."
+    - Anubis hat keinen Server und sammelt nichts. Deine Entscheidungen bleiben in deinem Browser.
+    - Funktioniert mit Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo und Yandex, in Firefox und Chrome.
   link: /de/guide/privacy
   linkText: Datenschutz und Berechtigungen
 ---

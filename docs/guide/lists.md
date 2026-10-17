@@ -1,10 +1,8 @@
 # Subscribing to lists
 
-A list tags, raises, lowers, or hides sites for you. Anyone can publish one: it's a text file in a Git repository, a gist, or any public web address. There's no Anubis server in between.
+A list tags, ranks, or hides sites for you. Anyone can publish one as a text file on the web.
 
-Anubis starts subscribed to five small lists that ship with it: **Official docs**, **Discussions**, **Reference**, **Paywalls**, and **FOSS tools**. They mostly add tags. **FOSS tools** labels LibreSpeed and cobalt.tools as FOSS, and makes the **AI slop** tag available for sites you choose to tag yourself.
-
-It also starts with two [lists made from other projects](#lists-made-from-other-projects), which it downloads when it's installed: **AI content** and **Independent wikis**. Copies of Anubis installed before these two existed subscribe to them, and switch every starting list back on, once, when they update. Turn any of them off again under **Settings → Lists**.
+Anubis starts with these lists: **Official docs**, **Discussions**, **Reference**, **Paywalls**, **FOSS tools**, **AI content**, and **Independent wikis**. Turn any off in **Settings → Lists**.
 
 <!-- Maintainer: this generated screenshot comes from the mock Settings page. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark image and its description together. -->
 
@@ -12,52 +10,48 @@ It also starts with two [lists made from other projects](#lists-made-from-other-
 
 ## Subscribe
 
-- **From the directory:** **Settings → Lists → More lists** shows lists other people have published. Press **Subscribe** on one. It leaves out lists you already have, and lists built from the same source as one you have.
-- **From the web:** **Subscribe** on the [Lists directory](../lists.md) page, or a subscribe link on a list's own page, opens Anubis's settings with the list filled in. Check it's the list you expected, and press **Subscribe** there to add it.
-- **From its address:** paste the list's address into **Add a list** and press **Subscribe**. Links to a file's page on GitHub, GitLab, or Codeberg, gist links, and Brave Search Goggle links all work; Anubis finds the raw file.
+- **Settings → Lists → More lists**, and press **Subscribe**.
+- Or **Subscribe** on the [Lists directory](../lists.md) or a list's own page.
+- Or paste its address into **Add a list**. GitHub, GitLab, Codeberg, gist, and Goggle links all work.
 
-Lists hosted on GitHub or in a gist download straight away. For a list hosted anywhere else, your browser asks you to allow Anubis to read from that one site.
+Lists hosted outside GitHub ask for permission to read that one site.
 
 ## What lists work
 
-- Anubis lists (`.anubis` files)
+- Anubis lists (`.anubis`)
 - [Brave Goggles](https://github.com/brave/goggles-quickstart)
 - [uBlacklist](https://github.com/iorate/ublacklist) rulesets
-- Plain lists of domains, one per line, and hosts files
+- Plain domain lists and hosts files
 
-Anubis detects the format itself. Rules it can't use, such as uBlacklist's title expressions, are skipped and counted under the list in settings.
+Rules Anubis can't use are skipped and counted.
 
 ::: warning Lenses
-Some Brave Goggles are *lenses*: they hide every result they don't mention, so a search shows only the sites on the list. Anubis marks these with "lens" so you don't subscribe to one by surprise.
+Some Goggles are *lenses*: they hide every site they don't list. Anubis marks them "lens".
 :::
 
 ## Updates
 
-Anubis checks for new versions of your lists when the browser starts and while you search, at most every 30 minutes. Each list says how often it wants to be checked (usually once a day). **Update all** in **Settings → Lists** checks right away.
+Lists update about once a day. **Update all** in **Settings → Lists** checks now.
 
 ## Lists made from other projects
 
-Some lists in the directory are made from data other projects collect. Every week, Anubis turns that data into a list and publishes it, so it stays current between Anubis's releases. Each list names its source and links to it in **Settings → Lists**.
+These are rebuilt weekly from other projects' data. To change one, contribute to its source.
 
-| List | Made from | What it does |
+| List | Source | What it does |
 | --- | --- | --- |
-| **AI content** | [HUGE AI Blocklist](https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist) by laylavish (CC0) | Labels sites made mostly of AI-generated text or images **AI-generated**, and sites that mix authentic and AI-generated work **Some AI content**. Sites the blocklist files as content farms or spam are also labelled **AI slop**. It never moves or hides anything unless you choose that for a tag. |
-| **Official docs (DevDocs)** | [DevDocs](https://github.com/freeCodeCamp/devdocs) by its contributors (MPL-2.0) | Labels the documentation sites DevDocs collects **Official docs** and raises them slightly, like the Official docs list. It covers about 210 sites, among them MDN and the Python, Rust, and React docs. |
-| **Self-hosted FOSS** | [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted-data) by its contributors (CC BY-SA 3.0) | Labels the websites of about 1,000 free programs you can run yourself **FOSS**, the same label as the FOSS tools list. Programs under licences that aren't free are left out. It never moves or hides anything. |
-| **Independent wikis** | [Indie Wiki Buddy](https://github.com/KevinPayravi/indie-wiki-buddy) by Kevin Payravi (MIT) | Raises independent wikis, labelled **Independent wiki**, and lowers the Fandom, Fextralife, and Neoseeker wikis they replace, labelled **Has independent wiki**. |
-
-To add a site to one of these lists, or to have one removed, contribute to the project it comes from, through the links above. Anubis copies the data as it is, and its next weekly update brings in the change.
-
-To stop using one, unsubscribe or turn it off like any list. To keep a list but not one of its labels, turn that tag off in **Settings → Tags**, or choose what it does there.
+| **AI content** | [HUGE AI Blocklist](https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist) by laylavish (CC0) | Tags AI-generated sites. |
+| **Official docs (DevDocs)** | [DevDocs](https://github.com/freeCodeCamp/devdocs) by its contributors (MPL-2.0) | Tags and slightly raises about 210 docs sites. |
+| **Self-hosted FOSS** | [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted-data) by its contributors (CC BY-SA 3.0) | Tags about 1,000 self-hostable programs FOSS. |
+| **Independent wikis** | [Indie Wiki Buddy](https://github.com/KevinPayravi/indie-wiki-buddy) by Kevin Payravi (MIT) | Raises independent wikis and lowers the Fandom wikis they replace. |
 
 ## Turn off, or unsubscribe
 
-Each list in **Your lists** has a switch to turn it off for a while and a button to unsubscribe. Unsubscribing happens at once, with **Undo** beside the message for a few seconds. Your own rankings always beat any list, so to overrule one list about one site, rank that site yourself.
+Each list has a switch and an unsubscribe button. To overrule a list on one site, rank the site yourself.
 
 ## Report a mistake in a list
 
-If a list hides, ranks, or tags a site wrongly, open the result's menu: the line under the rankings names the lists behind the site's ranking. In **Settings → Lists**, **suggest changes** beside a list that names its issue tracker opens it, to tell its maintainers what should change. To overrule a list straight away, rank the site yourself; a report gets the list fixed for everyone.
+A result's menu names the lists behind its ranking. Press **suggest changes** beside a list in **Settings → Lists** to tell its maintainers.
 
 ## Suggest a site to a list
 
-To suggest a site to a list, use **suggest changes** beside it in **Settings → Lists**, or contribute to its repository.
+Use **suggest changes** beside the list in **Settings → Lists**.

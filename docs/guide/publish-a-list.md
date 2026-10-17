@@ -1,10 +1,10 @@
 # Publish a list
 
-A list is a text file anyone can subscribe to. You don't need a server or an account with Anubis: a public Git repository is the database, and issues and pull requests are how other people contribute.
+A list is a text file in a public repository. Issues and pull requests are how people contribute.
 
 ## 1. Write it
 
-The quickest start is your own list. **Settings → Backup → Download my list** saves every site you've ranked and tagged. Or write one from scratch:
+Start from **Settings → Backup → Download my list**, or write one:
 
 ```
 ! name: Official docs
@@ -17,26 +17,20 @@ $site=developer.mozilla.org,tag=docs,boost=1 # MDN publishes first-party web pla
 $site=docs.python.org,tag=docs,boost=1 # This is Python's official documentation.
 ```
 
-Every line after the header is one instruction: which sites, and what to do with them. Add a short `#` comment to every tagged site rule you add, explaining why the site fits. The [list format](../list-format.md) has the details.
-
-Lists that only tag, and leave ranking to each subscriber, are the friendliest to publish: subscribers can decide in **Settings → Tags** whether your tag raises, highlights, or hides.
-
-Reuse a tag id other lists already have where one fits, so subscribers see one tag rather than two with the same meaning; the [list format](../list-format.md#tags) lists the ones Anubis's lists use. Once published, keep each id: to rename a tag, change its label.
+Give each tagged site a `#` comment saying why. Lists that only tag are friendliest: subscribers choose what tags do. Reuse [existing tag ids](../list-format.md#tags) where they fit, and never change one once published. See the [list format](../list-format.md).
 
 ## 2. Put it online
 
-Create a public repository on GitHub, GitLab, or Codeberg, or a gist, and add the file. Any file name works; ending it in `.anubis` helps people recognise it.
+Add it to a public repository on GitHub, GitLab, or Codeberg, or a gist. A name ending `.anubis` helps.
 
 ## 3. Share the link
 
-People paste the link into **Settings → Lists → Add a list**. A link to the file's page works; Anubis finds the raw file. Lists on GitHub and gists download without asking for any extra permission.
-
-For one click, share a [subscribe link](../subscribe.md#make-a-subscribe-link) instead: it opens Anubis's settings with your list filled in.
+People paste it into **Settings → Lists → Add a list**, or use a one-click [subscribe link](../subscribe.md#make-a-subscribe-link).
 
 ## 4. Hear about mistakes, and let people suggest sites
 
-Set `! issues:` to your issue tracker, and **Settings → Lists** shows **suggest changes** beside your list, which opens it: subscribers use it to tell you about a site your list gets wrong, or one it should include. Pull requests work as for any repository.
+Set `! issues:` to your tracker, and subscribers get a **suggest changes** button.
 
 ## 5. Add it to the directory
 
-To have your list offered to everyone under **Settings → Lists → More lists**, open a pull request that adds it to [`lists/directory.json`](https://github.com/Bishop-V/anubis/blob/main/lists/directory.json). The [Lists directory](../lists.md) page shows what's there now.
+Open a pull request adding it to [`lists/directory.json`](https://github.com/Bishop-V/anubis/blob/main/lists/directory.json). See the [Lists directory](../lists.md).

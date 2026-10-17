@@ -1,10 +1,10 @@
 # Xuất bản danh sách
 
-Danh sách là một tệp văn bản mà ai cũng có thể đăng ký. Bạn không cần máy chủ hay tài khoản Anubis: một kho Git công khai là cơ sở dữ liệu, còn issue và pull request là cách người khác đóng góp.
+Danh sách là một tệp văn bản trong kho mã công khai. Mọi người đóng góp qua issue và pull request.
 
-## 1. Viết danh sách
+## 1. Viết
 
-Cách nhanh nhất là bắt đầu từ danh sách của chính bạn. **Cài đặt → Sao lưu → Tải danh sách của tôi xuống** lưu mọi trang web bạn đã xếp hạng và gắn nhãn. Hoặc viết một danh sách từ đầu:
+Bắt đầu từ **Cài đặt → Sao lưu → Tải danh sách của tôi xuống**, hoặc tự viết:
 
 ```
 ! name: Official docs
@@ -17,28 +17,20 @@ $site=developer.mozilla.org,tag=docs,boost=1 # MDN publishes first-party web pla
 $site=docs.python.org,tag=docs,boost=1 # This is Python's official documentation.
 ```
 
-Mỗi dòng sau phần đầu là một chỉ thị: những trang web nào, và làm gì với chúng. Hãy thêm một chú thích ngắn bắt đầu bằng `#` vào mọi quy tắc gắn nhãn cho trang web bạn thêm, giải thích vì sao trang web phù hợp. [Định dạng danh sách](../../list-format.md) (bằng tiếng Anh) có chi tiết.
-
-Những danh sách chỉ gắn nhãn, và để mỗi người đăng ký tự quyết định việc xếp hạng, là thân thiện nhất khi xuất bản: người đăng ký có thể quyết định trong **Cài đặt → Nhãn** xem nhãn của bạn nâng, tô sáng hay ẩn.
-
-Hãy dùng lại mã định danh nhãn mà các danh sách khác đã có khi phù hợp, để người đăng ký thấy một nhãn thay vì hai nhãn cùng nghĩa; [định dạng danh sách](../../list-format.md#tags) liệt kê những mã mà các danh sách của Anubis dùng. Sau khi xuất bản, hãy giữ nguyên từng mã định danh: để đổi tên một nhãn, hãy đổi nhãn hiển thị của nó.
+Cho mỗi trang web được gắn nhãn một chú thích `#` nói lý do. Danh sách chỉ gắn nhãn là thân thiện nhất: người đăng ký tự chọn nhãn làm gì. Dùng lại [mã nhãn có sẵn](../../list-format.md#tags) khi phù hợp, và không bao giờ đổi một mã đã xuất bản. Xem [định dạng danh sách](../../list-format.md) (bằng tiếng Anh).
 
 ## 2. Đưa lên mạng
 
-Tạo một kho công khai trên GitHub, GitLab hoặc Codeberg, hoặc một gist, và thêm tệp vào. Tên tệp nào cũng được; kết thúc bằng `.anubis` giúp mọi người nhận ra nó.
+Thêm nó vào một kho mã công khai trên GitHub, GitLab hoặc Codeberg, hoặc một gist. Tên kết thúc bằng `.anubis` sẽ dễ nhận ra.
 
 ## 3. Chia sẻ liên kết
 
-Mọi người dán liên kết vào **Cài đặt → Danh sách → Thêm danh sách**. Liên kết đến trang của tệp dùng được; Anubis tìm ra tệp gốc. Các danh sách trên GitHub và gist được tải xuống mà không cần xin thêm quyền nào.
+Mọi người dán nó vào **Cài đặt → Danh sách → Thêm danh sách**, hoặc dùng [liên kết đăng ký](../../subscribe.md#make-a-subscribe-link) một lần nhấn.
 
-Để đăng ký chỉ bằng một lần nhấp, hãy chia sẻ [liên kết đăng ký](../../subscribe.md#make-a-subscribe-link): nó mở cài đặt của Anubis với danh sách của bạn đã điền sẵn.
+## 4. Nhận báo lỗi và đề xuất trang web
 
-## 4. Nhận thông tin về lỗi, và để mọi người đề xuất trang web
-
-Khi danh sách của bạn xử lý sai một trang web, người đăng ký có thể chọn “Sai? Báo cáo với *danh sách của bạn*” trong menu trên kết quả đó. Thao tác này mở một issue điền sẵn trên trình theo dõi vấn đề của kho của bạn, kèm quy tắc đã khớp và địa chỉ của kết quả, để họ gửi đi. Điều này không cần cài đặt nào cho danh sách trên GitHub, GitLab hoặc Codeberg.
-
-Hãy đặt `! issues:` là trình theo dõi vấn đề của bạn để người đăng ký cũng có thể đề xuất trang web: “Đề xuất với *danh sách của bạn*” khi đó xuất hiện trong menu trên các kết quả mà danh sách của bạn chưa nhắc đến. Các báo cáo cũng đến `! issues:`, nên hãy đặt nó nếu issue của chính kho của bạn đã bị tắt. Pull request hoạt động như với mọi kho.
+Đặt `! issues:` thành trình theo dõi của bạn, và người đăng ký sẽ có nút **đề xuất thay đổi**.
 
 ## 5. Thêm vào thư mục
 
-Để danh sách của bạn được đề xuất cho mọi người trong **Cài đặt → Danh sách → Danh sách khác**, hãy mở một pull request thêm nó vào [`lists/directory.json`](https://github.com/Bishop-V/anubis/blob/main/lists/directory.json). Trang [Thư mục danh sách](../../lists.md) (bằng tiếng Anh) cho thấy hiện có những gì.
+Mở một pull request thêm nó vào [`lists/directory.json`](https://github.com/Bishop-V/anubis/blob/main/lists/directory.json). Xem [Thư mục danh sách](../../lists.md).
