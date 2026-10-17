@@ -52,6 +52,10 @@ function withRepo(run: (repo: string, dest: string, sync: () => string) => void)
     execFileSync('git', ['init', '-q', repo]);
     git(repo, 'config', 'user.name', 'Anubis tests');
     git(repo, 'config', 'user.email', 'tests@example.invalid');
+    // Newer git starts maintenance in the background after a commit, which can still be
+    // writing to .git/objects when the folder is deleted below (ENOTEMPTY in CI).
+    git(repo, 'config', 'maintenance.auto', 'false');
+    git(repo, 'config', 'gc.auto', '0');
     commit(repo, 'LICENSE', 'MIT License');
     for (const file of Object.keys(config.watched)) commit(repo, file, `baseline ${file}`);
     const sync = () =>
@@ -61,7 +65,7 @@ function withRepo(run: (repo: string, dest: string, sync: () => string) => void)
       });
     run(repo, dest, sync);
   } finally {
-    rmSync(temp, { recursive: true, force: true });
+    rmSync(temp, { recursive: true, force: true, maxRetries: 5 });
   }
 }
 
