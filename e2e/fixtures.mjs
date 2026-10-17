@@ -90,8 +90,8 @@ const mainClass = ({ wide, padded }) => (wide ? ' class="wide"' : padded ? ' cla
 // on a live page (2026-09-30): the button left the result for its right edge
 // although nothing showed beside the menu; what's there is a guess.
 // `padded`: each result's words inside a padded box, as on the live page (2026-10-17).
-export function duckduckgo(query, results, dark = false, more = [], { ai = false, wide = false, tab, unseen = false, padded } = {}) {
-  if (tab) return duckduckgoTab(query, results, tab);
+export function duckduckgo(query, results, dark = false, more = [], { ai = false, wide = false, tab, unseen = false, padded, rows = false } = {}) {
+  if (tab) return duckduckgoTab(query, results, tab, rows);
   const item = ([url, title, snippet], i) => `
       <li data-layout="organic" class="wLL07_0Xnd1QZpzpfR4W">
         <article id="r1-${i}" data-testid="result" data-nrn="result" class="yQDlj3B5DI5YO8c8Ulio CpkrTDP54mqzpuCSn1Fa SKlplDuh9FjtDprgoMxk">
@@ -712,7 +712,10 @@ export function brave(query, results, { panels = false, pager } = {}) {
       <div id="pagination" class="pagination"><a class="btn" href="${pager}">Next</a></div>` : ''}</section></main></div></div></div></main></div></body></html>`;
 }
 
-function duckduckgoTab(query, results, tab) {
+// With `rows`, the Images tab is laid out as on the live page (2026-10-17 screenshot): a `ul` of pictures in
+// justified rows that a script places, once on load and again on every resize. Until it runs again, a hidden
+// picture leaves a hole, and anything inserted among the pictures takes a place in a row. The markup is a guess.
+function duckduckgoTab(query, results, tab, rows = false) {
   const card = ([url, title], i) =>
     tab === 'videos'
       ? `<li><a href="${url}"><article><div class="thumb"></div><h2>${esc(title)}</h2><div class="src">${esc(hostOf(url))}</div></article></a></li>`
@@ -729,7 +732,23 @@ function duckduckgoTab(query, results, tab) {
     figure{margin:0}.src,figcaption span{font-size:12px;color:#777}
   </style></head><body>
   <div class="tabs">All <b>${tab === 'videos' ? 'Videos' : 'Images'}</b></div>
-  <main><div data-testid="zci-${tab}"><ol>${results.map(card).join('')}</ol></div></main>
+  <main><div data-testid="zci-${tab}">${rows ? `<ul class="rows">${results.map(card).join('')}</ul>` : `<ol>${results.map(card).join('')}</ol>`}</div></main>
+  ${rows ? `<style>ul.rows{list-style:none;margin:0;padding:0;position:relative}ul.rows>li{position:absolute;overflow:hidden}ul.rows .thumb{height:140px}</style>
+  <script>
+    function lay() {
+      const ul = document.querySelector('ul.rows'), gap = 8, width = ul.clientWidth;
+      let x = 0, y = 0, rowHeight = 0;
+      for (const li of ul.children) {
+        if (li.tagName !== 'LI' || getComputedStyle(li).display === 'none') continue;
+        const w = 140 + (li.querySelector('p').textContent.length % 5) * 40;
+        if (x && x + w > width) { x = 0; y += rowHeight + gap; rowHeight = 0; }
+        li.style.cssText += ';left:' + x + 'px;top:' + y + 'px;width:' + w + 'px';
+        x += w + gap; rowHeight = Math.max(rowHeight, li.offsetHeight);
+      }
+      ul.style.height = y + rowHeight + 'px';
+    }
+    lay(); addEventListener('resize', lay);
+  </script>` : ''}
   </body></html>`;
 }
 
