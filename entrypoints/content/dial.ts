@@ -36,8 +36,14 @@ export function shapeWeigh(weigh: Weigh, shape: WeighShape, dial?: DialShape): v
   parts.drawing?.remove();
   parts.geom = dial?.geom;
   resetWeigh(weigh, shape, dial);
-  parts.drawing = dial ? drawDialShape(weigh, dial) : shape === 'gauge' ? icon(GAUGE_SVG) : undefined;
-  if (!dial) weigh.button.replaceChildren(...(parts.drawing ? [parts.drawing] : []));
+  parts.drawing = dial ? drawDialShape(weigh, dial) : drawInButton(weigh.button, shape);
+}
+
+/** The gauge, or the balance (set by ui.ts), inside the button itself. */
+function drawInButton(button: HTMLElement, shape: WeighShape): Element | undefined {
+  const drawing = shape === 'gauge' ? icon(GAUGE_SVG) : undefined;
+  button.replaceChildren(...(drawing ? [drawing] : []));
+  return drawing;
 }
 
 /** Clear what the host's last shape set, and mark the new one. */
@@ -163,17 +169,20 @@ function dialAnchor(result: FoundResult, bar: DOMRect | undefined): DialAnchor |
   // A hidden result folded into its one line: around that line's eye, which starts it.
   // Where the page's other results go round plain discs, it keeps to their column instead,
   // before the line. (Hidden lines are drawn after every dial is placed.)
-  if (bar) {
-    const y = bar.top + bar.height / 2;
-    if (pageGoesRoundDiscs()) return { x: bar.left - BLANK / 2 - 10, y, size: BLANK, blank: true };
-    return { x: bar.left + BAR_EYE / 2, y, size: BAR_EYE, blank: false };
-  }
+  if (bar) return barAnchor(bar);
   const found = siteIconOf(result.container, result.titleBlock);
   if (found) return { x: (found.left + found.right) / 2, y: (found.top + found.bottom) / 2, size: Math.max(found.width, found.height), blank: false };
   const title = result.titleBlock.querySelector<HTMLElement>('h1, h2, h3, h4, [role="heading"]') ?? result.titleBlock;
   const line = firstLineOf(title);
   if (!line?.height) return undefined;
   return { x: line.left - BLANK / 2 - 10, y: (line.top + line.bottom) / 2, size: BLANK, blank: true };
+}
+
+/** A hidden line's dial: round its eye, or in the discs' column where the page has no icons. */
+function barAnchor(bar: DOMRect): DialAnchor {
+  const y = bar.top + bar.height / 2;
+  if (pageGoesRoundDiscs()) return { x: bar.left - BLANK / 2 - 10, y, size: BLANK, blank: true };
+  return { x: bar.left + BAR_EYE / 2, y, size: BAR_EYE, blank: false };
 }
 
 /** Whether the page's shown results, not its hidden lines, all go round plain discs. */
@@ -197,11 +206,11 @@ function moveDialTo(host: HTMLElement, container: HTMLElement, at: DialAnchor, g
 }
 
 /** Small and square, like a site's icon. */
-const iconSized = (r: DOMRect): boolean => r.width >= 12 && r.height >= 12 && r.width <= 40 && r.height <= 40 && Math.abs(r.width - r.height) <= 6;
+const iconSized = (r: DOMRect): boolean => Math.min(r.width, r.height) >= 12 && Math.max(r.width, r.height) <= 40 && Math.abs(r.width - r.height) <= 6;
 
 /** At the result's start, no lower than its title. */
 const atResultStart = (r: DOMRect, box: DOMRect, title: DOMRect): boolean =>
-  r.left >= box.left - 8 && r.left <= box.left + 56 && r.top <= title.bottom && r.top <= box.top + 90;
+  Math.abs(r.left - (box.left + 24)) <= 32 && r.top <= Math.min(title.bottom, box.top + 90);
 
 /** Of two icons, the one to go round: the higher, then the larger, or the badge around the other. */
 function outranks(r: DOMRect, best: DOMRect | undefined): boolean {
