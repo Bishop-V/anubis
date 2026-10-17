@@ -2,6 +2,10 @@
 
 The look, the wording, and Anubis's own pages. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Filter by pressing a result's tag (2026-10-17)
+
+The summary used to carry a row of every tag on the page, each with a count, to show only that tag. It made the header tall and repeated what the extension's menu already offers under This page. Now the tag under each result is the button (pressed again, it clears), and the summary keeps only Show all.
+
 ## Shorter interface text (2026-10-17)
 
 - **Shipped:** about 90 of the longest messages in Settings, the welcome page, the popup, and the search-page summary were cut to one short sentence, taking the English interface from about 3,700 words to 2,850. Explanations that only mattered to maintainers (how sync merges, why encryption works as it does) live in code comments and the wiki now. The README, CONTRIBUTING, SECURITY, `lists/README.md`, and the pull request template were shortened the same way.
