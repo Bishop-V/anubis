@@ -202,6 +202,8 @@ function mockPages() {
     'https://duckduckgo.com/?q=javascript+promises&iax=images&ia=images': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'images' }),
     ...Object.fromEntries(ENGINE_TABS.map(([url, engine, tab]) => [url, engineTab(engine, tab, JS_RESULTS)])),
     'https://duckduckgo.com/?q=javascript+promises&wide=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { wide: true }),
+    // As on the live page, each result's words start inside its padded box.
+    'https://duckduckgo.com/?q=javascript+promises&padded=1&dark=1': duckduckgo('javascript promises', JS_RESULTS, true, [], { padded: true }),
     'https://duckduckgo.com/?q=javascript+promises&unseen=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { unseen: true }),
     'https://html.duckduckgo.com/html/?q=javascript+promises': duckduckgoHtml('javascript promises', JS_RESULTS),
     'https://lite.duckduckgo.com/lite/?q=javascript+promises': duckduckgoLite('javascript promises', JS_RESULTS),
@@ -428,6 +430,7 @@ if (!only || only === 'pages' || only === 'column' || checks) {
     'https://duckduckgo.com/?q=javascript+promises',
     'https://duckduckgo.com/?q=javascript+promises&dark=1',
     'https://duckduckgo.com/?q=javascript+promises&wide=1',
+    'https://duckduckgo.com/?q=javascript+promises&padded=1&dark=1',
     'https://www.google.com/search?q=anubis',
     'https://www.bing.com/search?q=javascript+promises',
     'https://search.brave.com/search?q=anubis',
@@ -440,8 +443,20 @@ if (!only || only === 'pages' || only === 'column' || checks) {
     // Ecosia builds its page in the browser first.
     await page.waitForTimeout(url.includes('ecosia') ? 3500 : 700);
     const found = await page.evaluate(() => {
+      // Where a result's words or site icon start.
+      const startOf = (result) => {
+        const lefts = [...result.querySelectorAll('img, svg, [class*="icon" i]')].map((el) => el.getBoundingClientRect()).filter((r) => r.width && r.width <= 40).map((r) => r.left);
+        const walker = document.createTreeWalker(result, NodeFilter.SHOW_TEXT);
+        const range = document.createRange();
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          if (!node.textContent.trim()) continue;
+          range.selectNodeContents(node);
+          lefts.push(...[...range.getClientRects()].filter((r) => r.width).map((r) => r.left));
+        }
+        return Math.min(...lefts);
+      };
       const results = [...document.querySelectorAll('[data-anubis-result]')].filter((r) => r.getBoundingClientRect().height);
-      const out = { results: results.length, inColumn: 0, notInColumn: [], outside: [], overText: [], notLevel: [] };
+      const out = { results: results.length, inColumn: 0, notInColumn: [], outside: [], overText: [], notLevel: [], offGap: [], lefts: [] };
       for (const result of results) {
         const host = result.querySelector(':scope > anubis-weigh');
         const site = result.querySelector('a[href]')?.href ?? '';
@@ -452,7 +467,11 @@ if (!only || only === 'pages' || only === 'column' || checks) {
         out.inColumn++;
         const h = host.getBoundingClientRect();
         const box = result.getBoundingClientRect();
-        if (h.left < 0 || h.right > box.left) out.outside.push(site);
+        out.lefts.push(Math.round(h.left));
+        if (h.left < 0 || h.right > box.left + 12) out.outside.push(site);
+        // 12px from where the result's words or icon start, its box's padding aside.
+        const start = startOf(result);
+        if (!result.matches('[data-anubis-state~="hide"]') && Math.abs(start - h.right - 12) > 1) out.offGap.push(`${site} ${Math.round(start - h.right)}`);
         // Only what's in view can be pointed at.
         const at = h.top >= 0 && h.bottom <= innerHeight ? document.elementFromPoint(h.left + h.width / 2, h.top + h.height / 2) : host;
         if (at !== host) out.overText.push(`${site} → ${at?.tagName}.${at?.className}`);
@@ -467,6 +486,9 @@ if (!only || only === 'pages' || only === 'column' || checks) {
       insideTheWindow: found.outside.length === 0,
       overNothingElse: found.overText.length === 0,
       levelWithTheFirstRow: found.notLevel.length === 0,
+      twelvePixelsFromTheResult: found.offGap.length === 0,
+      // Hidden results' lines included: one straight column.
+      oneColumn: Math.max(...found.lefts) - Math.min(...found.lefts) <= 1,
     });
   }
   // A window too narrow for the column: the button goes back in the result's corner.
@@ -2626,8 +2648,9 @@ if (only === 'docs') {
   const jackal = logo.replace(/<rect[^>]*\/>/, '').replace('<svg ', '<svg width="46" height="46" ');
   const serif = `'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', 'Bitstream Charter', Charter, Georgia, serif`;
   const themes = {
-    light: { ground: '#fbfbfa', name: '#1b1a16', text: '#3a372f', label: '#6b6457', note: '#8a8272', rule: '#d4a637', edge: '#dcd8cc', suffix: '' },
-    dark: { ground: '#1b1a16', name: '#d4a637', text: '#e8e2d2', label: '#a39b8c', note: '#8a8272', rule: '#d4a63773', edge: '#4a4438', suffix: '-dark' },
+    // Graphite, as the extension draws (assets/theme.css); only the jackal keeps its gold.
+    light: { ground: '#fcfcfd', name: '#1f1f22', text: '#3a3a40', label: '#5f5f66', note: '#85858c', rule: '#c4c4ca', edge: '#dcdce0', suffix: '' },
+    dark: { ground: '#1c1c1f', name: '#e8e8ea', text: '#e8e8ea', label: '#9d9da3', note: '#76767c', rule: '#4a4a50', edge: '#37373b', suffix: '-dark' },
   };
   const slide = await ctx.newPage();
   await slide.setViewportSize({ width: 960, height: 540 });
@@ -2645,7 +2668,7 @@ if (only === 'docs') {
           <span style="margin-left:auto;font-size:12px;color:${c.note}">Shown on a test page</span>
         </div>
         <div style="position:absolute;left:48px;right:48px;top:112px;display:grid;grid-template-columns:1fr 1fr;gap:32px">
-          ${shot('Without Anubis', 'before', c.edge)}${shot('With Anubis', 'after', '#d4a637')}
+          ${shot('Without Anubis', 'before', c.edge)}${shot('With Anubis', 'after', c.label)}
         </div>
       </body>`);
     await slide.screenshot({ path: fileURLToPath(new URL(`../docs/public/before-after-${theme}.png`, import.meta.url)) });

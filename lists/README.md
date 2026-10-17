@@ -27,8 +27,8 @@ The format is described in [docs/list-format.md](../docs/list-format.md).
 
 ## Contributing
 
-- **Add a site to a list:** for a list in [`sources/`](sources), contribute to the project it's made from. For the others, open a pull request that adds a line, or use "Suggest it to…" in the menu on a search result, which opens a pre-filled issue. Add a short trailing `#` comment to every new site rule that adds a tag, explaining why the site fits.
-- **Report a site a list gets wrong:** use "Wrong? Report it to…" under **Why** in the menu on that result, which opens a pre-filled issue with the rule that matched.
+- **Add a site to a list:** for a list in [`sources/`](sources), contribute to the project it's made from. For the others, open a pull request that adds a line, or use **suggest changes** beside the list in **Settings → Lists**. Add a short trailing `#` comment to every new site rule that adds a tag, explaining why the site fits.
+- **Report a site a list gets wrong:** use **suggest changes** beside the list in **Settings → Lists**, or open an issue here.
 - **Add a list to the directory:** host your list anywhere public and add an entry to `directory.json`:
 
   ```json

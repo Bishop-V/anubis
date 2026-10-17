@@ -1,8 +1,8 @@
 import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
-import { balance, dial, fold, html, ICON, LEVELS, tagMark, type Level } from './demo-parts';
+import { columnButton, fold, html, ICON, menu, placeMenu, tagMark, type Level, type MenuPlace } from './demo-parts';
 
 // Ranking sites, played out: a pointer opens the button beside the last result and
-// presses Pin, and the result moves to the top in its gold frame. Then it lowers
+// presses Pin, and the result moves to the top in its grey frame. Then it lowers
 // another site, which moves down the page as its button tips. The summary says
 // what changed each time, with Undo. It plays once when it scrolls into view, and
 // again from "Play again". With reduced motion there's no pointer, and results
@@ -46,7 +46,7 @@ export default defineComponent({
     const weighs = new Map<string, HTMLElement>();
     const rows = new Map<string, HTMLElement>();
     const levelRefs = new Map<Level, HTMLElement>();
-    const menuPos = reactive({ left: 0, top: 0, width: 312 });
+    let place: MenuPlace = { left: 0, width: 340, arrow: 22, below: false, edge: 0 };
     let run = 0;
     let observer: IntersectionObserver | undefined;
     const still = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -96,14 +96,8 @@ export default defineComponent({
     };
 
     const openMenu = async (id: string) => {
-      const b = root.value!.getBoundingClientRect();
-      const w = weighs.get(id)!.getBoundingClientRect();
-      const width = Math.min(312, b.width - 16);
-      menuPos.width = width;
-      menuPos.left = Math.max(8, Math.min(w.left - b.left, b.width - width - 8));
-      // Under the crown, unless that runs past the page: then above it.
-      const below = w.bottom - b.top + 6;
-      menuPos.top = below + 250 > b.height ? Math.max(8, w.top - b.top - 256) : below;
+      // Over the button, pointing down at it, or under it where there's no room above.
+      place = placeMenu(root.value!, weighs.get(id)!);
       state.menuLevel = state.levels[id] ?? 'normal';
       state.menuFor = id;
       await nextTick();
@@ -186,10 +180,11 @@ export default defineComponent({
           },
           [
             h('div', { class: 'site' }, [
-              dial(h('span', { class: 'favicon', style: { background: r.icon[0], color: r.icon[1] } }, r.icon[2]), level, {
-                crown: (el: unknown) => (el instanceof HTMLElement ? weighs.set(r.id, el) : weighs.delete(r.id)),
+              columnButton(level, {
+                button: (el: unknown) => (el instanceof HTMLElement ? weighs.set(r.id, el) : weighs.delete(r.id)),
                 active: state.menuFor === r.id,
               }),
+              h('span', { class: 'favicon', style: { background: r.icon[0], color: r.icon[1] } }, r.icon[2]),
               h('span', { class: 'site-name' }, r.site),
               h('span', { class: 'url' }, r.url),
             ]),
@@ -212,25 +207,16 @@ export default defineComponent({
             h('div', { class: 'demo-results' }, order().map(result)),
           ]),
           menuResult
-            ? h('div', { class: 'hd-menu', style: { left: `${menuPos.left}px`, top: `${menuPos.top}px`, width: `${menuPos.width}px` }, 'aria-hidden': 'true' }, [
-                h('div', { class: 'hd-head' }, [h('span', { class: 'hd-cartouche' }, [h('span', { class: 'hd-name' }, menuResult.host)]), html('span', 'hd-close', ICON.close)]),
-                balance(state.menuLevel),
-                h(
-                  'div',
-                  { class: 'hd-levels' },
-                  LEVELS.map(([level, name, icon]) =>
-                    h(
-                      'span',
-                      {
-                        ref: (el: unknown) => (el instanceof HTMLElement ? levelRefs.set(level, el) : levelRefs.delete(level)),
-                        class: ['hd-level', level, { pressed: state.menuLevel === level && level !== 'normal' }],
-                      },
-                      [html('span', 'hd-level-icon', icon), name],
-                    ),
-                  ),
-                ),
-                h('p', { class: 'hd-hint' }, `Your choice for ${menuResult.host}, on every search.`),
-              ])
+            ? menu(
+                place,
+                {
+                  site: menuResult.host,
+                  level: state.menuLevel,
+                  hint: `Your choice for ${menuResult.host}, on every search.`,
+                  tags: menuResult.tag ? [tagMark(menuResult.tag[0], menuResult.tag[1])] : [],
+                },
+                (level, el) => (el instanceof HTMLElement ? levelRefs.set(level, el) : levelRefs.delete(level)),
+              )
             : null,
           h(
             'span',

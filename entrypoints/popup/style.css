@@ -20,15 +20,15 @@ a.brand {
 }
 a.brand:hover h1 {
   text-decoration: underline;
-  text-decoration-color: var(--gold);
+  text-decoration-color: var(--accent);
   text-underline-offset: 3px;
 }
 body.paused main {
   opacity: 0.5;
 }
-/* The status line opens with a diamond: gold while Anubis is on, hollow when it's off. */
+/* The status line opens with a diamond: filled while Anubis is on, hollow when it's off. */
 #status {
-  --c: var(--gold);
+  --c: var(--accent);
   display: flex;
   align-items: center;
   gap: 7px;
@@ -88,37 +88,29 @@ h2 .text-btn {
   font-weight: 400;
 }
 
-/* This site: the result menu's cartouche, balance and rankings. */
+/* This site: as the result menu on search pages, the site's name, the balance, and the rankings. */
 .weigh {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 4px;
 }
+/* The site's name. Where the rule can cover more or less of the site, a caret follows it and
+   the native select lies unseen over it. */
 .cartouche {
   position: relative;
   display: inline-flex;
   align-items: center;
   min-width: 0;
   max-width: 100%;
-  padding: 5px 19px 6px;
-  border: 1.5px solid var(--gold);
-  border-radius: 999px;
-}
-.cartouche::after {
-  content: '';
-  position: absolute;
-  inset: 2.5px;
-  border: 0.75px solid var(--gold);
-  border-radius: 999px;
-  opacity: 0.55;
-  pointer-events: none;
+  border-radius: 4px;
 }
 .cartouche .name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font: 500 16px/1.3 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+  font-size: 14px;
+  font-weight: 600;
 }
 .cartouche.choosable .name {
   padding-inline-end: 14px;
@@ -139,15 +131,15 @@ h2 .text-btn {
   cursor: pointer;
 }
 .cartouche:has(select:focus-visible) {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 .balance {
   display: block;
-  width: 132px;
-  height: 40px;
-  margin: 10px auto 2px;
-  color: var(--gold);
+  width: 112px;
+  height: 34px;
+  margin: 6px auto 2px;
+  color: var(--muted);
   overflow: visible;
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -156,38 +148,64 @@ h2 .text-btn {
     transition: transform 0.45s cubic-bezier(0.34, 1.45, 0.5, 1);
   }
 }
+/* Hide | Lower, Normal, Raise | Pin, as in the result menu: a ranking's word wraps, hyphenated,
+   rather than push the row apart. */
 .seg.levels {
-  display: grid;
-  /* Five equal columns; a ranking's word wraps, hyphenated, rather than push the row apart. */
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 6px 2px;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 2px;
+  width: 100%;
 }
-/* Each ranking's icon over its name: muted at rest, the ranking's colour once chosen. */
+.levels .sep {
+  flex: none;
+  width: 1px;
+  margin: 6px 4px;
+  background: var(--line);
+}
 .levels button {
+  flex: 1 1 0;
   flex-direction: column;
   gap: 3px;
   min-width: 0;
-  padding: 2px 2px 4px;
+  padding: 6px 0 5px;
+  border: 0;
+  border-radius: 8px;
+  font-size: 12px;
   text-align: center;
   overflow-wrap: anywhere;
   hyphens: auto;
 }
+/* Every icon not chosen, and every arrow not lit, in one dim grey; the words stay brighter. */
 .levels .level-icon {
-  color: var(--muted);
+  color: var(--dim);
 }
-.levels button:hover .level-icon,
-.levels button.from-list .level-icon {
-  color: inherit;
+.levels .level-icon svg {
+  width: 15px;
+  height: 15px;
+}
+.levels .level-icon .lit {
+  stroke: var(--text);
+}
+.levels .level-icon .unlit {
+  stroke: var(--dim);
+}
+.levels button:hover {
+  background: var(--chosen);
+}
+.levels button[aria-pressed='true'] {
+  background: var(--chosen);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+  font-weight: 400;
 }
 .levels button[aria-pressed='true'] .level-icon {
   color: var(--text);
 }
-.levels button.raise[aria-pressed='true'] .level-icon,
-.levels button.pin[aria-pressed='true'] .level-icon {
-  color: var(--gold-ink);
-}
+/* The ranking your lists give the site, when you haven't chosen one. */
 .levels button.from-list:not([aria-pressed='true']) {
-  color: var(--gold-ink);
+  color: var(--text);
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
 }
 .hint {
   margin: 6px 0 0;
@@ -391,6 +409,6 @@ footer a,
 }
 footer a:hover,
 .link-btn:hover {
-  color: var(--gold-ink);
+  color: var(--accent-ink);
   text-decoration: underline;
 }

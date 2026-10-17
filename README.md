@@ -12,7 +12,7 @@ In Egyptian myth, Anubis weighed each heart against a feather. This extension we
 
 ## What it does
 
-- **[Rank any site from the results](https://bishop-v.github.io/anubis/guide/ranking)**: hide, lower, raise, or pin a site from the dial on any result.
+- **[Rank any site from the results](https://bishop-v.github.io/anubis/guide/ranking)**: hide, lower, raise, or pin a site from the button beside any result.
 - **[Tags](https://bishop-v.github.io/anubis/guide/tags)**: labels like "Official docs", "Paywalled", "AI-generated", or "Independent wiki" under each title, which can highlight, pin, raise, lower, or hide results.
 - **[Lists anyone can publish](https://bishop-v.github.io/anubis/guide/lists)**: subscribe to Anubis lists, Brave Goggles, uBlacklist rulesets, and plain domain lists, or [publish your own](https://bishop-v.github.io/anubis/guide/publish-a-list). Some are made every week from other projects' data, such as the HUGE AI Blocklist and Indie Wiki Buddy, and credit them.
 - **[Remove panels](https://bishop-v.github.io/anubis/guide/clean-up)**: take AI answers, video panels, "People also ask", and more off search pages.
@@ -77,7 +77,7 @@ Anubis takes a different approach because of that. Rather than tracking class na
 Other influences:
 
 - **[Firefox's `web-ext`](https://github.com/mozilla/web-ext)** does the development loading, via [WXT](https://wxt.dev), which builds Chrome MV3 and Firefox MV2 from one codebase.
-- The name and framing come from the Egyptian myth in which Anubis weighs a heart against a feather: sites that fail the weighing are hidden. The menu on each result shows the site's name in a cartouche over a small balance. The motif stays in the look; buttons say plainly what they do.
+- The name and framing come from the Egyptian myth in which Anubis weighs a heart against a feather: sites that fail the weighing are hidden. The menu on each result shows a small balance that tips with the site's weight. The motif stays in the logo and the balance; buttons say plainly what they do.
 
 ## License
 

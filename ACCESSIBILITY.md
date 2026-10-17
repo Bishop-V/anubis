@@ -13,17 +13,17 @@ Anubis works in two places, and they need different care:
 
 **Reading order is the page's order.** Reranking moves results with CSS `order` and never moves the nodes (see Pitfalls in `CLAUDE.md`). Screen readers and Tab follow the DOM, so they meet results in the engine's order, not the reranked one. This can't be fixed without moving nodes the engine owns; keep it in mind, and don't make anything depend on the visual order being the reading order.
 
-**Everything Anubis adds is read aloud, on every result.** The shadow roots keep the page's CSS out, not screen readers: the chips, the result's menu button (the dial's crown, or the ⚖ button on a phone), and the hidden-result line are read between each title and its snippet. Keep them short, and don't add text to a result that a sighted person wouldn't need either.
+**Everything Anubis adds is read aloud, on every result.** The shadow roots keep the page's CSS out, not screen readers: the chips, the result's menu button (in the column on its left, or the ⚖ button on a phone), and the hidden-result line are read between each title and its snippet. Keep them short, and don't add text to a result that a sighted person wouldn't need either.
 
 **A control has to make sense on its own.** Screen reader users often jump from button to button or pull up a list of them. A button repeated on every result should say which result it's for, and a text button's label should stand without the sentence around it.
 
-**Don't put information only in a tooltip.** `title` isn't reliably read, and can't be reached by keyboard at all. The chips' tooltips (which list gave the verdict) are a convenience; the same reasons are in the result menu's Why section, which is where that information has to be.
+**Don't put information only in a tooltip.** `title` isn't reliably read, and can't be reached by keyboard at all. The chips' tooltips (which list gave the verdict) are a convenience; the hint under the result menu's rankings names the lists behind the site's ranking, and the chip's own text says what a tag does.
 
 **Say what changed.** After an action whose result appears somewhere else on the page, put the message in an element with `role="status"` so it's announced without moving focus. Settings does this for its notices (`entrypoints/options/flash.ts`). Use `status` (polite), not `alert`: nothing Anubis says is urgent.
 
 **Icons are decoration unless they're the only content.** Icons from `utils/icons.ts` carry `aria-hidden="true"` and `focusable="false"`, and so does every drawing of the balance. The welcome page's balance swings when clicked, but only as decoration, so it isn't a button and isn't in the tab order. A button whose only content is an icon gets an `aria-label` and a matching `title`.
 
-**State goes in attributes, not only in colour or shape.** Chosen options in a row of choices use `aria-pressed`, the rows use `role="group"` with a label, the settings navigation marks its page with `aria-current`, and the result's menu button keeps `aria-expanded` in step with the menu. The dial's drawing is `aria-hidden`: the button's label says the ranking ("Hide, rank, or tag fandom.com (lowered)"). Follow the same patterns for new controls instead of inventing new ones.
+**State goes in attributes, not only in colour or shape.** Chosen options in a row of choices use `aria-pressed`, the rows use `role="group"` with a label, the settings navigation marks its page with `aria-current`, and the result's menu button keeps `aria-expanded` in step with the menu. The button's icon is `aria-hidden`: its label says the ranking ("Hide, rank, or tag fandom.com (lowered)"). In the menu, Raise and Lower light one arrow per press; `aria-pressed` and the hint say the same in words. Follow the same patterns for new controls instead of inventing new ones.
 
 **Leave the engine's own structure alone.** Clean-up removes content blocks (AI answers, video panels), never the page's navigation, search form, or landmarks (`NOT_A_BLOCK` in `entrypoints/content/cleanup.ts`). Keep it that way when adding a clean-up kind or an engine.
 
@@ -35,7 +35,7 @@ The optional reason field under **Settings → Tags** has a visible label that n
 
 **Everything the pointer can do, the keyboard can do.** Use real `<button>`, `<a href>`, `<input>` and `<select>` elements: they get Tab, Enter, and Space for free. A `div` with a click handler gets none of that. Hover-only behaviour needs a focus equivalent: the ⚖ button brightens on `:focus-within` as well as `:hover`.
 
-**Focus is always visible.** The focus ring is the 2px gold outline on `:focus-visible` (`assets/theme.css`, `shadow.css`). Never remove an outline without replacing it, and where a native control sits invisibly over a styled one (the cartouche's site picker), draw the ring on what can be seen.
+**Focus is always visible.** The focus ring is a 2px outline in the text colour on `:focus-visible` (`assets/theme.css`, `shadow.css`). Never remove an outline without replacing it, and where a native control sits invisibly over a styled one (the site picker on the site's name), draw the ring on what can be seen.
 
 **Focus goes somewhere sensible, and comes back.** When a control opens something, focus moves into it; when it closes, focus returns to what opened it. The result menu is the model: it opens with focus on the chosen ranking, Escape closes it and puts focus back on the ⚖ button (pressing the button again closes it too), and Enter in the new tag field adds the tag.
 
@@ -69,4 +69,4 @@ What the code does today that falls short of the above, found while writing this
 - **Reranked order isn't the reading order**, as above. Needs an idea that doesn't move the engine's nodes.
 - **The popup drops focus on ranking changes.** It replaces its content after a click (`renderHere()` in `entrypoints/popup/main.ts` for "This site"), so ranking buttons can lose focus. Tag choices and the new-tag action keep focus with `data-focus-key`.
 - **Tab from the result menu's last control goes to the end of the page,** since the menu is added at the end of the page, rather than back to the result.
-- **Tag reasons are tooltip-only on the chips.** Covered in the menu's Why section, but that's one step further away.
+- **Tag reasons and the lists behind a tag are tooltip-only,** on the chips and on the tags in the result menu. The menu's hint names the lists behind the site's ranking, but not each tag's.

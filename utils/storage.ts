@@ -21,7 +21,7 @@ import { fromBlockedSites, PERSONAL_HEADER } from './personal';
 
 export type Theme = 'auto' | 'dark' | 'light';
 export type HideStyle = 'collapse' | 'remove' | 'dim';
-/** Colours on search pages: Anubis's gold and each tag's colour, or the page's own greys. */
+/** Colours on search pages: each tag's colour, or greys only. `gold` names the first from when Anubis drew in gold, and stays so saved settings keep working. */
 export type Palette = 'gold' | 'plain';
 
 /**
@@ -42,7 +42,7 @@ export interface Settings {
   enabled: boolean;
   /** Colour scheme for the popup, options page, and in-page UI. `auto` follows the page / OS. */
   theme: Theme;
-  /** Colours of what Anubis adds to search pages: `plain` drops the gold and the tags' colours. */
+  /** Colours of what Anubis adds to search pages: `plain` drops the tags' colours and the red. */
   palette: Palette;
   /** How hidden results look: gone (the summary counts them), a slim line you can open, or faded. */
   hideStyle: HideStyle;

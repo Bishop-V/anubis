@@ -86,7 +86,7 @@ const siteIcon = (svg) =>
 // `unseen`: text beside the ⋯ menu that doesn't show (a see-through layer). Reported
 // on a live page (2026-09-30): the button left the result for its right edge
 // although nothing showed beside the menu; what's there is a guess.
-export function duckduckgo(query, results, dark = false, more = [], { ai = false, wide = false, tab, unseen = false } = {}) {
+export function duckduckgo(query, results, dark = false, more = [], { ai = false, wide = false, tab, unseen = false, padded = false } = {}) {
   if (tab) return duckduckgoTab(query, results, tab);
   const item = ([url, title, snippet], i) => `
       <li data-layout="organic" class="wLL07_0Xnd1QZpzpfR4W">
@@ -131,6 +131,7 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
     ol{list-style:none;margin:0;padding:0}
     li{margin:0 0 26px}
     article{position:relative}
+    main.padded article{padding:0 11px}
     .OHr0VX9IuNcv6iakvT6A{display:flex;align-items:center;gap:8px;font-size:13px;padding-right:72px}
     /* As on the live page, a long address is cut off with an ellipsis before the ⋯ menu. */
     .OHr0VX9IuNcv6iakvT6A a{color:${dark ? '#8ab4f8' : '#1f7a3a'};text-decoration:none;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
@@ -152,7 +153,7 @@ export function duckduckgo(query, results, dark = false, more = [], { ai = false
   </style></head><body>
   <div class="hdr"><div class="logo"></div><div class="q">${esc(query)}${ai ? '<button type="button" class="ask" title="Ask Duck.ai" data-ssg-id="ai-searchbox-chat-submit">✦</button>' : ''}</div></div>
   <div class="tabs"><b>All</b><span>Images</span><span>Videos</span><span>News</span><span>Maps</span>${ai ? `<a class="chat" href="/?q=${encodeURIComponent(query)}&ia=chat">Duck.ai</a>` : ''}</div>
-  <main${wide ? ' class="wide"' : ''}><section ${wide ? 'data-testid="mainline"><div data-testid="web-vertical"' : 'data-testid="web-vertical"'}><${wide ? 'div' : 'ol'} class="react-results--main">${ai ? `
+  <main${wide ? ' class="wide"' : padded ? ' class="padded"' : ''}><section ${wide ? 'data-testid="mainline"><div data-testid="web-vertical"' : 'data-testid="web-vertical"'}><${wide ? 'div' : 'ol'} class="react-results--main">${ai ? `
       <li class="assist"><div class="assist-box"><div data-testid="duckassist-answer-content"><p>A promise is an object representing the eventual completion or failure of an asynchronous operation, and its resulting value.</p></div>
         <a href="/?q=${encodeURIComponent(query)}&ia=chat&duckai=1">Ask a follow-up</a></div></li>` : ''}${items}</${wide ? 'div' : 'ol'}>
   ${more.length ? '<button id="more-results" style="margin:10px 0;padding:8px 18px;border-radius:8px;border:1px solid #ccc;background:none;color:inherit">More results</button>' : ''}

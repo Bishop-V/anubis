@@ -20,7 +20,7 @@ It works on the search engine you already use. Your choices, and the lists you s
 
 <!-- Maintainer: the README's "What it does" lists the same features under the same names, linking the same pages; tests/readme.test.ts checks that. Change both together. -->
 
-- **Rank any site from the results.** Hide, lower, raise, or pin a site with the dial on any result. [Ranking sites](./ranking.md)
+- **Rank any site from the results.** Hide, lower, raise, or pin a site with the button beside any result. [Ranking sites](./ranking.md)
 - **Tags.** Results carry labels like "Official docs", "Discussion", "Paywalled", "AI-generated", or "Independent wiki". You decide what each tag does, from just showing the label to hiding every result that has it. [Tags](./tags.md)
 - **Lists anyone can publish.** Subscribe to lists that tag and rank sites for you. A list is a text file in a Git repository, so anyone can publish one and suggest changes to one. Brave Goggles, uBlacklist rulesets, and plain domain lists work unchanged. Some lists are made every week from other projects' data, such as the HUGE AI Blocklist and Indie Wiki Buddy, and credit them. [Subscribing to lists](./lists.md) and [Publish a list](./publish-a-list.md)
 - **Remove panels.** Take AI answers, video panels, "People also ask", and more off every search. [Removing panels](./clean-up.md)

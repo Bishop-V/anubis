@@ -116,7 +116,7 @@ Plain text, so it reads the same in both dashboards. Don't list the search engin
 ```text
 Anubis hides, ranks, and tags search results, on the search engine you already use.
 
-Rank any site from the results. Press the small crown beside a result's site icon to hide, lower, raise, or pin that site, or to tag it. Your choices apply to every search.
+Rank any site from the results. Press the small button beside a result to hide, lower, raise, or pin that site, or to tag it. Your choices apply to every search.
 
 Tags. Results carry small labels such as "Official docs", "Discussion", "Paywalled", "FOSS", or "AI slop", from your own tags and from lists you subscribe to. For each tag, choose whether it only shows, highlights results, or pins, raises, lowers, or hides them.
 

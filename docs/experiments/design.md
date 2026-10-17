@@ -2,6 +2,20 @@
 
 The look, the wording, and Anubis's own pages. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## The column on the left, in Graphite (2026-10-17)
+
+- **Asked for:** the result menu was cluttered: a third of the size, a smaller title, no gold, and a new palette. Then the dial had to go too: it only works where a result shows an icon (Mojeek has none). Designs were drawn as mocks on a design canvas before any code, as for the dial.
+- **Tried and dropped, for the menu:**
+  - horizontal strips above the result: too cramped, then too spread out, and hard to read;
+  - a watch, pointer, and clockwork theme in place of the ancient scales, and an old tally counter for Raise and Lower;
+  - Pin and Hide on the same scale as Lower and Raise: they're separate ideas, not more of a raise or a lower;
+  - "Raise more" buttons and dots to count presses: too crowded and unclear.
+- **Tried and dropped, for the button:** the dial on the icon, buttons in the page's left margin (a narrow window takes the margin away), several more dials, and a bracket that half wraps the result.
+- **Chosen: one small round button in a column left of each result** (`entrypoints/content/column.ts`), showing the ranking's icon: the balance, an eye struck through, or a pin. It's 12px from where the result's words or icon start, not its box: DuckDuckGo pads its results, which first left a 23px gap (`padded` mock).
+- **Chosen: a simpler menu that pops out above the result**, pointing down at its button so the result stays in view, or below where there's no room above. It keeps the balance, smaller and grey; the rankings are Hide | Lower, Normal, Raise | Pin; one hint line; the site's tags on one line with **+ Tag**. Raise and Lower always show two arrows, and each press lights one more, so the unlit arrow says there's another step. Icons not chosen share one dim grey, about 3.5:1, while the words stay brighter. About 340 × 205.
+- **Dropped from the menu:** the cartouche, the Why section with its "Wrong? Report it to…" and "Suggest it to…" links, the footer, and the cog. Reports now go through **suggest changes** in Settings → Lists; a quieter home for pre-filled reports is in `ROADMAP.md`.
+- **Graphite:** neutral greys, with the text colour as the accent, everywhere Anubis draws: search pages first, then its own pages and the wiki. Gold stays only in the logo and the toolbar badge beside it. The Appearance choice that was *Gold* is now *Tag colours*, still stored as `gold`.
+
 ## The dial on each result (2026-10-16)
 
 - **Asked for:** the ⚖ button in each result's top-right corner looked fine on DuckDuckGo but awkward against a pinned result's frame. It should be quiet, and always in the same place. Designs were drawn as mocks on a design canvas before any code.

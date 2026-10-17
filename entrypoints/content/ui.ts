@@ -11,7 +11,7 @@ import { getSite, type PersonalLevel } from '@/utils/personal';
 import type { Palette } from '@/utils/storage';
 import { nextLevel, rankingHint, rankingOf, siteCartouche } from '@/utils/siteranking';
 import { shortSummary, stoppedSentence, summarySentence } from '@/utils/summary';
-import { clearColumnFrame, firstLineOf, lineUpInColumn, setColumnFrame, toColumn, type Weigh } from './column';
+import { clearColumnFrame, firstLineOf, lineIndent, lineUpInColumn, setColumnFrame, toColumn, type Weigh } from './column';
 import { levelButton, menuTags } from './menuparts';
 import { OWN_TAGS, type FoundResult } from './results';
 import shadowCss from './shadow.css?inline';
@@ -415,9 +415,16 @@ function drawWeigh(weigh: Weigh, result: FoundResult, engine: EngineDef, level: 
   host.dataset.shape = column ? 'column' : result.card ? 'tab' : 'button';
   button.className = `weigh ${host.dataset.shape}`;
   // A hidden result's line starts with an eye; beside the column's, it would be a second one.
-  barHosts.get(result.container)?.toggleAttribute('data-beside-column', column);
+  indentBar(barHosts.get(result.container), result.container, column);
   if (!column) clearColumnFrame(weigh, result.container);
   return column;
+}
+
+/** A hidden result's line beside the column: no eye of its own, and its words where the titles' start. */
+function indentBar(bar: HTMLElement | undefined, container: HTMLElement, column: boolean): void {
+  if (!bar) return;
+  bar.toggleAttribute('data-beside-column', column);
+  bar.style.setProperty('padding-inline-start', column ? `${lineIndent(bar, container)}px` : '0px', 'important');
 }
 
 /** The ranking's icon on the button. */
@@ -434,13 +441,13 @@ const columnFits = (result: FoundResult, engine: EngineDef): boolean => !result.
 function placeInColumn(weigh: Weigh, result: FoundResult, engine: EngineDef, level: Level): boolean {
   const { host } = weigh;
   const { container } = result;
-  if (!toColumn(weigh, result)) return false;
+  // A hidden result folded into its one line: level with that line.
+  const bar = barHosts.get(container)?.getBoundingClientRect();
+  if (!toColumn(weigh, result, bar)) return false;
   keepUpright(host);
   setPopOut(host, engine.button?.popOut);
   atEdge.delete(host);
   for (const prop of [...MENU_LOOK, '--anubis-weigh-bg']) host.style.removeProperty(prop);
-  // A hidden result folded into its one line: level with that line.
-  const bar = barHosts.get(container)?.getBoundingClientRect();
   if (!lineUpInColumn(host, container, bar)) lineUpWithHeader(host, container, result.titleBlock);
   setColumnFrame(weigh, container, level === 'pin');
   return true;
@@ -1304,6 +1311,7 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
   rendered.set(popover.host, pop);
   // Position only on open: if the result moves when reranked, the menu stays put.
   if (opening) position(popover.host, anchor);
+  else keepAbove(popover.host);
   if (opening) setBalance(balance, 'normal');
   // The result's whole weight: your ranking, its tags, and its lists.
   requestAnimationFrame(() => requestAnimationFrame(() => setBalance(balance, data.verdict.level, data.verdict.score)));
@@ -1361,7 +1369,16 @@ function position(host: HTMLElement, anchor: HTMLElement): void {
   const pop = rendered.get(host) as HTMLElement | undefined;
   const above = rect.top - MENU_GAP - (pop?.offsetHeight ?? 0) >= 8;
   host.setAttribute(above ? 'data-above' : 'data-below', '');
-  host.style.top = `${(above ? rect.top - MENU_GAP : rect.bottom + MENU_GAP) + window.scrollY}px`;
+  host.dataset.edge = String((above ? rect.top - MENU_GAP : rect.bottom + MENU_GAP) + window.scrollY);
+  host.style.top = `${host.dataset.edge}px`;
+  keepAbove(host);
+}
+
+/** Over its button, the menu's bottom stays put: as it grows (+ Tag), it grows upwards. */
+function keepAbove(host: HTMLElement): void {
+  const pop = rendered.get(host) as HTMLElement | undefined;
+  if (!host.hasAttribute('data-above') || !pop) return;
+  host.style.top = `${Number(host.dataset.edge) - pop.offsetHeight}px`;
 }
 
 /** Beside the card the engine names, level with its top, when there's room: like the engine's own menu. */

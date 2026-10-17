@@ -89,6 +89,11 @@ export function stepsIcon(level: 'raise' | 'lower', lit: 0 | 1 | 2): string {
   return svg(arrow(near, lit >= 1) + arrow(far, lit >= 2));
 }
 
+/** A ranking's button: Raise and Lower with two arrows, lit by `steps`, the presses that chose it (0 when it isn't chosen). */
+export function rankIcon(level: Level, steps: 0 | 1 | 2): string {
+  return level === 'raise' || level === 'lower' ? stepsIcon(level, steps) : levelIcon(level);
+}
+
 /** The five rankings, in the user's language. */
 export const LEVEL_LABELS = {
   hide: t('levelHide'),

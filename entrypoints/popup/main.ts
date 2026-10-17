@@ -9,7 +9,7 @@ import { bugReportLink, describeBrowser } from '@/utils/links';
 import { wiki } from '@/utils/wiki';
 import { LEVELS, evaluate, listTagCards, listTagIds, type Level } from '@/utils/matcher';
 import { h, icon, siteName } from '@/utils/dom';
-import { ICON_GEAR, LEVEL_CHIPS, LEVEL_LABELS, levelIcon, tagEffectText, tagMark } from '@/utils/icons';
+import { ICON_GEAR, LEVEL_CHIPS, LEVEL_LABELS, levelIcon, rankIcon, tagEffectText, tagMark } from '@/utils/icons';
 import { localizePage, t, tJoin, tn, type MessageKey } from '@/utils/i18n';
 import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/messages';
@@ -136,7 +136,9 @@ function renderHere(rules: RuleSet) {
   const levels = h(
     'div',
     { class: 'seg levels', attrs: { role: 'group', 'aria-label': t('popupRankingFor', domain) } },
-    LEVELS.map((level) =>
+    LEVELS.flatMap((level) => [
+      // Hide and Pin stand apart from Lower, Normal, and Raise, as in the result menu.
+      level === 'lower' || level === 'pin' ? h('span', { class: 'sep', attrs: { 'aria-hidden': 'true' } }) : null,
       h(
         'button',
         {
@@ -151,10 +153,10 @@ function renderHere(rules: RuleSet) {
             },
           },
         },
-        h('span', { class: 'level-icon' }, icon(levelIcon(level, r.pressed === level ? r.steps : 1))),
+        h('span', { class: 'level-icon' }, icon(rankIcon(level, r.pressed === level ? r.steps : 0))),
         LEVEL_LABELS[level],
       ),
-    ),
+    ]),
   );
 
   const verdict = evaluate(result, rules.lists, rules.prefs);
