@@ -2,6 +2,10 @@
 
 The look, the wording, and Anubis's own pages. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Filter by pressing a result's tag (2026-10-17)
+
+The summary used to carry a row of every tag on the page, each with a count, to show only that tag. It made the header tall and repeated what the extension's menu already offers under This page. Now the tag under each result is the button (pressed again, it clears), and the summary keeps only Show all.
+
 ## The column on the left, in Graphite (2026-10-17)
 
 - **Level with the icon, not the first line of words (live DuckDuckGo and Bing):** both put a 28 to 32px site icon beside a name over an address, so the first line sat about 9px above the icon's middle and the button with it. The button now centres on the icon that starts the row. Bing's icon is a `.tpic` box, which no icon selector matched. The `column` check asserts it (`levelWithTheIcon`); the DuckDuckGo `padded` mock now has the live icon and two lines.

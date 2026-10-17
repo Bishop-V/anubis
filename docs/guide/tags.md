@@ -45,7 +45,7 @@ A list owns its tags' names and colours, and the sites it tags. You own your sit
 
 ## Show only one tag
 
-Press a tag in the summary above the results to show only those results. **Show all** goes back.
+Press a tag under a result to show only the results with that tag. **Show all** in the summary, or pressing the tag again, goes back. The extension's menu has the same tags under **This page**.
 
 ## Shared tags
 

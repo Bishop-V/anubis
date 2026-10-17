@@ -284,7 +284,17 @@ export default defineContentScript({
         container.style.removeProperty('--anubis-hl');
       }
 
-      const ctx = { tags: rules.tags, prefs: rules.prefs, theme, belowRow: engine.chipsBelowRow };
+      const ctx = {
+        tags: rules.tags,
+        prefs: rules.prefs,
+        theme,
+        belowRow: engine.chipsBelowRow,
+        filter,
+        onFilter: (tag?: string) => {
+          filter = tag;
+          pass();
+        },
+      };
       if (rules.settings.showChips) renderChips(result, verdict, ctx, revealed);
       else renderChips(result, { ...verdict, tags: [] }, ctx, false);
 

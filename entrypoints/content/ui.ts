@@ -228,6 +228,10 @@ export interface ChipContext {
   theme: PageTheme;
   /** Tags go under the title's row, not in it (`chipsBelowRow`). */
   belowRow?: boolean;
+  /** The tag the page is showing only, if any. */
+  filter?: string;
+  /** Press a tag: show only it, or show all again when it's the one shown. */
+  onFilter: (tag?: string) => void;
 }
 
 /**
@@ -268,7 +272,7 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
   lineUpWithTitle(host, titleBlock);
   host.dataset.theme = ctx.theme;
 
-  const key = JSON.stringify([tags.map((id) => [ctx.tags.get(id), effect(id)]), page]);
+  const key = JSON.stringify([tags.map((id) => [ctx.tags.get(id), effect(id)]), page, ctx.filter]);
   render(host, key, () =>
     h(
       'div',
@@ -276,12 +280,19 @@ export function renderChips(result: FoundResult, verdict: Verdict, ctx: ChipCont
       tags.map((id) => {
         const tag = ctx.tags.get(id)!;
         const sources = verdict.tagSources[id] ?? [];
+        const on = ctx.filter === id;
         return h(
-          'span',
+          'button',
           {
             class: 'tag',
+            type: 'button',
             style: `--c: ${tag.color}`,
-            title: [tag.description, t('popupTagFrom', tJoin(sources)), TAG_EFFECTS[effect(id) ?? 'normal']].filter(Boolean).join('\n'),
+            title: [tag.description, t('popupTagFrom', tJoin(sources)), TAG_EFFECTS[effect(id) ?? 'normal'], on ? t('summaryFilterOff') : t('summaryFilterOn', tag.label)]
+              .filter(Boolean)
+              .join('\n'),
+            attrs: { 'aria-pressed': String(on) },
+            // Keep the click from reaching the result link around it.
+            on: { click: (e: Event) => (stop(e), ctx.onFilter(on ? undefined : id)) },
           },
           tagMark(effect(id)),
           tag.label,
@@ -932,10 +943,9 @@ export function renderSummary(
   summaryHost.dataset.theme = theme;
 
   // On phones the full sentence runs to several lines, so the summary says it in a
-  // few words and keeps the rest (the sentence, Load more results, settings, and the
-  // tags) behind Details. shadow.css shows the short form only on narrow screens.
+  // few words and keeps the rest (the sentence, Load more results, and settings) behind Details. shadow.css shows the short form only on narrow screens.
   const short = shortSummary(stats);
-  const compact = !!short || stats.tags.length > 0 || stats.canGoDeeper || stats.loading;
+  const compact = !!short || stats.canGoDeeper || stats.loading;
   const host = summaryHost;
   const build = () =>
     h(
@@ -1020,28 +1030,6 @@ export function renderSummary(
             { class: 'change' },
             h('span', null, change),
             h('button', { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'undo' }, on: { click: actions.undo } }, t('summaryUndo')),
-          )
-        : null,
-      // The tags on this page, as a legend you can click to show only that tag.
-      stats.tags.length
-        ? h(
-            'div',
-            { class: 'filters', attrs: { role: 'group', 'aria-label': t('summaryFilterLabel') } },
-            stats.tags.map((tag) =>
-              h(
-                'button',
-                {
-                  type: 'button',
-                  style: `--c: ${tag.color}`,
-                  title: stats.filter === tag.id ? t('summaryFilterOff') : t('summaryFilterOn', tag.label),
-                  attrs: { 'aria-pressed': String(stats.filter === tag.id), 'data-focus-key': `tag-${tag.id}` },
-                  on: { click: () => actions.filter(stats.filter === tag.id ? undefined : tag.id) },
-                },
-                h('i', { class: 'gem' }),
-                tag.label,
-                h('span', { class: 'count' }, tag.count),
-              ),
-            ),
           )
         : null,
     );

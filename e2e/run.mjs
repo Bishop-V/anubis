@@ -313,7 +313,7 @@ async function clickShadowButton(hostSelector, text, index = 0) {
   };
   const textOf = (node) => (node.nodeType === 3 ? node.nodeValue : (node.children ?? []).map(textOf).join(''));
   const buttons = (node) => [
-    ...(node.nodeName === 'BUTTON' && textOf(node).trim() === text ? [node] : []),
+    ...(node.nodeName === 'BUTTON' && (text instanceof RegExp ? text.test(textOf(node).trim()) : textOf(node).trim() === text) ? [node] : []),
     ...[...(node.children ?? []), ...(node.shadowRoots ?? [])].flatMap(buttons),
   ];
   const host = nodeIds[index] && find(root, nodeIds[index]);
@@ -2012,6 +2012,27 @@ if (!only || only === 'filter') {
   console.log('\n== filter (Discussion only):', JSON.stringify(visible));
   await page.screenshot({ path: `${SHOTS}ddg-filtered.png`, fullPage: false });
   await message({ type: 'set-filter' });
+  await page.waitForTimeout(400);
+
+  // Pressing a tag under a result does the same, and pressing it again undoes it.
+  const shown = () =>
+    page.evaluate(() => [...document.querySelectorAll('[data-anubis-result]')].filter((el) => getComputedStyle(el).display !== 'none').length);
+  const all = await shown();
+  const pressDiscussion = async () => {
+    const hosts = await page.locator('anubis-chips').count();
+    for (let i = 0; i < hosts; i++) {
+      try {
+        return await clickShadowButton('anubis-chips', /^Discussion/, i);
+      } catch {}
+    }
+  };
+  await pressDiscussion();
+  await page.waitForTimeout(400);
+  const narrowed = await shown();
+  console.log('\n== chip filter:', JSON.stringify({ all, narrowed }));
+  await pressDiscussion();
+  await page.waitForTimeout(400);
+  console.log('== chip filter off:', await shown());
 }
 
 if (!only || only === 'deeper' || checks) {
