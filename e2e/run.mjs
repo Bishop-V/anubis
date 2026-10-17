@@ -21,7 +21,7 @@ import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync
 import { tmpdir } from 'node:os';
 import { delimiter, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ANUBIS_PAGE2, ANUBIS_PAGE3, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, bingChallenge, bingMobile, brave, duckduckgo, duckduckgoHtml, duckduckgoLite, duckduckgoMobile, google, googleMobile, ecosia, startpage, yahoo } from './fixtures.mjs';
+import { ANUBIS_PAGE2, ANUBIS_PAGE3, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, bingChallenge, bingMobile, brave, duckduckgo, duckduckgoAd, duckduckgoHtml, duckduckgoLite, duckduckgoMobile, google, googleMobile, ecosia, startpage, yahoo } from './fixtures.mjs';
 import { ENGINE_TABS, engineTab } from './tab-fixtures.mjs';
 
 const EXT = fileURLToPath(new URL('../.output/chrome-mv3', import.meta.url));
@@ -198,7 +198,7 @@ function mockPages() {
     'https://search.yahoo.com/search?p=javascript+promises': yahoo('javascript promises', JS_RESULTS),
     'https://search.yahoo.com/search?p=javascript+promises&long=1': yahoo('javascript promises', JS_RESULTS, { longTitle: true, rail: true }),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
-    'https://duckduckgo.com/?q=javascript+promises&ad=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ad: true }),
+    'https://duckduckgo.com/?q=javascript+promises&ad=1': duckduckgoAd('javascript promises', JS_RESULTS),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
     'https://duckduckgo.com/?q=javascript+promises&iax=videos&ia=videos': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'videos' }),
     'https://duckduckgo.com/?q=javascript+promises&iax=images&ia=images': duckduckgo('javascript promises', JS_RESULTS, false, [], { tab: 'images' }),
