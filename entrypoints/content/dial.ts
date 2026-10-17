@@ -7,6 +7,14 @@ import type { FoundResult } from './results';
 // goes round the result's site icon, and a pinned result's frame around it. ui.ts places it.
 
 export type WeighShape = 'dial' | 'gauge' | 'button';
+/** A weigh host, the button inside it, and its shadow root. */
+export interface Weigh {
+  host: HTMLElement;
+  button: HTMLElement;
+  root: ShadowRoot;
+}
+/** The dial's size, and whether it goes round a plain disc rather than an icon. */
+type DialShape = { geom: DialGeometry; blank: boolean };
 /** What each weigh host draws: its shape, and the dial's drawing and size when it has one. */
 const weighParts = new WeakMap<HTMLElement, { key: string; drawing?: Element; geom?: DialGeometry }>();
 /** The plain disc a dial goes round where a result shows no site icon. */
@@ -19,41 +27,44 @@ const BLANK_TABLE = 12;
 const FRAME_OFF = 7;
 
 /** Draw a weigh host as the dial, the gauge on a card, or the balance button. */
-export function shapeWeigh(host: HTMLElement, button: HTMLElement, shape: WeighShape, geom?: DialGeometry, blank = false): void {
+export function shapeWeigh({ host, button }: Weigh, shape: WeighShape, dial?: DialShape): void {
   const parts = weighParts.get(host) ?? { key: '' };
   weighParts.set(host, parts);
-  const key = `${shape}:${geom?.r ?? ''}:${blank}`;
+  const key = `${shape}:${dial?.geom.r ?? ''}:${!!dial?.blank}`;
   if (parts.key === key) return;
   parts.key = key;
   parts.drawing?.remove();
   parts.drawing = undefined;
-  parts.geom = geom;
+  parts.geom = dial?.geom;
   host.dataset.shape = shape;
   // Where the dial goes round a plain disc, no site icon was found: worth knowing when an engine changes.
-  host.toggleAttribute('data-blank', blank);
+  host.toggleAttribute('data-blank', !!dial?.blank);
   button.className = `weigh ${shape}`;
   delete button.dataset.level;
   for (const prop of ['left', 'top', 'width']) button.style.removeProperty(prop);
   // The dial's box covers the site's icon and the title's start: only its crown takes clicks.
-  host.style.setProperty('pointer-events', shape === 'dial' ? 'none' : 'auto', 'important');
+  host.style.setProperty('pointer-events', dial ? 'none' : 'auto', 'important');
   host.style.removeProperty('width');
   host.style.removeProperty('height');
-  if (shape === 'dial' && geom) {
-    const drawing = icon(dialSvg(geom, blank));
-    button.before(drawing);
-    parts.drawing = drawing;
-    button.replaceChildren();
-    // The press area: the crown, from the drawing's left edge to just short of the icon.
-    button.style.setProperty('left', '0px');
-    button.style.setProperty('top', `calc(var(--dial-top, 0px) + ${Math.round(-geom.top - 14)}px)`);
-    button.style.setProperty('width', `${Math.round(-geom.r + 2 - geom.left)}px`);
-    host.style.setProperty('width', `${Math.ceil(geom.right - geom.left)}px`, 'important');
-    host.style.setProperty('height', `${Math.ceil(geom.bottom - geom.top)}px`, 'important');
-  } else if (shape === 'gauge') {
-    const drawing = icon(GAUGE_SVG);
-    button.replaceChildren(drawing);
-    parts.drawing = drawing;
+  if (dial) parts.drawing = drawDialShape(host, button, dial);
+  else if (shape === 'gauge') {
+    parts.drawing = icon(GAUGE_SVG);
+    button.replaceChildren(parts.drawing);
   } else button.replaceChildren();
+}
+
+/** The dial's drawing, behind the button, which becomes the crown's press area. */
+function drawDialShape(host: HTMLElement, button: HTMLElement, { geom, blank }: DialShape): Element {
+  const drawing = icon(dialSvg(geom, blank));
+  button.before(drawing);
+  button.replaceChildren();
+  // The press area: the crown, from the drawing's left edge to just short of the icon.
+  button.style.setProperty('left', '0px');
+  button.style.setProperty('top', `calc(var(--dial-top, 0px) + ${Math.round(-geom.top - 14)}px)`);
+  button.style.setProperty('width', `${Math.round(-geom.r + 2 - geom.left)}px`);
+  host.style.setProperty('width', `${Math.ceil(geom.right - geom.left)}px`, 'important');
+  host.style.setProperty('height', `${Math.ceil(geom.bottom - geom.top)}px`, 'important');
+  return drawing;
 }
 
 /** Turn a host's dial or gauge to the ranking. */
@@ -69,25 +80,21 @@ export function showReading(host: HTMLElement, level: Level, score: number): voi
  * beyond it. Where the result shows no icon, around a plain disc before the title. False
  * when there's no room for the crown, and the balance button is used instead.
  */
-export function drawDial(
-  host: HTMLElement,
-  button: HTMLElement,
-  root: ShadowRoot,
-  result: FoundResult,
-  where: { table: boolean; pinned: boolean; bar?: DOMRect },
-): boolean {
+export function drawDial(weigh: Weigh, result: FoundResult, where: { table: boolean; pinned: boolean; bar?: DOMRect }): boolean {
+  const { host } = weigh;
   const { container } = result;
-  if (where.table) return dialInTable(host, button, container);
+  if (where.table) return dialInTable(weigh, container);
   const at = dialAnchor(result, where.bar);
   if (!at) return false;
   const geom = dialGeometry(at.size);
   if (at.x + geom.left < 2) return false;
-  shapeWeigh(host, button, 'dial', geom, at.blank);
+  shapeWeigh(weigh, 'dial', { geom, blank: at.blank });
   host.style.removeProperty('--dial-top');
   if (host.parentElement !== container) container.append(host);
   if (getComputedStyle(container).position === 'static') container.style.position = 'relative';
   const box = moveDialTo(host, container, at, geom);
-  frameDial(host, root, container, where.pinned, box, at.x + geom.left - box.left);
+  if (where.pinned) frameDial(weigh, { container, box, crownLeft: at.x + geom.left - box.left });
+  else clearDialFrame(weigh, container);
   return true;
 }
 
@@ -95,11 +102,12 @@ export function drawDial(
  * The dial in a table row (DuckDuckGo Lite): in the cell with the result's number, whose
  * rows below are empty, so the dial overlaps nothing. False without that cell.
  */
-function dialInTable(host: HTMLElement, button: HTMLElement, container: HTMLElement): boolean {
+function dialInTable(weigh: Weigh, container: HTMLElement): boolean {
+  const { host } = weigh;
   const cell = container.querySelector<HTMLElement>(':scope > td');
   if (!cell) return false;
   const geom = dialGeometry(BLANK_TABLE);
-  shapeWeigh(host, button, 'dial', geom, true);
+  shapeWeigh(weigh, 'dial', { geom, blank: true });
   if (host.parentElement !== cell) cell.append(host);
   host.style.setProperty('position', 'relative', 'important');
   host.style.setProperty('vertical-align', 'middle', 'important');
@@ -116,13 +124,9 @@ function dialInTable(host: HTMLElement, button: HTMLElement, container: HTMLElem
  * rather than cutting through it. page.css leaves its own frame off results marked
  * `data-anubis-dial-frame`.
  */
-function frameDial(host: HTMLElement, root: ShadowRoot, container: HTMLElement, pinned: boolean, box: DOMRect, crownLeft: number): void {
-  container.toggleAttribute('data-anubis-dial-frame', pinned);
+function frameDial({ host, root }: Weigh, { container, box, crownLeft }: { container: HTMLElement; box: DOMRect; crownLeft: number }): void {
+  container.setAttribute('data-anubis-dial-frame', '');
   let frame = root.querySelector<HTMLElement>('.pin-frame');
-  if (!pinned) {
-    frame?.remove();
-    return;
-  }
   if (!frame) {
     frame = h('div', { class: 'pin-frame' });
     root.prepend(frame);
@@ -137,8 +141,8 @@ function frameDial(host: HTMLElement, root: ShadowRoot, container: HTMLElement, 
   frame.style.setProperty('height', `${Math.round(box.height) + 2 * FRAME_OFF}px`);
 }
 
-/** Take a pinned result's dial frame away, where the result has no dial. */
-export function clearDialFrame(container: HTMLElement, root: ShadowRoot): void {
+/** Take a pinned result's dial frame away, where it isn't pinned or has no dial. */
+export function clearDialFrame({ root }: Weigh, container: HTMLElement): void {
   container.removeAttribute('data-anubis-dial-frame');
   root.querySelector('.pin-frame')?.remove();
 }
@@ -217,13 +221,19 @@ function siteIconOf(container: HTMLElement, titleBlock: HTMLElement): DOMRect | 
   const t = (heading ?? titleBlock).getBoundingClientRect();
   let best: DOMRect | undefined;
   for (const el of container.querySelectorAll<HTMLElement>('img, svg, [class*="icon" i], [class*="pic" i], [class*="logo" i]')) {
+    // Not a control's picture, nor one in the title's own heading.
     if (el.closest('button, [role="button"]') || heading?.contains(el)) continue;
-    const r = el.getBoundingClientRect();
-    if (!iconSized(r) || !atResultStart(r, box, t)) continue;
-    if (el.checkVisibility?.({ opacityProperty: true, visibilityProperty: true }) === false) continue;
-    if (outranks(r, best)) best = r;
+    const r = iconBox(el, box, t);
+    if (r && outranks(r, best)) best = r;
   }
   return best;
+}
+
+/** The element's box, where it's shown and could be the site's icon. */
+function iconBox(el: HTMLElement, box: DOMRect, title: DOMRect): DOMRect | undefined {
+  const r = el.getBoundingClientRect();
+  if (!iconSized(r) || !atResultStart(r, box, title)) return undefined;
+  return el.checkVisibility?.({ opacityProperty: true, visibilityProperty: true }) === false ? undefined : r;
 }
 
 /**

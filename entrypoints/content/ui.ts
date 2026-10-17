@@ -12,7 +12,7 @@ import { ruleParts } from '@/utils/ruletext';
 import type { Palette } from '@/utils/storage';
 import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder, yourListTag, tagPicker, tagSource } from '@/utils/siteranking';
 import { shortSummary, stoppedSentence, summarySentence } from '@/utils/summary';
-import { clearDialFrame, drawDial, firstLineOf, shapeWeigh, showReading } from './dial';
+import { clearDialFrame, drawDial, firstLineOf, shapeWeigh, showReading, type Weigh } from './dial';
 import { OWN_TAGS, type FoundResult } from './results';
 import shadowCss from './shadow.css?inline';
 
@@ -337,18 +337,7 @@ export function ensureWeighButton(
     button.setAttribute('aria-label', label);
   }
 
-  // Phones keep the balance on the title's line; a card gets the gauge in its corner; every
-  // other result gets the dial around its site's icon, or the balance where there's no room for one.
-  const shape = result.card ? 'gauge' : !engine.button?.onTitle && placeDial(host, result, engine, level) ? 'dial' : 'button';
-  if (shape !== 'dial') clearDialFrame(container, roots.get(host)!);
-  if (shape === 'dial') return showReading(host, level, score);
-  shapeWeigh(host, button!, shape);
-  if (shape === 'gauge') showReading(host, level, score);
-  else if (button && button.dataset.level !== level) {
-    button.dataset.level = level;
-    button.replaceChildren(icon(WEIGH_ICONS[level]));
-  }
-
+  if (drawWeigh({ host, button: button!, root: roots.get(host)! }, result, engine, { level, score })) return;
   if (engine.table) {
     // Table rows can't position children; sit inline after the title instead.
     host.style.setProperty('position', 'relative', 'important');
@@ -416,11 +405,33 @@ export function ensureWeighButton(
 // ---------------------------------------------------------------------------
 // The dial
 
+/**
+ * Draw the result's button: on a phone, the balance on the title's line; on a card, the
+ * gauge in its corner; on every other result, the dial around its site's icon, or the
+ * balance where there's no room for one. True when it's the dial, which is then in place.
+ */
+function drawWeigh(weigh: Weigh, result: FoundResult, engine: EngineDef, { level, score }: { level: Level; score: number }): boolean {
+  const { host, button } = weigh;
+  const shape = result.card ? 'gauge' : !engine.button?.onTitle && placeDial(weigh, result, engine, level) ? 'dial' : 'button';
+  if (shape === 'dial') {
+    showReading(host, level, score);
+    return true;
+  }
+  clearDialFrame(weigh, result.container);
+  shapeWeigh(weigh, shape);
+  if (shape === 'gauge') showReading(host, level, score);
+  else if (button.dataset.level !== level) {
+    button.dataset.level = level;
+    button.replaceChildren(icon(WEIGH_ICONS[level]));
+  }
+  return false;
+}
+
 /** The dial around the result's site icon (drawDial in dial.ts), or false where it has no room. */
-function placeDial(host: HTMLElement, result: FoundResult, engine: EngineDef, level: Level): boolean {
+function placeDial(weigh: Weigh, result: FoundResult, engine: EngineDef, level: Level): boolean {
+  const { host } = weigh;
   const bar = barHosts.get(result.container)?.getBoundingClientRect();
-  const placed = drawDial(host, rendered.get(host) as HTMLElement, roots.get(host)!, result, { table: !!engine.table, pinned: level === 'pin', bar: bar?.height ? bar : undefined });
-  if (!placed) return false;
+  if (!drawDial(weigh, result, { table: !!engine.table, pinned: level === 'pin', bar: bar?.height ? bar : undefined })) return false;
   keepUpright(host);
   if (engine.table) return true;
   popOuts.set(host, engine.button?.popOut ?? ':scope');

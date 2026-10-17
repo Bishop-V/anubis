@@ -289,7 +289,7 @@ export default defineContentScript({
       if (rules.settings.showChips) renderChips(result, verdict, ctx, revealed);
       else renderChips(result, { ...verdict, tags: [] }, ctx, false);
 
-      ensureWeighButton(result, verdict.level, engine, theme, openWeigh, verdict.hidden ? 0 : verdict.score);
+      ensureWeighButton(result, verdict.level, engine, theme, openWeigh, shownScore(verdict));
     };
 
     /**
@@ -568,6 +568,9 @@ export default defineContentScript({
     observe();
   },
 });
+
+/** How far a result moved, for its dial: none once it's hidden. */
+const shownScore = (verdict: Verdict): number => (verdict.hidden ? 0 : verdict.score);
 
 // Reranking moves results with CSS `order` inside a flex column, so the page's own
 // scripts (which own these nodes) never see them move. Each boost point moves a

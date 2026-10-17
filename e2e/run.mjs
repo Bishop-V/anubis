@@ -116,53 +116,9 @@ async function waitForWorker(sw, check, error) {
   throw new Error(error);
 }
 
-async function launch(settings = {}, ext = EXT) {
-  const ctx = await chromium.launchPersistentContext(mkdtempSync(join(tmpdir(), 'anubis-')), {
-    executablePath,
-    headless: true,
-    // ANUBIS_LANG=de runs the browser, and so Anubis, in a translation; checks that
-    // read English text then fail, but layout checks such as `responsive` still hold.
-    args: [`--disable-extensions-except=${ext}`, `--load-extension=${ext}`, ...proxyTrustArgs(), ...(process.env.ANUBIS_LANG ? [`--lang=${process.env.ANUBIS_LANG}`] : [])],
-    ...(process.env.ANUBIS_LANG && { locale: process.env.ANUBIS_LANG.replace('_', '-') }),
-    viewport: { width: 1180, height: 1000 },
-    // Sharper screenshots for the documentation site.
-    deviceScaleFactor: only === 'docs' ? 2 : 1,
-    // Behind a proxy (as in CI sandboxes), real list downloads need it too.
-    ...(process.env.HTTPS_PROXY && { proxy: { server: process.env.HTTPS_PROXY } }),
-  });
-  // Lists this repository publishes (and its directory) come from the checkout, so a
-  // run tests this branch's lists, not what main has, and doesn't wait on GitHub.
-  await ctx.route(/^https:\/\/raw\.githubusercontent\.com\/Bishop-V\/anubis\/main\/lists\/([\w./-]+)$/, (route) => {
-    const path = /\/lists\/(.+)$/.exec(route.request().url())[1];
-    const file = fileURLToPath(new URL(`../lists/${path}`, import.meta.url));
-    if (path.includes('..') || !existsSync(file)) return route.fulfill({ status: 404, body: '' });
-    return route.fulfill({ contentType: 'text/plain; charset=utf-8', body: readFileSync(file, 'utf8') });
-  });
-  let [sw] = ctx.serviceWorkers();
-  if (!sw) sw = await ctx.waitForEvent('serviceworker');
-  const extId = new URL(sw.url()).host;
-  await waitForWorker(sw, () => typeof chrome !== 'undefined' && !!chrome.storage, 'Extension storage API did not become ready');
-  await waitForWorker(sw, async () => !!(await chrome.storage.sync.get('personal')).personal, 'Extension personal-list migration did not finish');
-  // On install the extension moves a stored "Collapse" to "Remove" once. Writing the
-  // settings below while that runs can land between its reads, so the tests would
-  // run with "Remove": wait until it has set its flag.
-  await waitForWorker(sw, async () => (await chrome.storage.sync.get('hideStyleMoved')).hideStyleMoved === true, 'Extension settings migration did not finish');
-  // Then it subscribes saved subscriptions to every default list, once: wait for that too.
-  await waitForWorker(sw, async () => (await chrome.storage.sync.get('defaultListsAdded')).defaultListsAdded === true, 'Extension default-lists migration did not finish');
-  await sw.evaluate(
-    async ({ personal, settings }) => {
-      await chrome.storage.sync.set({
-        'personal.0': personal,
-        personal: { chunks: 1, updatedAt: Date.now() },
-        tagPrefs: { 'ai-slop': { action: 'hide' } },
-        // The tests use the "Collapse" style; keep the one-time move to "Remove" away.
-        hideStyleMoved: true,
-        settings: { enabled: true, theme: 'auto', hideStyle: 'collapse', rerank: true, showChips: true, showSummary: true, engines: {}, updateHours: 24, ...settings },
-      });
-    },
-    { personal: PERSONAL, settings },
-  );
-  const pages = {
+/** The mock search pages, by the address each answers. */
+function mockPages() {
+  return {
     'https://duckduckgo.com/?q=javascript+promises': duckduckgo('javascript promises', JS_RESULTS),
     'https://duckduckgo.com/?q=javascript+promises&dark=1': duckduckgo('javascript promises', JS_RESULTS, true),
     'https://www.google.com/search?q=anubis': google('anubis', ANUBIS_RESULTS),
@@ -247,8 +203,58 @@ async function launch(settings = {}, ext = EXT) {
     ...Object.fromEntries(ENGINE_TABS.map(([url, engine, tab]) => [url, engineTab(engine, tab, JS_RESULTS)])),
     'https://duckduckgo.com/?q=javascript+promises&wide=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { wide: true }),
     'https://duckduckgo.com/?q=javascript+promises&unseen=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { unseen: true }),
-    ...Object.fromEntries(Object.entries({ html: duckduckgoHtml, lite: duckduckgoLite }).map(([v, mock]) => [`https://${v}.duckduckgo.com/${v}/?q=javascript+promises`, mock('javascript promises', JS_RESULTS)])),
+    'https://html.duckduckgo.com/html/?q=javascript+promises': duckduckgoHtml('javascript promises', JS_RESULTS),
+    'https://lite.duckduckgo.com/lite/?q=javascript+promises': duckduckgoLite('javascript promises', JS_RESULTS),
   };
+}
+
+async function launch(settings = {}, ext = EXT) {
+  const ctx = await chromium.launchPersistentContext(mkdtempSync(join(tmpdir(), 'anubis-')), {
+    executablePath,
+    headless: true,
+    // ANUBIS_LANG=de runs the browser, and so Anubis, in a translation; checks that
+    // read English text then fail, but layout checks such as `responsive` still hold.
+    args: [`--disable-extensions-except=${ext}`, `--load-extension=${ext}`, ...proxyTrustArgs(), ...(process.env.ANUBIS_LANG ? [`--lang=${process.env.ANUBIS_LANG}`] : [])],
+    ...(process.env.ANUBIS_LANG && { locale: process.env.ANUBIS_LANG.replace('_', '-') }),
+    viewport: { width: 1180, height: 1000 },
+    // Sharper screenshots for the documentation site.
+    deviceScaleFactor: only === 'docs' ? 2 : 1,
+    // Behind a proxy (as in CI sandboxes), real list downloads need it too.
+    ...(process.env.HTTPS_PROXY && { proxy: { server: process.env.HTTPS_PROXY } }),
+  });
+  // Lists this repository publishes (and its directory) come from the checkout, so a
+  // run tests this branch's lists, not what main has, and doesn't wait on GitHub.
+  await ctx.route(/^https:\/\/raw\.githubusercontent\.com\/Bishop-V\/anubis\/main\/lists\/([\w./-]+)$/, (route) => {
+    const path = /\/lists\/(.+)$/.exec(route.request().url())[1];
+    const file = fileURLToPath(new URL(`../lists/${path}`, import.meta.url));
+    if (path.includes('..') || !existsSync(file)) return route.fulfill({ status: 404, body: '' });
+    return route.fulfill({ contentType: 'text/plain; charset=utf-8', body: readFileSync(file, 'utf8') });
+  });
+  let [sw] = ctx.serviceWorkers();
+  if (!sw) sw = await ctx.waitForEvent('serviceworker');
+  const extId = new URL(sw.url()).host;
+  await waitForWorker(sw, () => typeof chrome !== 'undefined' && !!chrome.storage, 'Extension storage API did not become ready');
+  await waitForWorker(sw, async () => !!(await chrome.storage.sync.get('personal')).personal, 'Extension personal-list migration did not finish');
+  // On install the extension moves a stored "Collapse" to "Remove" once. Writing the
+  // settings below while that runs can land between its reads, so the tests would
+  // run with "Remove": wait until it has set its flag.
+  await waitForWorker(sw, async () => (await chrome.storage.sync.get('hideStyleMoved')).hideStyleMoved === true, 'Extension settings migration did not finish');
+  // Then it subscribes saved subscriptions to every default list, once: wait for that too.
+  await waitForWorker(sw, async () => (await chrome.storage.sync.get('defaultListsAdded')).defaultListsAdded === true, 'Extension default-lists migration did not finish');
+  await sw.evaluate(
+    async ({ personal, settings }) => {
+      await chrome.storage.sync.set({
+        'personal.0': personal,
+        personal: { chunks: 1, updatedAt: Date.now() },
+        tagPrefs: { 'ai-slop': { action: 'hide' } },
+        // The tests use the "Collapse" style; keep the one-time move to "Remove" away.
+        hideStyleMoved: true,
+        settings: { enabled: true, theme: 'auto', hideStyle: 'collapse', rerank: true, showChips: true, showSummary: true, engines: {}, updateHours: 24, ...settings },
+      });
+    },
+    { personal: PERSONAL, settings },
+  );
+  const pages = mockPages();
   await ctx.route(/^https:\/\/((noai\.|html\.|lite\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com|www\.ecosia\.org|search\.yahoo\.com|kagi\.com|www\.startpage\.com|yandex\.com)\//, (route) => {
     const page = pages[route.request().url()];
     return answerRoute(route, typeof page === 'function' ? page(route.request()) : page);
