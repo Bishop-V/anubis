@@ -107,37 +107,32 @@ async function renderAll() {
 }
 
 /** The rankings for the site, as in the result menu: Hide | Lower, Normal, Raise | Pin. */
-function rankingButtons(domain: string, r: Ranking): HTMLElement {
+function rankingButtons({ domain, r }: { domain: string; r: Ranking }): HTMLElement {
   return h(
     'div',
     { class: 'seg levels', attrs: { role: 'group', 'aria-label': t('popupRankingFor', domain) } },
     LEVELS.flatMap((level) => [
       // Hide and Pin stand apart from Lower, Normal, and Raise.
       level === 'lower' || level === 'pin' ? h('span', { class: 'sep', attrs: { 'aria-hidden': 'true' } }) : null,
-      rankingButton(domain, r, level),
-    ]),
-  );
-}
-
-/** One ranking's button: pressing it again steps Raise and Lower up, then back. */
-function rankingButton(domain: string, r: Ranking, level: Level): HTMLElement {
-  const pressed = r.pressed === level;
-  return h(
-    'button',
-    {
-      type: 'button',
-      class: `${level}${fromListsClass(level, r)}`,
-      title: t(RANK_TITLES[level], domain),
-      attrs: { 'aria-pressed': String(pressed) },
-      on: {
-        click: () => {
-          hereDomain = domain;
-          void editPersonal((text) => setSiteLevel(text, domain, nextLevel(level, r)));
+      h(
+        'button',
+        {
+          type: 'button',
+          class: `${level}${fromListsClass(level, r)}`,
+          title: t(RANK_TITLES[level], domain),
+          attrs: { 'aria-pressed': String(r.pressed === level) },
+          on: {
+            click: () => {
+              hereDomain = domain;
+              void editPersonal((text) => setSiteLevel(text, domain, nextLevel(level, r)));
+            },
+          },
         },
-      },
-    },
-    h('span', { class: 'level-icon' }, icon(rankIcon(level, pressed ? r.steps : 0))),
-    LEVEL_LABELS[level],
+        // Raise and Lower light one arrow per press.
+        h('span', { class: 'level-icon' }, icon(rankIcon(level, r.pressed === level ? r.steps : 0))),
+        LEVEL_LABELS[level],
+      ),
+    ]),
   );
 }
 
@@ -168,7 +163,7 @@ function renderHere(rules: RuleSet) {
     renderHere(rules);
   });
 
-  const levels = rankingButtons(domain, r);
+  const levels = rankingButtons({ domain, r });
 
   const verdict = evaluate(result, rules.lists, rules.prefs);
   const hint = rankingHint(domain, baseline, r, verdict);
