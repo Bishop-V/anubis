@@ -325,6 +325,17 @@ async function clickShadowButton(hostSelector, text, index = 0) {
   await cdp.detach();
 }
 
+// Presses the first tag under a result whose name starts with `label` (the button also names its effect, if any).
+async function pressChip(label) {
+  const name = (await axTree()).find((n) => n.role === 'button' && n.name.startsWith(label))?.name;
+  const hosts = await page.locator('anubis-chips').count();
+  for (let i = 0; i < hosts; i++) {
+    try {
+      return await clickShadowButton('anubis-chips', name, i);
+    } catch {}
+  }
+}
+
 async function hasInHost(cdp, hostId, selector) {
   const { node: host } = await cdp.send('DOM.describeNode', { nodeId: hostId, depth: -1, pierce: true });
   const shadow = host.shadowRoots?.[0];
@@ -784,7 +795,7 @@ if (!only || only === 'mobile' || checks) {
       }
     };
     const look = {};
-    for (const part of ['short', 'long', 'details', 'filters']) {
+    for (const part of ['short', 'long', 'details']) {
       const n = nodes.find((node) => classes(node).includes(part));
       look[part] = n ? !!(await box(n)) : null;
       if (part === 'details' && n) {
@@ -803,7 +814,7 @@ if (!only || only === 'mobile' || checks) {
       if (content) look.sentence = textOf(n).trim();
     }
     look.underMark = [];
-    for (const n of nodes.filter((node) => node.nodeName === 'BUTTON' || classes(node).includes('filters') || classes(node).includes('change'))) {
+    for (const n of nodes.filter((node) => node.nodeName === 'BUTTON' || classes(node).includes('change'))) {
       const content = await box(n);
       if (content && content[0] < sentenceLeft - 1) look.underMark.push(textOf(n).trim() || classes(n).join(' '));
     }
@@ -837,9 +848,7 @@ if (!only || only === 'mobile' || checks) {
     summaryRendered: check.summary,
     noHorizontalOverflow: !check.scrollsSideways,
     phoneSummaryIsShort: folded.short === true && folded.long === false && folded.details === true && folded.detailsText === 'Details',
-    phoneTagsWaitForDetails: folded.filters !== true,
     detailsShowsFullSentence: opened.short === false && opened.long === true && opened.detailsText === 'Fewer details',
-    detailsShowsTags: opened.filters !== false,
     phoneNothingUnderMark: folded.underMark.length === 0 && opened.underMark.length === 0,
     wideSummaryIsFull: wide.long === true && wide.short === false && wide.details === false,
   });
@@ -1748,7 +1757,7 @@ if (!only || only === 'pins' || checks) {
   }
   await page.screenshot({ path: `${SHOTS}google-pins.png`, fullPage: true });
   // The same after passes that change which results are shown: no creeping or leftovers.
-  await clickShadowButton('anubis-summary', 'Official docs4');
+  await pressChip('Official docs');
   await page.waitForTimeout(300);
   console.log('   only Official docs:', JSON.stringify(await measure()));
   await clickShadowButton('anubis-summary', 'Show all');
@@ -2018,21 +2027,11 @@ if (!only || only === 'filter') {
   const shown = () =>
     page.evaluate(() => [...document.querySelectorAll('[data-anubis-result]')].filter((el) => getComputedStyle(el).display !== 'none').length);
   const all = await shown();
-  // The tag's button reads "Discussion" plus its effect, if any, so find its full name first.
-  const chipName = (await axTree()).find((n) => n.role === 'button' && n.name.startsWith('Discussion'))?.name;
-  const pressDiscussion = async () => {
-    const hosts = await page.locator('anubis-chips').count();
-    for (let i = 0; i < hosts; i++) {
-      try {
-        return await clickShadowButton('anubis-chips', chipName, i);
-      } catch {}
-    }
-  };
-  await pressDiscussion();
+  await pressChip('Discussion');
   await page.waitForTimeout(400);
   const narrowed = await shown();
   console.log('\n== chip filter:', JSON.stringify({ all, narrowed }));
-  await pressDiscussion();
+  await pressChip('Discussion');
   await page.waitForTimeout(400);
   console.log('== chip filter off:', await shown());
 }
