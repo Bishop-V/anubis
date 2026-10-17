@@ -100,7 +100,7 @@ Two builds of the same commit are identical file for file. Firefox's reviewers r
 - `lists/`: the bundled lists and `directory.json` (the "More lists" directory). `docs/list-format.md` is the format reference. `lists/sources/` holds lists made from other projects' data, rewritten weekly by `.github/workflows/sources.yml` (`.github/scripts/update-sources.mjs`, with the conversions in `.github/scripts/sources/convert.mjs`).
 - `docs/`: the documentation site. `guide/` holds the wiki's pages, `vi/`, `de/`, `zh-cn/`, and `zh-tw/` its machine-translated home page and guide (see [Translations](#translations)), `lists.md` renders `lists/directory.json`, and `.vitepress/` holds the config and brand theme. The extension links to the published site through `utils/links.ts` (the manifest's `homepage_url`, the popup's Help link, a wiki link on each settings section, and `helpLink` in `entrypoints/options/parts.ts` on panels and settings that a heading explains). Earlier builds link to `docs/list-format.md` on GitHub, so don't move that file, and keep page paths and headings stable or the links from settings break (`tests/help-links.test.ts` checks them). `subscribe.md` is where subscribe links lead and what the subscribe content script matches, so it can't move either. `.github/workflows/docs.yml` builds the site on pull requests and publishes it to GitHub Pages from main.
 - `README.md`: the repository's front page (see [Documentation](#documentation)).
-- `public/`: the logo (`anubis.svg`), toolbar icons (`icon/{16,32,48,96,128}.png`), and the English interface text (`_locales/en/`). WXT detects these automatically.
+- `public/`: the logo (`anubis.svg`, copied to the repository's root and `docs/public/`), toolbar icons (`icon/{16,32,48,96,128}.png`, drawn from the logo by `store/render.mjs`), and the English interface text (`_locales/en/`). WXT detects these automatically.
 - `locales/<lang>/`: translations (`messages.json`) and the English each message came from (`sources.json`). The build adds them as `_locales/<lang>/`, leaving out messages whose English has changed since (`scripts/locales.mjs`, called from `wxt.config.ts`'s `build:publicAssets` hook).
 - `store/`: store listing text and images; `node store/render.mjs` redraws the store icon and promo tile. `ROADMAP.md`: planned work.
 
@@ -257,7 +257,7 @@ Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), French, German, Hi
 - Keep a reference to what you rendered instead of querying for it: `:scope` matches nothing inside a shadow root.
 - Styles for inside the shadow roots go in `shadow.css`; page-level treatments keyed off `data-anubis-*` attributes go in `page.css`.
 - On search pages, stay quiet: the page's own font, muted text, no fills. The result menu's balance is the one flourish (`.claude/skills/frontend-design`).
-- Colours, sizes, and controls come from [`STYLEGUIDE.md`](STYLEGUIDE.md). The palette, Graphite, is defined in `assets/theme.css` for extension pages and again in `shadow.css` for search pages, under the same names; change both together. `tests/palette.test.ts` checks they match and that no stylesheet draws in gold, which only the logo keeps.
+- Colours, sizes, and controls come from [`STYLEGUIDE.md`](STYLEGUIDE.md). The palette, Graphite, is defined in `assets/theme.css` for extension pages and again in `shadow.css` for search pages, under the same names; change both together. `tests/palette.test.ts` checks they match and that no stylesheet, nor the logo, draws in gold.
 
 ### Add a list to the extension
 

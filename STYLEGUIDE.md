@@ -14,7 +14,7 @@ The screenshots below come from the wiki (`docs/img/`, regenerated with `node e2
 2. **One flourish.** The result menu's balance is the only decoration. The popup shows it for the site you're on too, since it does the same job there. The Anubis motif stays in the logo and the balance; it never names a function.
 3. **Plain words over clever ones.** A label says what happens. The same word means the same thing everywhere.
 4. **Nothing without a trace.** What Anubis hid, removed, or reranked is stated in the summary, and "Show hidden" undoes it for the page. Deleting in Settings doesn't ask "Are you sure?" (a browser can be told to stop showing a page's dialogs, and then the answer is always no): it acts, says what it did, and offers Undo.
-5. **Graphite: greys, with the text colour for what matters.** The primary action, focus, and a choice that's been made take the text colour (`--accent`); everything else is greys. No gold, except in the logo.
+5. **Graphite: greys, with the text colour for what matters.** The primary action, focus, and a choice that's been made take the text colour (`--accent`); everything else is greys. No gold, the logo included.
 6. **Red is for errors and deleting.** `--danger` marks an error or an action that throws something away, and nothing else. A ranking is never red: a chosen Hide is grey, like Lower and Normal, since hiding a site is a choice, not a mistake. `tests/palette.test.ts` fails when a Hide rule uses `--danger`.
 
 ![A search page with Anubis: the summary above the results, tags under titles, a hidden result folded into one line](docs/img/after.png)
@@ -45,7 +45,7 @@ One palette, Graphite, defined twice: `assets/theme.css` for extension pages and
 | `--on-tab` | `#fff` | `#fff` | The icon on that tab |
 
 - Graphite is neutral, a little cool: no warm tint, so nothing Anubis draws outshines the results or the page. The accent is the text colour, so what matters stands out by weight and contrast, not hue.
-- Gold (`#d4a637` on `#1b1a16`) is the logo's, and the toolbar badge's beside it. It's never used in the interface.
+- The logo is Graphite too: the jackal in `#e8e8ea` on a `#1c1c1f` tile, and the toolbar badge `#5f5f66` with white text, which reads on light and dark toolbars. While Anubis is off, the toolbar icon is flat grey and half see-through (`public/icon-off/`). The store tiles and the toolbar icons are drawn from the logo by `store/render.mjs`.
 - Tags carry their own colour (`--c`), from the list or from `TAG_PALETTE` in `utils/listformat.ts`: muted Egyptian pigments (ochres, malachite, Egyptian blue, amethyst, turquoise, papyrus, umber) that sit quietly on light and dark pages. They're the only hues in the interface.
 - On search pages, **Settings → Appearance → Colours on search pages** can switch from *Tag colours* to *Plain*. Hosts then carry `data-palette="plain"` and `<html>` carries `data-anubis-palette="plain"`: `--danger` becomes `--muted`, tag marks are grey, and the pinned frame and highlights take the page's text colour. So a new colour on search pages goes through these tokens, never `--c` or a hex value alone, or it stays coloured in Plain. (The stored value of *Tag colours* is still `gold`, from before Graphite, so saved settings keep working.)
 - Every surface follows the theme setting (Auto, Light, Dark). On search pages, "Auto" follows the page's background for what sits on the page, and the browser's scheme for the result menu, which matches the popup.

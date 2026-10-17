@@ -2,9 +2,8 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 // Graphite, neutral greys with no gold, everywhere Anubis draws: its own pages
-// (assets/theme.css) and what it adds to search pages (entrypoints/content/shadow.css),
-// written out twice because a shadow root can't see the page's variables. Only the logo,
-// and the toolbar badge beside it, keep the brand gold.
+// (assets/theme.css), what it adds to search pages (entrypoints/content/shadow.css),
+// written out twice because a shadow root can't see the page's variables, and its logo.
 
 const read = (path: string) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
 
@@ -35,6 +34,11 @@ const SHEETS = [
   'entrypoints/options/style.css',
   'entrypoints/welcome/style.css',
   'docs/.vitepress/theme/brand.css',
+  // The logo, its copies, and the images drawn from it.
+  'public/anubis.svg',
+  'anubis.svg',
+  'docs/public/anubis.svg',
+  'store/render.mjs',
 ];
 
 describe('palette', () => {
@@ -48,17 +52,16 @@ describe('palette', () => {
     for (const k of shared(shadowDark, dark)) expect([k, shadowDark[k]]).toEqual([k, dark[k]]);
   });
 
-  it.each(SHEETS)('%s draws nothing in gold', (path) => {
+  it.each(SHEETS)('%s is drawn in no gold', (path) => {
     expect(read(path).replace(/\/\*[\s\S]*?\*\//g, '')).not.toMatch(GOLD);
   });
 
-  it('gives the toolbar badge the logo\'s gold on its background', () => {
-    const background = read('entrypoints/background.ts');
+  it('gives the logo and the toolbar badge Graphite', () => {
     const logo = read('public/anubis.svg');
-    for (const color of ['#d4a637', '#1b1a16']) {
-      expect(logo).toContain(color);
-      expect(background).toContain(`color: '${color}'`);
-    }
+    expect(logo).toContain(`fill="${dark['--text']}"`);
+    expect(logo).toContain(`fill="${dark['--bg']}"`);
+    for (const copy of ['anubis.svg', 'docs/public/anubis.svg']) expect(read(copy)).toBe(logo);
+    expect(read('entrypoints/background.ts')).toContain(`color: '${light['--muted']}'`);
   });
 });
 

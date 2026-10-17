@@ -180,7 +180,7 @@ function render(host: HTMLElement, key: string, build: () => Node): void {
   }
 }
 
-/** Gold or plain, for everything Anubis adds to the page, the result menu included. */
+/** Tag colours or plain, for everything Anubis adds to the page, the result menu included. */
 export function applyPalette(next: Palette): void {
   if (next === palette && document.documentElement.dataset.anubisPalette === next) return;
   palette = next;
