@@ -1255,12 +1255,17 @@ export function popoverAnchor(): HTMLElement | undefined {
   return popover?.anchor;
 }
 
+/** Whether a rerank has taken the button away. A phone's sheet is fixed to the screen, so it stays. */
+function buttonLost(open: NonNullable<typeof popover>, anchor: HTMLElement): boolean {
+  return !open.host.hasAttribute('data-sheet') && !anchorInView(anchor);
+}
+
 /**
  * Place the menu on open, and again when a rerank has moved its button; otherwise only
  * keep it anchored as it grows. Closes it, and says so, when the button is gone or off screen.
  */
 function placeMenu(open: NonNullable<typeof popover>, anchor: HTMLElement, opening: boolean): boolean {
-  if (!opening && !open.host.hasAttribute('data-sheet') && !anchorInView(anchor)) {
+  if (!opening && buttonLost(open, anchor)) {
     closePopover();
     return false;
   }
