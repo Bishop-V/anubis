@@ -63,7 +63,7 @@ html[data-anubis-hide='dim'] [data-anubis-state~='hide'] > anubis-bar {
    one you may want to read. The "Lowered" label under the title says why it moved. */
 
 /* Pinned: a thin frame in the page's own text colour, drawn outside the box, so layout
-   doesn't move. Grey like the dial, which shows the pin too. */
+   doesn't move. Grey like the button, which shows the pin too. */
 [data-anubis-state~='pin'] {
   outline: 1px solid color-mix(in srgb, currentColor 30%, transparent);
   outline-offset: 7px;
@@ -71,10 +71,10 @@ html[data-anubis-hide='dim'] [data-anubis-state~='hide'] > anubis-bar {
 [data-anubis-state~='pin']:not([data-anubis-frame-inside]) {
   border-radius: 10px;
 }
-/* A result with the dial has its frame drawn with the dial, taking in the crown on its left.
-   A result in a table spans several rows, each of which would get its own frame: its full
-   dial says it's pinned instead. */
-[data-anubis-state~='pin'][data-anubis-dial-frame],
+/* A result with its button in the column on its left has its frame drawn with the button,
+   taking it in. A result in a table spans several rows, each of which would get its own
+   frame: its button's pin says it's pinned instead. */
+[data-anubis-state~='pin'][data-anubis-column-frame],
 tr[data-anubis-state~='pin'] {
   outline: none;
 }

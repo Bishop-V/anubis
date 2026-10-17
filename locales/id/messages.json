@@ -245,9 +245,6 @@
   "barHiddenByList_other": {
     "message": "disembunyikan oleh $2"
   },
-  "menuWhyHeading": {
-    "message": "Alasan"
-  },
   "menuNewTagPlaceholder": {
     "message": "Tag baru"
   },
@@ -256,9 +253,6 @@
   },
   "menuAddTagButton": {
     "message": "Tambahkan tag"
-  },
-  "menuSavedNote": {
-    "message": "Disimpan di daftar Anda."
   },
   "menuCloseLabel": {
     "message": "Tutup"
@@ -418,21 +412,6 @@
   },
   "summaryUndo": {
     "message": "Urungkan"
-  },
-  "menuSuggest": {
-    "message": "Perlukah sebuah daftar memuatnya? Usulkan ke $1."
-  },
-  "menuSuggestTitle": {
-    "message": "Usulkan $1 ke $2 di pelacak masalahnya"
-  },
-  "menuReport": {
-    "message": "Salah? Laporkan ke $1."
-  },
-  "menuMatchedRule": {
-    "message": "Aturan yang cocok, baris $1"
-  },
-  "menuReportTitle": {
-    "message": "Beri tahu $1 bahwa daftar itu salah tentang hasil ini, di pelacak masalahnya"
   },
   "offerTitle": {
     "message": "Berlangganan $1?"
@@ -1462,9 +1441,6 @@
   },
   "reasonYourTagSettings": {
     "message": "Setelan tag Anda"
-  },
-  "menuReason": {
-    "message": "$1 $2."
   },
   "choicePin": {
     "message": "menyematkannya karena $1"

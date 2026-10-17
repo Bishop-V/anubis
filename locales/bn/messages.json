@@ -266,9 +266,6 @@
   "barHiddenByList_other": {
     "message": "$2 অনুযায়ী লুকানো"
   },
-  "menuWhyHeading": {
-    "message": "কেন"
-  },
   "menuNewTagPlaceholder": {
     "message": "নতুন ট্যাগ"
   },
@@ -277,9 +274,6 @@
   },
   "menuAddTagButton": {
     "message": "ট্যাগ যোগ করুন"
-  },
-  "menuSavedNote": {
-    "message": "আপনার তালিকায় সেভ করা হয়েছে।"
   },
   "menuCloseLabel": {
     "message": "বন্ধ করুন"
@@ -481,21 +475,6 @@
   },
   "summaryUndo": {
     "message": "পূর্বাবস্থায় ফেরান"
-  },
-  "menuSuggest": {
-    "message": "কোনো তালিকায় কি এটি থাকা উচিত? $1-কে এটি প্রস্তাব করুন।"
-  },
-  "menuSuggestTitle": {
-    "message": "$2-এর ইস্যু ট্র্যাকারে $1 প্রস্তাব করুন"
-  },
-  "menuReport": {
-    "message": "ভুল? $1-কে জানান।"
-  },
-  "menuMatchedRule": {
-    "message": "মিলে যাওয়া নিয়ম, লাইন $1"
-  },
-  "menuReportTitle": {
-    "message": "$1-এর ইস্যু ট্র্যাকারে জানান যে এই ফলাফল নিয়ে এটি ভুল করেছে"
   },
   "offerTitle": {
     "message": "$1 সাবস্ক্রাইব করবেন?"
@@ -1570,9 +1549,6 @@
   },
   "reasonYourTagSettings": {
     "message": "আপনার ট্যাগ সেটিংস"
-  },
-  "menuReason": {
-    "message": "$1 $2।"
   },
   "choicePin": {
     "message": "$1 ট্যাগের কারণে এটিকে পিন করে"

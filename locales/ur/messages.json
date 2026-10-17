@@ -266,9 +266,6 @@
   "barHiddenByList_other": {
     "message": "$2 کے ذریعے چھپائے گئے"
   },
-  "menuWhyHeading": {
-    "message": "کیوں"
-  },
   "menuNewTagPlaceholder": {
     "message": "نیا ٹیگ"
   },
@@ -277,9 +274,6 @@
   },
   "menuAddTagButton": {
     "message": "ٹیگ شامل کریں"
-  },
-  "menuSavedNote": {
-    "message": "آپ کی فہرست میں محفوظ ہو گیا۔"
   },
   "menuCloseLabel": {
     "message": "بند کریں"
@@ -481,21 +475,6 @@
   },
   "summaryUndo": {
     "message": "کالعدم کریں"
-  },
-  "menuSuggest": {
-    "message": "کیا کسی فہرست میں یہ شامل ہونی چاہیے؟ اسے $1 کو تجویز کریں۔"
-  },
-  "menuSuggestTitle": {
-    "message": "$2 کے ایشو ٹریکر پر $1 کی تجویز دیں"
-  },
-  "menuReport": {
-    "message": "غلط ہے؟ اس کی اطلاع $1 کو دیں۔"
-  },
-  "menuMatchedRule": {
-    "message": "مماثل اصول، سطر $1"
-  },
-  "menuReportTitle": {
-    "message": "$1 کے ایشو ٹریکر پر بتائیں کہ وہ اس نتیجے کے بارے میں غلط ہے"
   },
   "offerTitle": {
     "message": "$1 کو سبسکرائب کریں؟"
@@ -1570,9 +1549,6 @@
   },
   "reasonYourTagSettings": {
     "message": "آپ کی ٹیگ ترتیبات"
-  },
-  "menuReason": {
-    "message": "$1 $2۔"
   },
   "choicePin": {
     "message": "$1 کی وجہ سے اسے پن کرتی ہیں"

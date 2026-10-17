@@ -248,9 +248,6 @@
   "barHiddenByList_other": {
     "message": "已被 $2 隐藏"
   },
-  "menuWhyHeading": {
-    "message": "原因"
-  },
   "menuNewTagPlaceholder": {
     "message": "新标签"
   },
@@ -259,9 +256,6 @@
   },
   "menuAddTagButton": {
     "message": "添加标签"
-  },
-  "menuSavedNote": {
-    "message": "已保存在你的列表中。"
   },
   "menuCloseLabel": {
     "message": "关闭"
@@ -421,21 +415,6 @@
   },
   "summaryUndo": {
     "message": "撤销"
-  },
-  "menuSuggest": {
-    "message": "应该收录到列表中吗？推荐给 $1。"
-  },
-  "menuSuggestTitle": {
-    "message": "在 $2 的问题跟踪器上推荐 $1"
-  },
-  "menuReport": {
-    "message": "有误？报告给 $1。"
-  },
-  "menuMatchedRule": {
-    "message": "匹配的规则，第 $1 行"
-  },
-  "menuReportTitle": {
-    "message": "在 $1 的问题跟踪器上告诉它，它对此结果的判断有误"
   },
   "offerTitle": {
     "message": "订阅 $1？"
@@ -1465,9 +1444,6 @@
   },
   "reasonYourTagSettings": {
     "message": "你的标签设置"
-  },
-  "menuReason": {
-    "message": "$1：$2。"
   },
   "choicePin": {
     "message": "因$1标签将其置顶"

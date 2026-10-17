@@ -266,9 +266,6 @@
   "barHiddenByList_other": {
     "message": "के नतीजे $2 ने छिपाए"
   },
-  "menuWhyHeading": {
-    "message": "क्यों"
-  },
   "menuNewTagPlaceholder": {
     "message": "नया टैग"
   },
@@ -277,9 +274,6 @@
   },
   "menuAddTagButton": {
     "message": "टैग जोड़ें"
-  },
-  "menuSavedNote": {
-    "message": "आपकी सूची में सेव किया गया।"
   },
   "menuCloseLabel": {
     "message": "बंद करें"
@@ -481,21 +475,6 @@
   },
   "summaryUndo": {
     "message": "पहले जैसा करें"
-  },
-  "menuSuggest": {
-    "message": "क्या किसी सूची में यह होना चाहिए? इसे $1 को सुझाएं।"
-  },
-  "menuSuggestTitle": {
-    "message": "$2 के इश्यू ट्रैकर पर उसे $1 का सुझाव दें"
-  },
-  "menuReport": {
-    "message": "गलत है? इसकी शिकायत $1 से करें।"
-  },
-  "menuMatchedRule": {
-    "message": "मेल खाने वाला नियम, लाइन $1"
-  },
-  "menuReportTitle": {
-    "message": "$1 के इश्यू ट्रैकर पर बताएं कि वह इस नतीजे के बारे में गलत है"
   },
   "offerTitle": {
     "message": "$1 की सदस्यता लें?"
@@ -1570,9 +1549,6 @@
   },
   "reasonYourTagSettings": {
     "message": "आपकी टैग सेटिंग"
-  },
-  "menuReason": {
-    "message": "$1 $2।"
   },
   "choicePin": {
     "message": "$1 के लिए इसे पिन करती है"

@@ -245,9 +245,6 @@
   "barHiddenByList_other": {
     "message": "「$2」で非表示"
   },
-  "menuWhyHeading": {
-    "message": "理由"
-  },
   "menuNewTagPlaceholder": {
     "message": "新しいタグ"
   },
@@ -256,9 +253,6 @@
   },
   "menuAddTagButton": {
     "message": "タグを追加"
-  },
-  "menuSavedNote": {
-    "message": "マイリストに保存しました。"
   },
   "menuCloseLabel": {
     "message": "閉じる"
@@ -418,21 +412,6 @@
   },
   "summaryUndo": {
     "message": "元に戻す"
-  },
-  "menuSuggest": {
-    "message": "リストに含めるべきですか？　$1 に提案してください。"
-  },
-  "menuSuggestTitle": {
-    "message": "$2 の Issue トラッカーで $1 を提案します"
-  },
-  "menuReport": {
-    "message": "間違っていますか？　$1 に報告してください。"
-  },
-  "menuMatchedRule": {
-    "message": "一致したルール（$1 行目）"
-  },
-  "menuReportTitle": {
-    "message": "この結果についての誤りを $1 の Issue トラッカーで報告します"
   },
   "offerTitle": {
     "message": "$1 を購読しますか？"
@@ -1462,9 +1441,6 @@
   },
   "reasonYourTagSettings": {
     "message": "タグの設定"
-  },
-  "menuReason": {
-    "message": "$1：$2"
   },
   "choicePin": {
     "message": "$1により固定"

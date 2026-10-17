@@ -90,10 +90,10 @@ describe('t and tn', () => {
   it('puts a list of items, which can be elements, in place of a placeholder', () => {
     const a = { name: 'A' };
     const b = { name: 'B' };
-    expect(tList('menuReport', [a], 'disjunction')).toEqual(['Wrong? Report it to ', a, '.']);
-    expect(tList('menuReport', [a, b], 'disjunction')).toEqual(['Wrong? Report it to ', a, ' or ', b, '.']);
+    expect(tList('tagListsRaise_other', [a], 'disjunction')).toEqual(['raise ', a, '']);
+    expect(tList('tagListsRaise_other', [a, b], 'disjunction')).toEqual(['raise ', a, ' or ', b, '']);
     const c = { name: 'C' };
-    expect(tList('menuReport', [a, b, c], 'disjunction')).toEqual(['Wrong? Report it to ', a, ', ', b, ', or ', c, '.']);
+    expect(tList('tagListsRaise_other', [a, b, c], 'disjunction')).toEqual(['raise ', a, ', ', b, ', or ', c, '']);
   });
 
   it('joins lists of three or more with the serial comma', () => {

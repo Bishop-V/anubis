@@ -337,36 +337,38 @@ async function hasResultChip(cdp, resultId, level) {
   return hostId ? hasChipInHost(cdp, hostId, level) : false;
 }
 
-// The colour of a dial's crown, at rest and pointed at, and the palette's two golds, read from
-// inside the dial's closed shadow root with the DevTools protocol.
-async function dialColors(page, selector) {
+// The colour of a result's button, at rest and pointed at, read from inside its closed shadow
+// root with the DevTools protocol.
+async function weighColors(page, selector) {
   const cdp = await page.context().newCDPSession(page);
   await cdp.send('DOM.enable');
   await cdp.send('CSS.enable');
   const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
   const { nodeId: hostId } = await cdp.send('DOM.querySelector', { nodeId: root.nodeId, selector });
-  if (!hostId) throw new Error(`No dial host matches ${selector}`);
+  if (!hostId) throw new Error(`No weigh host matches ${selector}`);
   const { node: host } = await cdp.send('DOM.describeNode', { nodeId: hostId, depth: -1, pierce: true });
-  const shadow = host.shadowRoots?.[0];
-  const { nodeId: knobId } = await cdp.send('DOM.querySelector', { nodeId: shadow.nodeId, selector: '.dial .knob' });
-  const { nodeId: buttonId } = await cdp.send('DOM.querySelector', { nodeId: shadow.nodeId, selector: 'button.weigh' });
-  if (!knobId || !buttonId) throw new Error(`No dial inside ${selector}`);
-  const property = (style, name) => style.find((item) => item.name === name)?.value;
-  const stroke = async () => property((await cdp.send('CSS.getComputedStyleForNode', { nodeId: knobId })).computedStyle, 'stroke');
-  const rest = await stroke();
+  const { nodeId: buttonId } = await cdp.send('DOM.querySelector', { nodeId: host.shadowRoots[0].nodeId, selector: 'button.weigh' });
+  if (!buttonId) throw new Error(`No button inside ${selector}`);
+  const color = async () =>
+    (await cdp.send('CSS.getComputedStyleForNode', { nodeId: buttonId })).computedStyle.find((item) => item.name === 'color')?.value;
+  const rest = await color();
   const { model } = await cdp.send('DOM.getBoxModel', { nodeId: buttonId });
   const [x1, y1, , , x3, y3] = model.content;
   await page.mouse.move((x1 + x3) / 2, (y1 + y3) / 2);
   await page.waitForTimeout(250);
-  const hover = await stroke();
-  const { computedStyle: hostStyle } = await cdp.send('CSS.getComputedStyleForNode', { nodeId: hostId });
-  const rgb = (hex) => hex && `rgb(${parseInt(hex.slice(1, 3), 16)}, ${parseInt(hex.slice(3, 5), 16)}, ${parseInt(hex.slice(5, 7), 16)})`;
+  const hover = await color();
   await page.mouse.move(1, 1);
   await cdp.detach();
-  return { rest, hover, gold: [rgb(property(hostStyle, '--gold')), rgb(property(hostStyle, '--gold-ink'))] };
+  return { rest, hover };
 }
 
-/** Press a result's menu button: the dial's crown on its left, at its middle, or the button on a card. */
+/** Whether a computed colour is a grey: its red, green, and blue close together. */
+const isGrey = (color) => {
+  const [r, g, b] = (color.match(/[\d.]+/g) ?? []).map(Number);
+  return Math.max(r, g, b) - Math.min(r, g, b) <= 12;
+};
+
+/** Press a result's menu button, in the column on its left or on a card. */
 async function pressWeigh(host) {
   const box = await host.boundingBox();
   await host.click({ position: { x: 12, y: box.height / 2 } });
@@ -419,10 +421,10 @@ if (!only || only === 'pages') {
   await shoot('https://lite.duckduckgo.com/lite/?q=javascript+promises', 'ddg-lite');
 }
 
-// The dial on each desktop result (utils/dial.ts): around the site's icon, or a plain disc
-// before the title where there's none, with its crown inside the window and over no text.
-if (!only || only === 'pages' || only === 'dial' || checks) {
-  const DIAL_PAGES = [
+// The button on each desktop result (column.ts): in a column on the result's left, inside
+// the window, level with its first row, and over no text. In a table (DuckDuckGo Lite), after the title.
+if (!only || only === 'pages' || only === 'column' || checks) {
+  const COLUMN_PAGES = [
     'https://duckduckgo.com/?q=javascript+promises',
     'https://duckduckgo.com/?q=javascript+promises&dark=1',
     'https://duckduckgo.com/?q=javascript+promises&wide=1',
@@ -432,56 +434,51 @@ if (!only || only === 'pages' || only === 'dial' || checks) {
     'https://www.ecosia.org/search?q=javascript+promises',
     'https://search.yahoo.com/search?p=javascript+promises',
     'https://html.duckduckgo.com/html/?q=javascript+promises',
-    'https://lite.duckduckgo.com/lite/?q=javascript+promises',
   ];
-  for (const url of DIAL_PAGES) {
+  for (const url of COLUMN_PAGES) {
     await page.goto(url);
     // Ecosia builds its page in the browser first.
     await page.waitForTimeout(url.includes('ecosia') ? 3500 : 700);
     const found = await page.evaluate(() => {
-      const overlaps = (r, box) => r.width && r.right > box.left + 1 && r.left < box.right - 1 && r.bottom > box.top + 1 && r.top < box.bottom - 1;
-      // The words under the crown, leaving out the number cell DuckDuckGo Lite puts the dial in.
-      const wordsUnder = (result, box) => {
-        const walker = document.createTreeWalker(result, NodeFilter.SHOW_TEXT);
-        const range = document.createRange();
-        const words = [];
-        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-          if (!node.textContent.trim() || node.parentElement.closest('td')?.cellIndex === 0) continue;
-          range.selectNodeContents(node);
-          if ([...range.getClientRects()].some((r) => overlaps(r, box))) words.push(node.textContent.trim().slice(0, 30));
-        }
-        return words;
-      };
-      const iconish = (el) => /^(IMG|svg|path|circle|rect|g)$/i.test(el.tagName) || /icon|pic|logo/i.test(el.className?.baseVal ?? el.className) || el.matches('td');
-      // The dial's centre is 2px in from its right edge: on the site's icon, or on its own disc.
-      const offIcon = (host, h) => {
-        if (host.hasAttribute('data-blank')) return undefined;
-        const at = document.elementFromPoint(h.right - 2, h.top + h.height / 2);
-        return !at || at === host || at.closest('anubis-weigh, anubis-bar') || iconish(at) ? undefined : `${at.tagName}.${at.className}`;
-      };
       const results = [...document.querySelectorAll('[data-anubis-result]')].filter((r) => r.getBoundingClientRect().height);
-      const dials = results.map((result) => [result, result.querySelector('anubis-weigh')]).filter(([, host]) => host?.dataset.shape === 'dial');
-      const out = { results: results.length, dials: dials.length, blank: 0, offIcon: [], overText: [], outside: [] };
-      for (const [result, host] of dials) {
-        if (host.hasAttribute('data-blank')) out.blank++;
-        const h = host.getBoundingClientRect();
+      const out = { results: results.length, inColumn: 0, notInColumn: [], outside: [], overText: [], notLevel: [] };
+      for (const result of results) {
+        const host = result.querySelector(':scope > anubis-weigh');
         const site = result.querySelector('a[href]')?.href ?? '';
-        if (h.left < 0 || h.right > innerWidth) out.outside.push(site);
-        // The press area: the crown, 24px wide at the host's left.
-        out.overText.push(...wordsUnder(result, { left: h.left, right: h.left + 24, top: h.top + h.height / 2 - 14, bottom: h.top + h.height / 2 + 14 }));
-        const off = offIcon(host, h);
-        if (off) out.offIcon.push(`${site} → ${off}`);
+        if (host?.dataset.shape !== 'column') {
+          out.notInColumn.push(site);
+          continue;
+        }
+        out.inColumn++;
+        const h = host.getBoundingClientRect();
+        const box = result.getBoundingClientRect();
+        if (h.left < 0 || h.right > box.left) out.outside.push(site);
+        // Only what's in view can be pointed at.
+        const at = h.top >= 0 && h.bottom <= innerHeight ? document.elementFromPoint(h.left + h.width / 2, h.top + h.height / 2) : host;
+        if (at !== host) out.overText.push(`${site} → ${at?.tagName}.${at?.className}`);
+        // Within the result's first 80 pixels: on its first row, not halfway down it.
+        if (h.top < box.top - 8 || h.bottom > box.top + 80) out.notLevel.push(site);
       }
       return out;
     });
-    console.log(`== dial on ${url}:`, JSON.stringify(found));
-    assertChecks(`the dial on ${url}`, {
-      everyResultHasADial: found.results > 0 && found.dials === found.results,
-      aroundTheIcon: found.offIcon.length === 0,
-      crownOverNoText: found.overText.length === 0,
+    console.log(`== column on ${url}:`, JSON.stringify(found));
+    assertChecks(`the column on ${url}`, {
+      everyResultInTheColumn: found.results > 0 && found.inColumn === found.results,
       insideTheWindow: found.outside.length === 0,
+      overNothingElse: found.overText.length === 0,
+      levelWithTheFirstRow: found.notLevel.length === 0,
     });
   }
+  // A window too narrow for the column: the button goes back in the result's corner.
+  await page.setViewportSize({ width: 640, height: 900 });
+  await page.goto('https://duckduckgo.com/?q=javascript+promises');
+  await page.waitForTimeout(700);
+  const narrow = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-anubis-result] > anubis-weigh')].map((host) => [host.dataset.shape, host.getBoundingClientRect().left >= 0]),
+  );
+  await page.setViewportSize({ width: 1180, height: 1000 });
+  console.log('== column in a narrow window:', JSON.stringify(narrow));
+  assertChecks('the column in a narrow window', { inTheWindow: narrow.length > 0 && narrow.every(([, inside]) => inside) });
   // A menu that closes by a style change adds or removes no nodes, so no pass runs
   // after it: nothing a pass set while it was open may outlast it.
   await page.goto('https://duckduckgo.com/?q=javascript+promises&dark=1');
@@ -502,23 +499,23 @@ if (!only || only === 'pages' || only === 'dial' || checks) {
     menu.remove();
     return shown;
   });
-  assertChecks('ddg closed menu', { dialShows: afterMenu });
+  assertChecks('ddg closed menu', { buttonShows: afterMenu });
   const first = page.locator('li[data-anubis-result]').first();
-  const dialBox = await first.locator('anubis-weigh').boundingBox();
-  await page.mouse.move(dialBox.x + 12, dialBox.y + dialBox.height / 2);
+  const buttonBox = await first.locator('anubis-weigh').boundingBox();
+  await page.mouse.move(buttonBox.x + 12, buttonBox.y + buttonBox.height / 2);
   await page.waitForTimeout(250);
-  await page.screenshot({ path: `${SHOTS}ddg-dial.png`, clip: { x: dialBox.x - 10, y: dialBox.y - 10, width: 260, height: dialBox.height + 20 } });
+  await page.screenshot({ path: `${SHOTS}ddg-column.png`, clip: { x: buttonBox.x - 10, y: buttonBox.y - 10, width: 400, height: 80 } });
 }
 
-// The dial is drawn in the page's greys: no gold at rest or when pointed at.
+// The button is drawn in greys: no gold at rest or when pointed at.
 if (!only || only === 'ddg-colors' || checks) {
   for (const [mode, query] of [['light', ''], ['dark', '&dark=1']]) {
     await page.goto(`https://duckduckgo.com/?q=javascript+promises${query}`);
     await page.waitForTimeout(700);
     const selector = 'li[data-anubis-result]:not([data-anubis-state~="pin"]):not([data-anubis-state~="hide"]) > anubis-weigh';
-    const colors = await dialColors(page, selector);
-    console.log(`\n== DuckDuckGo ${mode} dial colors:`, JSON.stringify(colors));
-    assertChecks(`DuckDuckGo ${mode} dial`, { greyAtRest: !colors.gold.includes(colors.rest), greyPointedAt: !colors.gold.includes(colors.hover) });
+    const colors = await weighColors(page, selector);
+    console.log(`\n== DuckDuckGo ${mode} button colors:`, JSON.stringify(colors));
+    assertChecks(`DuckDuckGo ${mode} button`, { greyAtRest: isGrey(colors.rest), greyPointedAt: isGrey(colors.hover) });
   }
 }
 
@@ -1214,7 +1211,7 @@ if (!only || only === 'cleanup' || checks) {
     return { buttons: lefts.length, lefts: [...new Set(lefts)] };
   });
   console.log('== Bing buttons beside a picture:', JSON.stringify(bingButtons));
-  // The dials follow the site icons, which can sit a pixel apart.
+  // The buttons sit in one column left of the results.
   if (checks) assertChecks('Bing picture', { buttonsInOneColumn: bingButtons.buttons > 0 && Math.max(...bingButtons.lefts) - Math.min(...bingButtons.lefts) <= 2 });
   // Bing: a carousel labelled "Sponsored" goes with the Ads switch, and the summary is above it either way.
   const bingSponsored = async () => {
@@ -1559,7 +1556,7 @@ if (!only || only === 'cleanup' || checks) {
   console.log('== summary over result cards:', JSON.stringify(cards));
   if (checks) assertChecks('summary lined up with result cards', { found: cards.found, linedUp: cards.found && Math.abs(cards.left - cards.titleLeft) <= 1 });
 
-  // Each dial's crown is over no text: checked with the dial (the `dial` part).
+  // Each button is over no text: checked with the column (the `column` part).
   if (checks) {
     assertChecks('summary as wide as the results', {
       found: wide.found,
@@ -1649,27 +1646,23 @@ if (!only || only === 'pins' || checks) {
   for (const [index, id] of nodeIds.entries()) {
     const { nodeId: hostId } = await cdp.send('DOM.querySelector', { nodeId: id, selector: 'anubis-weigh' });
     if (!hostId) {
-      pinPresentation.push({ chip: chips[index], fullDial: false, accessibleName: false });
+      pinPresentation.push({ chip: chips[index], pinIcon: false, accessibleName: false });
       continue;
     }
     const { node: host } = await cdp.send('DOM.describeNode', { nodeId: hostId, depth: -1, pierce: true });
     const shadow = host.shadowRoots?.[0];
     const { nodeId: buttonId } = shadow ? await cdp.send('DOM.querySelector', { nodeId: shadow.nodeId, selector: 'button.weigh' }) : {};
     if (!buttonId) {
-      pinPresentation.push({ chip: chips[index], fullDial: false, accessibleName: false });
+      pinPresentation.push({ chip: chips[index], pinIcon: false, accessibleName: false });
       continue;
     }
-    // The dial shows the pin by filling all of its scale.
-    const { nodeId: pinFillId } = await cdp.send('DOM.querySelector', { nodeId: shadow.nodeId, selector: '.fill.pin' });
-    const [{ computedStyle: fillStyle }, { attributes }] = await Promise.all([
-      pinFillId ? cdp.send('CSS.getComputedStyleForNode', { nodeId: pinFillId }) : { computedStyle: [] },
-      cdp.send('DOM.getAttributes', { nodeId: buttonId }),
-    ]);
-    const ariaLabel = attributes[attributes.indexOf('aria-label') + 1] ?? '';
+    // The button shows the pin's icon.
+    const { attributes } = await cdp.send('DOM.getAttributes', { nodeId: buttonId });
+    const attr = (name) => (attributes.includes(name) ? attributes[attributes.indexOf(name) + 1] : '');
     pinPresentation.push({
       chip: chips[index],
-      fullDial: Number(fillStyle.find((item) => item.name === 'opacity')?.value) > 0.5,
-      accessibleName: ariaLabel.toLowerCase().includes('pinned'),
+      pinIcon: attr('data-level') === 'pin',
+      accessibleName: attr('aria-label').toLowerCase().includes('pinned'),
     });
   }
   // Set "Great tutorial" to Raise, then Pin: javascript.info's tag shows that sign in
@@ -1698,7 +1691,7 @@ if (!only || only === 'pins' || checks) {
     assertChecks('pinned result indicator', {
       pinnedResultsFound: pinPresentation.length > 0,
       noRedundantPinnedChip: pinPresentation.every((pin) => !pin.chip),
-      pinFillsTheDial: pinPresentation.every((pin) => pin.fullDial),
+      buttonShowsThePin: pinPresentation.every((pin) => pin.pinIcon),
       accessibleNameRetained: pinPresentation.every((pin) => pin.accessibleName),
       noRaisedOrLoweredChips: !retainedRankChips.raised && !retainedRankChips.lowered,
       tagMarkShown: retainedRankChips.tagMark,
@@ -1781,32 +1774,42 @@ if (!only || only === 'popover') {
   await page.keyboard.press('Escape');
   await browserScheme(null);
 
-  // A result a subscribed list weighs (Official docs tags MDN) offers to report it
-  // to that list, as a pre-filled issue with the rule that matched.
+  // The menu opens over its button, its arrow pointing down at it, so the result stays in
+  // view; over the first result, with no room above, it opens below. + Tag shows every tag.
   await page.goto('https://duckduckgo.com/?q=javascript+promises');
   await page.waitForTimeout(600);
-  const mdn = page.locator('[data-anubis-result]', { hasText: 'Promise - JavaScript | MDN' });
-  await mdn.hover();
-  await pressWeigh(mdn.locator('anubis-weigh'));
+  const placement = async (text) => {
+    const result = page.locator('[data-anubis-result]', { hasText: text });
+    await result.hover();
+    await pressWeigh(result.locator('anubis-weigh'));
+    await page.waitForTimeout(300);
+    const button = await result.locator('anubis-weigh').boundingBox();
+    return page.evaluate((b) => {
+      const host = document.querySelector('anubis-popover');
+      const arrow = parseFloat(host.style.getPropertyValue('--arrow-x'));
+      const left = parseFloat(host.style.left) - scrollX;
+      const top = parseFloat(host.style.top) - scrollY;
+      return {
+        side: host.hasAttribute('data-above') ? 'above' : host.hasAttribute('data-below') ? 'below' : 'neither',
+        pointsAtButton: Math.abs(left + arrow - (b.x + b.width / 2)) <= 1,
+        clearOfButton: host.hasAttribute('data-above') ? top <= b.y - 8 : top >= b.y + b.height + 8,
+      };
+    }, button);
+  };
+  const overTutorial = await placement('The Modern JavaScript Tutorial');
+  const tagsBefore = await shadowText('anubis-popover');
+  await clickShadowButton('anubis-popover', '+ Tag');
   await page.waitForTimeout(300);
-  const explanation = await shadowText('anubis-popover');
-  if (!explanation.includes('Matched rule, line ')) throw new Error('The result menu does not show the matching list rule');
-  const reportLink = (await shadowLinks('anubis-popover')).find((a) => a.href.includes('/issues/new'));
-  const issue = reportLink && new URL(reportLink.href);
-  // The rule is broken into its options for display (shadowText puts a space between
-  // them); its text must still read exactly as in the list.
-  const reportedRule = /```\n(.*)\n```/.exec(issue?.searchParams.get('body') ?? '')?.[1];
-  const squash = (s) => s.replace(/\s+/g, '');
-  if (!reportedRule || !squash(explanation).includes(squash(reportedRule))) {
-    throw new Error(`The result menu does not show the rule as written: ${reportedRule}`);
-  }
-  console.log('\n== report a wrong result:', JSON.stringify({
-    link: reportLink?.text,
-    tracker: issue && issue.origin + issue.pathname,
-    title: issue?.searchParams.get('title'),
-    rule: /```\n(.*)\n```/.exec(issue?.searchParams.get('body') ?? '')?.[1],
-  }));
-  await page.screenshot({ path: `${SHOTS}popover-report.png`, fullPage: false });
+  const tagsAfter = await shadowText('anubis-popover');
+  await page.keyboard.press('Escape');
+  const overMdn = await placement('Promise - JavaScript | MDN');
+  console.log('\n== where the menu opens:', JSON.stringify({ overTutorial, overMdn }));
+  assertChecks('the menu over its button', {
+    aboveTheResult: overTutorial.side === 'above' && overTutorial.pointsAtButton && overTutorial.clearOfButton,
+    belowTheFirst: overMdn.side === 'below' && overMdn.pointsAtButton && overMdn.clearOfButton,
+    tagShowsEveryTag: !tagsBefore.includes('New tag') && tagsAfter.length > tagsBefore.length && tagsAfter.includes('Done'),
+  });
+  await page.screenshot({ path: `${SHOTS}popover-below.png`, fullPage: false });
   // The site name is text with the select unseen over it. Focus the select and
   // choose the whole site with the keyboard.
   {
@@ -2534,7 +2537,7 @@ if (only === 'docs') {
   const clip = async (name, selectors, pad = 14) => {
     const box = await page.evaluate(
       ({ selectors, pad }) => {
-        // A result's dial reaches past its left edge: take it in.
+        // A result's button sits in the column past its left edge: take it in.
         const rects = selectors
           .flatMap((s) => [...document.querySelectorAll(s)].slice(0, 1))
           .flatMap((el) => [el, el.querySelector(':scope > anubis-weigh')].filter(Boolean))

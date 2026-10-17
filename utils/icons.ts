@@ -79,6 +79,16 @@ export function levelIcon(level: Level, steps: 1 | 2 = 1): string {
   return LEVEL_ICONS[level];
 }
 
+/**
+ * Raise and Lower in the result menu: always two arrows, lit one per press from the middle
+ * out, so an unlit one says there's another step. shadow.css colours `.lit` and `.unlit`.
+ */
+export function stepsIcon(level: 'raise' | 'lower', lit: 0 | 1 | 2): string {
+  const [near, far] = level === 'raise' ? ['M4 12l4-4 4 4', 'M4 7.5l4-4 4 4'] : ['M4 4l4 4 4-4', 'M4 8.5l4 4 4-4'];
+  const arrow = (d: string, on: boolean) => `<path class="${on ? 'lit' : 'unlit'}" d="${d}"/>`;
+  return svg(arrow(near, lit >= 1) + arrow(far, lit >= 2));
+}
+
 /** The five rankings, in the user's language. */
 export const LEVEL_LABELS = {
   hide: t('levelHide'),

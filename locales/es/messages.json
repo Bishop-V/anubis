@@ -266,9 +266,6 @@
   "barHiddenByList_other": {
     "message": "ocultos por $2"
   },
-  "menuWhyHeading": {
-    "message": "Por qué"
-  },
   "menuNewTagPlaceholder": {
     "message": "Nueva etiqueta"
   },
@@ -277,9 +274,6 @@
   },
   "menuAddTagButton": {
     "message": "Añadir etiqueta"
-  },
-  "menuSavedNote": {
-    "message": "Guardado en tu lista."
   },
   "menuCloseLabel": {
     "message": "Cerrar"
@@ -481,21 +475,6 @@
   },
   "summaryUndo": {
     "message": "Deshacer"
-  },
-  "menuSuggest": {
-    "message": "¿Debería incluirlo una lista? Propónselo a $1."
-  },
-  "menuSuggestTitle": {
-    "message": "Proponer $1 a $2 en su gestor de incidencias"
-  },
-  "menuReport": {
-    "message": "¿Está mal? Avisa a $1."
-  },
-  "menuMatchedRule": {
-    "message": "Regla que coincide, línea $1"
-  },
-  "menuReportTitle": {
-    "message": "Decirle a $1 que se equivoca con este resultado, en su gestor de incidencias"
   },
   "offerTitle": {
     "message": "¿Suscribirte a $1?"
@@ -1570,9 +1549,6 @@
   },
   "reasonYourTagSettings": {
     "message": "Tus ajustes de etiquetas"
-  },
-  "menuReason": {
-    "message": "$1 $2."
   },
   "choicePin": {
     "message": "lo fijan por $1"
