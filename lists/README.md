@@ -15,21 +15,16 @@ Lists that ship with Anubis, and the directory of lists it offers in **Settings 
 | [`sources/self-hosted-foss.anubis`](sources/self-hosted-foss.anubis) | Labels the websites of free programs [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted-data) lists as FOSS. |
 | [`directory.json`](directory.json) | The lists shown under "More lists", including community lists hosted elsewhere. |
 
-The five `.anubis` lists at the top level are bundled into the extension, so they work offline, and Anubis checks GitHub for newer versions of them and of this directory.
+The five top-level lists ship inside the extension and update from GitHub.
 
 ## Lists made from other projects
 
-The lists in [`sources/`](sources) are made from other projects' data by a weekly job (`.github/workflows/sources.yml`), which opens a pull request when the data changes. They aren't bundled: Anubis downloads them from here. Each keeps its source's licence, names its source, and links to it. Where a source covers what one of Anubis's own lists does, the source's data replaces the hand-made entries.
-
-Don't edit these files: the next update overwrites them. To add or remove a site, contribute to the project the list names; its change arrives here with the next update.
-
-The format is described in [docs/list-format.md](../docs/list-format.md).
+[`sources/`](sources) is rebuilt weekly from other projects' data (`.github/workflows/sources.yml`), keeping their licences and credits. Don't edit these files; change the source project instead. The format is in [docs/list-format.md](../docs/list-format.md).
 
 ## Contributing
 
-- **Add a site to a list:** for a list in [`sources/`](sources), contribute to the project it's made from. For the others, open a pull request that adds a line, or use **suggest changes** beside the list in **Settings → Lists**. Add a short trailing `#` comment to every new site rule that adds a tag, explaining why the site fits.
-- **Report a site a list gets wrong:** use **suggest changes** beside the list in **Settings → Lists**, or open an issue here.
-- **Add a list to the directory:** host your list anywhere public and add an entry to `directory.json`:
+- **Add or fix a site:** a pull request, or **suggest changes** in **Settings → Lists**. Give each new tagged site a short `#` comment saying why.
+- **Add a list to the directory:** host it publicly and add an entry to `directory.json`:
 
   ```json
   {
@@ -42,6 +37,6 @@ The format is described in [docs/list-format.md](../docs/list-format.md).
   }
   ```
 
-  `format` is one of `anubis`, `goggle`, `ublacklist` or `domains`. Add `"lens": true` if the list hides everything it doesn't mention. If your list covers the same sites as another in the directory, add `"overlaps": ["their-id"]` to yours, and yours to theirs: someone who has one isn't offered the other.
+  `format` is `anubis`, `goggle`, `ublacklist`, or `domains`. Add `"lens": true` if it hides everything it doesn't list, and `"overlaps": ["their-id"]` (on both) if it covers another list's sites.
 
-Please keep lists factual and neutral in their labels: describe what a result is ("Paywalled", "Discussion", "Official docs") rather than what you think of it, and let people choose in their settings whether to raise, lower or hide what a tag marks. A tag sits under a result's title as a description of it, so name it the way you'd describe the result: "Paywalled", not "Paywall". `npm test` checks that every list here parses cleanly.
+Name tags for what a result is ("Paywalled", not "Paywall" or "Bad"), and leave ranking to subscribers. `npm test` checks every list parses.
