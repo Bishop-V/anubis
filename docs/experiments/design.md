@@ -6,6 +6,11 @@ The look, the wording, and Anubis's own pages. Part of [Experiments and decision
 
 The summary used to carry a row of every tag on the page, each with a count, to show only that tag. It made the header tall and repeated what the extension's menu already offers under This page. Now the tag under each result is the button (pressed again, it clears), and the summary keeps only Show all.
 
+## Grouped switches in Remove panels, and quieter list rows (2026-10-17)
+
+- **Remove panels:** ten switches in a flat column, led by "All" and an "On every search" heading, read as a wall. They're now five groups: AI answers (with Google's Web tab under it), videos, images, and news, questions and discussions, advertising, and other search engines. A group's switch sets all of its parts and rests half-way (`:indeterminate`) while only some are on; the parts drop their notes, since their names say enough.
+- **Lists:** each subscribed list showed its format, "built in", rule and tag counts, author, update time, licence, and its tags. It now shows its name, one-line description, and links; "lens" stays, since it changes what a search shows. List and directory descriptions were cut to a few words.
+
 ## Shorter interface text (2026-10-17)
 
 - **Shipped:** about 90 of the longest messages in Settings, the welcome page, the popup, and the search-page summary were cut to one short sentence, taking the English interface from about 3,700 words to 2,850. Explanations that only mattered to maintainers (how sync merges, why encryption works as it does) live in code comments and the wiki now. The README, CONTRIBUTING, SECURITY, `lists/README.md`, and the pull request template were shortened the same way.

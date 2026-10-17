@@ -944,23 +944,8 @@
   "cleanupIntro": {
     "message": "Anubis dapat menghapus panel di halaman penelusuran yang bukan hasil. Aktifkan setiap panel yang tidak ingin Anda lihat. “Tampilkan yang disembunyikan” di atas hasil memunculkannya kembali untuk penelusuran tersebut."
   },
-  "cleanupEverySearch": {
-    "message": "Di setiap penelusuran"
-  },
-  "cleanupEverySearchHint": {
-    "message": "Aktif berarti Anubis menghapusnya. Nonaktif membiarkannya di halaman."
-  },
   "cleanupStillShows": {
     "message": "Jika panel masih muncul"
-  },
-  "cleanupAll": {
-    "message": "Semua ini"
-  },
-  "cleanupAllHint": {
-    "message": "Mengaktifkan atau menonaktifkan setiap tombol di bagian ini."
-  },
-  "cleanupOnGoogle": {
-    "message": "Di Google"
   },
   "cleanupWebTab": {
     "message": "Selalu buka tab Web"
@@ -1169,15 +1154,6 @@
   "listsNotDownloaded": {
     "message": "belum diunduh"
   },
-  "listsBy": {
-    "message": "oleh $1"
-  },
-  "listsBundledCopy": {
-    "message": "salinan bawaan Anubis"
-  },
-  "listsUpdated": {
-    "message": "diperbarui $1"
-  },
   "listsHomepage": {
     "message": "halaman beranda"
   },
@@ -1217,9 +1193,6 @@
   "listKindLens": {
     "message": "lensa"
   },
-  "listKindBuiltin": {
-    "message": "bawaan"
-  },
   "listFormatAnubis": {
     "message": "Daftar Anubis"
   },
@@ -1231,9 +1204,6 @@
   },
   "listFormatDomains": {
     "message": "daftar domain"
-  },
-  "timeJustNow": {
-    "message": "baru saja"
   },
   "tagsIntro": {
     "message": "Daftar memberi label pada hasil. Anda yang menentukan fungsi setiap label: mengikuti daftar, hanya menampilkannya, menyorotnya, atau menyematkan, menaikkan, menurunkan, atau menyembunyikan hasil yang memilikinya. Daftar yang memakai nama tag yang sama berbagi tag itu."

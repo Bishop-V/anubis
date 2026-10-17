@@ -1088,23 +1088,8 @@
   "cleanupIntro": {
     "message": "Anubis può rimuovere i riquadri delle pagine di ricerca che non sono risultati. Attiva ciascuno di quelli che preferisci non vedere. «Mostra nascosti» sopra i risultati li riporta per quella ricerca."
   },
-  "cleanupEverySearch": {
-    "message": "In ogni ricerca"
-  },
-  "cleanupEverySearchHint": {
-    "message": "Attivo: Anubis lo rimuove. Disattivo: resta sulla pagina."
-  },
   "cleanupStillShows": {
     "message": "Se un riquadro compare ancora"
-  },
-  "cleanupAll": {
-    "message": "Tutti questi"
-  },
-  "cleanupAllHint": {
-    "message": "Attiva o disattiva tutti gli interruttori di questa sezione."
-  },
-  "cleanupOnGoogle": {
-    "message": "Su Google"
   },
   "cleanupWebTab": {
     "message": "Apri sempre la scheda Web"
@@ -1325,15 +1310,6 @@
   "listsNotDownloaded": {
     "message": "non ancora scaricata"
   },
-  "listsBy": {
-    "message": "di $1"
-  },
-  "listsBundledCopy": {
-    "message": "la copia inclusa in Anubis"
-  },
-  "listsUpdated": {
-    "message": "aggiornata $1"
-  },
   "listsHomepage": {
     "message": "pagina principale"
   },
@@ -1379,9 +1355,6 @@
   "listKindLens": {
     "message": "lente"
   },
-  "listKindBuiltin": {
-    "message": "integrata"
-  },
   "listFormatAnubis": {
     "message": "lista di Anubis"
   },
@@ -1393,9 +1366,6 @@
   },
   "listFormatDomains": {
     "message": "lista di domini"
-  },
-  "timeJustNow": {
-    "message": "proprio ora"
   },
   "tagsIntro": {
     "message": "Le liste etichettano i risultati. Sei tu a decidere cosa fa ogni etichetta: seguire la lista, solo mostrarla, evidenziarla, oppure fissare, alzare, abbassare o nascondere ciò che la porta. Le liste che usano lo stesso nome di etichetta la condividono."

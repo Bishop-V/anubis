@@ -944,23 +944,8 @@
   "cleanupIntro": {
     "message": "Anubis는 검색 페이지에서 결과가 아닌 패널을 제거할 수 있습니다. 보고 싶지 않은 패널을 하나씩 켜세요. 결과 위의 ‘숨긴 항목 표시’를 누르면 그 검색에서 다시 표시됩니다."
   },
-  "cleanupEverySearch": {
-    "message": "모든 검색에서"
-  },
-  "cleanupEverySearchHint": {
-    "message": "켜면 Anubis가 제거합니다. 끄면 페이지에 그대로 둡니다."
-  },
   "cleanupStillShows": {
     "message": "패널이 계속 보이는 경우"
-  },
-  "cleanupAll": {
-    "message": "모두"
-  },
-  "cleanupAllHint": {
-    "message": "이 섹션의 모든 스위치를 켜거나 끕니다."
-  },
-  "cleanupOnGoogle": {
-    "message": "Google에서"
   },
   "cleanupWebTab": {
     "message": "항상 ‘웹’ 탭 열기"
@@ -1169,15 +1154,6 @@
   "listsNotDownloaded": {
     "message": "아직 다운로드되지 않음"
   },
-  "listsBy": {
-    "message": "제작: $1"
-  },
-  "listsBundledCopy": {
-    "message": "Anubis에 포함된 사본"
-  },
-  "listsUpdated": {
-    "message": "업데이트: $1"
-  },
   "listsHomepage": {
     "message": "홈페이지"
   },
@@ -1217,9 +1193,6 @@
   "listKindLens": {
     "message": "렌즈"
   },
-  "listKindBuiltin": {
-    "message": "기본 제공"
-  },
   "listFormatAnubis": {
     "message": "Anubis 목록"
   },
@@ -1231,9 +1204,6 @@
   },
   "listFormatDomains": {
     "message": "도메인 목록"
-  },
-  "timeJustNow": {
-    "message": "방금"
   },
   "tagsIntro": {
     "message": "목록은 결과에 태그를 붙입니다. 각 태그가 할 일은 직접 정합니다. 목록을 따르거나, 태그만 표시하거나, 강조 표시하거나, 태그가 붙은 결과를 고정하거나, 순위를 올리거나 내리거나, 숨길 수 있습니다. 같은 태그 이름을 쓰는 목록은 그 태그를 함께 씁니다."

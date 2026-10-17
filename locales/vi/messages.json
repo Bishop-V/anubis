@@ -953,23 +953,8 @@
   "cleanupIntro": {
     "message": "Anubis có thể gỡ các khung trên trang tìm kiếm không phải là kết quả. Bật từng khung bạn không muốn thấy. “Hiện mục đã ẩn” phía trên kết quả đưa chúng trở lại cho lần tìm kiếm đó."
   },
-  "cleanupEverySearch": {
-    "message": "Trong mọi lần tìm kiếm"
-  },
-  "cleanupEverySearchHint": {
-    "message": "Bật nghĩa là Anubis gỡ khung đó. Tắt thì khung vẫn ở trên trang."
-  },
   "cleanupStillShows": {
     "message": "Nếu một khung vẫn hiện"
-  },
-  "cleanupAll": {
-    "message": "Tất cả các mục này"
-  },
-  "cleanupAllHint": {
-    "message": "Bật hoặc tắt mọi nút gạt trong phần này."
-  },
-  "cleanupOnGoogle": {
-    "message": "Trên Google"
   },
   "cleanupWebTab": {
     "message": "Luôn mở thẻ Web"
@@ -1178,15 +1163,6 @@
   "listsNotDownloaded": {
     "message": "chưa tải xuống"
   },
-  "listsBy": {
-    "message": "do $1 tạo"
-  },
-  "listsBundledCopy": {
-    "message": "bản đi kèm Anubis"
-  },
-  "listsUpdated": {
-    "message": "cập nhật $1"
-  },
   "listsHomepage": {
     "message": "trang chủ"
   },
@@ -1226,9 +1202,6 @@
   "listKindLens": {
     "message": "lăng kính"
   },
-  "listKindBuiltin": {
-    "message": "có sẵn"
-  },
   "listFormatAnubis": {
     "message": "Danh sách Anubis"
   },
@@ -1240,9 +1213,6 @@
   },
   "listFormatDomains": {
     "message": "danh sách tên miền"
-  },
-  "timeJustNow": {
-    "message": "vừa xong"
   },
   "tagsIntro": {
     "message": "Danh sách gắn nhãn cho kết quả. Bạn quyết định mỗi nhãn làm gì: theo danh sách, chỉ hiện nhãn, tô sáng, hoặc ghim, nâng, hạ hay ẩn những kết quả có nhãn đó. Các danh sách dùng cùng tên nhãn sẽ dùng chung nhãn đó."

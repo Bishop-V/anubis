@@ -1160,23 +1160,8 @@
   "cleanupIntro": {
     "message": "Anubis может убирать со страниц поиска блоки, которые не являются результатами. Включите те, которые вы не хотите видеть. «Показать скрытые» над результатами возвращает их для этого поиска."
   },
-  "cleanupEverySearch": {
-    "message": "При каждом поиске"
-  },
-  "cleanupEverySearchHint": {
-    "message": "Включено — Anubis убирает блок. Выключено — блок остаётся на странице."
-  },
   "cleanupStillShows": {
     "message": "Если блок всё ещё виден"
-  },
-  "cleanupAll": {
-    "message": "Все сразу"
-  },
-  "cleanupAllHint": {
-    "message": "Включает или выключает все переключатели в этом разделе."
-  },
-  "cleanupOnGoogle": {
-    "message": "В Google"
   },
   "cleanupWebTab": {
     "message": "Всегда открывать вкладку «Веб»"
@@ -1403,15 +1388,6 @@
   "listsNotDownloaded": {
     "message": "ещё не скачан"
   },
-  "listsBy": {
-    "message": "автор: $1"
-  },
-  "listsBundledCopy": {
-    "message": "копия, встроенная в Anubis"
-  },
-  "listsUpdated": {
-    "message": "обновление: $1"
-  },
   "listsHomepage": {
     "message": "домашняя страница"
   },
@@ -1460,9 +1436,6 @@
   "listKindLens": {
     "message": "линза"
   },
-  "listKindBuiltin": {
-    "message": "встроенный"
-  },
   "listFormatAnubis": {
     "message": "список Anubis"
   },
@@ -1474,9 +1447,6 @@
   },
   "listFormatDomains": {
     "message": "список доменов"
-  },
-  "timeJustNow": {
-    "message": "только что"
   },
   "tagsIntro": {
     "message": "Списки помечают результаты. Вы решаете, что делает каждая метка: следовать спискам, только показывать метку, выделять результаты или закреплять, поднимать, понижать или скрывать то, что ею помечено. Списки, использующие одно и то же название метки, делят её между собой."

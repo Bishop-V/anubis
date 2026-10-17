@@ -1,6 +1,6 @@
 import { browser } from '#imports';
 import { h, icon } from '@/utils/dom';
-import { t, tAgo, tJoin, tList, tn, tParts, type MessageKey } from '@/utils/i18n';
+import { t, tJoin, tList, tn, tParts, type MessageKey } from '@/utils/i18n';
 import { ICON_EXTERNAL, ICON_REFRESH, ICON_TRASH } from '@/utils/icons';
 import { readSubscribeLink, REPO_URL, type SubscribeLink } from '@/utils/links';
 import { colorForTag, parseList, type ListFormat, type ParsedList } from '@/utils/listformat';
@@ -32,10 +32,10 @@ const FORMAT_LABEL: Record<ListFormat, MessageKey> = {
   domains: 'listFormatDomains',
 };
 
-/** "Brave Goggle, lens" / "Anubis list, built in" */
-function kindOf(format: string | undefined, lens?: boolean, builtin?: boolean): string {
+/** "Brave Goggle, lens" */
+function kindOf(format: string | undefined, lens?: boolean): string {
   const label = format && format in FORMAT_LABEL ? t(FORMAT_LABEL[format as ListFormat]) : format;
-  return tJoin([label, lens ? t('listKindLens') : null, builtin ? t('listKindBuiltin') : null].filter((x): x is string => !!x), 'unit');
+  return tJoin([label, lens ? t('listKindLens') : null].filter((x): x is string => !!x), 'unit');
 }
 
 let directory: DirectoryEntry[] | undefined;
@@ -194,7 +194,7 @@ export async function renderLists(): Promise<HTMLElement> {
                 'div',
                 { class: 'body' },
                 h('b', null, d.name),
-                h('span', { class: 'kind', title: d.lens ? t('listLensTitle') : undefined }, kindOf(d.format, d.lens)),
+                d.lens ? h('span', { class: 'kind', title: t('listLensTitle') }, t('listKindLens')) : null,
                 h('p', { attrs: { dir: 'auto' } }, d.description),
               ),
               h(
@@ -303,14 +303,7 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
     });
   };
 
-  const facts = [
-    parsed ? tn('listInstructions', parsed.rules.length) : t('listsNotDownloaded'),
-    parsed?.tags.length ? tn('popupTagCount', parsed.tags.length) : null,
-    meta.author ? t('listsBy', meta.author) : null,
-    // A list never downloaded already says "not downloaded yet"; "updated never" read badly in most languages.
-    cached?.fetchedAt ? t('listsUpdated', tAgo(cached.fetchedAt)) : sub.builtin ? t('listsBundledCopy') : null,
-    meta.license ?? null,
-  ].filter(Boolean) as string[];
+  // Kept to what someone choosing whether to keep a list needs: what it does, and where to report a mistake.
   const links = [
     meta.homepage ? h('a', { href: meta.homepage, target: '_blank', rel: 'noopener noreferrer' }, t('listsHomepage')) : null,
     meta.issues ? h('a', { href: meta.issues, target: '_blank', rel: 'noopener noreferrer' }, t('listsSuggestChanges')) : null,
@@ -323,32 +316,11 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
     h(
       'div',
       { class: 'body' },
-      h(
-        'h4',
-        null,
-        name,
-        h(
-          'span',
-          { class: 'kind', title: parsed?.lens ? t('listLensTitle') : undefined },
-          kindOf(parsed?.format, parsed?.lens, sub.builtin),
-        ),
-      ),
+      h('h4', null, name, parsed?.lens ? h('span', { class: 'kind', title: t('listLensTitle') }, kindOf(parsed.format, true)) : null),
       // A list's own words, often English: laid out in their own direction in Arabic or Urdu.
       meta.description ? h('p', { attrs: { dir: 'auto' } }, meta.description) : null,
-      h(
-        'div',
-        { class: 'facts' },
-        t('listsFacts', tJoin(facts, 'unit')),
-        links.length ? ' ' : null,
-        tList('listsLinks', links, 'unit'),
-      ),
-      parsed?.tags.length
-        ? h(
-            'div',
-            { class: 'tag-line' },
-            parsed.tags.slice(0, 12).map((tag) => h('span', { class: 'tag', style: `--c: ${tag.color}`, title: tag.description ?? tag.id }, h('i', { class: 'gem' }), tag.label)),
-          )
-        : null,
+      parsed ? null : h('div', { class: 'facts' }, t('listsFacts', t('listsNotDownloaded'))),
+      links.length ? h('div', { class: 'facts' }, tList('listsLinks', links, 'unit')) : null,
       cached?.error
         ? sub.builtin && !cached.text
           ? h('div', { class: 'facts', style: 'margin-top:6px' }, t('listsUsingBundled', cached.error))

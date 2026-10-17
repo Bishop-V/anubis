@@ -134,12 +134,6 @@
   "cleanupAiHint": {
     "message": "Google’ın yapay zekâ genel bakışı ve Yapay Zekâ Modu sekmesi, DuckDuckGo’nun yapay zekâ destekli yanıtları ve Duck.ai, Bing’in yapay zekâ yanıtları ve Brave’in yapay zekâ yanıtları."
   },
-  "cleanupAll": {
-    "message": "Bunların hepsi"
-  },
-  "cleanupAllHint": {
-    "message": "Bu bölümdeki her anahtarı açar veya kapatır."
-  },
   "cleanupDiscussions": {
     "message": "Tartışma panelleri"
   },
@@ -151,12 +145,6 @@
   },
   "cleanupElsewhereHint": {
     "message": "Aramanızı başka bir motorda yineleyen düğme satırları; Brave’in “Find elsewhere” satırı gibi."
-  },
-  "cleanupEverySearch": {
-    "message": "Her aramada"
-  },
-  "cleanupEverySearchHint": {
-    "message": "Açık, Anubis’in onu kaldırdığı anlamına gelir. Kapalı, onu sayfada bırakır."
   },
   "cleanupHeading": {
     "message": "Panelleri kaldır"
@@ -178,9 +166,6 @@
   },
   "cleanupNewsHint": {
     "message": "Sonuçların arasındaki haber panelleri."
-  },
-  "cleanupOnGoogle": {
-    "message": "Google’da"
   },
   "cleanupQuestions": {
     "message": "İlgili sorular"
@@ -455,9 +440,6 @@
   "listIsWebPage": {
     "message": "Bir liste yerine web sayfası alındı. Doğrudan (raw) dosya URL’sini kullanın."
   },
-  "listKindBuiltin": {
-    "message": "yerleşik"
-  },
   "listKindLens": {
     "message": "mercek"
   },
@@ -490,12 +472,6 @@
   },
   "listsAllChecked": {
     "message": "Tüm listelerin güncellemeleri denetlendi."
-  },
-  "listsBundledCopy": {
-    "message": "Anubis ile gelen kopya"
-  },
-  "listsBy": {
-    "message": "yazar: $1"
   },
   "listsFacts": {
     "message": "$1."
@@ -586,9 +562,6 @@
   },
   "listsUpdateOne": {
     "message": "$1 listesini güncelle"
-  },
-  "listsUpdated": {
-    "message": "güncellendi: $1"
   },
   "listsUpdating": {
     "message": "Güncelleniyor…"
@@ -1459,9 +1432,6 @@
   },
   "themeLightTitle": {
     "message": "Açık tema"
-  },
-  "timeJustNow": {
-    "message": "az önce"
   },
   "toolbarOff": {
     "message": "Anubis kapalı"

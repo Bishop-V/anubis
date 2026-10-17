@@ -68,6 +68,7 @@ Where things are stored, sync between browsers, and subscribing to lists.
 
 The look, the wording, and Anubis's own pages.
 
+- Grouped switches in Remove panels, and quieter list rows (2026-10-17)
 - Shorter interface text (2026-10-17)
 - The column on the left, in Graphite (2026-10-17)
 - The dial on each result (2026-10-16)

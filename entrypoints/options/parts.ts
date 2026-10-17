@@ -29,7 +29,7 @@ export function switchRow(label: string, hint: string, checked: boolean, onChang
   return h(
     'div',
     { class: 'setting' },
-    h('div', null, h('b', null, label), h('span', { class: 'muted' }, hint, help ? [' ', help] : null)),
+    h('div', null, h('b', null, label), hint || help ? h('span', { class: 'muted' }, hint, help ? [' ', help] : null) : null),
     h('label', { class: 'switch' }, input, h('span')),
   );
 }
