@@ -172,10 +172,13 @@ function dialAnchor(result: FoundResult, bar: DOMRect | undefined): DialAnchor |
   if (bar) return barAnchor(bar);
   const found = siteIconOf(result.container, result.titleBlock);
   if (found) return { x: (found.left + found.right) / 2, y: (found.top + found.bottom) / 2, size: Math.max(found.width, found.height), blank: false };
-  const title = result.titleBlock.querySelector<HTMLElement>('h1, h2, h3, h4, [role="heading"]') ?? result.titleBlock;
-  const line = firstLineOf(title);
-  if (!line?.height) return undefined;
-  return { x: line.left - BLANK / 2 - 10, y: (line.top + line.bottom) / 2, size: BLANK, blank: true };
+  return titleAnchor(result.titleBlock);
+}
+
+/** No icon: a plain disc before the title's first line. */
+function titleAnchor(titleBlock: HTMLElement): DialAnchor | undefined {
+  const line = firstLineOf(titleBlock.querySelector<HTMLElement>('h1, h2, h3, h4, [role="heading"]') ?? titleBlock);
+  return line?.height ? { x: line.left - BLANK / 2 - 10, y: (line.top + line.bottom) / 2, size: BLANK, blank: true } : undefined;
 }
 
 /** A hidden line's dial: round its eye, or in the discs' column where the page has no icons. */
@@ -214,10 +217,12 @@ const atResultStart = (r: DOMRect, box: DOMRect, title: DOMRect): boolean =>
 
 /** Of two icons, the one to go round: the higher, then the larger, or the badge around the other. */
 function outranks(r: DOMRect, best: DOMRect | undefined): boolean {
-  if (!best || r.top < best.top - 3) return true;
-  if (Math.abs(r.top - best.top) <= 3 && r.width > best.width) return true;
-  return r.left <= best.left && r.right >= best.right && r.top <= best.top && r.bottom >= best.bottom;
+  if (!best) return true;
+  const sameRow = Math.abs(r.top - best.top) <= 3;
+  return r.top < best.top - 3 || (sameRow && r.width > best.width) || encloses(r, best);
 }
+
+const encloses = (a: DOMRect, b: DOMRect): boolean => a.left <= b.left && a.right >= b.right && a.top <= b.top && a.bottom >= b.bottom;
 
 /**
  * The result's site icon: a small, square picture at the result's start, beside or above
