@@ -30,9 +30,8 @@ export function toColumn({ host }: Weigh, result: FoundResult): boolean {
   const { container } = result;
   const box = container.getBoundingClientRect();
   if (!box.width || box.left - BUTTON - GAP < EDGE) return false;
-  if (host.parentElement !== container) container.append(host);
-  if (getComputedStyle(container).position === 'static') container.style.position = 'relative';
-  const border = parseFloat(getComputedStyle(container).borderLeftWidth) || 0;
+  holdIn(host, container);
+  const border = px(getComputedStyle(container).borderLeftWidth);
   host.style.setProperty('position', 'absolute', 'important');
   host.style.setProperty('left', `${-BUTTON - GAP - border}px`, 'important');
   host.style.setProperty('right', 'auto', 'important');
@@ -40,6 +39,15 @@ export function toColumn({ host }: Weigh, result: FoundResult): boolean {
   host.style.setProperty('z-index', '5', 'important');
   return true;
 }
+
+/** The host inside the result, which it's placed from. */
+function holdIn(host: HTMLElement, container: HTMLElement): void {
+  if (host.parentElement !== container) container.append(host);
+  if (getComputedStyle(container).position === 'static') container.style.position = 'relative';
+}
+
+/** A length in pixels, or none. */
+const px = (value: string): number => parseFloat(value) || 0;
 
 type Row = { top: number; bottom: number };
 
@@ -51,7 +59,7 @@ export function lineUpInColumn(host: HTMLElement, container: HTMLElement, bar: D
   const row = bar?.height ? bar : firstRowOf(container);
   if (!row) return false;
   const box = container.getBoundingClientRect();
-  const border = parseFloat(getComputedStyle(container).borderTopWidth) || 0;
+  const border = px(getComputedStyle(container).borderTopWidth);
   const y = (row.top + row.bottom) / 2 - BUTTON / 2 - box.top - border;
   host.style.setProperty('top', `${Math.round(y)}px`, 'important');
   return true;
@@ -70,12 +78,16 @@ const isIcon = (el: Element): boolean =>
  */
 function firstRowOf(container: HTMLElement): Row | undefined {
   let row: Row | undefined = firstLineOf(container);
-  for (const el of container.querySelectorAll('img, svg')) {
-    const r = el.getBoundingClientRect();
-    const higher = !row || r.top < row.top - 1;
-    if (higher && iconSized(r) && isIcon(el)) row = r;
-  }
+  for (const el of container.querySelectorAll('img, svg')) row = iconAbove(el, row) ?? row;
   return row && { top: row.top, bottom: row.bottom };
+}
+
+/** The element's box, where it's a site's icon higher than `row`. */
+function iconAbove(el: Element, row: Row | undefined): DOMRect | undefined {
+  const r = el.getBoundingClientRect();
+  if (row && r.top >= row.top - 1) return undefined;
+  if (!iconSized(r)) return undefined;
+  return isIcon(el) ? r : undefined;
 }
 
 /**
@@ -84,14 +96,10 @@ function firstRowOf(container: HTMLElement): Row | undefined {
  */
 function frameColumn({ host, root }: Weigh, container: HTMLElement): void {
   container.setAttribute('data-anubis-column-frame', '');
-  let frame = root.querySelector<HTMLElement>('.pin-frame');
-  if (!frame) {
-    frame = h('div', { class: 'pin-frame' });
-    root.prepend(frame);
-  }
+  const frame = root.querySelector<HTMLElement>('.pin-frame') ?? root.insertBefore(h('div', { class: 'pin-frame' }), root.firstChild);
   const box = container.getBoundingClientRect();
-  const hostLeft = parseFloat(host.style.left) || 0;
-  const hostTop = parseFloat(host.style.top) || 0;
+  const hostLeft = px(host.style.left);
+  const hostTop = px(host.style.top);
   // Round the button with room to spare, but inside the window.
   const left = Math.max(hostLeft - FRAME_PAD, Math.round(2 - box.left));
   const top = Math.min(-FRAME_OFF, hostTop - FRAME_PAD);
