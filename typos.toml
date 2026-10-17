@@ -15,6 +15,7 @@ unparseable = "unparseable"
 # Short class names in selectors.
 ba = "ba"
 pn = "pn"
+tpic = "tpic"
 
 [type.code]
 extend-glob = ["*.ts", "*.mjs", "*.js", "*.css", "*.html", "*.yml", "*.yaml", "*.json"]
