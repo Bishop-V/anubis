@@ -651,6 +651,11 @@ function makeRoomForPins(pinned: Set<HTMLElement>) {
   }
 }
 
+/** Cards, or any results in a CSS grid, where the summary would take a cell. Cards the engine places with a script (DuckDuckGo's pictures in rows) have no grid to go by. */
+function inGrid(results: FoundResult[], area: HTMLElement): boolean {
+  return results.some((r) => r.card) || /grid/.test(getComputedStyle(area).display);
+}
+
 /**
  * Where the summary goes: at the top of the results area, above the first result
  * and above any panels (images, videos) before it. The area is the list holding
@@ -663,8 +668,7 @@ function summaryAnchor(results: FoundResult[], engine: EngineDef): { before?: HT
   const area = (engine.boundary && main.closest<HTMLElement>(engine.boundary)) || main;
   // Results in a grid (DuckDuckGo's Videos and Images tabs): inside it, the summary
   // would take a cell, so it goes before the grid.
-  // Cards the engine places with a script (DuckDuckGo's pictures in rows) have no grid to go by either.
-  if ((results.some((r) => r.card) || /grid/.test(getComputedStyle(area).display)) && area.parentElement) return { before: area, area, column: main };
+  if (area.parentElement && inGrid(results, area)) return { before: area, area, column: main };
   for (const child of area.children) {
     if (child instanceof HTMLElement && !/^(ANUBIS-SUMMARY|SCRIPT|STYLE|TEMPLATE|LINK|META)$/.test(child.tagName)) return { before: child, area, column: main };
   }
