@@ -247,8 +247,7 @@ async function launch(settings = {}, ext = EXT) {
     ...Object.fromEntries(ENGINE_TABS.map(([url, engine, tab]) => [url, engineTab(engine, tab, JS_RESULTS)])),
     'https://duckduckgo.com/?q=javascript+promises&wide=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { wide: true }),
     'https://duckduckgo.com/?q=javascript+promises&unseen=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { unseen: true }),
-    'https://html.duckduckgo.com/html/?q=javascript+promises': duckduckgoHtml('javascript promises', JS_RESULTS),
-    'https://lite.duckduckgo.com/lite/?q=javascript+promises': duckduckgoLite('javascript promises', JS_RESULTS),
+    ...Object.fromEntries(Object.entries({ html: duckduckgoHtml, lite: duckduckgoLite }).map(([v, mock]) => [`https://${v}.duckduckgo.com/${v}/?q=javascript+promises`, mock('javascript promises', JS_RESULTS)])),
   };
   await ctx.route(/^https:\/\/((noai\.|html\.|lite\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com|www\.ecosia\.org|search\.yahoo\.com|kagi\.com|www\.startpage\.com|yandex\.com)\//, (route) => {
     const page = pages[route.request().url()];
@@ -361,43 +360,13 @@ async function dialColors(page, selector) {
   return { rest, hover, gold: [rgb(property(hostStyle, '--gold')), rgb(property(hostStyle, '--gold-ink'))] };
 }
 
-async function weighButtonColors(page, selector) {
-  const cdp = await page.context().newCDPSession(page);
-  await cdp.send('DOM.enable');
-  await cdp.send('CSS.enable');
-  const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
-  const { nodeId: hostId } = await cdp.send('DOM.querySelector', { nodeId: root.nodeId, selector });
-  if (!hostId) throw new Error(`No weigh button host matches ${selector}`);
-  const { node: host } = await cdp.send('DOM.describeNode', { nodeId: hostId, depth: -1, pierce: true });
-  const shadow = host.shadowRoots?.[0];
-  if (!shadow) throw new Error(`No shadow root on ${selector}`);
-  const { nodeId: buttonId } = await cdp.send('DOM.querySelector', { nodeId: shadow.nodeId, selector: 'button.weigh' });
-  if (!buttonId) throw new Error(`No weigh button inside ${selector}`);
-  const { model } = await cdp.send('DOM.getBoxModel', { nodeId: buttonId });
-  const [x1, y1, , , x3, y3] = model.content;
-  await page.mouse.move((x1 + x3) / 2, (y1 + y3) / 2);
-  await page.waitForTimeout(200);
-  const [{ computedStyle: buttonStyle }, { computedStyle: hostStyle }] = await Promise.all([
-    cdp.send('CSS.getComputedStyleForNode', { nodeId: buttonId }),
-    cdp.send('CSS.getComputedStyleForNode', { nodeId: hostId }),
-  ]);
-  const property = (style, name) => style.find((item) => item.name === name)?.value;
-  const button = property(buttonStyle, 'color');
-  const goldInk = property(hostStyle, '--gold-ink')?.match(/^#([\da-f]{6})$/i)?.[1];
-  await cdp.detach();
-  return {
-    button,
-    goldInk: goldInk && `rgb(${parseInt(goldInk.slice(0, 2), 16)}, ${parseInt(goldInk.slice(2, 4), 16)}, ${parseInt(goldInk.slice(4, 6), 16)})`,
-  };
-}
-
-// The links inside the closed shadow roots of hosts with this tag, read the same way.
 /** Press a result's menu button: the dial's crown on its left, at its middle, or the button on a card. */
 async function pressWeigh(host) {
   const box = await host.boundingBox();
   await host.click({ position: { x: 12, y: box.height / 2 } });
 }
 
+// The links inside the closed shadow roots of hosts with this tag, read the same way.
 async function shadowLinks(hostTag) {
   const cdp = await page.context().newCDPSession(page);
   const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
@@ -464,31 +433,38 @@ if (!only || only === 'pages' || only === 'dial' || checks) {
     // Ecosia builds its page in the browser first.
     await page.waitForTimeout(url.includes('ecosia') ? 3500 : 700);
     const found = await page.evaluate(() => {
+      const overlaps = (r, box) => r.width && r.right > box.left + 1 && r.left < box.right - 1 && r.bottom > box.top + 1 && r.top < box.bottom - 1;
+      // The words under the crown, leaving out the number cell DuckDuckGo Lite puts the dial in.
+      const wordsUnder = (result, box) => {
+        const walker = document.createTreeWalker(result, NodeFilter.SHOW_TEXT);
+        const range = document.createRange();
+        const words = [];
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+          if (!node.textContent.trim() || node.parentElement.closest('td')?.cellIndex === 0) continue;
+          range.selectNodeContents(node);
+          if ([...range.getClientRects()].some((r) => overlaps(r, box))) words.push(node.textContent.trim().slice(0, 30));
+        }
+        return words;
+      };
+      const iconish = (el) => /^(IMG|svg|path|circle|rect|g)$/i.test(el.tagName) || /icon|pic|logo/i.test(el.className?.baseVal ?? el.className) || el.matches('td');
+      // The dial's centre is 2px in from its right edge: on the site's icon, or on its own disc.
+      const offIcon = (host, h) => {
+        if (host.hasAttribute('data-blank')) return undefined;
+        const at = document.elementFromPoint(h.right - 2, h.top + h.height / 2);
+        return !at || at === host || at.closest('anubis-weigh, anubis-bar') || iconish(at) ? undefined : `${at.tagName}.${at.className}`;
+      };
       const results = [...document.querySelectorAll('[data-anubis-result]')].filter((r) => r.getBoundingClientRect().height);
-      const out = { results: results.length, dials: 0, blank: 0, offIcon: [], overText: [], outside: [] };
-      for (const result of results) {
-        const host = result.querySelector('anubis-weigh');
-        if (!host || host.dataset.shape !== 'dial') continue;
-        out.dials++;
+      const dials = results.map((result) => [result, result.querySelector('anubis-weigh')]).filter(([, host]) => host?.dataset.shape === 'dial');
+      const out = { results: results.length, dials: dials.length, blank: 0, offIcon: [], overText: [], outside: [] };
+      for (const [result, host] of dials) {
         if (host.hasAttribute('data-blank')) out.blank++;
         const h = host.getBoundingClientRect();
         const site = result.querySelector('a[href]')?.href ?? '';
         if (h.left < 0 || h.right > innerWidth) out.outside.push(site);
         // The press area: the crown, 24px wide at the host's left.
-        const crown = { left: h.left, right: h.left + 24, top: h.top + h.height / 2 - 14, bottom: h.top + h.height / 2 + 14 };
-        const walker = document.createTreeWalker(result, NodeFilter.SHOW_TEXT);
-        const range = document.createRange();
-        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-          if (!node.textContent.trim() || node.parentElement.closest('td')?.cellIndex === 0) continue;
-          range.selectNodeContents(node);
-          for (const r of range.getClientRects()) {
-            if (r.width && r.right > crown.left + 1 && r.left < crown.right - 1 && r.bottom > crown.top + 1 && r.top < crown.bottom - 1) out.overText.push(node.textContent.trim().slice(0, 30));
-          }
-        }
-        // The dial's centre is 2px in from its right edge: on the site's icon, or on its own disc.
-        const at = document.elementFromPoint(h.right - 2, h.top + h.height / 2);
-        const onIcon = host.hasAttribute('data-blank') || !at || at === host || at.closest('anubis-weigh, anubis-bar') || /^(IMG|svg|path|circle|rect|g)$/i.test(at.tagName) || /icon|pic|logo/i.test(at.className?.baseVal ?? at.className) || at.matches('td');
-        if (!onIcon) out.offIcon.push(`${site} → ${at.tagName}.${at.className}`);
+        out.overText.push(...wordsUnder(result, { left: h.left, right: h.left + 24, top: h.top + h.height / 2 - 14, bottom: h.top + h.height / 2 + 14 }));
+        const off = offIcon(host, h);
+        if (off) out.offIcon.push(`${site} → ${off}`);
       }
       return out;
     });

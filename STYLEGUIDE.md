@@ -176,7 +176,7 @@ On phones (600px wide or less) the full sentence runs to several lines, so the s
 
 ## The dial on each result
 
-On a computer, each result shows its ranking in a dial around the site's icon, always in the same place: the left of the result. It's drawn by `utils/dial.ts`, placed by `placeDial()` in `entrypoints/content/ui.ts`, and styled in `shadow.css`.
+On a computer, each result shows its ranking in a dial around the site's icon, always in the same place: the left of the result. It's drawn by `utils/dial.ts`, placed by `entrypoints/content/dial.ts`, and styled in `shadow.css`.
 
 - **The scale** is the left half of a ring 6px outside the icon, in a 2px line with round ends. Its zero is at 9 o'clock: Raise fills it upwards and Lower downwards, a quarter at most, further the more places the site moved (half a quarter for one Raise). Pin fills all of it; Normal and Hide leave it empty. The fill is the same for both directions, in `--text`; the empty line is `--muted` at 45%.
 - **The crown**, on the scale's left, opens the result menu: a rounded knob with three grip lines, on a short stem that meets the ring's outer edge. It sits a layer behind the scale, so the scale's line runs unbroken over the stem. Two short guards on a wider circle stand off above and below it, in the same 2px line. Only the crown takes the pointer; the rest of the dial lets clicks through to the icon, which the engine may use (DuckDuckGo searches the site with it).

@@ -11,7 +11,7 @@ The look, the wording, and Anubis's own pages. Part of [Experiments and decision
   - a badge on the site's icon. The icon itself can't be the button: DuckDuckGo uses it to search the site;
   - a pocket-balance gauge, a weight dial, and five dots with one lit;
   - the scale beside the icon rather than round it.
-- **Chosen: a scale round the site's icon, with a watch crown that opens the menu** (`utils/dial.ts`, `placeDial` in `entrypoints/content/ui.ts`).
+- **Chosen: a scale round the site's icon, with a watch crown that opens the menu** (`utils/dial.ts`, `entrypoints/content/dial.ts`).
   - The scale is the left half of a ring, in a 2px line with round ends. Its zero is at 9 o'clock, so up means raised and down lowered, matching the result's height on the page. Raise and Lower fill it the same way, by how far the site moved, a quarter at most.
   - Pin fills the whole half circle, distinct from the most a raise can show. Hide is the empty line: a cross-out and a dashed line both read as noise.
   - Greys only, no gold. The pinned frame turned grey too, and takes in the crown rather than cutting through it.

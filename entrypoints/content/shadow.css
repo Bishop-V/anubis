@@ -276,7 +276,7 @@ button {
   pointer-events: auto;
 }
 
-/* A pinned result's frame, drawn with the dial so it takes in the crown (frameDial in ui.ts). */
+/* A pinned result's frame, drawn with the dial so it takes in the crown (frameDial in dial.ts). */
 .pin-frame {
   position: absolute;
   border: 1px solid color-mix(in srgb, var(--muted) 55%, transparent);
