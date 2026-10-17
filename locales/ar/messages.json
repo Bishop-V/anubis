@@ -1304,23 +1304,8 @@
   "cleanupIntro": {
     "message": "يستطيع Anubis إزالة اللوحات التي ليست نتائج من صفحات البحث. فعّل كل لوحة تفضّل ألا تراها. يعيدها «إظهار المخفي» فوق النتائج في ذلك البحث."
   },
-  "cleanupEverySearch": {
-    "message": "في كل بحث"
-  },
-  "cleanupEverySearchHint": {
-    "message": "التفعيل يعني أن Anubis يزيلها. الإيقاف يتركها في الصفحة."
-  },
   "cleanupStillShows": {
     "message": "إذا ظلت لوحة تظهر"
-  },
-  "cleanupAll": {
-    "message": "كل ما سبق"
-  },
-  "cleanupAllHint": {
-    "message": "يفعّل كل مفتاح في هذا القسم أو يوقفه."
-  },
-  "cleanupOnGoogle": {
-    "message": "في Google"
   },
   "cleanupWebTab": {
     "message": "فتح علامة التبويب «الويب» دائمًا"
@@ -1559,15 +1544,6 @@
   "listsNotDownloaded": {
     "message": "لم تُنزَّل بعد"
   },
-  "listsBy": {
-    "message": "من إعداد $1"
-  },
-  "listsBundledCopy": {
-    "message": "النسخة المرفقة مع Anubis"
-  },
-  "listsUpdated": {
-    "message": "آخر تحديث: $1"
-  },
   "listsHomepage": {
     "message": "الصفحة الرئيسية"
   },
@@ -1622,9 +1598,6 @@
   "listKindLens": {
     "message": "عدسة"
   },
-  "listKindBuiltin": {
-    "message": "مدمجة"
-  },
   "listFormatAnubis": {
     "message": "قائمة Anubis"
   },
@@ -1636,9 +1609,6 @@
   },
   "listFormatDomains": {
     "message": "قائمة نطاقات"
-  },
-  "timeJustNow": {
-    "message": "الآن"
   },
   "tagsIntro": {
     "message": "تضع القوائم وسومًا على النتائج. وأنت تقرر ما يفعله كل وسم: اتباع القائمة، أو عرضه فقط، أو تمييز النتائج، أو تثبيت ما يحمله أو رفعه أو خفضه أو إخفاؤه. القوائم التي تستخدم اسم الوسم نفسه تتشاركه."

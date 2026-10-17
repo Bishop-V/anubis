@@ -1016,23 +1016,8 @@
   "cleanupIntro": {
     "message": "O Anubis pode remover os painéis das páginas de busca que não são resultados. Ligue cada um que você prefere não ver. “Mostrar ocultos” acima dos resultados os traz de volta naquela busca."
   },
-  "cleanupEverySearch": {
-    "message": "Em toda busca"
-  },
-  "cleanupEverySearchHint": {
-    "message": "Ligado: o Anubis o remove. Desligado: ele fica na página."
-  },
   "cleanupStillShows": {
     "message": "Se um painel ainda aparece"
-  },
-  "cleanupAll": {
-    "message": "Todos estes"
-  },
-  "cleanupAllHint": {
-    "message": "Liga ou desliga todos os interruptores desta seção."
-  },
-  "cleanupOnGoogle": {
-    "message": "No Google"
   },
   "cleanupWebTab": {
     "message": "Sempre abrir a aba Web"
@@ -1247,15 +1232,6 @@
   "listsNotDownloaded": {
     "message": "ainda não baixada"
   },
-  "listsBy": {
-    "message": "por $1"
-  },
-  "listsBundledCopy": {
-    "message": "a cópia que vem com o Anubis"
-  },
-  "listsUpdated": {
-    "message": "atualizada $1"
-  },
   "listsHomepage": {
     "message": "página inicial"
   },
@@ -1298,9 +1274,6 @@
   "listKindLens": {
     "message": "lente"
   },
-  "listKindBuiltin": {
-    "message": "embutida"
-  },
   "listFormatAnubis": {
     "message": "lista do Anubis"
   },
@@ -1312,9 +1285,6 @@
   },
   "listFormatDomains": {
     "message": "lista de domínios"
-  },
-  "timeJustNow": {
-    "message": "agora mesmo"
   },
   "tagsIntro": {
     "message": "As listas etiquetam resultados. Você decide o que cada etiqueta faz: seguir a lista, só mostrá-la, destacá-la, ou fixar, elevar, rebaixar ou ocultar o que a tiver. Listas que usam o mesmo nome de etiqueta a compartilham."

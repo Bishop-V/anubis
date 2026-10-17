@@ -944,23 +944,8 @@
   "cleanupIntro": {
     "message": "Anubis は、検索ページにある結果以外のパネルを削除できます。表示したくないものをそれぞれオンにしてください。結果の上にある「非表示の結果を表示」を押すと、その検索で元に戻ります。"
   },
-  "cleanupEverySearch": {
-    "message": "すべての検索で"
-  },
-  "cleanupEverySearchHint": {
-    "message": "オンにすると Anubis が削除します。オフにするとページに残ります。"
-  },
   "cleanupStillShows": {
     "message": "パネルが表示されたままの場合"
-  },
-  "cleanupAll": {
-    "message": "すべて"
-  },
-  "cleanupAllHint": {
-    "message": "このセクションのすべてのスイッチをオンまたはオフにします。"
-  },
-  "cleanupOnGoogle": {
-    "message": "Google の場合"
   },
   "cleanupWebTab": {
     "message": "常に「ウェブ」タブを開く"
@@ -1169,15 +1154,6 @@
   "listsNotDownloaded": {
     "message": "未ダウンロード"
   },
-  "listsBy": {
-    "message": "作成者：$1"
-  },
-  "listsBundledCopy": {
-    "message": "Anubis に同梱のコピー"
-  },
-  "listsUpdated": {
-    "message": "更新：$1"
-  },
   "listsHomepage": {
     "message": "ホームページ"
   },
@@ -1217,9 +1193,6 @@
   "listKindLens": {
     "message": "レンズ"
   },
-  "listKindBuiltin": {
-    "message": "組み込み"
-  },
   "listFormatAnubis": {
     "message": "Anubis リスト"
   },
@@ -1231,9 +1204,6 @@
   },
   "listFormatDomains": {
     "message": "ドメインリスト"
-  },
-  "timeJustNow": {
-    "message": "たった今"
   },
   "tagsIntro": {
     "message": "リストは結果にラベルを付けます。各ラベルの動作は自分で決められます。リストに従う、表示だけする、ハイライトする、または付いている結果を固定、格上げ、格下げ、非表示にする、から選べます。同じタグ名を使うリストは、そのタグを共有します。"

@@ -1,5 +1,5 @@
 ! name: AI content (HUGE AI Blocklist)
-! description: Labels sites the HUGE AI Blocklist lists as made of AI-generated content, or as mixing it with authentic work. Never changes the ranking.
+! description: Tags AI-generated sites, from the HUGE AI Blocklist.
 ! author: laylavish and the HUGE AI Blocklist contributors
 ! homepage: https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist
 ! license: CC0-1.0

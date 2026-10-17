@@ -465,3 +465,14 @@ button.tag:hover {
   padding: 16px 0;
   color: var(--muted);
 }
+
+/* A switch for a group whose parts are only partly on: the knob rests half-way. */
+.switch input:indeterminate + span {
+  background: var(--line-strong);
+}
+.switch input:indeterminate + span::after {
+  transform: translateX(6.5px);
+}
+[dir='rtl'] .switch input:indeterminate + span::after {
+  transform: translateX(-6.5px);
+}

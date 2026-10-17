@@ -1016,23 +1016,8 @@
   "cleanupIntro": {
     "message": "Anubis खोज पेजों पर वे पैनल हटा सकता है जो नतीजे नहीं हैं। जो पैनल आप नहीं देखना चाहते, उनमें से हर एक को चालू करें। नतीजों के ऊपर “छिपे हुए दिखाएं” उस खोज के लिए उन्हें वापस ले आता है।"
   },
-  "cleanupEverySearch": {
-    "message": "हर खोज में"
-  },
-  "cleanupEverySearchHint": {
-    "message": "चालू होने पर Anubis इसे हटाता है। बंद होने पर यह पेज पर रहता है।"
-  },
   "cleanupStillShows": {
     "message": "अगर कोई पैनल अब भी दिखे"
-  },
-  "cleanupAll": {
-    "message": "ये सभी"
-  },
-  "cleanupAllHint": {
-    "message": "इस सेक्शन के हर स्विच को चालू या बंद करता है।"
-  },
-  "cleanupOnGoogle": {
-    "message": "Google पर"
   },
   "cleanupWebTab": {
     "message": "हमेशा “वेब” टैब खोलें"
@@ -1247,15 +1232,6 @@
   "listsNotDownloaded": {
     "message": "अभी डाउनलोड नहीं हुई"
   },
-  "listsBy": {
-    "message": "$1 की ओर से"
-  },
-  "listsBundledCopy": {
-    "message": "Anubis के साथ आई कॉपी"
-  },
-  "listsUpdated": {
-    "message": "अपडेट: $1"
-  },
   "listsHomepage": {
     "message": "होमपेज"
   },
@@ -1298,9 +1274,6 @@
   "listKindLens": {
     "message": "लेंस"
   },
-  "listKindBuiltin": {
-    "message": "पहले से शामिल"
-  },
   "listFormatAnubis": {
     "message": "Anubis सूची"
   },
@@ -1312,9 +1285,6 @@
   },
   "listFormatDomains": {
     "message": "डोमेन सूची"
-  },
-  "timeJustNow": {
-    "message": "अभी-अभी"
   },
   "tagsIntro": {
     "message": "सूचियां नतीजों पर लेबल लगाती हैं। हर लेबल क्या करे, यह आप तय करते हैं: सूची के हिसाब से चले, सिर्फ़ दिखे, हाइलाइट करे, या जिन नतीजों पर यह लगा है उन्हें पिन करे, ऊपर करे, नीचे करे या छिपाए। जो सूचियां एक ही टैग नाम इस्तेमाल करती हैं, वे उसे साझा करती हैं।"

@@ -1,6 +1,6 @@
 # Bereiche entfernen
 
-**Einstellungen → Bereiche entfernen** nimmt die Teile, die du wählst, aus jeder Suchseite. Alle sind anfangs aus.
+**Einstellungen → Bereiche entfernen** nimmt die Teile, die du wählst, aus jeder Suchseite. Alle sind anfangs aus. Der Schalter einer Gruppe schaltet alle ihre Teile zusammen.
 
 <!-- Maintainer: German translation of docs/guide/clean-up.md. The screenshots are the English ones. -->
 

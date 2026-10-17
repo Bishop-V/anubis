@@ -1016,23 +1016,8 @@
   "cleanupIntro": {
     "message": "Anubis تلاش کے صفحات پر وہ پینل ہٹا سکتا ہے جو نتائج نہیں ہیں۔ جو پینل آپ نہیں دیکھنا چاہتے، ان میں سے ہر ایک کو آن کریں۔ نتائج کے اوپر “چھپے ہوئے دکھائیں” اس تلاش کے لیے انہیں واپس لاتا ہے۔"
   },
-  "cleanupEverySearch": {
-    "message": "ہر تلاش پر"
-  },
-  "cleanupEverySearchHint": {
-    "message": "آن کا مطلب ہے کہ Anubis اسے ہٹا دیتا ہے۔ آف اسے صفحے پر رہنے دیتا ہے۔"
-  },
   "cleanupStillShows": {
     "message": "اگر کوئی پینل پھر بھی دکھے"
-  },
-  "cleanupAll": {
-    "message": "یہ سب"
-  },
-  "cleanupAllHint": {
-    "message": "اس حصے کے ہر سوئچ کو آن یا آف کرتا ہے۔"
-  },
-  "cleanupOnGoogle": {
-    "message": "Google پر"
   },
   "cleanupWebTab": {
     "message": "ہمیشہ “ویب” ٹیب کھولیں"
@@ -1247,15 +1232,6 @@
   "listsNotDownloaded": {
     "message": "ابھی ڈاؤن لوڈ نہیں ہوئی"
   },
-  "listsBy": {
-    "message": "از $1"
-  },
-  "listsBundledCopy": {
-    "message": "Anubis کے ساتھ آنے والی کاپی"
-  },
-  "listsUpdated": {
-    "message": "اپ ڈیٹ: $1"
-  },
   "listsHomepage": {
     "message": "ہوم پیج"
   },
@@ -1298,9 +1274,6 @@
   "listKindLens": {
     "message": "لینز"
   },
-  "listKindBuiltin": {
-    "message": "پہلے سے شامل"
-  },
   "listFormatAnubis": {
     "message": "Anubis فہرست"
   },
@@ -1312,9 +1285,6 @@
   },
   "listFormatDomains": {
     "message": "ڈومین فہرست"
-  },
-  "timeJustNow": {
-    "message": "ابھی ابھی"
   },
   "tagsIntro": {
     "message": "فہرستیں نتائج پر لیبل لگاتی ہیں۔ ہر لیبل کیا کرے یہ آپ طے کرتے ہیں: فہرست کی پیروی کرے، صرف دکھائی دے، نمایاں کرے، یا جن پر یہ لگا ہو انہیں پن کرے، اوپر کرے، نیچے کرے، یا چھپائے۔ جو فہرستیں ایک ہی ٹیگ نام استعمال کرتی ہیں ان کا ٹیگ ایک ہی ہوتا ہے۔"

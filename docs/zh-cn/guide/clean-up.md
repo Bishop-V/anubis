@@ -1,6 +1,6 @@
 # 移除面板
 
-**设置 → 移除面板**会从每个搜索页面上去掉你选择的部分。一开始全部关闭。
+**设置 → 移除面板**会从每个搜索页面上去掉你选择的部分。一开始全部关闭。每组的开关会同时打开或关闭组内所有项。
 
 <!-- Maintainer: Simplified Chinese translation of docs/guide/clean-up.md. The screenshots are the English ones. -->
 

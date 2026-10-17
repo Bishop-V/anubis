@@ -39,18 +39,6 @@ type ListType = 'conjunction' | 'disjunction' | 'unit';
 
 let pluralRules: Intl.PluralRules | undefined;
 
-/** How long ago a time was, in the language's words: "just now", "5 minutes ago", "2 days ago". */
-export function tAgo(ms: number, now = Date.now()): string {
-  const s = Math.round((now - ms) / 1000);
-  if (s < 60) return t('timeJustNow');
-  const format = new Intl.RelativeTimeFormat(lang(), { numeric: 'auto' });
-  const m = Math.round(s / 60);
-  if (m < 60) return format.format(-m, 'minute');
-  const hr = Math.round(m / 60);
-  if (hr < 48) return format.format(-hr, 'hour');
-  return format.format(-Math.round(hr / 24), 'day');
-}
-
 /** A message about `count` things, in the right plural form. `$1` is the count. */
 export function tn(key: PluralKey, count: number, ...subs: (string | number)[]): string {
   pluralRules ??= new Intl.PluralRules(lang());

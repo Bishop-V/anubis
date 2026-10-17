@@ -723,3 +723,20 @@ main {
     min-width: 390px;
   }
 }
+
+/* Remove panels: each group's switch, with its parts indented under it. */
+.setting-group + .setting-group .setting.lead {
+  margin-top: 6px;
+}
+.setting.child {
+  margin-inline-start: 24px;
+  padding: 10px 0;
+  border-top-style: dashed;
+}
+.setting.child b {
+  font-weight: 500;
+}
+.panel > .setting-group:first-child > .setting:first-child {
+  border-top: 0;
+  padding-top: 0;
+}

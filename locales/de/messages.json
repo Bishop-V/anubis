@@ -1019,23 +1019,8 @@
   "cleanupIntro": {
     "message": "Anubis kann die Bereiche auf Suchseiten entfernen, die keine Ergebnisse sind. Schalte jeden ein, den du lieber nicht sehen willst. „Ausgeblendete zeigen“ über den Ergebnissen holt sie für diese Suche zurück."
   },
-  "cleanupEverySearch": {
-    "message": "Bei jeder Suche"
-  },
-  "cleanupEverySearchHint": {
-    "message": "An heißt, Anubis entfernt ihn. Aus lässt ihn auf der Seite."
-  },
   "cleanupStillShows": {
     "message": "Wenn ein Bereich trotzdem erscheint"
-  },
-  "cleanupAll": {
-    "message": "Alle davon"
-  },
-  "cleanupAllHint": {
-    "message": "Schaltet jeden Schalter in diesem Abschnitt ein oder aus."
-  },
-  "cleanupOnGoogle": {
-    "message": "Auf Google"
   },
   "cleanupWebTab": {
     "message": "Immer den Tab „Web“ öffnen"
@@ -1250,15 +1235,6 @@
   "listsNotDownloaded": {
     "message": "noch nicht heruntergeladen"
   },
-  "listsBy": {
-    "message": "von $1"
-  },
-  "listsBundledCopy": {
-    "message": "die Kopie, die Anubis mitbringt"
-  },
-  "listsUpdated": {
-    "message": "aktualisiert $1"
-  },
   "listsHomepage": {
     "message": "Website"
   },
@@ -1301,9 +1277,6 @@
   "listKindLens": {
     "message": "Linse"
   },
-  "listKindBuiltin": {
-    "message": "eingebaut"
-  },
   "listFormatAnubis": {
     "message": "Anubis-Liste"
   },
@@ -1315,9 +1288,6 @@
   },
   "listFormatDomains": {
     "message": "Domainliste"
-  },
-  "timeJustNow": {
-    "message": "gerade eben"
   },
   "tagsIntro": {
     "message": "Listen beschriften Ergebnisse. Du entscheidest, was jede Beschriftung tut: der Liste folgen, sie nur zeigen, hervorheben, oder was sie trägt anheften, aufwerten, abwerten oder ausblenden. Listen, die denselben Tag-Namen verwenden, teilen sich dieses Tag."

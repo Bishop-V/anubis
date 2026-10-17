@@ -947,23 +947,8 @@
   "cleanupIntro": {
     "message": "Anubis 可以移除搜尋頁面上不屬於結果的面板。請啟用每一種你不想看到的面板。結果上方的“顯示已隱藏”可以在那次搜尋中把它們找回來。"
   },
-  "cleanupEverySearch": {
-    "message": "在每次搜尋中"
-  },
-  "cleanupEverySearchHint": {
-    "message": "開啟表示 Anubis 會移除它。關閉則把它留在頁面上。"
-  },
   "cleanupStillShows": {
     "message": "如果面板仍然顯示"
-  },
-  "cleanupAll": {
-    "message": "全部"
-  },
-  "cleanupAllHint": {
-    "message": "開啟或關閉此分區中的所有開關。"
-  },
-  "cleanupOnGoogle": {
-    "message": "在 Google 上"
   },
   "cleanupWebTab": {
     "message": "始終開啟“網頁”分頁"
@@ -1172,15 +1157,6 @@
   "listsNotDownloaded": {
     "message": "尚未下載"
   },
-  "listsBy": {
-    "message": "作者 $1"
-  },
-  "listsBundledCopy": {
-    "message": "Anubis 隨附的副本"
-  },
-  "listsUpdated": {
-    "message": "$1更新"
-  },
   "listsHomepage": {
     "message": "首頁"
   },
@@ -1220,9 +1196,6 @@
   "listKindLens": {
     "message": "濾鏡"
   },
-  "listKindBuiltin": {
-    "message": "內建"
-  },
   "listFormatAnubis": {
     "message": "Anubis 清單"
   },
@@ -1234,9 +1207,6 @@
   },
   "listFormatDomains": {
     "message": "網域清單"
-  },
-  "timeJustNow": {
-    "message": "剛剛"
   },
   "tagsIntro": {
     "message": "清單會給結果加上標籤。每個標籤起什麼作用由你決定：跟隨清單、僅作標籤、醒目標示，或者將帶有它的結果釘選、提升、降低或隱藏。使用相同標籤名稱的清單會共用這個標籤。"

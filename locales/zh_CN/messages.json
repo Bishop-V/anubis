@@ -947,23 +947,8 @@
   "cleanupIntro": {
     "message": "Anubis 可以移除搜索页面上不属于结果的面板。为每一种你不想看到的面板打开开关。结果上方的“显示已隐藏”可以在那次搜索中把它们找回来。"
   },
-  "cleanupEverySearch": {
-    "message": "在每次搜索中"
-  },
-  "cleanupEverySearchHint": {
-    "message": "开启表示 Anubis 会移除它。关闭则把它留在页面上。"
-  },
   "cleanupStillShows": {
     "message": "如果面板仍然显示"
-  },
-  "cleanupAll": {
-    "message": "全部"
-  },
-  "cleanupAllHint": {
-    "message": "开启或关闭此分区中的所有开关。"
-  },
-  "cleanupOnGoogle": {
-    "message": "在 Google 上"
   },
   "cleanupWebTab": {
     "message": "始终打开“网页”标签页"
@@ -1172,15 +1157,6 @@
   "listsNotDownloaded": {
     "message": "尚未下载"
   },
-  "listsBy": {
-    "message": "作者 $1"
-  },
-  "listsBundledCopy": {
-    "message": "Anubis 自带的副本"
-  },
-  "listsUpdated": {
-    "message": "$1更新"
-  },
   "listsHomepage": {
     "message": "主页"
   },
@@ -1220,9 +1196,6 @@
   "listKindLens": {
     "message": "滤镜"
   },
-  "listKindBuiltin": {
-    "message": "内置"
-  },
   "listFormatAnubis": {
     "message": "Anubis 列表"
   },
@@ -1234,9 +1207,6 @@
   },
   "listFormatDomains": {
     "message": "域名列表"
-  },
-  "timeJustNow": {
-    "message": "刚刚"
   },
   "tagsIntro": {
     "message": "列表会给结果加上标签。每个标签起什么作用由你决定：跟随列表、仅作标签、高亮显示，或者将带有它的结果置顶、提升、降低或隐藏。使用相同标签名称的列表会共用这个标签。"

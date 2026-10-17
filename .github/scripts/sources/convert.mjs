@@ -133,7 +133,7 @@ export function hugeAi({ main, nuclear, commit, date }) {
     header: header(
       {
         name: 'AI content (HUGE AI Blocklist)',
-        description: 'Labels sites the HUGE AI Blocklist lists as made of AI-generated content, or as mixing it with authentic work. Never changes the ranking.',
+        description: 'Tags AI-generated sites, from the HUGE AI Blocklist.',
         author: 'laylavish and the HUGE AI Blocklist contributors',
         homepage: HUGE_AI.repository,
         license: 'CC0-1.0',
@@ -214,7 +214,7 @@ export function indieWikis(data, { commit, licence }) {
     header: header(
       {
         name: 'Independent wikis (Indie Wiki Buddy)',
-        description: "Raises independent wikis and lowers the Fandom, Fextralife, and Neoseeker wikis they replace, using Indie Wiki Buddy's data.",
+        description: "Raises independent wikis over Fandom, from Indie Wiki Buddy.",
         author: 'Kevin Payravi and the Indie Wiki Buddy contributors',
         homepage: INDIE_WIKIS.repository,
         license: 'MIT',
@@ -331,7 +331,7 @@ export function devDocs(files, { commit }) {
     header: header(
       {
         name: 'Official docs (DevDocs)',
-        description: 'Tags the documentation sites DevDocs collects, and nudges them up.',
+        description: 'Tags and raises the docs DevDocs collects.',
         author: 'The DevDocs contributors',
         homepage: DEVDOCS.repository,
         license: 'MPL-2.0',
@@ -437,7 +437,7 @@ export function awesomeSelfhosted(files, { commit, free }) {
     header: header(
       {
         name: 'Self-hosted FOSS (awesome-selfhosted)',
-        description: 'Labels the websites of the free software awesome-selfhosted lists as FOSS. Never changes the ranking.',
+        description: 'Tags self-hostable FOSS, from awesome-selfhosted.',
         author: 'The awesome-selfhosted contributors',
         homepage: AWESOME_SELFHOSTED.repository,
         license: 'CC-BY-SA-3.0',
