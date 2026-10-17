@@ -215,7 +215,7 @@ export default defineContentScript({
       rerank(results, scores, rules.settings.rerank && !engine.table, cards);
       const pinned = results.filter((r) => verdictFor(r).level === 'pin' && !verdictFor(r).hidden).map((r) => r.container);
       makeRoomForPins(new Set(engine.table || cards ? [] : pinned));
-      if (cards) nudgeLayout(results.filter((r) => !verdictFor(r).hidden || reveal || shown.has(r.url)), results.length);
+      nudgeLayout(results, (r) => !verdictFor(r).hidden || reveal || shown.has(r.url));
 
       if (rules.settings.showSummary && !engine.table) {
         const ai = leadingBlocks(engine, results, rules.settings.cleanup, clutter);
@@ -553,6 +553,15 @@ export default defineContentScript({
 // Reranking moves results with CSS `order` inside a flex column, so the page's own
 // scripts (which own these nodes) never see them move. Each boost point moves a
 // result up one position; pins go to the top.
+/** Whether anything in this list moves. Cards keep the page's layout, so only a list that honours `order` can move them. */
+function movesList(parent: HTMLElement, children: HTMLElement[], scores: Map<HTMLElement, number>, enabled: boolean, cards: boolean): boolean {
+  const ordered = !cards || /flex|grid/.test(getComputedStyle(parent).display);
+  return enabled && ordered && children.some((c) => (scores.get(c) ?? 0) !== 0);
+}
+
+/** The value `order` on a reranked list leaves its own layout alone (page.css); the empty one makes it a flex column. */
+const rerankMark = (cards: boolean) => (cards ? 'order' : '');
+
 function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enabled: boolean, cards = false) {
   const parents = new Set<HTMLElement>();
   const containers = new Set<Element>(results.map((r) => r.container));
@@ -561,18 +570,14 @@ function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enable
 
   for (const parent of parents) {
     const children = [...parent.children] as HTMLElement[];
-    // Cards keep the page's layout, so only a list that honours `order` can move them.
-    const ordered = !cards || /flex|grid/.test(getComputedStyle(parent).display);
-    const moves = enabled && ordered && children.some((c) => (scores.get(c) ?? 0) !== 0);
-    if (!moves) {
+    if (!movesList(parent, children, scores, enabled, cards)) {
       if (parent.hasAttribute('data-anubis-rerank')) {
         parent.removeAttribute('data-anubis-rerank');
         for (const c of children) c.style.removeProperty('order');
       }
       continue;
     }
-    // The attribute value `order` leaves the list's own layout alone (page.css).
-    if (!parent.hasAttribute('data-anubis-rerank')) parent.setAttribute('data-anubis-rerank', cards ? 'order' : '');
+    if (!parent.hasAttribute('data-anubis-rerank')) parent.setAttribute('data-anubis-rerank', rerankMark(cards));
     // What follows the last result (the engine's pager, related searches) stays
     // below them all, however far a result is lowered.
     let lastResult = -1;
@@ -597,7 +602,10 @@ function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enable
 // place when it loads and when the window resizes), so a card that goes away leaves a hole until
 // the script runs again. When the cards on show change, say the window resized.
 let shownCards = '';
-function nudgeLayout(shown: FoundResult[], total: number) {
+function nudgeLayout(results: FoundResult[], isShown: (r: FoundResult) => boolean) {
+  if (!results.some((r) => r.card)) return;
+  const shown = results.filter(isShown);
+  const total = results.length;
   const now = shown.map((r) => r.url).join('\n');
   // The first pass counts when it has already hidden some: the script laid them out before that.
   const changed = now !== shownCards && (shownCards !== '' || shown.length < total);
