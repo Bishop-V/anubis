@@ -27,15 +27,21 @@ const BLANK_TABLE = 12;
 const FRAME_OFF = 7;
 
 /** Draw a weigh host as the dial, the gauge on a card, or the balance button. */
-export function shapeWeigh({ host, button }: Weigh, shape: WeighShape, dial?: DialShape): void {
-  const parts = weighParts.get(host) ?? { key: '' };
-  weighParts.set(host, parts);
-  const key = `${shape}:${dial?.geom.r ?? ''}:${!!dial?.blank}`;
+export function shapeWeigh(weigh: Weigh, shape: WeighShape, dial?: DialShape): void {
+  const parts = weighParts.get(weigh.host) ?? { key: '' };
+  weighParts.set(weigh.host, parts);
+  const key = dial ? `dial:${dial.geom.r}:${dial.blank}` : shape;
   if (parts.key === key) return;
   parts.key = key;
   parts.drawing?.remove();
-  parts.drawing = undefined;
   parts.geom = dial?.geom;
+  resetWeigh(weigh, shape, dial);
+  parts.drawing = dial ? drawDialShape(weigh, dial) : shape === 'gauge' ? icon(GAUGE_SVG) : undefined;
+  if (!dial) weigh.button.replaceChildren(...(parts.drawing ? [parts.drawing] : []));
+}
+
+/** Clear what the host's last shape set, and mark the new one. */
+function resetWeigh({ host, button }: Weigh, shape: WeighShape, dial?: DialShape): void {
   host.dataset.shape = shape;
   // Where the dial goes round a plain disc, no site icon was found: worth knowing when an engine changes.
   host.toggleAttribute('data-blank', !!dial?.blank);
@@ -46,15 +52,10 @@ export function shapeWeigh({ host, button }: Weigh, shape: WeighShape, dial?: Di
   host.style.setProperty('pointer-events', dial ? 'none' : 'auto', 'important');
   host.style.removeProperty('width');
   host.style.removeProperty('height');
-  if (dial) parts.drawing = drawDialShape(host, button, dial);
-  else if (shape === 'gauge') {
-    parts.drawing = icon(GAUGE_SVG);
-    button.replaceChildren(parts.drawing);
-  } else button.replaceChildren();
 }
 
 /** The dial's drawing, behind the button, which becomes the crown's press area. */
-function drawDialShape(host: HTMLElement, button: HTMLElement, { geom, blank }: DialShape): Element {
+function drawDialShape({ host, button }: Weigh, { geom, blank }: DialShape): Element {
   const drawing = icon(dialSvg(geom, blank));
   button.before(drawing);
   button.replaceChildren();

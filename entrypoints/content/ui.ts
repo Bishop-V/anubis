@@ -788,14 +788,11 @@ export function renderHiddenBar(
 ): void {
   const { container } = result;
   let host = barHosts.get(container);
+  const wasShown = !!host?.isConnected;
   if (!show) {
-    if (host?.isConnected) {
-      host.remove();
-      weighCalls.get(container)?.();
-    }
-    return;
+    host?.remove();
+    return barMoved(container, wasShown);
   }
-  const placed = !!host?.isConnected;
   if (!host) {
     host = makeHost('anubis-bar', theme).host;
     barHosts.set(container, host);
@@ -839,8 +836,12 @@ export function renderHiddenBar(
       ),
     ),
   );
-  // The result's dial goes round this line's eye: place it now the line is here.
-  if (!placed) weighCalls.get(container)?.();
+  barMoved(container, wasShown);
+}
+
+/** A hidden result's line came or went: its dial goes round the line's eye, so place it again. */
+function barMoved(container: HTMLElement, wasShown: boolean): void {
+  if (wasShown !== !!barHosts.get(container)?.isConnected) weighCalls.get(container)?.();
 }
 
 // ---------------------------------------------------------------------------
