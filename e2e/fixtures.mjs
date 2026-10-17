@@ -97,6 +97,20 @@ function ddgSite(url, { wide, padded }) {
   return `<div class="site-lines"><span>${esc(hostOf(url).split('.').slice(-2, -1)[0])}</span>${link(crumbsOf(url))}</div>`;
 }
 
+// DuckDuckGo with a text ad as a live page showed it (2026-10-17, trimmed): a list item of its own, ahead of the
+// results, with an `h2`, an "Ad" badge, and sitelinks.
+export function duckduckgoAd(query, results) {
+  const ad = `<li data-layout="ad" class="ddg-ad">
+        <article id="ra-0" data-testid="ad" data-nrn="result" class="yQDlj3B5DI5YO8c8Ulio">
+          <div class="OHr0VX9IuNcv6iakvT6A"><div class="favicon"></div><span>https://www.desmi.example</span><button class="menu" aria-label="Ad options">⋯</button></div>
+          <h2 class="LnpumSThxEWMIsDdAT17"><a href="https://duckduckgo.com/y.js?ad_domain=desmi.example&amp;u3=https%3A%2F%2Fwww.desmi.example%2F" rel="noopener" data-testid="result-title-a"><span>Sustainable ${esc(query)} pumps</span></a> <button>Ad</button></h2>
+          <div data-result="snippet"><div>Pumps and solutions for <b>${esc(query)}</b>.</div></div>
+          <ul data-sitelinks-container="true"><li id="sl-0"><a href="https://duckduckgo.com/y.js?ad_domain=desmi.example&amp;sl=0"><h3>Contact us today</h3></a></li><li id="sl-1"><a href="https://duckduckgo.com/y.js?ad_domain=desmi.example&amp;sl=1"><h3>Brochures</h3></a></li></ul>
+        </article>
+      </li>`;
+  return duckduckgo(query, results).replace('<li data-layout="organic"', `${ad}<li data-layout="organic"`);
+}
+
 export function duckduckgo(query, results, dark = false, more = [], { ai = false, wide = false, tab, unseen = false, padded, rows = false } = {}) {
   if (tab) return duckduckgoTab(query, results, tab, rows);
   const item = ([url, title, snippet], i) => `

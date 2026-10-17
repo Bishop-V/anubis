@@ -2,6 +2,12 @@
 
 What was checked on real search pages, and what is still unverified. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Reported from live pages: DuckDuckGo's text ad (2026-10-17)
+
+A screenshot and markup of a search showed a DuckDuckGo text ad (an `li[data-layout="ad"]` holding `article[data-testid="ad"]`, an `h2`, an "Ad" badge, and sitelinks) still on the page after Anubis removed the AI answer, video panel, and related searches. DuckDuckGo had no `ads` selector, so the Ads switch did nothing there, and the ad's `h2` sat where results' do.
+
+- **Fixed:** `ads: 'li[data-layout="ad"]'` on the DuckDuckGo engine. The ad is never weighed and the Ads switch removes it, counted in the summary. The `ad=1` mock models the markup (trimmed), and `checks` asserts all three; it failed on the previous build. **Unconfirmed live:** only the one markup sample was available, so other ad layouts (shopping, for example) are not covered.
+
 ## Reported from live pages: DuckDuckGo Images (2026-10-17)
 
 A screenshot of the Images tab showed pictures in rows of different widths, a hole at the end of the first row where a picture was hidden, the summary as a small cell at the start of the fourth row, and Raise and Pin doing nothing. The live markup wasn't available (this environment can't reach DuckDuckGo), so the fixes are modelled on the screenshot: the `rows=1` Images mock places each picture with a script, on load and on resize, as the page seems to.
