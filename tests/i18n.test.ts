@@ -147,7 +147,7 @@ describe('in another language', () => {
     bracketed();
     try {
       const code = { el: 'code' };
-      expect(tParts('publishStepIssues', code)).toEqual(['[Add ', code, ' so people can suggest sites to your list from the menu on each result.]']);
+      expect(tParts('publishStepIssues', code)).toEqual(['[Add ', code, ' so people can suggest sites.]']);
     } finally {
       installEnglish();
     }

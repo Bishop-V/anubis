@@ -1313,7 +1313,7 @@ if (!only || only === 'cleanup' || checks) {
   page.off('request', onRequest);
   const robotText = await shadowText('anubis-summary');
   const ecosiaRobot = {
-    said: robotText.includes('Ecosia wants to check you’re not a robot before it sends page 2.'),
+    said: robotText.includes('Ecosia wants a robot check before page 2.'),
     linked: (await shadowLinks('anubis-summary')).some((a) => a.text === 'Open page 2'),
     noFrame: framed.length === 0,
   };
