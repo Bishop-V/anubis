@@ -68,7 +68,7 @@ export const tagMark = (name: string, color: string, n?: number, effect?: keyof 
 // menu. `crown` takes a ref for the pointer to aim at; `active` is the menu open.
 const DIAL = dialGeometry(20);
 export const dial = (icon: VNode, level: Level, opts: { crown?: VNodeRef; active?: boolean } = {}) =>
-  h('span', { class: ['demo-dial', { active: opts.active }] }, [
+  h('span', { class: ['demo-dial', level, { active: opts.active }] }, [
     h('span', {
       class: 'dial-art',
       innerHTML: dialSvg(DIAL),
