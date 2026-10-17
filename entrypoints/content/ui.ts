@@ -2,16 +2,17 @@ import { balanceSvg, setBalance } from '@/utils/balance';
 import { domainChoices, normalizeHostname, siteOf } from '@/utils/domain';
 import { h, icon } from '@/utils/dom';
 import type { EngineDef } from '@/utils/engines';
-import { ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, LEVEL_LABELS, levelIcon, stepsIcon, TAG_EFFECTS, tagEffectText, tagMark, WEIGH_ICONS } from '@/utils/icons';
+import { ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, TAG_EFFECTS, tagEffectText, tagMark, WEIGH_ICONS } from '@/utils/icons';
 import type { TagDef } from '@/utils/listformat';
 import { LEVELS, type Level, type TagPref, type Verdict } from '@/utils/matcher';
 import { dir, gap, lang, t, tJoin, tn } from '@/utils/i18n';
 import { hiddenCount, type PageStats } from '@/utils/messages';
 import { getSite, type PersonalLevel } from '@/utils/personal';
 import type { Palette } from '@/utils/storage';
-import { fromListsClass, nextLevel, rankingHint, rankingOf, siteCartouche, tagOrder, tagPicker, tagSource, type Ranking } from '@/utils/siteranking';
+import { nextLevel, rankingHint, rankingOf, siteCartouche } from '@/utils/siteranking';
 import { shortSummary, stoppedSentence, summarySentence } from '@/utils/summary';
-import { centreOn, clearColumnFrame, firstLineOf, firstRowOf, frameColumn, toColumn, type Weigh } from './column';
+import { clearColumnFrame, firstLineOf, lineUpInColumn, setColumnFrame, toColumn, type Weigh } from './column';
+import { levelButton, menuTags } from './menuparts';
 import { OWN_TAGS, type FoundResult } from './results';
 import shadowCss from './shadow.css?inline';
 
@@ -409,11 +410,8 @@ export function ensureWeighButton(
  */
 function drawWeigh(weigh: Weigh, result: FoundResult, engine: EngineDef, level: Level): boolean {
   const { host, button } = weigh;
-  if (button.dataset.level !== level) {
-    button.dataset.level = level;
-    button.replaceChildren(icon(WEIGH_ICONS[level]));
-  }
-  const column = !result.card && !engine.table && !engine.button?.onTitle && placeInColumn(weigh, result, engine, level);
+  showLevel(button, level);
+  const column = columnFits(result, engine) && placeInColumn(weigh, result, engine, level);
   host.dataset.shape = column ? 'column' : result.card ? 'tab' : 'button';
   button.className = `weigh ${host.dataset.shape}`;
   // A hidden result's line starts with an eye; beside the column's, it would be a second one.
@@ -421,6 +419,16 @@ function drawWeigh(weigh: Weigh, result: FoundResult, engine: EngineDef, level: 
   if (!column) clearColumnFrame(weigh, result.container);
   return column;
 }
+
+/** The ranking's icon on the button. */
+function showLevel(button: HTMLElement, level: Level): void {
+  if (button.dataset.level === level) return;
+  button.dataset.level = level;
+  button.replaceChildren(icon(WEIGH_ICONS[level]));
+}
+
+/** Not on a card, in a table, or on a phone's title line, which keep their own places. */
+const columnFits = (result: FoundResult, engine: EngineDef): boolean => !result.card && !engine.table && !engine.button?.onTitle;
 
 /** The button in the column left of the result (column.ts), or false where there's no room. */
 function placeInColumn(weigh: Weigh, result: FoundResult, engine: EngineDef, level: Level): boolean {
@@ -430,15 +438,11 @@ function placeInColumn(weigh: Weigh, result: FoundResult, engine: EngineDef, lev
   keepUpright(host);
   setPopOut(host, engine.button?.popOut);
   atEdge.delete(host);
-  for (const prop of MENU_LOOK) host.style.removeProperty(prop);
-  for (const prop of ['--anubis-weigh-color', '--anubis-weigh-bg', '--anubis-weigh-opacity']) host.style.removeProperty(prop);
+  for (const prop of [...MENU_LOOK, '--anubis-weigh-bg']) host.style.removeProperty(prop);
   // A hidden result folded into its one line: level with that line.
   const bar = barHosts.get(container)?.getBoundingClientRect();
-  const row = bar?.height ? bar : firstRowOf(container);
-  if (row) centreOn(host, container, row);
-  else lineUpWithHeader(host, container, result.titleBlock);
-  if (level === 'pin') frameColumn(weigh, container);
-  else clearColumnFrame(weigh, container);
+  if (!lineUpInColumn(host, container, bar)) lineUpWithHeader(host, container, result.titleBlock);
+  setColumnFrame(weigh, container, level === 'pin');
   return true;
 }
 
@@ -1214,6 +1218,9 @@ let popover: { host: HTMLElement; anchor: HTMLElement; cleanup: () => void; doma
 /** Draw the open menu again, as it was opened. */
 const refreshMenu = (): void => popover?.redraw?.();
 
+/** Whether the menu shows every tag, and the field for a new one, or only the site's. Kept while the menu is open. */
+let allTags = false;
+
 export function closePopover(): void {
   if (!popover) return;
   popover.cleanup();
@@ -1359,11 +1366,7 @@ function position(host: HTMLElement, anchor: HTMLElement): void {
 
 /** Beside the card the engine names, level with its top, when there's room: like the engine's own menu. */
 function besideCard(host: HTMLElement, anchor: HTMLElement, width: number): boolean {
-  const root = anchor.getRootNode();
-  const weigh = root instanceof ShadowRoot ? (root.host as HTMLElement) : undefined;
-  const selector = weigh && popOuts.get(weigh);
-  const parent = selector ? weigh.parentElement : undefined;
-  const card = parent && selector ? ((parent.matches(selector) ? parent : parent.querySelector<HTMLElement>(selector)) ?? undefined) : undefined;
+  const card = popOutCard(anchor);
   if (!card) return false;
   const c = card.getBoundingClientRect();
   // Not over the button itself, when it sits out past the card's edge.
@@ -1372,6 +1375,16 @@ function besideCard(host: HTMLElement, anchor: HTMLElement, width: number): bool
   host.style.left = `${left + window.scrollX}px`;
   host.style.top = `${Math.max(window.scrollY + 8, c.top + window.scrollY)}px`;
   return true;
+}
+
+/** The card the engine names for a button's menu to open beside (`popOut`), if it has one. */
+function popOutCard(anchor: HTMLElement): HTMLElement | undefined {
+  const root = anchor.getRootNode();
+  const weigh = root instanceof ShadowRoot ? (root.host as HTMLElement) : undefined;
+  const selector = weigh && popOuts.get(weigh);
+  const parent = weigh?.parentElement;
+  if (!selector || !parent) return undefined;
+  return parent.matches(selector) ? parent : (parent.querySelector<HTMLElement>(selector) ?? undefined);
 }
 
 function buildPopover(
@@ -1409,101 +1422,12 @@ function buildPopover(
     levels,
     // The same words as the popup's This site.
     h('p', { class: 'hint' }, rankingHint(domain, data.baseline, r, data.verdict)),
-    menuTags(data, actions, domain),
-  );
-}
-
-/** One ranking's button. Raise and Lower show two arrows, lit one per press, so the unlit one says there's another step. */
-function levelButton(level: Level, r: Ranking, press: () => void): HTMLElement {
-  const pressed = r.pressed === level;
-  const drawing = level === 'raise' || level === 'lower' ? stepsIcon(level, pressed ? r.steps : 0) : levelIcon(level);
-  return h(
-    'button',
-    {
-      class: `level ${level}${fromListsClass(level, r)}`,
-      type: 'button',
-      attrs: { 'aria-pressed': String(pressed), 'data-focus-key': `level-${level}` },
-      on: { click: press },
-    },
-    h('span', { class: 'level-icon' }, icon(drawing)),
-    LEVEL_LABELS[level],
-  );
-}
-
-/** Whether the menu shows every tag, and the field for a new one, or only the site's. Kept while the menu is open. */
-let allTags = false;
-
-/** The site's tags on one line, and + Tag, which shows every tag to choose from. */
-function menuTags(data: PopoverData, actions: PopoverActions, domain: string): HTMLElement {
-  const entry = getSite(data.personalText, domain);
-  const { mine, fromList, ids } = tagOrder(data.tags, entry, data.verdict);
-  // Tags you set toggle; tags from lists are shown but fixed.
-  const tagItem = (id: string) => {
-    const tag = data.tags.get(id)!;
-    const on = mine.has(id);
-    if (!on && fromList.has(id)) {
-      return h(
-        'span',
-        { class: 'fixed', style: `--c: ${tag.color}` },
-        tagMark(data.verdict.tagEffects[id]),
-        tag.label,
-        tagEffectText(data.verdict.tagEffects[id]),
-        tagSource(data.verdict, id),
-      );
-    }
-    return h(
-      'button',
-      {
-        type: 'button',
-        style: `--c: ${tag.color}`,
-        title: tag.description ?? (on ? t('popupUntag', domain) : t('popupTagSite', domain, tag.label)),
-        attrs: { 'aria-pressed': String(on), 'data-focus-key': `tag-${id}` },
-        on: { click: () => actions.toggleTag(domain, id) },
+    menuTags(data, actions, domain, {
+      shown: allTags,
+      toggle: () => {
+        allTags = !allTags;
+        refreshMenu();
       },
-      tagMark(on ? data.verdict.tagEffects[id] : undefined, !on),
-      tag.label,
-      on ? tagEffectText(data.verdict.tagEffects[id]) : null,
-    );
-  };
-  const more = h(
-    'button',
-    {
-      class: 'text-btn more-tags',
-      type: 'button',
-      attrs: { 'aria-expanded': String(allTags), 'data-focus-key': 'more-tags' },
-      on: {
-        click: () => {
-          allTags = !allTags;
-          refreshMenu();
-        },
-      },
-    },
-    allTags ? t('menuTagsDone') : t('menuTagsMore'),
+    }),
   );
-  if (!allTags) {
-    const onSite = ids.filter((id) => mine.has(id) || fromList.has(id));
-    return h('div', { class: 'menu-tags' }, h('div', { class: 'tags' }, onSite.map(tagItem), more));
-  }
-  return h('div', { class: 'menu-tags open' }, tagPicker(ids, data.listTags, tagItem), newTag(actions, domain), more);
-}
-
-/** The field that names a new tag and puts it on the site. */
-function newTag(actions: PopoverActions, domain: string): HTMLElement {
-  const input = h('input', {
-    type: 'text',
-    placeholder: t('menuNewTagPlaceholder'),
-    maxLength: 32,
-    attrs: { 'aria-label': t('menuNewTagLabel'), 'data-focus-key': 'new-tag' },
-  });
-  const create = () => {
-    const label = input.value.trim();
-    if (label) actions.createTag(domain, label);
-  };
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      create();
-    }
-  });
-  return h('div', { class: 'new-tag' }, input, h('button', { class: 'text-btn', type: 'button', on: { click: create } }, t('menuAddTagButton')));
 }

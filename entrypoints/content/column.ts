@@ -41,29 +41,39 @@ export function toColumn({ host }: Weigh, result: FoundResult): boolean {
   return true;
 }
 
-export type Row = { top: number; bottom: number };
+type Row = { top: number; bottom: number };
 
-/** Centre the button on a row of the result: its first, or a hidden result's one line. */
-export function centreOn(host: HTMLElement, container: HTMLElement, row: Row): void {
+/**
+ * Centre the button on the result's first row, or on a hidden result's one line (`bar`).
+ * False when the result shows no row to go by.
+ */
+export function lineUpInColumn(host: HTMLElement, container: HTMLElement, bar: DOMRect | undefined): boolean {
+  const row = bar?.height ? bar : firstRowOf(container);
+  if (!row) return false;
   const box = container.getBoundingClientRect();
   const border = parseFloat(getComputedStyle(container).borderTopWidth) || 0;
   const y = (row.top + row.bottom) / 2 - BUTTON / 2 - box.top - border;
   host.style.setProperty('top', `${Math.round(y)}px`, 'important');
+  return true;
 }
 
 /** Small and square, like a site's icon. */
 const iconSized = (r: DOMRect): boolean => Math.min(r.width, r.height) >= 10 && Math.max(r.width, r.height) <= 40 && Math.abs(r.width - r.height) <= 6;
 
+/** A site's icon of the result's own, shown. */
+const isIcon = (el: Element): boolean =>
+  !el.closest('anubis-weigh, anubis-chips, anubis-bar') && el.checkVisibility?.({ opacityProperty: true, visibilityProperty: true }) !== false;
+
 /**
  * The result's first row: its first words, or a site's icon above or beside them,
  * whichever is higher. On most engines, the site's icon and name.
  */
-export function firstRowOf(container: HTMLElement): Row | undefined {
-  let row = firstLineOf(container);
-  for (const el of container.querySelectorAll<HTMLElement>('img, svg')) {
+function firstRowOf(container: HTMLElement): Row | undefined {
+  let row: Row | undefined = firstLineOf(container);
+  for (const el of container.querySelectorAll('img, svg')) {
     const r = el.getBoundingClientRect();
-    if (!iconSized(r) || (row && r.top >= row.top - 1) || el.closest('anubis-weigh, anubis-chips, anubis-bar')) continue;
-    if (el.checkVisibility?.({ opacityProperty: true, visibilityProperty: true }) !== false) row = r;
+    const higher = !row || r.top < row.top - 1;
+    if (higher && iconSized(r) && isIcon(el)) row = r;
   }
   return row && { top: row.top, bottom: row.bottom };
 }
@@ -72,7 +82,7 @@ export function firstRowOf(container: HTMLElement): Row | undefined {
  * A pinned result's frame, drawn with the button so it takes it in rather than leaving it
  * outside. page.css leaves its own frame off results marked `data-anubis-column-frame`.
  */
-export function frameColumn({ host, root }: Weigh, container: HTMLElement): void {
+function frameColumn({ host, root }: Weigh, container: HTMLElement): void {
   container.setAttribute('data-anubis-column-frame', '');
   let frame = root.querySelector<HTMLElement>('.pin-frame');
   if (!frame) {
@@ -89,6 +99,12 @@ export function frameColumn({ host, root }: Weigh, container: HTMLElement): void
   frame.style.setProperty('top', `${top - hostTop}px`);
   frame.style.setProperty('width', `${Math.round(box.width) + FRAME_OFF - left}px`);
   frame.style.setProperty('height', `${Math.round(box.height) + FRAME_OFF - top}px`);
+}
+
+/** Frame the result where it's pinned, or take its frame away. */
+export function setColumnFrame(weigh: Weigh, container: HTMLElement, pinned: boolean): void {
+  if (pinned) frameColumn(weigh, container);
+  else clearColumnFrame(weigh, container);
 }
 
 /** Take a pinned result's frame away, where it isn't pinned or its button isn't in the column. */
