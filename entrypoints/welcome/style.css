@@ -71,6 +71,49 @@ section p {
   margin-bottom: 0;
 }
 
+/* See how ranking works: example results, each under a hairline, with Raise and Lower at the end. */
+.demo {
+  list-style: none;
+  margin: 14px 0 12px;
+  padding: 0;
+}
+.demo li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  background: var(--bg);
+}
+.demo li:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.demo .result {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.demo .host {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.demo .title {
+  overflow-wrap: anywhere;
+}
+.demo .actions {
+  display: flex;
+  flex: none;
+  gap: 6px;
+}
+.demo .btn:disabled {
+  cursor: default;
+}
+#demo-said:empty {
+  display: none;
+}
+
 /* Keep it in the toolbar: the toolbar icon beside the steps, so it's easy to spot. */
 .pin {
   display: flex;
