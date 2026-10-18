@@ -18,31 +18,42 @@ export function renderDemo(list: HTMLElement, said: HTMLElement, reset: HTMLElem
   const rows = RESULTS.map(() => h('li'));
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /** Put the rows in order, and slide each from where it was (FLIP) unless motion is reduced. */
-  function show(focus?: { row: number; button: 'raise' | 'lower' }) {
-    const before = new Map(rows.map((row) => [row, row.getBoundingClientRect().top]));
-    list.replaceChildren(...order.map((i) => rows[i]!));
-    order.forEach((i, place) => {
-      const [raise, lower] = rows[i]!.querySelectorAll('button');
+  const buttons = (row: number) => rows[row]!.querySelectorAll('button');
+
+  /** Raise can't be pressed on the first result, nor Lower on the last. */
+  function updateButtons() {
+    order.forEach((row, place) => {
+      const [raise, lower] = buttons(row);
       raise!.disabled = place === 0;
       lower!.disabled = place === order.length - 1;
     });
-    if (focus) {
-      const [raise, lower] = rows[focus.row]!.querySelectorAll('button');
-      // A button that can't be pressed any more can't keep the focus: hand it to the other.
-      const wanted = focus.button === 'raise' ? raise! : lower!;
-      (wanted.disabled ? (focus.button === 'raise' ? lower! : raise!) : wanted).focus();
-    }
-    if (still) return;
-    for (const row of rows) {
-      const shift = (before.get(row) ?? 0) - row.getBoundingClientRect().top;
-      if (!shift || !before.get(row)) continue;
-      row.style.transition = 'none';
-      row.style.transform = `translateY(${shift}px)`;
-      void row.offsetHeight;
-      row.style.transition = 'transform 0.35s cubic-bezier(0.3, 0.7, 0.2, 1)';
-      row.style.transform = '';
-    }
+  }
+
+  /** A button that can't be pressed any more can't keep the focus: hand it to the other. */
+  function refocus(row: number, pressed: 'raise' | 'lower') {
+    const [raise, lower] = buttons(row);
+    const [wanted, other] = pressed === 'raise' ? [raise!, lower!] : [lower!, raise!];
+    (wanted.disabled ? other : wanted).focus();
+  }
+
+  /** Slide a row from where it was (FLIP). */
+  function slide(row: HTMLElement, from: number) {
+    const shift = from - row.getBoundingClientRect().top;
+    if (!shift) return;
+    row.style.transition = 'none';
+    row.style.transform = `translateY(${shift}px)`;
+    void row.offsetHeight;
+    row.style.transition = 'transform 0.35s cubic-bezier(0.3, 0.7, 0.2, 1)';
+    row.style.transform = '';
+  }
+
+  /** Put the rows in order, sliding them into place unless motion is reduced. */
+  function show(focus?: { row: number; button: 'raise' | 'lower' }) {
+    const before = new Map(rows.map((row) => [row, row.getBoundingClientRect().top]));
+    list.replaceChildren(...order.map((i) => rows[i]!));
+    updateButtons();
+    if (focus) refocus(focus.row, focus.button);
+    if (!still) rows.forEach((row) => slide(row, before.get(row)!));
   }
 
   function move(row: number, by: -1 | 1) {
