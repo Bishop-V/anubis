@@ -2454,6 +2454,22 @@ if (!only || only === 'welcome') {
     await welcome.waitForTimeout(300);
     await welcome.screenshot({ path: `${SHOTS}welcome-${scheme}.png`, fullPage: true });
   }
+  // The example results: Lower moves the first result down a place, Raise moves it back,
+  // and the end results can't go further.
+  const demoOrder = () => welcome.evaluate(() => [...document.querySelectorAll('#demo .host')].map((el) => el.textContent));
+  const first = await demoOrder();
+  await welcome.click('#demo li:first-child button:last-of-type');
+  const lowered = await demoOrder();
+  const said = await welcome.textContent('#demo-said');
+  await welcome.click('#demo li:nth-child(2) button:first-of-type');
+  const raised = await demoOrder();
+  await welcome.click('#demo-reset');
+  const reset = await demoOrder();
+  const topRaiseDisabled = await welcome.evaluate(() => document.querySelector('#demo li:first-child button').disabled);
+  console.log('\n== welcome demo:', JSON.stringify({ first, lowered, said, raised, reset, topRaiseDisabled }));
+  if (lowered[1] !== first[0] || lowered[0] !== first[1] || raised.join() !== first.join() || reset.join() !== first.join() || !topRaiseDisabled || !said) {
+    throw new Error('the welcome page demo did not rerank');
+  }
   const desktop = await check();
   await welcome.setViewportSize({ width: 390, height: 844 });
   await welcome.waitForTimeout(200);

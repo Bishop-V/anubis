@@ -4,6 +4,7 @@ import './style.css';
 import { browser } from '#imports';
 import { balanceSvg, swingBalance } from '@/utils/balance';
 import { h } from '@/utils/dom';
+import { renderDemo } from './demo';
 import { ENGINES } from '@/utils/engines';
 import { localizePage, t, type MessageKey } from '@/utils/i18n';
 import { wiki } from '@/utils/wiki';
@@ -12,8 +13,8 @@ import { getSettings, listCacheItem } from '@/utils/storage';
 import { BUNDLED_DIRECTORY, displayName, getSubscriptions, listText } from '@/utils/subscriptions';
 import { initTheme } from '@/utils/theme';
 
-// The page that opens when Anubis is installed: how to keep its button in the
-// toolbar, a search to try, and the lists it starts with. Opened by the background
+// The page that opens when Anubis is installed: example results to rank, how to keep
+// its button in the toolbar, a search to try, and the lists it starts with. Opened by the background
 // script on install only, never on updates.
 
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
@@ -119,6 +120,7 @@ async function main() {
   const note = machineTranslationNote();
   if (note) $('main').prepend(note);
   renderScales();
+  renderDemo($('#demo'), $('#demo-said'), $('#demo-reset'));
   $<HTMLAnchorElement>('#guide').href = wiki();
   $<HTMLAnchorElement>('#privacy').href = wiki('guide/privacy');
   await initTheme();
