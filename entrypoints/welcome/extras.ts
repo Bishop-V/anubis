@@ -1,8 +1,8 @@
 import { h } from '@/utils/dom';
 import { describeRemoved } from '@/utils/cleanup';
 import { t, tn, type MessageKey } from '@/utils/i18n';
-import { TAG_PALETTE } from '@/utils/listformat';
-import { STARTER_LISTS, STARTER_TAGS, resultRow, sample, slide, tagChip, type DemoResult } from './parts';
+import { TAG_PALETTE, type ParsedList } from '@/utils/listformat';
+import { STARTER_LISTS, STARTER_TAGS, reorder, resultRow, sample, tagChip, type DemoResult } from './parts';
 
 // "More to try" on the welcome page: tags, lists, and removing panels, each a short
 // example that opens on its own, so the first look stays on ranking. Like the ranking
@@ -62,47 +62,48 @@ export function renderTagsExample(box: HTMLElement): void {
   );
 }
 
+/** The starter list that defines a tag. */
+const listOf = (tag: string) => STARTER_LISTS.find((list) => list.tags.some((x) => x.id === tag))!;
+
+/** Whether a result's list is on; Official docs also raises the sites it tags, as its description says. */
+const listed = (r: DemoResult, on: Set<ParsedList>) => !!r.tag && on.has(listOf(r.tag));
+const raised = (r: DemoResult, on: Set<ParsedList>) => listed(r, on) && r.tag === 'docs';
+
+/** A starter list's name and description, with its switch. */
+const listSwitch = (parsed: ParsedList, change: (on: boolean) => void) =>
+  h(
+    'li',
+    null,
+    h('span', { class: 'name' }, parsed.meta.name ?? ''),
+    h('span', { class: 'description' }, parsed.meta.description ?? ''),
+    switchFor(parsed.meta.name ?? '', true, change),
+  );
+
 /** Lists: three starter lists with switches, and results that gain their tags and move when one is on. */
 export function renderListsExample(box: HTMLElement, subscribed: number): void {
   const results = ['stackoverflow.com', 'en.wikipedia.org', 'docs.python.org'].map(sample);
-  /** Which list each tag comes from; Official docs also raises the sites it tags, as its description says. */
-  const from = (tag: string) => STARTER_LISTS.find((list) => list.tags.some((x) => x.id === tag))!;
-  const raises = (tag: string) => tag === 'docs';
   const on = new Set(STARTER_LISTS);
   const rows = new Map(results.map((r) => [r, resultRow(r)]));
   const list = h('ol', { class: 'results' });
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function draw() {
-    const before = new Map([...rows.values()].map((row) => [row, row.getBoundingClientRect().top]));
     for (const [r, row] of rows) {
-      const tagged = !!r.tag && on.has(from(r.tag));
-      row.querySelector('.chips')!.replaceChildren(...(tagged ? [tagChip(STARTER_TAGS[r.tag!]!, raises(r.tag!) ? 'raise' : undefined)] : []));
+      row.querySelector('.chips')!.replaceChildren(...(listed(r, on) ? [tagChip(STARTER_TAGS[r.tag!]!, raised(r, on) ? 'raise' : undefined)] : []));
     }
-    const lifted = (r: DemoResult) => !!r.tag && raises(r.tag) && on.has(from(r.tag));
-    list.replaceChildren(...[...results].sort((a, b) => Number(lifted(b)) - Number(lifted(a))).map((r) => rows.get(r)!));
-    if (!still) for (const row of rows.values()) if (before.get(row)) slide(row, before.get(row)!);
+    const order = [...results].sort((a, b) => Number(raised(b, on)) - Number(raised(a, on)));
+    reorder(list, order.map((r) => rows.get(r)!));
   }
 
+  const switches = STARTER_LISTS.map((parsed) =>
+    listSwitch(parsed, (checked) => {
+      if (checked) on.add(parsed);
+      else on.delete(parsed);
+      draw();
+    }),
+  );
   box.replaceChildren(
     h('p', null, t('welcomeListsHow')),
-    h(
-      'ul',
-      { class: 'switches' },
-      STARTER_LISTS.map((parsed) =>
-        h(
-          'li',
-          null,
-          h('span', { class: 'name' }, parsed.meta.name ?? ''),
-          h('span', { class: 'description' }, parsed.meta.description ?? ''),
-          switchFor(parsed.meta.name ?? '', true, (checked) => {
-            if (checked) on.add(parsed);
-            else on.delete(parsed);
-            draw();
-          }),
-        ),
-      ),
-    ),
+    h('ul', { class: 'switches' }, switches),
     h('div', { class: 'page small' }, list),
     h('p', { class: 'more' }, h('span', null, `${tn('welcomeListsCount', subscribed)} ${t('welcomeListsMore')}`), settingsLink('lists', 'welcomeListsOpen')),
   );

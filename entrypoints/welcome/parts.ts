@@ -52,3 +52,11 @@ export function slide(el: HTMLElement, from: number): void {
   el.style.transition = 'transform 0.35s cubic-bezier(0.3, 0.7, 0.2, 1)';
   el.style.transform = '';
 }
+
+/** Put rows in a new order, sliding each from where it was unless motion is reduced. */
+export function reorder(list: HTMLElement, rows: HTMLElement[]): void {
+  const before = new Map(rows.map((row) => [row, row.getBoundingClientRect().top]));
+  list.replaceChildren(...rows);
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  for (const row of rows) if (before.get(row)) slide(row, before.get(row)!);
+}
