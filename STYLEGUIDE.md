@@ -74,7 +74,7 @@ One palette, Graphite, defined twice: `assets/theme.css` for extension pages and
 | --- | --- | --- | --- |
 | 34px serif (29px on phones) | 400 | The welcome page's title | "Anubis is installed" |
 | 30px serif | 400 | A settings section's title | "Your sites" |
-| 21px serif | 500 | A welcome section's title | "Keep it in the toolbar" |
+| 21px serif | 500 | A welcome section's title | "Rank a site" |
 | 19px serif | 500 | The brand name beside the logo | "Anubis" in the popup's header |
 | 16px | 400 | The welcome page's lead | |
 | 15px | 600 | A heading inside a settings section, a list's name | "Paywalls" |
@@ -93,8 +93,8 @@ One palette, Graphite, defined twice: `assets/theme.css` for extension pages and
 ## Space and shape
 
 - Spacing comes in steps of 2px: 4, 6, 8, 10, 12, 14, 16, 18, 24, and so on. Items in a wrapping row of tags or links sit 14px apart; buttons in a row 8px.
-- Sections are divided by a 1px `--line` hairline and space, never boxed into cards. The result menu is the only card.
-- Corner radius: **6px** for controls (buttons, inputs, selects); **8px** for a ranking's button in the result menu and the popup; **10px** for the pinned result's frame and the phone's sheet; **12px** for the result menu; **999px** (a pill) for switches; **50%** for round buttons on search pages (the column's, the tab on a picture), icon buttons there, and colour swatches. The focus ring's corners are 3px where the element has none of its own. Nothing else is rounded, and the logo carries its own rounded tile, so don't round or frame it.
+- Sections are divided by a 1px `--line` hairline and space, never boxed into cards. The result menu is the only card. The welcome page's example search pages sit on `--raised` inside a `--line` border, so they read as a page within the page.
+- Corner radius: **6px** for controls (buttons, inputs, selects); **8px** for a ranking's button in the result menu and the popup; **10px** for the pinned result's frame and the phone's sheet; **12px** for the result menu and the welcome page's example search pages; **999px** (a pill) for switches; **50%** for round buttons on search pages (the column's, the tab on a picture), icon buttons there, and colour swatches. The focus ring's corners are 3px where the element has none of its own. Nothing else is rounded, and the logo carries its own rounded tile, so don't round or frame it.
 - Shadows only on the result menu (`--shadow`), which floats over the page.
 
 ## Layout
@@ -103,7 +103,7 @@ One palette, Graphite, defined twice: `assets/theme.css` for extension pages and
 | --- | --- |
 | Popup | Up to 340px wide, shrinking to fit a narrower viewport. Header (logo, the status after a diamond that's filled while Anubis is on and hollow while it's off, on/off), then sections under hairlines with a muted label, then a footer. What shows depends on the tab: on a search page, what Anubis did there and its tags to show only; on any other site, that site's name over the balance, with the rankings as in the result menu, tag choices, and a field to add a tag; elsewhere, Add a site. The last few of your sites always follow. |
 | Settings | Two columns in 1040px: a 210px navigation column and sections up to 760px. One row per thing you can change. A tag's open panel has fields for its name and meaning, sites carrying it, and an optional note explaining why a site fits. Below 760px, one column with the navigation across the top. |
-| Welcome page | The same idea in 1040px: section titles in a 220px column, what to do beside them, lists two across. Below 900px, one column. |
+| Welcome page | The same idea in 1040px: section titles in a 220px column, what to do beside them. Ranking comes first, as an example search page whose result buttons open a copy of the result menu under the result. Tags, lists, and removing panels follow under More to try, each folded away. The toolbar button comes last, as optional. Below 900px, one column. |
 | Search pages | The summary sits above the results, lined up with them; on phones it's one short line, with Details for the rest. Tags go under each title. The result menu opens from the button in the column on the result's left (see [The button on each result](#the-button-on-each-result)), 340px wide, above the result. On phones (600px wide or less) it's a sheet along the bottom of the screen instead, and the ⚖ button sits at the end of the title's first line, under the engine's own menu button. |
 
 Every page works at phone width (390px) without scrolling sideways. Settings are also checked at 320px, 360px, 375px, and 389px: only the Your sites table may scroll inside its own wrapper below 390px. Its Add tag picker is at most 8em wide, because a closed select is as wide as its longest option and tag names come from lists. `node e2e/run.mjs responsive` checks all settings sections at those widths and at 390px in light and dark schemes; the `welcome` and `mobile` e2e parts cover their respective pages.
@@ -210,7 +210,7 @@ On a phone the engine's menu button (Google's ⋮, DuckDuckGo's ⋯) takes the r
 
 - Inline SVG from `utils/icons.ts`: a 16×16 grid, 1.6px stroke, round caps and joins, `currentColor`. Shown at 13–15px. Decorative, so `aria-hidden`.
 - Each ranking has one icon, used everywhere: an eye struck through (Hide), a chevron down (Lower), a feather (Normal), a chevron up (Raise), a pin (Pin). In the popup and the result menu it sits over the ranking's name, where Raise and Lower show two chevrons, lit one per press.
-- The balance is drawn in three more places. In the popup it's in `--muted`, level and with empty pans, above Your sites while that list is empty: the only illustration. On the welcome page it sits in `--muted` under the lead (see Motion).
+- The balance is drawn in three more places. In the popup it's in `--muted`, level and with empty pans, above Your sites while that list is empty: the only illustration. On the welcome page it's in the copy of the result menu on the example search page, tilting to the ranking chosen, as on a search page.
 - The Anubis head is the brand mark: the logo tile on extension pages and in the toolbar. Search pages don't show it: the summary is plain text. It's never a button's icon.
 - The button on each result shows the result menu's balance in small, tipped to the site's ranking: level for Normal, the site's (left) pan down for Lower, and up for Raise. A hidden site shows the ranking's crossed-out eye and a pinned one its pin. It's drawn in `--muted` like any icon at rest; the tilt, not a colour, shows the ranking, and its label says it too ("Hide, rank, or tag fandom.com (lowered)").
 - An icon without words only where the meaning is universal (the cog, ×, and the button on a result, which names the menu it opens in its tooltip). Everything else gets a word, with or without an icon.
@@ -218,8 +218,8 @@ On a phone the engine's menu button (Google's ⋮, DuckDuckGo's ⋯) takes the r
 ## Motion
 
 - Motion answers an action: the menu opens with a 120ms fade, the balance swings, switches slide.
-- Nothing moves on its own. The welcome page's balance swings only when clicked: a click on either side presses that pan down, and it settles level again. It's decoration, hidden from screen readers.
-- Movement (the menu's fade, the balance, switches, the welcome page's balance) stops under `prefers-reduced-motion`.
+- Nothing moves on its own. On the welcome page, the example results slide to their new places and the menu's balance tips when a ranking is pressed.
+- Movement (the menu's fade, the balance, switches, the welcome page's example results) stops under `prefers-reduced-motion`.
 
 ## Writing
 

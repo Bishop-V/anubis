@@ -533,9 +533,7 @@
   "welcomeHeading": "Anubis is installed",
   "welcomeIntro": "It tags, reranks, and hides search results, following your own choices and the lists you subscribe to.",
   "welcomeListsHeading": "Your lists",
-  "welcomeListsIntro": "Lists tag, raise, lower, or hide sites for you. You start with these:",
   "welcomeListsMore": "Turn these off, or find more lists, in the settings.",
-  "welcomeListsNone": "Lists tag, raise, lower, or hide sites for you. You aren't subscribed to any yet.",
   "welcomeListsOpen": "Open list settings",
   "welcomePinAndroid": "Anubis is in the browser's menu, under Extensions.",
   "welcomePinChrome": "Press the Extensions button (the puzzle piece) next to the address bar, then the pin beside Anubis.",
@@ -547,10 +545,6 @@
   "welcomePinned": "Anubis is in your toolbar.",
   "welcomePrivacy": "Privacy",
   "welcomeQuery": "python list comprehension",
-  "welcomeSearchFor": "Search for “$1” to see tags from your lists:",
-  "welcomeSearchHeading": "Try a search",
-  "welcomeSearchHow": "Search as you usually do. To hide, rank, or tag a site, point at one of its results and press the ⚖ button.",
-  "welcomeSearchOn": "Search for “$1” on $2",
   "welcomeTitle": "Welcome to Anubis",
   "withShortcut": "$1 ($2)"
 }

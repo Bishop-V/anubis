@@ -1601,14 +1601,8 @@
   "welcomeListsHeading": {
     "message": "Listeleriniz"
   },
-  "welcomeListsIntro": {
-    "message": "Listeler sizin için siteleri etiketler, yükseltir, düşürür veya gizler. Şunlarla başlarsınız:"
-  },
   "welcomeListsMore": {
     "message": "Bunları ayarlardan kapatabilir veya daha fazla liste bulabilirsiniz."
-  },
-  "welcomeListsNone": {
-    "message": "Listeler siteleri sizin için etiketler, yükseltir, düşürür veya gizler. Henüz hiçbir listeye abone değilsiniz."
   },
   "welcomeListsOpen": {
     "message": "Liste ayarlarını aç"
@@ -1642,18 +1636,6 @@
   },
   "welcomeQuery": {
     "message": "python list comprehension"
-  },
-  "welcomeSearchFor": {
-    "message": "Listelerinizden etiketleri görmek için “$1” araması yapın:"
-  },
-  "welcomeSearchHeading": {
-    "message": "Bir arama deneyin"
-  },
-  "welcomeSearchHow": {
-    "message": "Her zamanki gibi arama yapın. Bir siteyi gizlemek, sıralamak veya etiketlemek için sonuçlarından birinin üzerine gelin ve ⚖ düğmesine basın."
-  },
-  "welcomeSearchOn": {
-    "message": "$2 üzerinde “$1” araması yapın"
   },
   "welcomeTitle": {
     "message": "Anubis’e hoş geldiniz"

@@ -33,7 +33,7 @@ npm run build:chrome   # Chrome、Edge 和其他 Chromium 浏览器
 - **Firefox：** 在 `about:debugging` 中选择**此 Firefox → 临时载入附加组件**，然后选择 `.output/firefox-mv2/manifest.json`。Firefox 关闭时它会被移除。
 - **Chrome 或 Edge：** 在 `chrome://extensions` 或 `edge://extensions` 中打开**开发者模式**，选择**加载已解压的扩展程序**，然后选择 `.output/chrome-mv3` 或解压后的安装包。
 
-若要让 Anubis 的按钮留在工具栏上，请打开拼图菜单并固定它。
+Anubis 不需要工具栏按钮也能正常工作。如果想把按钮放在工具栏上，请打开拼图菜单并固定它。
 
 ## 照常搜索
 

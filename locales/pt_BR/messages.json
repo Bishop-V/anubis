@@ -530,29 +530,11 @@
   "welcomePinned": {
     "message": "O Anubis está na sua barra de ferramentas."
   },
-  "welcomeSearchHeading": {
-    "message": "Faça uma busca"
-  },
-  "welcomeSearchHow": {
-    "message": "Pesquise como de costume. Para ocultar, classificar ou etiquetar um site, aponte para um dos resultados dele e clique no botão ⚖."
-  },
-  "welcomeSearchFor": {
-    "message": "Pesquise “$1” para ver etiquetas das suas listas:"
-  },
-  "welcomeSearchOn": {
-    "message": "Pesquisar “$1” no $2"
-  },
   "welcomeQuery": {
     "message": "python list comprehension"
   },
   "welcomeListsHeading": {
     "message": "Suas listas"
-  },
-  "welcomeListsIntro": {
-    "message": "As listas etiquetam, elevam, rebaixam ou ocultam sites para você. Você começa com estas:"
-  },
-  "welcomeListsNone": {
-    "message": "As listas etiquetam, elevam, rebaixam ou ocultam sites para você. Você ainda não assina nenhuma."
   },
   "welcomeListsMore": {
     "message": "Desligue estas, ou encontre mais listas, nas configurações."

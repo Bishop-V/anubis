@@ -12,50 +12,49 @@
         <div class="body">
           <h1 data-i18n="welcomeHeading">Anubis is installed</h1>
           <p class="lead" data-i18n="welcomeIntro"></p>
-          <div id="scales" class="scales" aria-hidden="true"></div>
         </div>
       </header>
 
-      <section aria-labelledby="demo-heading">
-        <h2 id="demo-heading" data-i18n="welcomeDemoHeading">See how ranking works</h2>
+      <section class="try" aria-labelledby="demo-heading">
+        <h2 id="demo-heading" data-i18n="welcomeDemoHeading">Rank a site</h2>
         <div class="body">
-          <p data-i18n="welcomeDemoHow"></p>
-          <ol id="demo" class="demo" data-i18n-aria-label="welcomeDemoLabel"></ol>
+          <p id="demo-how"></p>
+          <div id="demo" class="page"></div>
           <p class="more">
-            <span id="demo-said" role="status"></span>
-            <button id="demo-reset" type="button" class="btn small" data-i18n="welcomeDemoReset">Start again</button>
+            <span data-i18n="welcomeDemoNothingSaved"></span>
+            <button id="demo-reset" type="button" class="btn small" data-i18n="welcomeDemoReset" hidden>Start again</button>
           </p>
         </div>
       </section>
 
+      <section aria-labelledby="more-heading">
+        <h2 id="more-heading" data-i18n="welcomeMoreHeading">More to try</h2>
+        <div class="body">
+          <p data-i18n="welcomeMoreHow"></p>
+          <div class="extras">
+            <details id="tags-demo">
+              <summary><span class="name" data-i18n="welcomeTagsHeading">Tag sites</span><span class="what" data-i18n="welcomeTagsWhat"></span></summary>
+              <div class="extra"></div>
+            </details>
+            <details id="lists-demo">
+              <summary><span class="name" data-i18n="welcomeListsTitle">Subscribe to lists</span><span class="what" data-i18n="welcomeListsWhat"></span></summary>
+              <div class="extra"></div>
+            </details>
+            <details id="panels-demo">
+              <summary><span class="name" data-i18n="welcomePanelsHeading">Remove panels</span><span class="what" data-i18n="welcomePanelsWhat"></span></summary>
+              <div class="extra"></div>
+            </details>
+          </div>
+        </div>
+      </section>
+
       <section aria-labelledby="pin-heading">
-        <h2 id="pin-heading" data-i18n="welcomePinHeading">Keep it in the toolbar</h2>
+        <h2 id="pin-heading" data-i18n="welcomePinHeading">Toolbar button</h2>
         <div class="body">
           <p data-i18n="welcomePinWhy"></p>
           <p id="pin" class="pin">
             <img src="/icon/32.png" alt="" width="20" height="20" />
             <span id="pin-text"></span>
-          </p>
-        </div>
-      </section>
-
-      <section aria-labelledby="search-heading">
-        <h2 id="search-heading" data-i18n="welcomeSearchHeading">Try a search</h2>
-        <div class="body">
-          <p data-i18n="welcomeSearchHow"></p>
-          <p id="search-for"></p>
-          <div id="engines" class="engines"></div>
-        </div>
-      </section>
-
-      <section aria-labelledby="lists-heading">
-        <h2 id="lists-heading" data-i18n="welcomeListsHeading">Your lists</h2>
-        <div class="body">
-          <p id="lists-intro"></p>
-          <ul id="lists" class="lists"></ul>
-          <p class="more">
-            <span data-i18n="welcomeListsMore"></span>
-            <a class="btn small" href="/options.html#lists" target="_blank" data-i18n="welcomeListsOpen">Open list settings</a>
           </p>
         </div>
       </section>

@@ -533,29 +533,11 @@
   "welcomePinned": {
     "message": "Anubis ist in deiner Symbolleiste."
   },
-  "welcomeSearchHeading": {
-    "message": "Probiere eine Suche"
-  },
-  "welcomeSearchHow": {
-    "message": "Suche wie gewohnt. Um eine Website auszublenden, einzustufen oder zu taggen, zeige auf eines ihrer Ergebnisse und klicke auf die ⚖-Schaltfläche."
-  },
-  "welcomeSearchFor": {
-    "message": "Suche nach „$1“, um Tags aus deinen Listen zu sehen:"
-  },
-  "welcomeSearchOn": {
-    "message": "Auf $2 nach „$1“ suchen"
-  },
   "welcomeQuery": {
     "message": "python list comprehension"
   },
   "welcomeListsHeading": {
     "message": "Deine Listen"
-  },
-  "welcomeListsIntro": {
-    "message": "Listen taggen Websites für dich, werten sie auf oder ab oder blenden sie aus. Du startest mit diesen:"
-  },
-  "welcomeListsNone": {
-    "message": "Listen taggen Websites für dich, werten sie auf oder ab oder blenden sie aus. Du hast noch keine abonniert."
   },
   "welcomeListsMore": {
     "message": "Schalte diese in den Einstellungen aus oder finde dort weitere Listen."

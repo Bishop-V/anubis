@@ -33,7 +33,7 @@ npm run build:chrome   # Chrome, Edge và các trình duyệt Chromium khác
 - **Firefox:** trong `about:debugging`, chọn **Firefox này → Tải tiện ích tạm thời** và chọn `.output/firefox-mv2/manifest.json`. Nó bị gỡ khi Firefox đóng.
 - **Chrome hoặc Edge:** trong `chrome://extensions` hoặc `edge://extensions`, bật **Chế độ dành cho nhà phát triển**, chọn **Tải tiện ích đã giải nén**, rồi chọn `.output/chrome-mv3` hoặc gói đã giải nén.
 
-Để giữ nút của Anubis trên thanh công cụ, hãy mở menu mảnh ghép và ghim nó.
+Anubis vẫn hoạt động khi không có nút trên thanh công cụ. Nếu muốn đặt nút ở đó, hãy mở menu mảnh ghép và ghim nó.
 
 ## Tìm kiếm như thường lệ
 

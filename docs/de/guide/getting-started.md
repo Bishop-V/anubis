@@ -33,7 +33,7 @@ npm run build:chrome   # Chrome, Edge und andere Chromium-Browser
 - **Firefox:** Wähle in `about:debugging` **Dieser Firefox → Temporäres Add-on laden** und wähle `.output/firefox-mv2/manifest.json`. Es verschwindet, wenn Firefox geschlossen wird.
 - **Chrome oder Edge:** Schalte in `chrome://extensions` oder `edge://extensions` den **Entwicklermodus** ein, wähle **Entpackte Erweiterung laden** und wähle `.output/chrome-mv3` oder das entpackte Paket.
 
-Damit die Schaltfläche von Anubis in der Symbolleiste bleibt, öffne das Puzzleteil-Menü und hefte es an.
+Anubis funktioniert auch ohne seine Schaltfläche in der Symbolleiste. Wenn du sie dort haben möchtest, öffne das Puzzleteil-Menü und hefte sie an.
 
 ## Wie gewohnt suchen
 

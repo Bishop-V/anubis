@@ -470,29 +470,11 @@
   "welcomePinned": {
     "message": "Anubis 已在你的工具列中。"
   },
-  "welcomeSearchHeading": {
-    "message": "試著搜尋一下"
-  },
-  "welcomeSearchHow": {
-    "message": "像平時一樣搜尋。要隱藏網站、為其設定排名或給它加標籤，請將滑鼠指向它的某個結果，然後點選 ⚖ 按鈕。"
-  },
-  "welcomeSearchFor": {
-    "message": "搜尋“$1”，查看你訂閱的清單給出的標籤："
-  },
-  "welcomeSearchOn": {
-    "message": "在 $2 上搜尋“$1”"
-  },
   "welcomeQuery": {
     "message": "python list comprehension"
   },
   "welcomeListsHeading": {
     "message": "你訂閱的清單"
-  },
-  "welcomeListsIntro": {
-    "message": "清單會替你給網站加標籤，或提升、降低、隱藏網站。你一開始訂閱了這些："
-  },
-  "welcomeListsNone": {
-    "message": "清單會替你給網站加標籤，或提升、降低、隱藏網站。你還沒有訂閱任何清單。"
   },
   "welcomeListsMore": {
     "message": "你可以在設定中關閉這些清單，或尋找更多清單。"

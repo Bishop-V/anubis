@@ -476,29 +476,11 @@
   "welcomePinned": {
     "message": "Anubis đã có trên thanh công cụ của bạn."
   },
-  "welcomeSearchHeading": {
-    "message": "Thử tìm kiếm"
-  },
-  "welcomeSearchHow": {
-    "message": "Tìm kiếm như bình thường. Để ẩn, xếp hạng hoặc gắn nhãn một trang web, hãy trỏ vào một kết quả của trang web đó và nhấn nút ⚖."
-  },
-  "welcomeSearchFor": {
-    "message": "Tìm “$1” để xem nhãn từ các danh sách của bạn:"
-  },
-  "welcomeSearchOn": {
-    "message": "Tìm “$1” trên $2"
-  },
   "welcomeQuery": {
     "message": "python list comprehension"
   },
   "welcomeListsHeading": {
     "message": "Các danh sách của bạn"
-  },
-  "welcomeListsIntro": {
-    "message": "Danh sách gắn nhãn, nâng, hạ hoặc ẩn trang web cho bạn. Bạn bắt đầu với các danh sách sau:"
-  },
-  "welcomeListsNone": {
-    "message": "Danh sách gắn nhãn, nâng, hạ hoặc ẩn trang web cho bạn. Bạn chưa đăng ký danh sách nào."
   },
   "welcomeListsMore": {
     "message": "Tắt các danh sách này hoặc tìm thêm danh sách trong phần cài đặt."

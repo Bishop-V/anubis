@@ -530,29 +530,11 @@
   "welcomePinned": {
     "message": "Anubis آپ کے ٹول بار میں ہے۔"
   },
-  "welcomeSearchHeading": {
-    "message": "کچھ تلاش کر کے دیکھیں"
-  },
-  "welcomeSearchHow": {
-    "message": "معمول کے مطابق تلاش کریں۔ کسی سائٹ کو چھپانے، درجہ دینے، یا اس پر ٹیگ لگانے کے لیے اس کے کسی نتیجے پر پوائنٹر لے جائیں اور ⚖ بٹن دبائیں۔"
-  },
-  "welcomeSearchFor": {
-    "message": "اپنی فہرستوں کے ٹیگ دیکھنے کے لیے “$1” تلاش کریں:"
-  },
-  "welcomeSearchOn": {
-    "message": "$2 پر “$1” تلاش کریں"
-  },
   "welcomeQuery": {
     "message": "python list comprehension"
   },
   "welcomeListsHeading": {
     "message": "آپ کی فہرستیں"
-  },
-  "welcomeListsIntro": {
-    "message": "فہرستیں آپ کے لیے سائٹوں پر ٹیگ لگاتی ہیں، انہیں اوپر یا نیچے کرتی ہیں، یا چھپاتی ہیں۔ آپ ان سے شروع کرتے ہیں:"
-  },
-  "welcomeListsNone": {
-    "message": "فہرستیں آپ کے لیے سائٹوں پر ٹیگ لگاتی ہیں، انہیں اوپر یا نیچے کرتی ہیں، یا چھپاتی ہیں۔ آپ نے ابھی کوئی فہرست سبسکرائب نہیں کی۔"
   },
   "welcomeListsMore": {
     "message": "ترتیبات میں انہیں آف کریں، یا مزید فہرستیں ڈھونڈیں۔"

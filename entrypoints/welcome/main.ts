@@ -2,30 +2,19 @@ import { machineTranslationNote } from '@/utils/translated';
 import '@/assets/theme.css';
 import './style.css';
 import { browser } from '#imports';
-import { balanceSvg, swingBalance } from '@/utils/balance';
-import { h } from '@/utils/dom';
 import { renderDemo } from './demo';
-import { ENGINES } from '@/utils/engines';
+import { renderListsExample, renderPanelsExample, renderTagsExample } from './extras';
 import { localizePage, t, type MessageKey } from '@/utils/i18n';
 import { wiki } from '@/utils/wiki';
-import { parseList } from '@/utils/listformat';
-import { getSettings, listCacheItem } from '@/utils/storage';
-import { BUNDLED_DIRECTORY, displayName, getSubscriptions, listText } from '@/utils/subscriptions';
+import { getSubscriptions } from '@/utils/subscriptions';
 import { initTheme } from '@/utils/theme';
 
-// The page that opens when Anubis is installed: example results to rank, how to keep
-// its button in the toolbar, a search to try, and the lists it starts with. Opened by the background
-// script on install only, never on updates.
+// The page that opens when Anubis is installed. Ranking comes first, as an example search
+// page to try it on (demo.ts). Tags, lists, and removing panels wait under "More to try",
+// each opened on its own (extras.ts). The toolbar button comes last: Anubis works without
+// it. Opened by the background script on install only, never on updates.
 
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
-
-/** Searches to try, on engines whose results the starter lists tag well. */
-const SEARCHES: [engine: string, url: string][] = [
-  ['google', 'https://www.google.com/search'],
-  ['duckduckgo', 'https://duckduckgo.com/'],
-  ['bing', 'https://www.bing.com/search'],
-  ['brave', 'https://search.brave.com/search'],
-];
 
 /** Each browser's own way to put an extension's button on the toolbar. */
 function pinSteps(): MessageKey {
@@ -54,77 +43,22 @@ async function renderPin() {
   $('#pin-text').textContent = pinned ? t('welcomePinned') : t(pinSteps());
 }
 
-async function renderSearch() {
-  const settings = await getSettings();
-  const query = t('welcomeQuery');
-  $('#search-for').textContent = t('welcomeSearchFor', query);
-  $('#engines').replaceChildren(
-    ...SEARCHES.filter(([id]) => settings.engines[id] !== false).map(([id, base]) => {
-      const name = ENGINES.find((e) => e.id === id)?.name ?? id;
-      const url = new URL(base);
-      url.searchParams.set('q', query);
-      return h('a', { class: 'btn', href: url.href, target: '_blank', rel: 'noopener noreferrer', title: t('welcomeSearchOn', query, name) }, name);
-    }),
-  );
-}
-
-async function renderLists() {
-  const [subs, cache] = await Promise.all([getSubscriptions(), listCacheItem.getValue()]);
-  const lists = subs
-    .filter((sub) => sub.enabled)
-    .map((sub) => {
-      const text = listText(sub, cache);
-      const parsed = text ? parseList(text) : undefined;
-      // A default list that isn't bundled has no text until its first download.
-      const description = parsed?.meta.description ?? BUNDLED_DIRECTORY.find((e) => e.url === sub.url)?.description;
-      return { name: displayName(sub, parsed?.meta), description, tags: parsed?.tags ?? [] };
-    });
-  $('#lists-intro').textContent = lists.length ? t('welcomeListsIntro') : t('welcomeListsNone');
-  $('#lists').replaceChildren(
-    ...lists.map((list) =>
-      h(
-        'li',
-        null,
-        h('span', { class: 'name' }, list.name),
-        list.description ? h('span', { class: 'description' }, list.description) : null,
-        list.tags.length
-          ? h(
-              'span',
-              { class: 'tags' },
-              list.tags.slice(0, 6).map((tag) => h('span', { class: 'tag', style: `--c: ${tag.color}`, title: tag.description ?? tag.label }, h('i', { class: 'gem' }), tag.label)),
-            )
-          : null,
-      ),
-    ),
-  );
-}
-
-/**
- * The heart and the feather: a click on either side of the balance presses that pan
- * down, and it swings back to level. It's decoration, so it's hidden from screen
- * readers, and it holds still with reduced motion.
- */
-function renderScales() {
-  const svg = balanceSvg();
-  $('#scales').replaceChildren(svg);
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  $('#scales').classList.add('moving');
-  svg.addEventListener('click', (e) => {
-    const box = svg.getBoundingClientRect();
-    swingBalance(svg, e.clientX < box.left + box.width / 2 ? -11 : 11);
-  });
+async function renderExtras() {
+  const subscribed = (await getSubscriptions()).filter((sub) => sub.enabled).length;
+  renderTagsExample($('#tags-demo .extra'));
+  renderListsExample($('#lists-demo .extra'), subscribed);
+  renderPanelsExample($('#panels-demo .extra'));
 }
 
 async function main() {
   localizePage();
   const note = machineTranslationNote();
   if (note) $('main').prepend(note);
-  renderScales();
-  renderDemo($('#demo'), $('#demo-said'), $('#demo-reset'));
+  renderDemo($('#demo-how'), $('#demo'), $('#demo-reset'));
   $<HTMLAnchorElement>('#guide').href = wiki();
   $<HTMLAnchorElement>('#privacy').href = wiki('guide/privacy');
   await initTheme();
-  await Promise.all([renderPin(), renderSearch(), renderLists()]);
+  await Promise.all([renderPin(), renderExtras()]);
   // Pinning happens in the browser's toolbar, outside this page.
   action?.onUserSettingsChanged?.addListener(() => void renderPin());
   window.addEventListener('focus', () => void renderPin());
