@@ -58,6 +58,61 @@ section p {
 }
 
 /* Rank a site: an example search page on a raised panel, so it reads as a page within the page. */
+/* The tour above the example page: which step and Skip on one line, what to do next under them. */
+.tour {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: 12px;
+  min-height: 46px;
+}
+.tour .step {
+  font-size: 12.5px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.tour .says {
+  grid-row: 2;
+  grid-column: 1 / -1;
+  font-weight: 500;
+}
+.tour.done .says {
+  font-weight: 400;
+}
+/* Skip stays quiet: the tour is an offer, not a gate. */
+.tour .text-btn {
+  grid-row: 1;
+  grid-column: 2;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--muted);
+}
+/* The control the tour points to: a ring in the text colour that pulses three times, then
+   holds still. It moves on its own, the one thing on the page that does, so it isn't missed. */
+.beckon {
+  box-shadow: 0 0 0 2px var(--text);
+}
+.weigh.beckon {
+  color: var(--text);
+  background: var(--chosen);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .beckon {
+    animation: beckon 1.4s ease-out 0.4s 3;
+  }
+}
+@keyframes beckon {
+  from {
+    box-shadow:
+      0 0 0 2px var(--text),
+      0 0 0 2px color-mix(in srgb, var(--text) 40%, transparent);
+  }
+  to {
+    box-shadow:
+      0 0 0 2px var(--text),
+      0 0 0 12px transparent;
+  }
+}
 .inline-weigh {
   display: inline-grid;
   place-items: center;
@@ -124,8 +179,30 @@ section p {
 .results li:first-child {
   border-top: 0;
 }
+.results li > .weigh {
+  grid-row: 1;
+  grid-column: 1;
+}
+.results li > .result {
+  grid-row: 1;
+  grid-column: 2;
+}
+/* Pinned: the search page's frame, in the text colour at 30%, taking in the result and its
+   button. It sits in the result's own row, so the menu under it stays outside. */
+.results li[data-level='pin']::before {
+  content: '';
+  grid-row: 1;
+  grid-column: 1 / -1;
+  margin: -7px -8px;
+  border: 1px solid color-mix(in srgb, var(--text) 30%, transparent);
+  border-radius: 10px;
+  pointer-events: none;
+}
 .page.small .results li {
   grid-template-columns: minmax(0, 1fr);
+}
+.page.small .results li > .result {
+  grid-column: 1;
 }
 .results li[data-level='hide'] .result {
   opacity: 0.6;
@@ -180,6 +257,7 @@ section p {
 
 /* The result menu, opened under its result: the site's name, the balance, the rankings, and whose choice it is. */
 .menu {
+  grid-row: 2;
   grid-column: 1 / -1;
   max-width: 340px;
   margin: 10px 0 2px;
@@ -396,22 +474,32 @@ section p {
   gap: 14px;
   font-weight: 600;
 }
-/* An AI answer, its text drawn as grey bars: the example is about the panel, not what it says. */
+/* An AI answer as engines draw one, a shaded box under a sparkle, its text drawn as grey bars:
+   the example is about the panel, not what it says. */
 .panel {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 12px 0 14px;
-  border-bottom: 1px solid var(--line);
+  margin: 12px 0;
+  padding: 12px 14px 14px;
+  border-radius: 10px;
+  background: var(--chosen);
 }
 .panel-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 13px;
   font-weight: 600;
+}
+.panel-name svg {
+  width: 15px;
+  height: 15px;
 }
 .panel .bar {
   display: block;
   height: 7px;
-  background: var(--line);
+  background: var(--line-strong);
 }
 .panel .bar.short {
   width: 60%;

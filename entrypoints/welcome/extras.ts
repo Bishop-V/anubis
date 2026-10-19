@@ -1,4 +1,6 @@
-import { h } from '@/utils/dom';
+import { h, icon } from '@/utils/dom';
+import { ICON_SPARKLE, tagEffectText, tagMark } from '@/utils/icons';
+import type { Level } from '@/utils/matcher';
 import { describeRemoved } from '@/utils/cleanup';
 import { t, tn, type MessageKey } from '@/utils/i18n';
 import { TAG_PALETTE, type ParsedList } from '@/utils/listformat';
@@ -17,18 +19,28 @@ const switchFor = (label: string, on: boolean, change: (on: boolean) => void) =>
   return h('span', { class: 'switch' }, input, h('span'));
 };
 
-/** Tags: put one of a few example tags on a result, and see it under the title. */
+interface ExampleTag {
+  id: MessageKey;
+  color: string;
+  /** What the tag does to every site that has it, shown by its mark. */
+  effect?: Level;
+}
+
+/** Tags people make for themselves: a plain label, one that raises, and one that lowers. In ochre, malachite, and umber, apart from the starter lists' colours. */
+const EXAMPLE_TAGS: ExampleTag[] = [
+  { id: 'welcomeTagTutorial', color: TAG_PALETTE[0]! },
+  { id: 'welcomeTagTrusted', color: TAG_PALETTE[2]!, effect: 'raise' },
+  { id: 'welcomeTagPaywalled', color: TAG_PALETTE[7]!, effect: 'lower' },
+];
+
+/** Tags: a result with one example tag already on, and the others to add or take off. */
 export function renderTagsExample(box: HTMLElement): void {
   const result = sample('realpython.com');
-  // Ochre, malachite, and umber: apart from each other and from the starter lists' tags.
-  const tags = ([
-    ['welcomeTagTutorial', TAG_PALETTE[0]!],
-    ['welcomeTagReadLater', TAG_PALETTE[2]!],
-    ['welcomeTagTrusted', TAG_PALETTE[7]!],
-  ] as const).map(([key, color]) => ({ id: key, label: t(key), color }));
-  const on = new Set<string>();
+  const tags = EXAMPLE_TAGS.map((tag) => ({ ...tag, label: t(tag.id) }));
+  const on = new Set<string>([tags[0]!.id]);
   const under = h('span', { class: 'chips' });
   const said = h('p', { class: 'said', attrs: { role: 'status' } });
+  const drawTags = () => under.replaceChildren(...tags.filter((x) => on.has(x.id)).map((x) => tagChip(x, x.effect)));
   const choices = tags.map((tag) =>
     h(
       'button',
@@ -36,24 +48,26 @@ export function renderTagsExample(box: HTMLElement): void {
         type: 'button',
         class: 'choice',
         style: `--c: ${tag.color}`,
-        attrs: { 'aria-pressed': 'false' },
+        attrs: { 'aria-pressed': String(on.has(tag.id)) },
         on: {
           click: (e) => {
             const added = !on.has(tag.id);
             if (added) on.add(tag.id);
             else on.delete(tag.id);
             (e.currentTarget as HTMLElement).setAttribute('aria-pressed', String(added));
-            under.replaceChildren(...tags.filter((x) => on.has(x.id)).map((x) => tagChip(x)));
+            drawTags();
             said.textContent = t(added ? 'summaryChangedTagOn' : 'summaryChangedTagOff', result.host, tag.label);
           },
         },
       },
-      h('i', { class: 'gem' }),
+      tagMark(tag.effect),
       tag.label,
+      tagEffectText(tag.effect),
     ),
   );
   const row = resultRow(result);
   row.querySelector('.chips')!.replaceWith(under);
+  drawTags();
   box.replaceChildren(
     h('p', null, t('welcomeTagsHow')),
     h('div', { class: 'choices', attrs: { role: 'group', 'aria-label': t('welcomeTagsHow') } }, choices),
@@ -70,19 +84,20 @@ const listed = (r: DemoResult, on: Set<ParsedList>) => !!r.tag && on.has(listOf(
 const raised = (r: DemoResult, on: Set<ParsedList>) => listed(r, on) && r.tag === 'docs';
 
 /** A starter list's name and description, with its switch. */
-const listSwitch = (parsed: ParsedList, change: (on: boolean) => void) =>
+const listSwitch = (parsed: ParsedList, on: boolean, change: (on: boolean) => void) =>
   h(
     'li',
     null,
     h('span', { class: 'name' }, parsed.meta.name ?? ''),
     h('span', { class: 'description' }, parsed.meta.description ?? ''),
-    switchFor(parsed.meta.name ?? '', true, change),
+    switchFor(parsed.meta.name ?? '', on, change),
   );
 
-/** Lists: three starter lists with switches, and results that gain their tags and move when one is on. */
+/** Lists: three starter lists with switches, two on, and results that gain their tags and move when one is on. */
 export function renderListsExample(box: HTMLElement, subscribed: number): void {
   const results = ['stackoverflow.com', 'en.wikipedia.org', 'docs.python.org'].map(sample);
-  const on = new Set(STARTER_LISTS);
+  // One list starts off, so there's a switch to turn on as well as ones to turn off.
+  const on = new Set(STARTER_LISTS.slice(0, -1));
   const rows = new Map(results.map((r) => [r, resultRow(r)]));
   const list = h('ol', { class: 'results' });
 
@@ -95,7 +110,7 @@ export function renderListsExample(box: HTMLElement, subscribed: number): void {
   }
 
   const switches = STARTER_LISTS.map((parsed) =>
-    listSwitch(parsed, (checked) => {
+    listSwitch(parsed, on.has(parsed), (checked) => {
       if (checked) on.add(parsed);
       else on.delete(parsed);
       draw();
@@ -110,19 +125,19 @@ export function renderListsExample(box: HTMLElement, subscribed: number): void {
   draw();
 }
 
-/** Removing panels: an AI answer above the results that a switch takes away, and the summary saying so. */
+/** Removing panels: an AI answer, marked with the sparkle engines give it, above a few results; a switch takes it away and the summary says so. */
 export function renderPanelsExample(box: HTMLElement): void {
   const panel = h(
     'div',
     { class: 'panel' },
-    h('span', { class: 'panel-name' }, t('welcomePanelsExample')),
+    h('span', { class: 'panel-name' }, icon(ICON_SPARKLE), t('welcomePanelsExample')),
     // Stand-ins for the answer's text: the example is about the panel, not what it says.
     h('span', { class: 'bar' }),
     h('span', { class: 'bar' }),
     h('span', { class: 'bar short' }),
   );
   const summary = h('p', { class: 'summary', attrs: { role: 'status' } });
-  const result = sample('docs.python.org');
+  const results = ['docs.python.org', 'realpython.com', 'stackoverflow.com'].map((host) => resultRow(sample(host)));
   const label = t('cleanupAi');
   box.replaceChildren(
     h(
@@ -134,7 +149,7 @@ export function renderPanelsExample(box: HTMLElement): void {
         summary.textContent = checked ? t('summaryRemovedOnly', describeRemoved({ ai: 1 })) : '';
       }),
     ),
-    h('div', { class: 'page small' }, summary, panel, h('ol', { class: 'results' }, resultRow(result))),
+    h('div', { class: 'page small' }, summary, panel, h('ol', { class: 'results' }, results)),
     h('p', { class: 'more' }, h('span', null, t('welcomePanelsMore')), settingsLink('cleanup', 'welcomePanelsOpen')),
   );
 }
