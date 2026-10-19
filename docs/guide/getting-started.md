@@ -33,7 +33,7 @@ npm run build:chrome   # Chrome, Edge, and other Chromium browsers
 - **Firefox:** in `about:debugging`, choose **This Firefox → Load Temporary Add-on** and pick `.output/firefox-mv2/manifest.json`. It's removed when Firefox closes.
 - **Chrome or Edge:** in `chrome://extensions` or `edge://extensions`, turn on **Developer mode**, choose **Load unpacked**, and pick `.output/chrome-mv3` or the extracted package.
 
-To keep Anubis's button in the toolbar, open the puzzle-piece menu and pin it.
+Anubis works without its toolbar button. If you'd like it there, open the puzzle-piece menu and pin it.
 
 ## Search as usual
 

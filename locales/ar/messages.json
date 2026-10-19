@@ -782,29 +782,11 @@
   "welcomePinned": {
     "message": "Anubis في شريط أدواتك."
   },
-  "welcomeSearchHeading": {
-    "message": "جرّب بحثًا"
-  },
-  "welcomeSearchHow": {
-    "message": "ابحث كما تفعل عادةً. لإخفاء موقع أو ترتيبه أو وسمه، أشِر إلى إحدى نتائجه واضغط على زر ⚖."
-  },
-  "welcomeSearchFor": {
-    "message": "ابحث عن «$1» لترى وسومًا من قوائمك:"
-  },
-  "welcomeSearchOn": {
-    "message": "البحث عن «$1» في $2"
-  },
   "welcomeQuery": {
     "message": "python list comprehension"
   },
   "welcomeListsHeading": {
     "message": "قوائمك"
-  },
-  "welcomeListsIntro": {
-    "message": "تَسِم القوائم المواقع لك وترفعها وتخفضها وتخفيها. تبدأ بهذه القوائم:"
-  },
-  "welcomeListsNone": {
-    "message": "تَسِم القوائم المواقع لك وترفعها وتخفضها وتخفيها. لست مشتركًا في أي قائمة بعد."
   },
   "welcomeListsMore": {
     "message": "أوقف هذه القوائم أو اعثر على المزيد منها في الإعدادات."

@@ -467,29 +467,11 @@
   "welcomePinned": {
     "message": "Anubis はツールバーにあります。"
   },
-  "welcomeSearchHeading": {
-    "message": "検索してみる"
-  },
-  "welcomeSearchHow": {
-    "message": "いつもどおりに検索してください。サイトを非表示、ランク付け、タグ付けするには、その検索結果にポインタを合わせて ⚖ ボタンを押します。"
-  },
-  "welcomeSearchFor": {
-    "message": "「$1」を検索して、リストのタグを確認しましょう："
-  },
-  "welcomeSearchOn": {
-    "message": "$2 で「$1」を検索"
-  },
   "welcomeQuery": {
     "message": "python リスト内包表記"
   },
   "welcomeListsHeading": {
     "message": "購読中のリスト"
-  },
-  "welcomeListsIntro": {
-    "message": "リストが代わりにサイトのタグ付け、格上げ、格下げ、非表示を行います。最初は次のリストを使います："
-  },
-  "welcomeListsNone": {
-    "message": "リストが代わりにサイトのタグ付け、格上げ、格下げ、非表示を行います。まだどのリストも購読していません。"
   },
   "welcomeListsMore": {
     "message": "これらをオフにしたり、ほかのリストを探したりするには、設定を開いてください。"

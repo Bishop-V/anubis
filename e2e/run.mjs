@@ -2442,9 +2442,6 @@ if (!only || only === 'welcome') {
   const check = () =>
     welcome.evaluate(() => ({
       pin: document.querySelector('#pin-text')?.textContent,
-      engines: [...document.querySelectorAll('#engines a')].map((a) => `${a.textContent} ${new URL(a.href).host}`),
-      lists: [...document.querySelectorAll('#lists .name')].map((el) => el.textContent),
-      tags: document.querySelectorAll('#lists .tag').length,
       scrollsSideways: document.documentElement.scrollWidth > innerWidth,
     }));
   for (const scheme of ['dark', 'light']) {
@@ -2454,22 +2451,65 @@ if (!only || only === 'welcome') {
     await welcome.waitForTimeout(300);
     await welcome.screenshot({ path: `${SHOTS}welcome-${scheme}.png`, fullPage: true });
   }
-  // The example results: Lower moves the first result down a place, Raise moves it back,
-  // and the end results can't go further.
-  const demoOrder = () => welcome.evaluate(() => [...document.querySelectorAll('#demo .host')].map((el) => el.textContent));
+  // The example search page: a result's button opens the menu, Pin puts its site first,
+  // Hide takes one away with Undo and Show hidden to bring it back, and Start again
+  // restores the engine's order.
+  const demoOrder = () => welcome.evaluate(() => [...document.querySelectorAll('#demo .results .host')].map((el) => el.textContent));
+  const demoText = (sel) => welcome.evaluate((sel) => document.querySelector(sel)?.textContent ?? '', sel);
+  const rank = async (site, level) => {
+    await welcome.click(`#demo .results li:nth-child(${(await demoOrder()).indexOf(site) + 1}) .weigh`);
+    await welcome.click(`#demo-menu button.${level}`);
+    await welcome.waitForTimeout(400);
+  };
   const first = await demoOrder();
-  await welcome.click('#demo li:first-child button:last-of-type');
-  const lowered = await demoOrder();
-  const said = await welcome.textContent('#demo-said');
-  await welcome.click('#demo li:nth-child(2) button:first-of-type');
-  const raised = await demoOrder();
+  await rank('docs.python.org', 'pin');
+  const pinned = await demoOrder();
+  const menuOpen = await welcome.evaluate(() => !!document.querySelector('#demo .results li #demo-menu'));
+  await welcome.screenshot({ path: `${SHOTS}welcome-demo-menu.png`, clip: await welcome.evaluate(() => { const r = document.querySelector('#demo').getBoundingClientRect(); return { x: r.x - 8, y: r.y + scrollY - 8, width: r.width + 16, height: r.height + 16 }; }) });
+  await welcome.keyboard.press('Escape');
+  await rank('w3schools.com', 'hide');
+  const hidden = await demoOrder();
+  const summary = await demoText('#demo .summary');
+  const said = await demoText('#demo .said');
+  await welcome.click('#demo .summary .text-btn');
+  const revealed = await demoOrder();
+  await welcome.click('#demo .said .text-btn');
+  const undone = await demoOrder();
   await welcome.click('#demo-reset');
   const reset = await demoOrder();
-  const topRaiseDisabled = await welcome.evaluate(() => document.querySelector('#demo li:first-child button').disabled);
-  console.log('\n== welcome demo:', JSON.stringify({ first, lowered, said, raised, reset, topRaiseDisabled }));
-  if (lowered[1] !== first[0] || lowered[0] !== first[1] || raised.join() !== first.join() || reset.join() !== first.join() || !topRaiseDisabled || !said) {
-    throw new Error('the welcome page demo did not rerank');
+  console.log('\n== welcome demo:', JSON.stringify({ first, pinned, menuOpen, hidden, summary, said, revealed, undone, reset }));
+  if (
+    pinned[0] !== 'docs.python.org' ||
+    !menuOpen ||
+    hidden.includes('w3schools.com') ||
+    hidden.length !== first.length - 1 ||
+    !/pinned 1 and hid 1 of 6 results/.test(summary) ||
+    !/Hid w3schools\.com/.test(said) ||
+    !revealed.includes('w3schools.com') ||
+    !undone.includes('w3schools.com') ||
+    reset.join() !== first.join()
+  ) {
+    throw new Error('the welcome page demo did not rank');
   }
+  // More to try: turning Official docs off takes its tag away and lets docs.python.org
+  // fall back; a tag goes under the title; the AI answer goes with its switch.
+  await welcome.click('#lists-demo summary');
+  const listsBefore = await welcome.evaluate(() => [...document.querySelectorAll('#lists-demo .host')].map((el) => el.textContent));
+  await welcome.click('#lists-demo .switches li:first-child .switch input');
+  await welcome.waitForTimeout(400);
+  const listsAfter = await welcome.evaluate(() => [...document.querySelectorAll('#lists-demo .host')].map((el) => el.textContent));
+  await welcome.click('#tags-demo summary');
+  await welcome.click('#tags-demo .choice');
+  const tagged = await demoText('#tags-demo .chips');
+  await welcome.click('#panels-demo summary');
+  await welcome.click('#panels-demo .switch input');
+  const panelGone = await welcome.evaluate(() => document.querySelector('#panels-demo .panel').hidden);
+  const listCount = await demoText('#lists-demo .more span');
+  console.log('\n== welcome extras:', JSON.stringify({ listsBefore, listsAfter, tagged, panelGone, listCount }));
+  if (listsBefore[0] !== 'docs.python.org' || listsAfter[0] === 'docs.python.org' || !tagged || !panelGone) {
+    throw new Error('the welcome page extras did not respond');
+  }
+  await welcome.screenshot({ path: `${SHOTS}welcome-extras.png`, fullPage: true });
   const desktop = await check();
   await welcome.setViewportSize({ width: 390, height: 844 });
   await welcome.waitForTimeout(200);

@@ -530,29 +530,11 @@
   "welcomePinned": {
     "message": "Anubis आपके टूलबार में है।"
   },
-  "welcomeSearchHeading": {
-    "message": "कुछ खोजकर देखें"
-  },
-  "welcomeSearchHow": {
-    "message": "जैसे आप आम तौर पर खोजते हैं, वैसे ही खोजें। किसी साइट को छिपाने, रैंक करने या टैग करने के लिए, उसके किसी नतीजे पर पॉइंटर ले जाएं और ⚖ बटन दबाएं।"
-  },
-  "welcomeSearchFor": {
-    "message": "अपनी सूचियों के टैग देखने के लिए “$1” खोजें:"
-  },
-  "welcomeSearchOn": {
-    "message": "$2 पर “$1” खोजें"
-  },
   "welcomeQuery": {
     "message": "python list comprehension"
   },
   "welcomeListsHeading": {
     "message": "आपकी सूचियां"
-  },
-  "welcomeListsIntro": {
-    "message": "सूचियां आपके लिए साइटों को टैग करती हैं, ऊपर या नीचे करती हैं, या छिपाती हैं। शुरुआत में आपके पास ये हैं:"
-  },
-  "welcomeListsNone": {
-    "message": "सूचियां आपके लिए साइटों को टैग करती हैं, ऊपर या नीचे करती हैं, या छिपाती हैं। आपने अभी तक किसी सूची की सदस्यता नहीं ली है।"
   },
   "welcomeListsMore": {
     "message": "सेटिंग में इन्हें बंद करें या और सूचियां ढूंढें।"

@@ -656,29 +656,11 @@
   "welcomePinned": {
     "message": "Anubis уже на панели инструментов."
   },
-  "welcomeSearchHeading": {
-    "message": "Попробуйте поиск"
-  },
-  "welcomeSearchHow": {
-    "message": "Ищите как обычно. Чтобы скрыть сайт, задать ему ранг или пометить его, наведите указатель на один из его результатов и нажмите кнопку ⚖."
-  },
-  "welcomeSearchFor": {
-    "message": "Поищите «$1», чтобы увидеть метки из ваших списков:"
-  },
-  "welcomeSearchOn": {
-    "message": "Искать «$1» в $2"
-  },
   "welcomeQuery": {
     "message": "python list comprehension"
   },
   "welcomeListsHeading": {
     "message": "Ваши списки"
-  },
-  "welcomeListsIntro": {
-    "message": "Списки помечают, поднимают, понижают или скрывают сайты за вас. Для начала у вас есть эти:"
-  },
-  "welcomeListsNone": {
-    "message": "Списки помечают, поднимают, понижают или скрывают сайты за вас. Вы пока не подписаны ни на один."
   },
   "welcomeListsMore": {
     "message": "Выключить их или найти другие списки можно в настройках."

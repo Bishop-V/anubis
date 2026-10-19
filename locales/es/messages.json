@@ -530,29 +530,11 @@
   "welcomePinned": {
     "message": "Anubis está en tu barra de herramientas."
   },
-  "welcomeSearchHeading": {
-    "message": "Prueba una búsqueda"
-  },
-  "welcomeSearchHow": {
-    "message": "Busca como siempre. Para ocultar, clasificar o etiquetar un sitio, señala uno de sus resultados y pulsa el botón ⚖."
-  },
-  "welcomeSearchFor": {
-    "message": "Busca «$1» para ver etiquetas de tus listas:"
-  },
-  "welcomeSearchOn": {
-    "message": "Buscar «$1» en $2"
-  },
   "welcomeQuery": {
     "message": "python list comprehension"
   },
   "welcomeListsHeading": {
     "message": "Tus listas"
-  },
-  "welcomeListsIntro": {
-    "message": "Las listas etiquetan, suben, bajan u ocultan sitios por ti. Empiezas con estas:"
-  },
-  "welcomeListsNone": {
-    "message": "Las listas etiquetan, suben, bajan u ocultan sitios por ti. Todavía no estás suscrito a ninguna."
   },
   "welcomeListsMore": {
     "message": "Desactívalas, o encuentra más listas, en los ajustes."

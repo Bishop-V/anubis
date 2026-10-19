@@ -530,29 +530,11 @@
   "welcomePinned": {
     "message": "Anubis আপনার টুলবারে আছে।"
   },
-  "welcomeSearchHeading": {
-    "message": "একটি সার্চ করে দেখুন"
-  },
-  "welcomeSearchHow": {
-    "message": "যেভাবে সাধারণত সার্চ করেন সেভাবেই করুন। কোনো সাইট লুকাতে, র‍্যাঙ্ক করতে বা ট্যাগ করতে তার কোনো ফলাফলের উপর পয়েন্টার রেখে ⚖ বোতাম টিপুন।"
-  },
-  "welcomeSearchFor": {
-    "message": "আপনার তালিকাগুলির ট্যাগ দেখতে “$1” সার্চ করুন:"
-  },
-  "welcomeSearchOn": {
-    "message": "$2-এ “$1” সার্চ করুন"
-  },
   "welcomeQuery": {
     "message": "python list comprehension"
   },
   "welcomeListsHeading": {
     "message": "আপনার তালিকাগুলি"
-  },
-  "welcomeListsIntro": {
-    "message": "তালিকাগুলি আপনার জন্য সাইট ট্যাগ করে, উপরে তোলে, নিচে নামায় বা লুকায়। আপনি এগুলি দিয়ে শুরু করছেন:"
-  },
-  "welcomeListsNone": {
-    "message": "তালিকাগুলি আপনার জন্য সাইট ট্যাগ করে, উপরে তোলে, নিচে নামায় বা লুকায়। আপনি এখনও কোনো তালিকা সাবস্ক্রাইব করেননি।"
   },
   "welcomeListsMore": {
     "message": "সেটিংসে গিয়ে এগুলি বন্ধ করুন বা আরও তালিকা খুঁজুন।"

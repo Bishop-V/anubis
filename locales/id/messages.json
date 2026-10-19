@@ -467,29 +467,11 @@
   "welcomePinned": {
     "message": "Anubis sudah ada di toolbar Anda."
   },
-  "welcomeSearchHeading": {
-    "message": "Coba lakukan penelusuran"
-  },
-  "welcomeSearchHow": {
-    "message": "Telusuri seperti biasa. Untuk menyembunyikan, memberi peringkat, atau memberi tag pada situs, arahkan kursor ke salah satu hasilnya dan tekan tombol ⚖."
-  },
-  "welcomeSearchFor": {
-    "message": "Telusuri “$1” untuk melihat tag dari daftar Anda:"
-  },
-  "welcomeSearchOn": {
-    "message": "Telusuri “$1” di $2"
-  },
   "welcomeQuery": {
     "message": "python list comprehension"
   },
   "welcomeListsHeading": {
     "message": "Daftar Anda"
-  },
-  "welcomeListsIntro": {
-    "message": "Daftar memberi tag, menaikkan, menurunkan, atau menyembunyikan situs untuk Anda. Anda mulai dengan daftar berikut:"
-  },
-  "welcomeListsNone": {
-    "message": "Daftar memberi tag, menaikkan, menurunkan, atau menyembunyikan situs untuk Anda. Anda belum berlangganan daftar apa pun."
   },
   "welcomeListsMore": {
     "message": "Nonaktifkan daftar ini, atau temukan daftar lain, di setelan."

@@ -1,6 +1,7 @@
 /* The welcome page. On a wide window it's the settings page's two columns: section
    names down the left, what to do on the right, sections divided by hairlines.
-   On a narrow one it's a single column. The logo is the only ornament. */
+   On a narrow one it's a single column. The logo is the only ornament; the example
+   search page, with the result menu's balance, is the one thing to play with. */
 
 main {
   max-width: 1040px;
@@ -39,21 +40,6 @@ h1 {
   font-size: 16px;
   color: var(--muted);
 }
-/* The balance under the lead: the one thing on the page that moves, and only when clicked. */
-.scales {
-  margin-top: 22px;
-}
-.scales svg {
-  display: block;
-  width: 176px;
-  height: 54px;
-  color: var(--muted);
-  overflow: visible;
-}
-.scales.moving svg {
-  cursor: pointer;
-}
-
 section {
   align-items: baseline;
   padding: 28px 0 30px;
@@ -71,50 +57,367 @@ section p {
   margin-bottom: 0;
 }
 
-/* See how ranking works: example results, each under a hairline, with Raise and Lower at the end. */
-.demo {
-  list-style: none;
+/* Rank a site: an example search page on a raised panel, so it reads as a page within the page. */
+.inline-weigh {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin: 0 2px;
+  vertical-align: -6px;
+  border-radius: 50%;
+  background: var(--chosen);
+}
+.inline-weigh svg {
+  width: 14px;
+  height: 14px;
+}
+.page {
   margin: 14px 0 12px;
+  padding: 16px 18px 6px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--raised);
+}
+/* The search, drawn as a search field that can't be typed in. */
+.query {
+  max-width: 360px;
+  padding: 5px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.summary-box {
+  margin: 12px 0 2px;
+  font-size: 13px;
+}
+.summary,
+.said {
+  margin: 0;
+}
+.summary {
+  color: var(--muted);
+}
+.summary .text-btn,
+.said .text-btn {
+  margin-inline-start: 8px;
+}
+.said:empty,
+.summary:empty,
+.chips:empty {
+  display: none;
+}
+.results {
+  list-style: none;
+  margin: 0;
   padding: 0;
 }
-.demo li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px 16px;
+.results li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  column-gap: 12px;
   padding: 12px 0;
   border-top: 1px solid var(--line);
-  background: var(--bg);
+  background: var(--raised);
 }
-.demo li:last-child {
-  border-bottom: 1px solid var(--line);
+.results li:first-child {
+  border-top: 0;
 }
-.demo .result {
+.page.small .results li {
+  grid-template-columns: minmax(0, 1fr);
+}
+.results li[data-level='hide'] .result {
+  opacity: 0.6;
+}
+.result {
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
 }
-.demo .host {
+.host {
+  font-size: 12.5px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.title {
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 14px;
+  margin-top: 4px;
+}
+
+/* The button beside each result, as the column's on a search page: the ranking's icon in a round button. */
+.weigh {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.weigh:hover,
+.weigh[aria-expanded='true'] {
+  color: var(--text);
+  background: var(--chosen);
+}
+.weigh[data-level='pin'] {
+  color: var(--text);
+}
+.weigh svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* The result menu, opened under its result: the site's name, the balance, the rankings, and whose choice it is. */
+.menu {
+  grid-column: 1 / -1;
+  max-width: 340px;
+  margin: 10px 0 2px;
+  padding: 8px 10px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--bg);
+}
+.menu-head {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 28px;
+  align-items: center;
+}
+.menu-head .name {
+  grid-column: 2;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.balance {
+  display: block;
+  width: 112px;
+  height: 34px;
+  margin: 2px auto 6px;
+  color: var(--muted);
+  overflow: visible;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .balance .beam,
+  .balance .pan {
+    transition: transform 0.45s cubic-bezier(0.34, 1.45, 0.5, 1);
+  }
+}
+/* Hide | Lower, Normal, Raise | Pin, as in the result menu and the popup. */
+.seg.levels {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 2px;
+  width: 100%;
+}
+.levels .sep {
+  flex: none;
+  width: 1px;
+  margin: 6px 4px;
+  background: var(--line);
+}
+.levels button {
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  padding: 6px 0 5px;
+  border: 0;
+  border-radius: 8px;
+  font-size: 12px;
+  text-align: center;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.levels .level-icon {
+  color: var(--dim);
+}
+.levels .level-icon svg {
+  width: 15px;
+  height: 15px;
+}
+.levels .level-icon .lit {
+  stroke: var(--text);
+}
+.levels .level-icon .unlit {
+  stroke: var(--dim);
+}
+.levels button:hover {
+  background: var(--chosen);
+}
+.levels button[aria-pressed='true'] {
+  background: var(--chosen);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+  font-weight: 400;
+}
+.levels button[aria-pressed='true'] .level-icon {
+  color: var(--text);
+}
+.hint {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+}
+#demo-reset {
+  margin-inline-start: auto;
+}
+
+/* More to try: each example folds away under its name, so the page stays on ranking. */
+.extras {
+  margin-top: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.extras details {
+  border-top: 1px solid var(--line);
+}
+.extras summary {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 12px;
+  padding: 12px 24px 12px 0;
+  list-style: none;
+  cursor: pointer;
+}
+/* The one caret, pointing down while closed and up while open. */
+.extras summary::after {
+  content: '';
+  position: absolute;
+  inset-inline-end: 4px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -5px;
+  border-right: 1.5px solid var(--muted);
+  border-bottom: 1.5px solid var(--muted);
+  transform: rotate(45deg);
+}
+.extras details[open] summary::after {
+  margin-top: -1px;
+  transform: rotate(-135deg);
+}
+.extras summary::-webkit-details-marker {
+  display: none;
+}
+.extras summary .name {
+  font-weight: 600;
+}
+.extras summary .what {
+  font-size: 13px;
+  color: var(--muted);
+}
+.extras summary:hover .name {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.extra {
+  padding-bottom: 18px;
+}
+.page.small {
+  margin: 12px 0;
+  padding: 4px 18px;
+}
+.page.small .said {
+  padding: 0 0 12px;
+  font-size: 13px;
+}
+.page.small .summary {
+  padding-top: 12px;
+  font-size: 13px;
+}
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 26px;
+  padding: 0 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.choice:hover {
+  border-color: var(--accent);
+}
+.choice[aria-pressed='true'] {
+  background: var(--chosen);
+  font-weight: 600;
+}
+/* The starter lists, each with its switch, as in Settings → Lists. */
+.switches {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+.switches li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 16px;
+  padding: 8px 0;
+}
+.switches .name {
+  font-weight: 600;
+}
+.switches .description {
+  grid-row: 2;
   font-size: 12.5px;
   color: var(--muted);
 }
-.demo .title {
-  overflow-wrap: anywhere;
+.switches .switch {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
 }
-.demo .actions {
+.switch-row {
   display: flex;
-  flex: none;
-  gap: 6px;
+  align-items: center;
+  gap: 14px;
+  font-weight: 600;
 }
-.demo .btn:disabled {
-  cursor: default;
+/* An AI answer, its text drawn as grey bars: the example is about the panel, not what it says. */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 0 14px;
+  border-bottom: 1px solid var(--line);
 }
-#demo-said:empty {
-  display: none;
+.panel-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+.panel .bar {
+  display: block;
+  height: 7px;
+  background: var(--line);
+}
+.panel .bar.short {
+  width: 60%;
 }
 
-/* Keep it in the toolbar: the toolbar icon beside the steps, so it's easy to spot. */
+/* Toolbar button: the toolbar icon beside the steps, so it's easy to spot. */
 .pin {
   display: flex;
   align-items: flex-start;
@@ -129,42 +432,6 @@ section p {
   font-weight: 600;
 }
 
-/* Try a search */
-.engines {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-/* Your lists: two across, each under its own hairline, like the settings' engines. */
-.lists {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  column-gap: 32px;
-  list-style: none;
-  margin: 14px 0 18px;
-  padding: 0;
-}
-.lists li {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding: 12px 0 14px;
-  border-top: 1px solid var(--line);
-}
-.lists .name {
-  font-weight: 600;
-}
-.lists .description {
-  font-size: 13px;
-  color: var(--muted);
-}
-.lists .tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px 14px;
-  margin-top: 4px;
-}
 .more {
   display: flex;
   flex-wrap: wrap;
@@ -217,6 +484,19 @@ footer a:hover {
 @media (max-width: 600px) {
   main {
     padding: 36px 16px 32px;
+  }
+  /* Room for the five rankings' words at 320px. */
+  .page {
+    padding: 12px 12px 4px;
+  }
+  .page.small {
+    padding: 4px 12px;
+  }
+  .results li {
+    column-gap: 8px;
+  }
+  .menu {
+    padding: 8px 4px 10px;
   }
   h1 {
     font-size: 29px;
