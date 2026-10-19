@@ -205,8 +205,12 @@ export default defineContentScript({
       stats.filter = filter;
       for (const result of results) {
         const out = !!filter && !verdictFor(result).tags.includes(filter);
+        const wasOut = result.container.hasAttribute('data-anubis-filtered');
         result.container.toggleAttribute('data-anubis-filtered', out);
         for (const row of result.extras) row.toggleAttribute('data-anubis-filtered', out);
+        // Its button was placed while the result was display: none, with no layout to measure
+        // (it fell back to the plain shape, off the column): place it again now it's back.
+        if (wasOut && !out) applyVerdict(result, verdictFor(result), theme);
       }
 
       // Cards sit in a grid, which reranking's flex column would break: they move with `order` alone,
