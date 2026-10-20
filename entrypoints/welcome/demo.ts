@@ -31,8 +31,8 @@ import { RESULTS, STARTER_TAGS, resultBody, slide, tagChip, type DemoResult } fr
 const SHIFT: Partial<Record<PersonalLevel, number>> = { raise: -5.5, raise2: -10.5, lower: 5.5, lower2: 10.5 };
 /** How far each one tips the balance: the places it moves the site. */
 const SCORE: Partial<Record<PersonalLevel, number>> = { raise: 5, raise2: 10, lower: -5, lower2: -10 };
-/** The result the tour starts on: a site people trust more than a shop, third on the page. */
-const TOUR_SITE = 'en.wikipedia.org';
+/** The result the tour starts on: a source people trust more than lecture notes, third on the page. */
+const TOUR_SITE = 'plato.stanford.edu';
 const TOUR_STEPS = 3;
 const RANK_TITLES: Record<Level, MessageKey> = {
   hide: 'popupRankHide',

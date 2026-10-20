@@ -23,43 +23,44 @@ export interface DemoResult {
 /** English on purpose: the sample results are for the search in welcomeQuery, which stays in English. In the engine's order. */
 export const RESULTS: DemoResult[] = [
   {
-    host: 'amazon.com',
-    path: 'noise-cancelling-headphones › s',
-    title: 'Amazon.com: Noise Cancelling Headphones',
-    snippet: 'Over 10,000 results for "noise cancelling headphones". Sponsored. Free delivery on eligible orders.',
-  },
-  {
-    host: 'techradar.com',
-    path: 'news › best-noise-cancelling-headphones',
-    title: 'The 12 best noise-cancelling headphones 2026: tested and ranked',
-    snippet: 'Our experts have picked the best noise-cancelling headphones you can buy, with deals updated daily.',
-  },
-  {
-    host: 'en.wikipedia.org',
-    path: 'wiki › Noise-cancelling_headphones',
-    title: 'Noise-cancelling headphones - Wikipedia',
-    snippet: 'Noise-cancelling headphones reduce unwanted sound from around you by playing a second sound that cancels it out.',
-    tag: 'reference',
-  },
-  {
-    host: 'nytimes.com',
-    path: 'wirecutter › reviews › best-noise-cancelling-headphones',
-    title: 'The Best Noise-Cancelling Headphones | Reviews by Wirecutter',
-    snippet: 'After testing dozens of pairs on planes, trains, and busy streets, these are the ones we recommend.',
-    tag: 'paywall',
-  },
-  {
-    host: 'reddit.com',
-    path: 'r › headphones › comments',
-    title: 'Which noise cancelling headphones are actually worth it? : r/headphones',
-    snippet: "I've owned the Sony, the Bose, and the AirPods Max. Here's which ones I'd actually buy again.",
-    tag: 'forum',
+    host: 'studocu.com',
+    path: 'document › trolley-problem-ethics-notes',
+    title: 'Trolley Problem - Ethics Lecture Notes - Studocu',
+    snippet: 'Notes from PHIL 101, week 4. Sign up or upload a document to read the full text.',
   },
   {
     host: 'youtube.com',
     path: 'watch',
-    title: 'Sony vs Bose vs Apple: Which Should You Buy?',
-    snippet: 'We compared noise cancelling, sound, comfort, and battery life over a month of daily use.',
+    title: 'Would You Pull the Lever? The Trolley Problem Explained',
+    snippet: "Five people, one lever, and a very hard choice. Here's why this thought experiment won't go away.",
+  },
+  {
+    host: 'plato.stanford.edu',
+    path: 'entries › doing-allowing',
+    title: 'Doing vs. Allowing Harm (Stanford Encyclopedia of Philosophy)',
+    snippet: 'Is it worse to kill someone than to let them die? The trolley problem is one of the cases philosophers use to ask.',
+    tag: 'reference',
+  },
+  {
+    host: 'nytimes.com',
+    path: 'opinion › trolley-problem',
+    title: 'The Trolley Problem Is Back',
+    snippet: 'Self-driving cars have turned an old thought experiment into a question engineers have to answer.',
+    tag: 'paywall',
+  },
+  {
+    host: 'reddit.com',
+    path: 'r › philosophy › comments',
+    title: 'Why is the trolley problem such a big deal? : r/philosophy',
+    snippet: 'Everyone I ask just says pull the lever. What am I missing?',
+    tag: 'forum',
+  },
+  {
+    host: 'en.wikipedia.org',
+    path: 'wiki › Trolley_problem',
+    title: 'Trolley problem - Wikipedia',
+    snippet: 'The trolley problem is a series of thought experiments in ethics about whether to sacrifice one person to save a larger number.',
+    tag: 'reference',
   },
 ];
 

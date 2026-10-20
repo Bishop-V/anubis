@@ -28,14 +28,14 @@ interface ExampleTag {
 
 /** Tags people make for themselves: a plain label, one that raises, and one that lowers. In ochre, malachite, and umber, apart from the starter lists' colours. */
 const EXAMPLE_TAGS: ExampleTag[] = [
-  { id: 'welcomeTagReviews', color: TAG_PALETTE[0]! },
+  { id: 'welcomeTagNotes', color: TAG_PALETTE[0]! },
   { id: 'welcomeTagTrusted', color: TAG_PALETTE[2]!, effect: 'raise' },
-  { id: 'welcomeTagAds', color: TAG_PALETTE[7]!, effect: 'lower' },
+  { id: 'welcomeTagSignUp', color: TAG_PALETTE[7]!, effect: 'lower' },
 ];
 
 /** Tags: a result with one example tag already on, and the others to add or take off. */
 export function renderTagsExample(box: HTMLElement): void {
-  const result = sample('techradar.com');
+  const result = sample('studocu.com');
   const tags = EXAMPLE_TAGS.map((tag) => ({ ...tag, label: t(tag.id) }));
   const on = new Set<string>([tags[0]!.id]);
   const under = h('span', { class: 'chips' });
@@ -132,7 +132,7 @@ export function renderPanelsExample(box: HTMLElement): void {
     h('span', { class: 'bar short' }),
   );
   const summary = h('p', { class: 'summary', attrs: { role: 'status' } });
-  const results = ['techradar.com', 'reddit.com', 'nytimes.com'].map((host) => resultRow(sample(host)));
+  const results = ['plato.stanford.edu', 'en.wikipedia.org', 'reddit.com'].map((host) => resultRow(sample(host)));
   const label = t('cleanupAi');
   box.replaceChildren(
     h(
