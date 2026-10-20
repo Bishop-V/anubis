@@ -11,9 +11,10 @@ import { initTheme } from '@/utils/theme';
 
 // The page that opens when Anubis is installed. Ranking comes first: a headline says what
 // Anubis is for, and a practice search page, with a short tour and a checklist of its
-// three steps, lets people try it (demo.ts). Tags, lists, and removing panels wait under "More to try", each opened on
-// its own (extras.ts). The toolbar button comes last: Anubis works without it. Opened by
-// the background script on install only, never on updates.
+// three steps, lets people try it (demo.ts). Tags, lists, and removing panels wait under
+// "More to try", each opened on its own (extras.ts). The toolbar button comes last:
+// Anubis works without it. Opened by the background script on install only, never on
+// updates.
 
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
 
