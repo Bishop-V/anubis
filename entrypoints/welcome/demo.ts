@@ -1,12 +1,12 @@
 import { balanceSvg, setBalance } from '@/utils/balance';
 import { h, icon } from '@/utils/dom';
 import { gap, t, tParts, type MessageKey } from '@/utils/i18n';
-import { ICON_CLOSE, LEVEL_CHIPS, LEVEL_LABELS, levelIcon, rankIcon, WEIGH_ICONS } from '@/utils/icons';
+import { ICON_CHECK, ICON_CLOSE, ICON_SEARCH, LEVEL_CHIPS, LEVEL_LABELS, levelIcon, rankIcon, WEIGH_ICONS } from '@/utils/icons';
 import { LEVELS, type Level } from '@/utils/matcher';
 import { displayLevel, levelSteps, type PersonalLevel } from '@/utils/personal';
 import { nextLevel, type Ranking } from '@/utils/siteranking';
 import { changeSentence, summarySentence } from '@/utils/summary';
-import { RESULTS, STARTER_TAGS, slide, tagChip, type DemoResult } from './parts';
+import { RESULTS, STARTER_TAGS, resultBody, slide, tagChip, type DemoResult } from './parts';
 
 // The welcome page's first impression: an example search page to rank sites on, with
 // the same parts a real one has. The balance button beside each result opens the
@@ -41,13 +41,21 @@ const RANK_TITLES: Record<Level, MessageKey> = {
   pin: 'popupRankPin',
 };
 
-export function renderDemo(page: HTMLElement, reset: HTMLElement): void {
+/** The checklist beside the practice search on a wide window: its steps, and the line once all are done. */
+export interface Checklist {
+  list: HTMLElement;
+  done: HTMLElement;
+}
+
+const STEPS: MessageKey[] = ['welcomeStepOpen', 'welcomeStepRank', 'welcomeStepHide'];
+
+export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Checklist): void {
   const levels = new Map<string, PersonalLevel>(RESULTS.map((r) => [r.host, 'normal']));
   let revealed = false;
   let open: DemoResult | undefined;
   let last: { host: string; before: PersonalLevel; after: PersonalLevel } | undefined;
-  /** The tour's progress: the first site ranked, whether a site was hidden, and whether it was skipped or closed. */
-  const tour: { first?: string; hid: boolean; skipped: boolean; closed: boolean } = { hid: false, skipped: false, closed: false };
+  /** The tour's progress: whether a menu was opened, the first site ranked, whether a site was hidden, and whether it was skipped or closed. */
+  const tour: { opened: boolean; first?: string; hid: boolean; skipped: boolean; closed: boolean } = { opened: false, hid: false, skipped: false, closed: false };
   let beckoning: HTMLElement | undefined;
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -58,7 +66,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement): void {
   // The tour's tip, moved beside whatever it's about; its words are also said here, as they change.
   const coach = h('div', { class: 'coach' });
   const coachSaid = h('p', { class: 'sr-only', attrs: { role: 'status' } });
-  page.replaceChildren(h('div', { class: 'query', attrs: { 'aria-hidden': 'true' } }, t('welcomeQuery')), summaryBox, list, coachSaid);
+  page.replaceChildren(h('div', { class: 'query', attrs: { 'aria-hidden': 'true' } }, icon(ICON_SEARCH), t('welcomeQuery')), summaryBox, list, coachSaid);
 
   // One menu, moved under whichever result it's open for, so its balance swings from where it was.
   const balance = balanceSvg();
@@ -93,13 +101,9 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement): void {
         attrs: { 'aria-expanded': 'false', 'aria-controls': 'demo-menu' },
         on: { click: () => (open === result ? closeMenu(false) : openMenu(result)) },
       });
-      const chips = h('span', { class: 'chips' });
-      const row = h(
-        'li',
-        null,
-        weigh,
-        h('div', { class: 'result' }, h('span', { class: 'host' }, result.host), h('span', { class: 'title' }, result.title), chips),
-      );
+      const body = resultBody(result);
+      const chips = body.querySelector<HTMLElement>('.chips')!;
+      const row = h('li', null, weigh, body);
       return [result.host, { row, weigh, chips }];
     }),
   );
@@ -183,6 +187,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement): void {
     drawMenu();
     summarise();
     drawTour();
+    drawChecklist();
     reset.hidden = !last && [...levels.values()].every((l) => l === 'normal');
     if (!still) for (const { row } of rows.values()) if (row.isConnected && before.get(row)) slide(row, before.get(row)!);
   }
@@ -264,6 +269,24 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement): void {
     beckoning = target;
   }
 
+  /** Tick off each step as it's done, and mark the next. It keeps counting after the tour is skipped. */
+  function drawChecklist() {
+    const done = [tour.opened, !!tour.first, tour.hid];
+    const next = done.indexOf(false);
+    checklist.list.replaceChildren(
+      ...STEPS.map((key, i) =>
+        h(
+          'li',
+          { class: done[i] ? 'done' : undefined, attrs: { 'aria-current': i === next ? 'step' : undefined } },
+          h('span', { class: 'mark', attrs: { 'aria-hidden': 'true' } }, done[i] ? icon(ICON_CHECK) : String(i + 1)),
+          t(key),
+          done[i] ? h('span', { class: 'sr-only' }, `${gap()}${t('welcomeStepDone')}`) : null,
+        ),
+      ),
+    );
+    checklist.done.hidden = next !== -1;
+  }
+
   function endTour(end: 'skipped' | 'closed') {
     tour[end] = true;
     draw();
@@ -272,6 +295,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement): void {
 
   function openMenu(result: DemoResult) {
     open = result;
+    tour.opened = true;
     // The balance starts level and swings to the site's ranking, as the real menu's does.
     setBalance(balance, 'normal');
     draw();
@@ -329,7 +353,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement): void {
     last = undefined;
     open = undefined;
     tour.first = undefined;
-    tour.hid = tour.closed = false;
+    tour.opened = tour.hid = tour.closed = false;
     draw();
     rows.get(RESULTS[0]!.host)!.weigh.focus();
   });

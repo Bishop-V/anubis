@@ -11,19 +11,56 @@ import type { Level } from '@/utils/matcher';
 
 export interface DemoResult {
   host: string;
+  /** The page's address after the site, as engines show it under the site's name. */
+  path: string;
   title: string;
+  /** A line from the page, as engines show under the title. */
+  snippet: string;
   /** A tag from the starter lists, by id. */
   tag?: string;
 }
 
 /** English on purpose: the sample results are for the search in welcomeQuery, which stays technical. In the engine's order. */
 export const RESULTS: DemoResult[] = [
-  { host: 'geeksforgeeks.org', title: 'Python - List Comprehension' },
-  { host: 'w3schools.com', title: 'Python List Comprehension' },
-  { host: 'docs.python.org', title: '5. Data Structures — Python 3 documentation', tag: 'docs' },
-  { host: 'realpython.com', title: 'When to Use a List Comprehension in Python' },
-  { host: 'stackoverflow.com', title: 'What does "list comprehension" mean? How does it work?', tag: 'forum' },
-  { host: 'en.wikipedia.org', title: 'List comprehension - Wikipedia', tag: 'reference' },
+  {
+    host: 'geeksforgeeks.org',
+    path: 'python › list-comprehension',
+    title: 'Python - List Comprehension',
+    snippet: 'Learn list comprehension in Python with examples, syntax, and practice problems.',
+  },
+  {
+    host: 'w3schools.com',
+    path: 'python › python_lists_comprehension',
+    title: 'Python List Comprehension',
+    snippet: 'List comprehension offers a shorter syntax when you want to create a new list from an existing one.',
+  },
+  {
+    host: 'docs.python.org',
+    path: '3 › tutorial › datastructures',
+    title: '5. Data Structures — Python 3 documentation',
+    snippet: 'List comprehensions provide a concise way to create lists, with a for clause and optional if clauses.',
+    tag: 'docs',
+  },
+  {
+    host: 'realpython.com',
+    path: 'list-comprehension-python',
+    title: 'When to Use a List Comprehension in Python',
+    snippet: "In this tutorial, you'll learn when a list comprehension makes your code clearer, and when it doesn't.",
+  },
+  {
+    host: 'stackoverflow.com',
+    path: 'questions › list-comprehension',
+    title: 'What does "list comprehension" mean? How does it work?',
+    snippet: 'I keep seeing [x for x in items] in code. What is this called, and how does it work?',
+    tag: 'forum',
+  },
+  {
+    host: 'en.wikipedia.org',
+    path: 'wiki › List_comprehension',
+    title: 'List comprehension - Wikipedia',
+    snippet: 'A list comprehension is a syntactic construct for creating a list based on existing lists.',
+    tag: 'reference',
+  },
 ];
 
 /** One of the sample results, by its site. */
@@ -38,9 +75,27 @@ export const STARTER_TAGS: Record<string, TagDef> = Object.fromEntries(STARTER_L
 export const tagChip = (tag: TagDef, effect?: Level): HTMLElement =>
   h('span', { class: 'tag', style: `--c: ${tag.color}`, title: tag.description ?? tag.label }, tagMark(effect), tag.label, tagEffectText(effect));
 
-/** An example result: its site, its title, and room under it for tags. */
-export const resultRow = (result: DemoResult): HTMLLIElement =>
-  h('li', null, h('div', { class: 'result' }, h('span', { class: 'host' }, result.host), h('span', { class: 'title' }, result.title), h('span', { class: 'chips' })));
+/**
+ * An example result as engines draw one: the site's round icon (its first letter), its
+ * name and address, the title, a line from the page, and room under it for tags.
+ */
+export const resultBody = (result: DemoResult): HTMLElement =>
+  h(
+    'div',
+    { class: 'result' },
+    h(
+      'span',
+      { class: 'site' },
+      h('span', { class: 'favicon', attrs: { 'aria-hidden': 'true' } }, result.host.replace(/^(www|en|docs)\./, '')[0]!.toUpperCase()),
+      h('span', { class: 'where' }, h('span', { class: 'host' }, result.host), h('span', { class: 'path' }, ` › ${result.path}`)),
+    ),
+    h('span', { class: 'title' }, result.title),
+    h('span', { class: 'snippet' }, result.snippet),
+    h('span', { class: 'chips' }),
+  );
+
+/** An example result in a list of them. */
+export const resultRow = (result: DemoResult): HTMLLIElement => h('li', null, resultBody(result));
 
 /** Slide an element from where it was (FLIP). */
 export function slide(el: HTMLElement, from: number): void {
