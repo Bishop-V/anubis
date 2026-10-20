@@ -23,7 +23,7 @@ The five top-level lists ship inside the extension and update from GitHub.
 
 ## Contributing
 
-- **Add or fix a site:** a pull request, or **suggest changes** in **Settings → Lists**. Give each new tagged site a short `#` comment saying why.
+- **Add or fix a site:** a pull request, or **Suggest changes** beside the list in **Settings → Lists**. Give each new tagged site a short `#` comment saying why.
 - **Add a list to the directory:** host it publicly and add an entry to `directory.json`:
 
   ```json

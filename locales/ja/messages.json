@@ -1136,9 +1136,6 @@
   "listsHomepage": {
     "message": "ホームページ"
   },
-  "listsSuggestChanges": {
-    "message": "変更を提案"
-  },
   "listsUsingBundled": {
     "message": "更新できるまで、Anubis に同梱のコピーを使っています（$1）。"
   },
@@ -1153,12 +1150,6 @@
   },
   "listsUpdateOne": {
     "message": "$1 を更新"
-  },
-  "listsViewFile": {
-    "message": "ファイルを表示"
-  },
-  "listsViewOne": {
-    "message": "$1 を表示"
   },
   "listsUnsubscribe": {
     "message": "購読を解除"

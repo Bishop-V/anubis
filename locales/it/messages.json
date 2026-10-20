@@ -1292,9 +1292,6 @@
   "listsHomepage": {
     "message": "pagina principale"
   },
-  "listsSuggestChanges": {
-    "message": "suggerisci modifiche"
-  },
   "listsUsingBundled": {
     "message": "Viene usata la copia inclusa in Anubis finché non si potrà aggiornare ($1)."
   },
@@ -1315,12 +1312,6 @@
   },
   "listsUpdateOne": {
     "message": "Aggiorna $1"
-  },
-  "listsViewFile": {
-    "message": "Visualizza il file"
-  },
-  "listsViewOne": {
-    "message": "Visualizza $1"
   },
   "listsUnsubscribe": {
     "message": "Annulla l’iscrizione"

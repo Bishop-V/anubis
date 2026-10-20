@@ -1214,9 +1214,6 @@
   "listsHomepage": {
     "message": "página inicial"
   },
-  "listsSuggestChanges": {
-    "message": "sugerir mudanças"
-  },
   "listsUsingBundled": {
     "message": "Usando a cópia que vem com o Anubis até que ela possa ser atualizada ($1)."
   },
@@ -1234,12 +1231,6 @@
   },
   "listsUpdateOne": {
     "message": "Atualizar $1"
-  },
-  "listsViewFile": {
-    "message": "Ver o arquivo"
-  },
-  "listsViewOne": {
-    "message": "Ver $1"
   },
   "listsUnsubscribe": {
     "message": "Cancelar assinatura"

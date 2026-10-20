@@ -1526,9 +1526,6 @@
   "listsHomepage": {
     "message": "الصفحة الرئيسية"
   },
-  "listsSuggestChanges": {
-    "message": "اقتراح تغييرات"
-  },
   "listsUsingBundled": {
     "message": "تُستخدم النسخة المرفقة مع Anubis إلى أن يمكن تحديثها ($1)."
   },
@@ -1558,12 +1555,6 @@
   },
   "listsUpdateOne": {
     "message": "تحديث $1"
-  },
-  "listsViewFile": {
-    "message": "عرض الملف"
-  },
-  "listsViewOne": {
-    "message": "عرض $1"
   },
   "listsUnsubscribe": {
     "message": "إلغاء الاشتراك"

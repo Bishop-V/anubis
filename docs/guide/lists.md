@@ -50,8 +50,8 @@ Each list has a switch and an unsubscribe button. To overrule a list on one site
 
 ## Report a mistake in a list
 
-A result's menu names the lists behind its ranking. Press **suggest changes** beside a list in **Settings → Lists** to tell its maintainers.
+A result's menu names the lists behind its ranking. Press **Suggest changes** beside the list in **Settings → Lists**, choose **Take it off the list** or **Something else**, and say why.
 
 ## Suggest a site to a list
 
-Use **suggest changes** beside the list in **Settings → Lists**.
+Press **Suggest changes** beside the list in **Settings → Lists**, type the site, and choose a tag. Anubis opens an issue on the list's tracker, filled in with the rule to add. Nothing is sent until you submit it.
