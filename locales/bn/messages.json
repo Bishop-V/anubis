@@ -1214,9 +1214,6 @@
   "listsHomepage": {
     "message": "হোমপেজ"
   },
-  "listsSuggestChanges": {
-    "message": "পরিবর্তনের পরামর্শ দিন"
-  },
   "listsUsingBundled": {
     "message": "আপডেট না হওয়া পর্যন্ত Anubis-এর সাথে আসা কপি ব্যবহার করা হচ্ছে ($1)।"
   },
@@ -1234,12 +1231,6 @@
   },
   "listsUpdateOne": {
     "message": "$1 আপডেট করুন"
-  },
-  "listsViewFile": {
-    "message": "ফাইলটি দেখুন"
-  },
-  "listsViewOne": {
-    "message": "$1 দেখুন"
   },
   "listsUnsubscribe": {
     "message": "আনসাবস্ক্রাইব করুন"

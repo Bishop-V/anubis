@@ -5,7 +5,7 @@
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
 //                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options,
-//                               responsive, axe, welcome, sync, webdav, popup-tags, tag-notes, settings-undo, checks (layout, lifecycle, pin/hidden chips, DDG icon colors, Undo in Settings)
+//                               responsive, axe, welcome, sync, webdav, popup-tags, tag-notes, settings-undo, suggest-changes, checks (layout, lifecycle, pin/hidden chips, DDG icon colors, Undo in Settings, Suggest changes)
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slides
 //                               in docs/public/
 //
@@ -3142,6 +3142,55 @@ if (only === 'tag-notes') {
   });
   await options.close();
   console.log('\n== tag-site explanations passed');
+}
+
+if (!only || only === 'suggest-changes' || checks) {
+  // Settings → Lists: Suggest changes sits beside a list that takes suggestions,
+  // where its file's link used to be, and opens a short form that turns into a
+  // filled-in issue. The tracker is a mock; nothing reaches GitHub.
+  await ctx.route(/^https:\/\/github\.com\//, (route) => route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>Issue</title>' }));
+  const options = await ctx.newPage();
+  await options.setViewportSize({ width: 320, height: 800 });
+  await options.goto(`chrome-extension://${extId}/options.html#lists`);
+  const button = options.getByRole('button', { name: 'Suggest changes to Official docs', exact: true });
+  await button.waitFor({ timeout: 5000 });
+  const noFileLink = (await options.getByRole('link', { name: /^View / }).count()) === 0;
+  await button.click();
+  const form = options.locator('.suggest-form');
+  await form.waitFor({ timeout: 3000 });
+  const expanded = (await button.getAttribute('aria-expanded')) === 'true';
+  const site = form.getByRole('textbox', { name: 'Site' });
+  const focused = await site.evaluate((el) => el === document.activeElement);
+  const fits = await options.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth);
+  await options.screenshot({ path: `${SHOTS}options-suggest-changes.png`, fullPage: true });
+  await form.getByRole('button', { name: 'Open the issue' }).click();
+  const asksForSite = ((await form.locator('.notice.error').textContent()) ?? '').includes('Type a site');
+  await site.fill('https://www.go.dev/doc/');
+  await form.getByRole('combobox', { name: 'What should change' }).selectOption({ label: 'Tag it “Official docs”' });
+  await form.getByRole('textbox', { name: 'Why (optional)' }).fill('The Go docs.');
+  const [issue] = await Promise.all([ctx.waitForEvent('page'), form.getByRole('button', { name: 'Open the issue' }).click()]);
+  const url = new URL(issue.url());
+  await issue.close();
+  const body = url.searchParams.get('body') ?? '';
+  const closed = (await options.locator('.suggest-form').count()) === 0;
+  assertChecks('suggesting changes to a list', {
+    noFileLink,
+    opensForm: expanded,
+    focusesSite: focused,
+    fitsAt320: fits,
+    asksForSite,
+    opensTracker: url.pathname === '/Bishop-V/anubis/issues/new',
+    titleNamesChange: url.searchParams.get('title') === 'Tag go.dev “Official docs”',
+    bodyHasInstruction: body.includes('$site=go.dev,tag=docs') && body.includes('**Why:** The Go docs.'),
+    closesAfter: closed,
+  });
+  await options.setViewportSize({ width: 1180, height: 900 });
+  await button.click();
+  await options.locator('.suggest-form').waitFor({ timeout: 3000 });
+  await options.screenshot({ path: `${SHOTS}options-suggest-changes-wide.png` });
+  await ctx.unroute(/^https:\/\/github\.com\//);
+  await options.close();
+  console.log('\n== suggesting changes to a list passed');
 }
 
 if (!only || only === 'settings-undo' || checks) {

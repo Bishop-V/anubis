@@ -1217,9 +1217,6 @@
   "listsHomepage": {
     "message": "Website"
   },
-  "listsSuggestChanges": {
-    "message": "Änderungen vorschlagen"
-  },
   "listsUsingBundled": {
     "message": "Verwendet die Kopie, die Anubis mitbringt, bis ein Update klappt ($1)."
   },
@@ -1237,12 +1234,6 @@
   },
   "listsUpdateOne": {
     "message": "$1 aktualisieren"
-  },
-  "listsViewFile": {
-    "message": "Datei ansehen"
-  },
-  "listsViewOne": {
-    "message": "$1 ansehen"
   },
   "listsUnsubscribe": {
     "message": "Abbestellen"

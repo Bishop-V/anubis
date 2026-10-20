@@ -1139,9 +1139,6 @@
   "listsHomepage": {
     "message": "主页"
   },
-  "listsSuggestChanges": {
-    "message": "建议更改"
-  },
   "listsUsingBundled": {
     "message": "在能够更新之前，先使用 Anubis 自带的副本（$1）。"
   },
@@ -1156,12 +1153,6 @@
   },
   "listsUpdateOne": {
     "message": "更新 $1"
-  },
-  "listsViewFile": {
-    "message": "查看文件"
-  },
-  "listsViewOne": {
-    "message": "查看 $1"
   },
   "listsUnsubscribe": {
     "message": "取消订阅"

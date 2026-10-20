@@ -536,9 +536,6 @@
   "listsSubscribedBundled": {
     "message": "$1 listesine abone olundu (güncellenene kadar Anubis ile birlikte gelen kopya kullanılıyor)."
   },
-  "listsSuggestChanges": {
-    "message": "değişiklik öner"
-  },
   "listsUnsubscribe": {
     "message": "Abonelikten çık"
   },
@@ -574,12 +571,6 @@
   },
   "listsUsingBundled": {
     "message": "Güncellenene kadar Anubis ile birlikte gelen kopya kullanılıyor ($1)."
-  },
-  "listsViewFile": {
-    "message": "Dosyayı görüntüle"
-  },
-  "listsViewOne": {
-    "message": "$1 dosyasını görüntüle"
   },
   "loadMore": {
     "message": "Daha fazla sonuç yükle"

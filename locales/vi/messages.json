@@ -1145,9 +1145,6 @@
   "listsHomepage": {
     "message": "trang chủ"
   },
-  "listsSuggestChanges": {
-    "message": "đề xuất thay đổi"
-  },
   "listsUsingBundled": {
     "message": "Đang dùng bản đi kèm Anubis cho tới khi cập nhật được ($1)."
   },
@@ -1162,12 +1159,6 @@
   },
   "listsUpdateOne": {
     "message": "Cập nhật $1"
-  },
-  "listsViewFile": {
-    "message": "Xem tệp"
-  },
-  "listsViewOne": {
-    "message": "Xem $1"
   },
   "listsUnsubscribe": {
     "message": "Hủy đăng ký"

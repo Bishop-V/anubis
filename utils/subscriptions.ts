@@ -425,3 +425,21 @@ export function suggestionUrl(issues: string | undefined, list: string, domain: 
   const body = [`Suggested instruction for **${list}**:`, '', '```', line, '```', '', `Example result: ${plainAddress(url)}`, '', '_Sent from Anubis._'];
   return issueUrl(issues, `Suggest ${domain}`, body.join('\n'));
 }
+
+/** What someone asks a list to change about a site, from **Suggest changes** in Settings → Lists. */
+export type ListChange = { kind: 'tag'; tag: { id: string; label: string } } | { kind: 'add' | 'remove' | 'other' };
+
+/**
+ * A pre-filled issue asking a list to change what it says about a site, laid out
+ * like the repository's "Suggest a site" template. A tag comes with the
+ * instruction to paste in, so a maintainer only has to check it.
+ * English on purpose, like reportUrl's.
+ */
+export function changeRequestUrl(issues: string | undefined, list: string, site: string, change: ListChange, why: string): string | undefined {
+  const title = change.kind === 'tag' ? `Tag ${site} “${change.tag.label}”` : { add: 'Add', remove: 'Remove', other: 'Change' }[change.kind] + ` ${site}`;
+  const lines = [`**List:** ${list}`, '', `**Site:** ${site}`, ''];
+  if (change.kind === 'tag') lines.push('**Instruction:**', '', '```', `$site=${site},tag=${change.tag.id}`, '```', '');
+  else if (change.kind === 'remove') lines.push('Take it off the list.', '');
+  lines.push(`**Why:** ${why.trim()}`, '', '_Sent from Anubis._');
+  return issueUrl(issues, title, lines.join('\n'));
+}

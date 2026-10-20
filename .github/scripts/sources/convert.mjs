@@ -3,7 +3,7 @@
 //
 // Each list made here keeps its source's licence and credits it in its name and
 // header. Its `! homepage:` is the source's repository, where the people who
-// maintain the data are. It sets no `! issues:`: that offers **suggest changes**
+// maintain the data are. It sets no `! issues:`: that offers **Suggest changes**
 // in Settings → Lists, and the sources never asked for Anubis's suggestions.
 
 /**

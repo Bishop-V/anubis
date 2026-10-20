@@ -1136,9 +1136,6 @@
   "listsHomepage": {
     "message": "halaman beranda"
   },
-  "listsSuggestChanges": {
-    "message": "usulkan perubahan"
-  },
   "listsUsingBundled": {
     "message": "Memakai salinan bawaan Anubis sampai daftar ini dapat diperbarui ($1)."
   },
@@ -1153,12 +1150,6 @@
   },
   "listsUpdateOne": {
     "message": "Perbarui $1"
-  },
-  "listsViewFile": {
-    "message": "Lihat file"
-  },
-  "listsViewOne": {
-    "message": "Lihat $1"
   },
   "listsUnsubscribe": {
     "message": "Berhenti berlangganan"

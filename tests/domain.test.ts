@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { decodeBingRedirect, displayedDomainToUrl, domainChoices, normalizeDomain, normalizeHostname, siteNameToUrl, siteOf, splitSuffix } from '@/utils/domain';
 import { existsSync } from 'node:fs';
 import { DOCS_URL, readSubscribeLink, SUBSCRIBE_PAGE, subscribeLink } from '@/utils/links';
-import { issueUrl, originPermissionFor, reportTracker, reportUrl, suggestionUrl, toRawUrl } from '@/utils/subscriptions';
+import { changeRequestUrl, issueUrl, originPermissionFor, reportTracker, reportUrl, suggestionUrl, toRawUrl } from '@/utils/subscriptions';
 
 describe('domains', () => {
   it('normalizes what people type', () => {
@@ -142,6 +142,20 @@ describe('subscription URLs', () => {
     expect(body).toContain('Suggested instruction for **Docs**:\n\n```\n$site=example.com,tag=docs\n```');
     expect(body).toContain('Example result: https://example.com/a\n');
     expect(body).not.toContain('secret');
+  });
+
+  it('builds a list change from Settings with the instruction to paste in', () => {
+    const tag = new URL(changeRequestUrl('https://github.com/o/r/issues', 'Official docs', 'go.dev', { kind: 'tag', tag: { id: 'docs', label: 'Official docs' } }, ' The Go docs. ')!);
+    expect(tag.pathname).toBe('/o/r/issues/new');
+    expect(tag.searchParams.get('title')).toBe('Tag go.dev “Official docs”');
+    const body = tag.searchParams.get('body')!;
+    expect(body).toContain('**List:** Official docs\n\n**Site:** go.dev\n');
+    expect(body).toContain('**Instruction:**\n\n```\n$site=go.dev,tag=docs\n```');
+    expect(body).toContain('**Why:** The Go docs.\n');
+    const remove = new URL(changeRequestUrl('https://github.com/o/r/issues', 'Paywalls', 'example.com', { kind: 'remove' }, '')!);
+    expect(remove.searchParams.get('title')).toBe('Remove example.com');
+    expect(remove.searchParams.get('body')).not.toContain('Instruction');
+    expect(changeRequestUrl('javascript:alert(1)', 'L', 'a.com', { kind: 'other' }, '')).toBeUndefined();
   });
 
   it('reports a lens leaving a result out, which has no rule', () => {

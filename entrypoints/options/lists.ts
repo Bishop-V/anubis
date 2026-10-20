@@ -1,7 +1,8 @@
 import { browser } from '#imports';
 import { h, icon } from '@/utils/dom';
+import { normalizeDomain } from '@/utils/domain';
 import { t, tJoin, tList, tn, tParts, type MessageKey } from '@/utils/i18n';
-import { ICON_EXTERNAL, ICON_REFRESH, ICON_TRASH } from '@/utils/icons';
+import { ICON_REFRESH, ICON_TRASH } from '@/utils/icons';
 import { readSubscribeLink, REPO_URL, type SubscribeLink } from '@/utils/links';
 import { colorForTag, parseList, type ListFormat, type ParsedList } from '@/utils/listformat';
 import { send } from '@/utils/messages';
@@ -10,6 +11,7 @@ import { helpLink, pageTitle } from './parts';
 import { editListCache, listCacheItem, type CachedList, type Subscription } from '@/utils/storage';
 import {
   builtinId,
+  changeRequestUrl,
   displayName,
   downloadList,
   freshCopy,
@@ -23,6 +25,7 @@ import {
   subscriptionId,
   toRawUrl,
   type DirectoryEntry,
+  type ListChange,
 } from '@/utils/subscriptions';
 
 const FORMAT_LABEL: Record<ListFormat, MessageKey> = {
@@ -40,6 +43,9 @@ function kindOf(format: string | undefined, lens?: boolean): string {
 
 let directory: DirectoryEntry[] | undefined;
 const busy = new Set<string>();
+/** The list whose Suggest changes form is open, and whether it has just opened (to move focus into it once). */
+let suggesting: string | undefined;
+let justOpened = false;
 
 /** The list a subscribe link opened settings for, until you subscribe or cancel. */
 let offer = readSubscribeLink(location.search);
@@ -303,11 +309,31 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
     });
   };
 
-  // Kept to what someone choosing whether to keep a list needs: what it does, and where to report a mistake.
-  const links = [
-    meta.homepage ? h('a', { href: meta.homepage, target: '_blank', rel: 'noopener noreferrer' }, t('listsHomepage')) : null,
-    meta.issues ? h('a', { href: meta.issues, target: '_blank', rel: 'noopener noreferrer' }, t('listsSuggestChanges')) : null,
-  ].filter((a): a is HTMLAnchorElement => a !== null);
+  // Kept to what someone choosing whether to keep a list needs: what it does. Suggest changes is a button beside it.
+  const links = [meta.homepage ? h('a', { href: meta.homepage, target: '_blank', rel: 'noopener noreferrer' }, t('listsHomepage')) : null].filter(
+    (a): a is HTMLAnchorElement => a !== null,
+  );
+  // Only lists that ask for suggestions with `! issues:` offer them: a list that never did may not want them.
+  const tracker = meta.issues;
+  const open = !!tracker && suggesting === sub.id;
+  const suggest = tracker
+    ? h(
+        'button',
+        {
+          class: 'btn small',
+          type: 'button',
+          attrs: { 'aria-label': t('listsSuggestChangesTo', name), 'aria-expanded': String(open) },
+          on: {
+            click: () => {
+              suggesting = open ? undefined : sub.id;
+              justOpened = !open;
+              rerender();
+            },
+          },
+        },
+        t('listsSuggestChanges'),
+      )
+    : null;
 
   return h(
     'div',
@@ -333,10 +359,75 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
     h(
       'div',
       { class: 'side' },
+      suggest,
       h('label', { class: 'switch', title: sub.enabled ? t('listsOn') : t('listsOff') }, toggle, h('span')),
       h('button', { class: 'icon-btn', type: 'button', title: t('listsUpdateNow'), attrs: { 'aria-label': t('listsUpdateOne', name) }, on: { click: update } }, icon(ICON_REFRESH)),
-      h('a', { class: 'icon-btn', href: sub.url, target: '_blank', rel: 'noopener noreferrer', title: t('listsViewFile'), attrs: { 'aria-label': t('listsViewOne', name) } }, icon(ICON_EXTERNAL)),
       h('button', { class: 'icon-btn danger', type: 'button', title: t('listsUnsubscribe'), attrs: { 'aria-label': t('listsUnsubscribeOne', name) }, on: { click: remove } }, icon(ICON_TRASH)),
     ),
+    open ? suggestForm(tracker, name, parsed) : null,
   );
+}
+
+/**
+ * Suggest changes: the site, what should change, and why, turned into an issue
+ * on the list's tracker with the instruction already written. Nothing is sent:
+ * the issue opens in a new tab for the person to check and submit.
+ */
+function suggestForm(tracker: string, list: string, parsed: ParsedList | undefined): HTMLElement {
+  const tags = parsed?.format === 'anubis' ? parsed.tags.filter((tag) => !tag.generated) : [];
+  const changes: { label: string; change: ListChange }[] = [
+    ...(tags.length
+      ? tags.map((tag) => ({ label: t('listsSuggestTag', tag.label), change: { kind: 'tag', tag: { id: tag.id, label: tag.label } } as const }))
+      : [{ label: t('listsSuggestAdd'), change: { kind: 'add' } as const }]),
+    { label: t('listsSuggestRemove'), change: { kind: 'remove' } },
+    { label: t('listsSuggestOther'), change: { kind: 'other' } },
+  ];
+
+  const site = h('input', { type: 'text', placeholder: 'go.dev', autocomplete: 'off', spellcheck: false, attrs: { 'aria-label': t('listsSuggestSite') } });
+  const what = h(
+    'select',
+    { attrs: { 'aria-label': t('listsSuggestWhat') } },
+    ...changes.map((c, i) => h('option', { value: String(i) }, c.label)),
+  );
+  const why = h('input', { type: 'text', maxLength: 300 });
+  const error = h('p', { class: 'notice error', hidden: true });
+  const close = () => {
+    suggesting = undefined;
+    rerender();
+  };
+
+  const form = h(
+    'form',
+    { class: 'suggest-form' },
+    h('div', { class: 'inline-form' }, site, what),
+    h('label', { class: 'field' }, h('span', null, t('listsSuggestWhy')), why),
+    error,
+    h(
+      'div',
+      { class: 'inline-form' },
+      h('button', { class: 'btn small primary', type: 'submit' }, t('listsSuggestOpen')),
+      h('button', { class: 'text-btn', type: 'button', on: { click: close } }, t('listsSuggestCancel')),
+    ),
+    h('p', { class: 'facts' }, t('listsSuggestHint', new URL(tracker).hostname)),
+  );
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const typed = site.value.trim();
+    const domain = normalizeDomain(typed);
+    if (!domain) {
+      error.textContent = typed ? t('tagNotSite', typed) : t('tagTypeSite');
+      error.hidden = false;
+      site.focus();
+      return;
+    }
+    const url = changeRequestUrl(tracker, list, domain, changes[Number(what.value)]!.change, why.value);
+    if (url) window.open(url, '_blank', 'noopener');
+    close();
+  });
+  if (justOpened) {
+    justOpened = false;
+    // After the section has replaced the old one.
+    setTimeout(() => site.isConnected && site.focus(), 0);
+  }
+  return form;
 }

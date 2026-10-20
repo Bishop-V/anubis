@@ -1370,9 +1370,6 @@
   "listsHomepage": {
     "message": "домашняя страница"
   },
-  "listsSuggestChanges": {
-    "message": "предложить изменения"
-  },
   "listsUsingBundled": {
     "message": "Пока список не сможет обновиться, используется копия, встроенная в Anubis ($1)."
   },
@@ -1396,12 +1393,6 @@
   },
   "listsUpdateOne": {
     "message": "Обновить $1"
-  },
-  "listsViewFile": {
-    "message": "Открыть файл"
-  },
-  "listsViewOne": {
-    "message": "Открыть $1"
   },
   "listsUnsubscribe": {
     "message": "Отписаться"

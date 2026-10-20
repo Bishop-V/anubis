@@ -1136,9 +1136,6 @@
   "listsHomepage": {
     "message": "홈페이지"
   },
-  "listsSuggestChanges": {
-    "message": "변경 제안"
-  },
   "listsUsingBundled": {
     "message": "업데이트할 수 있을 때까지 Anubis에 포함된 사본을 사용합니다($1)."
   },
@@ -1153,12 +1150,6 @@
   },
   "listsUpdateOne": {
     "message": "$1 업데이트"
-  },
-  "listsViewFile": {
-    "message": "파일 보기"
-  },
-  "listsViewOne": {
-    "message": "$1 보기"
   },
   "listsUnsubscribe": {
     "message": "구독 취소"

@@ -2,6 +2,13 @@
 
 Where things are stored, sync between browsers, and subscribing to lists. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Suggest changes as a form in Settings (2026-10-20)
+
+- **Before:** "suggest changes" was a lower-case link in a list's small print, and it opened the tracker's issues page, so people had to find the template and write the instruction themselves. Beside it, the side column's external-link icon opened the list's raw file, which few people need.
+- **Now:** a **Suggest changes** button takes the file link's place among the list's buttons. It opens a short form under the list: the site, what should change (one of the list's tags, Take it off the list, or Something else), and why. The form opens a filled-in issue in a new tab, with the `$site=…,tag=…` instruction to paste in (`changeRequestUrl` in `utils/subscriptions.ts`), laid out like the "Suggest a site" template.
+- **Still opt-in:** only lists with `! issues:` get the button, as before. A list that never asked for suggestions still doesn't get them.
+- **First try at 320px:** the button in the side column squeezed the description into a few characters per line, and the form under the description sat beneath the buttons. Below 760px, the buttons now go on their own line under the description, as a tag row's controls do, and the form is a row of its own across the list (`e2e/run.mjs suggest-changes`).
+
 ## Review findings on list parsing and subscriptions (2026-10-10)
 
 - **Source:** a whole-codebase review, split across six draft pull requests (#129 to #134, closed unmerged). Only the list-parsing one produced findings worth keeping; the rest held automated code-health comments and nothing else. None of the findings below has been reproduced or fixed yet.

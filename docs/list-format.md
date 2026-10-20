@@ -34,7 +34,7 @@ Lines starting with `!` are comments. A comment of the form `! key: value` is me
 | `description` | One or two sentences on what the list is for. |
 | `author` | Who maintains it. |
 | `homepage` | Where to read more. |
-| `issues` | An issue tracker. When set, **Settings → Lists** links it as **suggest changes** beside the list, for subscribers to report a mistake or suggest a site. |
+| `issues` | An issue tracker. When set, **Settings → Lists** shows **Suggest changes** beside the list: a short form that opens a filled-in issue there, for subscribers to report a mistake or suggest a site. |
 | `license` | The license of the list's contents. CC0-1.0 is a good default for lists meant to be shared. |
 | `avatar` | A hex colour for the list. |
 | `expires` | How often Anubis should check for updates, as `N hours` or `N days`. The default is a day. |

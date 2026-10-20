@@ -123,7 +123,7 @@ All shared controls are in `assets/theme.css`; the search-page versions in `shad
 | Primary button | `.btn.primary` | `--accent` fill, `--on-accent` text, 600 | The action the form exists for, at most one per form: "Add", "Subscribe", "Connect" |
 | Destructive button | `.btn.danger` | `--danger` text; the border turns `--danger` on hover | Actions that throw something away: "Reset settings" |
 | Text button | `.text-btn` | No box, `--accent-ink`, 600, underline on hover (on search pages, `--text` and always underlined, as Show is); `.danger` for removing | Actions inside a sentence or row: "Show hidden", "Undo", "Add tag", "See all 9" |
-| Icon button | `.icon-btn` | 28px (24px and round on search pages), `--muted`, `--text` on hover; `.danger` turns red on hover | Only icons everyone knows: the cog, ×, and a list's update, view, and remove icons. Always with `aria-label` and `title`. |
+| Icon button | `.icon-btn` | 28px (24px and round on search pages), `--muted`, `--text` on hover; `.danger` turns red on hover | Only icons everyone knows: the cog, ×, and a list's update and remove icons. Always with `aria-label` and `title`. |
 | Input | `input` | 30px, `--raised`, 1px `--line-strong` border, 6px radius, 13px; the border turns `--accent` on focus | Placeholders in `--muted` give an example ("fandom.com"), not an instruction |
 | Amount | `.amount` + `.tip` | A 64px number input with its unit after it in `--muted`; a tip under the setting's description says what the amount costs, in `--muted`, or in `--text` when it warns | A number people choose: Load more results automatically |
 | Select | `select` | The same box as an input, with the one caret: a small `--muted` chevron drawn in CSS, 10px from the right edge | Never the browser's own arrow |

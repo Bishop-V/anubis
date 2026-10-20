@@ -29,7 +29,7 @@ People paste it into **Settings → Lists → Add a list**, or use a one-click [
 
 ## 4. Hear about mistakes, and let people suggest sites
 
-Set `! issues:` to your tracker, and subscribers get a **suggest changes** button.
+Set `! issues:` to your tracker, and subscribers get a **Suggest changes** button that opens a filled-in issue there.
 
 ## 5. Add it to the directory
 

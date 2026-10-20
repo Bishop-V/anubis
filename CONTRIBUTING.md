@@ -4,7 +4,7 @@ Issues for reports and ideas, pull requests for changes.
 
 ## Ways to help
 
-- **Suggest a site for a list:** **suggest changes** in **Settings → Lists**, the [issue template](https://github.com/Bishop-V/anubis/issues/new?template=suggest-a-site.md), or a pull request to [`lists/`](lists). Lists in [`lists/sources/`](lists/sources) are rebuilt weekly, so change their source project instead.
+- **Suggest a site for a list:** **Suggest changes** in **Settings → Lists**, the [issue template](https://github.com/Bishop-V/anubis/issues/new?template=suggest-a-site.md), or a pull request to [`lists/`](lists). Lists in [`lists/sources/`](lists/sources) are rebuilt weekly, so change their source project instead.
 - **Add your list to the directory:** see [Publish a list](docs/guide/publish-a-list.md).
 - **Report a broken engine:** the engine's domain (`google.de`), a search, a screenshot, and for panels the snippet from [Troubleshooting](docs/guide/troubleshooting.md). Never attach a saved search page.
 - **Report a security problem** privately: see [SECURITY.md](SECURITY.md).
