@@ -57,7 +57,7 @@ The Chinese interface is `locales/zh_CN/messages.json`, machine translated from 
 - **Firefox:** “扩展” (the puzzle-piece button and the Android menu entry), “附加组件” (the sync option), “立即同步”, “固定到工具栏”.
 - **Chrome:** “扩展程序” (the puzzle piece). **Edge:** “扩展”. **Opera:** “扩展”.
 - Product names stay: Anubis, Brave Goggles, uBlacklist, HOHSER, Koofr, Nextcloud, Duck.ai, WebDAV. Brave's “Find elsewhere” and Startpage's “Block creepy ads, not private search” stay English, since those sites show no Chinese version.
-- `welcomeQuery` stays the English search “best noise cancelling headphones”: its example results are English pages.
+- `welcomeQuery` stays the English search “trolley problem”: its example results are English pages.
 
 ## What machine translation gets wrong here
 
