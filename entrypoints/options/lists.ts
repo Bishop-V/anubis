@@ -374,14 +374,7 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
  * the issue opens in a new tab for the person to check and submit.
  */
 function suggestForm(tracker: string, list: string, parsed: ParsedList | undefined): HTMLElement {
-  const tags = parsed?.format === 'anubis' ? parsed.tags.filter((tag) => !tag.generated) : [];
-  const changes: { label: string; change: ListChange }[] = [
-    ...(tags.length
-      ? tags.map((tag) => ({ label: t('listsSuggestTag', tag.label), change: { kind: 'tag', tag: { id: tag.id, label: tag.label } } as const }))
-      : [{ label: t('listsSuggestAdd'), change: { kind: 'add' } as const }]),
-    { label: t('listsSuggestRemove'), change: { kind: 'remove' } },
-    { label: t('listsSuggestOther'), change: { kind: 'other' } },
-  ];
+  const changes = suggestChoices(parsed);
 
   const site = h('input', { type: 'text', placeholder: 'go.dev', autocomplete: 'off', spellcheck: false, attrs: { 'aria-label': t('listsSuggestSite') } });
   const what = h(
@@ -412,14 +405,8 @@ function suggestForm(tracker: string, list: string, parsed: ParsedList | undefin
   );
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const typed = site.value.trim();
-    const domain = normalizeDomain(typed);
-    if (!domain) {
-      error.textContent = typed ? t('tagNotSite', typed) : t('tagTypeSite');
-      error.hidden = false;
-      site.focus();
-      return;
-    }
+    const domain = siteTyped(site, error);
+    if (!domain) return;
     const url = changeRequestUrl(tracker, list, domain, changes[Number(what.value)]!.change, why.value);
     if (url) window.open(url, '_blank', 'noopener');
     close();
@@ -430,4 +417,24 @@ function suggestForm(tracker: string, list: string, parsed: ParsedList | undefin
     setTimeout(() => site.isConnected && site.focus(), 0);
   }
   return form;
+}
+
+/** What a list can be asked to change: one of its tags (or adding the site, when it has none), taking the site off, or anything else. */
+function suggestChoices(parsed: ParsedList | undefined): { label: string; change: ListChange }[] {
+  const tags = parsed?.format === 'anubis' ? parsed.tags.filter((tag) => !tag.generated) : [];
+  const additions = tags.length
+    ? tags.map((tag) => ({ label: t('listsSuggestTag', tag.label), change: { kind: 'tag', tag: { id: tag.id, label: tag.label } } as const }))
+    : [{ label: t('listsSuggestAdd'), change: { kind: 'add' } as const }];
+  return [...additions, { label: t('listsSuggestRemove'), change: { kind: 'remove' } }, { label: t('listsSuggestOther'), change: { kind: 'other' } }];
+}
+
+/** The site typed into Suggest changes, or undefined after saying what's wrong with it. */
+function siteTyped(input: HTMLInputElement, error: HTMLElement): string | undefined {
+  const typed = input.value.trim();
+  const domain = normalizeDomain(typed);
+  if (domain) return domain;
+  error.textContent = typed ? t('tagNotSite', typed) : t('tagTypeSite');
+  error.hidden = false;
+  input.focus();
+  return undefined;
 }
