@@ -202,6 +202,10 @@ describe('tag names', () => {
 });
 
 describe('extra pages to load automatically', () => {
+  it('loads 3 extra pages by default', () => {
+    expect(DEFAULT_SETTINGS.deeper).toBe(3);
+  });
+
   it('keeps a typed or stored amount to a whole number from 0 to the limit', () => {
     expect(clampDeeper(3)).toBe(3);
     expect(clampDeeper('7')).toBe(7);

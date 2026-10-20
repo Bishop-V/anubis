@@ -254,7 +254,7 @@ async function launch(settings = {}, ext = EXT) {
         tagPrefs: { 'ai-slop': { action: 'hide' } },
         // The tests use the "Collapse" style; keep the one-time move to "Remove" away.
         hideStyleMoved: true,
-        settings: { enabled: true, theme: 'auto', hideStyle: 'collapse', rerank: true, showChips: true, showSummary: true, engines: {}, updateHours: 24, ...settings },
+        settings: { enabled: true, theme: 'auto', hideStyle: 'collapse', rerank: true, showChips: true, showSummary: true, engines: {}, updateHours: 24, deeper: 0, ...settings },
       });
     },
     { personal: PERSONAL, settings },

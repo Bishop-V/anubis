@@ -74,7 +74,7 @@ export const DEFAULT_SETTINGS: Settings = {
   showSummary: true,
   engines: {},
   updateHours: 24,
-  deeper: 0,
+  deeper: 3,
   cleanup: NO_CLEANUP,
   googleWebTab: false,
 };
