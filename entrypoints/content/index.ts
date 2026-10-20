@@ -203,11 +203,7 @@ export default defineContentScript({
       // A filter whose tag left the page (a new search, a list turned off) lapses.
       if (filter && !tagCounts.has(filter)) filter = undefined;
       stats.filter = filter;
-      for (const result of results) {
-        const out = !!filter && !verdictFor(result).tags.includes(filter);
-        result.container.toggleAttribute('data-anubis-filtered', out);
-        for (const row of result.extras) row.toggleAttribute('data-anubis-filtered', out);
-      }
+      applyFilter(results, theme);
 
       // Cards sit in a grid, which reranking's flex column would break: they move with `order` alone,
       // and only where their list is a grid or a flex row (a script-placed layout ignores `order`).
@@ -256,6 +252,19 @@ export default defineContentScript({
       if (JSON.stringify(stats) !== JSON.stringify(lastStats)) {
         lastStats = stats;
         void send({ type: 'stats', stats });
+      }
+    };
+
+    /** Results without the filter's tag step aside; the ones it brings back are laid out again. */
+    const applyFilter = (results: FoundResult[], theme: PageTheme) => {
+      for (const result of results) {
+        const out = !!filter && !verdictFor(result).tags.includes(filter);
+        const wasOut = result.container.hasAttribute('data-anubis-filtered');
+        result.container.toggleAttribute('data-anubis-filtered', out);
+        for (const row of result.extras) row.toggleAttribute('data-anubis-filtered', out);
+        // Its button was placed while the result was display: none, with no layout to measure
+        // (it fell back to the plain shape, off the column): place it again now it's back.
+        if (wasOut && !out) applyVerdict(result, verdictFor(result), theme);
       }
     };
 

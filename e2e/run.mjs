@@ -2074,17 +2074,39 @@ if (!only || only === 'filter') {
   await message({ type: 'set-filter' });
   await page.waitForTimeout(400);
 
-  // Pressing a tag under a result does the same, and pressing it again undoes it.
+  // Pressing a tag under a result does the same, and pressing it again undoes it, buttons and all.
   const shown = () =>
     page.evaluate(() => [...document.querySelectorAll('[data-anubis-result]')].filter((el) => getComputedStyle(el).display !== 'none').length);
-  const all = await shown();
-  await pressChip('Discussion');
-  await page.waitForTimeout(400);
-  const narrowed = await shown();
-  console.log('\n== chip filter:', JSON.stringify({ all, narrowed }));
-  await pressChip('Discussion');
-  await page.waitForTimeout(400);
-  console.log('== chip filter off:', await shown());
+  // Each shown result's button: which shape it takes and how far from the left (its height varies with the result's icon).
+  const buttons = () =>
+    page.evaluate(() =>
+      [...document.querySelectorAll('[data-anubis-result]')]
+        .filter((el) => getComputedStyle(el).display !== 'none')
+        .map((el) => {
+          const host = el.querySelector('anubis-weigh');
+          const box = host?.getBoundingClientRect();
+          return `${host?.dataset.shape}@${box ? Math.round(box.left) : '-'}`;
+        }),
+    );
+  for (const [name, url, chip] of [
+    ['DuckDuckGo', 'https://duckduckgo.com/?q=javascript+promises', 'Discussion'],
+    ['Google', 'https://www.google.com/search?q=anubis', 'Reference'],
+  ]) {
+    await page.goto(url);
+    await page.waitForTimeout(600);
+    const all = await shown();
+    const buttonsBefore = await buttons();
+    await pressChip(chip);
+    await page.waitForTimeout(400);
+    const narrowed = await shown();
+    console.log(`\n== chip filter (${name}):`, JSON.stringify({ all, narrowed }));
+    await pressChip(chip);
+    await page.waitForTimeout(400);
+    const buttonsAfter = await buttons();
+    console.log('== chip filter off:', await shown(), JSON.stringify({ buttonsBefore, buttonsAfter }));
+    // Results that were filtered out come back with their buttons where they were.
+    assertChecks(`filter off (${name})`, { narrowed: narrowed < all, sameCount: all === (await shown()), buttonsBack: JSON.stringify(buttonsBefore) === JSON.stringify(buttonsAfter) });
+  }
 }
 
 if (!only || only === 'deeper' || checks) {
