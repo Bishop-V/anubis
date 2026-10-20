@@ -29,7 +29,7 @@ Andere fügen ihn unter **Einstellungen → Listen → Liste hinzufügen** ein o
 
 ## 4. Von Fehlern erfahren und Vorschläge annehmen
 
-Setze `! issues:` auf deinen Tracker, dann bekommen Abonnenten eine Schaltfläche **Änderungen vorschlagen**.
+Setze `! issues:` auf deinen Tracker, dann bekommen Abonnenten eine Schaltfläche **Änderungen vorschlagen**, die dort ein vorausgefülltes Issue öffnet.
 
 ## 5. Ins Verzeichnis aufnehmen
 

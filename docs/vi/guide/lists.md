@@ -50,8 +50,8 @@ Mỗi danh sách có một công tắc và một nút hủy đăng ký. Để b�
 
 ## Báo lỗi trong danh sách
 
-Menu của kết quả nêu các danh sách quyết định thứ hạng của nó. Nhấn **đề xuất thay đổi** bên cạnh danh sách trong **Cài đặt → Danh sách** để báo cho người duy trì.
+Menu của kết quả nêu các danh sách quyết định thứ hạng của nó. Nhấn **Đề xuất thay đổi** bên cạnh danh sách trong **Cài đặt → Danh sách**, chọn **Gỡ khỏi danh sách** hoặc **Việc khác**, rồi nêu lý do.
 
 ## Đề xuất trang web cho danh sách
 
-Dùng **đề xuất thay đổi** bên cạnh danh sách trong **Cài đặt → Danh sách**.
+Nhấn **Đề xuất thay đổi** bên cạnh danh sách trong **Cài đặt → Danh sách**, nhập trang web và chọn một thẻ. Anubis mở một issue trên trình theo dõi của danh sách, điền sẵn quy tắc cần thêm. Không gì được gửi cho tới khi bạn tự gửi tại đó.

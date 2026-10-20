@@ -50,8 +50,8 @@ Jede Liste hat einen Schalter und eine Schaltfläche zum Abbestellen. Um eine Li
 
 ## Einen Fehler in einer Liste melden
 
-Das Menü eines Ergebnisses nennt die Listen hinter seiner Einstufung. Drücke **Änderungen vorschlagen** neben einer Liste unter **Einstellungen → Listen**, um es ihren Betreuern zu sagen.
+Das Menü eines Ergebnisses nennt die Listen hinter seiner Einstufung. Drücke **Änderungen vorschlagen** neben der Liste unter **Einstellungen → Listen**, wähle **Von der Liste entfernen** oder **Etwas anderes** und sag, warum.
 
 ## Einer Liste eine Website vorschlagen
 
-Verwende **Änderungen vorschlagen** neben der Liste unter **Einstellungen → Listen**.
+Drücke **Änderungen vorschlagen** neben der Liste unter **Einstellungen → Listen**, gib die Website ein und wähle ein Tag. Anubis öffnet im Tracker der Liste ein Issue, in dem die neue Regel schon eingetragen ist. Nichts wird gesendet, bis du es dort absendest.
