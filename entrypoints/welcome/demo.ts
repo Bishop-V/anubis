@@ -21,10 +21,10 @@ import { RESULTS, STARTER_TAGS, resultBody, slide, tagChip, type DemoResult } fr
 //
 // A short tour leads the way, written for someone who has never seen Anubis: what the
 // button is, what its choices do, what just happened, and what to do next. Each tip is
-// a callout beside the control it's about, which it rings, so it's where the person is
-// already looking, and it moves along as they go. Each step follows what the person
-// does rather than insisting on it (another site, or Raise before Pin, works too), and
-// the tour can be skipped.
+// a callout beside the control it's about, which it marks with a dot, so it's where the
+// person is already looking, and it moves along as they go. Each step follows what the
+// person does rather than insisting on it (another site, or Raise before Pin, works
+// too), and the tour can be skipped.
 
 /** Raise and Lower move a site five places a press, as on a search page; it passes the result it lands on. */
 const SHIFT: Partial<Record<PersonalLevel, number>> = { raise: -5.5, raise2: -10.5, lower: 5.5, lower2: 10.5 };
@@ -198,7 +198,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
     /** The step, or none for the closing tip. */
     n?: number;
     says: (string | Node)[];
-    /** The control to ring. */
+    /** The control to mark with a dot. */
     target?: HTMLElement;
     /** Where the tip goes, and which way its pointer points: up at the button or a ranking at the start or end of the menu, or down at the results. */
     at: HTMLElement;
@@ -214,7 +214,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
     return done ? [done, gap(), ...find] : find;
   }
 
-  /** Where the tour is: its step, what to say, the control to ring, and where the tip goes. Undefined once it's closed. */
+  /** Where the tour is: its step, what to say, the control to mark, and where the tip goes. Undefined once it's closed. */
   function tourTip(): Tip | undefined {
     if (tour.skipped || tour.closed) return undefined;
     if (!tour.first) {
@@ -228,7 +228,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
     return { n: 3, says: nextSays(), at: summaryBox, point: 'down' };
   }
 
-  /** The tip beside what it's about, and the ring on the control that comes next. */
+  /** The tip beside what it's about, and the dot on the control that comes next. */
   function drawTour() {
     const tip = tourTip();
     if (!tip) coach.remove();
@@ -261,7 +261,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
         coach.classList.add('arrive');
       }
     }
-    // Ring the control that comes next. A ring that stays put doesn't pulse again.
+    // Mark the control that comes next. A dot that stays put doesn't pulse again.
     const target = tip?.target;
     if (target === beckoning) return;
     beckoning?.classList.remove('beckon');
