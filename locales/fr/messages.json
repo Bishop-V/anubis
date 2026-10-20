@@ -503,9 +503,6 @@
   "welcomeHeading": {
     "message": "Anubis est installé"
   },
-  "welcomeIntro": {
-    "message": "Il étiquette, reclasse et masque les résultats de recherche, selon vos propres choix et les listes auxquelles vous êtes abonné."
-  },
   "welcomePinHeading": {
     "message": "Le garder dans la barre d’outils"
   },

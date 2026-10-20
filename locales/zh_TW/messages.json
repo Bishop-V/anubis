@@ -443,9 +443,6 @@
   "welcomeHeading": {
     "message": "Anubis 已安裝"
   },
-  "welcomeIntro": {
-    "message": "它會按照你自己的選擇和你訂閱的清單，給搜尋結果加標籤、重新排序和隱藏。"
-  },
   "welcomePinHeading": {
     "message": "把它留在工具列中"
   },

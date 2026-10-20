@@ -506,9 +506,6 @@
   "welcomeHeading": {
     "message": "Anubis ist installiert"
   },
-  "welcomeIntro": {
-    "message": "Es taggt Suchergebnisse, ordnet sie neu und blendet sie aus, nach deinen eigenen Entscheidungen und den Listen, die du abonnierst."
-  },
   "welcomePinHeading": {
     "message": "In der Symbolleiste behalten"
   },

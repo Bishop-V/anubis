@@ -9,10 +9,11 @@ import { wiki } from '@/utils/wiki';
 import { getSubscriptions } from '@/utils/subscriptions';
 import { initTheme } from '@/utils/theme';
 
-// The page that opens when Anubis is installed. Ranking comes first, as an example search
-// page to try it on (demo.ts). Tags, lists, and removing panels wait under "More to try",
-// each opened on its own (extras.ts). The toolbar button comes last: Anubis works without
-// it. Opened by the background script on install only, never on updates.
+// The page that opens when Anubis is installed. Ranking comes first: a headline says what
+// Anubis is for, and a practice search page, with a short tour, lets people try it
+// (demo.ts). Tags, lists, and removing panels wait under "More to try", each opened on
+// its own (extras.ts). The toolbar button comes last: Anubis works without it. Opened by
+// the background script on install only, never on updates.
 
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
 
@@ -54,7 +55,7 @@ async function main() {
   localizePage();
   const note = machineTranslationNote();
   if (note) $('main').prepend(note);
-  renderDemo($('#demo-how'), $('#demo'), $('#demo-reset'));
+  renderDemo($('#demo'), $('#demo-reset'));
   $<HTMLAnchorElement>('#guide').href = wiki();
   $<HTMLAnchorElement>('#privacy').href = wiki('guide/privacy');
   await initTheme();

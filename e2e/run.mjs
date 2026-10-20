@@ -2484,10 +2484,12 @@ if (!only || only === 'welcome') {
     await welcome.waitForTimeout(400);
   };
   const first = await demoOrder();
-  // The tour rings the docs' button first, then Pin once its menu is open.
+  // The tour introduces the button and rings the docs' first, then Pin once its menu is
+  // open; after Pin it says the docs are first and asks for a site to hide; after Hide, it
+  // points at Undo and says what to do next.
   const ringed = () => welcome.evaluate(() => [...document.querySelectorAll('.beckon')].map((el) => el.getAttribute('aria-label') ?? el.textContent));
   const tourStart = { says: await demoText('#demo .coach .says'), ringed: await ringed() };
-  await welcome.click(`#demo .results li:nth-child(4) .weigh`);
+  await welcome.click(`#demo .results li:nth-child(3) .weigh`);
   const tourMenu = { says: await demoText('#demo .coach .says'), ringed: await ringed(), besideMenu: await welcome.evaluate(() => document.querySelector('#demo-menu + .coach') !== null) };
   await welcome.keyboard.press('Escape');
   await rank('docs.python.org', 'pin');
@@ -2510,12 +2512,13 @@ if (!only || only === 'welcome') {
   const reset = await demoOrder();
   console.log('\n== welcome demo:', JSON.stringify({ first, tourStart, tourMenu, pinned, pinFramed, menuOpen, tourThird, hidden, summary, said, tourDone, revealed, undone, reset }));
   if (
-    !/docs\.python\.org/.test(tourStart.says) ||
+    !/beside every result/.test(tourStart.says) ||
     !/docs\.python\.org/.test(tourStart.ringed.join()) ||
     !tourMenu.ringed.join().includes('Pin') ||
     !tourMenu.besideMenu ||
+    !/docs\.python\.org is now first/.test(tourThird) ||
     !/rather not/.test(tourThird) ||
-    !/That's ranking/.test(tourDone) ||
+    !/Undo puts it back/.test(tourDone) ||
     !pinFramed ||
     pinned[0] !== 'docs.python.org' ||
     !menuOpen ||

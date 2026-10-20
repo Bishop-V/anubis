@@ -20,8 +20,8 @@ export interface DemoResult {
 export const RESULTS: DemoResult[] = [
   { host: 'geeksforgeeks.org', title: 'Python - List Comprehension' },
   { host: 'w3schools.com', title: 'Python List Comprehension' },
-  { host: 'realpython.com', title: 'When to Use a List Comprehension in Python' },
   { host: 'docs.python.org', title: '5. Data Structures — Python 3 documentation', tag: 'docs' },
+  { host: 'realpython.com', title: 'When to Use a List Comprehension in Python' },
   { host: 'stackoverflow.com', title: 'What does "list comprehension" mean? How does it work?', tag: 'forum' },
   { host: 'en.wikipedia.org', title: 'List comprehension - Wikipedia', tag: 'reference' },
 ];

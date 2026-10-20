@@ -1595,9 +1595,6 @@
   "welcomeHeading": {
     "message": "Anubis kuruldu"
   },
-  "welcomeIntro": {
-    "message": "Kendi seçimlerinize ve abone olduğunuz listelere göre arama sonuçlarını etiketler, yeniden sıralar ve gizler."
-  },
   "welcomeListsHeading": {
     "message": "Listeleriniz"
   },

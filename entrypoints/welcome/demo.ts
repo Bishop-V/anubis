@@ -1,6 +1,6 @@
 import { balanceSvg, setBalance } from '@/utils/balance';
 import { h, icon } from '@/utils/dom';
-import { t, tParts, type MessageKey } from '@/utils/i18n';
+import { gap, t, tParts, type MessageKey } from '@/utils/i18n';
 import { ICON_CLOSE, LEVEL_CHIPS, LEVEL_LABELS, levelIcon, rankIcon, WEIGH_ICONS } from '@/utils/icons';
 import { LEVELS, type Level } from '@/utils/matcher';
 import { displayLevel, levelSteps, type PersonalLevel } from '@/utils/personal';
@@ -19,16 +19,18 @@ import { RESULTS, STARTER_TAGS, slide, tagChip, type DemoResult } from './parts'
 // The menu opens under its result rather than floating over it, so it never covers
 // the page at phone width. Tags show from the starter lists, as a hint.
 //
-// A short tour leads the way: open the menu beside the official docs, rank the site,
-// then hide one. Each tip is a callout beside the control it's about, which it rings,
-// so it's where the person is already looking, and it moves along as they go. Each
-// step follows what the person does rather than insisting on it, and can be skipped.
+// A short tour leads the way, written for someone who has never seen Anubis: what the
+// button is, what its choices do, what just happened, and what to do next. Each tip is
+// a callout beside the control it's about, which it rings, so it's where the person is
+// already looking, and it moves along as they go. Each step follows what the person
+// does rather than insisting on it (another site, or Raise before Pin, works too), and
+// the tour can be skipped.
 
 /** Raise and Lower move a site five places a press, as on a search page; it passes the result it lands on. */
 const SHIFT: Partial<Record<PersonalLevel, number>> = { raise: -5.5, raise2: -10.5, lower: 5.5, lower2: 10.5 };
 /** How far each one tips the balance: the places it moves the site. */
 const SCORE: Partial<Record<PersonalLevel, number>> = { raise: 5, raise2: 10, lower: -5, lower2: -10 };
-/** The result the tour starts on: the official docs, fourth on the page. */
+/** The result the tour starts on: the official docs, third on the page. */
 const TOUR_SITE = 'docs.python.org';
 const TOUR_STEPS = 3;
 const RANK_TITLES: Record<Level, MessageKey> = {
@@ -39,13 +41,13 @@ const RANK_TITLES: Record<Level, MessageKey> = {
   pin: 'popupRankPin',
 };
 
-export function renderDemo(how: HTMLElement, page: HTMLElement, reset: HTMLElement): void {
+export function renderDemo(page: HTMLElement, reset: HTMLElement): void {
   const levels = new Map<string, PersonalLevel>(RESULTS.map((r) => [r.host, 'normal']));
   let revealed = false;
   let open: DemoResult | undefined;
   let last: { host: string; before: PersonalLevel; after: PersonalLevel } | undefined;
-  /** The tour's progress: a ranking pressed, a site hidden, or the tour skipped. */
-  const tour = { ranked: false, hid: false, skipped: false, closed: false };
+  /** The tour's progress: the first site ranked, whether a site was hidden, and whether it was skipped or closed. */
+  const tour: { first?: string; hid: boolean; skipped: boolean; closed: boolean } = { hid: false, skipped: false, closed: false };
   let beckoning: HTMLElement | undefined;
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -169,10 +171,13 @@ export function renderDemo(how: HTMLElement, page: HTMLElement, reset: HTMLEleme
   /** Put the rows in order, sliding them from where they were unless motion is reduced. */
   function draw() {
     const before = new Map([...rows.values()].map(({ row }) => [row, row.getBoundingClientRect().top]));
+    // Putting rows back in the list takes the focus off whatever was in them: keep it.
+    const focused = page.contains(document.activeElement) ? (document.activeElement as HTMLElement) : undefined;
     RESULTS.forEach(drawRow);
     list.replaceChildren(...order().map((r) => rows.get(r.host)!.row));
     if (open && shown(open)) rows.get(open.host)!.row.append(menu);
     else menu.remove();
+    if (focused?.isConnected && document.activeElement !== focused) focused.focus({ preventScroll: true });
     // The tip goes after the menu, wherever both are.
     coach.remove();
     drawMenu();
@@ -195,34 +200,53 @@ export function renderDemo(how: HTMLElement, page: HTMLElement, reset: HTMLEleme
     point: 'weigh' | 'menu-start' | 'menu-end' | 'down' | 'up';
   }
 
-  /** Where the tour is: its step, what to do, the control to ring, and where the tip goes. Undefined once it's closed. */
+  /** What step 3 says: what the first ranking did, if it still stands, then to hide a site. */
+  function nextSays(): (string | Node)[] {
+    const host = tour.first!;
+    const level = levels.get(host);
+    const done = level === 'pin' ? t('welcomeTourPinned', host) : level?.startsWith('raise') ? t('welcomeTourRaised', host) : level?.startsWith('lower') ? t('welcomeTourLowered', host) : '';
+    const find = tParts('welcomeTourFind', weighIcon());
+    return done ? [done, gap(), ...find] : find;
+  }
+
+  /** Where the tour is: its step, what to say, the control to ring, and where the tip goes. Undefined once it's closed. */
   function tourTip(): Tip | undefined {
     if (tour.skipped || tour.closed) return undefined;
-    if (!tour.ranked) {
-      if (!open) return { n: 1, says: tParts('welcomeTourOpen', weighIcon(), TOUR_SITE), target: rows.get(TOUR_SITE)!.weigh, at: rows.get(TOUR_SITE)!.row, point: 'weigh' };
+    if (!tour.first) {
+      if (!open) return { n: 1, says: tParts('welcomeTourOpen', weighIcon()), target: rows.get(TOUR_SITE)!.weigh, at: rows.get(TOUR_SITE)!.row, point: 'weigh' };
       return { n: 2, says: tParts('welcomeTourRank', open.host), target: rankButtons.get('pin'), at: rows.get(open.host)!.row, point: 'menu-end' };
     }
-    if (tour.hid) return { says: [t('welcomeTourDone')], at: summaryBox, point: 'up' };
+    if (tour.hid) return { says: tParts('welcomeTourDone', weighIcon()), at: summaryBox, point: 'up' };
     if (open && levels.get(open.host) === 'normal') {
       return { n: 3, says: tParts('welcomeTourHide', open.host), target: rankButtons.get('hide'), at: rows.get(open.host)!.row, point: 'menu-start' };
     }
-    return { n: 3, says: tParts('welcomeTourFind', weighIcon()), at: summaryBox, point: 'down' };
+    return { n: 3, says: nextSays(), at: summaryBox, point: 'down' };
   }
 
-  /** The tip beside what it's about, the ring on the control that comes next, and the line above the page. */
+  /** The tip beside what it's about, and the ring on the control that comes next. */
   function drawTour() {
     const tip = tourTip();
-    how.replaceChildren(...(tip ? [t('welcomeTourIntro')] : tParts('welcomeDemoHow', weighIcon())));
     if (!tip) coach.remove();
     else {
-      const button = tip.n
-        ? h('button', { type: 'button', class: 'text-btn', on: { click: () => endTour('skipped') } }, t('welcomeTourSkip'))
-        : h('button', { type: 'button', class: 'text-btn', on: { click: () => endTour('closed') } }, t('welcomeTourGotIt'));
-      const head = h('div', { class: 'coach-head' }, h('span', { class: 'step' }, tip.n ? t('welcomeTourStep', tip.n, TOUR_STEPS) : ''), button);
-      const says = h('p', { class: 'says' }, ...tip.says);
+      // A step's tip has its number and Skip above what it says; the last one ends with Got it.
+      const parts = tip.n
+        ? [
+            h(
+              'div',
+              { class: 'coach-head' },
+              h('span', { class: 'step' }, t('welcomeTourStep', tip.n, TOUR_STEPS)),
+              h('button', { type: 'button', class: 'text-btn', on: { click: () => endTour('skipped') } }, t('welcomeTourSkip')),
+            ),
+            h('p', { class: 'says' }, ...tip.says),
+          ]
+        : [
+            h('p', { class: 'says' }, ...tip.says),
+            h('div', { class: 'coach-foot' }, h('button', { type: 'button', class: 'btn small', on: { click: () => endTour('closed') } }, t('welcomeTourGotIt'))),
+          ];
+      const says = parts.find((part) => part.classList.contains('says'))!;
       // A new tip arrives with a short fade where it lands; the same one stays put.
-      const fresh = coach.textContent !== head.textContent + says.textContent || coach.dataset.point !== tip.point;
-      coach.replaceChildren(head, says);
+      const fresh = coach.textContent !== parts.map((part) => part.textContent).join('') || coach.dataset.point !== tip.point;
+      coach.replaceChildren(...parts);
       coach.dataset.point = tip.point;
       if (coach.parentElement !== tip.at) tip.at.append(coach);
       if (fresh) {
@@ -266,9 +290,11 @@ export function renderDemo(how: HTMLElement, page: HTMLElement, reset: HTMLEleme
     const host = open.host;
     const before = levels.get(host)!;
     const after = nextLevel(level, rankingOf(host));
+    // Normal on a site that has no ranking changes nothing, so it isn't news.
+    if (after === before) return;
     levels.set(host, after);
     last = { host, before, after };
-    tour.ranked = true;
+    tour.first ??= host;
     if (after === 'hide') tour.hid = true;
     if (after === 'hide' && !revealed) {
       open = undefined;
@@ -302,7 +328,8 @@ export function renderDemo(how: HTMLElement, page: HTMLElement, reset: HTMLEleme
     revealed = false;
     last = undefined;
     open = undefined;
-    tour.ranked = tour.hid = tour.closed = false;
+    tour.first = undefined;
+    tour.hid = tour.closed = false;
     draw();
     rows.get(RESULTS[0]!.host)!.weigh.focus();
   });
