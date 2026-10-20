@@ -23,15 +23,16 @@ import { RESULTS, STARTER_TAGS, resultBody, slide, tagChip, type DemoResult } fr
 // button is, what its choices do, what just happened, and what to do next. Each tip is
 // a callout beside the control it's about, which it marks with a dot, so it's where the
 // person is already looking, and it moves along as they go. Each step follows what the
-// person does rather than insisting on it (another site, or Raise before Pin, works
-// too), and the tour can be skipped.
+// person does, and while a tip asks for one control, the others are dimmed and do
+// nothing, so there's no wrong thing to press. Close and Skip always work, and once the
+// tour is done or skipped, everything does.
 
 /** Raise and Lower move a site five places a press, as on a search page; it passes the result it lands on. */
 const SHIFT: Partial<Record<PersonalLevel, number>> = { raise: -5.5, raise2: -10.5, lower: 5.5, lower2: 10.5 };
 /** How far each one tips the balance: the places it moves the site. */
 const SCORE: Partial<Record<PersonalLevel, number>> = { raise: 5, raise2: 10, lower: -5, lower2: -10 };
-/** The result the tour starts on: the official docs, third on the page. */
-const TOUR_SITE = 'docs.python.org';
+/** The result the tour starts on: a recipe site worth trusting, third on the page. */
+const TOUR_SITE = 'bbcgoodfood.com';
 const TOUR_STEPS = 3;
 const RANK_TITLES: Record<Level, MessageKey> = {
   hide: 'popupRankHide',
@@ -77,7 +78,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
     'div',
     { class: 'seg levels', attrs: { role: 'group' } },
     LEVELS.flatMap((level) => {
-      const button = h('button', { type: 'button', class: level, on: { click: () => press(level) } });
+      const button = h('button', { type: 'button', class: level, on: { click: () => !locked(button) && press(level) } });
       rankButtons.set(level, button);
       // Hide and Pin stand apart from Lower, Normal, and Raise.
       return [level === 'lower' || level === 'pin' ? h('span', { class: 'sep', attrs: { 'aria-hidden': 'true' } }) : null, button];
@@ -99,7 +100,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
         type: 'button',
         class: 'weigh',
         attrs: { 'aria-expanded': 'false', 'aria-controls': 'demo-menu' },
-        on: { click: () => (open === result ? closeMenu(false) : openMenu(result)) },
+        on: { click: () => locked(weigh) || (open === result ? closeMenu(false) : openMenu(result)) },
       });
       const body = resultBody(result);
       const chips = body.querySelector<HTMLElement>('.chips')!;
@@ -218,7 +219,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
   function tourTip(): Tip | undefined {
     if (tour.skipped || tour.closed) return undefined;
     if (!tour.first) {
-      if (!open) return { n: 1, says: tParts('welcomeTourOpen', weighIcon()), target: rows.get(TOUR_SITE)!.weigh, at: rows.get(TOUR_SITE)!.row, point: 'weigh' };
+      if (!open) return { n: 1, says: tParts('welcomeTourOpen', weighIcon(), TOUR_SITE), target: rows.get(TOUR_SITE)!.weigh, at: rows.get(TOUR_SITE)!.row, point: 'weigh' };
       return { n: 2, says: tParts('welcomeTourRank', open.host), target: rankButtons.get('pin'), at: rows.get(open.host)!.row, point: 'menu-end' };
     }
     if (tour.hid) return { says: tParts('welcomeTourDone', weighIcon()), at: summaryBox, point: 'up' };
@@ -228,9 +229,29 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
     return { n: 3, says: nextSays(), at: summaryBox, point: 'down' };
   }
 
-  /** The tip beside what it's about, and the dot on the control that comes next. */
+  const locked = (el: HTMLElement) => el.getAttribute('aria-disabled') === 'true';
+
+  /**
+   * While a tip asks for one control, dim the others and make them do nothing: the
+   * result's button in step 1, Pin in step 2, and Hide in step 3, which also leaves the
+   * button of every site not yet ranked, so any can be the one to hide. They stay
+   * focusable, so a keyboard doesn't lose its place, and say they're unavailable.
+   */
+  function lockTo(tip: Tip | undefined) {
+    const unranked = () => RESULTS.filter((r) => levels.get(r.host) === 'normal').map((r) => rows.get(r.host)!.weigh);
+    const allowed = tip?.target ? [tip.target, ...(tip.n === 3 ? unranked() : [])] : undefined;
+    for (const el of [...[...rows.values()].map((r) => r.weigh), ...rankButtons.values()]) {
+      const off = !!allowed && !allowed.includes(el);
+      if (off) el.setAttribute('aria-disabled', 'true');
+      else el.removeAttribute('aria-disabled');
+      el.classList.toggle('locked', off);
+    }
+  }
+
+  /** The tip beside what it's about, the dot on the control that comes next, and the others dimmed. */
   function drawTour() {
     const tip = tourTip();
+    lockTo(tip);
     if (!tip) coach.remove();
     else {
       // A step's tip has its number and Skip above what it says; the last one ends with Got it.
@@ -299,7 +320,9 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
     // The balance starts level and swings to the site's ranking, as the real menu's does.
     setBalance(balance, 'normal');
     draw();
-    rankButtons.get(rankingOf(result.host).pressed ?? 'normal')!.focus();
+    // Into the menu, on the ranking the tour asks for, or else the site's own.
+    const asked = tourTip()?.target;
+    (asked && [...rankButtons.values()].includes(asked as HTMLButtonElement) ? asked : rankButtons.get(rankingOf(result.host).pressed ?? 'normal')!).focus();
   }
 
   function closeMenu(refocus: boolean) {

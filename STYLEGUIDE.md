@@ -76,7 +76,7 @@ One palette, Graphite, defined twice: `assets/theme.css` for extension pages and
 | 30px serif | 400 | A settings section's title | "Your sites" |
 | 21px serif | 500 | A welcome section's title | "More to try" |
 | 19px serif | 500 | The brand name beside the logo | "Anubis" in the popup's header |
-| 16px | 400–500 | The welcome page's lead (400), and a practice result's title (500) | "Python List Comprehension" |
+| 16px | 400–500 | The welcome page's lead (400), and a practice result's title (500) | "Easy banana bread recipe" |
 | 15px | 600 | A heading inside a settings section, a list's name | "Paywalls" |
 | 14px | 400 | Body text on extension pages (`body`) | |
 | 14px | 600 | A site's name as the subject, in the popup | "javascript.info" |
@@ -161,6 +161,7 @@ h('span', { class: 'tag', style: `--c: ${tag.color}` }, h('i', { class: 'gem' })
 - **Focus**: a 2px `--accent` outline (`--text` on search pages), 2px offset, on `:focus-visible` only. Where a native control sits unseen over a styled one (the select over the site's name), the visible element shows the ring (`:has(select:focus-visible)`).
 - **Chosen**: the 2px underline above; for the rankings, a `--chosen` fill with a `--line-strong` edge. Don't use checkmarks, or bold alone.
 - **Disabled or busy**: `opacity: 0.6` and `cursor: progress` on buttons, `--muted` text on text buttons. Say what's happening ("Loading…").
+- **Not now**: while a tip of the welcome page's tour asks for one control, the others it would compete with go to `opacity: 0.35` with no hover, so the one asked for stands out. Its tip says which to press.
 - **Off**: when Anubis is off, the popup's content fades to half and the toolbar icon turns grey, with "Anubis is off" as its tooltip.
 - **Hidden and removed on search pages**: hidden results leave the page, fold into one muted line with a Show button, or fade, as Settings → Appearance says; the summary counts them. Removed panels that "Show hidden" brings back are marked with a faint dashed outline.
 
