@@ -18,11 +18,18 @@ import { RESULTS, STARTER_TAGS, slide, tagChip, type DemoResult } from './parts'
 // what pressing one again does (nextLevel), the summary's sentences, and the balance.
 // The menu opens under its result rather than floating over it, so it never covers
 // the page at phone width. Tags show from the starter lists, as a hint.
+//
+// A short tour above the page leads the way: open the menu beside the official docs,
+// rank the site, then hide one. Each step follows what the person does rather than
+// insisting on it, rings the control that comes next, and can be skipped.
 
 /** Raise and Lower move a site five places a press, as on a search page; it passes the result it lands on. */
 const SHIFT: Partial<Record<PersonalLevel, number>> = { raise: -5.5, raise2: -10.5, lower: 5.5, lower2: 10.5 };
 /** How far each one tips the balance: the places it moves the site. */
 const SCORE: Partial<Record<PersonalLevel, number>> = { raise: 5, raise2: 10, lower: -5, lower2: -10 };
+/** The result the tour starts on: the official docs, fourth on the page. */
+const TOUR_SITE = 'docs.python.org';
+const TOUR_STEPS = 3;
 const RANK_TITLES: Record<Level, MessageKey> = {
   hide: 'popupRankHide',
   lower: 'popupRankLower',
@@ -32,16 +39,13 @@ const RANK_TITLES: Record<Level, MessageKey> = {
 };
 
 export function renderDemo(how: HTMLElement, page: HTMLElement, reset: HTMLElement): void {
-  how.replaceChildren(
-    ...t('welcomeDemoHow', '')
-      .split('')
-      .flatMap((part, i) => (i ? [h('span', { class: 'inline-weigh' }, icon(WEIGH_ICONS.normal)), part] : [part])),
-  );
-
   const levels = new Map<string, PersonalLevel>(RESULTS.map((r) => [r.host, 'normal']));
   let revealed = false;
   let open: DemoResult | undefined;
   let last: { host: string; before: PersonalLevel; after: PersonalLevel } | undefined;
+  /** The tour's progress: a ranking pressed, a site hidden, or the tour skipped. */
+  const tour = { ranked: false, hid: false, skipped: false };
+  let beckoning: HTMLElement | undefined;
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const summary = h('p', { class: 'summary' });
@@ -166,8 +170,46 @@ export function renderDemo(how: HTMLElement, page: HTMLElement, reset: HTMLEleme
     else menu.remove();
     drawMenu();
     summarise();
+    drawTour();
     reset.hidden = !last && [...levels.values()].every((l) => l === 'normal');
     if (!still) for (const { row } of rows.values()) if (row.isConnected && before.get(row)) slide(row, before.get(row)!);
+  }
+
+  const weighIcon = () => h('span', { class: 'inline-weigh' }, icon(WEIGH_ICONS.normal));
+
+  /** Where the tour is: its step, what to do, and the control to ring. Undefined once it's done. */
+  function tourStep(): { n: number; says: (string | Node)[]; target?: HTMLElement } | undefined {
+    if (!tour.ranked) {
+      if (!open) return { n: 1, says: tParts('welcomeTourOpen', weighIcon(), TOUR_SITE), target: rows.get(TOUR_SITE)!.weigh };
+      return { n: 2, says: tParts('welcomeTourRank', open.host), target: rankButtons.get('pin') };
+    }
+    if (tour.hid) return undefined;
+    if (open && levels.get(open.host) === 'normal') return { n: 3, says: tParts('welcomeTourHide', open.host), target: rankButtons.get('hide') };
+    return { n: 3, says: tParts('welcomeTourFind', weighIcon()) };
+  }
+
+  /** The line above the page: the tour's step, or once it's done or skipped, what the page is for. */
+  function drawTour() {
+    const step = tour.skipped ? undefined : tourStep();
+    const skip = h('button', { type: 'button', class: 'text-btn', on: { click: skipTour } }, t('welcomeTourSkip'));
+    const parts = step
+      ? [h('span', { class: 'step' }, t('welcomeTourStep', step.n, TOUR_STEPS)), h('span', { class: 'says' }, ...step.says), skip]
+      : [h('span', { class: 'says' }, ...(tour.skipped ? tParts('welcomeDemoHow', weighIcon()) : [t('welcomeTourDone')]))];
+    // Said again only when it changes, so a screen reader isn't told the same step twice.
+    if (how.textContent !== parts.map((part) => part.textContent).join('')) how.replaceChildren(...parts);
+    how.classList.toggle('done', !step);
+    // Ring the control that comes next. A ring that stays put doesn't pulse again.
+    const target = step?.target;
+    if (target === beckoning) return;
+    beckoning?.classList.remove('beckon');
+    target?.classList.add('beckon');
+    beckoning = target;
+  }
+
+  function skipTour() {
+    tour.skipped = true;
+    draw();
+    page.querySelector<HTMLElement>('.weigh')?.focus();
   }
 
   function openMenu(result: DemoResult) {
@@ -192,6 +234,8 @@ export function renderDemo(how: HTMLElement, page: HTMLElement, reset: HTMLEleme
     const after = nextLevel(level, rankingOf(host));
     levels.set(host, after);
     last = { host, before, after };
+    tour.ranked = true;
+    if (after === 'hide') tour.hid = true;
     if (after === 'hide' && !revealed) {
       open = undefined;
       draw();
@@ -224,6 +268,7 @@ export function renderDemo(how: HTMLElement, page: HTMLElement, reset: HTMLEleme
     revealed = false;
     last = undefined;
     open = undefined;
+    tour.ranked = tour.hid = false;
     draw();
     rows.get(RESULTS[0]!.host)!.weigh.focus();
   });

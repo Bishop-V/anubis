@@ -2484,12 +2484,21 @@ if (!only || only === 'welcome') {
     await welcome.waitForTimeout(400);
   };
   const first = await demoOrder();
+  // The tour rings the docs' button first, then Pin once its menu is open.
+  const ringed = () => welcome.evaluate(() => [...document.querySelectorAll('.beckon')].map((el) => el.getAttribute('aria-label') ?? el.textContent));
+  const tourStart = { says: await demoText('#demo-how .says'), ringed: await ringed() };
+  await welcome.click(`#demo .results li:nth-child(4) .weigh`);
+  const tourMenu = { says: await demoText('#demo-how .says'), ringed: await ringed() };
+  await welcome.keyboard.press('Escape');
   await rank('docs.python.org', 'pin');
+  const pinFramed = await welcome.evaluate(() => getComputedStyle(document.querySelector('#demo li[data-level="pin"]'), '::before').borderTopStyle === 'solid');
   const pinned = await demoOrder();
   const menuOpen = await welcome.evaluate(() => !!document.querySelector('#demo .results li #demo-menu'));
   await welcome.screenshot({ path: `${SHOTS}welcome-demo-menu.png`, clip: await welcome.evaluate(() => { const r = document.querySelector('#demo').getBoundingClientRect(); return { x: r.x - 8, y: r.y + scrollY - 8, width: r.width + 16, height: r.height + 16 }; }) });
   await welcome.keyboard.press('Escape');
+  const tourThird = await demoText('#demo-how .says');
   await rank('w3schools.com', 'hide');
+  const tourDone = await demoText('#demo-how');
   const hidden = await demoOrder();
   const summary = await demoText('#demo .summary');
   const said = await demoText('#demo .said');
@@ -2499,8 +2508,14 @@ if (!only || only === 'welcome') {
   const undone = await demoOrder();
   await welcome.click('#demo-reset');
   const reset = await demoOrder();
-  console.log('\n== welcome demo:', JSON.stringify({ first, pinned, menuOpen, hidden, summary, said, revealed, undone, reset }));
+  console.log('\n== welcome demo:', JSON.stringify({ first, tourStart, tourMenu, pinned, pinFramed, menuOpen, tourThird, hidden, summary, said, tourDone, revealed, undone, reset }));
   if (
+    !/docs\.python\.org/.test(tourStart.says) ||
+    !/docs\.python\.org/.test(tourStart.ringed.join()) ||
+    !tourMenu.ringed.join().includes('Pin') ||
+    !/rather not/.test(tourThird) ||
+    /Step/.test(tourDone) ||
+    !pinFramed ||
     pinned[0] !== 'docs.python.org' ||
     !menuOpen ||
     hidden.includes('w3schools.com') ||
@@ -2514,21 +2529,22 @@ if (!only || only === 'welcome') {
     throw new Error('the welcome page demo did not rank');
   }
   // More to try: turning Official docs off takes its tag away and lets docs.python.org
-  // fall back; a tag goes under the title; the AI answer goes with its switch.
+  // fall back; a second tag goes under the title; the AI answer goes with its switch.
   await welcome.click('#lists-demo summary');
   const listsBefore = await welcome.evaluate(() => [...document.querySelectorAll('#lists-demo .host')].map((el) => el.textContent));
   await welcome.click('#lists-demo .switches li:first-child .switch input');
   await welcome.waitForTimeout(400);
   const listsAfter = await welcome.evaluate(() => [...document.querySelectorAll('#lists-demo .host')].map((el) => el.textContent));
   await welcome.click('#tags-demo summary');
-  await welcome.click('#tags-demo .choice');
+  // Tutorial starts on; Trusted joins it.
+  await welcome.click('#tags-demo .choice:nth-child(2)');
   const tagged = await demoText('#tags-demo .chips');
   await welcome.click('#panels-demo summary');
   await welcome.click('#panels-demo .switch input');
   const panelGone = await welcome.evaluate(() => document.querySelector('#panels-demo .panel').hidden);
   const listCount = await demoText('#lists-demo .more span');
   console.log('\n== welcome extras:', JSON.stringify({ listsBefore, listsAfter, tagged, panelGone, listCount }));
-  if (listsBefore[0] !== 'docs.python.org' || listsAfter[0] === 'docs.python.org' || !tagged || !panelGone) {
+  if (listsBefore[0] !== 'docs.python.org' || listsAfter[0] === 'docs.python.org' || !/Tutorial.*Trusted/.test(tagged) || !panelGone) {
     throw new Error('the welcome page extras did not respond');
   }
   await welcome.screenshot({ path: `${SHOTS}welcome-extras.png`, fullPage: true });

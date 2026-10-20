@@ -94,7 +94,7 @@ One palette, Graphite, defined twice: `assets/theme.css` for extension pages and
 
 - Spacing comes in steps of 2px: 4, 6, 8, 10, 12, 14, 16, 18, 24, and so on. Items in a wrapping row of tags or links sit 14px apart; buttons in a row 8px.
 - Sections are divided by a 1px `--line` hairline and space, never boxed into cards. The result menu is the only card. The welcome page's example search pages sit on `--raised` inside a `--line` border, so they read as a page within the page.
-- Corner radius: **6px** for controls (buttons, inputs, selects); **8px** for a ranking's button in the result menu and the popup; **10px** for the pinned result's frame and the phone's sheet; **12px** for the result menu and the welcome page's example search pages; **999px** (a pill) for switches; **50%** for round buttons on search pages (the column's, the tab on a picture), icon buttons there, and colour swatches. The focus ring's corners are 3px where the element has none of its own. Nothing else is rounded, and the logo carries its own rounded tile, so don't round or frame it.
+- Corner radius: **6px** for controls (buttons, inputs, selects); **8px** for a ranking's button in the result menu and the popup; **10px** for the pinned result's frame, the phone's sheet, and the welcome page's example AI answer; **12px** for the result menu and the welcome page's example search pages; **999px** (a pill) for switches; **50%** for round buttons on search pages (the column's, the tab on a picture), icon buttons there, and colour swatches. The focus ring's corners are 3px where the element has none of its own. Nothing else is rounded, and the logo carries its own rounded tile, so don't round or frame it.
 - Shadows only on the result menu (`--shadow`), which floats over the page.
 
 ## Layout
@@ -218,8 +218,8 @@ On a phone the engine's menu button (Google's ⋮, DuckDuckGo's ⋯) takes the r
 ## Motion
 
 - Motion answers an action: the menu opens with a 120ms fade, the balance swings, switches slide.
-- Nothing moves on its own. On the welcome page, the example results slide to their new places and the menu's balance tips when a ranking is pressed.
-- Movement (the menu's fade, the balance, switches, the welcome page's example results) stops under `prefers-reduced-motion`.
+- Nothing moves on its own, with one exception: the welcome page's tour rings the control to press next, and the ring pulses three times before it holds still. Otherwise, on the welcome page, the example results slide to their new places and the menu's balance tips when a ranking is pressed.
+- Movement (the menu's fade, the balance, switches, the welcome page's example results and its tour's pulse) stops under `prefers-reduced-motion`; the tour's ring stays, still.
 
 ## Writing
 
