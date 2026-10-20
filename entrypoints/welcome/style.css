@@ -1,19 +1,22 @@
-/* The welcome page: one centred column. A small line says Anubis is installed, a headline
-   says what it's for, and the practice search comes straight after, as wide as the column:
-   it's the page's reason for being. What else Anubis does, and the toolbar button, follow
-   under hairlines. The practice search, with the result menu's balance, is the one thing
-   to play with. */
+/* The welcome page. On a wide window it's two columns: on the left the headline, what
+   Anubis does, and a three-step checklist that stays in view; on the right, as large as
+   the page allows, the practice search with its tour. Under them, More to try and the
+   toolbar button keep the same columns, their titles on the left. Below 1040px it's one
+   column, with the checklist left to the tips. The practice search, with the result
+   menu's balance, is the one thing to play with. */
 
 main {
-  max-width: 760px;
+  --side: 340px;
+  --gap: 64px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 32px 56px;
+  padding: 40px 48px 56px;
 }
 .installed {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 0 0 28px;
+  margin: 0 0 36px;
   font-size: 15px;
   font-weight: 600;
 }
@@ -22,19 +25,92 @@ main {
   width: 28px;
   height: 28px;
 }
+.hero,
+main > section,
+footer {
+  display: grid;
+  grid-template-columns: var(--side) minmax(0, 1fr);
+  column-gap: var(--gap);
+}
+.body {
+  min-width: 0;
+}
+/* The left column follows the practice search down the page, so the checklist stays in view. */
+.intro {
+  position: sticky;
+  top: 32px;
+  align-self: start;
+}
 h1 {
   margin: 0;
-  font: 400 34px/1.15 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+  font: 400 44px/1.1 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
   text-wrap: balance;
 }
 .lead {
-  margin: 12px 0 0;
+  margin: 16px 0 0;
   max-width: 56ch;
   font-size: 16px;
   color: var(--muted);
 }
+
+/* Try it in three steps: a number in a ring for each, the next one in bold, a tick once done. */
+.steps-box {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.steps-label {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.steps {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.steps li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+}
+.steps .mark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  font-size: 12.5px;
+  font-variant-numeric: tabular-nums;
+}
+.steps .mark svg {
+  width: 14px;
+  height: 14px;
+}
+.steps li[aria-current='step'] {
+  color: var(--text);
+  font-weight: 600;
+}
+.steps li[aria-current='step'] .mark {
+  border: 2px solid var(--text);
+}
+.steps li.done .mark {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.steps-done {
+  margin: 14px 0 0;
+  font-weight: 600;
+}
+
 .try {
-  padding: 22px 0 20px;
+  min-width: 0;
 }
 .after {
   display: flex;
@@ -42,9 +118,13 @@ h1 {
   margin: 0;
   min-height: 26px;
 }
-section:not(.try) {
+main > section:not(.try) {
+  margin-top: 40px;
   padding: 28px 0 30px;
   border-top: 1px solid var(--line);
+}
+main > section + section:not(.try) {
+  margin-top: 0;
 }
 h2 {
   margin: 0 0 8px;
@@ -54,7 +134,7 @@ section p {
   margin: 0 0 10px;
   max-width: 62ch;
 }
-section > :last-child {
+.body > :last-child {
   margin-bottom: 0;
 }
 
@@ -195,20 +275,28 @@ section > :last-child {
   height: 14px;
 }
 .page {
-  margin: 14px 0 12px;
-  padding: 16px 18px 6px;
+  margin: 0 0 12px;
+  padding: 20px 24px 8px;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--raised);
 }
-/* The search, drawn as a search field that can't be typed in. */
+/* The search, drawn as a search field that can't be typed in, with its magnifying glass. */
 .query {
-  max-width: 360px;
-  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 440px;
+  min-height: 36px;
+  padding: 6px 14px;
   border: 1px solid var(--line-strong);
   border-radius: 6px;
-  font-size: 13px;
   overflow-wrap: anywhere;
+}
+.query svg {
+  width: 15px;
+  height: 15px;
+  color: var(--muted);
 }
 .summary-box {
   /* Above the results, so a tip here isn't covered while they slide past. */
@@ -241,8 +329,8 @@ section > :last-child {
 .results li {
   display: grid;
   grid-template-columns: 28px minmax(0, 1fr);
-  column-gap: 12px;
-  padding: 12px 0;
+  column-gap: 14px;
+  padding: 16px 0;
   border-top: 1px solid var(--line);
   background: var(--raised);
 }
@@ -277,20 +365,50 @@ section > :last-child {
 .results li[data-level='hide'] .result {
   opacity: 0.6;
 }
+/* A result as engines draw one: the site's round icon, name, and address; the title; a line from the page. */
 .result {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   min-width: 0;
 }
-.host {
+.site {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  margin-bottom: 3px;
+}
+.favicon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--chosen);
   font-size: 12.5px;
+  font-weight: 600;
+}
+.where {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.path {
   color: var(--muted);
-  overflow-wrap: anywhere;
 }
 .title {
+  font-size: 16px;
   font-weight: 500;
   overflow-wrap: anywhere;
+}
+.snippet {
+  font-size: 13px;
+  color: var(--muted);
 }
 .chips {
   display: flex;
@@ -595,11 +713,14 @@ section > :last-child {
 }
 
 footer {
-  display: flex;
-  gap: 18px;
   padding-top: 18px;
   border-top: 1px solid var(--line);
   font-size: 13px;
+}
+footer .body {
+  grid-column: 2;
+  display: flex;
+  gap: 18px;
 }
 footer a {
   color: var(--muted);
@@ -610,6 +731,32 @@ footer a:hover {
   text-decoration: underline;
 }
 
+@media (max-width: 1040px) {
+  main {
+    max-width: 760px;
+    padding: 40px 32px 56px;
+  }
+  .hero,
+  main > section,
+  footer {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  footer .body {
+    grid-column: 1;
+  }
+  .intro {
+    position: static;
+    margin-bottom: 22px;
+  }
+  h1 {
+    font-size: 34px;
+    line-height: 1.15;
+  }
+  /* The tips number each step, so the checklist would only push the practice search down. */
+  .steps-box {
+    display: none;
+  }
+}
 @media (max-width: 600px) {
   main {
     padding: 24px 16px 32px;
@@ -632,5 +779,10 @@ footer a:hover {
   }
   .menu {
     padding: 8px 4px 10px;
+  }
+  /* A phone's screen holds three results with their snippets, so the first tip would start
+     below it; the titles are enough to try ranking. */
+  .snippet {
+    display: none;
   }
 }

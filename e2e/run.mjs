@@ -2501,6 +2501,8 @@ if (!only || only === 'welcome') {
   const tourThird = await demoText('#demo .coach .says');
   await rank('w3schools.com', 'hide');
   const tourDone = await demoText('#demo .coach');
+  // The checklist beside the practice search ticks off all three steps and says so.
+  const checklist = await welcome.evaluate(() => ({ done: document.querySelectorAll('#steps li.done').length, allDone: !document.querySelector('#steps-done').hidden }));
   const hidden = await demoOrder();
   const summary = await demoText('#demo .summary');
   const said = await demoText('#demo .said');
@@ -2510,7 +2512,7 @@ if (!only || only === 'welcome') {
   const undone = await demoOrder();
   await welcome.click('#demo-reset');
   const reset = await demoOrder();
-  console.log('\n== welcome demo:', JSON.stringify({ first, tourStart, tourMenu, pinned, pinFramed, menuOpen, tourThird, hidden, summary, said, tourDone, revealed, undone, reset }));
+  console.log('\n== welcome demo:', JSON.stringify({ first, tourStart, tourMenu, pinned, pinFramed, menuOpen, tourThird, hidden, summary, said, tourDone, checklist, revealed, undone, reset }));
   if (
     !/beside every result/.test(tourStart.says) ||
     !/docs\.python\.org/.test(tourStart.ringed.join()) ||
@@ -2519,6 +2521,8 @@ if (!only || only === 'welcome') {
     !/docs\.python\.org is now first/.test(tourThird) ||
     !/rather not/.test(tourThird) ||
     !/Undo puts it back/.test(tourDone) ||
+    checklist.done !== 3 ||
+    !checklist.allDone ||
     !pinFramed ||
     pinned[0] !== 'docs.python.org' ||
     !menuOpen ||

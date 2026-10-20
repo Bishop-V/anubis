@@ -20,6 +20,10 @@ export const ICON_RAISE2 = svg('<path d="M4 7.5l4-4 4 4M4 12.5l4-4 4 4"/>');
 export const ICON_FEATHER = svg('<path d="M13 3C7.5 3.5 4.5 7 4 13"/><path d="M13 3c.3 4.5-2.8 8-7.2 8.6M7.5 8.5l3-.5M6 11l3.5-.4"/>');
 export const ICON_PIN = svg('<path d="M9.8 2.2l4 4-1.6.5-2.6 2.6.3 3.1-1.2 1.2L5.4 10.3 2.2 13.8M5.4 10.3L2.3 7.2l1.2-1.2 3.1.3 2.6-2.6z"/>');
 export const ICON_CLOSE = svg('<path d="M4 4l8 8M12 4l-8 8"/>');
+/** A magnifying glass, for the welcome page's practice search field. */
+export const ICON_SEARCH = svg('<circle cx="7" cy="7" r="4.5"/><path d="M10.4 10.4L14 14"/>');
+/** A tick, for a step that's done in the welcome page's checklist. */
+export const ICON_CHECK = svg('<path d="M3 8.5l3.2 3.2L13 4.8"/>');
 /** The sparkle engines put on their AI answers, for the welcome page's example of one. */
 export const ICON_SPARKLE = svg(
   '<path d="M7 2.5c.5 3 1.5 4 4.5 4.5-3 .5-4 1.5-4.5 4.5-.5-3-1.5-4-4.5-4.5 3-.5 4-1.5 4.5-4.5z"/><path d="M12.5 10.5c.2 1 .5 1.3 1.5 1.5-1 .2-1.3.5-1.5 1.5-.2-1-.5-1.3-1.5-1.5 1-.2 1.3-.5 1.5-1.5z"/>',
