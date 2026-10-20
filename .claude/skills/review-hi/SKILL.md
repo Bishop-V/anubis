@@ -65,7 +65,7 @@ Standard Hindi in Devanagari, as Google, Chrome, Gmail, and YouTube speak it in 
 - **Firefox (hi-IN):** « ऐड-ऑन » (Add-ons in the sync settings), « अभी सिंक करें » (Sync Now), « टूलबार पर पिन करें » (Pin to Toolbar), « एक्सटेंशन » (Extensions). Firefox's Hindi localisation lags behind the English; check these in a current build.
 - **Chrome:** « एक्सटेंशन » (the puzzle-piece button), « पता बार » (address bar).
 - Product names stay in Latin script: Anubis, Google, Bing, DuckDuckGo, Brave Goggles, uBlacklist, HOHSER, Koofr, Nextcloud, Duck.ai, Firefox, Chrome, GitHub, WebDAV. Quoted English UI from sites that show no Hindi stays English: Brave's “Find elsewhere” and Startpage's “Block creepy ads, not private search”.
-- `welcomeQuery` stays the English search « python list comprehension »: the starter lists tag English documentation, and Hindi speakers search technical topics in English.
+- `welcomeQuery` stays the English search « banana bread recipe »: its example results are English pages.
 
 ## What machine translation gets wrong here
 

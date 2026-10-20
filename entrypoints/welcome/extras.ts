@@ -4,7 +4,7 @@ import type { Level } from '@/utils/matcher';
 import { describeRemoved } from '@/utils/cleanup';
 import { t, tn, type MessageKey } from '@/utils/i18n';
 import { TAG_PALETTE, type ParsedList } from '@/utils/listformat';
-import { STARTER_LISTS, STARTER_TAGS, reorder, resultRow, sample, tagChip, type DemoResult } from './parts';
+import { STARTER_LISTS, STARTER_TAGS, resultRow, sample, tagChip, type DemoResult } from './parts';
 
 // "More to try" on the welcome page: tags, lists, and removing panels, each a short
 // example that opens on its own, so the first look stays on ranking. Like the ranking
@@ -28,14 +28,14 @@ interface ExampleTag {
 
 /** Tags people make for themselves: a plain label, one that raises, and one that lowers. In ochre, malachite, and umber, apart from the starter lists' colours. */
 const EXAMPLE_TAGS: ExampleTag[] = [
-  { id: 'welcomeTagTutorial', color: TAG_PALETTE[0]! },
+  { id: 'welcomeTagRecipes', color: TAG_PALETTE[0]! },
   { id: 'welcomeTagTrusted', color: TAG_PALETTE[2]!, effect: 'raise' },
-  { id: 'welcomeTagPaywalled', color: TAG_PALETTE[7]!, effect: 'lower' },
+  { id: 'welcomeTagAds', color: TAG_PALETTE[7]!, effect: 'lower' },
 ];
 
 /** Tags: a result with one example tag already on, and the others to add or take off. */
 export function renderTagsExample(box: HTMLElement): void {
-  const result = sample('realpython.com');
+  const result = sample('allrecipes.com');
   const tags = EXAMPLE_TAGS.map((tag) => ({ ...tag, label: t(tag.id) }));
   const on = new Set<string>([tags[0]!.id]);
   const under = h('span', { class: 'chips' });
@@ -79,9 +79,8 @@ export function renderTagsExample(box: HTMLElement): void {
 /** The starter list that defines a tag. */
 const listOf = (tag: string) => STARTER_LISTS.find((list) => list.tags.some((x) => x.id === tag))!;
 
-/** Whether a result's list is on; Official docs also raises the sites it tags, as its description says. */
+/** Whether a result has a tag from a list that's on. */
 const listed = (r: DemoResult, on: Set<ParsedList>) => !!r.tag && on.has(listOf(r.tag));
-const raised = (r: DemoResult, on: Set<ParsedList>) => listed(r, on) && r.tag === 'docs';
 
 /** A starter list's name and description, with its switch. */
 const listSwitch = (parsed: ParsedList, on: boolean, change: (on: boolean) => void) =>
@@ -93,20 +92,16 @@ const listSwitch = (parsed: ParsedList, on: boolean, change: (on: boolean) => vo
     switchFor(parsed.meta.name ?? '', on, change),
   );
 
-/** Lists: three starter lists with switches, two on, and results that gain their tags and move when one is on. */
+/** Lists: three starter lists with switches, two on, and a result for each that has its tag while the list is on. */
 export function renderListsExample(box: HTMLElement, subscribed: number): void {
-  const results = ['stackoverflow.com', 'en.wikipedia.org', 'docs.python.org'].map(sample);
+  const results = ['reddit.com', 'en.wikipedia.org', 'cooking.nytimes.com'].map(sample);
   // One list starts off, so there's a switch to turn on as well as ones to turn off.
   const on = new Set(STARTER_LISTS.slice(0, -1));
   const rows = new Map(results.map((r) => [r, resultRow(r)]));
-  const list = h('ol', { class: 'results' });
+  const list = h('ol', { class: 'results' }, [...rows.values()]);
 
   function draw() {
-    for (const [r, row] of rows) {
-      row.querySelector('.chips')!.replaceChildren(...(listed(r, on) ? [tagChip(STARTER_TAGS[r.tag!]!, raised(r, on) ? 'raise' : undefined)] : []));
-    }
-    const order = [...results].sort((a, b) => Number(raised(b, on)) - Number(raised(a, on)));
-    reorder(list, order.map((r) => rows.get(r)!));
+    for (const [r, row] of rows) row.querySelector('.chips')!.replaceChildren(...(listed(r, on) ? [tagChip(STARTER_TAGS[r.tag!]!)] : []));
   }
 
   const switches = STARTER_LISTS.map((parsed) =>
@@ -137,7 +132,7 @@ export function renderPanelsExample(box: HTMLElement): void {
     h('span', { class: 'bar short' }),
   );
   const summary = h('p', { class: 'summary', attrs: { role: 'status' } });
-  const results = ['docs.python.org', 'realpython.com', 'stackoverflow.com'].map((host) => resultRow(sample(host)));
+  const results = ['allrecipes.com', 'bbcgoodfood.com', 'reddit.com'].map((host) => resultRow(sample(host)));
   const label = t('cleanupAi');
   box.replaceChildren(
     h(

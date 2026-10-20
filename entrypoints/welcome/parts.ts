@@ -1,5 +1,5 @@
 import discussions from '@/lists/discussions.anubis?raw';
-import officialDocs from '@/lists/official-docs.anubis?raw';
+import paywalls from '@/lists/paywalls.anubis?raw';
 import reference from '@/lists/reference.anubis?raw';
 import { h } from '@/utils/dom';
 import { tagEffectText, tagMark } from '@/utils/icons';
@@ -20,45 +20,45 @@ export interface DemoResult {
   tag?: string;
 }
 
-/** English on purpose: the sample results are for the search in welcomeQuery, which stays technical. In the engine's order. */
+/** English on purpose: the sample results are for the search in welcomeQuery, which stays in English. In the engine's order. */
 export const RESULTS: DemoResult[] = [
   {
-    host: 'geeksforgeeks.org',
-    path: 'python › list-comprehension',
-    title: 'Python - List Comprehension',
-    snippet: 'Learn list comprehension in Python with examples, syntax, and practice problems.',
+    host: 'pinterest.com',
+    path: 'ideas › banana-bread',
+    title: 'Banana Bread Recipes: 900+ ideas',
+    snippet: 'Discover recipes, home ideas, style inspiration, and other ideas to try. Log in to see more.',
   },
   {
-    host: 'w3schools.com',
-    path: 'python › python_lists_comprehension',
-    title: 'Python List Comprehension',
-    snippet: 'List comprehension offers a shorter syntax when you want to create a new list from an existing one.',
+    host: 'allrecipes.com',
+    path: 'recipe › banana-banana-bread',
+    title: 'Banana Banana Bread Recipe',
+    snippet: 'A moist, easy loaf that uses up overripe bananas. Rated by thousands of home cooks.',
   },
   {
-    host: 'docs.python.org',
-    path: '3 › tutorial › datastructures',
-    title: '5. Data Structures — Python 3 documentation',
-    snippet: 'List comprehensions provide a concise way to create lists, with a for clause and optional if clauses.',
-    tag: 'docs',
+    host: 'bbcgoodfood.com',
+    path: 'recipes › easy-banana-bread',
+    title: 'Easy banana bread recipe',
+    snippet: 'Make the most of overripe bananas with this simple loaf. It takes ten minutes to prepare.',
   },
   {
-    host: 'realpython.com',
-    path: 'list-comprehension-python',
-    title: 'When to Use a List Comprehension in Python',
-    snippet: "In this tutorial, you'll learn when a list comprehension makes your code clearer, and when it doesn't.",
+    host: 'cooking.nytimes.com',
+    path: 'recipes › banana-bread',
+    title: 'Banana Bread Recipe - NYT Cooking',
+    snippet: 'The one to make when your bananas have gone brown: tender, sweet, and quick to stir together.',
+    tag: 'paywall',
   },
   {
-    host: 'stackoverflow.com',
-    path: 'questions › list-comprehension',
-    title: 'What does "list comprehension" mean? How does it work?',
-    snippet: 'I keep seeing [x for x in items] in code. What is this called, and how does it work?',
+    host: 'reddit.com',
+    path: 'r › Baking › comments',
+    title: "What's your go-to banana bread recipe? : r/Baking",
+    snippet: "I've tried a dozen recipes and they all come out dry. What do you swear by?",
     tag: 'forum',
   },
   {
     host: 'en.wikipedia.org',
-    path: 'wiki › List_comprehension',
-    title: 'List comprehension - Wikipedia',
-    snippet: 'A list comprehension is a syntactic construct for creating a list based on existing lists.',
+    path: 'wiki › Banana_bread',
+    title: 'Banana bread - Wikipedia',
+    snippet: 'Banana bread is a type of sweet bread made from mashed bananas, usually a quick bread.',
     tag: 'reference',
   },
 ];
@@ -67,7 +67,7 @@ export const RESULTS: DemoResult[] = [
 export const sample = (host: string): DemoResult => RESULTS.find((r) => r.host === host)!;
 
 /** Three of the lists Anubis starts with, read from their bundled copies so names, tags, and colours stay in step. */
-export const STARTER_LISTS: ParsedList[] = [officialDocs, discussions, reference].map((text) => parseList(text));
+export const STARTER_LISTS: ParsedList[] = [discussions, reference, paywalls].map((text) => parseList(text));
 
 export const STARTER_TAGS: Record<string, TagDef> = Object.fromEntries(STARTER_LISTS.flatMap((list) => list.tags).map((tag) => [tag.id, tag]));
 
@@ -86,7 +86,7 @@ export const resultBody = (result: DemoResult): HTMLElement =>
     h(
       'span',
       { class: 'site' },
-      h('span', { class: 'favicon', attrs: { 'aria-hidden': 'true' } }, result.host.replace(/^(www|en|docs)\./, '')[0]!.toUpperCase()),
+      h('span', { class: 'favicon', attrs: { 'aria-hidden': 'true' } }, result.host.replace(/^(www|en|cooking)\./, '')[0]!.toUpperCase()),
       h('span', { class: 'where' }, h('span', { class: 'host' }, result.host), h('span', { class: 'path' }, ` › ${result.path}`)),
     ),
     h('span', { class: 'title' }, result.title),
@@ -106,12 +106,4 @@ export function slide(el: HTMLElement, from: number): void {
   void el.offsetHeight;
   el.style.transition = 'transform 0.35s cubic-bezier(0.3, 0.7, 0.2, 1)';
   el.style.transform = '';
-}
-
-/** Put rows in a new order, sliding each from where it was unless motion is reduced. */
-export function reorder(list: HTMLElement, rows: HTMLElement[]): void {
-  const before = new Map(rows.map((row) => [row, row.getBoundingClientRect().top]));
-  list.replaceChildren(...rows);
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  for (const row of rows) if (before.get(row)) slide(row, before.get(row)!);
 }

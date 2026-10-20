@@ -2484,22 +2484,38 @@ if (!only || only === 'welcome') {
     await welcome.waitForTimeout(400);
   };
   const first = await demoOrder();
-  // The tour introduces the button and rings the docs' first, then Pin once its menu is
-  // open; after Pin it says the docs are first and asks for a site to hide; after Hide, it
-  // points at Undo and says what to do next.
+  // The tour introduces the button and marks the recipe site's first, then Pin once its
+  // menu is open, with the other choices dimmed and doing nothing; after Pin it says the
+  // site is first and asks for a site to hide; after Hide, it points at Undo and says what
+  // to do next.
   const ringed = () => welcome.evaluate(() => [...document.querySelectorAll('.beckon')].map((el) => el.getAttribute('aria-label') ?? el.textContent));
   const tourStart = { says: await demoText('#demo .coach .says'), ringed: await ringed() };
   await welcome.click(`#demo .results li:nth-child(3) .weigh`);
   const tourMenu = { says: await demoText('#demo .coach .says'), ringed: await ringed(), besideMenu: await welcome.evaluate(() => document.querySelector('#demo-menu + .coach') !== null) };
+  // Playwright won't press a control that says it's unavailable; a person can.
+  await welcome.click('#demo-menu button.raise', { force: true });
+  await welcome.waitForTimeout(400);
+  const lockedPress = {
+    order: await demoOrder(),
+    dimmed: await welcome.evaluate(() => [...document.querySelectorAll('#demo-menu [aria-disabled="true"]')].map((el) => el.className)),
+    says: await demoText('#demo .coach .says'),
+  };
   await welcome.keyboard.press('Escape');
-  await rank('docs.python.org', 'pin');
+  await rank('bbcgoodfood.com', 'pin');
   const pinFramed = await welcome.evaluate(() => getComputedStyle(document.querySelector('#demo li[data-level="pin"]'), '::before').borderTopStyle === 'solid');
   const pinned = await demoOrder();
   const menuOpen = await welcome.evaluate(() => !!document.querySelector('#demo .results li #demo-menu'));
   await welcome.screenshot({ path: `${SHOTS}welcome-demo-menu.png`, clip: await welcome.evaluate(() => { const r = document.querySelector('#demo').getBoundingClientRect(); return { x: r.x - 8, y: r.y + scrollY - 8, width: r.width + 16, height: r.height + 16 }; }) });
   await welcome.keyboard.press('Escape');
   const tourThird = await demoText('#demo .coach .says');
-  await rank('w3schools.com', 'hide');
+  // In step 3, Hide is the one choice, but any site not yet ranked can be the one.
+  await welcome.click(`#demo .results li:nth-child(${(await demoOrder()).indexOf('pinterest.com') + 1}) .weigh`);
+  const hideStep = await welcome.evaluate(() => ({
+    choices: [...document.querySelectorAll('#demo-menu .levels button:not([aria-disabled])')].map((el) => el.className.split(' ')[0]),
+    sites: [...document.querySelectorAll('#demo .weigh:not([aria-disabled])')].map((el) => el.closest('li').querySelector('.host').textContent),
+  }));
+  await welcome.click('#demo-menu button.hide');
+  await welcome.waitForTimeout(400);
   const tourDone = await demoText('#demo .coach');
   // The checklist beside the practice search ticks off all three steps and says so.
   const checklist = await welcome.evaluate(() => ({ done: document.querySelectorAll('#steps li.done').length, allDone: !document.querySelector('#steps-done').hidden }));
@@ -2512,39 +2528,46 @@ if (!only || only === 'welcome') {
   const undone = await demoOrder();
   await welcome.click('#demo-reset');
   const reset = await demoOrder();
-  console.log('\n== welcome demo:', JSON.stringify({ first, tourStart, tourMenu, pinned, pinFramed, menuOpen, tourThird, hidden, summary, said, tourDone, checklist, revealed, undone, reset }));
+  console.log('\n== welcome demo:', JSON.stringify({ first, tourStart, tourMenu, lockedPress, pinned, pinFramed, menuOpen, tourThird, hideStep, hidden, summary, said, tourDone, checklist, revealed, undone, reset }));
   if (
     !/beside every result/.test(tourStart.says) ||
-    !/docs\.python\.org/.test(tourStart.ringed.join()) ||
+    !/bbcgoodfood\.com/.test(tourStart.ringed.join()) ||
     !tourMenu.ringed.join().includes('Pin') ||
     !tourMenu.besideMenu ||
-    !/docs\.python\.org is now first/.test(tourThird) ||
+    lockedPress.order.join() !== first.join() ||
+    lockedPress.dimmed.length !== 4 ||
+    lockedPress.says !== tourMenu.says ||
+    !/bbcgoodfood\.com is now first/.test(tourThird) ||
     !/rather not/.test(tourThird) ||
+    hideStep.choices.join() !== 'hide' ||
+    hideStep.sites.length !== 5 ||
+    hideStep.sites.includes('bbcgoodfood.com') ||
     !/Undo puts it back/.test(tourDone) ||
     checklist.done !== 3 ||
     !checklist.allDone ||
     !pinFramed ||
-    pinned[0] !== 'docs.python.org' ||
+    pinned[0] !== 'bbcgoodfood.com' ||
     !menuOpen ||
-    hidden.includes('w3schools.com') ||
+    hidden.includes('pinterest.com') ||
     hidden.length !== first.length - 1 ||
     !/pinned 1 and hid 1 of 6 results/.test(summary) ||
-    !/Hid w3schools\.com/.test(said) ||
-    !revealed.includes('w3schools.com') ||
-    !undone.includes('w3schools.com') ||
+    !/Hid pinterest\.com/.test(said) ||
+    !revealed.includes('pinterest.com') ||
+    !undone.includes('pinterest.com') ||
     reset.join() !== first.join()
   ) {
     throw new Error('the welcome page demo did not rank');
   }
-  // More to try: turning Official docs off takes its tag away and lets docs.python.org
-  // fall back; a second tag goes under the title; the AI answer goes with its switch.
+  // More to try: turning Discussions off takes its tag away and turning Paywalls on adds
+  // one; a second tag goes under the title; the AI answer goes with its switch.
   await welcome.click('#lists-demo summary');
-  const listsBefore = await welcome.evaluate(() => [...document.querySelectorAll('#lists-demo .host')].map((el) => el.textContent));
+  const listTags = () => welcome.evaluate(() => [...document.querySelectorAll('#lists-demo .results li')].map((li) => `${li.querySelector('.host').textContent}: ${li.querySelector('.chips').textContent}`));
+  const listsBefore = await listTags();
   await welcome.click('#lists-demo .switches li:first-child .switch input');
-  await welcome.waitForTimeout(400);
-  const listsAfter = await welcome.evaluate(() => [...document.querySelectorAll('#lists-demo .host')].map((el) => el.textContent));
+  await welcome.click('#lists-demo .switches li:last-child .switch input');
+  const listsAfter = await listTags();
   await welcome.click('#tags-demo summary');
-  // Tutorial starts on; Trusted joins it.
+  // Recipes starts on; Trusted joins it.
   await welcome.click('#tags-demo .choice:nth-child(2)');
   const tagged = await demoText('#tags-demo .chips');
   await welcome.click('#panels-demo summary');
@@ -2552,7 +2575,8 @@ if (!only || only === 'welcome') {
   const panelGone = await welcome.evaluate(() => document.querySelector('#panels-demo .panel').hidden);
   const listCount = await demoText('#lists-demo .more span');
   console.log('\n== welcome extras:', JSON.stringify({ listsBefore, listsAfter, tagged, panelGone, listCount }));
-  if (listsBefore[0] !== 'docs.python.org' || listsAfter[0] === 'docs.python.org' || !/Tutorial.*Trusted/.test(tagged) || !panelGone) {
+  const listsChanged = listsBefore.join() === 'reddit.com: Discussion,en.wikipedia.org: Reference,cooking.nytimes.com: ' && listsAfter.join() === 'reddit.com: ,en.wikipedia.org: Reference,cooking.nytimes.com: Paywalled';
+  if (!listsChanged || !/Recipes.*Trusted/.test(tagged) || !panelGone) {
     throw new Error('the welcome page extras did not respond');
   }
   await welcome.screenshot({ path: `${SHOTS}welcome-extras.png`, fullPage: true });

@@ -265,6 +265,18 @@ section p {
   color: var(--text);
   background: var(--chosen);
 }
+/* While the tour asks for one control, the others are dimmed and do nothing. */
+.locked {
+  opacity: 0.35;
+  cursor: default;
+}
+.weigh.locked:hover {
+  color: var(--muted);
+  background: transparent;
+}
+.levels button.locked:hover {
+  background: transparent;
+}
 @media (prefers-reduced-motion: no-preference) {
   .beckon::after {
     animation: beckon 1.4s ease-out 0.4s 3;
