@@ -58,34 +58,84 @@ section p {
 }
 
 /* Rank a site: an example search page on a raised panel, so it reads as a page within the page. */
-/* The tour above the example page: which step and Skip on one line, what to do next under them. */
-.tour {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: baseline;
-  column-gap: 12px;
-  min-height: 46px;
+/* The tour's tip: a callout in the primary button's colours, so it reads as a guide laid over
+   the example rather than part of it, with a pointer at what it's about. It sits beside that:
+   under a result's button, under the menu (pointing at a ranking), or by the summary. */
+.coach {
+  position: relative;
+  max-width: 340px;
+  margin: 12px 0 2px;
+  padding: 10px 14px 12px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--on-accent);
 }
-.tour .step {
-  font-size: 12.5px;
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
+.coach::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  inset-inline-start: 9px;
+  width: 10px;
+  height: 10px;
+  background: inherit;
+  transform: rotate(45deg);
 }
-.tour .says {
-  grid-row: 2;
+.coach[data-point='menu-start']::before {
+  inset-inline-start: 30px;
+}
+.coach[data-point='menu-end']::before {
+  inset-inline-start: auto;
+  inset-inline-end: 32px;
+}
+.coach[data-point='down'] {
+  margin: 12px 0 8px;
+}
+.coach[data-point='down']::before {
+  top: auto;
+  bottom: -5px;
+}
+.results li > .coach {
+  grid-row: 3;
   grid-column: 1 / -1;
-  font-weight: 500;
 }
-.tour.done .says {
-  font-weight: 400;
+@media (prefers-reduced-motion: no-preference) {
+  .coach.arrive {
+    animation: coach-in 0.25s ease-out;
+  }
+}
+@keyframes coach-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.coach-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 12.5px;
+}
+.coach .step {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
 }
 /* Skip stays quiet: the tour is an offer, not a gate. */
-.tour .text-btn {
-  grid-row: 1;
-  grid-column: 2;
-  font-size: 12.5px;
+.coach .text-btn {
+  color: inherit;
   font-weight: 500;
-  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.coach :focus-visible {
+  outline-color: var(--on-accent);
+}
+.coach .says {
+  margin: 4px 0 0;
+  font-weight: 500;
+}
+.coach .inline-weigh {
+  background: color-mix(in srgb, var(--on-accent) 20%, transparent);
 }
 /* The control the tour points to: a ring in the text colour that pulses three times, then
    holds still. It moves on its own, the one thing on the page that does, so it isn't missed. */

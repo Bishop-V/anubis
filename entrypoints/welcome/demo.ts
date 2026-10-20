@@ -19,9 +19,10 @@ import { RESULTS, STARTER_TAGS, slide, tagChip, type DemoResult } from './parts'
 // The menu opens under its result rather than floating over it, so it never covers
 // the page at phone width. Tags show from the starter lists, as a hint.
 //
-// A short tour above the page leads the way: open the menu beside the official docs,
-// rank the site, then hide one. Each step follows what the person does rather than
-// insisting on it, rings the control that comes next, and can be skipped.
+// A short tour leads the way: open the menu beside the official docs, rank the site,
+// then hide one. Each tip is a callout beside the control it's about, which it rings,
+// so it's where the person is already looking, and it moves along as they go. Each
+// step follows what the person does rather than insisting on it, and can be skipped.
 
 /** Raise and Lower move a site five places a press, as on a search page; it passes the result it lands on. */
 const SHIFT: Partial<Record<PersonalLevel, number>> = { raise: -5.5, raise2: -10.5, lower: 5.5, lower2: 10.5 };
@@ -44,14 +45,18 @@ export function renderDemo(how: HTMLElement, page: HTMLElement, reset: HTMLEleme
   let open: DemoResult | undefined;
   let last: { host: string; before: PersonalLevel; after: PersonalLevel } | undefined;
   /** The tour's progress: a ranking pressed, a site hidden, or the tour skipped. */
-  const tour = { ranked: false, hid: false, skipped: false };
+  const tour = { ranked: false, hid: false, skipped: false, closed: false };
   let beckoning: HTMLElement | undefined;
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const summary = h('p', { class: 'summary' });
   const said = h('p', { class: 'said', attrs: { role: 'status' } });
   const list = h('ol', { class: 'results', attrs: { 'aria-label': t('welcomeDemoLabel', t('welcomeQuery')) } });
-  page.replaceChildren(h('div', { class: 'query', attrs: { 'aria-hidden': 'true' } }, t('welcomeQuery')), h('div', { class: 'summary-box' }, summary, said), list);
+  const summaryBox = h('div', { class: 'summary-box' }, summary, said);
+  // The tour's tip, moved beside whatever it's about; its words are also said here, as they change.
+  const coach = h('div', { class: 'coach' });
+  const coachSaid = h('p', { class: 'sr-only', attrs: { role: 'status' } });
+  page.replaceChildren(h('div', { class: 'query', attrs: { 'aria-hidden': 'true' } }, t('welcomeQuery')), summaryBox, list, coachSaid);
 
   // One menu, moved under whichever result it's open for, so its balance swings from where it was.
   const balance = balanceSvg();
@@ -168,6 +173,8 @@ export function renderDemo(how: HTMLElement, page: HTMLElement, reset: HTMLEleme
     list.replaceChildren(...order().map((r) => rows.get(r.host)!.row));
     if (open && shown(open)) rows.get(open.host)!.row.append(menu);
     else menu.remove();
+    // The tip goes after the menu, wherever both are.
+    coach.remove();
     drawMenu();
     summarise();
     drawTour();
@@ -177,37 +184,64 @@ export function renderDemo(how: HTMLElement, page: HTMLElement, reset: HTMLEleme
 
   const weighIcon = () => h('span', { class: 'inline-weigh' }, icon(WEIGH_ICONS.normal));
 
-  /** Where the tour is: its step, what to do, and the control to ring. Undefined once it's done. */
-  function tourStep(): { n: number; says: (string | Node)[]; target?: HTMLElement } | undefined {
-    if (!tour.ranked) {
-      if (!open) return { n: 1, says: tParts('welcomeTourOpen', weighIcon(), TOUR_SITE), target: rows.get(TOUR_SITE)!.weigh };
-      return { n: 2, says: tParts('welcomeTourRank', open.host), target: rankButtons.get('pin') };
-    }
-    if (tour.hid) return undefined;
-    if (open && levels.get(open.host) === 'normal') return { n: 3, says: tParts('welcomeTourHide', open.host), target: rankButtons.get('hide') };
-    return { n: 3, says: tParts('welcomeTourFind', weighIcon()) };
+  interface Tip {
+    /** The step, or none for the closing tip. */
+    n?: number;
+    says: (string | Node)[];
+    /** The control to ring. */
+    target?: HTMLElement;
+    /** Where the tip goes, and which way its pointer points: up at the button or a ranking at the start or end of the menu, or down at the results. */
+    at: HTMLElement;
+    point: 'weigh' | 'menu-start' | 'menu-end' | 'down' | 'up';
   }
 
-  /** The line above the page: the tour's step, or once it's done or skipped, what the page is for. */
+  /** Where the tour is: its step, what to do, the control to ring, and where the tip goes. Undefined once it's closed. */
+  function tourTip(): Tip | undefined {
+    if (tour.skipped || tour.closed) return undefined;
+    if (!tour.ranked) {
+      if (!open) return { n: 1, says: tParts('welcomeTourOpen', weighIcon(), TOUR_SITE), target: rows.get(TOUR_SITE)!.weigh, at: rows.get(TOUR_SITE)!.row, point: 'weigh' };
+      return { n: 2, says: tParts('welcomeTourRank', open.host), target: rankButtons.get('pin'), at: rows.get(open.host)!.row, point: 'menu-end' };
+    }
+    if (tour.hid) return { says: [t('welcomeTourDone')], at: summaryBox, point: 'up' };
+    if (open && levels.get(open.host) === 'normal') {
+      return { n: 3, says: tParts('welcomeTourHide', open.host), target: rankButtons.get('hide'), at: rows.get(open.host)!.row, point: 'menu-start' };
+    }
+    return { n: 3, says: tParts('welcomeTourFind', weighIcon()), at: summaryBox, point: 'down' };
+  }
+
+  /** The tip beside what it's about, the ring on the control that comes next, and the line above the page. */
   function drawTour() {
-    const step = tour.skipped ? undefined : tourStep();
-    const skip = h('button', { type: 'button', class: 'text-btn', on: { click: skipTour } }, t('welcomeTourSkip'));
-    const parts = step
-      ? [h('span', { class: 'step' }, t('welcomeTourStep', step.n, TOUR_STEPS)), h('span', { class: 'says' }, ...step.says), skip]
-      : [h('span', { class: 'says' }, ...(tour.skipped ? tParts('welcomeDemoHow', weighIcon()) : [t('welcomeTourDone')]))];
-    // Said again only when it changes, so a screen reader isn't told the same step twice.
-    if (how.textContent !== parts.map((part) => part.textContent).join('')) how.replaceChildren(...parts);
-    how.classList.toggle('done', !step);
+    const tip = tourTip();
+    how.replaceChildren(...(tip ? [t('welcomeTourIntro')] : tParts('welcomeDemoHow', weighIcon())));
+    if (!tip) coach.remove();
+    else {
+      const button = tip.n
+        ? h('button', { type: 'button', class: 'text-btn', on: { click: () => endTour('skipped') } }, t('welcomeTourSkip'))
+        : h('button', { type: 'button', class: 'text-btn', on: { click: () => endTour('closed') } }, t('welcomeTourGotIt'));
+      const head = h('div', { class: 'coach-head' }, h('span', { class: 'step' }, tip.n ? t('welcomeTourStep', tip.n, TOUR_STEPS) : ''), button);
+      const says = h('p', { class: 'says' }, ...tip.says);
+      // A new tip arrives with a short fade where it lands; the same one stays put.
+      const fresh = coach.textContent !== head.textContent + says.textContent || coach.dataset.point !== tip.point;
+      coach.replaceChildren(head, says);
+      coach.dataset.point = tip.point;
+      if (coach.parentElement !== tip.at) tip.at.append(coach);
+      if (fresh) {
+        coachSaid.textContent = says.textContent;
+        coach.classList.remove('arrive');
+        void coach.offsetWidth;
+        coach.classList.add('arrive');
+      }
+    }
     // Ring the control that comes next. A ring that stays put doesn't pulse again.
-    const target = step?.target;
+    const target = tip?.target;
     if (target === beckoning) return;
     beckoning?.classList.remove('beckon');
     target?.classList.add('beckon');
     beckoning = target;
   }
 
-  function skipTour() {
-    tour.skipped = true;
+  function endTour(end: 'skipped' | 'closed') {
+    tour[end] = true;
     draw();
     page.querySelector<HTMLElement>('.weigh')?.focus();
   }
@@ -268,7 +302,7 @@ export function renderDemo(how: HTMLElement, page: HTMLElement, reset: HTMLEleme
     revealed = false;
     last = undefined;
     open = undefined;
-    tour.ranked = tour.hid = false;
+    tour.ranked = tour.hid = tour.closed = false;
     draw();
     rows.get(RESULTS[0]!.host)!.weigh.focus();
   });
