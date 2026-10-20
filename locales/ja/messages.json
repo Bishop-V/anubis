@@ -66,7 +66,7 @@
     "message": "ランク"
   },
   "popupNoSites": {
-    "message": "まだありません。検索結果の ⚖ ボタンで、そのサイトをランク付けできます。"
+    "message": "まだありません。サイトの検索結果のメニューから、そのサイトをランク付けします。"
   },
   "popupKeptNormal": {
     "message": "通常のまま"
@@ -152,6 +152,12 @@
   "tagMarkSpoken": {
     "message": "（$1）"
   },
+  "tagsShowMore": {
+    "message": "ほかの $1 個のタグを表示"
+  },
+  "tagsShowFewer": {
+    "message": "表示するタグを減らす"
+  },
   "tagListsPickerHint": {
     "message": "追加しても、変わるのはマイリストだけです。"
   },
@@ -183,7 +189,7 @@
     "message": "$1 のこのページ"
   },
   "popupNotSearch": {
-    "message": "Google、DuckDuckGo、Bing、Brave、またはその他の対応する検索エンジンで検索すると、Anubis による変更を確認できます。"
+    "message": "対応している検索エンジンで検索すると、Anubis が変更した内容を確認できます。"
   },
   "showHidden": {
     "message": "非表示の結果を表示"
@@ -195,19 +201,22 @@
     "message": "さらに結果を読み込む"
   },
   "loadMoreTitle": {
-    "message": "次のページの結果をこのページに追加し、まとめてランク付けします"
+    "message": "次のページを追加して、すべてをまとめてランク付けする"
   },
   "loading": {
     "message": "読み込み中…"
   },
   "loadMoreEmpty": {
-    "message": "$1 から $2 ページ目の結果が返されませんでした。先にロボットでないことの確認を求めている可能性があります。"
+    "message": "$1 は $2 ページ目の結果を返しませんでした。ロボット確認が原因かもしれません。"
   },
   "loadMoreRepeat": {
-    "message": "$1 が $2 ページ目にも同じ結果を返したため、これ以上の結果はありません。"
+    "message": "$1 が $2 ページ目をもう一度返したため、これ以上ありません。"
   },
   "loadMoreBusy": {
     "message": "$2 ページ目を読み込む前に、$1 から速度を落とすよう求められました。1 分ほどしてからもう一度お試しください。"
+  },
+  "loadMoreRobot": {
+    "message": "$1 は $2 ページ目の前にロボット確認を求めています。"
   },
   "loadMoreRefused": {
     "message": "$1 が $2 ページ目の送信を拒否しました。"
@@ -254,6 +263,12 @@
   "menuAddTagButton": {
     "message": "タグを追加"
   },
+  "menuTagsMore": {
+    "message": "+ タグ"
+  },
+  "menuTagsDone": {
+    "message": "完了"
+  },
   "menuCloseLabel": {
     "message": "閉じる"
   },
@@ -270,7 +285,7 @@
     "message": "問題を報告"
   },
   "reportProblemTitle": {
-    "message": "Anubis のバージョンとブラウザを記入したバグ報告を GitHub で開きます"
+    "message": "バージョンとブラウザーを入力済みの状態で、GitHub にバグ報告を開く"
   },
   "summaryShowAll": {
     "message": "すべて表示"
@@ -356,11 +371,17 @@
   "summaryRemovedRelated_other": {
     "message": "関連する検索のリスト $1 件"
   },
+  "summaryRemovedMore": {
+    "message": "ほか $1 件"
+  },
   "summaryRemovedElsewhere_other": {
     "message": "ほかの検索エンジンへのボタンの列 $1 件"
   },
   "summaryRemovedAdRequests_other": {
     "message": "広告の許可を求める表示 $1 件"
+  },
+  "summaryRemovedAds_other": {
+    "message": "広告ブロック $1 件"
   },
   "withShortcut": {
     "message": "$1（$2）"
@@ -417,10 +438,10 @@
     "message": "$1 を購読しますか？"
   },
   "offerTrust": {
-    "message": "リストは、検索結果のサイトを非表示にしたり、ランク付けやタグ付けをしたりできます。信頼できるリストだけを購読してください。"
+    "message": "リストは、サイトの非表示、ランク付け、タグ付けを行えます。信頼できるリストだけを購読してください。"
   },
   "offerPermission": {
-    "message": "このあと、リストのあるサイト $1 の読み取りを Anubis に許可するよう、ブラウザから求められます。"
+    "message": "Anubis が $1 から読み込むための許可をブラウザーが求めます。"
   },
   "offerAlready": {
     "message": "$1 はすでに購読しています。"
@@ -440,41 +461,164 @@
   "welcomeHeading": {
     "message": "Anubis をインストールしました"
   },
+  "welcomeDemoHeading": {
+    "message": "練習用の検索"
+  },
+  "welcomeDemoLabel": {
+    "message": "「$1」の検索結果の例"
+  },
+  "welcomeHeadline": {
+    "message": "先に表示するサイトと、二度と見たくないサイトを選びます。"
+  },
+  "welcomeLead": {
+    "message": "Anubis は、Google、Bing、DuckDuckGo などの各検索結果の横に小さなボタンを表示します。まずはこの練習用の検索で試してみましょう。ここで行ったことは保存されません。"
+  },
+  "welcomeStepsLabel": {
+    "message": "試してみる 3 つのこと"
+  },
+  "welcomeStepOpen": {
+    "message": "検索結果の横のボタンを押す"
+  },
+  "welcomeStepRank": {
+    "message": "そのサイトを好きな位置に置く"
+  },
+  "welcomeStepHide": {
+    "message": "見たくないサイトを非表示にする"
+  },
+  "welcomeStepDone": {
+    "message": "完了"
+  },
+  "welcomeStepsAllDone": {
+    "message": "3 つともできました。実際の検索も同じように使えます。"
+  },
+  "welcomeTourPinned": {
+    "message": "$1 は表示されるたびに先頭に表示されます。"
+  },
+  "welcomeTourRaised": {
+    "message": "Anubis は $1 が表示されるたびに格上げします。"
+  },
+  "welcomeTourLowered": {
+    "message": "Anubis は $1 が表示されるたびに格下げします。"
+  },
+  "welcomeTourStep": {
+    "message": "ステップ $1 / $2"
+  },
+  "welcomeTourOpen": {
+    "message": "Anubis は、すべての結果の横にこの $1 ボタンを表示します。$2 は、誰かの講義ノートよりも信頼できそうですが、3 番目に埋もれています。その横のボタンを押してください。"
+  },
+  "welcomeTourRank": {
+    "message": "ここから $1 を上げたり、下げたり、ページから外したりできます。固定すると先頭に残ります。"
+  },
+  "welcomeTourFind": {
+    "message": "次に、見たくないサイトを探して、その $1 を押します。"
+  },
+  "welcomeTourHide": {
+    "message": "「非表示」を押すと、$1 は二度と表示されません。"
+  },
+  "welcomeTourDone": {
+    "message": "消えました。Anubis は非表示にした内容を必ず結果の上に表示し、「元に戻す」で戻せます。次の検索では $1 を探してみてください。"
+  },
+  "welcomeTourGotIt": {
+    "message": "わかりました"
+  },
+  "welcomeTourSkip": {
+    "message": "スキップ"
+  },
+  "welcomeDemoReset": {
+    "message": "最初からやり直す"
+  },
+  "welcomeQuery": {
+    "message": "trolley problem"
+  },
+  "welcomeMoreHeading": {
+    "message": "ほかにも試せること"
+  },
+  "welcomeMoreHow": {
+    "message": "どれも必須ではありませんが、見ておく価値があります。"
+  },
+  "welcomeTagsHeading": {
+    "message": "サイトにタグを付ける"
+  },
+  "welcomeTagsWhat": {
+    "message": "サイトに自分だけのラベルを付けます。"
+  },
+  "welcomeTagsHow": {
+    "message": "この結果にタグを付けてみましょう。"
+  },
+  "welcomeTagNotes": {
+    "message": "講義ノート"
+  },
+  "welcomeTagSignUp": {
+    "message": "登録必須"
+  },
+  "welcomeTagTrusted": {
+    "message": "信頼できる"
+  },
+  "welcomeTagsMore": {
+    "message": "タグは、そのタグが付いたすべてのサイトを動かせます。「信頼できる」は格上げし、「登録必須」は格下げします。"
+  },
+  "welcomeTagsOpen": {
+    "message": "タグの設定を開く"
+  },
+  "welcomeListsTitle": {
+    "message": "リストを購読する"
+  },
+  "welcomeListsWhat": {
+    "message": "ほかの人が最新に保っているリストを使います。"
+  },
+  "welcomeListsHow": {
+    "message": "これらをオフ、オンにして、タグの変化を確認しましょう。"
+  },
+  "welcomeListsCount_other": {
+    "message": "$1 個のリストがすでにオンです。"
+  },
+  "welcomeListsHeading": {
+    "message": "購読中のリスト"
+  },
+  "welcomeListsMore": {
+    "message": "設定で、オフにしたり、リストを追加したりできます。"
+  },
+  "welcomeListsOpen": {
+    "message": "リストの設定を開く"
+  },
+  "welcomePanelsHeading": {
+    "message": "パネルの削除"
+  },
+  "welcomePanelsWhat": {
+    "message": "AI の回答などの余計なものを取り除きます。"
+  },
+  "welcomePanelsExample": {
+    "message": "AI の回答"
+  },
+  "welcomePanelsMore": {
+    "message": "指定するまで、Anubis はこれらに手を加えません。削除するものは設定で選びます。"
+  },
+  "welcomePanelsOpen": {
+    "message": "パネルの設定を開く"
+  },
   "welcomePinHeading": {
-    "message": "ツールバーに表示しておく"
+    "message": "ツールバーのボタン"
   },
   "welcomePinWhy": {
-    "message": "ツールバーのボタンでは、そのページで Anubis が行ったことの確認、オンとオフの切り替え、表示中のサイトのランク付けができます。"
+    "message": "なくても使えますが、あると便利です。開いているサイトをランク付けしたり、検索で Anubis が行った内容を確認したりできます。"
   },
   "welcomePinChrome": {
-    "message": "アドレスバーの横にある拡張機能ボタン（パズルのピース）を押し、Anubis の横にある固定アイコン（ピン）を押します。"
+    "message": "アドレスバーの横にあるパズルのピースを押し、Anubis の横のピンを押します。"
   },
   "welcomePinEdge": {
-    "message": "アドレスバーの横にある拡張機能ボタン（パズルのピース）を押し、Anubis の横にある目のアイコンを押します。"
+    "message": "アドレスバーの横にあるパズルのピースを押し、Anubis の横の目のアイコンを押します。"
   },
   "welcomePinOpera": {
-    "message": "アドレスバーの横にある拡張機能ボタン（キューブ）を押し、Anubis の横にあるピンを押します。"
+    "message": "アドレスバーの横にあるキューブを押し、Anubis の横のピンを押します。"
   },
   "welcomePinFirefox": {
-    "message": "アドレスバーの横にある拡張機能ボタン（パズルのピース）を押し、Anubis の横にある歯車を押して「ツールバーにピン留め」を選びます。"
+    "message": "パズルのピースを押し、Anubis の横の歯車を押して、「ツールバーにピン留め」を選びます。"
   },
   "welcomePinAndroid": {
     "message": "Anubis は、ブラウザのメニューの「拡張機能」にあります。"
   },
   "welcomePinned": {
     "message": "Anubis はツールバーにあります。"
-  },
-  "welcomeQuery": {
-    "message": "trolley problem"
-  },
-  "welcomeListsHeading": {
-    "message": "購読中のリスト"
-  },
-  "welcomeListsMore": {
-    "message": "これらをオフにしたり、ほかのリストを探したりするには、設定を開いてください。"
-  },
-  "welcomeListsOpen": {
-    "message": "リストの設定を開く"
   },
   "welcomeGuide": {
     "message": "Wiki"
@@ -486,34 +630,34 @@
     "message": "同期"
   },
   "syncIntro": {
-    "message": "マイリストと設定を、ほかのパソコンやほかのブラウザでも使えます。"
+    "message": "マイサイトと設定を、ほかのパソコンやブラウザーと共有します。"
   },
   "syncBrowserHeading": {
     "message": "ブラウザの同期"
   },
   "syncFirefox": {
-    "message": "マイリスト、設定、タグの設定、購読リストは、Firefox の同期ストレージに保存されます。Firefox にログインし、同期の設定で「アドオン」にチェックを入れていると、Firefox がほかのパソコンにコピーします。同期はおよそ 10 分ごと、または「今すぐ同期」を選んだときに行われます。"
+    "message": "ログインしていて、同期設定で「アドオン」にチェックが入っていると、Firefox がマイサイトと設定を同期します。"
   },
   "syncFirefoxAndroid": {
-    "message": "Android 版 Firefox はアドオンのデータを同期しないため、マイリスト、設定、タグの設定、購読リストはこの端末にのみ保存されます。同期するには、下で WebDAV サーバーに接続してください。"
+    "message": "Android 版 Firefox はアドオンのデータを同期しません。同期するには、下で WebDAV サーバーを接続してください。"
   },
   "syncChrome": {
-    "message": "マイリスト、設定、タグの設定、購読リストは、ブラウザの同期ストレージに保存されます。ブラウザにログインして拡張機能の同期をオンにしていると、ブラウザがほかのパソコンにコピーします。"
+    "message": "ログインしていて、拡張機能の同期がオンになっていると、ブラウザーがマイサイトと設定を同期します。"
   },
   "syncBrowserHelp": {
     "message": "確認するブラウザの設定"
   },
   "syncUsage": {
-    "message": "同期で使える $2 KB のうち、$1 KB を使用しています。"
+    "message": "$2 KB のうち $1 KB を使用中です。"
   },
   "syncTooBig": {
-    "message": "マイリストは同期するには大きすぎるため、この端末にのみ保存されています。設定、タグの設定、購読リストは引き続き同期されます。"
+    "message": "マイリストは同期するには大きすぎるため、このデバイスにのみ保存されます。設定は引き続き同期されます。"
   },
   "webdavHeading": {
     "message": "ブラウザ間"
   },
   "webdavIntro": {
-    "message": "Firefox と Chrome は、互いに直接は同期できません。両方で共有するには、それぞれに同じ WebDAV ストレージを接続します。Koofr と InfiniCLOUD には無料プランがあり、Nextcloud などのセルフホスト型も使えます。Anubis はそこに anubis-sync.json というファイルを 1 つ置き、各ブラウザの変更をまとめます。"
+    "message": "Firefox と Chrome の間で同期するには、それぞれに同じ WebDAV ストレージ（Koofr、InfiniCLOUD、Nextcloud など）を接続します。"
   },
   "webdavHelp": {
     "message": "アドレスとパスワードの入手方法"
@@ -534,7 +678,7 @@
     "message": "パスワード"
   },
   "webdavPasswordHint": {
-    "message": "多くのサービスでは、アプリ用に別のパスワードが発行されます。そちらを使ってください。"
+    "message": "サービスにアプリ パスワードがある場合は、それを使います。"
   },
   "webdavConnect": {
     "message": "接続"
@@ -549,13 +693,13 @@
     "message": "パスフレーズの確認"
   },
   "webdavEncryptionHint": {
-    "message": "どのブラウザでも、長く固有のパスフレーズ（12 文字以上）を使ってください。パスフレーズはこのブラウザにのみ保存され、サーバーには送信されません。忘れると、サーバー上のコピーは復元できません。"
+    "message": "12 文字以上で、すべてのブラウザーで同じものにします。このブラウザーの外には出ず、復元できません。"
   },
   "webdavCorrectPassphrase": {
     "message": "正しい暗号化パスフレーズを入力してください"
   },
   "webdavCorrectPassphraseHint": {
-    "message": "ほかのブラウザで設定したものと同じパスフレーズを使ってください。パスフレーズはここにのみ保存され、サーバーには送信されません。"
+    "message": "もう一方のブラウザーで設定したパスフレーズを使います。"
   },
   "webdavSavePassphrase": {
     "message": "パスフレーズを保存して同期"
@@ -564,7 +708,7 @@
     "message": "暗号化パスフレーズを変更"
   },
   "webdavChangePassphraseHint": {
-    "message": "Anubis は、サーバーのファイルを変更する前に現在のパスフレーズを確認します。ほかのブラウザでも、次の同期の前に新しいパスフレーズを入力してください。"
+    "message": "その後、ほかのブラウザーに新しいパスフレーズを入力します。"
   },
   "webdavChangePassphraseHelp": {
     "message": "変更するとどうなるか"
@@ -576,16 +720,16 @@
     "message": "パスフレーズが一致しません。"
   },
   "webdavEncrypted": {
-    "message": "同期ファイルはエンドツーエンドで暗号化されています。パスフレーズはこのブラウザにのみ保存され、サーバーは内容を読み取れません。どのブラウザでも同じパスフレーズを使ってください。忘れると、サーバー上のコピーは復元できません。"
+    "message": "エンドツーエンドで暗号化されています。サーバーは内容を読めず、忘れたパスフレーズは復元できません。"
   },
   "webdavEncryptionPending": {
-    "message": "このブラウザで暗号化を設定しました。次の同期が成功すると、サーバー上のコピーが暗号化されます。どのブラウザでも同じパスフレーズを使ってください。"
+    "message": "暗号化を設定しました。次回の同期で、サーバー上のコピーが暗号化されます。"
   },
   "webdavEncryptionMissing": {
-    "message": "このブラウザには暗号化パスフレーズが設定されていません。暗号化されたファイルを読み取るには、ほかのブラウザと同じパスフレーズを使ってください。暗号化されていない同期ファイルは、サーバーの運営者が読み取れます。"
+    "message": "暗号化されたファイルを読むには、もう一方のブラウザーのパスフレーズを入力します。"
   },
   "webdavPrivacy": {
-    "message": "暗号化がオンのときは、暗号化されたデータだけがこのサーバーに送られます。パスフレーズはここに保存され、送信されません。暗号化しない場合、サーバーは同期ファイルを読み取れます。WebDAV のログイン情報はここに保存され、ログインのためにこのサーバーへ送信されます。"
+    "message": "暗号化がオフの場合、サーバーは同期ファイルを読めます。"
   },
   "webdavBadAddress": {
     "message": "https:// で始まる、サービスの WebDAV アドレスを入力してください"
@@ -600,7 +744,7 @@
     "message": "$2 として $1 と同期しています。"
   },
   "webdavWhen": {
-    "message": "変更は、行ってから数秒後にサーバーへ送られます。ほかのブラウザからの変更は、ブラウザの起動時と検索時に、最短で 5 分おきに取り込まれます。"
+    "message": "変更の数秒後、起動時、検索時に同期します。"
   },
   "webdavSyncing": {
     "message": "同期中…"
@@ -618,43 +762,43 @@
     "message": "接続を解除"
   },
   "webdavDisconnected": {
-    "message": "接続を解除しました。ファイルはサーバーに残り、マイリストと設定はこのブラウザに残ります。"
+    "message": "接続を解除しました。データはこことサーバーに残ります。"
   },
   "webdavErrorAuth": {
-    "message": "サーバーがユーザー名またはパスワードを受け付けませんでした。多くのサービスでは、普段のパスワードではなくアプリパスワードが必要です。"
+    "message": "サーバーがログインを受け付けませんでした。アプリ パスワードをお試しください。"
   },
   "webdavErrorForbidden": {
     "message": "このアカウントでは、サーバーのその場所にファイルを保存できません。"
   },
   "webdavErrorFolder": {
-    "message": "サーバーのそのアドレスにフォルダがありません。アドレスを確認してください。"
+    "message": "そのアドレスにフォルダーがありません。"
   },
   "webdavErrorPermission": {
-    "message": "Anubis には $1 と同期する権限がなくなりました。「今すぐ同期」を押して、もう一度許可してください。"
+    "message": "Anubis は $1 と同期する権限を失いました。「今すぐ同期」を押して許可してください。"
   },
   "webdavErrorNetwork": {
     "message": "$1 に接続できませんでした。アドレスとネットワーク接続を確認してください。"
   },
   "webdavErrorFile": {
-    "message": "そこにある anubis-sync.json は Anubis が読み取れるファイルではないため、変更していません。別のフォルダを使ってください。"
+    "message": "Anubis はそこにある anubis-sync.json を読み込めないため、変更しませんでした。別のフォルダーを使ってください。"
   },
   "webdavErrorNeedsPassphrase": {
-    "message": "この同期ファイルは暗号化されています。パスフレーズを入力してください。何も変更していません。"
+    "message": "この同期ファイルは暗号化されています。パスフレーズを入力してください。"
   },
   "webdavErrorWrongPassphrase": {
-    "message": "そのパスフレーズでは同期ファイルを復号できませんでした。確認してください。サーバーのファイルは変更していません。"
+    "message": "パスフレーズが違います。何も変更していません。"
   },
   "webdavErrorUnencrypted": {
-    "message": "この接続は以前は暗号化されていましたが、現在サーバーには暗号化されていない同期ファイルがあります。ファイルは変更していません。もう一度同期する前に、サーバーのファイルを確認してください。"
+    "message": "サーバー上の同期ファイルは暗号化されなくなりました。変更していません。"
   },
   "webdavErrorChanged": {
-    "message": "パスフレーズの変更中に同期ファイルが変更されたか、サーバーが同時編集からファイルを保護できません。何も上書きしていません。もう一度同期してから、やり直してください。"
+    "message": "その間に同期ファイルが変更されました。何も上書きしていません。同期してから、もう一度お試しください。"
   },
   "webdavErrorUnconfirmed": {
-    "message": "ファイルの保存中に $1 との接続が切れたため、現在どのパスフレーズが使われているか Anubis には分かりません。古いパスフレーズはここに保存されたままです。次の同期で誤りと表示されたら、新しいパスフレーズを入力してください。"
+    "message": "保存中に $1 との接続が切れました。次回の同期でパスフレーズが違うと表示されたら、新しいパスフレーズを入力してください。"
   },
   "webdavErrorServer": {
-    "message": "サーバーがエラーを返しました（HTTP $1）。しばらくしてからもう一度お試しください。"
+    "message": "サーバーエラー（HTTP $1）です。しばらくしてからもう一度お試しください。"
   },
   "webdavErrorFailed": {
     "message": "同期が完了しませんでした。もう一度お試しください。"
@@ -669,16 +813,16 @@
     "message": "配色"
   },
   "themeHint": {
-    "message": "「自動」は、この設定ページと各結果のメニューではブラウザに合わせ、Anubis が検索ページに追加するその他の部分では、各検索エンジンのライトモードやダークモードに合わせます。"
+    "message": "「自動」はブラウザーの設定に従い、各検索エンジンのページでは、そのエンジン独自のモードに従います。"
   },
   "paletteHeading": {
     "message": "検索ページでの色"
   },
   "paletteHint": {
-    "message": "「シンプル」では、Anubis が検索ページに追加するものをすべてグレーで表示し、ゴールドを使いません。タグは色がなくなり、名前で区別します。設定とツールバーのポップアップはゴールドのままです。"
+    "message": "「シンプル」はタグをグレーで表示し、名前で見分けます。"
   },
   "paletteGold": {
-    "message": "ゴールド"
+    "message": "タグの色"
   },
   "palettePlain": {
     "message": "シンプル"
@@ -687,7 +831,7 @@
     "message": "非表示の結果"
   },
   "hideStyleHint": {
-    "message": "「削除」はページから取り除きます。結果の上のサマリーがその数を示し、「非表示の結果を表示」で元に戻せます。「折りたたみ」は、連続する非表示の結果ごとに細い行を 1 つ残します。「薄く表示」は結果を薄くします。"
+    "message": "「削除」はページから取り除き、「折りたたみ」は 1 行だけ残し、「薄く表示」は薄くします。"
   },
   "hideStyleRemove": {
     "message": "削除"
@@ -702,7 +846,7 @@
     "message": "結果を並べ替える"
   },
   "rerankHint": {
-    "message": "Brave Goggle のように、格上げした結果と固定した結果を上へ、格下げした結果を下へ移動します。"
+    "message": "格上げした結果と固定した結果を上に、格下げした結果を下に移動します。"
   },
   "rerankHelp": {
     "message": "並べ替えのしくみ"
@@ -711,7 +855,7 @@
     "message": "さらに結果を自動で読み込む"
   },
   "deeperAutoHint": {
-    "message": "次のページの結果を最初のページに追加し、まとめてランク付けします。3 ページ目にあった固定したサイトも先頭に上がります。結果の上にある「さらに結果を読み込む」を押しても、同じことができます。追加するページ数を 0（オフ）から $1 までで入力してください。"
+    "message": "すべての検索に追加するページ数です。0（オフ）から $1 までです。"
   },
   "deeperHelp": {
     "message": "追加読み込みのしくみ"
@@ -720,7 +864,7 @@
     "message": "ページを追加"
   },
   "deeperTipOff": {
-    "message": "オフ：「さらに結果を読み込む」を押したときだけ、追加の結果を読み込みます。"
+    "message": "オフです。もっと見たいときは「さらに結果を読み込む」を押します。"
   },
   "deeperTipTime_other": {
     "message": "検索ごとに約 $1 秒長くかかります。"
@@ -729,10 +873,10 @@
     "message": "$1数ページ程度なら、検索エンジンが問題にすることはほとんどありません。"
   },
   "deeperTipSome": {
-    "message": "$1一部の検索エンジンで、ロボットでないことの確認を求められる場合があります。"
+    "message": "$1 検索エンジンによっては、ロボット確認が求められることがあります。"
   },
   "deeperTipMany": {
-    "message": "$1Google と Bing では、この数になるとロボットでないことの確認を求められることがよくあります。それより前にページがなくなる検索エンジンもあります。"
+    "message": "$1 この数だと、Google や Bing はたいていロボット確認を求めます。"
   },
   "chipsHeading": {
     "message": "タグのラベル"
@@ -744,7 +888,7 @@
     "message": "サマリー"
   },
   "summaryHint": {
-    "message": "Anubis が変更した内容を、結果の上に 1 行のサマリーで表示します。"
+    "message": "Anubis が変更した内容を、結果の上に表示します。"
   },
   "enabledHeading": {
     "message": "Anubis オン"
@@ -756,7 +900,7 @@
     "message": "検索エンジン"
   },
   "enginesIntro": {
-    "message": "Anubis は、次の検索エンジンのウェブ検索結果で動作します。結果はできるだけページの構造から見つけるため、小さなデザイン変更では動かなくなりません。"
+    "message": "Anubis は、これらの検索エンジンのウェブ結果で動作します。"
   },
   "enginesTrouble": {
     "message": "検索ページで Anubis が何もしない場合は"
@@ -768,31 +912,31 @@
     "message": "バックアップ、インポート、共有"
   },
   "shareIntro": {
-    "message": "すべてのコピーを保存したり、ほかのツールからサイトを移したり、マイリストを公開してほかの人が購読できるようにしたりできます。"
+    "message": "バックアップ、ほかのツールからのインポート、マイリストの公開ができます。"
   },
   "publishHeading": {
     "message": "マイリストを公開"
   },
   "publishIntro": {
-    "message": "サーバーは不要です。公開 git リポジトリがデータベースになり、プルリクエストで誰でも貢献できます。"
+    "message": "公開 Git リポジトリからマイリストを公開します。"
   },
   "publishHelp": {
     "message": "リストの公開方法"
   },
   "publishStepDownload": {
-    "message": "下からマイリストをダウンロードします。先頭にある $1、$2、$3 の行を設定してください。"
+    "message": "マイリストをダウンロードし、$1、$2、$3 の行を設定します。"
   },
   "publishStepRepository": {
-    "message": "公開の GitHub リポジトリ（または gist）を作成し、ファイルを追加します（例：$1）。"
+    "message": "公開の GitHub リポジトリまたは gist に追加します（例：$1）。"
   },
   "publishStepIssues": {
-    "message": "$1 を追加すると、各結果のメニューから、ほかの人がリストにサイトを提案できるようになります。"
+    "message": "$1 を追加すると、ほかの人がサイトを提案できます。"
   },
   "publishStepShare": {
-    "message": "ファイルのリンクを共有します。受け取った人は「リスト」→「リストを追加」に貼り付けます。"
+    "message": "ファイルのリンクを共有し、「リスト」→「リストを追加」で使ってもらいます。"
   },
   "publishStepDirectory": {
-    "message": "「その他のリスト」で全員に表示したい場合は、$1 に追加するプルリクエストを作成してください。"
+    "message": "「ほかのリスト」に掲載するには、$1 にプルリクエストを送ります。"
   },
   "publishDownload": {
     "message": "マイリストをダウンロード"
@@ -804,13 +948,13 @@
     "message": "サイトをインポート"
   },
   "importIntro": {
-    "message": "uBlacklist や HOHSER から移行しますか？　ルールやエクスポートをここに貼り付けると、サイトがマイリストに追加されます。非表示は非表示のまま、HOHSER の部分的な非表示は「格下げ」になり、ハイライトの色はハイライトするタグになります。"
+    "message": "uBlacklist や HOHSER のルール、または Goggle を貼り付けると、サイトがマイリストに追加されます。"
   },
   "importHelp": {
     "message": "各ツールのルールの変換先"
   },
   "importPlaceholder": {
-    "message": "uBlacklist のルール、HOHSER のエクスポート、Goggle、または 1 行に 1 つのドメインを貼り付け"
+    "message": "uBlacklist のルール、HOHSER のエクスポート、Goggle、または 1 行に 1 つのドメイン"
   },
   "importLabel": {
     "message": "インポートするサイト"
@@ -840,7 +984,7 @@
     "message": "$2として読み込みました：$1 件のサイトを追加し、$3 件を更新しました。"
   },
   "importSkipped_other": {
-    "message": "アドレスのパターンや未対応の構文を含む $1 件のルールを除外しました。それらを残すには、元のリストを購読してください。"
+    "message": "Anubis が使えない $1 件のルールをスキップしました。"
   },
   "importFailed": {
     "message": "インポートできませんでした：$1"
@@ -849,7 +993,7 @@
     "message": "バックアップ"
   },
   "backupIntro": {
-    "message": "設定、タグの設定、購読リスト、マイリストのすべてを 1 つのファイルにまとめます。"
+    "message": "設定、タグの設定、購読リスト、マイサイトを 1 つのファイルにまとめます。"
   },
   "backupExport": {
     "message": "バックアップをエクスポート"
@@ -921,7 +1065,16 @@
     "message": "ほかのツールからの移行"
   },
   "cleanupIntro": {
-    "message": "Anubis は、検索ページにある結果以外のパネルを削除できます。表示したくないものをそれぞれオンにしてください。結果の上にある「非表示の結果を表示」を押すと、その検索で元に戻ります。"
+    "message": "検索ページの結果以外の部分を削除します。「非表示の結果を表示」で元に戻せます。"
+  },
+  "cleanupGroupMedia": {
+    "message": "動画、画像、ニュース"
+  },
+  "cleanupGroupQuestions": {
+    "message": "質問とディスカッション"
+  },
+  "cleanupGroupAds": {
+    "message": "広告"
   },
   "cleanupStillShows": {
     "message": "パネルが表示されたままの場合"
@@ -930,13 +1083,13 @@
     "message": "常に「ウェブ」タブを開く"
   },
   "cleanupWebTabHint": {
-    "message": "Google の検索をすべて「ウェブ」タブで開きます。「AI による概要」や動画などのパネルがない、リンクだけの結果になり、Anubis が認識しないパネルも表示されません。1 回の検索だけ元に戻すには、結果の上にある「すべて」を選んでください。"
+    "message": "AI やパネルのない、Google のシンプルなリンク一覧を常に使います。一度だけ抜けるには、結果の上の「すべて」を選びます。"
   },
   "cleanupAi": {
     "message": "AI による回答"
   },
   "cleanupAiHint": {
-    "message": "Google の「AI による概要」と「AI モード」タブ、DuckDuckGo の AI による回答と Duck.ai、Bing の AI による回答、Brave の AI による回答。"
+    "message": "「AI による概要」、「AI モード」、Duck.ai、Bing と Brave の AI の回答。"
   },
   "cleanupVideos": {
     "message": "動画パネル"
@@ -954,7 +1107,7 @@
     "message": "ディスカッションのパネル"
   },
   "cleanupDiscussionsHint": {
-    "message": "Google の「ディスカッションとフォーラム」のような、結果の間にあるフォーラムのスレッドのパネル。結果に含まれるフォーラムのページは残ります。"
+    "message": "フォーラムのパネル。フォーラムの結果は残ります。"
   },
   "cleanupNews": {
     "message": "トップニュース"
@@ -966,28 +1119,34 @@
     "message": "画像の列"
   },
   "cleanupImagesHint": {
-    "message": "結果の間にある画像の列。「画像」タブは引き続き使えます。"
+    "message": "結果の間に並ぶ画像の列。"
   },
   "cleanupRelated": {
     "message": "関連する検索"
   },
   "cleanupRelatedHint": {
-    "message": "ほかの検索キーワードのリスト。通常はページの下部にあります。"
+    "message": "ほかの検索のリスト。"
   },
   "cleanupElsewhere": {
     "message": "ほかの検索エンジン"
   },
   "cleanupElsewhereHint": {
-    "message": "Brave の「Find elsewhere」のような、同じ検索をほかの検索エンジンで行うボタンの列。"
+    "message": "ほかの検索エンジンで同じ検索を繰り返すボタン。"
   },
   "cleanupAdRequests": {
     "message": "広告の許可を求める表示"
   },
   "cleanupAdRequestsHint": {
-    "message": "Startpage の「Block creepy ads, not private search」のような、広告ブロッカーをオフにするか、広告を許可するよう求めるバナー。"
+    "message": "広告の許可を求めるバナー。"
+  },
+  "cleanupAds": {
+    "message": "広告"
+  },
+  "cleanupAdsHint": {
+    "message": "スポンサー結果と商品カルーセル。"
   },
   "sitesIntro": {
-    "message": "自分でランク付けまたは非表示にしたサイトです。ここでの設定は、購読しているどのリストよりも優先されます。検索結果のボタンを使うか、ここでサイトを追加してください。"
+    "message": "自分でランク付けしたサイトです。ここでの選択は、どのリストよりも優先されます。"
   },
   "sitesEditAsText": {
     "message": "テキストで編集"
@@ -996,7 +1155,7 @@
     "message": "表に戻る"
   },
   "sitesTooBig": {
-    "message": "マイリストはブラウザの同期には大きすぎるため、この端末にのみ保存されています。コピーを残すには、ダウンロードしてください。"
+    "message": "マイリストは同期するには大きすぎるため、このデバイスにのみ保存されます。コピーを残すにはダウンロードしてください。"
   },
   "sitesAddPlaceholder": {
     "message": "ドメインまたは URL（例：fandom.com）"
@@ -1035,13 +1194,13 @@
     "message": "最初の 500 件を表示しています。残りは絞り込んで探してください。"
   },
   "sitesNone": {
-    "message": "まだサイトがありません。上で追加するか、検索結果のボタンを使ってください。"
+    "message": "サイトはまだありません。上で追加するか、検索結果からランク付けします。"
   },
   "sitesTextLabel": {
     "message": "マイリスト（テキスト）"
   },
   "sitesTextIntro": {
-    "message": "Anubis リスト形式のマイリストです。Brave Goggles の構文にタグを加えた形式で、公開するファイルそのものです。表に表示できない行も、書いたとおりに保持されます。"
+    "message": "公開するときと同じ形式の、テキストで表したマイリストです。"
   },
   "sitesTextReadable": {
     "message": "$1、$2。すべて読み取れます。"
@@ -1059,7 +1218,7 @@
     "message": "形式のリファレンス"
   },
   "listsIntro": {
-    "message": "サイトのタグ付け、並べ替え、非表示を行うリストを購読します。GitHub、GitLab、Codeberg、gist 上のテキストファイルなら何でも使えます。Anubis リスト、Brave Goggles、uBlacklist のルールセット、ドメインだけのリストに対応しています。"
+    "message": "リストは、サイトにタグを付けたり、ランク付けしたり、非表示にしたりします。"
   },
   "listsUpdateAll": {
     "message": "すべて更新"
@@ -1074,7 +1233,7 @@
     "message": "リストを追加"
   },
   "listsAddHint": {
-    "message": "ファイルへのリンクを貼り付けてください。GitHub のページ、gist、Brave Goggle へのリンクも使えます。"
+    "message": "ファイル、gist、または Brave Goggle のリンクを貼り付けます。"
   },
   "listsAddHelp": {
     "message": "使えるリスト"
@@ -1092,7 +1251,7 @@
     "message": "Anubis のディレクトリと、より広いコミュニティから。"
   },
   "listsShare": {
-    "message": "共有したいリストを作りましたか？　$1 へのプルリクエストで、ディレクトリに追加してください。"
+    "message": "リストを共有するには、$1 にプルリクエストを送ります。"
   },
   "listsNeedHttps": {
     "message": "リストは https で配信されている必要があります。"
@@ -1104,7 +1263,7 @@
     "message": "$1 を購読しました：$2、$3。"
   },
   "listsSubscribedBundled": {
-    "message": "$1 を購読しました（更新できるまでは、Anubis に同梱のコピーを使います）。"
+    "message": "$1 を購読しました。更新されるまで内蔵のコピーを使います。"
   },
   "listsSubscribeFailed": {
     "message": "購読できませんでした：$1"
@@ -1137,7 +1296,7 @@
     "message": "ホームページ"
   },
   "listsUsingBundled": {
-    "message": "更新できるまで、Anubis に同梱のコピーを使っています（$1）。"
+    "message": "更新されるまで内蔵のコピーを使っています（$1）。"
   },
   "listsLastUpdateFailed": {
     "message": "前回の更新に失敗しました：$1"
@@ -1150,6 +1309,42 @@
   },
   "listsUpdateOne": {
     "message": "$1 を更新"
+  },
+  "listsSuggestChanges": {
+    "message": "変更を提案"
+  },
+  "listsSuggestChangesTo": {
+    "message": "$1 に変更を提案"
+  },
+  "listsSuggestSite": {
+    "message": "サイト"
+  },
+  "listsSuggestWhat": {
+    "message": "変更したい内容"
+  },
+  "listsSuggestTag": {
+    "message": "「$1」タグを付ける"
+  },
+  "listsSuggestAdd": {
+    "message": "追加する"
+  },
+  "listsSuggestRemove": {
+    "message": "リストから外す"
+  },
+  "listsSuggestOther": {
+    "message": "その他"
+  },
+  "listsSuggestWhy": {
+    "message": "理由（任意）"
+  },
+  "listsSuggestOpen": {
+    "message": "Issue を開く"
+  },
+  "listsSuggestHint": {
+    "message": "入力済みの Issue を $1 で開きます。そこで送信するまで、何も送信されません。"
+  },
+  "listsSuggestCancel": {
+    "message": "キャンセル"
   },
   "listsUnsubscribe": {
     "message": "購読を解除"
@@ -1176,7 +1371,7 @@
     "message": "ドメインリスト"
   },
   "tagsIntro": {
-    "message": "リストは結果にラベルを付けます。各ラベルの動作は自分で決められます。リストに従う、表示だけする、ハイライトする、または付いている結果を固定、格上げ、格下げ、非表示にする、から選べます。同じタグ名を使うリストは、そのタグを共有します。"
+    "message": "各タグが、そのタグが付いた結果に対して何をするかを選びます。"
   },
   "tagActionList": {
     "message": "リストに従う"
@@ -1284,7 +1479,7 @@
     "message": "このタグが付いたマイサイト"
   },
   "tagNoSites": {
-    "message": "まだありません。ここで追加するか、検索結果の ⚖ ボタンを使ってください。"
+    "message": "まだありません。ここで追加するか、検索結果のメニューから追加します。"
   },
   "tagFromYourLists": {
     "message": "購読中のリストから"
@@ -1317,7 +1512,7 @@
     "message": "新しいタグ"
   },
   "tagNewHint": {
-    "message": "タグはマイリストに保存されるため、マイリストを公開するとタグも一緒に公開されます。"
+    "message": "マイタグはマイリストに保存されます。"
   },
   "tagNewHelp": {
     "message": "タグにサイトを追加する"
@@ -1344,7 +1539,7 @@
     "message": "リストのタグ"
   },
   "tagListsHint": {
-    "message": "これらは購読中のリストが定義しています。それぞれの動作を決めたり、自分のサイトを追加したりできます。マイサイトで使っているタグをリストがなくした場合、そのタグは「マイタグ」に移ります。"
+    "message": "購読中のリストのタグです。それぞれの動作を選ぶか、自分のサイトを追加します。"
   },
   "tagSourceLists": {
     "message": "提供元：$1"
