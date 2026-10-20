@@ -2486,9 +2486,9 @@ if (!only || only === 'welcome') {
   const first = await demoOrder();
   // The tour rings the docs' button first, then Pin once its menu is open.
   const ringed = () => welcome.evaluate(() => [...document.querySelectorAll('.beckon')].map((el) => el.getAttribute('aria-label') ?? el.textContent));
-  const tourStart = { says: await demoText('#demo-how .says'), ringed: await ringed() };
+  const tourStart = { says: await demoText('#demo .coach .says'), ringed: await ringed() };
   await welcome.click(`#demo .results li:nth-child(4) .weigh`);
-  const tourMenu = { says: await demoText('#demo-how .says'), ringed: await ringed() };
+  const tourMenu = { says: await demoText('#demo .coach .says'), ringed: await ringed(), besideMenu: await welcome.evaluate(() => document.querySelector('#demo-menu + .coach') !== null) };
   await welcome.keyboard.press('Escape');
   await rank('docs.python.org', 'pin');
   const pinFramed = await welcome.evaluate(() => getComputedStyle(document.querySelector('#demo li[data-level="pin"]'), '::before').borderTopStyle === 'solid');
@@ -2496,9 +2496,9 @@ if (!only || only === 'welcome') {
   const menuOpen = await welcome.evaluate(() => !!document.querySelector('#demo .results li #demo-menu'));
   await welcome.screenshot({ path: `${SHOTS}welcome-demo-menu.png`, clip: await welcome.evaluate(() => { const r = document.querySelector('#demo').getBoundingClientRect(); return { x: r.x - 8, y: r.y + scrollY - 8, width: r.width + 16, height: r.height + 16 }; }) });
   await welcome.keyboard.press('Escape');
-  const tourThird = await demoText('#demo-how .says');
+  const tourThird = await demoText('#demo .coach .says');
   await rank('w3schools.com', 'hide');
-  const tourDone = await demoText('#demo-how');
+  const tourDone = await demoText('#demo .coach');
   const hidden = await demoOrder();
   const summary = await demoText('#demo .summary');
   const said = await demoText('#demo .said');
@@ -2513,8 +2513,9 @@ if (!only || only === 'welcome') {
     !/docs\.python\.org/.test(tourStart.says) ||
     !/docs\.python\.org/.test(tourStart.ringed.join()) ||
     !tourMenu.ringed.join().includes('Pin') ||
+    !tourMenu.besideMenu ||
     !/rather not/.test(tourThird) ||
-    /Step/.test(tourDone) ||
+    !/That's ranking/.test(tourDone) ||
     !pinFramed ||
     pinned[0] !== 'docs.python.org' ||
     !menuOpen ||
