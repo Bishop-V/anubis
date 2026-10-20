@@ -76,7 +76,7 @@ One palette, Graphite, defined twice: `assets/theme.css` for extension pages and
 | 30px serif | 400 | A settings section's title | "Your sites" |
 | 21px serif | 500 | A welcome section's title | "More to try" |
 | 19px serif | 500 | The brand name beside the logo | "Anubis" in the popup's header |
-| 16px | 400–500 | The welcome page's lead (400), and a practice result's title (500) | "Active noise control - Wikipedia" |
+| 16px | 400–500 | The welcome page's lead (400), and a practice result's title (500) | "Noise-cancelling headphones - Wikipedia" |
 | 15px | 600 | A heading inside a settings section, a list's name | "Paywalls" |
 | 14px | 400 | Body text on extension pages (`body`) | |
 | 14px | 600 | A site's name as the subject, in the popup | "javascript.info" |

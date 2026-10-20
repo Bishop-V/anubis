@@ -2484,7 +2484,7 @@ if (!only || only === 'welcome') {
     await welcome.waitForTimeout(400);
   };
   const first = await demoOrder();
-  // The tour introduces the button and marks Reddit's first, then Pin once its
+  // The tour introduces the button and marks Wikipedia's first, then Pin once its
   // menu is open, with the other choices dimmed and doing nothing; after Pin it says the
   // site is first and asks for a site to hide; after Hide, it points at Undo and says what
   // to do next.
@@ -2501,7 +2501,7 @@ if (!only || only === 'welcome') {
     says: await demoText('#demo .coach .says'),
   };
   await welcome.keyboard.press('Escape');
-  await rank('reddit.com', 'pin');
+  await rank('en.wikipedia.org', 'pin');
   const pinFramed = await welcome.evaluate(() => getComputedStyle(document.querySelector('#demo li[data-level="pin"]'), '::before').borderTopStyle === 'solid');
   const pinned = await demoOrder();
   const menuOpen = await welcome.evaluate(() => !!document.querySelector('#demo .results li #demo-menu'));
@@ -2531,22 +2531,22 @@ if (!only || only === 'welcome') {
   console.log('\n== welcome demo:', JSON.stringify({ first, tourStart, tourMenu, lockedPress, pinned, pinFramed, menuOpen, tourThird, hideStep, hidden, summary, said, tourDone, checklist, revealed, undone, reset }));
   if (
     !/next to every result/.test(tourStart.says) ||
-    !/reddit\.com/.test(tourStart.ringed.join()) ||
+    !/en\.wikipedia\.org/.test(tourStart.ringed.join()) ||
     !tourMenu.ringed.join().includes('Pin') ||
     !tourMenu.besideMenu ||
     lockedPress.order.join() !== first.join() ||
     lockedPress.dimmed.length !== 4 ||
     lockedPress.says !== tourMenu.says ||
-    !/reddit\.com will come first/.test(tourThird) ||
+    !/en\.wikipedia\.org will come first/.test(tourThird) ||
     !/don't want to see/.test(tourThird) ||
     hideStep.choices.join() !== 'hide' ||
     hideStep.sites.length !== 5 ||
-    hideStep.sites.includes('reddit.com') ||
+    hideStep.sites.includes('en.wikipedia.org') ||
     !/Undo brings it back/.test(tourDone) ||
     checklist.done !== 3 ||
     !checklist.allDone ||
     !pinFramed ||
-    pinned[0] !== 'reddit.com' ||
+    pinned[0] !== 'en.wikipedia.org' ||
     !menuOpen ||
     hidden.includes('amazon.com') ||
     hidden.length !== first.length - 1 ||

@@ -35,11 +35,11 @@ export const RESULTS: DemoResult[] = [
     snippet: 'Our experts have picked the best noise-cancelling headphones you can buy, with deals updated daily.',
   },
   {
-    host: 'reddit.com',
-    path: 'r › headphones › comments',
-    title: 'Which noise cancelling headphones are actually worth it? : r/headphones',
-    snippet: "I've owned the Sony, the Bose, and the AirPods Max. Here's which ones I'd actually buy again.",
-    tag: 'forum',
+    host: 'en.wikipedia.org',
+    path: 'wiki › Noise-cancelling_headphones',
+    title: 'Noise-cancelling headphones - Wikipedia',
+    snippet: 'Noise-cancelling headphones reduce unwanted sound from around you by playing a second sound that cancels it out.',
+    tag: 'reference',
   },
   {
     host: 'nytimes.com',
@@ -49,17 +49,17 @@ export const RESULTS: DemoResult[] = [
     tag: 'paywall',
   },
   {
+    host: 'reddit.com',
+    path: 'r › headphones › comments',
+    title: 'Which noise cancelling headphones are actually worth it? : r/headphones',
+    snippet: "I've owned the Sony, the Bose, and the AirPods Max. Here's which ones I'd actually buy again.",
+    tag: 'forum',
+  },
+  {
     host: 'youtube.com',
     path: 'watch',
     title: 'Sony vs Bose vs Apple: Which Should You Buy?',
     snippet: 'We compared noise cancelling, sound, comfort, and battery life over a month of daily use.',
-  },
-  {
-    host: 'en.wikipedia.org',
-    path: 'wiki › Active_noise_control',
-    title: 'Active noise control - Wikipedia',
-    snippet: 'Active noise control is a way of reducing unwanted sound by adding a second sound made to cancel the first.',
-    tag: 'reference',
   },
 ];
 
