@@ -2530,19 +2530,19 @@ if (!only || only === 'welcome') {
   const reset = await demoOrder();
   console.log('\n== welcome demo:', JSON.stringify({ first, tourStart, tourMenu, lockedPress, pinned, pinFramed, menuOpen, tourThird, hideStep, hidden, summary, said, tourDone, checklist, revealed, undone, reset }));
   if (
-    !/beside every result/.test(tourStart.says) ||
+    !/next to every result/.test(tourStart.says) ||
     !/reddit\.com/.test(tourStart.ringed.join()) ||
     !tourMenu.ringed.join().includes('Pin') ||
     !tourMenu.besideMenu ||
     lockedPress.order.join() !== first.join() ||
     lockedPress.dimmed.length !== 4 ||
     lockedPress.says !== tourMenu.says ||
-    !/reddit\.com is now first/.test(tourThird) ||
-    !/rather not/.test(tourThird) ||
+    !/reddit\.com will come first/.test(tourThird) ||
+    !/don't want to see/.test(tourThird) ||
     hideStep.choices.join() !== 'hide' ||
     hideStep.sites.length !== 5 ||
     hideStep.sites.includes('reddit.com') ||
-    !/Undo puts it back/.test(tourDone) ||
+    !/Undo brings it back/.test(tourDone) ||
     checklist.done !== 3 ||
     !checklist.allDone ||
     !pinFramed ||

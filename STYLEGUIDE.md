@@ -72,7 +72,7 @@ One palette, Graphite, defined twice: `assets/theme.css` for extension pages and
 
 | Size | Weight | Use | Example |
 | --- | --- | --- | --- |
-| 44px serif (34px below 1040px, 29px on phones) | 400 | The welcome page's headline | "Put the sites you trust first. Hide the ones you don't." |
+| 44px serif (34px below 1040px, 29px on phones) | 400 | The welcome page's headline | "Choose which sites come first, and which you never see again." |
 | 30px serif | 400 | A settings section's title | "Your sites" |
 | 21px serif | 500 | A welcome section's title | "More to try" |
 | 19px serif | 500 | The brand name beside the logo | "Anubis" in the popup's header |
