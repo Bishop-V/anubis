@@ -66,7 +66,7 @@
     "message": "Classificazione"
   },
   "popupNoSites": {
-    "message": "Ancora niente. Usa il pulsante ⚖ su un risultato di ricerca per classificarne il sito."
+    "message": "Ancora niente. Classifica un sito dal menu di uno dei suoi risultati."
   },
   "popupKeptNormal": {
     "message": "Mantenuto normale"
@@ -77,19 +77,19 @@
   "popupListCount_one": {
     "message": "$1 lista"
   },
-  "popupListCount_other": {
+  "popupListCount_many": {
     "message": "$1 liste"
   },
-  "popupListCount_many": {
+  "popupListCount_other": {
     "message": "$1 liste"
   },
   "popupTagCount_one": {
     "message": "$1 etichetta"
   },
-  "popupTagCount_other": {
+  "popupTagCount_many": {
     "message": "$1 etichette"
   },
-  "popupTagCount_many": {
+  "popupTagCount_other": {
     "message": "$1 etichette"
   },
   "popupRankingFor": {
@@ -164,6 +164,12 @@
   "tagMarkSpoken": {
     "message": " ($1)"
   },
+  "tagsShowMore": {
+    "message": "Mostra altre $1 etichette"
+  },
+  "tagsShowFewer": {
+    "message": "Mostra meno etichette"
+  },
   "tagListsPickerHint": {
     "message": "Aggiungerne una cambia solo la tua lista."
   },
@@ -195,7 +201,7 @@
     "message": "Questa pagina su $1"
   },
   "popupNotSearch": {
-    "message": "Cerca su Google, DuckDuckGo, Bing, Brave o un altro motore di ricerca supportato per vedere cosa cambia Anubis."
+    "message": "Cerca con un motore di ricerca supportato per vedere cosa cambia Anubis."
   },
   "showHidden": {
     "message": "Mostra nascosti"
@@ -207,19 +213,22 @@
     "message": "Carica altri risultati"
   },
   "loadMoreTitle": {
-    "message": "Aggiungi la pagina successiva di risultati a questa e classificali insieme"
+    "message": "Aggiungi la pagina successiva e classifica tutto insieme"
   },
   "loading": {
     "message": "Caricamento…"
   },
   "loadMoreEmpty": {
-    "message": "$1 non ha inviato risultati per la pagina $2. Forse vuole prima che confermi di non essere un robot."
+    "message": "$1 non ha inviato risultati per la pagina $2, forse per una verifica anti-robot."
   },
   "loadMoreRepeat": {
-    "message": "$1 ha inviato di nuovo gli stessi risultati per la pagina $2, quindi non ce ne sono altri."
+    "message": "$1 ha inviato di nuovo la pagina $2, quindi non ce ne sono altre."
   },
   "loadMoreBusy": {
     "message": "$1 ha chiesto ad Anubis di rallentare prima della pagina $2. Riprova tra un minuto."
+  },
+  "loadMoreRobot": {
+    "message": "$1 richiede una verifica anti-robot prima della pagina $2."
   },
   "loadMoreRefused": {
     "message": "$1 si è rifiutato di inviare la pagina $2."
@@ -245,46 +254,46 @@
   "barHidden_one": {
     "message": "nascosto"
   },
-  "barHidden_other": {
+  "barHidden_many": {
     "message": "nascosti"
   },
-  "barHidden_many": {
+  "barHidden_other": {
     "message": "nascosti"
   },
   "barHiddenByYou_one": {
     "message": "nascosto dalla tua lista"
   },
-  "barHiddenByYou_other": {
+  "barHiddenByYou_many": {
     "message": "nascosti dalla tua lista"
   },
-  "barHiddenByYou_many": {
+  "barHiddenByYou_other": {
     "message": "nascosti dalla tua lista"
   },
   "barHiddenByTag_one": {
     "message": "nascosto perché ha l’etichetta «$2»"
   },
-  "barHiddenByTag_other": {
+  "barHiddenByTag_many": {
     "message": "nascosti perché hanno l’etichetta «$2»"
   },
-  "barHiddenByTag_many": {
+  "barHiddenByTag_other": {
     "message": "nascosti perché hanno l’etichetta «$2»"
   },
   "barHiddenByLens_one": {
     "message": "nascosto perché $2 non lo include"
   },
-  "barHiddenByLens_other": {
+  "barHiddenByLens_many": {
     "message": "nascosti perché $2 non li include"
   },
-  "barHiddenByLens_many": {
+  "barHiddenByLens_other": {
     "message": "nascosti perché $2 non li include"
   },
   "barHiddenByList_one": {
     "message": "nascosto da $2"
   },
-  "barHiddenByList_other": {
+  "barHiddenByList_many": {
     "message": "nascosti da $2"
   },
-  "barHiddenByList_many": {
+  "barHiddenByList_other": {
     "message": "nascosti da $2"
   },
   "menuNewTagPlaceholder": {
@@ -295,6 +304,12 @@
   },
   "menuAddTagButton": {
     "message": "Aggiungi etichetta"
+  },
+  "menuTagsMore": {
+    "message": "+ Etichetta"
+  },
+  "menuTagsDone": {
+    "message": "Fatto"
   },
   "menuCloseLabel": {
     "message": "Chiudi"
@@ -312,7 +327,7 @@
     "message": "Segnala un problema"
   },
   "reportProblemTitle": {
-    "message": "Apri una segnalazione di bug su GitHub, con la versione di Anubis e il tuo browser già compilati"
+    "message": "Apri una segnalazione su GitHub, con la tua versione e il tuo browser già compilati"
   },
   "summaryShowAll": {
     "message": "Mostra tutti"
@@ -344,19 +359,19 @@
   "summaryResults_one": {
     "message": "$1 risultato"
   },
-  "summaryResults_other": {
+  "summaryResults_many": {
     "message": "$1 risultati"
   },
-  "summaryResults_many": {
+  "summaryResults_other": {
     "message": "$1 risultati"
   },
   "summaryResultsPages_one": {
     "message": "$1 risultato da $2 pagine"
   },
-  "summaryResultsPages_other": {
+  "summaryResultsPages_many": {
     "message": "$1 risultati da $2 pagine"
   },
-  "summaryResultsPages_many": {
+  "summaryResultsPages_other": {
     "message": "$1 risultati da $2 pagine"
   },
   "summaryAlsoRemoved": {
@@ -383,10 +398,10 @@
   "summaryUnchanged_one": {
     "message": "Anubis ha lasciato questo risultato com’era."
   },
-  "summaryUnchanged_other": {
+  "summaryUnchanged_many": {
     "message": "Anubis ha lasciato com’erano tutti e $1 i risultati."
   },
-  "summaryUnchanged_many": {
+  "summaryUnchanged_other": {
     "message": "Anubis ha lasciato com’erano tutti e $1 i risultati."
   },
   "summaryUnchangedPages": {
@@ -395,92 +410,104 @@
   "summaryFiltered_one": {
     "message": "Solo «$2»: $3 su $1 risultato."
   },
-  "summaryFiltered_other": {
+  "summaryFiltered_many": {
     "message": "Solo «$2»: $3 su $1 risultati."
   },
-  "summaryFiltered_many": {
+  "summaryFiltered_other": {
     "message": "Solo «$2»: $3 su $1 risultati."
   },
   "summaryRemovedAi_one": {
     "message": "una risposta AI"
   },
-  "summaryRemovedAi_other": {
+  "summaryRemovedAi_many": {
     "message": "$1 risposte AI"
   },
-  "summaryRemovedAi_many": {
+  "summaryRemovedAi_other": {
     "message": "$1 risposte AI"
   },
   "summaryRemovedVideos_one": {
     "message": "un riquadro video"
   },
-  "summaryRemovedVideos_other": {
+  "summaryRemovedVideos_many": {
     "message": "$1 riquadri video"
   },
-  "summaryRemovedVideos_many": {
+  "summaryRemovedVideos_other": {
     "message": "$1 riquadri video"
   },
   "summaryRemovedQuestions_one": {
     "message": "un elenco di domande"
   },
-  "summaryRemovedQuestions_other": {
+  "summaryRemovedQuestions_many": {
     "message": "$1 elenchi di domande"
   },
-  "summaryRemovedQuestions_many": {
+  "summaryRemovedQuestions_other": {
     "message": "$1 elenchi di domande"
   },
   "summaryRemovedDiscussions_one": {
     "message": "un riquadro di discussioni"
   },
-  "summaryRemovedDiscussions_other": {
+  "summaryRemovedDiscussions_many": {
     "message": "$1 riquadri di discussioni"
   },
-  "summaryRemovedDiscussions_many": {
+  "summaryRemovedDiscussions_other": {
     "message": "$1 riquadri di discussioni"
   },
   "summaryRemovedNews_one": {
     "message": "un riquadro di notizie"
   },
-  "summaryRemovedNews_other": {
+  "summaryRemovedNews_many": {
     "message": "$1 riquadri di notizie"
   },
-  "summaryRemovedNews_many": {
+  "summaryRemovedNews_other": {
     "message": "$1 riquadri di notizie"
   },
   "summaryRemovedImages_one": {
     "message": "un riquadro di immagini"
   },
-  "summaryRemovedImages_other": {
+  "summaryRemovedImages_many": {
     "message": "$1 riquadri di immagini"
   },
-  "summaryRemovedImages_many": {
+  "summaryRemovedImages_other": {
     "message": "$1 riquadri di immagini"
   },
   "summaryRemovedRelated_one": {
     "message": "un elenco di ricerche correlate"
   },
+  "summaryRemovedRelated_many": {
+    "message": "$1 elenchi di ricerche correlate"
+  },
   "summaryRemovedRelated_other": {
     "message": "$1 elenchi di ricerche correlate"
   },
-  "summaryRemovedRelated_many": {
-    "message": "$1 elenchi di ricerche correlate"
+  "summaryRemovedMore": {
+    "message": "altri $1"
   },
   "summaryRemovedElsewhere_one": {
     "message": "una riga di altri motori di ricerca"
   },
-  "summaryRemovedElsewhere_other": {
+  "summaryRemovedElsewhere_many": {
     "message": "$1 righe di altri motori di ricerca"
   },
-  "summaryRemovedElsewhere_many": {
+  "summaryRemovedElsewhere_other": {
     "message": "$1 righe di altri motori di ricerca"
   },
   "summaryRemovedAdRequests_one": {
     "message": "una richiesta di consentire gli annunci"
   },
+  "summaryRemovedAdRequests_many": {
+    "message": "$1 richieste di consentire gli annunci"
+  },
   "summaryRemovedAdRequests_other": {
     "message": "$1 richieste di consentire gli annunci"
   },
-  "summaryRemovedAdRequests_many": {
-    "message": "$1 richieste di consentire gli annunci"
+  "summaryRemovedAds_one": {
+    "message": "un blocco di annunci"
+  },
+  "summaryRemovedAds_many": {
+    "message": "$1 blocchi di annunci"
+  },
+  "summaryRemovedAds_other": {
+    "message": "$1 blocchi di annunci"
   },
   "withShortcut": {
     "message": "$1 ($2)"
@@ -503,10 +530,10 @@
   "hiddenMore_one": {
     "message": "e $1 altro"
   },
-  "hiddenMore_other": {
+  "hiddenMore_many": {
     "message": "e altri $1"
   },
-  "hiddenMore_many": {
+  "hiddenMore_other": {
     "message": "e altri $1"
   },
   "summaryChangedHide": {
@@ -543,10 +570,10 @@
     "message": "Iscriverti a $1?"
   },
   "offerTrust": {
-    "message": "Una lista può nascondere, classificare ed etichettare siti nei tuoi risultati. Iscriviti solo a liste di cui ti fidi."
+    "message": "Una lista può nascondere, classificare ed etichettare i siti. Iscriviti solo a liste di cui ti fidi."
   },
   "offerPermission": {
-    "message": "Il browser ti chiederà poi di permettere ad Anubis di leggere da $1, il sito in cui si trova la lista."
+    "message": "Il browser ti chiederà di permettere ad Anubis di leggere da $1."
   },
   "offerAlready": {
     "message": "$1 è già tra le tue liste."
@@ -566,41 +593,170 @@
   "welcomeHeading": {
     "message": "Anubis è installato"
   },
+  "welcomeDemoHeading": {
+    "message": "Ricerca di prova"
+  },
+  "welcomeDemoLabel": {
+    "message": "Risultati di esempio per «$1»"
+  },
+  "welcomeHeadline": {
+    "message": "Scegli quali siti vengono per primi e quali non vuoi vedere mai più."
+  },
+  "welcomeLead": {
+    "message": "Anubis mette un piccolo pulsante accanto a ogni risultato su Google, Bing, DuckDuckGo e altri. Prova prima con questa ricerca di prova. Niente di ciò che fai qui viene salvato."
+  },
+  "welcomeStepsLabel": {
+    "message": "Tre cose da provare"
+  },
+  "welcomeStepOpen": {
+    "message": "Premi il pulsante accanto a un risultato"
+  },
+  "welcomeStepRank": {
+    "message": "Metti quel sito dove vuoi"
+  },
+  "welcomeStepHide": {
+    "message": "Nascondi un sito che non vuoi"
+  },
+  "welcomeStepDone": {
+    "message": "Fatto"
+  },
+  "welcomeStepsAllDone": {
+    "message": "Le hai fatte tutte e tre. Le tue ricerche vere funzionano allo stesso modo."
+  },
+  "welcomeTourPinned": {
+    "message": "$1 verrà per primo ogni volta che compare."
+  },
+  "welcomeTourRaised": {
+    "message": "Anubis alzerà $1 ogni volta che compare."
+  },
+  "welcomeTourLowered": {
+    "message": "Anubis abbasserà $1 ogni volta che compare."
+  },
+  "welcomeTourStep": {
+    "message": "Passo $1 di $2"
+  },
+  "welcomeTourOpen": {
+    "message": "Anubis mette questo pulsante $1 accanto a ogni risultato. Probabilmente ti fideresti più di $2 che degli appunti di qualcuno, ma è bloccato al terzo posto. Premi il pulsante accanto."
+  },
+  "welcomeTourRank": {
+    "message": "Da qui puoi spostare $1 in alto, in basso o fuori dalla pagina. Fissalo per tenerlo in cima."
+  },
+  "welcomeTourFind": {
+    "message": "Ora trova un sito che non vuoi vedere e premi il suo $1."
+  },
+  "welcomeTourHide": {
+    "message": "Premi Nascondi e non vedrai più $1."
+  },
+  "welcomeTourDone": {
+    "message": "È sparito. Anubis dice sempre sopra i risultati cosa ha nascosto, e «Annulla» lo riporta. Cerca il $1 alla tua prossima ricerca."
+  },
+  "welcomeTourGotIt": {
+    "message": "Ho capito"
+  },
+  "welcomeTourSkip": {
+    "message": "Salta"
+  },
+  "welcomeDemoReset": {
+    "message": "Ricomincia"
+  },
+  "welcomeQuery": {
+    "message": "trolley problem"
+  },
+  "welcomeMoreHeading": {
+    "message": "Altro da provare"
+  },
+  "welcomeMoreHow": {
+    "message": "Non ti serve niente di tutto questo, ma ognuna merita un’occhiata."
+  },
+  "welcomeTagsHeading": {
+    "message": "Etichetta i siti"
+  },
+  "welcomeTagsWhat": {
+    "message": "Metti le tue etichette sui siti."
+  },
+  "welcomeTagsHow": {
+    "message": "Prova a etichettare questo risultato."
+  },
+  "welcomeTagNotes": {
+    "message": "Appunti di corso"
+  },
+  "welcomeTagSignUp": {
+    "message": "Registrazione obbligatoria"
+  },
+  "welcomeTagTrusted": {
+    "message": "Affidabile"
+  },
+  "welcomeTagsMore": {
+    "message": "Un’etichetta può spostare tutti i siti che la portano. «Affidabile» li alza e «Registrazione obbligatoria» li abbassa."
+  },
+  "welcomeTagsOpen": {
+    "message": "Apri le impostazioni delle etichette"
+  },
+  "welcomeListsTitle": {
+    "message": "Iscriviti alle liste"
+  },
+  "welcomeListsWhat": {
+    "message": "Usa liste che altre persone tengono aggiornate."
+  },
+  "welcomeListsHow": {
+    "message": "Disattiva e riattiva queste per vedere cambiare le etichette."
+  },
+  "welcomeListsCount_one": {
+    "message": "$1 lista è già attiva."
+  },
+  "welcomeListsCount_many": {
+    "message": "$1 liste sono già attive."
+  },
+  "welcomeListsCount_other": {
+    "message": "$1 liste sono già attive."
+  },
+  "welcomeListsHeading": {
+    "message": "Le tue liste"
+  },
+  "welcomeListsMore": {
+    "message": "Nelle impostazioni puoi disattivarle o aggiungerne altre."
+  },
+  "welcomeListsOpen": {
+    "message": "Apri le impostazioni delle liste"
+  },
+  "welcomePanelsHeading": {
+    "message": "Rimuovi riquadri"
+  },
+  "welcomePanelsWhat": {
+    "message": "Liberati delle risposte AI e di altro ingombro."
+  },
+  "welcomePanelsExample": {
+    "message": "Risposta AI"
+  },
+  "welcomePanelsMore": {
+    "message": "Anubis li lascia stare finché non dici altrimenti. Scegli cosa rimuovere nelle impostazioni."
+  },
+  "welcomePanelsOpen": {
+    "message": "Apri le impostazioni dei riquadri"
+  },
   "welcomePinHeading": {
-    "message": "Tienilo nella barra degli strumenti"
+    "message": "Pulsante nella barra degli strumenti"
   },
   "welcomePinWhy": {
-    "message": "Il suo pulsante nella barra degli strumenti mostra cosa ha fatto Anubis nella pagina, lo attiva o disattiva e classifica il sito in cui ti trovi."
+    "message": "Non ti serve, ma è comodo. Ti permette di classificare il sito in cui ti trovi e di vedere cosa ha fatto Anubis in una ricerca."
   },
   "welcomePinChrome": {
-    "message": "Premi il pulsante Estensioni (il pezzo di puzzle) accanto alla barra degli indirizzi, poi la puntina accanto ad Anubis."
+    "message": "Premi il pezzo di puzzle accanto alla barra degli indirizzi, poi la puntina accanto ad Anubis."
   },
   "welcomePinEdge": {
-    "message": "Premi il pulsante Estensioni (il pezzo di puzzle) accanto alla barra degli indirizzi, poi l’occhio accanto ad Anubis."
+    "message": "Premi il pezzo di puzzle accanto alla barra degli indirizzi, poi l’occhio accanto ad Anubis."
   },
   "welcomePinOpera": {
-    "message": "Premi il pulsante Estensioni (il cubo) accanto alla barra degli indirizzi, poi la puntina accanto ad Anubis."
+    "message": "Premi il cubo accanto alla barra degli indirizzi, poi la puntina accanto ad Anubis."
   },
   "welcomePinFirefox": {
-    "message": "Premi il pulsante Estensioni (il pezzo di puzzle) accanto alla barra degli indirizzi, poi l’ingranaggio accanto ad Anubis, e scegli «Aggiungi alla barra degli strumenti»."
+    "message": "Premi il pezzo di puzzle, poi l’ingranaggio accanto ad Anubis e scegli «Aggiungi alla barra degli strumenti»."
   },
   "welcomePinAndroid": {
     "message": "Anubis è nel menu del browser, sotto Estensioni."
   },
   "welcomePinned": {
     "message": "Anubis è nella tua barra degli strumenti."
-  },
-  "welcomeQuery": {
-    "message": "trolley problem"
-  },
-  "welcomeListsHeading": {
-    "message": "Le tue liste"
-  },
-  "welcomeListsMore": {
-    "message": "Disattivale, o trova altre liste, nelle impostazioni."
-  },
-  "welcomeListsOpen": {
-    "message": "Apri le impostazioni delle liste"
   },
   "welcomeGuide": {
     "message": "Wiki"
@@ -612,34 +768,34 @@
     "message": "Sincronizzazione"
   },
   "syncIntro": {
-    "message": "La tua lista e le tue impostazioni sugli altri tuoi computer e negli altri tuoi browser."
+    "message": "I tuoi siti e le tue impostazioni sugli altri computer e browser."
   },
   "syncBrowserHeading": {
     "message": "Sincronizzazione del browser"
   },
   "syncFirefox": {
-    "message": "La tua lista, le impostazioni, le scelte sulle etichette e le iscrizioni vengono salvate nello spazio di sincronizzazione di Firefox. Firefox le copia sugli altri tuoi computer quando hai effettuato l’accesso a Firefox con «Componenti aggiuntivi» selezionato nelle impostazioni di sincronizzazione. Sincronizza circa ogni 10 minuti, o quando scegli «Sincronizza adesso»."
+    "message": "Firefox sincronizza i tuoi siti e le tue impostazioni quando hai effettuato l’accesso e «Componenti aggiuntivi» è selezionato nelle sue impostazioni di sincronizzazione."
   },
   "syncFirefoxAndroid": {
-    "message": "Firefox per Android non sincronizza i dati dei componenti aggiuntivi, quindi la tua lista, le impostazioni, le scelte sulle etichette e le iscrizioni restano su questo dispositivo. Per sincronizzarle, collega un server WebDAV qui sotto."
+    "message": "Firefox per Android non sincronizza i dati dei componenti aggiuntivi. Collega qui sotto un server WebDAV per sincronizzare."
   },
   "syncChrome": {
-    "message": "La tua lista, le impostazioni, le scelte sulle etichette e le iscrizioni vengono salvate nello spazio di sincronizzazione del browser. Il browser le copia sugli altri tuoi computer quando hai effettuato l’accesso con la sincronizzazione delle estensioni attiva."
+    "message": "Il browser sincronizza i tuoi siti e le tue impostazioni quando hai effettuato l’accesso e la sincronizzazione delle estensioni è attiva."
   },
   "syncBrowserHelp": {
     "message": "Quali impostazioni del browser controllare"
   },
   "syncUsage": {
-    "message": "Occupano $1 KB su $2 KB disponibili per la sincronizzazione."
+    "message": "Usati $1 KB su $2 KB."
   },
   "syncTooBig": {
-    "message": "La tua lista è troppo grande per la sincronizzazione, quindi è salvata solo su questo dispositivo. Le impostazioni, le scelte sulle etichette e le iscrizioni si sincronizzano comunque."
+    "message": "La tua lista è troppo grande per la sincronizzazione, quindi resta su questo dispositivo. Le impostazioni si sincronizzano comunque."
   },
   "webdavHeading": {
     "message": "Tra browser diversi"
   },
   "webdavIntro": {
-    "message": "Firefox e Chrome non si sincronizzano tra loro in modo nativo. Per condividere i dati tra i due, puoi collegare lo stesso spazio WebDAV in ciascuno. Koofr e InfiniCLOUD hanno piani gratuiti, e funzionano anche soluzioni self-hosted come Nextcloud. Anubis vi tiene un solo file, anubis-sync.json, e unisce le modifiche di ogni browser."
+    "message": "Per sincronizzare Firefox e Chrome, collega in entrambi lo stesso spazio WebDAV, come Koofr, InfiniCLOUD o Nextcloud."
   },
   "webdavHelp": {
     "message": "Dove trovare un indirizzo e una password"
@@ -660,7 +816,7 @@
     "message": "Password"
   },
   "webdavPasswordHint": {
-    "message": "La maggior parte dei servizi ti dà una password separata per le app. Usa quella."
+    "message": "Usa una password per le app, se il servizio ne offre una."
   },
   "webdavConnect": {
     "message": "Collega"
@@ -675,13 +831,13 @@
     "message": "Conferma la frase segreta"
   },
   "webdavEncryptionHint": {
-    "message": "In ogni browser, usa una frase segreta lunga e che non usi altrove (almeno 12 caratteri). Viene salvata solo in questo browser, mai inviata al server. Se la dimentichi, la copia sul server non si potrà recuperare."
+    "message": "Almeno 12 caratteri, la stessa in ogni browser. Non lascia mai questo browser e non si può recuperare."
   },
   "webdavCorrectPassphrase": {
     "message": "Inserisci la frase segreta di crittografia corretta"
   },
   "webdavCorrectPassphraseHint": {
-    "message": "Usa la stessa frase segreta che hai impostato nell’altro browser. Viene salvata solo qui e mai inviata al server."
+    "message": "Usa la frase segreta che hai impostato nell’altro browser."
   },
   "webdavSavePassphrase": {
     "message": "Salva la frase segreta e sincronizza"
@@ -690,7 +846,7 @@
     "message": "Cambia la frase segreta di crittografia"
   },
   "webdavChangePassphraseHint": {
-    "message": "Anubis controlla la frase segreta attuale prima di modificare il file sul server. Inserisci la nuova frase segreta in ogni altro browser prima della sua prossima sincronizzazione."
+    "message": "Poi inserisci la nuova frase segreta negli altri browser."
   },
   "webdavChangePassphraseHelp": {
     "message": "Cosa succede quando la cambi"
@@ -702,16 +858,16 @@
     "message": "Le frasi segrete non coincidono."
   },
   "webdavEncrypted": {
-    "message": "Il file di sincronizzazione è cifrato end-to-end. La sua frase segreta è salvata solo in questo browser; il server non può leggerne il contenuto. Usa la stessa frase segreta in ogni browser. Se la dimentichi, la copia sul server non si potrà recuperare."
+    "message": "Cifrato end-to-end. Il server non può leggerlo e una frase segreta dimenticata non si può recuperare."
   },
   "webdavEncryptionPending": {
-    "message": "La crittografia è impostata qui. La prossima sincronizzazione riuscita cifrerà la copia sul server. Usa la stessa frase segreta in ogni browser."
+    "message": "La cifratura è configurata. La prossima sincronizzazione cifrerà la copia sul server."
   },
   "webdavEncryptionMissing": {
-    "message": "Questo browser non ha una frase segreta di crittografia. Usa la stessa dell’altro browser per leggere un file cifrato. Un file di sincronizzazione non cifrato può essere letto da chi gestisce il server."
+    "message": "Inserisci la frase segreta dell’altro browser per leggere un file cifrato."
   },
   "webdavPrivacy": {
-    "message": "Con la crittografia attiva, a questo server arrivano solo dati cifrati; la tua frase segreta è salvata qui e mai inviata. Senza crittografia, il server può leggere il file di sincronizzazione. Le tue credenziali WebDAV sono salvate qui e inviate a questo server per accedere."
+    "message": "Senza cifratura, il server può leggere il file di sincronizzazione."
   },
   "webdavBadAddress": {
     "message": "Inserisci l’indirizzo WebDAV del servizio, che inizia con https://"
@@ -726,7 +882,7 @@
     "message": "Sincronizzazione con $1 come $2."
   },
   "webdavWhen": {
-    "message": "Le modifiche arrivano al server pochi secondi dopo che le fai. Le modifiche dagli altri tuoi browser arrivano all’avvio del browser e quando cerchi, al massimo ogni 5 minuti."
+    "message": "Sincronizza qualche secondo dopo una modifica, all’avvio e quando cerchi."
   },
   "webdavSyncing": {
     "message": "Sincronizzazione…"
@@ -744,43 +900,43 @@
     "message": "Scollega"
   },
   "webdavDisconnected": {
-    "message": "Scollegato. Il file resta sul server, e la tua lista e le impostazioni restano qui."
+    "message": "Disconnesso. I tuoi dati restano qui e sul server."
   },
   "webdavErrorAuth": {
-    "message": "Il server non ha accettato il nome utente o la password. Molti servizi qui richiedono una password per le app, non quella solita."
+    "message": "Il server non ha accettato l’accesso. Prova con una password per le app."
   },
   "webdavErrorForbidden": {
     "message": "Il server non permette a questo account di salvarvi file."
   },
   "webdavErrorFolder": {
-    "message": "Non c’è nessuna cartella a quell’indirizzo sul server. Controlla l’indirizzo."
+    "message": "A quell’indirizzo non c’è nessuna cartella."
   },
   "webdavErrorPermission": {
-    "message": "Anubis non ha più il permesso di sincronizzare con $1. Premi «Sincronizza adesso» per consentirlo di nuovo."
+    "message": "Anubis ha perso il permesso di sincronizzare con $1. Premi «Sincronizza adesso» per concederlo."
   },
   "webdavErrorNetwork": {
     "message": "Impossibile raggiungere $1. Controlla l’indirizzo e la connessione."
   },
   "webdavErrorFile": {
-    "message": "Anubis non riesce a leggere il file anubis-sync.json che si trova lì, quindi non l’ha toccato. Usa un’altra cartella."
+    "message": "Anubis non riesce a leggere il file anubis-sync.json in quella posizione, quindi l’ha lasciato com’era. Usa un’altra cartella."
   },
   "webdavErrorNeedsPassphrase": {
-    "message": "Questo file di sincronizzazione è cifrato. Inserisci la sua frase segreta; non è stato cambiato nulla."
+    "message": "Questo file di sincronizzazione è cifrato. Inserisci la sua frase segreta."
   },
   "webdavErrorWrongPassphrase": {
-    "message": "Quella frase segreta non ha decifrato il file di sincronizzazione. Controllala; il file sul server non è stato modificato."
+    "message": "Frase segreta errata. Non è stato modificato nulla."
   },
   "webdavErrorUnencrypted": {
-    "message": "Questa connessione prima era cifrata, ma ora sul server c’è un file di sincronizzazione in chiaro. Non è stato modificato. Controlla il file sul server prima di sincronizzare di nuovo."
+    "message": "Il file di sincronizzazione sul server non è più cifrato. È stato lasciato com’era."
   },
   "webdavErrorChanged": {
-    "message": "Il file di sincronizzazione è cambiato durante il cambio della frase segreta, oppure il server non può proteggerlo da modifiche simultanee. Non è stato sovrascritto nulla. Sincronizza di nuovo e riprova."
+    "message": "Nel frattempo il file di sincronizzazione è cambiato. Non è stato sovrascritto nulla. Sincronizza e riprova."
   },
   "webdavErrorUnconfirmed": {
-    "message": "La connessione con $1 si è interrotta mentre il file veniva salvato, quindi Anubis non sa quale frase segreta abbia ora. La vecchia frase segreta è ancora salvata qui. Se la prossima sincronizzazione dice che è sbagliata, inserisci quella nuova."
+    "message": "La connessione a $1 si è interrotta durante il salvataggio. Se alla prossima sincronizzazione la frase segreta risulta errata, inserisci quella nuova."
   },
   "webdavErrorServer": {
-    "message": "Il server ha risposto con un errore (HTTP $1). Riprova più tardi."
+    "message": "Errore del server (HTTP $1). Riprova più tardi."
   },
   "webdavErrorFailed": {
     "message": "La sincronizzazione non è terminata. Riprova."
@@ -795,16 +951,16 @@
     "message": "Combinazione di colori"
   },
   "themeHint": {
-    "message": "«Automatico» segue il browser qui e nel menu di ogni risultato, e la modalità chiara o scura di ciascun motore di ricerca per il resto di ciò che Anubis aggiunge alle sue pagine."
+    "message": "«Automatico» segue il browser e, sulle loro pagine, la modalità propria di ogni motore di ricerca."
   },
   "paletteHeading": {
     "message": "Colori nelle pagine di ricerca"
   },
   "paletteHint": {
-    "message": "«Sobrio» disegna in grigio, senza oro, tutto ciò che Anubis aggiunge alle pagine di ricerca. Le etichette perdono i loro colori e si distinguono per nome. Le impostazioni e il popup della barra degli strumenti restano in oro."
+    "message": "«Sobrio» disegna le etichette in grigio, distinte dal nome."
   },
   "paletteGold": {
-    "message": "Oro"
+    "message": "Colori delle etichette"
   },
   "palettePlain": {
     "message": "Sobrio"
@@ -813,7 +969,7 @@
     "message": "Risultati nascosti"
   },
   "hideStyleHint": {
-    "message": "«Rimuovi» li toglie dalla pagina; il riepilogo sopra i risultati li conta, e «Mostra nascosti» li riporta. «Comprimi» lascia una riga sottile per ogni serie di risultati nascosti. «Attenua» li sbiadisce."
+    "message": "«Rimuovi» li nasconde del tutto, «Comprimi» lascia una riga e «Attenua» li sbiadisce."
   },
   "hideStyleRemove": {
     "message": "Rimuovi"
@@ -828,7 +984,7 @@
     "message": "Riordina i risultati"
   },
   "rerankHint": {
-    "message": "Sposta in alto i risultati alzati e fissati e in basso quelli abbassati, come un Brave Goggle."
+    "message": "Sposta in alto i risultati alzati e fissati e in basso quelli abbassati."
   },
   "rerankHelp": {
     "message": "Come funziona il riordinamento"
@@ -837,7 +993,7 @@
     "message": "Carica altri risultati automaticamente"
   },
   "deeperAutoHint": {
-    "message": "Aggiunge le pagine successive di risultati alla prima e li classifica insieme, così un sito che hai fissato a pagina 3 sale in cima. «Carica altri risultati» sopra i risultati fa lo stesso quando lo chiedi. Scrivi quante pagine aggiungere, da 0 (disattivato) a $1."
+    "message": "Pagine da aggiungere a ogni ricerca, da 0 (disattivato) a $1."
   },
   "deeperHelp": {
     "message": "Come funziona il caricamento di altri risultati"
@@ -846,25 +1002,25 @@
     "message": "pagine in più"
   },
   "deeperTipOff": {
-    "message": "Disattivato: altri risultati si caricano solo quando premi «Carica altri risultati»."
+    "message": "Disattivato. Premi «Carica altri risultati» quando ne vuoi di più."
   },
   "deeperTipTime_one": {
     "message": "Aggiunge circa $1 secondo a ogni ricerca."
   },
-  "deeperTipTime_other": {
+  "deeperTipTime_many": {
     "message": "Aggiunge circa $1 secondi a ogni ricerca."
   },
-  "deeperTipTime_many": {
+  "deeperTipTime_other": {
     "message": "Aggiunge circa $1 secondi a ogni ricerca."
   },
   "deeperTipFew": {
     "message": "$1 Poche pagine di solito non disturbano i motori di ricerca."
   },
   "deeperTipSome": {
-    "message": "$1 Alcuni motori di ricerca potrebbero iniziare a chiederti di confermare che non sei un robot."
+    "message": "$1 Alcuni motori potrebbero chiedere una verifica anti-robot."
   },
   "deeperTipMany": {
-    "message": "$1 Dopo così tante pagine, Google e Bing chiedono spesso di confermare che non sei un robot. Alcuni motori di ricerca finiscono le pagine prima."
+    "message": "$1 Google e Bing ormai chiedono spesso una verifica anti-robot."
   },
   "chipsHeading": {
     "message": "Etichette sotto i risultati"
@@ -876,7 +1032,7 @@
     "message": "Riepilogo"
   },
   "summaryHint": {
-    "message": "Mostra sopra i risultati un riepilogo di una riga di ciò che Anubis ha cambiato."
+    "message": "Indica sopra i risultati cosa ha cambiato Anubis."
   },
   "enabledHeading": {
     "message": "Anubis è attivo"
@@ -888,7 +1044,7 @@
     "message": "Motori di ricerca"
   },
   "enginesIntro": {
-    "message": "Anubis funziona sui risultati web di questi motori di ricerca. Dove possibile, trova i risultati dalla struttura della pagina, così i piccoli restyling non lo bloccano."
+    "message": "Anubis agisce sui risultati web di questi motori."
   },
   "enginesTrouble": {
     "message": "Anubis non fa niente in una pagina di ricerca?"
@@ -900,31 +1056,31 @@
     "message": "Backup, importazione e condivisione"
   },
   "shareIntro": {
-    "message": "Conserva una copia di tutto, porta qui i tuoi siti da un altro strumento o pubblica la tua lista perché altri vi si iscrivano."
+    "message": "Fai un backup, importa da un altro strumento o pubblica la tua lista."
   },
   "publishHeading": {
     "message": "Pubblica la tua lista"
   },
   "publishIntro": {
-    "message": "Non serve un server: un repository git pubblico è il database, e le pull request sono il modo per contribuire."
+    "message": "Pubblica la tua lista da un repository Git pubblico."
   },
   "publishHelp": {
     "message": "Come pubblicare una lista"
   },
   "publishStepDownload": {
-    "message": "Scarica la tua lista qui sotto. Compila le sue righe $1, $2 e $3 in cima."
+    "message": "Scarica la tua lista e imposta le sue righe $1, $2 e $3."
   },
   "publishStepRepository": {
-    "message": "Crea un repository pubblico su GitHub (o un gist) e aggiungi il file, ad esempio $1."
+    "message": "Aggiungila a un repository GitHub pubblico o a un gist, per esempio $1."
   },
   "publishStepIssues": {
-    "message": "Aggiungi $1 così le persone possono suggerire siti alla tua lista dal menu di ogni risultato."
+    "message": "Aggiungi $1 perché le persone possano suggerire dei siti."
   },
   "publishStepShare": {
-    "message": "Condividi il link del file. Le persone lo incollano in Liste → Aggiungi una lista."
+    "message": "Condividi il link del file per «Liste» → «Aggiungi una lista»."
   },
   "publishStepDirectory": {
-    "message": "Vuoi che compaia in Altre liste per tutti? Apri una pull request che la aggiunga a $1."
+    "message": "Per inserirla in «Altre liste», apri una pull request su $1."
   },
   "publishDownload": {
     "message": "Scarica la mia lista"
@@ -936,13 +1092,13 @@
     "message": "Importa siti"
   },
   "importIntro": {
-    "message": "Arrivi da uBlacklist o HOHSER? Incolla qui le tue regole o la tua esportazione e i siti entreranno nella tua lista. Ciò che è nascosto resta nascosto, l’oscuramento parziale di HOHSER diventa Abbassa e i colori di evidenziazione diventano etichette che evidenziano."
+    "message": "Incolla regole di uBlacklist, HOHSER o un Goggle, e i siti entrano nella tua lista."
   },
   "importHelp": {
     "message": "In cosa si trasformano le regole di ogni strumento"
   },
   "importPlaceholder": {
-    "message": "Incolla regole di uBlacklist, un’esportazione di HOHSER, un Goggle o un dominio per riga"
+    "message": "Regole di uBlacklist, un’esportazione di HOHSER, un Goggle o un dominio per riga"
   },
   "importLabel": {
     "message": "Siti da importare"
@@ -971,20 +1127,20 @@
   "importRead_one": {
     "message": "Letto come $2. Siti aggiunti: $1; aggiornati: $3."
   },
-  "importRead_other": {
-    "message": "Letto come $2. Siti aggiunti: $1; aggiornati: $3."
-  },
   "importRead_many": {
     "message": "Letto come $2. Siti aggiunti: $1; aggiornati: $3."
   },
-  "importSkipped_one": {
-    "message": "$1 regola con schemi di indirizzo o sintassi non supportata è stata esclusa; iscriviti alla lista originale per mantenerla."
+  "importRead_other": {
+    "message": "Letto come $2. Siti aggiunti: $1; aggiornati: $3."
   },
-  "importSkipped_other": {
-    "message": "$1 regole con schemi di indirizzo o sintassi non supportata sono state escluse; iscriviti alla lista originale per mantenerle."
+  "importSkipped_one": {
+    "message": "È stata saltata $1 regola che Anubis non può usare."
   },
   "importSkipped_many": {
-    "message": "$1 regole con schemi di indirizzo o sintassi non supportata sono state escluse; iscriviti alla lista originale per mantenerle."
+    "message": "Sono state saltate $1 regole che Anubis non può usare."
+  },
+  "importSkipped_other": {
+    "message": "Sono state saltate $1 regole che Anubis non può usare."
   },
   "importFailed": {
     "message": "Impossibile importare: $1"
@@ -993,7 +1149,7 @@
     "message": "Backup"
   },
   "backupIntro": {
-    "message": "Tutto in un file: impostazioni, scelte sulle etichette, iscrizioni e la tua lista."
+    "message": "Impostazioni, scelte sulle etichette, iscrizioni e i tuoi siti, in un unico file."
   },
   "backupExport": {
     "message": "Esporta backup"
@@ -1065,7 +1221,16 @@
     "message": "Passare da altri strumenti"
   },
   "cleanupIntro": {
-    "message": "Anubis può rimuovere i riquadri delle pagine di ricerca che non sono risultati. Attiva ciascuno di quelli che preferisci non vedere. «Mostra nascosti» sopra i risultati li riporta per quella ricerca."
+    "message": "Rimuovi le parti delle pagine di ricerca che non sono risultati. «Mostra nascosti» le riporta."
+  },
+  "cleanupGroupMedia": {
+    "message": "Video, immagini e notizie"
+  },
+  "cleanupGroupQuestions": {
+    "message": "Domande e discussioni"
+  },
+  "cleanupGroupAds": {
+    "message": "Pubblicità"
   },
   "cleanupStillShows": {
     "message": "Se un riquadro compare ancora"
@@ -1074,13 +1239,13 @@
     "message": "Apri sempre la scheda Web"
   },
   "cleanupWebTabHint": {
-    "message": "Manda ogni ricerca su Google alla sua scheda Web: solo link, senza Panoramica AI, video o altri riquadri, anche quelli che Anubis non riconosce. Per uscirne in una ricerca, scegli Tutti sopra i risultati."
+    "message": "Usa sempre l’elenco semplice di link di Google, senza AI né riquadri. Scegli «Tutti» sopra i risultati per uscirne una volta."
   },
   "cleanupAi": {
     "message": "Risposte AI"
   },
   "cleanupAiHint": {
-    "message": "La Panoramica AI e la scheda Modalità AI di Google, le risposte assistite dall’AI e Duck.ai di DuckDuckGo, le risposte AI di Bing e quelle di Brave."
+    "message": "«Panoramica AI», «Modalità AI», Duck.ai e le risposte AI di Bing e Brave."
   },
   "cleanupVideos": {
     "message": "Riquadri video"
@@ -1098,7 +1263,7 @@
     "message": "Riquadri di discussioni"
   },
   "cleanupDiscussionsHint": {
-    "message": "Riquadri di thread dei forum tra i risultati, come «Discussioni e forum» di Google. Le pagine dei forum tra i risultati restano."
+    "message": "Riquadri dei forum. I risultati dei forum restano."
   },
   "cleanupNews": {
     "message": "Notizie principali"
@@ -1110,28 +1275,34 @@
     "message": "Righe di immagini"
   },
   "cleanupImagesHint": {
-    "message": "Righe di immagini tra i risultati. La scheda Immagini funziona ancora."
+    "message": "File di immagini tra i risultati."
   },
   "cleanupRelated": {
     "message": "Ricerche correlate"
   },
   "cleanupRelatedHint": {
-    "message": "Elenchi di altre ricerche, di solito in fondo alla pagina."
+    "message": "Elenchi di altre ricerche."
   },
   "cleanupElsewhere": {
     "message": "Altri motori di ricerca"
   },
   "cleanupElsewhereHint": {
-    "message": "Righe di pulsanti che ripetono la ricerca su un altro motore di ricerca, come «Find elsewhere» di Brave."
+    "message": "Pulsanti che ripetono la tua ricerca su un altro motore."
   },
   "cleanupAdRequests": {
     "message": "Richieste di consentire gli annunci"
   },
   "cleanupAdRequestsHint": {
-    "message": "Banner che ti chiedono di disattivare il blocco degli annunci o di consentire gli annunci, come «Block creepy ads, not private search» di Startpage."
+    "message": "Banner che ti chiedono di consentire le pubblicità."
+  },
+  "cleanupAds": {
+    "message": "Annunci"
+  },
+  "cleanupAdsHint": {
+    "message": "Risultati sponsorizzati e caroselli di prodotti."
   },
   "sitesIntro": {
-    "message": "Siti che hai classificato o nascosto tu. La tua scelta prevale su ogni lista a cui ti iscrivi. Usa il pulsante su un risultato di ricerca o aggiungi siti qui."
+    "message": "Siti che hai classificato tu. La tua scelta vale più di qualsiasi lista."
   },
   "sitesEditAsText": {
     "message": "Modifica come testo"
@@ -1140,7 +1311,7 @@
     "message": "Torna alla tabella"
   },
   "sitesTooBig": {
-    "message": "La tua lista è troppo grande per la sincronizzazione del browser, quindi è salvata solo su questo dispositivo. Scaricala per tenerne una copia."
+    "message": "La tua lista è troppo grande per la sincronizzazione, quindi resta su questo dispositivo. Scaricala per conservarne una copia."
   },
   "sitesAddPlaceholder": {
     "message": "Dominio o URL, ad esempio fandom.com"
@@ -1160,10 +1331,10 @@
   "sitesFilter_one": {
     "message": "Filtra $1 sito…"
   },
-  "sitesFilter_other": {
+  "sitesFilter_many": {
     "message": "Filtra $1 siti…"
   },
-  "sitesFilter_many": {
+  "sitesFilter_other": {
     "message": "Filtra $1 siti…"
   },
   "sitesFilterLabel": {
@@ -1185,13 +1356,13 @@
     "message": "Sono mostrati i primi 500. Filtra per trovare gli altri."
   },
   "sitesNone": {
-    "message": "Ancora nessun sito. Aggiungine uno qui sopra o usa il pulsante su un risultato di ricerca."
+    "message": "Ancora nessun sito. Aggiungine uno qui sopra o classificane uno da un risultato di ricerca."
   },
   "sitesTextLabel": {
     "message": "La tua lista come testo"
   },
   "sitesTextIntro": {
-    "message": "La tua lista nel formato delle liste di Anubis: la sintassi dei Brave Goggles più le etichette. È esattamente il file che pubblicheresti. Le righe che la tabella non può mostrare restano come sono scritte."
+    "message": "La tua lista come testo, nel formato in cui la pubblicheresti."
   },
   "sitesTextReadable": {
     "message": "$1 e $2, tutto leggibile."
@@ -1199,10 +1370,10 @@
   "listInstructions_one": {
     "message": "$1 istruzione"
   },
-  "listInstructions_other": {
+  "listInstructions_many": {
     "message": "$1 istruzioni"
   },
-  "listInstructions_many": {
+  "listInstructions_other": {
     "message": "$1 istruzioni"
   },
   "listErrorLine": {
@@ -1215,7 +1386,7 @@
     "message": "Guida al formato"
   },
   "listsIntro": {
-    "message": "Iscriviti a liste che etichettano, riordinano o nascondono siti. Funziona qualsiasi file di testo su GitHub, GitLab, Codeberg o in un gist: liste di Anubis, Brave Goggles, set di regole di uBlacklist e semplici liste di domini."
+    "message": "Le liste etichettano, classificano o nascondono i siti per te."
   },
   "listsUpdateAll": {
     "message": "Aggiorna tutte"
@@ -1230,7 +1401,7 @@
     "message": "Aggiungi una lista"
   },
   "listsAddHint": {
-    "message": "Incolla un link al file. Funzionano anche i link a una pagina di GitHub, a un gist o a un Brave Goggle."
+    "message": "Incolla un link al file, a un gist o a un Brave Goggle."
   },
   "listsAddHelp": {
     "message": "Quali liste funzionano"
@@ -1248,7 +1419,7 @@
     "message": "Dal catalogo di Anubis e dalla comunità più ampia."
   },
   "listsShare": {
-    "message": "Hai creato una lista che vale la pena condividere? Aggiungila al catalogo con una pull request a $1."
+    "message": "Per condividere una lista, apri una pull request su $1."
   },
   "listsNeedHttps": {
     "message": "Le liste devono essere servite tramite https."
@@ -1260,7 +1431,7 @@
     "message": "Iscrizione a $1 effettuata: $2 e $3."
   },
   "listsSubscribedBundled": {
-    "message": "Iscrizione a $1 effettuata (con la copia inclusa in Anubis finché non si potrà aggiornare)."
+    "message": "Iscrizione a $1 attiva, con la copia inclusa fino al prossimo aggiornamento."
   },
   "listsSubscribeFailed": {
     "message": "Impossibile iscriversi: $1"
@@ -1293,7 +1464,7 @@
     "message": "pagina principale"
   },
   "listsUsingBundled": {
-    "message": "Viene usata la copia inclusa in Anubis finché non si potrà aggiornare ($1)."
+    "message": "Uso della copia inclusa fino al prossimo aggiornamento ($1)."
   },
   "listsLastUpdateFailed": {
     "message": "L’ultimo aggiornamento non è riuscito: $1."
@@ -1301,10 +1472,10 @@
   "listsSkippedLines_one": {
     "message": "$1 riga saltata: Anubis non sa ancora leggere quella sintassi."
   },
-  "listsSkippedLines_other": {
+  "listsSkippedLines_many": {
     "message": "$1 righe saltate: Anubis non sa ancora leggere quella sintassi."
   },
-  "listsSkippedLines_many": {
+  "listsSkippedLines_other": {
     "message": "$1 righe saltate: Anubis non sa ancora leggere quella sintassi."
   },
   "listsUpdateNow": {
@@ -1312,6 +1483,42 @@
   },
   "listsUpdateOne": {
     "message": "Aggiorna $1"
+  },
+  "listsSuggestChanges": {
+    "message": "Suggerisci modifiche"
+  },
+  "listsSuggestChangesTo": {
+    "message": "Suggerisci modifiche a $1"
+  },
+  "listsSuggestSite": {
+    "message": "Sito"
+  },
+  "listsSuggestWhat": {
+    "message": "Cosa dovrebbe cambiare"
+  },
+  "listsSuggestTag": {
+    "message": "Etichettalo «$1»"
+  },
+  "listsSuggestAdd": {
+    "message": "Aggiungilo"
+  },
+  "listsSuggestRemove": {
+    "message": "Toglilo dalla lista"
+  },
+  "listsSuggestOther": {
+    "message": "Altro"
+  },
+  "listsSuggestWhy": {
+    "message": "Perché (facoltativo)"
+  },
+  "listsSuggestOpen": {
+    "message": "Apri la segnalazione"
+  },
+  "listsSuggestHint": {
+    "message": "Apre una segnalazione su $1, già compilata. Non viene inviato nulla finché non la invii lì."
+  },
+  "listsSuggestCancel": {
+    "message": "Annulla"
   },
   "listsUnsubscribe": {
     "message": "Annulla l’iscrizione"
@@ -1338,7 +1545,7 @@
     "message": "lista di domini"
   },
   "tagsIntro": {
-    "message": "Le liste etichettano i risultati. Sei tu a decidere cosa fa ogni etichetta: seguire la lista, solo mostrarla, evidenziarla, oppure fissare, alzare, abbassare o nascondere ciò che la porta. Le liste che usano lo stesso nome di etichetta la condividono."
+    "message": "Scegli cosa fa ogni etichetta ai risultati che la portano."
   },
   "tagActionList": {
     "message": "Segui le liste"
@@ -1361,19 +1568,19 @@
   "tagMarksYours_one": {
     "message": "$1 dei tuoi siti"
   },
-  "tagMarksYours_other": {
+  "tagMarksYours_many": {
     "message": "$1 dei tuoi siti"
   },
-  "tagMarksYours_many": {
+  "tagMarksYours_other": {
     "message": "$1 dei tuoi siti"
   },
   "tagMarksFromList_one": {
     "message": "$1 sito di $2"
   },
-  "tagMarksFromList_other": {
+  "tagMarksFromList_many": {
     "message": "$1 siti di $2"
   },
-  "tagMarksFromList_many": {
+  "tagMarksFromList_other": {
     "message": "$1 siti di $2"
   },
   "tagEffectLabel": {
@@ -1403,55 +1610,55 @@
   "tagListRaises_one": {
     "message": "alza $1"
   },
-  "tagListRaises_other": {
+  "tagListRaises_many": {
     "message": "alza $1"
   },
-  "tagListRaises_many": {
+  "tagListRaises_other": {
     "message": "alza $1"
   },
   "tagListLowers_one": {
     "message": "abbassa $1"
   },
-  "tagListLowers_other": {
+  "tagListLowers_many": {
     "message": "abbassa $1"
   },
-  "tagListLowers_many": {
+  "tagListLowers_other": {
     "message": "abbassa $1"
   },
   "tagListHides_one": {
     "message": "nasconde $1"
   },
-  "tagListHides_other": {
+  "tagListHides_many": {
     "message": "nasconde $1"
   },
-  "tagListHides_many": {
+  "tagListHides_other": {
     "message": "nasconde $1"
   },
   "tagListsRaise_one": {
     "message": "alzano $1"
   },
-  "tagListsRaise_other": {
+  "tagListsRaise_many": {
     "message": "alzano $1"
   },
-  "tagListsRaise_many": {
+  "tagListsRaise_other": {
     "message": "alzano $1"
   },
   "tagListsLower_one": {
     "message": "abbassano $1"
   },
-  "tagListsLower_other": {
+  "tagListsLower_many": {
     "message": "abbassano $1"
   },
-  "tagListsLower_many": {
+  "tagListsLower_other": {
     "message": "abbassano $1"
   },
   "tagListsHide_one": {
     "message": "nascondono $1"
   },
-  "tagListsHide_other": {
+  "tagListsHide_many": {
     "message": "nascondono $1"
   },
-  "tagListsHide_many": {
+  "tagListsHide_other": {
     "message": "nascondono $1"
   },
   "tagSitesToTag": {
@@ -1472,10 +1679,10 @@
   "tagMoreSites_one": {
     "message": "$1 altro"
   },
-  "tagMoreSites_other": {
+  "tagMoreSites_many": {
     "message": "altri $1"
   },
-  "tagMoreSites_many": {
+  "tagMoreSites_other": {
     "message": "altri $1"
   },
   "tagFromList": {
@@ -1500,7 +1707,7 @@
     "message": "I tuoi siti con questa etichetta"
   },
   "tagNoSites": {
-    "message": "Ancora nessuno. Aggiungine uno qui o usa il pulsante ⚖ su un risultato di ricerca."
+    "message": "Ancora nessuna. Aggiungine una qui o dal menu di un risultato."
   },
   "tagFromYourLists": {
     "message": "Dalle tue liste"
@@ -1533,7 +1740,7 @@
     "message": "Nuova etichetta"
   },
   "tagNewHint": {
-    "message": "Le tue etichette sono salvate nella tua lista, quindi la seguono quando la pubblichi."
+    "message": "Le tue etichette vengono salvate nella tua lista."
   },
   "tagNewHelp": {
     "message": "Aggiungere siti a un’etichetta"
@@ -1560,7 +1767,7 @@
     "message": "Etichette dalle liste"
   },
   "tagListsHint": {
-    "message": "Sono le tue liste a definirle. Decidi cosa fa ciascuna e aggiungi i tuoi siti a qualunque di esse. Se una lista smette di usare un’etichetta che i tuoi siti hanno, questa passa in «Le tue etichette»."
+    "message": "Etichette delle tue liste. Scegli cosa fa ciascuna o aggiungi i tuoi siti."
   },
   "tagSourceLists": {
     "message": "Da $1"
@@ -1607,19 +1814,19 @@
   "choiceRaise_one": {
     "message": "lo alzano di $2 per $3"
   },
-  "choiceRaise_other": {
+  "choiceRaise_many": {
     "message": "lo alzano di $2 ciascuna per $3"
   },
-  "choiceRaise_many": {
+  "choiceRaise_other": {
     "message": "lo alzano di $2 ciascuna per $3"
   },
   "choiceLower_one": {
     "message": "lo abbassano di $2 per $3"
   },
-  "choiceLower_other": {
+  "choiceLower_many": {
     "message": "lo abbassano di $2 ciascuna per $3"
   },
-  "choiceLower_many": {
+  "choiceLower_other": {
     "message": "lo abbassano di $2 ciascuna per $3"
   },
   "choiceTotal": {
@@ -1628,19 +1835,19 @@
   "choiceNetUp_one": {
     "message": "quindi sale di $1 posizione"
   },
-  "choiceNetUp_other": {
+  "choiceNetUp_many": {
     "message": "quindi sale di $1 posizioni"
   },
-  "choiceNetUp_many": {
+  "choiceNetUp_other": {
     "message": "quindi sale di $1 posizioni"
   },
   "choiceNetDown_one": {
     "message": "quindi scende di $1 posizione"
   },
-  "choiceNetDown_other": {
+  "choiceNetDown_many": {
     "message": "quindi scende di $1 posizioni"
   },
-  "choiceNetDown_many": {
+  "choiceNetDown_other": {
     "message": "quindi scende di $1 posizioni"
   },
   "choiceNetSame": {
@@ -1745,10 +1952,10 @@
   "tagDeleted_one": {
     "message": "Hai eliminato l’etichetta «$2» e l’hai tolta da $1 sito."
   },
-  "tagDeleted_other": {
+  "tagDeleted_many": {
     "message": "Hai eliminato l’etichetta «$2» e l’hai tolta da $1 siti."
   },
-  "tagDeleted_many": {
+  "tagDeleted_other": {
     "message": "Hai eliminato l’etichetta «$2» e l’hai tolta da $1 siti."
   },
   "listsUnsubscribed": {

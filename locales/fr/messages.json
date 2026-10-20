@@ -66,7 +66,7 @@
     "message": "Classement"
   },
   "popupNoSites": {
-    "message": "Rien pour l’instant. Utilisez le bouton ⚖ sur un résultat de recherche pour classer son site."
+    "message": "Rien pour l’instant. Classez un site depuis le menu de l’un de ses résultats."
   },
   "popupKeptNormal": {
     "message": "Gardé normal"
@@ -158,6 +158,12 @@
   "tagMarkSpoken": {
     "message": " ($1)"
   },
+  "tagsShowMore": {
+    "message": "Afficher $1 étiquettes de plus"
+  },
+  "tagsShowFewer": {
+    "message": "Afficher moins d’étiquettes"
+  },
   "tagListsPickerHint": {
     "message": "En ajouter une ne modifie que votre liste."
   },
@@ -189,7 +195,7 @@
     "message": "Cette page sur $1"
   },
   "popupNotSearch": {
-    "message": "Lancez une recherche sur Google, DuckDuckGo, Bing, Brave ou un autre moteur pris en charge pour voir ce qu’Anubis modifie."
+    "message": "Lancez une recherche sur un moteur pris en charge pour voir ce que Anubis modifie."
   },
   "showHidden": {
     "message": "Afficher les masqués"
@@ -201,19 +207,22 @@
     "message": "Charger plus de résultats"
   },
   "loadMoreTitle": {
-    "message": "Ajouter la page de résultats suivante à celle-ci et les classer ensemble"
+    "message": "Ajouter la page suivante et tout classer ensemble"
   },
   "loading": {
     "message": "Chargement…"
   },
   "loadMoreEmpty": {
-    "message": "$1 n’a envoyé aucun résultat pour la page $2. Il veut peut-être d’abord que vous confirmiez ne pas être un robot."
+    "message": "$1 n’a envoyé aucun résultat pour la page $2, peut-être à cause d’une vérification anti-robot."
   },
   "loadMoreRepeat": {
-    "message": "$1 a renvoyé les mêmes résultats pour la page $2 : il n’y en a donc pas d’autres."
+    "message": "$1 a renvoyé la page $2, il n’y en a donc plus."
   },
   "loadMoreBusy": {
     "message": "$1 a demandé à Anubis de ralentir avant la page $2. Réessayez dans une minute."
+  },
+  "loadMoreRobot": {
+    "message": "$1 demande une vérification anti-robot avant la page $2."
   },
   "loadMoreRefused": {
     "message": "$1 a refusé d’envoyer la page $2."
@@ -275,6 +284,12 @@
   "menuAddTagButton": {
     "message": "Ajouter"
   },
+  "menuTagsMore": {
+    "message": "+ Étiquette"
+  },
+  "menuTagsDone": {
+    "message": "Terminé"
+  },
   "menuCloseLabel": {
     "message": "Fermer"
   },
@@ -291,7 +306,7 @@
     "message": "Signaler un problème"
   },
   "reportProblemTitle": {
-    "message": "Ouvrir un rapport de bogue sur GitHub, avec la version d’Anubis et votre navigateur déjà remplis"
+    "message": "Ouvrir un rapport de bogue sur GitHub, avec votre version et votre navigateur déjà renseignés"
   },
   "summaryShowAll": {
     "message": "Tout afficher"
@@ -410,6 +425,9 @@
   "summaryRemovedRelated_other": {
     "message": "$1 listes de recherches associées"
   },
+  "summaryRemovedMore": {
+    "message": "$1 autres"
+  },
   "summaryRemovedElsewhere_one": {
     "message": "une rangée d’autres moteurs de recherche"
   },
@@ -421,6 +439,12 @@
   },
   "summaryRemovedAdRequests_other": {
     "message": "$1 demandes d’autoriser les publicités"
+  },
+  "summaryRemovedAds_one": {
+    "message": "un bloc de publicités"
+  },
+  "summaryRemovedAds_other": {
+    "message": "$1 blocs de publicités"
   },
   "withShortcut": {
     "message": "$1 ($2)"
@@ -480,10 +504,10 @@
     "message": "S’abonner à $1 ?"
   },
   "offerTrust": {
-    "message": "Une liste peut masquer, classer et étiqueter des sites dans vos résultats. Abonnez-vous seulement aux listes en qui vous avez confiance."
+    "message": "Une liste peut masquer, classer et étiqueter des sites. Abonnez-vous uniquement aux listes de confiance."
   },
   "offerPermission": {
-    "message": "Votre navigateur demandera ensuite d’autoriser Anubis à lire $1, le site où se trouve la liste."
+    "message": "Votre navigateur demandera d’autoriser Anubis à lire depuis $1."
   },
   "offerAlready": {
     "message": "Vous êtes déjà abonné à $1."
@@ -503,41 +527,167 @@
   "welcomeHeading": {
     "message": "Anubis est installé"
   },
+  "welcomeDemoHeading": {
+    "message": "Recherche d’essai"
+  },
+  "welcomeDemoLabel": {
+    "message": "Exemples de résultats pour  « $1 » "
+  },
+  "welcomeHeadline": {
+    "message": "Choisissez quels sites passent en premier, et lesquels vous ne verrez plus jamais."
+  },
+  "welcomeLead": {
+    "message": "Anubis place un petit bouton à côté de chaque résultat sur Google, Bing, DuckDuckGo et d’autres. Essayez d’abord sur cette recherche d’essai. Rien de ce que vous faites ici n’est enregistré."
+  },
+  "welcomeStepsLabel": {
+    "message": "Trois choses à essayer"
+  },
+  "welcomeStepOpen": {
+    "message": "Cliquez sur le bouton à côté d’un résultat"
+  },
+  "welcomeStepRank": {
+    "message": "Placez ce site où vous voulez"
+  },
+  "welcomeStepHide": {
+    "message": "Masquez un site dont vous ne voulez pas"
+  },
+  "welcomeStepDone": {
+    "message": "Terminé"
+  },
+  "welcomeStepsAllDone": {
+    "message": "Vous avez fait les trois. Vos vraies recherches fonctionnent de la même façon."
+  },
+  "welcomeTourPinned": {
+    "message": "$1 passera en premier chaque fois qu’il apparaîtra."
+  },
+  "welcomeTourRaised": {
+    "message": "Anubis promouvra $1 chaque fois qu’il apparaîtra."
+  },
+  "welcomeTourLowered": {
+    "message": "Anubis rétrogradera $1 chaque fois qu’il apparaîtra."
+  },
+  "welcomeTourStep": {
+    "message": "Étape $1 sur $2"
+  },
+  "welcomeTourOpen": {
+    "message": "Anubis place ce bouton $1 à côté de chaque résultat. Vous feriez sans doute plus confiance à $2 qu’aux notes de cours de quelqu’un, mais il est coincé en troisième position. Cliquez sur le bouton à côté."
+  },
+  "welcomeTourRank": {
+    "message": "Vous pouvez d’ici faire monter $1, le faire descendre ou le retirer de la page. Épinglez-le pour le garder en haut."
+  },
+  "welcomeTourFind": {
+    "message": "Trouvez maintenant un site que vous ne voulez pas voir et cliquez sur son $1."
+  },
+  "welcomeTourHide": {
+    "message": "Cliquez sur  « Masquer »  et vous ne verrez plus $1."
+  },
+  "welcomeTourDone": {
+    "message": "Il a disparu. Anubis dit toujours ce qu’il a masqué au-dessus des résultats, et  « Annuler »  le ramène. Cherchez le $1 lors de votre prochaine recherche."
+  },
+  "welcomeTourGotIt": {
+    "message": "Compris"
+  },
+  "welcomeTourSkip": {
+    "message": "Passer"
+  },
+  "welcomeDemoReset": {
+    "message": "Recommencer"
+  },
+  "welcomeQuery": {
+    "message": "trolley problem"
+  },
+  "welcomeMoreHeading": {
+    "message": "Autres choses à essayer"
+  },
+  "welcomeMoreHow": {
+    "message": "Vous n’en avez besoin d’aucune, mais chacune mérite un coup d’œil."
+  },
+  "welcomeTagsHeading": {
+    "message": "Étiqueter des sites"
+  },
+  "welcomeTagsWhat": {
+    "message": "Mettez vos propres étiquettes sur les sites."
+  },
+  "welcomeTagsHow": {
+    "message": "Essayez d’étiqueter ce résultat."
+  },
+  "welcomeTagNotes": {
+    "message": "Notes de cours"
+  },
+  "welcomeTagSignUp": {
+    "message": "Inscription obligatoire"
+  },
+  "welcomeTagTrusted": {
+    "message": "De confiance"
+  },
+  "welcomeTagsMore": {
+    "message": "Une étiquette peut déplacer tous les sites qui la portent.  « De confiance »  les promeut et  « Inscription obligatoire »  les rétrograde."
+  },
+  "welcomeTagsOpen": {
+    "message": "Ouvrir les paramètres des étiquettes"
+  },
+  "welcomeListsTitle": {
+    "message": "S’abonner à des listes"
+  },
+  "welcomeListsWhat": {
+    "message": "Utilisez des listes que d’autres personnes tiennent à jour."
+  },
+  "welcomeListsHow": {
+    "message": "Désactivez puis réactivez celles-ci pour voir les étiquettes changer."
+  },
+  "welcomeListsCount_one": {
+    "message": "$1 liste est déjà activée."
+  },
+  "welcomeListsCount_other": {
+    "message": "$1 listes sont déjà activées."
+  },
+  "welcomeListsHeading": {
+    "message": "Vos listes"
+  },
+  "welcomeListsMore": {
+    "message": "Vous pouvez les désactiver ou en ajouter d’autres dans les paramètres."
+  },
+  "welcomeListsOpen": {
+    "message": "Ouvrir les paramètres des listes"
+  },
+  "welcomePanelsHeading": {
+    "message": "Retirer des panneaux"
+  },
+  "welcomePanelsWhat": {
+    "message": "Débarrassez-vous des réponses IA et autres encombrants."
+  },
+  "welcomePanelsExample": {
+    "message": "Réponse IA"
+  },
+  "welcomePanelsMore": {
+    "message": "Anubis les laisse tranquilles tant que vous ne dites pas le contraire. Choisissez ce qu’il faut retirer dans les paramètres."
+  },
+  "welcomePanelsOpen": {
+    "message": "Ouvrir les paramètres des panneaux"
+  },
   "welcomePinHeading": {
-    "message": "Le garder dans la barre d’outils"
+    "message": "Bouton de la barre d’outils"
   },
   "welcomePinWhy": {
-    "message": "Son bouton dans la barre d’outils montre ce qu’Anubis a fait sur la page, l’active ou le désactive, et classe le site où vous êtes."
+    "message": "Vous n’en avez pas besoin, mais il est pratique. Il permet de classer le site où vous êtes et de voir ce qu’Anubis a fait lors d’une recherche."
   },
   "welcomePinChrome": {
-    "message": "Cliquez sur le bouton Extensions (la pièce de puzzle) à côté de la barre d’adresse, puis sur l’épingle à côté d’Anubis."
+    "message": "Cliquez sur la pièce de puzzle à côté de la barre d’adresse, puis sur l’épingle à côté d’Anubis."
   },
   "welcomePinEdge": {
-    "message": "Cliquez sur le bouton Extensions (la pièce de puzzle) à côté de la barre d’adresse, puis sur l’œil à côté d’Anubis."
+    "message": "Cliquez sur la pièce de puzzle à côté de la barre d’adresse, puis sur l’œil à côté d’Anubis."
   },
   "welcomePinOpera": {
-    "message": "Cliquez sur le bouton Extensions (le cube) à côté de la barre d’adresse, puis sur l’épingle à côté d’Anubis."
+    "message": "Cliquez sur le cube à côté de la barre d’adresse, puis sur l’épingle à côté d’Anubis."
   },
   "welcomePinFirefox": {
-    "message": "Cliquez sur le bouton Extensions (la pièce de puzzle) à côté de la barre d’adresse, puis sur l’engrenage à côté d’Anubis, et choisissez « Épingler à la barre d’outils »."
+    "message": "Cliquez sur la pièce de puzzle, puis sur la roue dentée à côté d’Anubis, et choisissez  « Épingler à la barre d’outils » ."
   },
   "welcomePinAndroid": {
     "message": "Anubis se trouve dans le menu du navigateur, sous Extensions."
   },
   "welcomePinned": {
     "message": "Anubis est dans votre barre d’outils."
-  },
-  "welcomeQuery": {
-    "message": "trolley problem"
-  },
-  "welcomeListsHeading": {
-    "message": "Vos listes"
-  },
-  "welcomeListsMore": {
-    "message": "Désactivez-les, ou trouvez d’autres listes, dans les paramètres."
-  },
-  "welcomeListsOpen": {
-    "message": "Ouvrir les paramètres des listes"
   },
   "welcomeGuide": {
     "message": "Wiki"
@@ -549,34 +699,34 @@
     "message": "Synchronisation"
   },
   "syncIntro": {
-    "message": "Votre liste et vos paramètres sur vos autres ordinateurs et dans vos autres navigateurs."
+    "message": "Vos sites et paramètres sur vos autres ordinateurs et navigateurs."
   },
   "syncBrowserHeading": {
     "message": "Synchronisation du navigateur"
   },
   "syncFirefox": {
-    "message": "Votre liste, vos paramètres, vos choix d’étiquettes et vos abonnements sont enregistrés dans le stockage synchronisé de Firefox. Firefox les copie sur vos autres ordinateurs quand vous êtes connecté à Firefox avec « Modules complémentaires » coché dans ses paramètres de synchronisation. Il synchronise environ toutes les 10 minutes, ou quand vous choisissez « Synchroniser maintenant »."
+    "message": "Firefox synchronise vos sites et paramètres quand vous êtes connecté et que  « Modules complémentaires »  est coché dans ses paramètres de synchronisation."
   },
   "syncFirefoxAndroid": {
-    "message": "Firefox pour Android ne synchronise pas les données des modules, donc votre liste, vos paramètres, vos choix d’étiquettes et vos abonnements restent sur cet appareil. Pour les synchroniser, connectez un serveur WebDAV ci-dessous."
+    "message": "Firefox pour Android ne synchronise pas les données des modules. Connectez un serveur WebDAV ci-dessous pour synchroniser."
   },
   "syncChrome": {
-    "message": "Votre liste, vos paramètres, vos choix d’étiquettes et vos abonnements sont enregistrés dans le stockage synchronisé du navigateur. Le navigateur les copie sur vos autres ordinateurs quand vous y êtes connecté avec la synchronisation des extensions activée."
+    "message": "Votre navigateur synchronise vos sites et paramètres quand vous êtes connecté et que la synchronisation des extensions est activée."
   },
   "syncBrowserHelp": {
     "message": "Quels paramètres du navigateur vérifier"
   },
   "syncUsage": {
-    "message": "Ils occupent $1 Ko sur les $2 Ko disponibles pour la synchronisation."
+    "message": "$1 Ko utilisés sur $2 Ko."
   },
   "syncTooBig": {
-    "message": "Votre liste est trop grande pour la synchronisation, elle est donc enregistrée sur cet appareil seulement. Vos paramètres, vos choix d’étiquettes et vos abonnements restent synchronisés."
+    "message": "Votre liste est trop volumineuse pour la synchronisation, elle reste donc sur cet appareil. Les paramètres, eux, se synchronisent toujours."
   },
   "webdavHeading": {
     "message": "Entre navigateurs"
   },
   "webdavIntro": {
-    "message": "Firefox et Chrome ne se synchronisent pas entre eux. Pour partager entre eux, vous pouvez connecter le même stockage WebDAV dans chacun. Koofr et InfiniCLOUD ont des offres gratuites, et les solutions auto-hébergées comme Nextcloud fonctionnent aussi. Anubis y garde un fichier, anubis-sync.json, et combine les modifications de chaque navigateur."
+    "message": "Pour synchroniser Firefox et Chrome, connectez le même stockage WebDAV dans chacun, comme Koofr, InfiniCLOUD ou Nextcloud."
   },
   "webdavHelp": {
     "message": "Où obtenir une adresse et un mot de passe"
@@ -597,7 +747,7 @@
     "message": "Mot de passe"
   },
   "webdavPasswordHint": {
-    "message": "La plupart des services vous donnent un mot de passe distinct pour les applications. Utilisez celui-là."
+    "message": "Utilisez un mot de passe d’application si le service en propose un."
   },
   "webdavConnect": {
     "message": "Se connecter"
@@ -612,13 +762,13 @@
     "message": "Confirmer la phrase secrète"
   },
   "webdavEncryptionHint": {
-    "message": "Utilisez une phrase secrète longue et unique dans chaque navigateur (au moins 12 caractères). Elle est enregistrée dans ce navigateur seulement, jamais envoyée au serveur. Si vous l’oubliez, la copie du serveur ne pourra pas être récupérée."
+    "message": "Au moins 12 caractères, identique dans chaque navigateur. Elle ne quitte jamais ce navigateur et ne peut pas être récupérée."
   },
   "webdavCorrectPassphrase": {
     "message": "Saisissez la bonne phrase secrète de chiffrement"
   },
   "webdavCorrectPassphraseHint": {
-    "message": "Utilisez la même phrase secrète que dans l’autre navigateur. Elle est enregistrée ici seulement et jamais envoyée au serveur."
+    "message": "Utilisez la phrase secrète définie dans l’autre navigateur."
   },
   "webdavSavePassphrase": {
     "message": "Enregistrer la phrase secrète et synchroniser"
@@ -627,7 +777,7 @@
     "message": "Changer la phrase secrète de chiffrement"
   },
   "webdavChangePassphraseHint": {
-    "message": "Anubis vérifie la phrase secrète actuelle avant de modifier le fichier du serveur. Saisissez la nouvelle phrase secrète dans chaque autre navigateur avant sa prochaine synchronisation."
+    "message": "Saisissez ensuite la nouvelle phrase secrète dans vos autres navigateurs."
   },
   "webdavChangePassphraseHelp": {
     "message": "Ce qui se passe quand vous la changez"
@@ -639,16 +789,16 @@
     "message": "Les phrases secrètes ne correspondent pas."
   },
   "webdavEncrypted": {
-    "message": "Le fichier de synchronisation est chiffré de bout en bout. Sa phrase secrète est enregistrée dans ce navigateur seulement ; le serveur ne peut pas lire le contenu. Utilisez la même phrase secrète dans chaque navigateur. Si vous l’oubliez, la copie du serveur ne pourra pas être récupérée."
+    "message": "Chiffré de bout en bout. Le serveur ne peut pas le lire, et une phrase secrète oubliée ne peut pas être récupérée."
   },
   "webdavEncryptionPending": {
-    "message": "Le chiffrement est configuré ici. La prochaine synchronisation réussie chiffrera la copie du serveur. Utilisez la même phrase secrète dans chaque navigateur."
+    "message": "Le chiffrement est configuré. La prochaine synchronisation chiffrera la copie du serveur."
   },
   "webdavEncryptionMissing": {
-    "message": "Ce navigateur n’a pas de phrase secrète de chiffrement. Utilisez la même que dans l’autre navigateur pour lire un fichier chiffré. Un fichier de synchronisation non chiffré peut être lu par l’exploitant du serveur."
+    "message": "Saisissez la phrase secrète de votre autre navigateur pour lire un fichier chiffré."
   },
   "webdavPrivacy": {
-    "message": "Avec le chiffrement, seules des données chiffrées vont sur ce serveur ; votre phrase secrète est enregistrée ici et jamais envoyée. Sans chiffrement, le serveur peut lire le fichier de synchronisation. Vos identifiants WebDAV sont enregistrés ici et envoyés à ce serveur pour vous connecter."
+    "message": "Sans chiffrement, le serveur peut lire le fichier de synchronisation."
   },
   "webdavBadAddress": {
     "message": "Saisissez l’adresse WebDAV du service, commençant par https://"
@@ -663,7 +813,7 @@
     "message": "Synchronisation avec $1 en tant que $2."
   },
   "webdavWhen": {
-    "message": "Les modifications sont envoyées au serveur quelques secondes après que vous les avez faites. Celles de vos autres navigateurs arrivent au démarrage du navigateur et quand vous cherchez, au plus toutes les 5 minutes."
+    "message": "Se synchronise quelques secondes après une modification, au démarrage et quand vous recherchez."
   },
   "webdavSyncing": {
     "message": "Synchronisation…"
@@ -681,43 +831,43 @@
     "message": "Se déconnecter"
   },
   "webdavDisconnected": {
-    "message": "Déconnecté. Le fichier reste sur le serveur, et votre liste et vos paramètres restent ici."
+    "message": "Déconnecté. Vos données restent ici et sur le serveur."
   },
   "webdavErrorAuth": {
-    "message": "Le serveur n’a pas accepté le nom d’utilisateur ou le mot de passe. Beaucoup de services demandent ici un mot de passe d’application, pas votre mot de passe habituel."
+    "message": "Le serveur n’a pas accepté l’identifiant. Essayez un mot de passe d’application."
   },
   "webdavErrorForbidden": {
     "message": "Le serveur ne permet pas à ce compte d’y enregistrer des fichiers."
   },
   "webdavErrorFolder": {
-    "message": "Il n’y a pas de dossier à cette adresse sur le serveur. Vérifiez l’adresse."
+    "message": "Il n’y a aucun dossier à cette adresse."
   },
   "webdavErrorPermission": {
-    "message": "Anubis n’a plus l’autorisation de se synchroniser avec $1. Cliquez sur « Synchroniser maintenant » pour l’autoriser à nouveau."
+    "message": "Anubis n’a plus l’autorisation de se synchroniser avec $1. Cliquez sur  « Synchroniser maintenant »  pour l’accorder."
   },
   "webdavErrorNetwork": {
     "message": "Impossible de joindre $1. Vérifiez l’adresse et votre connexion."
   },
   "webdavErrorFile": {
-    "message": "Le fichier anubis-sync.json présent n’est pas lisible par Anubis, il n’a donc pas été modifié. Utilisez un autre dossier."
+    "message": "Anubis ne peut pas lire le fichier anubis-sync.json à cet endroit et l’a donc laissé tel quel. Utilisez un autre dossier."
   },
   "webdavErrorNeedsPassphrase": {
-    "message": "Ce fichier de synchronisation est chiffré. Saisissez sa phrase secrète ; rien n’a été modifié."
+    "message": "Ce fichier de synchronisation est chiffré. Saisissez sa phrase secrète."
   },
   "webdavErrorWrongPassphrase": {
-    "message": "Cette phrase secrète n’a pas pu déchiffrer le fichier de synchronisation. Vérifiez-la ; le fichier du serveur n’a pas été modifié."
+    "message": "Phrase secrète incorrecte. Rien n’a été modifié."
   },
   "webdavErrorUnencrypted": {
-    "message": "Cette connexion était chiffrée avant, mais le serveur a maintenant un fichier de synchronisation en clair. Il n’a pas été modifié. Vérifiez le fichier du serveur avant de synchroniser à nouveau."
+    "message": "Le fichier de synchronisation du serveur n’est plus chiffré. Il a été laissé tel quel."
   },
   "webdavErrorChanged": {
-    "message": "Le fichier de synchronisation a changé pendant le changement de phrase secrète, ou le serveur ne peut pas le protéger des modifications simultanées. Rien n’a été écrasé. Synchronisez à nouveau et réessayez."
+    "message": "Le fichier de synchronisation a changé entre-temps. Rien n’a été écrasé. Synchronisez, puis réessayez."
   },
   "webdavErrorUnconfirmed": {
-    "message": "La connexion à $1 a été coupée pendant l’enregistrement du fichier, Anubis ne sait donc pas quelle phrase secrète protège maintenant le fichier. L’ancienne phrase secrète est toujours enregistrée ici. Si la prochaine synchronisation dit qu’elle est fausse, saisissez la nouvelle."
+    "message": "La connexion à $1 s’est interrompue pendant l’enregistrement. Si la prochaine synchronisation indique que la phrase secrète est incorrecte, saisissez la nouvelle."
   },
   "webdavErrorServer": {
-    "message": "Le serveur a répondu par une erreur (HTTP $1). Réessayez plus tard."
+    "message": "Erreur du serveur (HTTP $1). Réessayez plus tard."
   },
   "webdavErrorFailed": {
     "message": "La synchronisation n’a pas abouti. Réessayez."
@@ -732,16 +882,16 @@
     "message": "Jeu de couleurs"
   },
   "themeHint": {
-    "message": "« Auto » suit votre navigateur ici et dans le menu de chaque résultat, et le mode clair ou sombre de chaque moteur de recherche pour le reste de ce qu’Anubis ajoute à ses pages."
+    "message": " « Automatique »  suit votre navigateur et, sur leurs pages, le mode propre à chaque moteur de recherche."
   },
   "paletteHeading": {
     "message": "Couleurs sur les pages de recherche"
   },
   "paletteHint": {
-    "message": "« Sobre » dessine tout ce qu’Anubis ajoute aux pages de recherche en gris, sans or. Les étiquettes perdent leurs couleurs et se distinguent par leur nom. Les paramètres et la fenêtre de la barre d’outils restent dorés."
+    "message": " « Sobre »  dessine les étiquettes en gris, distinguées par leur nom."
   },
   "paletteGold": {
-    "message": "Or"
+    "message": "Couleurs des étiquettes"
   },
   "palettePlain": {
     "message": "Sobre"
@@ -750,7 +900,7 @@
     "message": "Résultats masqués"
   },
   "hideStyleHint": {
-    "message": "« Retirer » les enlève de la page ; le résumé au-dessus des résultats les compte, et « Afficher les masqués » les ramène. « Replier » laisse une fine ligne pour chaque suite de résultats masqués. « Estomper » les rend pâles."
+    "message": " « Retirer »  les supprime de la page,  « Replier »  laisse une ligne et  « Estomper »  les atténue."
   },
   "hideStyleRemove": {
     "message": "Retirer"
@@ -765,7 +915,7 @@
     "message": "Reclasser les résultats"
   },
   "rerankHint": {
-    "message": "Monter les résultats promus et épinglés, et descendre les rétrogradés, comme un Brave Goggle."
+    "message": "Remonter les résultats promus et épinglés, et descendre les rétrogradés."
   },
   "rerankHelp": {
     "message": "Comment fonctionne le reclassement"
@@ -774,7 +924,7 @@
     "message": "Charger plus de résultats automatiquement"
   },
   "deeperAutoHint": {
-    "message": "Ajouter les pages de résultats suivantes à la première et les classer ensemble, pour qu’un site épinglé en page 3 monte en haut. « Charger plus de résultats » au-dessus des résultats fait de même à la demande. Indiquez combien de pages ajouter, de 0 (désactivé) à $1."
+    "message": "Pages à ajouter à chaque recherche, de 0 (désactivé) à $1."
   },
   "deeperHelp": {
     "message": "Comment fonctionne le chargement"
@@ -783,7 +933,7 @@
     "message": "pages de plus"
   },
   "deeperTipOff": {
-    "message": "Désactivé : d’autres résultats ne se chargent que si vous cliquez sur « Charger plus de résultats »."
+    "message": "Désactivé. Cliquez sur  « Charger plus de résultats »  quand vous en voulez davantage."
   },
   "deeperTipTime_one": {
     "message": "Ajoute environ $1 seconde à chaque recherche."
@@ -795,10 +945,10 @@
     "message": "$1 Les moteurs se soucient rarement de quelques pages."
   },
   "deeperTipSome": {
-    "message": "$1 Certains moteurs peuvent commencer à vous demander de confirmer que vous n’êtes pas un robot."
+    "message": "$1 Certains moteurs peuvent demander une vérification anti-robot."
   },
   "deeperTipMany": {
-    "message": "$1 Google et Bing demandent souvent de confirmer que vous n’êtes pas un robot après autant de pages. Certains moteurs sont à court de pages avant."
+    "message": "$1 Google et Bing demandent souvent une vérification anti-robot à ce stade."
   },
   "chipsHeading": {
     "message": "Étiquettes sous les résultats"
@@ -810,7 +960,7 @@
     "message": "Résumé"
   },
   "summaryHint": {
-    "message": "Afficher au-dessus des résultats un résumé d’une ligne de ce qu’Anubis a modifié."
+    "message": "Indiquer au-dessus des résultats ce qu’Anubis a modifié."
   },
   "enabledHeading": {
     "message": "Anubis est activé"
@@ -822,7 +972,7 @@
     "message": "Moteurs de recherche"
   },
   "enginesIntro": {
-    "message": "Anubis agit sur les résultats web de ces moteurs. Les résultats sont repérés par la structure de la page quand c’est possible, pour que de petites refontes ne le cassent pas."
+    "message": "Anubis agit sur les résultats web de ces moteurs."
   },
   "enginesTrouble": {
     "message": "Anubis ne fait rien sur une page de recherche ?"
@@ -834,31 +984,31 @@
     "message": "Sauvegarder, importer et partager"
   },
   "shareIntro": {
-    "message": "Gardez une copie de tout, importez vos sites depuis un autre outil, ou publiez votre liste pour que d’autres s’y abonnent."
+    "message": "Sauvegardez, importez depuis un autre outil ou publiez votre liste."
   },
   "publishHeading": {
     "message": "Publier votre liste"
   },
   "publishIntro": {
-    "message": "Pas besoin de serveur : un dépôt git public sert de base de données, et les pull requests sont la façon de contribuer."
+    "message": "Publiez votre liste depuis un dépôt Git public."
   },
   "publishHelp": {
     "message": "Comment publier une liste"
   },
   "publishStepDownload": {
-    "message": "Téléchargez votre liste ci-dessous. Remplissez ses lignes $1, $2 et $3 en haut."
+    "message": "Téléchargez votre liste et renseignez ses lignes $1, $2 et $3."
   },
   "publishStepRepository": {
-    "message": "Créez un dépôt GitHub public (ou un gist) et ajoutez-y le fichier, par exemple $1."
+    "message": "Ajoutez-la à un dépôt GitHub public ou à un gist, par exemple $1."
   },
   "publishStepIssues": {
-    "message": "Ajoutez $1 pour que chacun puisse proposer des sites à votre liste depuis le menu de chaque résultat."
+    "message": "Ajoutez $1 pour que les gens puissent suggérer des sites."
   },
   "publishStepShare": {
-    "message": "Partagez le lien du fichier. Les gens le collent dans Listes → Ajouter une liste."
+    "message": "Partagez le lien du fichier pour  « Listes »  →  « Ajouter une liste » ."
   },
   "publishStepDirectory": {
-    "message": "Vous voulez qu’elle figure dans Plus de listes pour tout le monde ? Ouvrez une pull request qui l’ajoute à $1."
+    "message": "Pour la faire figurer sous  « Plus de listes » , ouvrez une demande de fusion vers $1."
   },
   "publishDownload": {
     "message": "Télécharger ma liste"
@@ -870,13 +1020,13 @@
     "message": "Importer des sites"
   },
   "importIntro": {
-    "message": "Vous venez d’uBlacklist ou de HOHSER ? Collez ici vos règles ou votre export, et les sites rejoignent votre liste. Ce qui est masqué le reste, le masquage partiel de HOHSER devient Rétrograder, et les couleurs de surlignage deviennent des étiquettes qui surlignent."
+    "message": "Collez des règles de uBlacklist, de HOHSER ou un Goggle, et les sites rejoignent votre liste."
   },
   "importHelp": {
     "message": "Ce que deviennent les règles de chaque outil"
   },
   "importPlaceholder": {
-    "message": "Collez des règles uBlacklist, un export HOHSER, un Goggle ou un domaine par ligne"
+    "message": "Règles uBlacklist, export HOHSER, Goggle ou un domaine par ligne"
   },
   "importLabel": {
     "message": "Sites à importer"
@@ -909,10 +1059,10 @@
     "message": "Lu comme $2 : $1 sites ajoutés et $3 mis à jour."
   },
   "importSkipped_one": {
-    "message": "$1 règle avec des motifs d’adresse ou une syntaxe non prise en charge a été écartée ; abonnez-vous à la liste d’origine pour la garder."
+    "message": "$1 règle qu’Anubis ne peut pas utiliser a été ignorée."
   },
   "importSkipped_other": {
-    "message": "$1 règles avec des motifs d’adresse ou une syntaxe non prise en charge ont été écartées ; abonnez-vous à la liste d’origine pour les garder."
+    "message": "$1 règles qu’Anubis ne peut pas utiliser ont été ignorées."
   },
   "importFailed": {
     "message": "Import impossible : $1"
@@ -921,7 +1071,7 @@
     "message": "Sauvegarde"
   },
   "backupIntro": {
-    "message": "Tout dans un seul fichier : paramètres, choix d’étiquettes, abonnements et votre liste."
+    "message": "Paramètres, choix d’étiquettes, abonnements et vos sites, dans un seul fichier."
   },
   "backupExport": {
     "message": "Exporter une sauvegarde"
@@ -993,7 +1143,16 @@
     "message": "Migrer depuis d’autres outils"
   },
   "cleanupIntro": {
-    "message": "Anubis peut retirer les panneaux des pages de recherche qui ne sont pas des résultats. Activez chacun de ceux que vous préférez ne pas voir. « Afficher les masqués » au-dessus des résultats les ramène pour cette recherche."
+    "message": "Retirez les parties des pages de recherche qui ne sont pas des résultats.  « Afficher les masqués »  les ramène."
+  },
+  "cleanupGroupMedia": {
+    "message": "Vidéos, images et actualités"
+  },
+  "cleanupGroupQuestions": {
+    "message": "Questions et discussions"
+  },
+  "cleanupGroupAds": {
+    "message": "Publicité"
   },
   "cleanupStillShows": {
     "message": "Si un panneau s’affiche encore"
@@ -1002,13 +1161,13 @@
     "message": "Toujours ouvrir l’onglet Web"
   },
   "cleanupWebTabHint": {
-    "message": "Envoie chaque recherche Google vers son onglet Web : des liens simples, sans Aperçu IA, vidéos ni autres panneaux, même ceux qu’Anubis ne reconnaît pas. Pour le quitter le temps d’une recherche, choisissez Tous au-dessus des résultats."
+    "message": "Utiliser toujours la liste de liens simple de Google, sans IA ni panneaux. Choisissez  « Tous »  au-dessus des résultats pour la quitter une fois."
   },
   "cleanupAi": {
     "message": "Réponses d’IA"
   },
   "cleanupAiHint": {
-    "message": "L’Aperçu IA et l’onglet Mode IA de Google, les réponses assistées par IA et Duck.ai de DuckDuckGo, les réponses d’IA de Bing et celles de Brave."
+    "message": " « Aperçu IA » ,  « Mode IA » , Duck.ai et les réponses IA de Bing et de Brave."
   },
   "cleanupVideos": {
     "message": "Panneaux de vidéos"
@@ -1026,7 +1185,7 @@
     "message": "Panneaux de discussions"
   },
   "cleanupDiscussionsHint": {
-    "message": "Panneaux de fils de forum entre les résultats, comme « Discussions et forums » de Google. Les pages de forum parmi les résultats restent."
+    "message": "Panneaux de forums. Les résultats de forums restent."
   },
   "cleanupNews": {
     "message": "À la une"
@@ -1038,28 +1197,34 @@
     "message": "Rangées d’images"
   },
   "cleanupImagesHint": {
-    "message": "Rangées d’images entre les résultats. L’onglet Images fonctionne toujours."
+    "message": "Rangées d’images entre les résultats."
   },
   "cleanupRelated": {
     "message": "Recherches associées"
   },
   "cleanupRelatedHint": {
-    "message": "Listes d’autres recherches, en général en bas de la page."
+    "message": "Listes d’autres recherches."
   },
   "cleanupElsewhere": {
     "message": "Autres moteurs de recherche"
   },
   "cleanupElsewhereHint": {
-    "message": "Rangées de boutons qui relancent votre recherche sur un autre moteur, comme « Find elsewhere » de Brave."
+    "message": "Boutons qui répètent votre recherche sur un autre moteur."
   },
   "cleanupAdRequests": {
     "message": "Demandes d’autoriser les publicités"
   },
   "cleanupAdRequestsHint": {
-    "message": "Bannières qui vous demandent de désactiver votre bloqueur de publicités ou d’autoriser les publicités, comme « Block creepy ads, not private search » de Startpage."
+    "message": "Bannières qui vous demandent d’autoriser les publicités."
+  },
+  "cleanupAds": {
+    "message": "Annonces"
+  },
+  "cleanupAdsHint": {
+    "message": "Résultats sponsorisés et carrousels de produits."
   },
   "sitesIntro": {
-    "message": "Les sites que vous avez classés ou masqués vous-même. Votre choix l’emporte sur toutes les listes auxquelles vous êtes abonné. Utilisez le bouton sur un résultat de recherche, ou ajoutez des sites ici."
+    "message": "Sites que vous avez classés vous-même. Votre choix l’emporte sur toutes les listes."
   },
   "sitesEditAsText": {
     "message": "Modifier en texte"
@@ -1068,7 +1233,7 @@
     "message": "Retour au tableau"
   },
   "sitesTooBig": {
-    "message": "Votre liste est trop grande pour la synchronisation du navigateur, elle est donc enregistrée sur cet appareil seulement. Téléchargez-la pour en garder une copie."
+    "message": "Votre liste est trop volumineuse pour la synchronisation, elle reste donc sur cet appareil. Téléchargez-la pour en garder une copie."
   },
   "sitesAddPlaceholder": {
     "message": "Domaine ou URL, par ex. fandom.com"
@@ -1110,13 +1275,13 @@
     "message": "Les 500 premiers sont affichés. Filtrez pour trouver le reste."
   },
   "sitesNone": {
-    "message": "Aucun site pour l’instant. Ajoutez-en un ci-dessus, ou utilisez le bouton sur un résultat de recherche."
+    "message": "Aucun site pour l’instant. Ajoutez-en un ci-dessus, ou classez-en un depuis un résultat de recherche."
   },
   "sitesTextLabel": {
     "message": "Votre liste en texte"
   },
   "sitesTextIntro": {
-    "message": "Votre liste au format des listes Anubis : la syntaxe des Brave Goggles plus des étiquettes. C’est exactement le fichier que vous publieriez. Les lignes que le tableau ne peut pas afficher sont gardées telles quelles."
+    "message": "Votre liste sous forme de texte, au format que vous publieriez."
   },
   "sitesTextReadable": {
     "message": "$1 et $2, toutes lisibles."
@@ -1137,7 +1302,7 @@
     "message": "Référence du format"
   },
   "listsIntro": {
-    "message": "Abonnez-vous à des listes qui étiquettent, reclassent ou masquent des sites. N’importe quel fichier texte sur GitHub, GitLab, Codeberg ou dans un gist fonctionne : listes Anubis, Brave Goggles, ensembles de règles uBlacklist et simples listes de domaines."
+    "message": "Les listes étiquettent, classent ou masquent des sites pour vous."
   },
   "listsUpdateAll": {
     "message": "Tout mettre à jour"
@@ -1152,7 +1317,7 @@
     "message": "Ajouter une liste"
   },
   "listsAddHint": {
-    "message": "Collez un lien vers le fichier. Les liens vers une page GitHub, un gist ou un Brave Goggle fonctionnent aussi."
+    "message": "Collez un lien vers le fichier, un gist ou un Brave Goggle."
   },
   "listsAddHelp": {
     "message": "Quelles listes fonctionnent"
@@ -1170,7 +1335,7 @@
     "message": "De l’annuaire d’Anubis et de la communauté au sens large."
   },
   "listsShare": {
-    "message": "Vous avez fait une liste qui mérite d’être partagée ? Ajoutez-la à l’annuaire avec une pull request sur $1."
+    "message": "Pour partager une liste, ouvrez une demande de fusion vers $1."
   },
   "listsNeedHttps": {
     "message": "Les listes doivent être servies en https."
@@ -1182,7 +1347,7 @@
     "message": "Abonné à $1 : $2 et $3."
   },
   "listsSubscribedBundled": {
-    "message": "Abonné à $1 (avec la copie fournie avec Anubis jusqu’à ce qu’elle puisse se mettre à jour)."
+    "message": "Abonné à $1, avec la copie intégrée jusqu’à la prochaine mise à jour."
   },
   "listsSubscribeFailed": {
     "message": "Abonnement impossible : $1"
@@ -1215,7 +1380,7 @@
     "message": "page d’accueil"
   },
   "listsUsingBundled": {
-    "message": "Utilise la copie fournie avec Anubis jusqu’à ce qu’elle puisse se mettre à jour ($1)."
+    "message": "Utilisation de la copie intégrée jusqu’à la prochaine mise à jour ($1)."
   },
   "listsLastUpdateFailed": {
     "message": "La dernière mise à jour a échoué : $1."
@@ -1231,6 +1396,42 @@
   },
   "listsUpdateOne": {
     "message": "Mettre à jour $1"
+  },
+  "listsSuggestChanges": {
+    "message": "Suggérer des modifications"
+  },
+  "listsSuggestChangesTo": {
+    "message": "Suggérer des modifications à $1"
+  },
+  "listsSuggestSite": {
+    "message": "Site"
+  },
+  "listsSuggestWhat": {
+    "message": "Ce qui devrait changer"
+  },
+  "listsSuggestTag": {
+    "message": "L’étiqueter  « $1 » "
+  },
+  "listsSuggestAdd": {
+    "message": "L’ajouter"
+  },
+  "listsSuggestRemove": {
+    "message": "Le retirer de la liste"
+  },
+  "listsSuggestOther": {
+    "message": "Autre chose"
+  },
+  "listsSuggestWhy": {
+    "message": "Pourquoi (facultatif)"
+  },
+  "listsSuggestOpen": {
+    "message": "Ouvrir le ticket"
+  },
+  "listsSuggestHint": {
+    "message": "Ouvre un ticket sur $1, déjà rempli. Rien n’est envoyé tant que vous ne l’avez pas soumis là-bas."
+  },
+  "listsSuggestCancel": {
+    "message": "Annuler"
   },
   "listsUnsubscribe": {
     "message": "Se désabonner"
@@ -1257,7 +1458,7 @@
     "message": "liste de domaines"
   },
   "tagsIntro": {
-    "message": "Les listes étiquettent les résultats. Vous décidez de ce que fait chaque étiquette : suivre la liste, seulement l’afficher, la surligner, ou épingler, promouvoir, rétrograder ou masquer ce qui la porte. Les listes qui utilisent le même nom d’étiquette la partagent."
+    "message": "Choisissez ce que chaque étiquette fait aux résultats qui la portent."
   },
   "tagActionList": {
     "message": "Suivre les listes"
@@ -1392,7 +1593,7 @@
     "message": "Vos sites avec cette étiquette"
   },
   "tagNoSites": {
-    "message": "Aucun pour l’instant. Ajoutez-en un ici, ou utilisez le bouton ⚖ sur un résultat de recherche."
+    "message": "Aucune pour l’instant. Ajoutez-en une ici, ou depuis le menu d’un résultat."
   },
   "tagFromYourLists": {
     "message": "De vos listes"
@@ -1425,7 +1626,7 @@
     "message": "Nouvelle étiquette"
   },
   "tagNewHint": {
-    "message": "Vos étiquettes sont enregistrées dans votre liste, elles l’accompagnent donc quand vous la publiez."
+    "message": "Vos étiquettes sont enregistrées dans votre liste."
   },
   "tagNewHelp": {
     "message": "Ajouter des sites à une étiquette"
@@ -1452,7 +1653,7 @@
     "message": "Étiquettes des listes"
   },
   "tagListsHint": {
-    "message": "Vos listes les définissent. Décidez de ce que fait chacune, et ajoutez-y vos propres sites. Si une liste abandonne une étiquette que vos sites utilisent, elle passe dans Vos étiquettes."
+    "message": "Étiquettes de vos listes. Choisissez ce que fait chacune, ou ajoutez vos propres sites."
   },
   "tagSourceLists": {
     "message": "De $1"

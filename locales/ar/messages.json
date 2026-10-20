@@ -66,7 +66,7 @@
     "message": "الترتيب"
   },
   "popupNoSites": {
-    "message": "لا شيء بعد. استخدم زر ⚖ في أي نتيجة بحث لترتيب موقعها."
+    "message": "لا شيء بعد. رتّب موقعًا من القائمة ⚖ عند أي من نتائجه."
   },
   "popupKeptNormal": {
     "message": "يبقى عاديًا"
@@ -74,10 +74,10 @@
   "popupListsAndTags": {
     "message": "$1، $2"
   },
-  "popupListCount_zero": {
+  "popupListCount_one": {
     "message": "$1 قائمة"
   },
-  "popupListCount_one": {
+  "popupListCount_zero": {
     "message": "$1 قائمة"
   },
   "popupListCount_two": {
@@ -92,10 +92,10 @@
   "popupListCount_other": {
     "message": "$1 قائمة"
   },
-  "popupTagCount_zero": {
+  "popupTagCount_one": {
     "message": "$1 وسم"
   },
-  "popupTagCount_one": {
+  "popupTagCount_zero": {
     "message": "$1 وسم"
   },
   "popupTagCount_two": {
@@ -182,6 +182,12 @@
   "tagMarkSpoken": {
     "message": " ($1)"
   },
+  "tagsShowMore": {
+    "message": "إظهار $1 وسوم أخرى"
+  },
+  "tagsShowFewer": {
+    "message": "إظهار وسوم أقل"
+  },
   "tagListsPickerHint": {
     "message": "إضافة أحدها تغيّر قائمتك فقط."
   },
@@ -213,7 +219,7 @@
     "message": "هذه الصفحة على $1"
   },
   "popupNotSearch": {
-    "message": "ابحث في Google أو DuckDuckGo أو Bing أو Brave أو محرك بحث آخر مدعوم لترى ما يغيّره Anubis."
+    "message": "ابحث في محرك بحث مدعوم لترى ما يغيّره Anubis."
   },
   "showHidden": {
     "message": "إظهار المخفي"
@@ -225,19 +231,22 @@
     "message": "تحميل المزيد من النتائج"
   },
   "loadMoreTitle": {
-    "message": "إضافة الصفحة التالية من النتائج إلى هذه الصفحة وترتيبها معًا"
+    "message": "أضف الصفحة التالية ورتّب كل شيء معًا"
   },
   "loading": {
     "message": "جارٍ التحميل…"
   },
   "loadMoreEmpty": {
-    "message": "لم يرسل $1 أي نتائج للصفحة $2. ربما يريد أن تؤكد أولًا أنك لست روبوتًا."
+    "message": "لم يُرسل $1 أي نتائج للصفحة $2، ربما بسبب التحقق من أنك لست روبوتًا."
   },
   "loadMoreRepeat": {
-    "message": "أرسل $1 النتائج نفسها مرة أخرى للصفحة $2، فلا مزيد منها."
+    "message": "أعاد $1 إرسال الصفحة $2، لذا لا توجد صفحات أخرى."
   },
   "loadMoreBusy": {
     "message": "طلب $1 من Anubis أن يبطئ قبل الصفحة $2. حاول مرة أخرى بعد دقيقة."
+  },
+  "loadMoreRobot": {
+    "message": "يطلب $1 التحقق من أنك لست روبوتًا قبل الصفحة $2."
   },
   "loadMoreRefused": {
     "message": "رفض $1 إرسال الصفحة $2."
@@ -260,11 +269,11 @@
   "chipFromPageTitle": {
     "message": "أضافها «تحميل المزيد من النتائج»"
   },
-  "barHidden_zero": {
-    "message": "مخفية"
-  },
   "barHidden_one": {
     "message": "مخفي"
+  },
+  "barHidden_zero": {
+    "message": "مخفية"
   },
   "barHidden_two": {
     "message": "مخفيان"
@@ -278,11 +287,11 @@
   "barHidden_other": {
     "message": "مخفية"
   },
-  "barHiddenByYou_zero": {
-    "message": "أخفتها قائمتك"
-  },
   "barHiddenByYou_one": {
     "message": "أخفته قائمتك"
+  },
+  "barHiddenByYou_zero": {
+    "message": "أخفتها قائمتك"
   },
   "barHiddenByYou_two": {
     "message": "أخفتهما قائمتك"
@@ -296,11 +305,11 @@
   "barHiddenByYou_other": {
     "message": "أخفتها قائمتك"
   },
-  "barHiddenByTag_zero": {
-    "message": "مخفية لأنها تحمل الوسم «$2»"
-  },
   "barHiddenByTag_one": {
     "message": "مخفي لأنه يحمل الوسم «$2»"
+  },
+  "barHiddenByTag_zero": {
+    "message": "مخفية لأنها تحمل الوسم «$2»"
   },
   "barHiddenByTag_two": {
     "message": "مخفيان لأنهما يحملان الوسم «$2»"
@@ -314,11 +323,11 @@
   "barHiddenByTag_other": {
     "message": "مخفية لأنها تحمل الوسم «$2»"
   },
-  "barHiddenByLens_zero": {
-    "message": "مخفية لأن قائمة $2 لا تشملها"
-  },
   "barHiddenByLens_one": {
     "message": "مخفي لأن قائمة $2 لا تشمله"
+  },
+  "barHiddenByLens_zero": {
+    "message": "مخفية لأن قائمة $2 لا تشملها"
   },
   "barHiddenByLens_two": {
     "message": "مخفيان لأن قائمة $2 لا تشملهما"
@@ -332,11 +341,11 @@
   "barHiddenByLens_other": {
     "message": "مخفية لأن قائمة $2 لا تشملها"
   },
-  "barHiddenByList_zero": {
-    "message": "أخفتها قائمة $2"
-  },
   "barHiddenByList_one": {
     "message": "أخفته قائمة $2"
+  },
+  "barHiddenByList_zero": {
+    "message": "أخفتها قائمة $2"
   },
   "barHiddenByList_two": {
     "message": "أخفتهما قائمة $2"
@@ -359,6 +368,12 @@
   "menuAddTagButton": {
     "message": "إضافة وسم"
   },
+  "menuTagsMore": {
+    "message": "+ وسم"
+  },
+  "menuTagsDone": {
+    "message": "تم"
+  },
   "menuCloseLabel": {
     "message": "إغلاق"
   },
@@ -375,7 +390,7 @@
     "message": "الإبلاغ عن مشكلة"
   },
   "reportProblemTitle": {
-    "message": "فتح بلاغ عن خطأ في GitHub، وفيه إصدار Anubis ومتصفحك"
+    "message": "افتح بلاغ خطأ على GitHub مع تعبئة إصدارك ومتصفحك مسبقًا"
   },
   "summaryShowAll": {
     "message": "عرض الكل"
@@ -404,10 +419,10 @@
   "summaryActed": {
     "message": "Anubis $1 من أصل $2."
   },
-  "summaryResults_zero": {
+  "summaryResults_one": {
     "message": "$1 نتيجة"
   },
-  "summaryResults_one": {
+  "summaryResults_zero": {
     "message": "$1 نتيجة"
   },
   "summaryResults_two": {
@@ -422,10 +437,10 @@
   "summaryResults_other": {
     "message": "$1 نتيجة"
   },
-  "summaryResultsPages_zero": {
+  "summaryResultsPages_one": {
     "message": "$1 نتيجة في الصفحات الـ$2"
   },
-  "summaryResultsPages_one": {
+  "summaryResultsPages_zero": {
     "message": "$1 نتيجة في الصفحات الـ$2"
   },
   "summaryResultsPages_two": {
@@ -461,11 +476,11 @@
   "summaryFewerDetails": {
     "message": "تفاصيل أقل"
   },
-  "summaryUnchanged_zero": {
-    "message": "ترك Anubis النتائج الـ$1 كلها كما هي."
-  },
   "summaryUnchanged_one": {
     "message": "ترك Anubis هذه النتيجة كما هي."
+  },
+  "summaryUnchanged_zero": {
+    "message": "ترك Anubis النتائج الـ$1 كلها كما هي."
   },
   "summaryUnchanged_two": {
     "message": "ترك Anubis النتائج الـ$1 كلها كما هي."
@@ -482,10 +497,10 @@
   "summaryUnchangedPages": {
     "message": "ترك Anubis النتائج الـ$1 من الصفحات الـ$2 كلها كما هي."
   },
-  "summaryFiltered_zero": {
+  "summaryFiltered_one": {
     "message": "تُعرض نتائج «$2» فقط: $3 من أصل $1 نتيجة."
   },
-  "summaryFiltered_one": {
+  "summaryFiltered_zero": {
     "message": "تُعرض نتائج «$2» فقط: $3 من أصل $1 نتيجة."
   },
   "summaryFiltered_two": {
@@ -500,11 +515,11 @@
   "summaryFiltered_other": {
     "message": "تُعرض نتائج «$2» فقط: $3 من أصل $1 نتيجة."
   },
-  "summaryRemovedAi_zero": {
-    "message": "$1 إجابة بالذكاء الاصطناعي"
-  },
   "summaryRemovedAi_one": {
     "message": "إجابة بالذكاء الاصطناعي"
+  },
+  "summaryRemovedAi_zero": {
+    "message": "$1 إجابة بالذكاء الاصطناعي"
   },
   "summaryRemovedAi_two": {
     "message": "$1 إجابتين بالذكاء الاصطناعي"
@@ -518,11 +533,11 @@
   "summaryRemovedAi_other": {
     "message": "$1 إجابة بالذكاء الاصطناعي"
   },
-  "summaryRemovedVideos_zero": {
-    "message": "$1 لوحة فيديو"
-  },
   "summaryRemovedVideos_one": {
     "message": "لوحة فيديو"
+  },
+  "summaryRemovedVideos_zero": {
+    "message": "$1 لوحة فيديو"
   },
   "summaryRemovedVideos_two": {
     "message": "$1 لوحتي فيديو"
@@ -536,11 +551,11 @@
   "summaryRemovedVideos_other": {
     "message": "$1 لوحة فيديو"
   },
-  "summaryRemovedQuestions_zero": {
-    "message": "$1 قائمة أسئلة"
-  },
   "summaryRemovedQuestions_one": {
     "message": "قائمة أسئلة"
+  },
+  "summaryRemovedQuestions_zero": {
+    "message": "$1 قائمة أسئلة"
   },
   "summaryRemovedQuestions_two": {
     "message": "$1 قائمتي أسئلة"
@@ -554,11 +569,11 @@
   "summaryRemovedQuestions_other": {
     "message": "$1 قائمة أسئلة"
   },
-  "summaryRemovedDiscussions_zero": {
-    "message": "$1 لوحة نقاشات"
-  },
   "summaryRemovedDiscussions_one": {
     "message": "لوحة نقاشات"
+  },
+  "summaryRemovedDiscussions_zero": {
+    "message": "$1 لوحة نقاشات"
   },
   "summaryRemovedDiscussions_two": {
     "message": "$1 لوحتي نقاشات"
@@ -572,11 +587,11 @@
   "summaryRemovedDiscussions_other": {
     "message": "$1 لوحة نقاشات"
   },
-  "summaryRemovedNews_zero": {
-    "message": "$1 لوحة أخبار"
-  },
   "summaryRemovedNews_one": {
     "message": "لوحة أخبار"
+  },
+  "summaryRemovedNews_zero": {
+    "message": "$1 لوحة أخبار"
   },
   "summaryRemovedNews_two": {
     "message": "$1 لوحتي أخبار"
@@ -590,11 +605,11 @@
   "summaryRemovedNews_other": {
     "message": "$1 لوحة أخبار"
   },
-  "summaryRemovedImages_zero": {
-    "message": "$1 لوحة صور"
-  },
   "summaryRemovedImages_one": {
     "message": "لوحة صور"
+  },
+  "summaryRemovedImages_zero": {
+    "message": "$1 لوحة صور"
   },
   "summaryRemovedImages_two": {
     "message": "$1 لوحتي صور"
@@ -608,11 +623,11 @@
   "summaryRemovedImages_other": {
     "message": "$1 لوحة صور"
   },
-  "summaryRemovedRelated_zero": {
-    "message": "$1 قائمة عمليات بحث ذات صلة"
-  },
   "summaryRemovedRelated_one": {
     "message": "قائمة عمليات بحث ذات صلة"
+  },
+  "summaryRemovedRelated_zero": {
+    "message": "$1 قائمة عمليات بحث ذات صلة"
   },
   "summaryRemovedRelated_two": {
     "message": "$1 قائمتي عمليات بحث ذات صلة"
@@ -626,11 +641,14 @@
   "summaryRemovedRelated_other": {
     "message": "$1 قائمة عمليات بحث ذات صلة"
   },
-  "summaryRemovedElsewhere_zero": {
-    "message": "$1 صف محركات بحث أخرى"
+  "summaryRemovedMore": {
+    "message": "و$1 أخرى"
   },
   "summaryRemovedElsewhere_one": {
     "message": "صف محركات بحث أخرى"
+  },
+  "summaryRemovedElsewhere_zero": {
+    "message": "$1 صف محركات بحث أخرى"
   },
   "summaryRemovedElsewhere_two": {
     "message": "$1 صفّي محركات بحث أخرى"
@@ -644,11 +662,11 @@
   "summaryRemovedElsewhere_other": {
     "message": "$1 صف محركات بحث أخرى"
   },
-  "summaryRemovedAdRequests_zero": {
-    "message": "$1 طلب للسماح بالإعلانات"
-  },
   "summaryRemovedAdRequests_one": {
     "message": "طلبًا للسماح بالإعلانات"
+  },
+  "summaryRemovedAdRequests_zero": {
+    "message": "$1 طلب للسماح بالإعلانات"
   },
   "summaryRemovedAdRequests_two": {
     "message": "$1 طلبين للسماح بالإعلانات"
@@ -661,6 +679,24 @@
   },
   "summaryRemovedAdRequests_other": {
     "message": "$1 طلب للسماح بالإعلانات"
+  },
+  "summaryRemovedAds_one": {
+    "message": "مجموعة إعلانات"
+  },
+  "summaryRemovedAds_zero": {
+    "message": "$1 مجموعة إعلانات"
+  },
+  "summaryRemovedAds_two": {
+    "message": "$1 مجموعتي إعلانات"
+  },
+  "summaryRemovedAds_few": {
+    "message": "$1 مجموعات إعلانات"
+  },
+  "summaryRemovedAds_many": {
+    "message": "$1 مجموعة إعلانات"
+  },
+  "summaryRemovedAds_other": {
+    "message": "$1 مجموعة إعلانات"
   },
   "withShortcut": {
     "message": "$1 ($2)"
@@ -680,10 +716,10 @@
   "hiddenShowSite": {
     "message": "إظهار $1"
   },
-  "hiddenMore_zero": {
+  "hiddenMore_one": {
     "message": "و$1 غيره"
   },
-  "hiddenMore_one": {
+  "hiddenMore_zero": {
     "message": "و$1 غيره"
   },
   "hiddenMore_two": {
@@ -732,10 +768,10 @@
     "message": "الاشتراك في $1؟"
   },
   "offerTrust": {
-    "message": "يمكن للقائمة أن تخفي المواقع في نتائجك وترتّبها وتَسِمها. لا تشترك إلا في القوائم التي تثق بها."
+    "message": "يمكن للقائمة إخفاء المواقع وترتيبها ووسمها. اشترك فقط في القوائم التي تثق بها."
   },
   "offerPermission": {
-    "message": "سيطلب متصفحك بعد ذلك السماح لـ Anubis بالقراءة من $1، الموقع الذي توجد عليه القائمة."
+    "message": "سيطلب متصفحك السماح لـ Anubis بالقراءة من الموقع $1."
   },
   "offerAlready": {
     "message": "أنت مشترك بالفعل في $1."
@@ -755,41 +791,179 @@
   "welcomeHeading": {
     "message": "تم تثبيت Anubis"
   },
+  "welcomeDemoHeading": {
+    "message": "بحث تجريبي"
+  },
+  "welcomeDemoLabel": {
+    "message": "نتائج مثال لـ «$1»"
+  },
+  "welcomeHeadline": {
+    "message": "اختر المواقع التي تأتي أولًا، وتلك التي لا تريد رؤيتها مجددًا."
+  },
+  "welcomeLead": {
+    "message": "يضع Anubis زرًا صغيرًا بجانب كل نتيجة في Google وBing وDuckDuckGo وغيرها. جرّب أولًا على هذا البحث التجريبي. لا يُحفظ شيء مما تفعله هنا."
+  },
+  "welcomeStepsLabel": {
+    "message": "ثلاثة أشياء لتجربتها"
+  },
+  "welcomeStepOpen": {
+    "message": "اضغط على الزر بجانب نتيجة"
+  },
+  "welcomeStepRank": {
+    "message": "ضع ذلك الموقع حيث تريد"
+  },
+  "welcomeStepHide": {
+    "message": "أخفِ موقعًا لا تريده"
+  },
+  "welcomeStepDone": {
+    "message": "تم"
+  },
+  "welcomeStepsAllDone": {
+    "message": "أنجزت الثلاثة. تعمل عمليات بحثك الحقيقية بالطريقة نفسها."
+  },
+  "welcomeTourPinned": {
+    "message": "سيأتي الموقع $1 أولًا كلما ظهر."
+  },
+  "welcomeTourRaised": {
+    "message": "سيرفع Anubis الموقع $1 كلما ظهر."
+  },
+  "welcomeTourLowered": {
+    "message": "سيخفض Anubis الموقع $1 كلما ظهر."
+  },
+  "welcomeTourStep": {
+    "message": "الخطوة $1 من $2"
+  },
+  "welcomeTourOpen": {
+    "message": "يضع Anubis هذا الزر $1 بجانب كل نتيجة. ربما تثق بالموقع $2 أكثر من ملاحظات محاضرة لأحدهم، لكنه عالق في المرتبة الثالثة. اضغط على الزر بجانبه."
+  },
+  "welcomeTourRank": {
+    "message": "من هنا يمكنك رفع الموقع $1 أو خفضه أو إخراجه من الصفحة. ثبّته ليبقى في الأعلى."
+  },
+  "welcomeTourFind": {
+    "message": "بعد ذلك، ابحث عن موقع لا تريد رؤيته واضغط على الزر $1 الخاص به."
+  },
+  "welcomeTourHide": {
+    "message": "اضغط «إخفاء» ولن ترى الموقع $1 مجددًا."
+  },
+  "welcomeTourDone": {
+    "message": "اختفى. يذكر Anubis دائمًا فوق النتائج ما أخفاه، و«تراجع» يعيده. ابحث عن الزر $1 في بحثك التالي."
+  },
+  "welcomeTourGotIt": {
+    "message": "فهمت"
+  },
+  "welcomeTourSkip": {
+    "message": "تخطٍّ"
+  },
+  "welcomeDemoReset": {
+    "message": "البدء من جديد"
+  },
+  "welcomeQuery": {
+    "message": "trolley problem"
+  },
+  "welcomeMoreHeading": {
+    "message": "المزيد لتجربته"
+  },
+  "welcomeMoreHow": {
+    "message": "لا تحتاج إلى أي منها، لكن كلًّا منها يستحق النظر."
+  },
+  "welcomeTagsHeading": {
+    "message": "وسم المواقع"
+  },
+  "welcomeTagsWhat": {
+    "message": "ضع وسومك الخاصة على المواقع."
+  },
+  "welcomeTagsHow": {
+    "message": "جرّب وسم هذه النتيجة."
+  },
+  "welcomeTagNotes": {
+    "message": "ملاحظات الدورة"
+  },
+  "welcomeTagSignUp": {
+    "message": "يتطلب التسجيل"
+  },
+  "welcomeTagTrusted": {
+    "message": "موثوق"
+  },
+  "welcomeTagsMore": {
+    "message": "يمكن للوسم تحريك كل موقع يحمله. «موثوق» يرفعها و«يتطلب التسجيل» يخفضها."
+  },
+  "welcomeTagsOpen": {
+    "message": "فتح إعدادات الوسوم"
+  },
+  "welcomeListsTitle": {
+    "message": "الاشتراك في القوائم"
+  },
+  "welcomeListsWhat": {
+    "message": "استخدم قوائم يحدّثها آخرون باستمرار."
+  },
+  "welcomeListsHow": {
+    "message": "أوقف هذه القوائم ثم شغّلها لترى الوسوم تتغير."
+  },
+  "welcomeListsCount_one": {
+    "message": "$1 قائمة مفعّلة بالفعل."
+  },
+  "welcomeListsCount_zero": {
+    "message": "$1 قائمة مفعّلة بالفعل."
+  },
+  "welcomeListsCount_two": {
+    "message": "$1 قائمتان مفعّلتان بالفعل."
+  },
+  "welcomeListsCount_few": {
+    "message": "$1 قوائم مفعّلة بالفعل."
+  },
+  "welcomeListsCount_many": {
+    "message": "$1 قائمة مفعّلة بالفعل."
+  },
+  "welcomeListsCount_other": {
+    "message": "$1 قائمة مفعّلة بالفعل."
+  },
+  "welcomeListsHeading": {
+    "message": "قوائمك"
+  },
+  "welcomeListsMore": {
+    "message": "يمكنك إيقافها أو إضافة المزيد في الإعدادات."
+  },
+  "welcomeListsOpen": {
+    "message": "فتح إعدادات القوائم"
+  },
+  "welcomePanelsHeading": {
+    "message": "إزالة اللوحات"
+  },
+  "welcomePanelsWhat": {
+    "message": "تخلّص من إجابات الذكاء الاصطناعي وغيرها من الفوضى."
+  },
+  "welcomePanelsExample": {
+    "message": "إجابة بالذكاء الاصطناعي"
+  },
+  "welcomePanelsMore": {
+    "message": "يترك Anubis هذه اللوحات كما هي حتى تقول غير ذلك. اختر ما تريد إزالته في الإعدادات."
+  },
+  "welcomePanelsOpen": {
+    "message": "فتح إعدادات اللوحات"
+  },
   "welcomePinHeading": {
-    "message": "أبقِه في شريط الأدوات"
+    "message": "زر شريط الأدوات"
   },
   "welcomePinWhy": {
-    "message": "يعرض زره في شريط الأدوات ما فعله Anubis في الصفحة، ويشغّله أو يوقفه، ويرتّب الموقع الذي أنت فيه."
+    "message": "لا تحتاج إليه، لكنه مفيد. يتيح لك ترتيب الموقع الذي أنت فيه ومعرفة ما فعله Anubis في عملية بحث."
   },
   "welcomePinChrome": {
-    "message": "اضغط على زر «الإضافات» (قطعة الأحجية) بجوار شريط العناوين، ثم على الدبوس بجوار Anubis."
+    "message": "اضغط على قطعة الأحجية بجانب شريط العنوان، ثم على الدبوس بجانب Anubis."
   },
   "welcomePinEdge": {
-    "message": "اضغط على زر «الملحقات» (قطعة الأحجية) بجوار شريط العناوين، ثم على العين بجوار Anubis."
+    "message": "اضغط على قطعة الأحجية بجانب شريط العنوان، ثم على العين بجانب Anubis."
   },
   "welcomePinOpera": {
-    "message": "اضغط على زر «الإضافات» (المكعب) بجوار شريط العناوين، ثم على الدبوس بجوار Anubis."
+    "message": "اضغط على المكعب بجانب شريط العنوان، ثم على الدبوس بجانب Anubis."
   },
   "welcomePinFirefox": {
-    "message": "اضغط على زر «الامتدادات» (قطعة الأحجية) بجوار شريط العناوين، ثم على الترس بجوار Anubis، واختر «ثبّت في شريط الأدوات»."
+    "message": "اضغط على قطعة الأحجية، ثم على الترس بجانب Anubis، واختر «ثبّت في شريط الأدوات»."
   },
   "welcomePinAndroid": {
     "message": "تجد Anubis في قائمة المتصفح، تحت «الإضافات»."
   },
   "welcomePinned": {
     "message": "Anubis في شريط أدواتك."
-  },
-  "welcomeQuery": {
-    "message": "trolley problem"
-  },
-  "welcomeListsHeading": {
-    "message": "قوائمك"
-  },
-  "welcomeListsMore": {
-    "message": "أوقف هذه القوائم أو اعثر على المزيد منها في الإعدادات."
-  },
-  "welcomeListsOpen": {
-    "message": "فتح إعدادات القوائم"
   },
   "welcomeGuide": {
     "message": "الويكي"
@@ -801,34 +975,34 @@
     "message": "المزامنة"
   },
   "syncIntro": {
-    "message": "قائمتك وإعداداتك على أجهزتك الأخرى وفي متصفحاتك الأخرى."
+    "message": "مواقعك وإعداداتك على حواسيبك ومتصفحاتك الأخرى."
   },
   "syncBrowserHeading": {
     "message": "مزامنة المتصفح"
   },
   "syncFirefox": {
-    "message": "تُحفظ قائمتك وإعداداتك واختيارات الوسوم والاشتراكات في مساحة المزامنة في Firefox. ينسخها Firefox إلى أجهزتك الأخرى عندما تكون مسجّلًا الدخول إلى Firefox مع تحديد «الإضافات» في إعدادات المزامنة. يزامن كل 10 دقائق تقريبًا، أو عندما تختار «زامِن الآن»."
+    "message": "يزامن Firefox مواقعك وإعداداتك عندما تكون مسجّلًا الدخول وخيار «الإضافات» محدّدًا في إعدادات المزامنة."
   },
   "syncFirefoxAndroid": {
-    "message": "لا يزامن Firefox لنظام Android بيانات الإضافات، لذا تبقى قائمتك وإعداداتك واختيارات الوسوم والاشتراكات على هذا الجهاز. لمزامنتها، اربط خادم WebDAV أدناه."
+    "message": "لا يزامن Firefox لأجهزة Android بيانات الإضافات. اربط خادم WebDAV أدناه للمزامنة."
   },
   "syncChrome": {
-    "message": "تُحفظ قائمتك وإعداداتك واختيارات الوسوم والاشتراكات في مساحة المزامنة في المتصفح. ينسخها المتصفح إلى أجهزتك الأخرى عندما تكون مسجّلًا الدخول إليه مع تفعيل مزامنة الإضافات."
+    "message": "يزامن متصفحك مواقعك وإعداداتك عندما تكون مسجّلًا الدخول ومزامنة الإضافات مفعّلة."
   },
   "syncBrowserHelp": {
     "message": "أي إعدادات المتصفح تتحقق منها"
   },
   "syncUsage": {
-    "message": "تشغل $1 كيلوبايت من أصل $2 كيلوبايت تتسع لها المزامنة."
+    "message": "استخدام $1 كيلوبايت من أصل $2 كيلوبايت."
   },
   "syncTooBig": {
-    "message": "قائمتك أكبر من أن تتسع لها المزامنة، لذا تُحفظ على هذا الجهاز فقط. لا تزال إعداداتك واختيارات الوسوم والاشتراكات تُزامَن."
+    "message": "قائمتك أكبر من أن تُزامَن، لذا تبقى على هذا الجهاز. تستمر مزامنة الإعدادات."
   },
   "webdavHeading": {
     "message": "بين المتصفحات"
   },
   "webdavIntro": {
-    "message": "لا يتزامن Firefox وChrome أحدهما مع الآخر تلقائيًا. للمشاركة بينهما، يمكنك ربط مساحة تخزين WebDAV نفسها في كل منهما. لدى Koofr وInfiniCLOUD خطط مجانية، وتعمل أيضًا الخيارات المستضافة ذاتيًا مثل Nextcloud. يحتفظ Anubis هناك بملف واحد، anubis-sync.json، ويدمج التغييرات الآتية من كل متصفح."
+    "message": "للمزامنة بين Firefox وChrome، اربط التخزين نفسه عبر WebDAV في كل منهما، مثل Koofr أو InfiniCLOUD أو Nextcloud."
   },
   "webdavHelp": {
     "message": "من أين تحصل على عنوان وكلمة مرور"
@@ -849,7 +1023,7 @@
     "message": "كلمة المرور"
   },
   "webdavPasswordHint": {
-    "message": "تعطيك معظم الخدمات كلمة مرور منفصلة للتطبيقات. استخدمها."
+    "message": "استخدم كلمة مرور التطبيق إن وفّرتها الخدمة."
   },
   "webdavConnect": {
     "message": "ربط"
@@ -864,13 +1038,13 @@
     "message": "تأكيد عبارة المرور"
   },
   "webdavEncryptionHint": {
-    "message": "استخدم عبارة مرور طويلة وفريدة في كل متصفح (12 حرفًا على الأقل). تُحفظ في هذا المتصفح فقط، ولا تُرسل إلى الخادم أبدًا. إذا نسيتها، فلا يمكن استرداد النسخة الموجودة على الخادم."
+    "message": "12 حرفًا على الأقل، وهي نفسها في كل متصفح. لا تغادر هذا المتصفح أبدًا ولا يمكن استعادتها."
   },
   "webdavCorrectPassphrase": {
     "message": "أدخل عبارة مرور التشفير الصحيحة"
   },
   "webdavCorrectPassphraseHint": {
-    "message": "استخدم عبارة المرور نفسها التي ضبطتها في المتصفح الآخر. تُحفظ هنا فقط ولا تُرسل إلى الخادم أبدًا."
+    "message": "استخدم عبارة المرور التي عيّنتها في المتصفح الآخر."
   },
   "webdavSavePassphrase": {
     "message": "حفظ عبارة المرور والمزامنة"
@@ -879,7 +1053,7 @@
     "message": "تغيير عبارة مرور التشفير"
   },
   "webdavChangePassphraseHint": {
-    "message": "يتحقق Anubis من عبارة المرور الحالية قبل تغيير الملف على الخادم. أدخل عبارة المرور الجديدة في كل متصفح آخر قبل مزامنته التالية."
+    "message": "ثم أدخل عبارة المرور الجديدة في متصفحاتك الأخرى."
   },
   "webdavChangePassphraseHelp": {
     "message": "ماذا يحدث عند تغييرها"
@@ -891,16 +1065,16 @@
     "message": "عبارتا المرور غير متطابقتين."
   },
   "webdavEncrypted": {
-    "message": "ملف المزامنة مشفّر تشفيرًا تامًّا بين الطرفين. عبارة مروره محفوظة في هذا المتصفح فقط؛ ولا يستطيع الخادم قراءة المحتوى. استخدم عبارة المرور نفسها في كل متصفح. إذا نسيتها، فلا يمكن استرداد النسخة الموجودة على الخادم."
+    "message": "مشفّر بين الطرفين. لا يستطيع الخادم قراءته، ولا يمكن استعادة عبارة المرور المنسية."
   },
   "webdavEncryptionPending": {
-    "message": "تم إعداد التشفير هنا. ستشفّر المزامنة الناجحة التالية النسخة الموجودة على الخادم. استخدم عبارة المرور نفسها في كل متصفح."
+    "message": "تم إعداد التشفير. ستشفّر المزامنة التالية النسخة الموجودة على الخادم."
   },
   "webdavEncryptionMissing": {
-    "message": "لا توجد عبارة مرور تشفير في هذا المتصفح. استخدم عبارة المرور نفسها التي في المتصفح الآخر لقراءة ملف مشفّر. ملف المزامنة غير المشفّر يستطيع مشغّل الخادم قراءته."
+    "message": "أدخل عبارة المرور من متصفحك الآخر لقراءة ملف مشفّر."
   },
   "webdavPrivacy": {
-    "message": "عند تفعيل التشفير، لا تذهب إلى هذا الخادم إلا بيانات مشفّرة؛ وعبارة مرورك تُحفظ هنا ولا تُرسل أبدًا. دون تشفير، يستطيع الخادم قراءة ملف المزامنة. بيانات دخولك إلى WebDAV تُحفظ هنا وتُرسل إلى هذا الخادم لتسجيل الدخول."
+    "message": "عند إيقاف التشفير، يستطيع الخادم قراءة ملف المزامنة."
   },
   "webdavBadAddress": {
     "message": "أدخل عنوان WebDAV الخاص بالخدمة، ويبدأ بـ https://‎"
@@ -915,7 +1089,7 @@
     "message": "تجري المزامنة مع $1 باسم المستخدم $2."
   },
   "webdavWhen": {
-    "message": "تذهب التغييرات إلى الخادم بعد ثوانٍ قليلة من إجرائها. وتصل التغييرات من متصفحاتك الأخرى عند بدء تشغيل المتصفح وعندما تبحث، مرة كل 5 دقائق على الأكثر."
+    "message": "تتم المزامنة بعد ثوانٍ من التغيير، وعند بدء التشغيل، وعند البحث."
   },
   "webdavSyncing": {
     "message": "جارٍ المزامنة…"
@@ -933,43 +1107,43 @@
     "message": "قطع الاتصال"
   },
   "webdavDisconnected": {
-    "message": "تم قطع الاتصال. يبقى الملف على الخادم، وتبقى قائمتك وإعداداتك هنا."
+    "message": "تم قطع الاتصال. تبقى بياناتك هنا وعلى الخادم."
   },
   "webdavErrorAuth": {
-    "message": "لم يقبل الخادم اسم المستخدم أو كلمة المرور. تحتاج خدمات كثيرة هنا إلى كلمة مرور للتطبيقات، لا كلمة مرورك المعتادة."
+    "message": "لم يقبل الخادم تسجيل الدخول. جرّب كلمة مرور التطبيق."
   },
   "webdavErrorForbidden": {
     "message": "لا يسمح الخادم لهذا الحساب بحفظ الملفات هناك."
   },
   "webdavErrorFolder": {
-    "message": "لا يوجد مجلد على هذا العنوان في الخادم. تحقق من العنوان."
+    "message": "لا يوجد مجلد في هذا العنوان."
   },
   "webdavErrorPermission": {
-    "message": "لم يعد لدى Anubis إذن بالمزامنة مع $1. اضغط على «المزامنة الآن» للسماح بذلك مجددًا."
+    "message": "فقد Anubis إذن المزامنة مع الموقع $1. اضغط «زامِن الآن» للسماح بذلك."
   },
   "webdavErrorNetwork": {
     "message": "تعذّر الوصول إلى $1. تحقق من العنوان ومن اتصالك."
   },
   "webdavErrorFile": {
-    "message": "ملف anubis-sync.json الموجود هناك ليس ملفًا يستطيع Anubis قراءته، لذا تُرك كما هو. استخدم مجلدًا آخر."
+    "message": "لا يستطيع Anubis قراءة الملف anubis-sync.json هناك، لذا تركه كما هو. استخدم مجلدًا آخر."
   },
   "webdavErrorNeedsPassphrase": {
-    "message": "ملف المزامنة هذا مشفّر. أدخل عبارة مروره؛ لم يتغيّر شيء."
+    "message": "ملف المزامنة هذا مشفّر. أدخل عبارة المرور الخاصة به."
   },
   "webdavErrorWrongPassphrase": {
-    "message": "تعذّر على عبارة المرور هذه فك تشفير ملف المزامنة. تحقق منها؛ تُرك الملف على الخادم دون تغيير."
+    "message": "عبارة المرور غير صحيحة. لم يتغير شيء."
   },
   "webdavErrorUnencrypted": {
-    "message": "كان هذا الاتصال مشفّرًا من قبل، لكن على الخادم الآن ملف مزامنة غير مشفّر. تُرك دون تغيير. تحقق من الملف على الخادم قبل المزامنة مجددًا."
+    "message": "لم يعد ملف المزامنة على الخادم مشفّرًا. تُرك دون تغيير."
   },
   "webdavErrorChanged": {
-    "message": "تغيّر ملف المزامنة أثناء تغيير عبارة المرور، أو أن الخادم لا يستطيع حمايته من التعديلات المتزامنة. لم يُستبدل شيء. زامِن مجددًا ثم أعد المحاولة."
+    "message": "تغيّر ملف المزامنة في هذه الأثناء. لم يُستبدل شيء. زامِن ثم حاول مجددًا."
   },
   "webdavErrorUnconfirmed": {
-    "message": "انقطع الاتصال بـ $1 أثناء حفظ الملف، لذا لا يستطيع Anubis معرفة عبارة المرور التي يحملها الآن. لا تزال عبارة المرور القديمة محفوظة هنا. إذا قالت المزامنة التالية إنها خاطئة، فأدخل العبارة الجديدة."
+    "message": "انقطع الاتصال بالموقع $1 أثناء الحفظ. إذا ذكرت المزامنة التالية أن عبارة المرور غير صحيحة، فأدخل الجديدة."
   },
   "webdavErrorServer": {
-    "message": "ردّ الخادم بخطأ (HTTP $1). حاول مرة أخرى لاحقًا."
+    "message": "خطأ في الخادم (HTTP $1). حاول مجددًا لاحقًا."
   },
   "webdavErrorFailed": {
     "message": "لم تكتمل المزامنة. حاول مرة أخرى."
@@ -984,16 +1158,16 @@
     "message": "نظام الألوان"
   },
   "themeHint": {
-    "message": "يتبع «تلقائي» متصفحك هنا وفي قائمة ⚖ في كل نتيجة، ويتبع الوضع الفاتح أو الداكن لكل محرك بحث في بقية ما يضيفه Anubis إلى صفحاته."
+    "message": "«تلقائي» يتبع متصفحك، ويتبع الوضع الخاص بكل محرك بحث في صفحاته."
   },
   "paletteHeading": {
     "message": "الألوان في صفحات البحث"
   },
   "paletteHint": {
-    "message": "يرسم «بسيط» كل ما يضيفه Anubis إلى صفحات البحث بالرمادي، دون ذهبي. تفقد الوسوم ألوانها وتُميَّز بأسمائها. تبقى الإعدادات والنافذة المنبثقة لشريط الأدوات ذهبية."
+    "message": "«بسيط» يرسم الوسوم باللون الرمادي، وتتميز بأسمائها."
   },
   "paletteGold": {
-    "message": "ذهبي"
+    "message": "ألوان الوسوم"
   },
   "palettePlain": {
     "message": "بسيط"
@@ -1002,7 +1176,7 @@
     "message": "النتائج المخفية"
   },
   "hideStyleHint": {
-    "message": "«إزالة» تحذفها من الصفحة؛ ويحسبها الملخص فوق النتائج، و«إظهار المخفي» يعيدها. «طي» يترك سطرًا رفيعًا واحدًا لكل مجموعة متتالية من النتائج المخفية. «تعتيم» يجعلها باهتة."
+    "message": "«إزالة» تحذفها من الصفحة، و«طي» يترك سطرًا واحدًا، و«تعتيم» يجعلها باهتة."
   },
   "hideStyleRemove": {
     "message": "إزالة"
@@ -1017,7 +1191,7 @@
     "message": "إعادة ترتيب النتائج"
   },
   "rerankHint": {
-    "message": "نقل النتائج المرفوعة والمثبَّتة إلى الأعلى والمخفوضة إلى الأسفل، كما يفعل Brave Goggle."
+    "message": "انقل النتائج المرفوعة والمثبّتة إلى الأعلى والمخفوضة إلى الأسفل."
   },
   "rerankHelp": {
     "message": "كيف تعمل إعادة الترتيب"
@@ -1026,7 +1200,7 @@
     "message": "تحميل المزيد من النتائج تلقائيًا"
   },
   "deeperAutoHint": {
-    "message": "أضف الصفحات التالية من النتائج إلى الأولى ورتّبها معًا، فيصعد إلى الأعلى موقعٌ ثبّته في الصفحة 3. ويفعل زر «تحميل المزيد من النتائج» فوق النتائج الشيء نفسه عندما تطلب. اكتب عدد الصفحات المراد إضافتها، من 0 (متوقف) إلى $1."
+    "message": "عدد الصفحات التي تُضاف إلى كل بحث، من 0 (إيقاف) إلى $1."
   },
   "deeperHelp": {
     "message": "كيف يعمل تحميل المزيد"
@@ -1035,12 +1209,12 @@
     "message": "من الصفحات الإضافية"
   },
   "deeperTipOff": {
-    "message": "متوقف: لا تُحمَّل نتائج إضافية إلا عندما تضغط على «تحميل المزيد من النتائج»."
-  },
-  "deeperTipTime_zero": {
-    "message": "يضيف نحو $1 ثانية إلى كل بحث."
+    "message": "متوقف. اضغط «تحميل المزيد من النتائج» عندما تريد المزيد."
   },
   "deeperTipTime_one": {
+    "message": "يضيف نحو $1 ثانية إلى كل بحث."
+  },
+  "deeperTipTime_zero": {
     "message": "يضيف نحو $1 ثانية إلى كل بحث."
   },
   "deeperTipTime_two": {
@@ -1059,10 +1233,10 @@
     "message": "$1 نادرًا ما تمانع محركات البحث بضع صفحات."
   },
   "deeperTipSome": {
-    "message": "$1 قد تبدأ بعض محركات البحث في طلب تأكيد أنك لست روبوتًا."
+    "message": "$1 قد تطلب بعض محركات البحث التحقق من أنك لست روبوتًا."
   },
   "deeperTipMany": {
-    "message": "$1 كثيرًا ما يطلب Google وBing تأكيد أنك لست روبوتًا بعد هذا العدد. وتنفد الصفحات لدى بعض المحركات قبل ذلك."
+    "message": "$1 غالبًا ما يطلب Google وBing التحقق من أنك لست روبوتًا عند هذا العدد."
   },
   "chipsHeading": {
     "message": "شارات الوسوم"
@@ -1074,7 +1248,7 @@
     "message": "الملخص"
   },
   "summaryHint": {
-    "message": "عرض ملخص من سطر واحد لما غيّره Anubis فوق النتائج."
+    "message": "اذكر فوق النتائج ما غيّره Anubis."
   },
   "enabledHeading": {
     "message": "Anubis يعمل"
@@ -1086,7 +1260,7 @@
     "message": "محركات البحث"
   },
   "enginesIntro": {
-    "message": "يعمل Anubis على نتائج الويب من هذه المحركات. يجد النتائج من بنية الصفحة حيثما أمكن، فلا تعطّله التعديلات الصغيرة في التصميم."
+    "message": "يعمل Anubis على نتائج الويب في محركات البحث هذه."
   },
   "enginesTrouble": {
     "message": "Anubis لا يفعل شيئًا في صفحة بحث؟"
@@ -1098,31 +1272,31 @@
     "message": "النسخ الاحتياطي والاستيراد والمشاركة"
   },
   "shareIntro": {
-    "message": "احتفظ بنسخة من كل شيء، أو انقل مواقعك من أداة أخرى، أو انشر قائمتك ليشترك فيها الآخرون."
+    "message": "انسخ احتياطيًا، أو استورد من أداة أخرى، أو انشر قائمتك."
   },
   "publishHeading": {
     "message": "نشر قائمتك"
   },
   "publishIntro": {
-    "message": "لا حاجة إلى خادم: مستودع git عام هو قاعدة البيانات، وطلبات السحب هي طريقة مساهمة الناس."
+    "message": "انشر قائمتك من مستودع Git عام."
   },
   "publishHelp": {
     "message": "كيف تنشر قائمة"
   },
   "publishStepDownload": {
-    "message": "نزّل قائمتك أدناه. اضبط الأسطر ‎$1‎ و‎$2‎ و‎$3‎ في أعلاها."
+    "message": "نزّل قائمتك واضبط أسطرها $1 و$2 و$3."
   },
   "publishStepRepository": {
-    "message": "أنشئ مستودعًا عامًا على GitHub (أو gist) وأضف إليه الملف، مثل ‎$1‎."
+    "message": "أضفها إلى مستودع GitHub عام أو إلى gist، مثل $1."
   },
   "publishStepIssues": {
-    "message": "أضف ‎$1‎ ليتمكن الناس من اقتراح مواقع لقائمتك من قائمة ⚖ في كل نتيجة."
+    "message": "أضف $1 ليتمكن الناس من اقتراح مواقع."
   },
   "publishStepShare": {
-    "message": "شارك رابط الملف. يلصقه الناس في «القوائم» ← «إضافة قائمة»."
+    "message": "شارك رابط الملف لاستخدامه في «القوائم» ← «إضافة قائمة»."
   },
   "publishStepDirectory": {
-    "message": "تريدها ضمن «المزيد من القوائم» للجميع؟ افتح طلب سحب يضيفها إلى $1."
+    "message": "لإدراجها ضمن «المزيد من القوائم»، افتح طلب سحب إلى $1."
   },
   "publishDownload": {
     "message": "تنزيل قائمتي"
@@ -1134,13 +1308,13 @@
     "message": "استيراد مواقع"
   },
   "importIntro": {
-    "message": "قادم من uBlacklist أو HOHSER؟ الصق قواعدك أو ملف التصدير هنا فتنضم المواقع إلى قائمتك. المخفي يبقى مخفيًا، والإخفاء الجزئي في HOHSER يصبح «خفض»، وألوان التمييز تصبح وسومًا تُميِّز."
+    "message": "الصق قواعد من uBlacklist أو HOHSER أو Goggle، وستنضم المواقع إلى قائمتك."
   },
   "importHelp": {
     "message": "ماذا تصبح قواعد كل أداة"
   },
   "importPlaceholder": {
-    "message": "الصق قواعد uBlacklist، أو ملف تصدير من HOHSER، أو Goggle، أو نطاقًا واحدًا في كل سطر"
+    "message": "قواعد uBlacklist، أو تصدير HOHSER، أو Goggle، أو نطاق واحد في كل سطر"
   },
   "importLabel": {
     "message": "المواقع المراد استيرادها"
@@ -1166,10 +1340,10 @@
   "importSourceDomains": {
     "message": "قائمة نطاقات"
   },
-  "importRead_zero": {
+  "importRead_one": {
     "message": "قُرئ النص بوصفه $2: أُضيف $1 موقع وحُدِّث $3."
   },
-  "importRead_one": {
+  "importRead_zero": {
     "message": "قُرئ النص بوصفه $2: أُضيف $1 موقع وحُدِّث $3."
   },
   "importRead_two": {
@@ -1184,23 +1358,23 @@
   "importRead_other": {
     "message": "قُرئ النص بوصفه $2: أُضيف $1 موقع وحُدِّث $3."
   },
-  "importSkipped_zero": {
-    "message": "لم تُستورد $1 قاعدة فيها أنماط عناوين أو صياغة غير مدعومة؛ اشترك في القائمة الأصلية للاحتفاظ بها."
-  },
   "importSkipped_one": {
-    "message": "لم تُستورد $1 قاعدة فيها أنماط عناوين أو صياغة غير مدعومة؛ اشترك في القائمة الأصلية للاحتفاظ بها."
+    "message": "تم تخطي $1 قاعدة لا يستطيع Anubis استخدامها."
+  },
+  "importSkipped_zero": {
+    "message": "تم تخطي $1 قاعدة لا يستطيع Anubis استخدامها."
   },
   "importSkipped_two": {
-    "message": "لم تُستورد $1 قاعدتان فيهما أنماط عناوين أو صياغة غير مدعومة؛ اشترك في القائمة الأصلية للاحتفاظ بهما."
+    "message": "تم تخطي $1 قاعدتين لا يستطيع Anubis استخدامهما."
   },
   "importSkipped_few": {
-    "message": "لم تُستورد $1 قواعد فيها أنماط عناوين أو صياغة غير مدعومة؛ اشترك في القائمة الأصلية للاحتفاظ بها."
+    "message": "تم تخطي $1 قواعد لا يستطيع Anubis استخدامها."
   },
   "importSkipped_many": {
-    "message": "لم تُستورد $1 قاعدةً فيها أنماط عناوين أو صياغة غير مدعومة؛ اشترك في القائمة الأصلية للاحتفاظ بها."
+    "message": "تم تخطي $1 قاعدة لا يستطيع Anubis استخدامها."
   },
   "importSkipped_other": {
-    "message": "لم تُستورد $1 قاعدة فيها أنماط عناوين أو صياغة غير مدعومة؛ اشترك في القائمة الأصلية للاحتفاظ بها."
+    "message": "تم تخطي $1 قاعدة لا يستطيع Anubis استخدامها."
   },
   "importFailed": {
     "message": "تعذّر الاستيراد: $1"
@@ -1209,7 +1383,7 @@
     "message": "النسخ الاحتياطي"
   },
   "backupIntro": {
-    "message": "كل شيء في ملف واحد: الإعدادات واختيارات الوسوم والاشتراكات وقائمتك."
+    "message": "الإعدادات واختيارات الوسوم والاشتراكات ومواقعك، في ملف واحد."
   },
   "backupExport": {
     "message": "تصدير نسخة احتياطية"
@@ -1281,7 +1455,16 @@
     "message": "الانتقال من أدوات أخرى"
   },
   "cleanupIntro": {
-    "message": "يستطيع Anubis إزالة اللوحات التي ليست نتائج من صفحات البحث. فعّل كل لوحة تفضّل ألا تراها. يعيدها «إظهار المخفي» فوق النتائج في ذلك البحث."
+    "message": "أزل أجزاء صفحات البحث التي ليست نتائج. «إظهار المخفي» يعيدها."
+  },
+  "cleanupGroupMedia": {
+    "message": "الفيديوهات والصور والأخبار"
+  },
+  "cleanupGroupQuestions": {
+    "message": "الأسئلة والنقاشات"
+  },
+  "cleanupGroupAds": {
+    "message": "الإعلانات"
   },
   "cleanupStillShows": {
     "message": "إذا ظلت لوحة تظهر"
@@ -1290,13 +1473,13 @@
     "message": "فتح علامة التبويب «الويب» دائمًا"
   },
   "cleanupWebTabHint": {
-    "message": "يرسل كل بحث في Google إلى علامة التبويب «الويب»: روابط فقط، بلا «نظرة عامة بالذكاء الاصطناعي» ولا فيديوهات ولا لوحات أخرى، حتى تلك التي لا يتعرّف عليها Anubis. لمغادرتها في بحث واحد، اختر «الكل» فوق النتائج."
+    "message": "استخدم دائمًا قائمة الروابط البسيطة من Google، بلا ذكاء اصطناعي أو لوحات. اختر «الكل» فوق النتائج للخروج منها مرة واحدة."
   },
   "cleanupAi": {
     "message": "إجابات الذكاء الاصطناعي"
   },
   "cleanupAiHint": {
-    "message": "«نظرة عامة بالذكاء الاصطناعي» وعلامة التبويب «وضع الذكاء الاصطناعي» في Google، وإجابات DuckDuckGo المدعومة بالذكاء الاصطناعي وDuck.ai، وإجابات الذكاء الاصطناعي في Bing، وإجابات الذكاء الاصطناعي في Brave."
+    "message": "«نظرة عامة بالذكاء الاصطناعي» و«وضع الذكاء الاصطناعي» وDuck.ai وإجابات الذكاء الاصطناعي في Bing وBrave."
   },
   "cleanupVideos": {
     "message": "لوحات الفيديو"
@@ -1314,7 +1497,7 @@
     "message": "لوحات النقاشات"
   },
   "cleanupDiscussionsHint": {
-    "message": "لوحات سلاسل المنتديات بين النتائج، مثل «المناقشات والمنتديات» في Google. تبقى صفحات المنتديات الموجودة بين النتائج."
+    "message": "لوحات المنتديات. تبقى نتائج المنتديات."
   },
   "cleanupNews": {
     "message": "أهم الأخبار"
@@ -1326,28 +1509,34 @@
     "message": "صفوف الصور"
   },
   "cleanupImagesHint": {
-    "message": "صفوف الصور بين النتائج. تظل علامة التبويب «صور» تعمل."
+    "message": "صفوف الصور بين النتائج."
   },
   "cleanupRelated": {
     "message": "عمليات البحث ذات الصلة"
   },
   "cleanupRelatedHint": {
-    "message": "قوائم بعمليات بحث أخرى، تكون عادةً في أسفل الصفحة."
+    "message": "قوائم عمليات البحث الأخرى."
   },
   "cleanupElsewhere": {
     "message": "محركات بحث أخرى"
   },
   "cleanupElsewhereHint": {
-    "message": "صفوف أزرار تكرر بحثك في محرك آخر، مثل «Find elsewhere» في Brave."
+    "message": "أزرار تكرّر بحثك في محرك بحث آخر."
   },
   "cleanupAdRequests": {
     "message": "طلبات السماح بالإعلانات"
   },
   "cleanupAdRequestsHint": {
-    "message": "لافتات تطلب منك إيقاف مانع الإعلانات أو السماح بالإعلانات، مثل «Block creepy ads, not private search» في Startpage."
+    "message": "لافتات تطلب منك السماح بالإعلانات."
+  },
+  "cleanupAds": {
+    "message": "الإعلانات"
+  },
+  "cleanupAdsHint": {
+    "message": "النتائج الممولة وشرائط المنتجات."
   },
   "sitesIntro": {
-    "message": "مواقع رتّبتها أو أخفيتها بنفسك. اختيارك يتقدّم على كل قائمة تشترك فيها. استخدم الزر في أي نتيجة بحث، أو أضف مواقع هنا."
+    "message": "المواقع التي رتّبتها بنفسك. اختيارك يتفوق على كل قائمة."
   },
   "sitesEditAsText": {
     "message": "تحرير كنص"
@@ -1356,7 +1545,7 @@
     "message": "العودة إلى الجدول"
   },
   "sitesTooBig": {
-    "message": "قائمتك أكبر من أن تتسع لها مزامنة المتصفح، لذا تُحفظ على هذا الجهاز فقط. نزّلها لتحتفظ بنسخة منها."
+    "message": "قائمتك أكبر من أن تُزامَن، لذا تبقى على هذا الجهاز. نزّلها للاحتفاظ بنسخة."
   },
   "sitesAddPlaceholder": {
     "message": "نطاق أو رابط، مثل fandom.com"
@@ -1373,10 +1562,10 @@
   "sitesAddHelp": {
     "message": "اختيار الجزء المقصود من الموقع"
   },
-  "sitesFilter_zero": {
+  "sitesFilter_one": {
     "message": "ابحث في $1 موقع…"
   },
-  "sitesFilter_one": {
+  "sitesFilter_zero": {
     "message": "ابحث في $1 موقع…"
   },
   "sitesFilter_two": {
@@ -1410,21 +1599,21 @@
     "message": "يُعرض أول 500. استخدم التصفية للعثور على البقية."
   },
   "sitesNone": {
-    "message": "لا مواقع بعد. أضف موقعًا أعلاه، أو استخدم الزر في نتيجة بحث."
+    "message": "لا توجد مواقع بعد. أضف موقعًا أعلاه، أو رتّب موقعًا من نتيجة بحث."
   },
   "sitesTextLabel": {
     "message": "قائمتك كنص"
   },
   "sitesTextIntro": {
-    "message": "قائمتك بصيغة قوائم Anubis: صياغة Brave Goggles مع الوسوم. إنها الملف نفسه الذي ستنشره تمامًا. الأسطر التي لا يستطيع الجدول عرضها تُحفظ كما كُتبت."
+    "message": "قائمتك كنص، بالصيغة التي ستنشرها بها."
   },
   "sitesTextReadable": {
     "message": "$1 و$2، كلها مقروءة."
   },
-  "listInstructions_zero": {
+  "listInstructions_one": {
     "message": "$1 تعليمة"
   },
-  "listInstructions_one": {
+  "listInstructions_zero": {
     "message": "$1 تعليمة"
   },
   "listInstructions_two": {
@@ -1449,7 +1638,7 @@
     "message": "مرجع الصيغة"
   },
   "listsIntro": {
-    "message": "اشترك في قوائم تَسِم المواقع أو تعيد ترتيبها أو تخفيها. يصلح أي ملف نصي على GitHub أو GitLab أو Codeberg أو gist: قوائم Anubis وBrave Goggles ومجموعات قواعد uBlacklist وقوائم النطاقات البسيطة."
+    "message": "القوائم تَسِم المواقع أو ترتّبها أو تخفيها نيابةً عنك."
   },
   "listsUpdateAll": {
     "message": "تحديث الكل"
@@ -1464,7 +1653,7 @@
     "message": "إضافة قائمة"
   },
   "listsAddHint": {
-    "message": "الصق رابطًا إلى الملف. تصلح أيضًا الروابط إلى صفحة GitHub أو gist أو Brave Goggle."
+    "message": "الصق رابط الملف أو gist أو Brave Goggle."
   },
   "listsAddHelp": {
     "message": "أي القوائم تصلح"
@@ -1482,7 +1671,7 @@
     "message": "من دليل Anubis ومن المجتمع الأوسع."
   },
   "listsShare": {
-    "message": "صنعت قائمة تستحق المشاركة؟ أضفها إلى الدليل بطلب سحب إلى $1."
+    "message": "لمشاركة قائمة، افتح طلب سحب إلى $1."
   },
   "listsNeedHttps": {
     "message": "يجب أن تُقدَّم القوائم عبر https."
@@ -1494,7 +1683,7 @@
     "message": "تم الاشتراك في $1: $2 و$3."
   },
   "listsSubscribedBundled": {
-    "message": "تم الاشتراك في $1 (باستخدام النسخة المرفقة مع Anubis إلى أن يمكن تحديثها)."
+    "message": "تم الاشتراك في القائمة $1، مع استخدام النسخة المضمّنة إلى أن تُحدَّث."
   },
   "listsSubscribeFailed": {
     "message": "تعذّر الاشتراك: $1"
@@ -1527,15 +1716,15 @@
     "message": "الصفحة الرئيسية"
   },
   "listsUsingBundled": {
-    "message": "تُستخدم النسخة المرفقة مع Anubis إلى أن يمكن تحديثها ($1)."
+    "message": "استخدام النسخة المضمّنة إلى أن تُحدَّث ($1)."
   },
   "listsLastUpdateFailed": {
     "message": "فشل التحديث الأخير: $1."
   },
-  "listsSkippedLines_zero": {
+  "listsSkippedLines_one": {
     "message": "تم تخطي $1 سطر: لا يستطيع Anubis قراءة هذه الصياغة بعد."
   },
-  "listsSkippedLines_one": {
+  "listsSkippedLines_zero": {
     "message": "تم تخطي $1 سطر: لا يستطيع Anubis قراءة هذه الصياغة بعد."
   },
   "listsSkippedLines_two": {
@@ -1555,6 +1744,42 @@
   },
   "listsUpdateOne": {
     "message": "تحديث $1"
+  },
+  "listsSuggestChanges": {
+    "message": "اقتراح تغييرات"
+  },
+  "listsSuggestChangesTo": {
+    "message": "اقتراح تغييرات على القائمة $1"
+  },
+  "listsSuggestSite": {
+    "message": "الموقع"
+  },
+  "listsSuggestWhat": {
+    "message": "ما الذي يجب تغييره"
+  },
+  "listsSuggestTag": {
+    "message": "وسمه بـ «$1»"
+  },
+  "listsSuggestAdd": {
+    "message": "إضافته"
+  },
+  "listsSuggestRemove": {
+    "message": "إزالته من القائمة"
+  },
+  "listsSuggestOther": {
+    "message": "شيء آخر"
+  },
+  "listsSuggestWhy": {
+    "message": "السبب (اختياري)"
+  },
+  "listsSuggestOpen": {
+    "message": "فتح المشكلة"
+  },
+  "listsSuggestHint": {
+    "message": "يفتح مشكلة في $1 مع تعبئتها مسبقًا. لا يُرسل شيء حتى ترسلها هناك."
+  },
+  "listsSuggestCancel": {
+    "message": "إلغاء"
   },
   "listsUnsubscribe": {
     "message": "إلغاء الاشتراك"
@@ -1581,7 +1806,7 @@
     "message": "قائمة نطاقات"
   },
   "tagsIntro": {
-    "message": "تضع القوائم وسومًا على النتائج. وأنت تقرر ما يفعله كل وسم: اتباع القائمة، أو عرضه فقط، أو تمييز النتائج، أو تثبيت ما يحمله أو رفعه أو خفضه أو إخفاؤه. القوائم التي تستخدم اسم الوسم نفسه تتشاركه."
+    "message": "اختر ما يفعله كل وسم بالنتائج التي تحمله."
   },
   "tagActionList": {
     "message": "اتباع القوائم"
@@ -1601,10 +1826,10 @@
   "tagMarks": {
     "message": "يحمله $1."
   },
-  "tagMarksYours_zero": {
+  "tagMarksYours_one": {
     "message": "$1 من مواقعك"
   },
-  "tagMarksYours_one": {
+  "tagMarksYours_zero": {
     "message": "$1 من مواقعك"
   },
   "tagMarksYours_two": {
@@ -1619,10 +1844,10 @@
   "tagMarksYours_other": {
     "message": "$1 من مواقعك"
   },
-  "tagMarksFromList_zero": {
+  "tagMarksFromList_one": {
     "message": "$1 موقع من $2"
   },
-  "tagMarksFromList_one": {
+  "tagMarksFromList_zero": {
     "message": "$1 موقع من $2"
   },
   "tagMarksFromList_two": {
@@ -1661,10 +1886,10 @@
   "tagEffectLists": {
     "message": "$1 القوائم $2 منها."
   },
-  "tagListRaises_zero": {
+  "tagListRaises_one": {
     "message": "ترفع $1"
   },
-  "tagListRaises_one": {
+  "tagListRaises_zero": {
     "message": "ترفع $1"
   },
   "tagListRaises_two": {
@@ -1679,10 +1904,10 @@
   "tagListRaises_other": {
     "message": "ترفع $1"
   },
-  "tagListLowers_zero": {
+  "tagListLowers_one": {
     "message": "تخفض $1"
   },
-  "tagListLowers_one": {
+  "tagListLowers_zero": {
     "message": "تخفض $1"
   },
   "tagListLowers_two": {
@@ -1697,10 +1922,10 @@
   "tagListLowers_other": {
     "message": "تخفض $1"
   },
-  "tagListHides_zero": {
+  "tagListHides_one": {
     "message": "تخفي $1"
   },
-  "tagListHides_one": {
+  "tagListHides_zero": {
     "message": "تخفي $1"
   },
   "tagListHides_two": {
@@ -1715,10 +1940,10 @@
   "tagListHides_other": {
     "message": "تخفي $1"
   },
-  "tagListsRaise_zero": {
+  "tagListsRaise_one": {
     "message": "ترفع $1"
   },
-  "tagListsRaise_one": {
+  "tagListsRaise_zero": {
     "message": "ترفع $1"
   },
   "tagListsRaise_two": {
@@ -1733,10 +1958,10 @@
   "tagListsRaise_other": {
     "message": "ترفع $1"
   },
-  "tagListsLower_zero": {
+  "tagListsLower_one": {
     "message": "تخفض $1"
   },
-  "tagListsLower_one": {
+  "tagListsLower_zero": {
     "message": "تخفض $1"
   },
   "tagListsLower_two": {
@@ -1751,10 +1976,10 @@
   "tagListsLower_other": {
     "message": "تخفض $1"
   },
-  "tagListsHide_zero": {
+  "tagListsHide_one": {
     "message": "تخفي $1"
   },
-  "tagListsHide_one": {
+  "tagListsHide_zero": {
     "message": "تخفي $1"
   },
   "tagListsHide_two": {
@@ -1784,10 +2009,10 @@
   "tagSiteNote": {
     "message": "$1: $2"
   },
-  "tagMoreSites_zero": {
+  "tagMoreSites_one": {
     "message": "$1 موقع آخر"
   },
-  "tagMoreSites_one": {
+  "tagMoreSites_zero": {
     "message": "$1 موقع آخر"
   },
   "tagMoreSites_two": {
@@ -1824,7 +2049,7 @@
     "message": "مواقعك التي تحمل هذا الوسم"
   },
   "tagNoSites": {
-    "message": "لا شيء بعد. أضف موقعًا هنا، أو استخدم زر ⚖ في نتيجة بحث."
+    "message": "لا شيء بعد. أضف هنا أو من قائمة ⚖ عند نتيجة."
   },
   "tagFromYourLists": {
     "message": "من قوائمك"
@@ -1857,7 +2082,7 @@
     "message": "وسم جديد"
   },
   "tagNewHint": {
-    "message": "تُحفظ وسومك في قائمتك، فتنتقل معها عندما تنشرها."
+    "message": "تُحفظ وسومك في قائمتك."
   },
   "tagNewHelp": {
     "message": "إضافة مواقع إلى وسم"
@@ -1884,7 +2109,7 @@
     "message": "وسوم من القوائم"
   },
   "tagListsHint": {
-    "message": "تعرّف قوائمك هذه الوسوم. قرّر ما يفعله كل منها، وأضف مواقعك إلى أي منها. إذا تخلّت قائمة عن وسم تستخدمه مواقعك، ينتقل إلى «وسومك»."
+    "message": "وسوم من قوائمك. اختر ما يفعله كل منها، أو أضف مواقعك الخاصة."
   },
   "tagSourceLists": {
     "message": "من $1"
@@ -1928,11 +2153,11 @@
   "choiceHide": {
     "message": "تخفيها بسبب $1"
   },
-  "choiceRaise_zero": {
-    "message": "ترفعها بمقدار $2 لكلٍّ من $3"
-  },
   "choiceRaise_one": {
     "message": "ترفعها بمقدار $2 بسبب $3"
+  },
+  "choiceRaise_zero": {
+    "message": "ترفعها بمقدار $2 لكلٍّ من $3"
   },
   "choiceRaise_two": {
     "message": "ترفعها بمقدار $2 لكلٍّ من $3"
@@ -1946,11 +2171,11 @@
   "choiceRaise_other": {
     "message": "ترفعها بمقدار $2 لكلٍّ من $3"
   },
-  "choiceLower_zero": {
-    "message": "تخفضها بمقدار $2 لكلٍّ من $3"
-  },
   "choiceLower_one": {
     "message": "تخفضها بمقدار $2 بسبب $3"
+  },
+  "choiceLower_zero": {
+    "message": "تخفضها بمقدار $2 لكلٍّ من $3"
   },
   "choiceLower_two": {
     "message": "تخفضها بمقدار $2 لكلٍّ من $3"
@@ -1967,10 +2192,10 @@
   "choiceTotal": {
     "message": "$1، $2"
   },
-  "choiceNetUp_zero": {
+  "choiceNetUp_one": {
     "message": "فتصعد في المحصلة بمقدار $1"
   },
-  "choiceNetUp_one": {
+  "choiceNetUp_zero": {
     "message": "فتصعد في المحصلة بمقدار $1"
   },
   "choiceNetUp_two": {
@@ -1985,10 +2210,10 @@
   "choiceNetUp_other": {
     "message": "فتصعد في المحصلة بمقدار $1"
   },
-  "choiceNetDown_zero": {
+  "choiceNetDown_one": {
     "message": "فتنزل في المحصلة بمقدار $1"
   },
-  "choiceNetDown_one": {
+  "choiceNetDown_zero": {
     "message": "فتنزل في المحصلة بمقدار $1"
   },
   "choiceNetDown_two": {
@@ -2102,10 +2327,10 @@
   "importHighlightTag": {
     "message": "تمييز $1"
   },
-  "tagDeleted_zero": {
+  "tagDeleted_one": {
     "message": "تم حذف الوسم «$2» وإزالته من $1 موقع."
   },
-  "tagDeleted_one": {
+  "tagDeleted_zero": {
     "message": "تم حذف الوسم «$2» وإزالته من $1 موقع."
   },
   "tagDeleted_two": {
