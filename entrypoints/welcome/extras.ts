@@ -28,14 +28,14 @@ interface ExampleTag {
 
 /** Tags people make for themselves: a plain label, one that raises, and one that lowers. In ochre, malachite, and umber, apart from the starter lists' colours. */
 const EXAMPLE_TAGS: ExampleTag[] = [
-  { id: 'welcomeTagRecipes', color: TAG_PALETTE[0]! },
+  { id: 'welcomeTagReviews', color: TAG_PALETTE[0]! },
   { id: 'welcomeTagTrusted', color: TAG_PALETTE[2]!, effect: 'raise' },
   { id: 'welcomeTagAds', color: TAG_PALETTE[7]!, effect: 'lower' },
 ];
 
 /** Tags: a result with one example tag already on, and the others to add or take off. */
 export function renderTagsExample(box: HTMLElement): void {
-  const result = sample('allrecipes.com');
+  const result = sample('techradar.com');
   const tags = EXAMPLE_TAGS.map((tag) => ({ ...tag, label: t(tag.id) }));
   const on = new Set<string>([tags[0]!.id]);
   const under = h('span', { class: 'chips' });
@@ -94,7 +94,7 @@ const listSwitch = (parsed: ParsedList, on: boolean, change: (on: boolean) => vo
 
 /** Lists: three starter lists with switches, two on, and a result for each that has its tag while the list is on. */
 export function renderListsExample(box: HTMLElement, subscribed: number): void {
-  const results = ['reddit.com', 'en.wikipedia.org', 'cooking.nytimes.com'].map(sample);
+  const results = ['reddit.com', 'en.wikipedia.org', 'nytimes.com'].map(sample);
   // One list starts off, so there's a switch to turn on as well as ones to turn off.
   const on = new Set(STARTER_LISTS.slice(0, -1));
   const rows = new Map(results.map((r) => [r, resultRow(r)]));
@@ -132,7 +132,7 @@ export function renderPanelsExample(box: HTMLElement): void {
     h('span', { class: 'bar short' }),
   );
   const summary = h('p', { class: 'summary', attrs: { role: 'status' } });
-  const results = ['allrecipes.com', 'bbcgoodfood.com', 'reddit.com'].map((host) => resultRow(sample(host)));
+  const results = ['techradar.com', 'reddit.com', 'nytimes.com'].map((host) => resultRow(sample(host)));
   const label = t('cleanupAi');
   box.replaceChildren(
     h(

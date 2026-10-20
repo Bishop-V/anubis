@@ -2484,7 +2484,7 @@ if (!only || only === 'welcome') {
     await welcome.waitForTimeout(400);
   };
   const first = await demoOrder();
-  // The tour introduces the button and marks the recipe site's first, then Pin once its
+  // The tour introduces the button and marks Reddit's first, then Pin once its
   // menu is open, with the other choices dimmed and doing nothing; after Pin it says the
   // site is first and asks for a site to hide; after Hide, it points at Undo and says what
   // to do next.
@@ -2501,7 +2501,7 @@ if (!only || only === 'welcome') {
     says: await demoText('#demo .coach .says'),
   };
   await welcome.keyboard.press('Escape');
-  await rank('bbcgoodfood.com', 'pin');
+  await rank('reddit.com', 'pin');
   const pinFramed = await welcome.evaluate(() => getComputedStyle(document.querySelector('#demo li[data-level="pin"]'), '::before').borderTopStyle === 'solid');
   const pinned = await demoOrder();
   const menuOpen = await welcome.evaluate(() => !!document.querySelector('#demo .results li #demo-menu'));
@@ -2509,7 +2509,7 @@ if (!only || only === 'welcome') {
   await welcome.keyboard.press('Escape');
   const tourThird = await demoText('#demo .coach .says');
   // In step 3, Hide is the one choice, but any site not yet ranked can be the one.
-  await welcome.click(`#demo .results li:nth-child(${(await demoOrder()).indexOf('pinterest.com') + 1}) .weigh`);
+  await welcome.click(`#demo .results li:nth-child(${(await demoOrder()).indexOf('amazon.com') + 1}) .weigh`);
   const hideStep = await welcome.evaluate(() => ({
     choices: [...document.querySelectorAll('#demo-menu .levels button:not([aria-disabled])')].map((el) => el.className.split(' ')[0]),
     sites: [...document.querySelectorAll('#demo .weigh:not([aria-disabled])')].map((el) => el.closest('li').querySelector('.host').textContent),
@@ -2531,29 +2531,29 @@ if (!only || only === 'welcome') {
   console.log('\n== welcome demo:', JSON.stringify({ first, tourStart, tourMenu, lockedPress, pinned, pinFramed, menuOpen, tourThird, hideStep, hidden, summary, said, tourDone, checklist, revealed, undone, reset }));
   if (
     !/beside every result/.test(tourStart.says) ||
-    !/bbcgoodfood\.com/.test(tourStart.ringed.join()) ||
+    !/reddit\.com/.test(tourStart.ringed.join()) ||
     !tourMenu.ringed.join().includes('Pin') ||
     !tourMenu.besideMenu ||
     lockedPress.order.join() !== first.join() ||
     lockedPress.dimmed.length !== 4 ||
     lockedPress.says !== tourMenu.says ||
-    !/bbcgoodfood\.com is now first/.test(tourThird) ||
+    !/reddit\.com is now first/.test(tourThird) ||
     !/rather not/.test(tourThird) ||
     hideStep.choices.join() !== 'hide' ||
     hideStep.sites.length !== 5 ||
-    hideStep.sites.includes('bbcgoodfood.com') ||
+    hideStep.sites.includes('reddit.com') ||
     !/Undo puts it back/.test(tourDone) ||
     checklist.done !== 3 ||
     !checklist.allDone ||
     !pinFramed ||
-    pinned[0] !== 'bbcgoodfood.com' ||
+    pinned[0] !== 'reddit.com' ||
     !menuOpen ||
-    hidden.includes('pinterest.com') ||
+    hidden.includes('amazon.com') ||
     hidden.length !== first.length - 1 ||
     !/pinned 1 and hid 1 of 6 results/.test(summary) ||
-    !/Hid pinterest\.com/.test(said) ||
-    !revealed.includes('pinterest.com') ||
-    !undone.includes('pinterest.com') ||
+    !/Hid amazon\.com/.test(said) ||
+    !revealed.includes('amazon.com') ||
+    !undone.includes('amazon.com') ||
     reset.join() !== first.join()
   ) {
     throw new Error('the welcome page demo did not rank');
@@ -2567,7 +2567,7 @@ if (!only || only === 'welcome') {
   await welcome.click('#lists-demo .switches li:last-child .switch input');
   const listsAfter = await listTags();
   await welcome.click('#tags-demo summary');
-  // Recipes starts on; Trusted joins it.
+  // Reviews starts on; Trusted joins it.
   await welcome.click('#tags-demo .choice:nth-child(2)');
   const tagged = await demoText('#tags-demo .chips');
   await welcome.click('#panels-demo summary');
@@ -2575,8 +2575,8 @@ if (!only || only === 'welcome') {
   const panelGone = await welcome.evaluate(() => document.querySelector('#panels-demo .panel').hidden);
   const listCount = await demoText('#lists-demo .more span');
   console.log('\n== welcome extras:', JSON.stringify({ listsBefore, listsAfter, tagged, panelGone, listCount }));
-  const listsChanged = listsBefore.join() === 'reddit.com: Discussion,en.wikipedia.org: Reference,cooking.nytimes.com: ' && listsAfter.join() === 'reddit.com: ,en.wikipedia.org: Reference,cooking.nytimes.com: Paywalled';
-  if (!listsChanged || !/Recipes.*Trusted/.test(tagged) || !panelGone) {
+  const listsChanged = listsBefore.join() === 'reddit.com: Discussion,en.wikipedia.org: Reference,nytimes.com: ' && listsAfter.join() === 'reddit.com: ,en.wikipedia.org: Reference,nytimes.com: Paywalled';
+  if (!listsChanged || !/Reviews.*Trusted/.test(tagged) || !panelGone) {
     throw new Error('the welcome page extras did not respond');
   }
   await welcome.screenshot({ path: `${SHOTS}welcome-extras.png`, fullPage: true });
