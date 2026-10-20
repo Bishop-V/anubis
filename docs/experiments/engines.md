@@ -22,6 +22,7 @@ Keeping engine definitions current, and engine bugs found while testing. Part of
 
 ## Engine watch
 
+- **Upstream changes of 2026-10-06 to 2026-10-17 (DuckDuckGo, Brave), applied from the diff, not checked on live pages.** Brave: `safe.search.brave.com` is now an address of the engine, and Discussions (`.discussions-item > .accordion-item`) are weighed on the web tab. Brave's Enrichment Cards are left out, since their link is the card itself and a card's link is looked for inside it. DuckDuckGo: image titles are the `h3`, and the web list, HTML, and Lite pages leave out ads by the rules' selectors, beside the `ads` selector.
 - A weekly workflow opened an issue when uBlacklist changed its rules for an engine Anubis supports (replaced by a pull request on 2026-09-29, below). The development sandbox can't reach GitHub's API, so the script reads upstream history with `git log` over a blobless clone and only files the issue through `gh`. Run against real history, it reported four Google changes in 45 days; commits already mentioned in an `engines` issue are skipped, so the ten-day window can overlap safely.
 
 ## Bugs found while testing

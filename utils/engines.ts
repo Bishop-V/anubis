@@ -231,11 +231,11 @@ export const ENGINES: EngineDef[] = [
     isResultsPage: (url) => hasQuery(url, 'q'),
     // Web results are in the web-vertical list (uBlacklist's rules); the side
     // panel's heading links to a site too, and isn't a result.
-    heading: '[data-testid="web-vertical"] li > article h2',
+    heading: '[data-testid="web-vertical"] li > article:not([data-testid="ad"]) h2',
     boundary: 'ol, main, [data-testid="web-vertical"], [data-testid="zci-images"], [data-testid="zci-videos"], [data-testid="news-vertical"]',
     // The Images, Videos, and News tabs, from uBlacklist's rules.
     cards: [
-      { item: '[data-testid="zci-images"] li:has(> figure)', link: 'figcaption > a', title: 'figcaption > a > p' },
+      { item: '[data-testid="zci-images"] li:has(> figure)', link: 'figcaption > a', title: 'h3' },
       { item: '[data-testid="zci-videos"] li:has(> a > article)', link: 'a', title: 'h2' },
       { item: '[data-testid="news-vertical"] li:has(> article)', link: 'article > a', title: 'h2' },
     ],
@@ -269,7 +269,7 @@ export const ENGINES: EngineDef[] = [
     matches: ['*://lite.duckduckgo.com/*'],
     host: /^lite\.duckduckgo\.com$/,
     isResultsPage: (url) => url.pathname.startsWith('/lite'),
-    item: 'tr:has(.result-link)',
+    item: 'tr:not(.result-sponsored):has(.result-link)',
     link: 'a.result-link',
     title: 'a.result-link',
     displayed: '.link-text',
@@ -322,8 +322,8 @@ export const ENGINES: EngineDef[] = [
   {
     id: 'brave',
     name: 'Brave Search',
-    matches: ['*://search.brave.com/*'],
-    host: /^search\.brave\.com$/,
+    matches: ['*://search.brave.com/*', '*://safe.search.brave.com/*'],
+    host: /^(safe\.)?search\.brave\.com$/,
     isResultsPage: (url) => /^\/(search|images|news|videos)$/.test(url.pathname),
     item: '.snippet[data-type="web"]',
     link: 'a',
@@ -331,6 +331,8 @@ export const ENGINES: EngineDef[] = [
     // The Images, News, and Videos tabs, from uBlacklist's rules; the Videos panel on the web tab has the same
     // `data-type`, so each is limited to its tab. Unverified on a live page.
     cards: [
+      // Discussions are on the web tab, in an accordion (uBlacklist's rules; unverified on a live page).
+      { item: '.discussions-item > .accordion-item', link: 'a', title: '.title', when: onPath(/^\/search$/) },
       { item: '.image-result', link: 'a', title: '.image-metadata-title', displayed: '.image-metadata-source', when: onPath(/^\/images$/) },
       { item: '.snippet[data-type="news"]', link: 'a', title: '.snippet-title', when: onPath(/^\/news$/) },
       { item: '.snippet[data-type="videos"]', link: 'a', title: '.snippet-title', when: onPath(/^\/videos$/) },
