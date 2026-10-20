@@ -8,7 +8,7 @@
 ! tag: foss | FOSS | #3f6d8a | Free and open-source software.
 !
 ! Made from awesome-selfhosted's data (https://github.com/awesome-selfhosted/awesome-selfhosted-data),
-! commit c14ae717b193f2fbe1b02388e399bb30b0e4cb46, under the Creative Commons Attribution-ShareAlike 3.0
+! commit 73ee825d3368cee695f177cdca7802025f515272, under the Creative Commons Attribution-ShareAlike 3.0
 ! Unported licence (https://creativecommons.org/licenses/by-sa/3.0/). This list
 ! is shared under the same licence.
 !
@@ -214,6 +214,7 @@ $site=calagopus.com,tag=foss # awesome-selfhosted lists Calagopus (MIT).
 $site=calibre-ebook.com,tag=foss # awesome-selfhosted lists Calibre (GPL-3.0).
 $site=canarytokens.org,tag=foss # awesome-selfhosted lists Canary Tokens (BSD-3-Clause).
 $site=cannery.app,tag=foss # awesome-selfhosted lists Cannery (AGPL-3.0).
+$site=cellarboss.org,tag=foss # awesome-selfhosted lists CellarBoss (GPL-3.0).
 $site=centrifugal.dev,tag=foss # awesome-selfhosted lists Centrifugo (MIT).
 $site=chamilo.org,tag=foss # awesome-selfhosted lists Chamilo LMS (GPL-3.0).
 $site=changedetection.io,tag=foss # awesome-selfhosted lists changedetection.io (Apache-2.0).
@@ -329,6 +330,7 @@ $site=downtify.henriquesebastiao.com,tag=foss # awesome-selfhosted lists Downtif
 $site=dpaste.org,tag=foss # awesome-selfhosted lists dpaste (MIT).
 $site=draw.io,tag=foss # awesome-selfhosted lists draw.io (Apache-2.0).
 $site=dreamfactory.com,tag=foss # awesome-selfhosted lists DreamFactory (Apache-2.0).
+$site=dreeve.app,tag=foss # awesome-selfhosted lists Dreeve (AGPL-3.0).
 $site=droposs.org,tag=foss # awesome-selfhosted lists Drop (AGPL-3.0).
 $site=dropserver.org,tag=foss # awesome-selfhosted lists Dropserver (Apache-2.0).
 $site=druid.apache.org,tag=foss # awesome-selfhosted lists Druid (Apache-2.0).
@@ -461,7 +463,6 @@ $site=healthchecks.io,tag=foss # awesome-selfhosted lists Healthchecks (BSD-3-Cl
 $site=hedgedoc.org,tag=foss # awesome-selfhosted lists HedgeDoc (AGPL-3.0).
 $site=heimdall.site,tag=foss # awesome-selfhosted lists Heimdall (MIT).
 $site=heliumedu.com,tag=foss # awesome-selfhosted lists Helium (MIT).
-$site=hemmelig.app,tag=foss # awesome-selfhosted lists Hemmelig (MIT).
 $site=heyform.net,tag=foss # awesome-selfhosted lists HeyForm (AGPL-3.0).
 $site=hi.events,tag=foss # awesome-selfhosted lists Hi.Events (AGPL-3.0).
 $site=hister.org,tag=foss # awesome-selfhosted lists Hister (AGPL-3.0).
@@ -614,6 +615,7 @@ $site=mediagoblin.org,tag=foss # awesome-selfhosted lists Mediagoblin (AGPL-3.0)
 $site=mediamtx.org,tag=foss # awesome-selfhosted lists MediaMTX (MIT).
 $site=medusajs.com,tag=foss # awesome-selfhosted lists MedusaJs (MIT).
 $site=meilisearch.com,tag=foss # awesome-selfhosted lists MeiliSearch (MIT).
+$site=memex-app.shibao.dev,tag=foss # awesome-selfhosted lists memEx (AGPL-3.0).
 $site=memories.gallery,tag=foss # awesome-selfhosted lists Nextcloud Memories (AGPL-3.0).
 $site=meremedical.co,tag=foss # awesome-selfhosted lists Mere Medical (GPL-3.0).
 $site=meshcentral.com,tag=foss # awesome-selfhosted lists MeshCentral (Apache-2.0).
