@@ -234,29 +234,51 @@ section p {
 .coach .inline-weigh {
   background: color-mix(in srgb, var(--on-accent) 20%, transparent);
 }
-/* The control the tour points to: a ring in the text colour that pulses three times, then
-   holds still. It moves on its own, the one thing on the page that does, so it isn't missed. */
+/* The control the tour points to: a dot on its corner, in the text colour, whose halo pulses
+   three times and then holds still. Not a ring round the control: in the menu a ring is how
+   the chosen ranking looks, and a ringed Pin read as already chosen. The pulse is the one
+   thing on the page that moves on its own, so the next step isn't missed. */
 .beckon {
-  box-shadow: 0 0 0 2px var(--text);
+  position: relative;
+}
+.beckon::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  inset-inline-end: -3px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  /* A gap in the colour behind, so the dot stands off the control. */
+  box-shadow: 0 0 0 2px var(--beckon-behind, var(--raised));
+  pointer-events: none;
+}
+/* A ranking's button is as wide as its share of the row, so the dot sits by its icon instead. */
+.menu .beckon::after {
+  --beckon-behind: var(--bg);
+  top: 2px;
+  inset-inline-start: calc(50% + 6px);
+  inset-inline-end: auto;
 }
 .weigh.beckon {
   color: var(--text);
   background: var(--chosen);
 }
 @media (prefers-reduced-motion: no-preference) {
-  .beckon {
+  .beckon::after {
     animation: beckon 1.4s ease-out 0.4s 3;
   }
 }
 @keyframes beckon {
   from {
     box-shadow:
-      0 0 0 2px var(--text),
-      0 0 0 2px color-mix(in srgb, var(--text) 40%, transparent);
+      0 0 0 2px var(--beckon-behind, var(--raised)),
+      0 0 0 2px color-mix(in srgb, var(--accent) 45%, transparent);
   }
   to {
     box-shadow:
-      0 0 0 2px var(--text),
+      0 0 0 2px var(--beckon-behind, var(--raised)),
       0 0 0 12px transparent;
   }
 }

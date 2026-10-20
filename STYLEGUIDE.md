@@ -218,8 +218,8 @@ On a phone the engine's menu button (Google's ⋮, DuckDuckGo's ⋯) takes the r
 ## Motion
 
 - Motion answers an action: the menu opens with a 120ms fade, the balance swings, switches slide.
-- Nothing moves on its own, with one exception: the welcome page's tour rings the control to press next, and the ring pulses three times before it holds still. Otherwise, on the welcome page, the example results slide to their new places and the menu's balance tips when a ranking is pressed.
-- Movement (the menu's fade, the balance, switches, the welcome page's example results and its tour's pulse) stops under `prefers-reduced-motion`; the tour's ring stays, still.
+- Nothing moves on its own, with one exception: the welcome page's tour puts a 10px dot in `--accent` on the corner of the control to press next (by the icon, on a ranking's button), and its halo pulses three times before it holds still. It's a dot, not a ring round the control, because a ring is how the menu shows the chosen ranking. Otherwise, on the welcome page, the example results slide to their new places and the menu's balance tips when a ranking is pressed.
+- Movement (the menu's fade, the balance, switches, the welcome page's example results and its tour's pulse) stops under `prefers-reduced-motion`; the tour's dot stays, still.
 
 ## Writing
 
