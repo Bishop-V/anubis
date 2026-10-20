@@ -503,9 +503,6 @@
   "welcomeHeading": {
     "message": "Anubis está instalado"
   },
-  "welcomeIntro": {
-    "message": "Etiqueta, reordena y oculta resultados de búsqueda, según tus propias decisiones y las listas a las que te suscribes."
-  },
   "welcomePinHeading": {
     "message": "Mantenlo en la barra de herramientas"
   },

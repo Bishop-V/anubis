@@ -440,9 +440,6 @@
   "welcomeHeading": {
     "message": "Anubis をインストールしました"
   },
-  "welcomeIntro": {
-    "message": "自分の選択と購読しているリストに従って、検索結果にタグを付け、並べ替え、非表示にします。"
-  },
   "welcomePinHeading": {
     "message": "ツールバーに表示しておく"
   },

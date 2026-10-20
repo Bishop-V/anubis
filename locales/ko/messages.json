@@ -440,9 +440,6 @@
   "welcomeHeading": {
     "message": "Anubis가 설치되었습니다"
   },
-  "welcomeIntro": {
-    "message": "내 선택과 구독한 목록에 따라 검색 결과에 태그를 붙이고, 순위를 재조정하고, 숨깁니다."
-  },
   "welcomePinHeading": {
     "message": "툴바에 고정하기"
   },

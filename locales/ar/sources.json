@@ -251,7 +251,6 @@
   "offerCancel": "Cancel",
   "welcomeTitle": "Welcome to Anubis",
   "welcomeHeading": "Anubis is installed",
-  "welcomeIntro": "It tags, reranks, and hides search results, following your own choices and the lists you subscribe to.",
   "welcomePinHeading": "Keep it in the toolbar",
   "welcomePinWhy": "Its toolbar button shows what Anubis did on the page, turns it on or off, and ranks the site you're on.",
   "welcomePinChrome": "Press the Extensions button (the puzzle piece) next to the address bar, then the pin beside Anubis.",

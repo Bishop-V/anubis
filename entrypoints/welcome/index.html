@@ -8,62 +8,52 @@
   <body>
     <main>
       <header>
-        <img src="/anubis.svg" alt="" width="112" height="112" />
-        <div class="body">
-          <h1 data-i18n="welcomeHeading">Anubis is installed</h1>
-          <p class="lead" data-i18n="welcomeIntro"></p>
-        </div>
+        <p class="installed">
+          <img src="/anubis.svg" alt="" width="28" height="28" />
+          <span data-i18n="welcomeHeading">Anubis is installed</span>
+        </p>
+        <h1 data-i18n="welcomeHeadline">Choose which sites come first in your search results</h1>
+        <p class="lead" data-i18n="welcomeLead"></p>
       </header>
 
-      <section class="try" aria-labelledby="demo-heading">
-        <h2 id="demo-heading" data-i18n="welcomeDemoHeading">Rank a site</h2>
-        <div class="body">
-          <p id="demo-how"></p>
-          <div id="demo" class="page"></div>
-          <p class="more">
-            <span data-i18n="welcomeDemoNothingSaved"></span>
-            <button id="demo-reset" type="button" class="btn small" data-i18n="welcomeDemoReset" hidden>Start again</button>
-          </p>
-        </div>
+      <section class="try" data-i18n-aria-label="welcomeDemoHeading">
+        <div id="demo" class="page"></div>
+        <p class="after">
+          <button id="demo-reset" type="button" class="btn small" data-i18n="welcomeDemoReset" hidden>Start again</button>
+        </p>
       </section>
 
       <section aria-labelledby="more-heading">
         <h2 id="more-heading" data-i18n="welcomeMoreHeading">More to try</h2>
-        <div class="body">
-          <p data-i18n="welcomeMoreHow"></p>
-          <div class="extras">
-            <details id="tags-demo">
-              <summary><span class="name" data-i18n="welcomeTagsHeading">Tag sites</span><span class="what" data-i18n="welcomeTagsWhat"></span></summary>
-              <div class="extra"></div>
-            </details>
-            <details id="lists-demo">
-              <summary><span class="name" data-i18n="welcomeListsTitle">Subscribe to lists</span><span class="what" data-i18n="welcomeListsWhat"></span></summary>
-              <div class="extra"></div>
-            </details>
-            <details id="panels-demo">
-              <summary><span class="name" data-i18n="welcomePanelsHeading">Remove panels</span><span class="what" data-i18n="welcomePanelsWhat"></span></summary>
-              <div class="extra"></div>
-            </details>
-          </div>
+        <p data-i18n="welcomeMoreHow"></p>
+        <div class="extras">
+          <details id="tags-demo">
+            <summary><span class="name" data-i18n="welcomeTagsHeading">Tag sites</span><span class="what" data-i18n="welcomeTagsWhat"></span></summary>
+            <div class="extra"></div>
+          </details>
+          <details id="lists-demo">
+            <summary><span class="name" data-i18n="welcomeListsTitle">Subscribe to lists</span><span class="what" data-i18n="welcomeListsWhat"></span></summary>
+            <div class="extra"></div>
+          </details>
+          <details id="panels-demo">
+            <summary><span class="name" data-i18n="welcomePanelsHeading">Remove panels</span><span class="what" data-i18n="welcomePanelsWhat"></span></summary>
+            <div class="extra"></div>
+          </details>
         </div>
       </section>
 
       <section aria-labelledby="pin-heading">
         <h2 id="pin-heading" data-i18n="welcomePinHeading">Toolbar button</h2>
-        <div class="body">
-          <p data-i18n="welcomePinWhy"></p>
-          <p id="pin" class="pin">
-            <img src="/icon/32.png" alt="" width="20" height="20" />
-            <span id="pin-text"></span>
-          </p>
-        </div>
+        <p data-i18n="welcomePinWhy"></p>
+        <p id="pin" class="pin">
+          <img src="/icon/32.png" alt="" width="20" height="20" />
+          <span id="pin-text"></span>
+        </p>
       </section>
 
       <footer>
-        <div class="body">
-          <a id="guide" target="_blank" rel="noopener noreferrer" data-i18n="welcomeGuide">Wiki</a>
-          <a id="privacy" target="_blank" rel="noopener noreferrer" data-i18n="welcomePrivacy">Privacy</a>
-        </div>
+        <a id="guide" target="_blank" rel="noopener noreferrer" data-i18n="welcomeGuide">Wiki</a>
+        <a id="privacy" target="_blank" rel="noopener noreferrer" data-i18n="welcomePrivacy">Privacy</a>
       </footer>
     </main>
     <script type="module" src="./main.ts"></script>

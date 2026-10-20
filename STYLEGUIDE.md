@@ -72,9 +72,9 @@ One palette, Graphite, defined twice: `assets/theme.css` for extension pages and
 
 | Size | Weight | Use | Example |
 | --- | --- | --- | --- |
-| 34px serif (29px on phones) | 400 | The welcome page's title | "Anubis is installed" |
+| 34px serif (29px on phones) | 400 | The welcome page's headline | "Choose which sites come first in your search results" |
 | 30px serif | 400 | A settings section's title | "Your sites" |
-| 21px serif | 500 | A welcome section's title | "Rank a site" |
+| 21px serif | 500 | A welcome section's title | "More to try" |
 | 19px serif | 500 | The brand name beside the logo | "Anubis" in the popup's header |
 | 16px | 400 | The welcome page's lead | |
 | 15px | 600 | A heading inside a settings section, a list's name | "Paywalls" |
@@ -103,7 +103,7 @@ One palette, Graphite, defined twice: `assets/theme.css` for extension pages and
 | --- | --- |
 | Popup | Up to 340px wide, shrinking to fit a narrower viewport. Header (logo, the status after a diamond that's filled while Anubis is on and hollow while it's off, on/off), then sections under hairlines with a muted label, then a footer. What shows depends on the tab: on a search page, what Anubis did there and its tags to show only; on any other site, that site's name over the balance, with the rankings as in the result menu, tag choices, and a field to add a tag; elsewhere, Add a site. The last few of your sites always follow. |
 | Settings | Two columns in 1040px: a 210px navigation column and sections up to 760px. One row per thing you can change. A tag's open panel has fields for its name and meaning, sites carrying it, and an optional note explaining why a site fits. Below 760px, one column with the navigation across the top. |
-| Welcome page | The same idea in 1040px: section titles in a 220px column, what to do beside them. Ranking comes first, as an example search page whose result buttons open a copy of the result menu under the result. Tags, lists, and removing panels follow under More to try, each folded away. The toolbar button comes last, as optional. Below 900px, one column. |
+| Welcome page | One centred column, 760px at most. At the top, the 28px logo and "Anubis is installed" (15px, 600), the headline, and the lead; then the practice search, as wide as the column, whose result buttons open a copy of the result menu under the result. Tags, lists, and removing panels follow under More to try, each folded away. The toolbar button comes last, as optional. Sections below the practice search are divided by hairlines, with their titles above them. |
 | Search pages | The summary sits above the results, lined up with them; on phones it's one short line, with Details for the rest. Tags go under each title. The result menu opens from the button in the column on the result's left (see [The button on each result](#the-button-on-each-result)), 340px wide, above the result. On phones (600px wide or less) it's a sheet along the bottom of the screen instead, and the ⚖ button sits at the end of the title's first line, under the engine's own menu button. |
 
 Every page works at phone width (390px) without scrolling sideways. Settings are also checked at 320px, 360px, 375px, and 389px: only the Your sites table may scroll inside its own wrapper below 390px. Its Add tag picker is at most 8em wide, because a closed select is as wide as its longest option and tag names come from lists. `node e2e/run.mjs responsive` checks all settings sections at those widths and at 390px in light and dark schemes; the `welcome` and `mobile` e2e parts cover their respective pages.
