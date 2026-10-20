@@ -29,7 +29,7 @@ $site=docs.python.org,tag=docs,boost=1 # This is Python's official documentation
 
 ## 4. 了解错误，接受推荐
 
-把 `! issues:` 设为你的问题跟踪器，订阅者就会看到**建议更改**按钮。
+把 `! issues:` 设为你的问题跟踪器，订阅者就会看到**建议更改**按钮，点击后会在那里打开一个填好内容的 issue。
 
 ## 5. 加入目录
 

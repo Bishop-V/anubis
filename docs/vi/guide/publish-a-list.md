@@ -29,7 +29,7 @@ Mọi người dán nó vào **Cài đặt → Danh sách → Thêm danh sách**
 
 ## 4. Nhận báo lỗi và đề xuất trang web
 
-Đặt `! issues:` thành trình theo dõi của bạn, và người đăng ký sẽ có nút **đề xuất thay đổi**.
+Đặt `! issues:` thành trình theo dõi của bạn, và người đăng ký sẽ có nút **Đề xuất thay đổi** mở một issue điền sẵn tại đó.
 
 ## 5. Thêm vào thư mục
 

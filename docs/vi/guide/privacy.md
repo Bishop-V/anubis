@@ -22,7 +22,7 @@ Chỉ những nơi sau:
 - **Thư mục danh sách** trên GitHub, khi bạn mở **Cài đặt → Danh sách**.
 - **Công cụ tìm kiếm bạn đang dùng**, cho [Tải thêm kết quả](./more-results.md). Trên Ecosia, biểu tượng trang web của các kết quả đó đến từ dịch vụ biểu tượng của Ecosia.
 - **Máy chủ WebDAV của bạn**, nếu bạn kết nối. Nó nhận trang web, cài đặt, lựa chọn nhãn và đăng ký của bạn, được mã hóa theo mặc định. Không mã hóa thì người vận hành đọc được.
-- **Trình theo dõi issue**, khi bạn chọn **Báo cáo sự cố** (điền sẵn phiên bản Anubis, trình duyệt và công cụ tìm kiếm) hoặc **đề xuất thay đổi** của một danh sách. Chúng mở trong thẻ mới, và không gì được gửi cho tới khi bạn tự gửi.
+- **Trình theo dõi issue**, khi bạn chọn **Báo cáo sự cố** (điền sẵn phiên bản Anubis, trình duyệt và công cụ tìm kiếm) hoặc **Đề xuất thay đổi** của một danh sách. Chúng mở trong thẻ mới, và không gì được gửi cho tới khi bạn tự gửi.
 
 Nơi lưu danh sách thấy địa chỉ IP của bạn và tệp nào được yêu cầu, như mọi lượt tải. Không gửi gì khác.
 
