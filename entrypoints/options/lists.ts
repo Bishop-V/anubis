@@ -191,34 +191,7 @@ export async function renderLists(): Promise<HTMLElement> {
       flashed('unsubscribed'),
       cards.length ? cards : h('p', { class: 'empty' }, t('listsNone')),
     ),
-    discover.length
-      ? foldable(
-          'more',
-          t('listsMoreHeading'),
-          discover.length,
-          true,
-          h('p', { class: 'muted' }, t('listsMoreIntro')),
-          discover.map((d) => {
-            const id = d.builtin ? builtinId(d) : subscriptionId(d.url);
-            return h(
-              'div',
-              { class: 'discover-row' },
-              h(
-                'div',
-                { class: 'body' },
-                h('b', null, d.name),
-                d.lens ? h('span', { class: 'kind', title: t('listLensTitle') }, t('listKindLens')) : null,
-                h('p', { attrs: { dir: 'auto' } }, d.description),
-              ),
-              h(
-                'button',
-                { class: 'text-btn', type: 'button', disabled: busy.has(id), on: { click: () => void subscribe(d.url, d) } },
-                busy.has(id) ? t('offerSubscribing') : t('offerSubscribe'),
-              ),
-            );
-          }),
-        )
-      : null,
+    discover.length ? moreLists(discover) : null,
     h(
       'p',
       { class: 'muted', style: 'margin-top:26px;font-size:13px' },
@@ -226,6 +199,36 @@ export async function renderLists(): Promise<HTMLElement> {
       ' ',
       helpLink('guide/publish-a-list', t('publishHelp')),
     ),
+  );
+}
+
+/** Directory lists you don't have yet, each with Subscribe. */
+function moreLists(discover: DirectoryEntry[]): HTMLElement {
+  return foldable(
+    'more',
+    t('listsMoreHeading'),
+    discover.length,
+    true,
+    h('p', { class: 'muted' }, t('listsMoreIntro')),
+    discover.map((d) => {
+      const id = d.builtin ? builtinId(d) : subscriptionId(d.url);
+      return h(
+        'div',
+        { class: 'discover-row' },
+        h(
+          'div',
+          { class: 'body' },
+          h('b', null, d.name),
+          d.lens ? h('span', { class: 'kind', title: t('listLensTitle') }, t('listKindLens')) : null,
+          h('p', { attrs: { dir: 'auto' } }, d.description),
+        ),
+        h(
+          'button',
+          { class: 'text-btn', type: 'button', disabled: busy.has(id), on: { click: () => void subscribe(d.url, d) } },
+          busy.has(id) ? t('offerSubscribing') : t('offerSubscribe'),
+        ),
+      );
+    }),
   );
 }
 
