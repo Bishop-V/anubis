@@ -2868,7 +2868,12 @@ if (only === 'docs') {
     await target.hover();
     await pressWeigh(target.locator('anubis-weigh'));
     await page.waitForTimeout(300);
-    await clip(`menu${suffix}`, ['anubis-popover', '[data-anubis-result]:has(a[href*="javascript.info"])'], 12);
+    // A shot taken mid-fade shows the menu see-through over the results behind it.
+    await page.evaluate(async () => {
+      const pop = document.querySelector('anubis-popover')?.shadowRoot;
+      await Promise.all((pop?.getAnimations?.({ subtree: true }) ?? []).map((a) => a.finished.catch(() => {})));
+    });
+    await clip(`menu${suffix}`,['anubis-popover', '[data-anubis-result]:has(a[href*="javascript.info"])'], 12);
     await page.keyboard.press('Escape');
   }
   await browserScheme(null);
