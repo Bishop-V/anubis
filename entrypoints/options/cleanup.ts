@@ -6,24 +6,26 @@ import { helpLink, pageTitle, switchRow } from './parts';
 
 // "Remove panels": parts of search pages that aren't results (AI answers, video
 // panels, "People also ask"), removed on every search. The switches come in a
-// few groups, each led by a switch for the whole group, with its parts indented
-// under it, so the page reads as five choices rather than eleven.
+// few groups, each led by a switch for the whole group, with its parts folded
+// under it, so the page reads as six choices rather than eleven. Google's Web tab
+// isn't a panel, and no group's switch turns it on, so it stands on its own, last.
 
 /** One switch: a clean-up kind, or Google's Web tab, which is its own setting. */
 type Item = CleanupKind | 'webTab';
 
 interface Group {
-  /** The group's name; a group of one is just that switch, with any extras under it. */
+  /** The group's name, over its parts; without one, a group is a single switch. */
   label?: MessageKey;
   items: Item[];
 }
 
 const GROUPS: Group[] = [
-  { items: ['ai', 'webTab'] },
+  { items: ['ai'] },
   { label: 'cleanupGroupMedia', items: ['videos', 'images', 'news'] },
   { label: 'cleanupGroupQuestions', items: ['questions', 'discussions', 'related'] },
   { label: 'cleanupGroupAds', items: ['ads', 'adRequests'] },
   { items: ['elsewhere'] },
+  { items: ['webTab'] },
 ];
 
 /** Groups whose parts are showing, kept while the page is open: it renders again after each change. */
@@ -43,14 +45,13 @@ export async function renderCleanup(): Promise<HTMLElement> {
 
   const group = ({ label: name, items }: Group): HTMLElement => {
     // A named group's lead switch turns all of its parts on or off, and shows
-    // half-way while only some are on. An unnamed group leads with its first switch,
-    // and the rest are extras that only make sense under it (Google's Web tab under AI answers).
-    const children = name ? items : items.slice(1);
+    // half-way while only some are on. An unnamed group is one switch.
+    const children = name ? items : [];
     const rows = children.map((item) => {
-      // Inside a named group the parts' names say enough; Google's Web tab needs its note.
-      const row = switchRow(t(label(item)), name ? '' : t(hint(item)), isOn(item), (on) => {
+      // Inside a group the parts' names say enough.
+      const row = switchRow(t(label(item)), '', isOn(item), (on) => {
         save({ [item]: on });
-        if (name) sync();
+        sync();
       });
       row.classList.add('child');
       return row;
@@ -71,10 +72,10 @@ export async function renderCleanup(): Promise<HTMLElement> {
     }
     if (name) sync();
     lead.classList.add('lead');
-    if (!rows.length) return h('div', { class: 'setting-group' }, lead);
+    if (!name) return h('div', { class: 'setting-group' }, lead);
 
-    // The parts fold under the group's name, so the page reads as five choices.
-    const key = name ?? items[0]!;
+    // The parts fold under the group's name, so the page reads as six choices.
+    const key = name;
     const parts = h('div', { class: 'setting-parts', id: `parts-${key}`, hidden: !expanded.has(key) }, rows);
     const title = lead.querySelector('b')!;
     const disclose = h(
@@ -90,13 +91,11 @@ export async function renderCleanup(): Promise<HTMLElement> {
     });
     title.replaceWith(disclose);
     // How many parts are on, said beside the name while they're folded away.
-    if (name) {
-      const count = h('span', { class: 'parts-on' });
-      const say = () => (count.textContent = t('cleanupPartsOn', String(inputs.filter((i) => i.checked).length), String(inputs.length)));
-      say();
-      for (const input of [...inputs, leadInput]) input.addEventListener('change', say);
-      disclose.after(count);
-    }
+    const count = h('span', { class: 'parts-on' });
+    const say = () => (count.textContent = t('cleanupPartsOn', String(inputs.filter((i) => i.checked).length), String(inputs.length)));
+    say();
+    for (const input of [...inputs, leadInput]) input.addEventListener('change', say);
+    disclose.after(count);
     return h('div', { class: 'setting-group' }, lead, parts);
   };
 
