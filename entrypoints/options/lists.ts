@@ -140,8 +140,7 @@ export async function renderLists(): Promise<HTMLElement> {
   }
   const notice = flashed('lists');
 
-  const order = subs.map((s) => s.id);
-  const cards = subs.map((sub) => listCard(sub, listText(sub, cache), cache[sub.id], order));
+  const cards = listCards(subs, cache);
   const discover = listsToDiscover(directory, subs);
 
   return h(
@@ -269,6 +268,12 @@ function offerPanel(link: SubscribeLink, notice: HTMLElement | null): HTMLElemen
     ),
     notice,
   );
+}
+
+/** A card for each of your lists, in your order. */
+function listCards(subs: Subscription[], cache: Record<string, CachedList>): HTMLElement[] {
+  const order = subs.map((s) => s.id);
+  return subs.map((sub) => listCard(sub, listText(sub, cache), cache[sub.id], order));
 }
 
 /** Puts your lists in this order; lists not named (added meanwhile) keep their place at the end. */

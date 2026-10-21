@@ -455,15 +455,24 @@ export function collectTags(lists: CompiledList[], prefs: Record<string, TagPref
     }
   }
   for (const tag of out.values()) delete tag.generated;
+  applyTagPrefs(out, prefs);
+  return inYourOrder(out, prefs);
+}
+
+/** Your colour and name for each tag, over the lists'. */
+function applyTagPrefs(tags: Map<string, TagDef>, prefs: Record<string, TagPref>): void {
   for (const [id, pref] of Object.entries(prefs)) {
-    const tag = out.get(id);
+    const tag = tags.get(id);
     if (!tag) continue;
     if (pref.color) tag.color = pref.color;
     if (pref.label) tag.label = pref.label;
   }
-  // In the order you gave them, which every list of tags follows.
-  const rank = (id: string) => prefs[id]?.order ?? Infinity;
-  return new Map([...out].sort(([a, x], [b, y]) => rank(a) - rank(b) || x.label.localeCompare(y.label)));
+}
+
+/** The tags in the order you gave them, then the rest by name: the order every list of tags follows. */
+function inYourOrder(tags: Map<string, TagDef>, prefs: Record<string, TagPref>): Map<string, TagDef> {
+  const rank = (id: string) => prefs[id]?.order ?? Number.MAX_SAFE_INTEGER;
+  return new Map([...tags].sort(([a, x], [b, y]) => rank(a) - rank(b) || x.label.localeCompare(y.label)));
 }
 
 /** The tags subscribed lists define (not only use), first definition wins, as the lists wrote them. */
