@@ -41,6 +41,13 @@ describe('the extension', () => {
     expect(resolveTheme('auto')).toBe(expected);
   });
 
+  it('steps the settings button from Auto to Light, Dark, and back to Auto', async () => {
+    const { nextTheme } = await load('neither');
+    expect(nextTheme('auto')).toBe('light');
+    expect(nextTheme('light')).toBe('dark');
+    expect(nextTheme('dark')).toBe('auto');
+  });
+
   it('keeps a chosen theme', async () => {
     const { resolveTheme } = await load('neither');
     expect(resolveTheme('light')).toBe('light');

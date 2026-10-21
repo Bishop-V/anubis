@@ -40,7 +40,7 @@ Các danh sách này được dựng lại hằng tuần từ dữ liệu của 
 | Danh sách | Nguồn | Tác dụng |
 | --- | --- | --- |
 | **AI content** | [HUGE AI Blocklist](https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist) của laylavish (CC0) | Gắn nhãn trang web do AI tạo. |
-| **Official docs (DevDocs)** | [DevDocs](https://github.com/freeCodeCamp/devdocs) của những người đóng góp (MPL-2.0) | Gắn nhãn và nâng nhẹ khoảng 210 trang tài liệu. |
+| **DevDocs** | [DevDocs](https://github.com/freeCodeCamp/devdocs) của những người đóng góp (MPL-2.0) | Gắn nhãn và nâng nhẹ khoảng 210 trang tài liệu. |
 | **Self-hosted FOSS** | [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted-data) của những người đóng góp (CC BY-SA 3.0) | Gắn nhãn FOSS cho khoảng 1.000 chương trình tự lưu trữ. |
 | **Independent wikis** | [Indie Wiki Buddy](https://github.com/KevinPayravi/indie-wiki-buddy) của Kevin Payravi (MIT) | Nâng các wiki độc lập và hạ các wiki Fandom mà chúng thay thế. |
 

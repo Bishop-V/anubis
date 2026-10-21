@@ -809,12 +809,6 @@
   "appearanceIntro": {
     "message": "Anubis 在這裡和搜尋頁面上的外觀。"
   },
-  "themeHeading": {
-    "message": "配色方案"
-  },
-  "themeHint": {
-    "message": "“自動”跟隨你的瀏覽器，並在各搜尋引擎自己的頁面上跟隨該引擎的模式。"
-  },
   "paletteHeading": {
     "message": "搜尋頁面上的顏色"
   },
@@ -852,31 +846,13 @@
     "message": "重新排序的原理"
   },
   "deeperAuto": {
-    "message": "自動載入更多結果"
-  },
-  "deeperAutoHint": {
-    "message": "每次搜尋要加入的頁數，從 0（關閉）到 $1。"
-  },
-  "deeperHelp": {
-    "message": "載入更多結果的原理"
-  },
-  "deeperUnit": {
-    "message": "頁"
-  },
-  "deeperTipOff": {
-    "message": "已關閉。需要更多結果時，點選“載入更多結果”。"
-  },
-  "deeperTipTime_other": {
-    "message": "每次搜尋約增加 $1 秒。"
-  },
-  "deeperTipFew": {
-    "message": "$1搜尋引擎很少會介意幾頁。"
+    "message": "每次搜尋額外載入的頁數"
   },
   "deeperTipSome": {
-    "message": "$1 部分搜尋引擎可能會要求人機驗證。"
+    "message": "部分搜尋引擎可能會要求人機驗證。"
   },
   "deeperTipMany": {
-    "message": "$1 到這個數量，Google 和 Bing 往往會要求人機驗證。"
+    "message": "到這個數量，Google 和 Bing 往往會要求人機驗證。"
   },
   "chipsHeading": {
     "message": "結果下方的標籤"
@@ -889,12 +865,6 @@
   },
   "summaryHint": {
     "message": "在結果上方說明 Anubis 做了哪些變更。"
-  },
-  "enabledHeading": {
-    "message": "Anubis 已開啟"
-  },
-  "enabledHint": {
-    "message": "關閉此項即可讓搜尋頁面保持原樣，無需卸載。"
   },
   "enginesHeading": {
     "message": "搜尋引擎"
@@ -1682,15 +1652,6 @@
   "themeDark": {
     "message": "深色"
   },
-  "themeAutoTitle": {
-    "message": "自動主題"
-  },
-  "themeLightTitle": {
-    "message": "淺色主題"
-  },
-  "themeDarkTitle": {
-    "message": "深色主題"
-  },
   "personalListName": {
     "message": "你的清單"
   },
@@ -1702,5 +1663,8 @@
   },
   "listsUnsubscribed": {
     "message": "已取消訂閱 $1。"
+  },
+  "themeButtonTitle": {
+    "message": "配色方案：$1"
   }
 }

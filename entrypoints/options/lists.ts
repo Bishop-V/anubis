@@ -7,7 +7,7 @@ import { readSubscribeLink, REPO_URL, type SubscribeLink } from '@/utils/links';
 import { colorForTag, parseList, type ListFormat, type ParsedList } from '@/utils/listformat';
 import { send } from '@/utils/messages';
 import { flash, flashed, rerender } from './flash';
-import { helpLink, pageTitle } from './parts';
+import { foldable, helpLink, pageTitle } from './parts';
 import { editListCache, listCacheItem, type CachedList, type Subscription } from '@/utils/storage';
 import {
   builtinId,
@@ -40,6 +40,9 @@ function kindOf(format: string | undefined, lens?: boolean): string {
   const label = format && format in FORMAT_LABEL ? t(FORMAT_LABEL[format as ListFormat]) : format;
   return tJoin([label, lens ? t('listKindLens') : null].filter((x): x is string => !!x), 'unit');
 }
+
+/** Your lists start folded once there are more than this many. */
+const FOLD_AFTER = 5;
 
 let directory: DirectoryEntry[] | undefined;
 const busy = new Set<string>();
@@ -170,26 +173,30 @@ export async function renderLists(): Promise<HTMLElement> {
       ),
     ),
     offer ? offerPanel(offer, notice) : null,
-    h(
-      'div',
-      { class: 'panel' },
-      h('h3', null, t('listsAddHeading')),
+    foldable(
+      'add',
+      t('listsAddHeading'),
+      null,
+      true,
       h('p', { class: 'muted' }, t('listsAddHint'), ' ', helpLink('guide/lists#what-lists-work', t('listsAddHelp'))),
       form,
       offer ? null : notice,
     ),
-    h(
-      'div',
-      { class: 'panel' },
-      h('h3', null, t('welcomeListsHeading')),
+    // A long list of your own folds away, so the lists to add below stay in reach.
+    foldable(
+      'yours',
+      t('welcomeListsHeading'),
+      subs.length,
+      subs.length <= FOLD_AFTER,
       flashed('unsubscribed'),
       cards.length ? cards : h('p', { class: 'empty' }, t('listsNone')),
     ),
     discover.length
-      ? h(
-          'div',
-          { class: 'panel' },
-          h('h3', null, t('listsMoreHeading')),
+      ? foldable(
+          'more',
+          t('listsMoreHeading'),
+          discover.length,
+          true,
           h('p', { class: 'muted' }, t('listsMoreIntro')),
           discover.map((d) => {
             const id = d.builtin ? builtinId(d) : subscriptionId(d.url);

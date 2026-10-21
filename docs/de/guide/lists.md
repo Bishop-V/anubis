@@ -40,7 +40,7 @@ Diese werden jede Woche aus den Daten anderer Projekte neu erstellt. Um eine zu 
 | Liste | Quelle | Was sie tut |
 | --- | --- | --- |
 | **AI content** | [HUGE AI Blocklist](https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist) von laylavish (CC0) | Markiert KI-generierte Websites. |
-| **Official docs (DevDocs)** | [DevDocs](https://github.com/freeCodeCamp/devdocs) von seinen Mitwirkenden (MPL-2.0) | Markiert rund 210 Dokumentationsseiten und wertet sie leicht auf. |
+| **DevDocs** | [DevDocs](https://github.com/freeCodeCamp/devdocs) von seinen Mitwirkenden (MPL-2.0) | Markiert rund 210 Dokumentationsseiten und wertet sie leicht auf. |
 | **Self-hosted FOSS** | [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted-data) von seinen Mitwirkenden (CC BY-SA 3.0) | Markiert rund 1.000 selbst hostbare Programme als FOSS. |
 | **Independent wikis** | [Indie Wiki Buddy](https://github.com/KevinPayravi/indie-wiki-buddy) von Kevin Payravi (MIT) | Wertet unabhängige Wikis auf und die Fandom-Wikis ab, die sie ersetzen. |
 

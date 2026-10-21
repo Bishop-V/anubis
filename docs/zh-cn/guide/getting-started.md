@@ -61,20 +61,12 @@ Anubis 不需要工具栏按钮也能正常工作。如果想把按钮放在工�
 
 <img src="../../img/popup.png" width="364" alt="wikipedia.org 上的工具栏弹出窗口：Reference 标签在网站的标签中被选中并加了下划线">
 
-## 关闭 Anubis
-
-使用工具栏弹出窗口中的开关。图标会变成灰色。
-
 ## 键盘快捷键
 
 - **Alt+Shift+O** 打开或关闭 Anubis。
 - **Alt+Shift+H** 显示或重新隐藏已隐藏的结果。
 
 在 Mac 上，用 Control 代替 Alt。可以在 `chrome://extensions/shortcuts` 中修改，或在 Firefox 的 `about:addons` → 齿轮 → **管理扩展快捷键**中修改。
-
-## 帮助
-
-弹出窗口中的**帮助**会打开本 wiki，**设置**的每个部分都链接到对应的页面。
 
 ## 下一步
 

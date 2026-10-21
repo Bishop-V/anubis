@@ -40,7 +40,7 @@ These are rebuilt weekly from other projects' data. To change one, contribute to
 | List | Source | What it does |
 | --- | --- | --- |
 | **AI content** | [HUGE AI Blocklist](https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist) by laylavish (CC0) | Tags AI-generated sites. |
-| **Official docs (DevDocs)** | [DevDocs](https://github.com/freeCodeCamp/devdocs) by its contributors (MPL-2.0) | Tags and slightly raises about 210 docs sites. |
+| **DevDocs** | [DevDocs](https://github.com/freeCodeCamp/devdocs) by its contributors (MPL-2.0) | Tags and slightly raises about 210 docs sites. |
 | **Self-hosted FOSS** | [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted-data) by its contributors (CC BY-SA 3.0) | Tags about 1,000 self-hostable programs FOSS. |
 | **Independent wikis** | [Indie Wiki Buddy](https://github.com/KevinPayravi/indie-wiki-buddy) by Kevin Payravi (MIT) | Raises independent wikis and lowers the Fandom wikis they replace. |
 

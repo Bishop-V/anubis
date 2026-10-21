@@ -17,6 +17,29 @@ export function pageTitle(heading: string, text: string, ...tools: HTMLElement[]
   );
 }
 
+/** Which sections someone opened or closed, kept while the page is open: settings re-render on every change. */
+const folded = new Map<string, boolean>();
+
+/**
+ * A section of a settings page that folds away under its heading, so a long one
+ * doesn't push the rest out of sight. `open` is how it starts until someone
+ * opens or closes it.
+ */
+export function foldable(id: string, heading: string, count: number | null, open: boolean, ...content: (Node | Node[] | null)[]): HTMLElement {
+  const initial = folded.get(id) ?? open;
+  const details = h(
+    'details',
+    { class: 'fold', open: initial },
+    h('summary', null, h('span', { class: 'fold-title' }, heading), count === null ? null : h('span', { class: 'count' }, count)),
+    ...content,
+  );
+  // Opening it as it's built fires a toggle too, which isn't anyone's choice.
+  details.addEventListener('toggle', () => {
+    if (folded.has(id) || details.open !== initial) folded.set(id, details.open);
+  });
+  return details;
+}
+
 /** A link to a page of the wiki, like `guide/sync#browser-sync`, opening in a new tab. */
 export function helpLink(path: string, text: string): HTMLElement {
   return h('a', { class: 'help-link', href: wiki(path), target: '_blank', rel: 'noopener noreferrer' }, text, icon(ICON_EXTERNAL));

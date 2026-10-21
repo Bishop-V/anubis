@@ -48,33 +48,35 @@ export async function initTheme(onChange?: (theme: Theme) => void): Promise<Them
   return theme;
 }
 
-const OPTIONS: { value: Theme; label: MessageKey; title: MessageKey; svg: string }[] = [
-  { value: 'auto', label: 'themeAuto', title: 'themeAutoTitle', svg: ICON_AUTO },
-  { value: 'light', label: 'themeLight', title: 'themeLightTitle', svg: ICON_SUN },
-  { value: 'dark', label: 'themeDark', title: 'themeDarkTitle', svg: ICON_MOON },
+/** The order the button steps through, from the default. */
+const CYCLE: { value: Theme; label: MessageKey; svg: string }[] = [
+  { value: 'auto', label: 'themeAuto', svg: ICON_AUTO },
+  { value: 'light', label: 'themeLight', svg: ICON_SUN },
+  { value: 'dark', label: 'themeDark', svg: ICON_MOON },
 ];
 
-/** Auto / Light / Dark segmented control. `compact` shows icons only. */
-export function themeSwitcher(current: Theme, compact = false): HTMLElement {
-  const seg = h('div', { class: 'seg', attrs: { role: 'group', 'aria-label': t('themeHeading') } });
-  const buttons = OPTIONS.map((o) =>
-    h(
-      'button',
-      {
-        type: 'button',
-        title: t(o.title),
-        attrs: { 'aria-pressed': String(o.value === current), 'aria-label': t(o.title) },
-        on: {
-          click: () => {
-            buttons.forEach((b, i) => b.setAttribute('aria-pressed', String(OPTIONS[i]!.value === o.value)));
-            void updateSettings({ theme: o.value });
-          },
-        },
-      },
-      icon(o.svg),
-      compact ? null : t(o.label),
-    ),
-  );
-  seg.append(...buttons);
-  return seg;
+/** The scheme after `theme` when the button is pressed: Auto, Light, Dark, and round again. */
+export function nextTheme(theme: Theme): Theme {
+  const at = CYCLE.findIndex((o) => o.value === theme);
+  return CYCLE[(at + 1) % CYCLE.length]!.value;
+}
+
+/** One button showing the colour scheme's icon; each press moves to the next scheme. */
+export function themeButton(current: Theme): HTMLElement {
+  const button = h('button', { class: 'icon-btn theme-btn', type: 'button' });
+  const show = (theme: Theme) => {
+    const o = CYCLE.find((c) => c.value === theme) ?? CYCLE[0]!;
+    const label = t('themeButtonTitle', t(o.label));
+    button.title = label;
+    button.setAttribute('aria-label', label);
+    button.replaceChildren(icon(o.svg));
+  };
+  let theme = current;
+  show(theme);
+  button.addEventListener('click', () => {
+    theme = nextTheme(theme);
+    show(theme);
+    void updateSettings({ theme });
+  });
+  return button;
 }

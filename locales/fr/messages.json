@@ -878,12 +878,6 @@
   "appearanceIntro": {
     "message": "L’apparence d’Anubis ici et sur les pages de recherche."
   },
-  "themeHeading": {
-    "message": "Jeu de couleurs"
-  },
-  "themeHint": {
-    "message": " « Automatique »  suit votre navigateur et, sur leurs pages, le mode propre à chaque moteur de recherche."
-  },
   "paletteHeading": {
     "message": "Couleurs sur les pages de recherche"
   },
@@ -921,34 +915,13 @@
     "message": "Comment fonctionne le reclassement"
   },
   "deeperAuto": {
-    "message": "Charger plus de résultats automatiquement"
-  },
-  "deeperAutoHint": {
-    "message": "Pages à ajouter à chaque recherche, de 0 (désactivé) à $1."
-  },
-  "deeperHelp": {
-    "message": "Comment fonctionne le chargement"
-  },
-  "deeperUnit": {
-    "message": "pages de plus"
-  },
-  "deeperTipOff": {
-    "message": "Désactivé. Cliquez sur  « Charger plus de résultats »  quand vous en voulez davantage."
-  },
-  "deeperTipTime_one": {
-    "message": "Ajoute environ $1 seconde à chaque recherche."
-  },
-  "deeperTipTime_other": {
-    "message": "Ajoute environ $1 secondes à chaque recherche."
-  },
-  "deeperTipFew": {
-    "message": "$1 Les moteurs se soucient rarement de quelques pages."
+    "message": "Pages en plus par recherche"
   },
   "deeperTipSome": {
-    "message": "$1 Certains moteurs peuvent demander une vérification anti-robot."
+    "message": "Certains moteurs peuvent demander une vérification anti-robot."
   },
   "deeperTipMany": {
-    "message": "$1 Google et Bing demandent souvent une vérification anti-robot à ce stade."
+    "message": "Google et Bing demandent souvent une vérification anti-robot à ce stade."
   },
   "chipsHeading": {
     "message": "Étiquettes sous les résultats"
@@ -961,12 +934,6 @@
   },
   "summaryHint": {
     "message": "Indiquer au-dessus des résultats ce qu’Anubis a modifié."
-  },
-  "enabledHeading": {
-    "message": "Anubis est activé"
-  },
-  "enabledHint": {
-    "message": "Désactivez-le pour laisser les pages de recherche intactes sans désinstaller."
   },
   "enginesHeading": {
     "message": "Moteurs de recherche"
@@ -1808,15 +1775,6 @@
   "themeDark": {
     "message": "Sombre"
   },
-  "themeAutoTitle": {
-    "message": "Thème automatique"
-  },
-  "themeLightTitle": {
-    "message": "Thème clair"
-  },
-  "themeDarkTitle": {
-    "message": "Thème sombre"
-  },
   "personalListName": {
     "message": "Votre liste"
   },
@@ -1831,5 +1789,8 @@
   },
   "listsUnsubscribed": {
     "message": "Désabonné de $1."
+  },
+  "themeButtonTitle": {
+    "message": "Jeu de couleurs : $1"
   }
 }

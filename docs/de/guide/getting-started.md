@@ -61,20 +61,12 @@ Drücke auf einer beliebigen Website die Schaltfläche von Anubis in der Symboll
 
 <img src="../../img/popup.png" width="364" alt="Das Pop-up der Symbolleiste auf wikipedia.org: Das Tag Reference ist unter den Tags der Website ausgewählt und unterstrichen">
 
-## Anubis ausschalten
-
-Verwende den Schalter im Pop-up der Symbolleiste. Das Symbol wird grau.
-
 ## Tastenkürzel
 
 - **Alt+Umschalt+O** schaltet Anubis ein oder aus.
 - **Alt+Umschalt+H** zeigt die ausgeblendeten Ergebnisse oder blendet sie wieder aus.
 
 Auf dem Mac drückst du Control statt Alt. Ändern kannst du sie unter `chrome://extensions/shortcuts` oder in Firefox unter `about:addons` → Zahnrad → **Tastenkombinationen für Erweiterungen verwalten**.
-
-## Hilfe
-
-**Hilfe** im Pop-up öffnet dieses Wiki, und jeder Abschnitt der **Einstellungen** verlinkt seine Seite.
 
 ## Weiter
 

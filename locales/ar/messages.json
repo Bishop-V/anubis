@@ -1154,12 +1154,6 @@
   "appearanceIntro": {
     "message": "كيف يبدو Anubis هنا وفي صفحات البحث."
   },
-  "themeHeading": {
-    "message": "نظام الألوان"
-  },
-  "themeHint": {
-    "message": "«تلقائي» يتبع متصفحك، ويتبع الوضع الخاص بكل محرك بحث في صفحاته."
-  },
   "paletteHeading": {
     "message": "الألوان في صفحات البحث"
   },
@@ -1197,46 +1191,13 @@
     "message": "كيف تعمل إعادة الترتيب"
   },
   "deeperAuto": {
-    "message": "تحميل المزيد من النتائج تلقائيًا"
-  },
-  "deeperAutoHint": {
-    "message": "عدد الصفحات التي تُضاف إلى كل بحث، من 0 (إيقاف) إلى $1."
-  },
-  "deeperHelp": {
-    "message": "كيف يعمل تحميل المزيد"
-  },
-  "deeperUnit": {
-    "message": "من الصفحات الإضافية"
-  },
-  "deeperTipOff": {
-    "message": "متوقف. اضغط «تحميل المزيد من النتائج» عندما تريد المزيد."
-  },
-  "deeperTipTime_one": {
-    "message": "يضيف نحو $1 ثانية إلى كل بحث."
-  },
-  "deeperTipTime_zero": {
-    "message": "يضيف نحو $1 ثانية إلى كل بحث."
-  },
-  "deeperTipTime_two": {
-    "message": "يضيف نحو $1 ثانيتين إلى كل بحث."
-  },
-  "deeperTipTime_few": {
-    "message": "يضيف نحو $1 ثوانٍ إلى كل بحث."
-  },
-  "deeperTipTime_many": {
-    "message": "يضيف نحو $1 ثانية إلى كل بحث."
-  },
-  "deeperTipTime_other": {
-    "message": "يضيف نحو $1 ثانية إلى كل بحث."
-  },
-  "deeperTipFew": {
-    "message": "$1 نادرًا ما تمانع محركات البحث بضع صفحات."
+    "message": "صفحات إضافية لكل بحث"
   },
   "deeperTipSome": {
-    "message": "$1 قد تطلب بعض محركات البحث التحقق من أنك لست روبوتًا."
+    "message": "قد تطلب بعض محركات البحث التحقق من أنك لست روبوتًا."
   },
   "deeperTipMany": {
-    "message": "$1 غالبًا ما يطلب Google وBing التحقق من أنك لست روبوتًا عند هذا العدد."
+    "message": "غالبًا ما يطلب Google وBing التحقق من أنك لست روبوتًا عند هذا العدد."
   },
   "chipsHeading": {
     "message": "شارات الوسوم"
@@ -1249,12 +1210,6 @@
   },
   "summaryHint": {
     "message": "اذكر فوق النتائج ما غيّره Anubis."
-  },
-  "enabledHeading": {
-    "message": "Anubis يعمل"
-  },
-  "enabledHint": {
-    "message": "أوقف هذا لترك صفحات البحث كما هي دون إلغاء التثبيت."
   },
   "enginesHeading": {
     "message": "محركات البحث"
@@ -2312,15 +2267,6 @@
   "themeDark": {
     "message": "داكن"
   },
-  "themeAutoTitle": {
-    "message": "مظهر تلقائي"
-  },
-  "themeLightTitle": {
-    "message": "مظهر فاتح"
-  },
-  "themeDarkTitle": {
-    "message": "مظهر داكن"
-  },
   "personalListName": {
     "message": "قائمتك"
   },
@@ -2347,5 +2293,8 @@
   },
   "listsUnsubscribed": {
     "message": "تم إلغاء الاشتراك في $1."
+  },
+  "themeButtonTitle": {
+    "message": "نظام الألوان: $1"
   }
 }

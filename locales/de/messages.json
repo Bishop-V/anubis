@@ -878,12 +878,6 @@
   "appearanceIntro": {
     "message": "Wie Anubis hier und auf Suchseiten aussieht."
   },
-  "themeHeading": {
-    "message": "Farbschema"
-  },
-  "themeHint": {
-    "message": "„Automatisch“ folgt deinem Browser und auf den Seiten der Suchmaschinen deren eigenem Modus."
-  },
   "paletteHeading": {
     "message": "Farben auf Suchseiten"
   },
@@ -921,34 +915,13 @@
     "message": "Wie das Neuordnen funktioniert"
   },
   "deeperAuto": {
-    "message": "Automatisch mehr Ergebnisse laden"
-  },
-  "deeperAutoHint": {
-    "message": "Seiten, die zu jeder Suche hinzukommen, von 0 (aus) bis $1."
-  },
-  "deeperHelp": {
-    "message": "Wie das Nachladen funktioniert"
-  },
-  "deeperUnit": {
-    "message": "weitere Seiten"
-  },
-  "deeperTipOff": {
-    "message": "Aus. Klicke auf „Mehr Ergebnisse laden“, wenn du mehr willst."
-  },
-  "deeperTipTime_one": {
-    "message": "Verlängert jede Suche um etwa $1 Sekunde."
-  },
-  "deeperTipTime_other": {
-    "message": "Verlängert jede Suche um etwa $1 Sekunden."
-  },
-  "deeperTipFew": {
-    "message": "$1 Suchmaschinen stören sich selten an ein paar Seiten."
+    "message": "Zusätzliche Seiten pro Suche"
   },
   "deeperTipSome": {
-    "message": "$1 Manche Suchmaschinen verlangen vielleicht eine Roboterprüfung."
+    "message": "Manche Suchmaschinen verlangen vielleicht eine Roboterprüfung."
   },
   "deeperTipMany": {
-    "message": "$1 Google und Bing verlangen inzwischen oft eine Roboterprüfung."
+    "message": "Google und Bing verlangen inzwischen oft eine Roboterprüfung."
   },
   "chipsHeading": {
     "message": "Tag-Chips"
@@ -961,12 +934,6 @@
   },
   "summaryHint": {
     "message": "Über den Ergebnissen sagen, was Anubis geändert hat."
-  },
-  "enabledHeading": {
-    "message": "Anubis ist an"
-  },
-  "enabledHint": {
-    "message": "Schalte das aus, um Suchseiten in Ruhe zu lassen, ohne Anubis zu deinstallieren."
   },
   "enginesHeading": {
     "message": "Suchmaschinen"
@@ -1808,15 +1775,6 @@
   "themeDark": {
     "message": "Dunkel"
   },
-  "themeAutoTitle": {
-    "message": "Automatisches Design"
-  },
-  "themeLightTitle": {
-    "message": "Helles Design"
-  },
-  "themeDarkTitle": {
-    "message": "Dunkles Design"
-  },
   "personalListName": {
     "message": "Deine Liste"
   },
@@ -1831,5 +1789,8 @@
   },
   "listsUnsubscribed": {
     "message": "$1 abbestellt."
+  },
+  "themeButtonTitle": {
+    "message": "Farbschema: $1"
   }
 }

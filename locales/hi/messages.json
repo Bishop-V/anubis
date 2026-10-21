@@ -878,12 +878,6 @@
   "appearanceIntro": {
     "message": "Anubis यहां और खोज पेजों पर कैसा दिखता है।"
   },
-  "themeHeading": {
-    "message": "थीम"
-  },
-  "themeHint": {
-    "message": "“ऑटो” आपके ब्राउज़र के हिसाब से चलता है, और सर्च इंजन के अपने पेजों पर उस इंजन के अपने मोड के हिसाब से।"
-  },
   "paletteHeading": {
     "message": "खोज पेजों पर रंग"
   },
@@ -921,34 +915,13 @@
     "message": "फिर से रैंक करना कैसे काम करता है"
   },
   "deeperAuto": {
-    "message": "और नतीजे अपने-आप लोड करें"
-  },
-  "deeperAutoHint": {
-    "message": "हर खोज में जोड़े जाने वाले पेज, 0 (बंद) से $1 तक।"
-  },
-  "deeperHelp": {
-    "message": "और नतीजे लोड करना कैसे काम करता है"
-  },
-  "deeperUnit": {
-    "message": "और पेज"
-  },
-  "deeperTipOff": {
-    "message": "बंद है। ज़्यादा नतीजे चाहिए, तो “और नतीजे लोड करें” दबाएं।"
-  },
-  "deeperTipTime_one": {
-    "message": "इससे हर खोज में लगभग $1 सेकंड ज़्यादा लगता है।"
-  },
-  "deeperTipTime_other": {
-    "message": "इससे हर खोज में लगभग $1 सेकंड ज़्यादा लगते हैं।"
-  },
-  "deeperTipFew": {
-    "message": "$1 कुछ पेजों से सर्च इंजनों को शायद ही कोई दिक्कत होती है।"
+    "message": "हर सर्च पर अतिरिक्त पेज"
   },
   "deeperTipSome": {
-    "message": "$1 कुछ सर्च इंजन रोबोट जांच मांग सकते हैं।"
+    "message": "कुछ सर्च इंजन रोबोट जांच मांग सकते हैं।"
   },
   "deeperTipMany": {
-    "message": "$1 इतने पेज पर Google और Bing अक्सर रोबोट जांच मांगते हैं।"
+    "message": "इतने पेज पर Google और Bing अक्सर रोबोट जांच मांगते हैं।"
   },
   "chipsHeading": {
     "message": "टैग लेबल"
@@ -961,12 +934,6 @@
   },
   "summaryHint": {
     "message": "नतीजों के ऊपर बताएं कि Anubis ने क्या बदला।"
-  },
-  "enabledHeading": {
-    "message": "Anubis चालू है"
-  },
-  "enabledHint": {
-    "message": "अनइंस्टॉल किए बिना खोज पेजों को जैसा है वैसा छोड़ने के लिए, इसे बंद करें।"
   },
   "enginesHeading": {
     "message": "सर्च इंजन"
@@ -1808,15 +1775,6 @@
   "themeDark": {
     "message": "डार्क"
   },
-  "themeAutoTitle": {
-    "message": "ऑटो थीम"
-  },
-  "themeLightTitle": {
-    "message": "लाइट थीम"
-  },
-  "themeDarkTitle": {
-    "message": "डार्क थीम"
-  },
   "personalListName": {
     "message": "आपकी सूची"
   },
@@ -1831,5 +1789,8 @@
   },
   "listsUnsubscribed": {
     "message": "$1 की सदस्यता छोड़ दी।"
+  },
+  "themeButtonTitle": {
+    "message": "थीम: $1"
   }
 }

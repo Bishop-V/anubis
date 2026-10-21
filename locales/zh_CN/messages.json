@@ -809,12 +809,6 @@
   "appearanceIntro": {
     "message": "Anubis 在这里和搜索页面上的外观。"
   },
-  "themeHeading": {
-    "message": "配色方案"
-  },
-  "themeHint": {
-    "message": "“自动”跟随你的浏览器，并在各搜索引擎自己的页面上跟随该引擎的模式。"
-  },
   "paletteHeading": {
     "message": "搜索页面上的颜色"
   },
@@ -852,31 +846,13 @@
     "message": "重新排序的原理"
   },
   "deeperAuto": {
-    "message": "自动加载更多结果"
-  },
-  "deeperAutoHint": {
-    "message": "每次搜索要添加的页数，从 0（关闭）到 $1。"
-  },
-  "deeperHelp": {
-    "message": "加载更多结果的原理"
-  },
-  "deeperUnit": {
-    "message": "页"
-  },
-  "deeperTipOff": {
-    "message": "已关闭。需要更多结果时，点击“加载更多结果”。"
-  },
-  "deeperTipTime_other": {
-    "message": "每次搜索约增加 $1 秒。"
-  },
-  "deeperTipFew": {
-    "message": "$1搜索引擎很少会介意几页。"
+    "message": "每次搜索额外加载的页数"
   },
   "deeperTipSome": {
-    "message": "$1 部分搜索引擎可能会要求人机验证。"
+    "message": "部分搜索引擎可能会要求人机验证。"
   },
   "deeperTipMany": {
-    "message": "$1 到这个数量，Google 和 Bing 往往会要求人机验证。"
+    "message": "到这个数量，Google 和 Bing 往往会要求人机验证。"
   },
   "chipsHeading": {
     "message": "结果下方的标签"
@@ -889,12 +865,6 @@
   },
   "summaryHint": {
     "message": "在结果上方说明 Anubis 做了哪些更改。"
-  },
-  "enabledHeading": {
-    "message": "Anubis 已开启"
-  },
-  "enabledHint": {
-    "message": "关闭此项即可让搜索页面保持原样，无需卸载。"
   },
   "enginesHeading": {
     "message": "搜索引擎"
@@ -1682,15 +1652,6 @@
   "themeDark": {
     "message": "深色"
   },
-  "themeAutoTitle": {
-    "message": "自动主题"
-  },
-  "themeLightTitle": {
-    "message": "浅色主题"
-  },
-  "themeDarkTitle": {
-    "message": "深色主题"
-  },
   "personalListName": {
     "message": "你的列表"
   },
@@ -1702,5 +1663,8 @@
   },
   "listsUnsubscribed": {
     "message": "已取消订阅 $1。"
+  },
+  "themeButtonTitle": {
+    "message": "配色方案：$1"
   }
 }

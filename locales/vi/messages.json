@@ -809,12 +809,6 @@
   "appearanceIntro": {
     "message": "Anubis trông như thế nào ở đây và trên trang tìm kiếm."
   },
-  "themeHeading": {
-    "message": "Bảng màu"
-  },
-  "themeHint": {
-    "message": "“Tự động” theo trình duyệt của bạn, và theo chế độ riêng của từng công cụ tìm kiếm trên trang của nó."
-  },
   "paletteHeading": {
     "message": "Màu trên trang tìm kiếm"
   },
@@ -852,31 +846,13 @@
     "message": "Cách xếp hạng lại hoạt động"
   },
   "deeperAuto": {
-    "message": "Tự động tải thêm kết quả"
-  },
-  "deeperAutoHint": {
-    "message": "Số trang thêm vào mỗi lượt tìm kiếm, từ 0 (tắt) đến $1."
-  },
-  "deeperHelp": {
-    "message": "Cách tải thêm hoạt động"
-  },
-  "deeperUnit": {
-    "message": "trang nữa"
-  },
-  "deeperTipOff": {
-    "message": "Đã tắt. Nhấn “Tải thêm kết quả” khi bạn muốn xem thêm."
-  },
-  "deeperTipTime_other": {
-    "message": "Mỗi lần tìm kiếm mất thêm khoảng $1 giây."
-  },
-  "deeperTipFew": {
-    "message": "$1 Công cụ tìm kiếm hiếm khi phiền lòng vì vài trang."
+    "message": "Số trang thêm mỗi lần tìm kiếm"
   },
   "deeperTipSome": {
-    "message": "$1 Một số công cụ tìm kiếm có thể yêu cầu kiểm tra robot."
+    "message": "Một số công cụ tìm kiếm có thể yêu cầu kiểm tra robot."
   },
   "deeperTipMany": {
-    "message": "$1 Với mức này, Google và Bing thường yêu cầu kiểm tra robot."
+    "message": "Với mức này, Google và Bing thường yêu cầu kiểm tra robot."
   },
   "chipsHeading": {
     "message": "Nhãn dưới kết quả"
@@ -889,12 +865,6 @@
   },
   "summaryHint": {
     "message": "Cho biết phía trên kết quả những gì Anubis đã thay đổi."
-  },
-  "enabledHeading": {
-    "message": "Anubis đang bật"
-  },
-  "enabledHint": {
-    "message": "Tắt mục này để giữ nguyên trang tìm kiếm mà không cần gỡ cài đặt."
   },
   "enginesHeading": {
     "message": "Công cụ tìm kiếm"
@@ -1682,15 +1652,6 @@
   "themeDark": {
     "message": "Tối"
   },
-  "themeAutoTitle": {
-    "message": "Giao diện tự động"
-  },
-  "themeLightTitle": {
-    "message": "Giao diện sáng"
-  },
-  "themeDarkTitle": {
-    "message": "Giao diện tối"
-  },
   "personalListName": {
     "message": "Danh sách của bạn"
   },
@@ -1702,5 +1663,8 @@
   },
   "listsUnsubscribed": {
     "message": "Đã hủy đăng ký $1."
+  },
+  "themeButtonTitle": {
+    "message": "Bảng màu: $1"
   }
 }

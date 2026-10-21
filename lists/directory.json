@@ -51,7 +51,7 @@
     },
     {
       "id": "ai-content",
-      "name": "AI content (HUGE AI Blocklist)",
+      "name": "AI content",
       "description": "Tags AI-generated sites, from the HUGE AI Blocklist.",
       "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/sources/ai-content.anubis",
       "homepage": "https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist",
@@ -61,7 +61,7 @@
     },
     {
       "id": "independent-wikis",
-      "name": "Independent wikis (Indie Wiki Buddy)",
+      "name": "Independent wikis",
       "description": "Raises independent wikis over Fandom, from Indie Wiki Buddy.",
       "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/sources/independent-wikis.anubis",
       "homepage": "https://github.com/KevinPayravi/indie-wiki-buddy",
@@ -70,7 +70,7 @@
     },
     {
       "id": "devdocs",
-      "name": "Official docs (DevDocs)",
+      "name": "DevDocs",
       "description": "Tags and raises the docs DevDocs collects.",
       "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/sources/devdocs.anubis",
       "homepage": "https://github.com/freeCodeCamp/devdocs",
@@ -80,7 +80,7 @@
     },
     {
       "id": "self-hosted-foss",
-      "name": "Self-hosted FOSS (awesome-selfhosted)",
+      "name": "Self-hosted FOSS",
       "description": "Tags self-hostable FOSS, from awesome-selfhosted.",
       "url": "https://raw.githubusercontent.com/Bishop-V/anubis/main/lists/sources/self-hosted-foss.anubis",
       "homepage": "https://github.com/awesome-selfhosted/awesome-selfhosted-data",

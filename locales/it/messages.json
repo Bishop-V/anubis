@@ -947,12 +947,6 @@
   "appearanceIntro": {
     "message": "Come appare Anubis qui e nelle pagine di ricerca."
   },
-  "themeHeading": {
-    "message": "Combinazione di colori"
-  },
-  "themeHint": {
-    "message": "«Automatico» segue il browser e, sulle loro pagine, la modalità propria di ogni motore di ricerca."
-  },
   "paletteHeading": {
     "message": "Colori nelle pagine di ricerca"
   },
@@ -990,37 +984,13 @@
     "message": "Come funziona il riordinamento"
   },
   "deeperAuto": {
-    "message": "Carica altri risultati automaticamente"
-  },
-  "deeperAutoHint": {
-    "message": "Pagine da aggiungere a ogni ricerca, da 0 (disattivato) a $1."
-  },
-  "deeperHelp": {
-    "message": "Come funziona il caricamento di altri risultati"
-  },
-  "deeperUnit": {
-    "message": "pagine in più"
-  },
-  "deeperTipOff": {
-    "message": "Disattivato. Premi «Carica altri risultati» quando ne vuoi di più."
-  },
-  "deeperTipTime_one": {
-    "message": "Aggiunge circa $1 secondo a ogni ricerca."
-  },
-  "deeperTipTime_many": {
-    "message": "Aggiunge circa $1 secondi a ogni ricerca."
-  },
-  "deeperTipTime_other": {
-    "message": "Aggiunge circa $1 secondi a ogni ricerca."
-  },
-  "deeperTipFew": {
-    "message": "$1 Poche pagine di solito non disturbano i motori di ricerca."
+    "message": "Pagine in più per ricerca"
   },
   "deeperTipSome": {
-    "message": "$1 Alcuni motori potrebbero chiedere una verifica anti-robot."
+    "message": "Alcuni motori potrebbero chiedere una verifica anti-robot."
   },
   "deeperTipMany": {
-    "message": "$1 Google e Bing ormai chiedono spesso una verifica anti-robot."
+    "message": "Google e Bing ormai chiedono spesso una verifica anti-robot."
   },
   "chipsHeading": {
     "message": "Etichette sotto i risultati"
@@ -1033,12 +1003,6 @@
   },
   "summaryHint": {
     "message": "Indica sopra i risultati cosa ha cambiato Anubis."
-  },
-  "enabledHeading": {
-    "message": "Anubis è attivo"
-  },
-  "enabledHint": {
-    "message": "Disattivalo per lasciare intatte le pagine di ricerca senza disinstallarlo."
   },
   "enginesHeading": {
     "message": "Motori di ricerca"
@@ -1934,15 +1898,6 @@
   "themeDark": {
     "message": "Scuro"
   },
-  "themeAutoTitle": {
-    "message": "Tema automatico"
-  },
-  "themeLightTitle": {
-    "message": "Tema chiaro"
-  },
-  "themeDarkTitle": {
-    "message": "Tema scuro"
-  },
   "personalListName": {
     "message": "La tua lista"
   },
@@ -1960,5 +1915,8 @@
   },
   "listsUnsubscribed": {
     "message": "Iscrizione a $1 annullata."
+  },
+  "themeButtonTitle": {
+    "message": "Combinazione di colori: $1"
   }
 }

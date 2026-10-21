@@ -2360,7 +2360,12 @@ if (!only || only === 'options') {
     await opt.setViewportSize({ width: 1180, height: 900 });
     await opt.goto(`chrome-extension://${extId}/options.html#appearance`);
     await opt.waitForTimeout(300);
-    await opt.getByRole('button', { name: theme === 'dark' ? 'Dark theme' : 'Light theme' }).first().click();
+    // The sidebar's one button steps Auto, Light, Dark: press it until the scheme is this one.
+    const stored = () => opt.evaluate(async () => (await chrome.storage.sync.get('settings')).settings?.theme ?? 'auto');
+    for (let i = 0; i < 3 && (await stored()) !== theme; i++) {
+      await opt.locator('.theme-btn').click();
+      await opt.waitForTimeout(150);
+    }
     for (const section of ['sites', 'tags', 'lists', 'cleanup', 'appearance', 'sync', 'share']) {
       await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
       await opt.waitForTimeout(500);
@@ -3144,6 +3149,13 @@ if (only === 'tag-notes') {
   console.log('\n== tag-site explanations passed');
 }
 
+/** Settings → Lists folds Your lists away once there are more than five: open it as a person would. */
+async function openYourLists(page) {
+  const closed = page.locator('details.fold:not([open]) > summary', { hasText: 'Your lists' });
+  await page.locator('details.fold > summary', { hasText: 'Your lists' }).waitFor({ timeout: 5000 });
+  if (await closed.count()) await closed.click();
+}
+
 if (!only || only === 'suggest-changes' || checks) {
   // Settings → Lists: Suggest changes sits beside a list that takes suggestions,
   // where its file's link used to be, and opens a short form that turns into a
@@ -3152,6 +3164,7 @@ if (!only || only === 'suggest-changes' || checks) {
   const options = await ctx.newPage();
   await options.setViewportSize({ width: 320, height: 800 });
   await options.goto(`chrome-extension://${extId}/options.html#lists`);
+  await openYourLists(options);
   const button = options.getByRole('button', { name: 'Suggest changes to Official docs', exact: true });
   await button.waitFor({ timeout: 5000 });
   const noFileLink = (await options.getByRole('link', { name: /^View / }).count()) === 0;
@@ -3222,6 +3235,7 @@ if (!only || only === 'settings-undo' || checks) {
   const tagBack = (await options.getByRole('button', { name: 'Edit Great tutorial and its sites' }).count()) === 1;
 
   await options.goto(`chrome-extension://${extId}/options.html#lists`);
+  await openYourLists(options);
   const subsBefore = await worker.evaluate(async () => (await chrome.storage.sync.get('subscriptions')).subscriptions ?? null);
   const unsubscribe = options.getByRole('button', { name: /^Unsubscribe from / }).first();
   const listName = ((await unsubscribe.getAttribute('aria-label')) ?? '').replace('Unsubscribe from ', '');
