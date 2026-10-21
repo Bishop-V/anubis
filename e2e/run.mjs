@@ -3208,6 +3208,11 @@ if (!only || only === 'organise' || checks) {
   const media = page.getByRole('button', { name: 'Videos, images, and news' });
   await media.waitFor({ timeout: 5000 });
   const foldedFirst = !(await page.getByRole('checkbox', { name: 'Video panels', exact: true }).isVisible());
+  // Google's Web tab is no group's part: its own switch, in view, which no group's switch turns on.
+  const webTabAlone =
+    (await page.getByRole('checkbox', { name: 'Always open the Web tab', exact: true }).isVisible()) &&
+    (await page.getByRole('button', { name: 'AI answers', exact: true }).count()) === 0 &&
+    (await page.locator('.setting.child', { hasText: 'Always open the Web tab' }).count()) === 0;
   await media.click();
   const opens = await page.getByRole('checkbox', { name: 'Video panels', exact: true }).isVisible();
 
@@ -3220,6 +3225,7 @@ if (!only || only === 'organise' || checks) {
     'the down arrow moves a tag': tagsAfter[1] === tagsBefore[0],
     'Remove panels starts folded': foldedFirst,
     'pressing a group shows its parts': opens,
+    'the Web tab stands on its own': webTabAlone,
   };
   console.log('\n== organising Settings:', JSON.stringify(results));
   await page.close();
