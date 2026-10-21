@@ -14,6 +14,8 @@ Tags are labels under a result's title, like "Official docs" or "Paywalled". The
 
 Tags you gave a site are bold and underlined. Tags from a list say which list; only that list can remove them.
 
+To put tags in your own order, drag them by the dots in **Settings → Tags**, or focus the dots and press the up and down arrows. The popup and the result menu follow that order.
+
 ![Settings, Tags, with an expanded tag showing the optional explanation field for a site](../img/options-tags.png)
 
 ## Decide what a tag does

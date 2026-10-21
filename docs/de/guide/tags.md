@@ -14,6 +14,8 @@ Tags sind Beschriftungen unter dem Titel eines Ergebnisses, etwa „Official doc
 
 Tags, die du einer Website gegeben hast, sind fett und unterstrichen. Tags aus einer Liste nennen die Liste; nur diese Liste kann sie entfernen.
 
+Um Tags in deine eigene Reihenfolge zu bringen, ziehe sie in **Einstellungen → Tags** an den Punkten, oder setze den Fokus auf die Punkte und drücke die Pfeiltasten nach oben und unten. Das Popup und das Ergebnismenü folgen dieser Reihenfolge.
+
 ![Einstellungen, Tags, mit einem geöffneten Tag und dem optionalen Feld für eine Erklärung zur Website](../../img/options-tags.png)
 
 ## Entscheiden, was ein Tag bewirkt

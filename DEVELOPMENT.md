@@ -111,7 +111,7 @@ Two builds of the same commit are identical file for file. Firefox's reviewers r
 | Key | Where | What |
 | --- | --- | --- |
 | `sync:settings` | Sync | Every setting (`Settings` in `utils/storage.ts`). Read with `getSettings()`, which fills in defaults for anything missing. |
-| `sync:tagPrefs` | Sync | What the user chose for each tag: its action, colour, label, and whether it's shown. |
+| `sync:tagPrefs` | Sync | What the user chose for each tag: its action, colour, label, whether it's shown, and its place in their order (`order`, which `collectTags` sorts by and every list of tags follows). |
 | `sync:subscriptions` | Sync | The lists the user subscribes to. Absent means the default subscriptions, so a second computer's sync can't be overwritten by defaults on install. |
 | `sync:personal`, `sync:personal.N` | Sync | The personal list: text in the list format, compressed (deflate, then base64) and split into chunks under sync's 8 KB per item. `sync:personal` counts the chunks and holds the text's checksum; lists saved before compression are plain text with no checksum, and still read. |
 | `local:personal` | This computer | The personal list, once it's too big for sync (about 100 KB in total, some 10,000 sites compressed). |
@@ -212,7 +212,7 @@ Clean-up kinds live in `utils/cleanup.ts`:
 ### Add a setting
 
 1. Add it to `Settings` and `DEFAULT_SETTINGS` in `utils/storage.ts`. `getSettings` fills it in for anyone whose stored settings predate it.
-2. Add a row to the right settings section: `toggleRow` or `segRow` in `options/general.ts`, or `switchRow` from `options/parts.ts`.
+2. Add a row to the right settings section: `toggleRow` or `selectRow` in `options/general.ts`, or `switchRow` from `options/parts.ts`.
 3. Read it where it's needed: `rules.settings` in the content script, `getSettings()` elsewhere.
 4. Changing a default for people who already use Anubis needs a one-time migration, run from the background script's `onInstalled` (see `migrateSettings`, which moved hidden results from Collapse to Remove).
 5. Describe it in the wiki page for that section. Settings links each section to its page (`help` in `SECTIONS`), and panels or settings that a heading explains to that heading (`helpLink` in `parts.ts`), so keep page paths and headings as they are. `tests/help-links.test.ts` fails on a link that leads nowhere.

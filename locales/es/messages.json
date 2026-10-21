@@ -879,16 +879,10 @@
     "message": "Cómo se ve Anubis aquí y en las páginas de búsqueda."
   },
   "paletteHeading": {
-    "message": "Colores en las páginas de búsqueda"
+    "message": "Colores de las etiquetas en las páginas de búsqueda"
   },
   "paletteHint": {
-    "message": "«Sobrio» dibuja las etiquetas en gris, distinguidas por su nombre."
-  },
-  "paletteGold": {
-    "message": "Colores de las etiquetas"
-  },
-  "palettePlain": {
-    "message": "Sobrio"
+    "message": "Desactivado dibuja las etiquetas en gris, distinguidas por su nombre."
   },
   "hideStyleHeading": {
     "message": "Resultados ocultos"
@@ -1337,14 +1331,11 @@
   "listsFacts": {
     "message": "$1."
   },
-  "listsLinks": {
-    "message": "$1"
-  },
   "listsNotDownloaded": {
     "message": "aún no descargada"
   },
   "listsHomepage": {
-    "message": "página principal"
+    "message": "Página principal"
   },
   "listsUsingBundled": {
     "message": "Usando la copia incluida hasta que se actualice ($1)."
@@ -1792,5 +1783,20 @@
   },
   "themeButtonTitle": {
     "message": "Esquema de colores: $1"
+  },
+  "moveTitle": {
+    "message": "Arrastra para mover, o pulsa las flechas arriba y abajo"
+  },
+  "moveItem": {
+    "message": "Mover $1, $2 de $3"
+  },
+  "cleanupPartsOn": {
+    "message": "$1 de $2 activadas"
+  },
+  "tagHeadDoes": {
+    "message": "Qué hace"
+  },
+  "tagHeadShown": {
+    "message": "Visible"
   }
 }

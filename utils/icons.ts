@@ -66,6 +66,8 @@ export const ICON_SUN = svg(
 export const ICON_MOON = svg('<path d="M13.2 10.2A5.5 5.5 0 015.8 2.8a5.5 5.5 0 107.4 7.4z"/>');
 export const ICON_AUTO = svg('<circle cx="8" cy="8" r="5.5"/><path d="M8 2.5v11" /><path d="M8 2.5a5.5 5.5 0 010 11z" fill="currentColor"/>');
 export const ICON_REFRESH = svg('<path d="M13 3.5v3h-3"/><path d="M12.6 6.5A5 5 0 103 9.5"/>');
+/** Six dots: a handle that moves a row, in Settings' lists and tags. */
+export const ICON_GRIP = svg('<g fill="currentColor" stroke="none"><circle cx="6" cy="4" r="1.2"/><circle cx="10" cy="4" r="1.2"/><circle cx="6" cy="8" r="1.2"/><circle cx="10" cy="8" r="1.2"/><circle cx="6" cy="12" r="1.2"/><circle cx="10" cy="12" r="1.2"/></g>');
 export const ICON_TRASH = svg('<path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5"/>');
 
 export const ICON_UPLOAD = svg('<path d="M8 10V2.5M5 5.5l3-3 3 3"/><path d="M3.5 9v4h9V9"/>');

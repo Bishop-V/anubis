@@ -879,16 +879,10 @@
     "message": "Wie Anubis hier und auf Suchseiten aussieht."
   },
   "paletteHeading": {
-    "message": "Farben auf Suchseiten"
+    "message": "Tag-Farben auf Suchseiten"
   },
   "paletteHint": {
-    "message": "„Schlicht“ zeichnet Tags in Grau, an ihrem Namen zu unterscheiden."
-  },
-  "paletteGold": {
-    "message": "Tag-Farben"
-  },
-  "palettePlain": {
-    "message": "Schlicht"
+    "message": "Aus zeichnet Tags in Grau, an ihrem Namen zu unterscheiden."
   },
   "hideStyleHeading": {
     "message": "Ausgeblendete Ergebnisse"
@@ -1336,9 +1330,6 @@
   },
   "listsFacts": {
     "message": "$1."
-  },
-  "listsLinks": {
-    "message": "$1"
   },
   "listsNotDownloaded": {
     "message": "noch nicht heruntergeladen"
@@ -1792,5 +1783,20 @@
   },
   "themeButtonTitle": {
     "message": "Farbschema: $1"
+  },
+  "moveTitle": {
+    "message": "Zum Verschieben ziehen oder die Pfeiltasten nach oben und unten drücken"
+  },
+  "moveItem": {
+    "message": "$1 verschieben, $2 von $3"
+  },
+  "cleanupPartsOn": {
+    "message": "$1 von $2 an"
+  },
+  "tagHeadDoes": {
+    "message": "Was es tut"
+  },
+  "tagHeadShown": {
+    "message": "Gezeigt"
   }
 }

@@ -6,9 +6,9 @@ import { colorForTag, normalizeColor, slugifyTag, TAG_PALETTE, type TagDef } fro
 import { allSites, listTagCards, type CompiledList, type TagAction } from '@/utils/matcher';
 import { listSites, removeTag, tagSite, upsertTagDef, type SiteEntry } from '@/utils/personal';
 import { loadRuleSet } from '@/utils/ruleset';
-import { editPersonal, setTagPref } from '@/utils/storage';
+import { editPersonal, setTagOrder, setTagPref } from '@/utils/storage';
 import { flash, flashed } from './flash';
-import { helpLink, pageTitle } from './parts';
+import { grip, helpLink, pageTitle } from './parts';
 
 const ACTIONS: { value: TagAction; label: string }[] = [
   { value: 'list', label: t('tagActionList') },
@@ -224,14 +224,19 @@ export async function renderTags(): Promise<HTMLElement> {
   const rules = await loadRuleSet();
   const sites = listSites(rules.personalText);
 
+  // Yours, and those from lists, each in the order you gave them (`collectTags`).
+  const isYours = (id: string) => !rules.lists.some((l) => !l.personal && l.tags.some((d) => d.id === id));
+  const yourIds = [...rules.tags.keys()].filter(isYours);
+  const listIds = [...rules.tags.keys()].filter((id) => !isYours(id));
   const cards = [...rules.tags.values()]
-    .sort((a, b) => a.label.localeCompare(b.label))
     .map((tag) => {
       // The lists that give sites the tag. A tag is yours when none does: one you made, or
       // one a list dropped that your sites still use. Your list keeps a copy of a list's
       // tag you use, for then.
-      const sources = rules.lists.filter((l) => !l.personal && l.tags.some((d) => d.id === tag.id)).map((l) => l.name);
-      const yours = !sources.length;
+      const sourceLists = rules.lists.filter((l) => !l.personal && l.tags.some((d) => d.id === tag.id));
+      // The sentence above names the lists that mark sites; this names only those that just define the tag.
+      const sources = sourceLists.filter((l) => ruleCount(l, tag.id) === 0).map((l) => l.name);
+      const yours = !sourceLists.length;
       const pref = rules.prefs[tag.id] ?? {};
       const personalCount = sites.filter((s) => s.tags.includes(tag.id)).length;
 
@@ -272,9 +277,14 @@ export async function renderTags(): Promise<HTMLElement> {
         if (!panel.hidden) panel.querySelector<HTMLInputElement>('form input')?.focus();
       });
 
+      // Moving a tag orders its own group; the other keeps its order after it.
+      const handle = yours
+        ? grip('tags', tag.id, tag.label, yourIds, (ids) => void setTagOrder([...ids, ...listIds]))
+        : grip('tags', tag.id, tag.label, listIds, (ids) => void setTagOrder([...yourIds, ...ids]));
       const row = h(
         'div',
-        { class: `tag-row${open.has(tag.id) ? ' open' : ''}`, style: `--c: ${tag.color}` },
+        { class: `tag-row${open.has(tag.id) ? ' open' : ''}`, style: `--c: ${tag.color}`, attrs: { 'data-order': tag.id } },
+        handle,
         color,
         h('b', { class: 'name' }, tag.label),
         h(
@@ -321,6 +331,13 @@ export async function renderTags(): Promise<HTMLElement> {
 
   const yours = cards.filter((c) => c.yours).map((c) => c.row);
   const elsewhere = cards.filter((c) => !c.yours).map((c) => c.row);
+  // Names for the drop-down and the switch on every row, which have no words of their own.
+  const head = () =>
+    h(
+      'div',
+      { class: 'tag-head', attrs: { 'aria-hidden': 'true' } },
+      h('span', { class: 'controls' }, h('span', { class: 'does' }, t('tagHeadDoes')), h('span', { class: 'shown' }, t('tagHeadShown'))),
+    );
 
   // Create a tag
   let pick = TAG_PALETTE[rules.tags.size % TAG_PALETTE.length]!;
@@ -372,7 +389,7 @@ export async function renderTags(): Promise<HTMLElement> {
       { class: 'panel' },
       h('h3', null, t('tagYoursHeading')),
       flashed('tags'),
-      yours.length ? h('div', { class: 'tag-rows' }, yours) : h('p', { class: 'empty' }, t('tagNoneYours')),
+      yours.length ? h('div', { class: 'tag-rows' }, head(), yours) : h('p', { class: 'empty' }, t('tagNoneYours')),
     ),
     elsewhere.length
       ? h(
@@ -380,7 +397,7 @@ export async function renderTags(): Promise<HTMLElement> {
           { class: 'panel' },
           h('h3', null, t('tagListsHeading')),
           h('p', { class: 'muted' }, t('tagListsHint')),
-          h('div', { class: 'tag-rows' }, elsewhere),
+          h('div', { class: 'tag-rows' }, head(), elsewhere),
         )
       : null,
   );

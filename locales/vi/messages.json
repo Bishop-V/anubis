@@ -810,16 +810,10 @@
     "message": "Anubis trông như thế nào ở đây và trên trang tìm kiếm."
   },
   "paletteHeading": {
-    "message": "Màu trên trang tìm kiếm"
+    "message": "Màu nhãn trên trang tìm kiếm"
   },
   "paletteHint": {
-    "message": "“Đơn giản” vẽ các nhãn màu xám, phân biệt bằng tên."
-  },
-  "paletteGold": {
-    "message": "Màu nhãn"
-  },
-  "palettePlain": {
-    "message": "Đơn giản"
+    "message": "Khi tắt, các nhãn được vẽ màu xám, phân biệt bằng tên."
   },
   "hideStyleHeading": {
     "message": "Kết quả bị ẩn"
@@ -1256,14 +1250,11 @@
   "listsFacts": {
     "message": "$1."
   },
-  "listsLinks": {
-    "message": "$1"
-  },
   "listsNotDownloaded": {
     "message": "chưa tải xuống"
   },
   "listsHomepage": {
-    "message": "trang chủ"
+    "message": "Trang chủ"
   },
   "listsUsingBundled": {
     "message": "Đang dùng bản sao đi kèm cho đến khi cập nhật ($1)."
@@ -1666,5 +1657,20 @@
   },
   "themeButtonTitle": {
     "message": "Bảng màu: $1"
+  },
+  "moveTitle": {
+    "message": "Kéo để di chuyển, hoặc nhấn mũi tên lên và xuống"
+  },
+  "moveItem": {
+    "message": "Di chuyển $1, $2 trên $3"
+  },
+  "cleanupPartsOn": {
+    "message": "Bật $1 trên $2"
+  },
+  "tagHeadDoes": {
+    "message": "Tác dụng"
+  },
+  "tagHeadShown": {
+    "message": "Hiện"
   }
 }

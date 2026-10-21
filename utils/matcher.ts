@@ -31,6 +31,8 @@ export interface TagPref {
   label?: string;
   /** Hide the chip but keep the ranking effect. */
   muted?: boolean;
+  /** Where you put the tag in Settings → Tags; tags you haven't moved follow, by name. */
+  order?: number;
 }
 
 /** How far the personal "raise"/"lower" levels move a result, in list positions. Also each Raise or Lower tag's pull. */
@@ -459,7 +461,9 @@ export function collectTags(lists: CompiledList[], prefs: Record<string, TagPref
     if (pref.color) tag.color = pref.color;
     if (pref.label) tag.label = pref.label;
   }
-  return out;
+  // In the order you gave them, which every list of tags follows.
+  const rank = (id: string) => prefs[id]?.order ?? Infinity;
+  return new Map([...out].sort(([a, x], [b, y]) => rank(a) - rank(b) || x.label.localeCompare(y.label)));
 }
 
 /** The tags subscribed lists define (not only use), first definition wins, as the lists wrote them. */

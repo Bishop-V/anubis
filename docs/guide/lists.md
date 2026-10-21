@@ -48,6 +48,10 @@ These are rebuilt weekly from other projects' data. To change one, contribute to
 
 Each list has a switch and an unsubscribe button. To overrule a list on one site, rank the site yourself.
 
+## Put lists in order
+
+Drag a list by the dots at its start, or focus them and press the up and down arrows. Tags from lists higher up come first on results.
+
 ## Report a mistake in a list
 
 A result's menu names the lists behind its ranking. Press **Suggest changes** beside the list in **Settings → Lists**, choose **Take it off the list** or **Something else**, and say why.

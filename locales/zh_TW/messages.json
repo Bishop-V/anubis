@@ -810,16 +810,10 @@
     "message": "Anubis 在這裡和搜尋頁面上的外觀。"
   },
   "paletteHeading": {
-    "message": "搜尋頁面上的顏色"
+    "message": "搜尋頁面上的標籤顏色"
   },
   "paletteHint": {
-    "message": "“素色”用灰色繪製標籤，靠名稱區分。"
-  },
-  "paletteGold": {
-    "message": "標籤顏色"
-  },
-  "palettePlain": {
-    "message": "素色"
+    "message": "關閉後，標籤以灰色繪製，靠名稱區分。"
   },
   "hideStyleHeading": {
     "message": "已隱藏的結果"
@@ -1256,9 +1250,6 @@
   "listsFacts": {
     "message": "$1。"
   },
-  "listsLinks": {
-    "message": "$1"
-  },
   "listsNotDownloaded": {
     "message": "尚未下載"
   },
@@ -1666,5 +1657,20 @@
   },
   "themeButtonTitle": {
     "message": "配色方案：$1"
+  },
+  "moveTitle": {
+    "message": "拖曳以移動，或按上下方向鍵"
+  },
+  "moveItem": {
+    "message": "移動「$1」，第 $2 個，共 $3 個"
+  },
+  "cleanupPartsOn": {
+    "message": "已開啟 $1 項，共 $2 項"
+  },
+  "tagHeadDoes": {
+    "message": "作用"
+  },
+  "tagHeadShown": {
+    "message": "顯示"
   }
 }

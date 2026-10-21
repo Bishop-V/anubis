@@ -810,16 +810,10 @@
     "message": "この設定ページと検索ページでの Anubis の見た目です。"
   },
   "paletteHeading": {
-    "message": "検索ページでの色"
+    "message": "検索ページでのタグの色"
   },
   "paletteHint": {
-    "message": "「シンプル」はタグをグレーで表示し、名前で見分けます。"
-  },
-  "paletteGold": {
-    "message": "タグの色"
-  },
-  "palettePlain": {
-    "message": "シンプル"
+    "message": "オフにすると、タグをグレーで表示し、名前で見分けます。"
   },
   "hideStyleHeading": {
     "message": "非表示の結果"
@@ -1256,9 +1250,6 @@
   "listsFacts": {
     "message": "$1"
   },
-  "listsLinks": {
-    "message": "$1"
-  },
   "listsNotDownloaded": {
     "message": "未ダウンロード"
   },
@@ -1666,5 +1657,20 @@
   },
   "themeButtonTitle": {
     "message": "配色：$1"
+  },
+  "moveTitle": {
+    "message": "ドラッグで移動、または上下の矢印キーを押します"
+  },
+  "moveItem": {
+    "message": "$1 を移動（$3 件中 $2 番目）"
+  },
+  "cleanupPartsOn": {
+    "message": "$2 件中 $1 件がオン"
+  },
+  "tagHeadDoes": {
+    "message": "動作"
+  },
+  "tagHeadShown": {
+    "message": "表示"
   }
 }

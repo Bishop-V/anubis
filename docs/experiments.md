@@ -69,6 +69,7 @@ Where things are stored, sync between browsers, and subscribing to lists.
 
 The look, the wording, and Anubis's own pages.
 
+- Organising Settings (2026-10-21)
 - Less crowded settings (2026-10-21)
 - Grouped switches in Remove panels, and quieter list rows (2026-10-17)
 - Shorter interface text (2026-10-17)

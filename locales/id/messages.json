@@ -810,16 +810,10 @@
     "message": "Tampilan Anubis di sini dan di halaman penelusuran."
   },
   "paletteHeading": {
-    "message": "Warna di halaman penelusuran"
+    "message": "Warna tag di halaman penelusuran"
   },
   "paletteHint": {
-    "message": "“Polos” menggambar tag dengan warna abu-abu, dibedakan menurut namanya."
-  },
-  "paletteGold": {
-    "message": "Warna tag"
-  },
-  "palettePlain": {
-    "message": "Polos"
+    "message": "Saat mati, tag digambar abu-abu, dibedakan menurut namanya."
   },
   "hideStyleHeading": {
     "message": "Hasil yang disembunyikan"
@@ -1256,14 +1250,11 @@
   "listsFacts": {
     "message": "$1."
   },
-  "listsLinks": {
-    "message": "$1"
-  },
   "listsNotDownloaded": {
     "message": "belum diunduh"
   },
   "listsHomepage": {
-    "message": "halaman beranda"
+    "message": "Halaman beranda"
   },
   "listsUsingBundled": {
     "message": "Menggunakan salinan bawaan sampai diperbarui ($1)."
@@ -1666,5 +1657,20 @@
   },
   "themeButtonTitle": {
     "message": "Skema warna: $1"
+  },
+  "moveTitle": {
+    "message": "Seret untuk memindahkan, atau tekan panah atas dan bawah"
+  },
+  "moveItem": {
+    "message": "Pindahkan $1, $2 dari $3"
+  },
+  "cleanupPartsOn": {
+    "message": "$1 dari $2 aktif"
+  },
+  "tagHeadDoes": {
+    "message": "Fungsinya"
+  },
+  "tagHeadShown": {
+    "message": "Tampil"
   }
 }

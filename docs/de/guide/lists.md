@@ -48,6 +48,10 @@ Diese werden jede Woche aus den Daten anderer Projekte neu erstellt. Um eine zu 
 
 Jede Liste hat einen Schalter und eine Schaltfläche zum Abbestellen. Um eine Liste bei einer Website zu überstimmen, stufe die Website selbst ein.
 
+## Listen ordnen
+
+Ziehe eine Liste an den Punkten an ihrem Anfang, oder setze den Fokus darauf und drücke die Pfeiltasten nach oben und unten. Tags aus weiter oben stehenden Listen kommen bei Ergebnissen zuerst.
+
 ## Einen Fehler in einer Liste melden
 
 Das Menü eines Ergebnisses nennt die Listen hinter seiner Einstufung. Drücke **Änderungen vorschlagen** neben der Liste unter **Einstellungen → Listen**, wähle **Von der Liste entfernen** oder **Etwas anderes** und sag, warum.

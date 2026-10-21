@@ -810,16 +810,10 @@
     "message": "여기와 검색 페이지에서 Anubis가 보이는 방식입니다."
   },
   "paletteHeading": {
-    "message": "검색 페이지의 색"
+    "message": "검색 페이지의 태그 색상"
   },
   "paletteHint": {
-    "message": "‘단색’은 태그를 회색으로 그리고 이름으로 구분합니다."
-  },
-  "paletteGold": {
-    "message": "태그 색상"
-  },
-  "palettePlain": {
-    "message": "단순"
+    "message": "끄면 태그를 회색으로 그리고 이름으로 구분합니다."
   },
   "hideStyleHeading": {
     "message": "숨긴 결과"
@@ -1256,9 +1250,6 @@
   "listsFacts": {
     "message": "$1."
   },
-  "listsLinks": {
-    "message": "$1"
-  },
   "listsNotDownloaded": {
     "message": "아직 다운로드되지 않음"
   },
@@ -1666,5 +1657,20 @@
   },
   "themeButtonTitle": {
     "message": "색 구성표: $1"
+  },
+  "moveTitle": {
+    "message": "끌어서 옮기거나 위아래 화살표를 누르세요"
+  },
+  "moveItem": {
+    "message": "$1 옮기기, $3개 중 $2번째"
+  },
+  "cleanupPartsOn": {
+    "message": "$2개 중 $1개 켜짐"
+  },
+  "tagHeadDoes": {
+    "message": "하는 일"
+  },
+  "tagHeadShown": {
+    "message": "표시"
   }
 }
