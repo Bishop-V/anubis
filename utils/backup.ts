@@ -74,6 +74,7 @@ function readTagPrefs(value: unknown): Record<string, TagPref> {
     if (color) out.color = color;
     if (typeof pref.label === 'string') out.label = pref.label;
     if (typeof pref.muted === 'boolean') out.muted = pref.muted;
+    if (typeof pref.order === 'number' && Number.isInteger(pref.order) && pref.order >= 0) out.order = pref.order;
     prefs[id] = out;
   }
   return prefs;

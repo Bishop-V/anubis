@@ -1155,16 +1155,10 @@
     "message": "كيف يبدو Anubis هنا وفي صفحات البحث."
   },
   "paletteHeading": {
-    "message": "الألوان في صفحات البحث"
+    "message": "ألوان الوسوم في صفحات البحث"
   },
   "paletteHint": {
-    "message": "«بسيط» يرسم الوسوم باللون الرمادي، وتتميز بأسمائها."
-  },
-  "paletteGold": {
-    "message": "ألوان الوسوم"
-  },
-  "palettePlain": {
-    "message": "بسيط"
+    "message": "عند الإيقاف تُرسم الوسوم باللون الرمادي، وتتميز بأسمائها."
   },
   "hideStyleHeading": {
     "message": "النتائج المخفية"
@@ -1660,9 +1654,6 @@
   },
   "listsFacts": {
     "message": "$1."
-  },
-  "listsLinks": {
-    "message": "$1"
   },
   "listsNotDownloaded": {
     "message": "لم تُنزَّل بعد"
@@ -2296,5 +2287,20 @@
   },
   "themeButtonTitle": {
     "message": "نظام الألوان: $1"
+  },
+  "moveTitle": {
+    "message": "اسحب للنقل، أو اضغط على السهمين لأعلى ولأسفل"
+  },
+  "moveItem": {
+    "message": "نقل $1، $2 من $3"
+  },
+  "cleanupPartsOn": {
+    "message": "$1 من $2 مفعّلة"
+  },
+  "tagHeadDoes": {
+    "message": "ما يفعله"
+  },
+  "tagHeadShown": {
+    "message": "ظاهر"
   }
 }

@@ -1,6 +1,6 @@
 # Gỡ khung
 
-**Cài đặt → Gỡ khung** bỏ những phần bạn chọn khỏi mọi trang tìm kiếm. Tất cả đều tắt lúc đầu. Công tắc của mỗi nhóm bật hoặc tắt mọi mục trong nhóm cùng lúc.
+**Cài đặt → Gỡ khung** bỏ những phần bạn chọn khỏi mọi trang tìm kiếm. Tất cả đều tắt lúc đầu. Công tắc của mỗi nhóm bật hoặc tắt mọi mục trong nhóm cùng lúc; nhấn vào tên nhóm để chọn từng mục.
 
 <!-- Maintainer: Vietnamese translation of docs/guide/clean-up.md. The screenshots are the English ones. -->
 

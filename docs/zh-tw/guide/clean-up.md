@@ -1,6 +1,6 @@
 # 移除面板
 
-**設定 → 移除面板**會從每個搜尋頁面上去掉你選擇的部分。一開始全部關閉。每組的開關會同時開啟或關閉組內所有項目。
+**設定 → 移除面板**會從每個搜尋頁面上去掉你選擇的部分。一開始全部關閉。每組的開關會同時開啟或關閉組內所有項目；點按組名可逐項選擇。
 
 <!-- Maintainer: Traditional Chinese translation of docs/guide/clean-up.md. The screenshots are the English ones. -->
 

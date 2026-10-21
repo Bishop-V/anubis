@@ -879,16 +879,10 @@
     "message": "এখানে আর সার্চ পৃষ্ঠায় Anubis দেখতে কেমন হবে।"
   },
   "paletteHeading": {
-    "message": "সার্চ পৃষ্ঠার রঙ"
+    "message": "সার্চ পৃষ্ঠায় ট্যাগের রং"
   },
   "paletteHint": {
-    "message": "“সাদামাটা” ট্যাগগুলিকে ধূসর রঙে আঁকে, নাম দেখে আলাদা চেনা যায়।"
-  },
-  "paletteGold": {
-    "message": "ট্যাগের রং"
-  },
-  "palettePlain": {
-    "message": "সাদামাটা"
+    "message": "বন্ধ থাকলে ট্যাগগুলি ধূসর রঙে আঁকা হয়, নাম দেখে আলাদা চেনা যায়।"
   },
   "hideStyleHeading": {
     "message": "লুকানো ফলাফল"
@@ -1336,9 +1330,6 @@
   },
   "listsFacts": {
     "message": "$1।"
-  },
-  "listsLinks": {
-    "message": "$1"
   },
   "listsNotDownloaded": {
     "message": "এখনও ডাউনলোড করা হয়নি"
@@ -1792,5 +1783,20 @@
   },
   "themeButtonTitle": {
     "message": "রঙের থিম: $1"
+  },
+  "moveTitle": {
+    "message": "সরাতে টেনে আনুন, অথবা উপর ও নিচের তীর চাপুন"
+  },
+  "moveItem": {
+    "message": "$1 সরান, $3টির মধ্যে $2"
+  },
+  "cleanupPartsOn": {
+    "message": "$2টির মধ্যে $1টি চালু"
+  },
+  "tagHeadDoes": {
+    "message": "কী করে"
+  },
+  "tagHeadShown": {
+    "message": "দেখানো"
   }
 }

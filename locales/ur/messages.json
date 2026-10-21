@@ -879,16 +879,10 @@
     "message": "Anubis یہاں اور تلاش کے صفحات پر کیسا دکھتا ہے۔"
   },
   "paletteHeading": {
-    "message": "تلاش کے صفحات پر رنگ"
+    "message": "تلاش کے صفحات پر ٹیگ کے رنگ"
   },
   "paletteHint": {
-    "message": "“سادہ” ٹیگ کو سرمئی رنگ میں بناتا ہے، اور وہ نام سے پہچانے جاتے ہیں۔"
-  },
-  "paletteGold": {
-    "message": "ٹیگ کے رنگ"
-  },
-  "palettePlain": {
-    "message": "سادہ"
+    "message": "بند ہونے پر ٹیگ سرمئی رنگ میں بنتے ہیں، اور نام سے پہچانے جاتے ہیں۔"
   },
   "hideStyleHeading": {
     "message": "چھپے ہوئے نتائج"
@@ -1336,9 +1330,6 @@
   },
   "listsFacts": {
     "message": "$1۔"
-  },
-  "listsLinks": {
-    "message": "$1"
   },
   "listsNotDownloaded": {
     "message": "ابھی ڈاؤن لوڈ نہیں ہوئی"
@@ -1792,5 +1783,20 @@
   },
   "themeButtonTitle": {
     "message": "رنگ سکیم: $1"
+  },
+  "moveTitle": {
+    "message": "ہٹانے کے لیے گھسیٹیں، یا اوپر اور نیچے کے تیر دبائیں"
+  },
+  "moveItem": {
+    "message": "$1 ہٹائیں، $3 میں سے $2"
+  },
+  "cleanupPartsOn": {
+    "message": "$2 میں سے $1 آن"
+  },
+  "tagHeadDoes": {
+    "message": "کیا کرتا ہے"
+  },
+  "tagHeadShown": {
+    "message": "دکھایا گیا"
   }
 }

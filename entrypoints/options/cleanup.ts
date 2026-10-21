@@ -26,6 +26,9 @@ const GROUPS: Group[] = [
   { items: ['elsewhere'] },
 ];
 
+/** Groups whose parts are showing, kept while the page is open: it renders again after each change. */
+const expanded = new Set<string>();
+
 const label = (item: Item): MessageKey => (item === 'webTab' ? 'cleanupWebTab' : CLEANUP.find((def) => def.id === item)!.label);
 const hint = (item: Item): MessageKey => (item === 'webTab' ? 'cleanupWebTabHint' : CLEANUP.find((def) => def.id === item)!.hint);
 
@@ -68,7 +71,33 @@ export async function renderCleanup(): Promise<HTMLElement> {
     }
     if (name) sync();
     lead.classList.add('lead');
-    return h('div', { class: 'setting-group' }, lead, rows);
+    if (!rows.length) return h('div', { class: 'setting-group' }, lead);
+
+    // The parts fold under the group's name, so the page reads as five choices.
+    const key = name ?? items[0]!;
+    const parts = h('div', { class: 'setting-parts', id: `parts-${key}`, hidden: !expanded.has(key) }, rows);
+    const title = lead.querySelector('b')!;
+    const disclose = h(
+      'button',
+      { class: 'disclose', type: 'button', attrs: { 'aria-expanded': String(!parts.hidden), 'aria-controls': parts.id } },
+      title.textContent,
+    );
+    disclose.addEventListener('click', () => {
+      parts.hidden = !parts.hidden;
+      if (parts.hidden) expanded.delete(key);
+      else expanded.add(key);
+      disclose.setAttribute('aria-expanded', String(!parts.hidden));
+    });
+    title.replaceWith(disclose);
+    // How many parts are on, said beside the name while they're folded away.
+    if (name) {
+      const count = h('span', { class: 'parts-on' });
+      const say = () => (count.textContent = t('cleanupPartsOn', String(inputs.filter((i) => i.checked).length), String(inputs.length)));
+      say();
+      for (const input of [...inputs, leadInput]) input.addEventListener('change', say);
+      disclose.after(count);
+    }
+    return h('div', { class: 'setting-group' }, lead, parts);
   };
 
   return h(

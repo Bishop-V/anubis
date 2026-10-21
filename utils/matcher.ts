@@ -31,6 +31,8 @@ export interface TagPref {
   label?: string;
   /** Hide the chip but keep the ranking effect. */
   muted?: boolean;
+  /** Where you put the tag in Settings → Tags; tags you haven't moved follow, by name. */
+  order?: number;
 }
 
 /** How far the personal "raise"/"lower" levels move a result, in list positions. Also each Raise or Lower tag's pull. */
@@ -453,13 +455,24 @@ export function collectTags(lists: CompiledList[], prefs: Record<string, TagPref
     }
   }
   for (const tag of out.values()) delete tag.generated;
+  applyTagPrefs(out, prefs);
+  return inYourOrder(out, prefs);
+}
+
+/** Your colour and name for each tag, over the lists'. */
+function applyTagPrefs(tags: Map<string, TagDef>, prefs: Record<string, TagPref>): void {
   for (const [id, pref] of Object.entries(prefs)) {
-    const tag = out.get(id);
+    const tag = tags.get(id);
     if (!tag) continue;
     if (pref.color) tag.color = pref.color;
     if (pref.label) tag.label = pref.label;
   }
-  return out;
+}
+
+/** The tags in the order you gave them, then the rest by name: the order every list of tags follows. */
+function inYourOrder(tags: Map<string, TagDef>, prefs: Record<string, TagPref>): Map<string, TagDef> {
+  const rank = (id: string) => prefs[id]?.order ?? Number.MAX_SAFE_INTEGER;
+  return new Map([...tags].sort(([a, x], [b, y]) => rank(a) - rank(b) || x.label.localeCompare(y.label)));
 }
 
 /** The tags subscribed lists define (not only use), first definition wins, as the lists wrote them. */

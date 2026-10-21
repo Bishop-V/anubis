@@ -1,6 +1,6 @@
 # Removing panels
 
-**Settings → Remove panels** takes the parts you choose off every search page. All start off. Each group's switch turns its parts on or off together.
+**Settings → Remove panels** takes the parts you choose off every search page. All start off. Each group's switch turns its parts on or off together; press the group's name to choose its parts one by one.
 
 <!-- Maintainer: the generated screenshots on this page come from mock pages. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark images and their descriptions together. -->
 

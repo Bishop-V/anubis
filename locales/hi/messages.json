@@ -879,16 +879,10 @@
     "message": "Anubis यहां और खोज पेजों पर कैसा दिखता है।"
   },
   "paletteHeading": {
-    "message": "खोज पेजों पर रंग"
+    "message": "खोज पेजों पर टैग के रंग"
   },
   "paletteHint": {
-    "message": "“सादा” टैग को स्लेटी रंग में बनाता है, और वे नाम से पहचाने जाते हैं।"
-  },
-  "paletteGold": {
-    "message": "टैग के रंग"
-  },
-  "palettePlain": {
-    "message": "सादा"
+    "message": "बंद होने पर टैग स्लेटी रंग में बनते हैं, और नाम से पहचाने जाते हैं।"
   },
   "hideStyleHeading": {
     "message": "छिपे हुए नतीजे"
@@ -1336,9 +1330,6 @@
   },
   "listsFacts": {
     "message": "$1।"
-  },
-  "listsLinks": {
-    "message": "$1"
   },
   "listsNotDownloaded": {
     "message": "अभी डाउनलोड नहीं हुई"
@@ -1792,5 +1783,20 @@
   },
   "themeButtonTitle": {
     "message": "थीम: $1"
+  },
+  "moveTitle": {
+    "message": "हिलाने के लिए खींचें, या ऊपर और नीचे के तीर दबाएं"
+  },
+  "moveItem": {
+    "message": "$1 को हिलाएं, $3 में से $2"
+  },
+  "cleanupPartsOn": {
+    "message": "$2 में से $1 चालू"
+  },
+  "tagHeadDoes": {
+    "message": "क्या करता है"
+  },
+  "tagHeadShown": {
+    "message": "दिखता है"
   }
 }

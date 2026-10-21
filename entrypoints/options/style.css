@@ -172,7 +172,8 @@ main {
   display: none;
 }
 /* A chevron that points down while open. */
-.fold > summary::before {
+.fold > summary::before,
+.disclose::before {
   content: '';
   width: 6px;
   height: 6px;
@@ -183,10 +184,12 @@ main {
   transition: transform 0.15s;
   flex: none;
 }
-:root[dir='rtl'] .fold:not([open]) > summary::before {
+:root[dir='rtl'] .fold:not([open]) > summary::before,
+:root[dir='rtl'] .disclose[aria-expanded='false']::before {
   transform: rotate(135deg);
 }
-.fold[open] > summary::before {
+.fold[open] > summary::before,
+.disclose[aria-expanded='true']::before {
   transform: rotate(45deg);
 }
 .fold-title {
@@ -217,7 +220,8 @@ main {
   padding-bottom: 20px;
 }
 @media (prefers-reduced-motion: reduce) {
-  .fold > summary::before {
+  .fold > summary::before,
+  .disclose::before {
     transition: none;
   }
 }
@@ -405,11 +409,30 @@ textarea.code {
 .tag-rows {
   margin-top: 8px;
 }
+/* Over the rows: what the drop-down and the switch are, lined up with them. */
+.tag-head {
+  display: flex;
+  justify-content: flex-end;
+  padding-inline-end: 40px;
+  margin-bottom: 4px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+.tag-head .controls {
+  display: flex;
+  gap: 14px;
+}
+.tag-head .does {
+  width: 170px;
+}
+.tag-head .shown {
+  width: calc(30px + 14px + 40px);
+}
 .tag-row {
   display: grid;
-  grid-template-columns: 26px minmax(0, 1fr) auto 28px;
+  grid-template-columns: 20px 26px minmax(0, 1fr) auto 28px;
   align-items: center;
-  gap: 4px 14px;
+  gap: 4px 12px;
   padding: 12px 0;
   border-top: 1px solid var(--line);
 }
@@ -434,14 +457,14 @@ textarea.code {
 }
 /* Edit sits in the same place on every row, whatever the sentence below says. */
 .tag-row .controls .text-btn {
-  min-width: 34px;
+  min-width: 40px;
   font-size: 13px;
-  text-align: end;
+  text-align: start;
 }
 
 /* An open tag: its name and description, and the sites that carry it. */
 .tag-sites {
-  grid-column: 2 / -1;
+  grid-column: 3 / -1;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -529,7 +552,7 @@ textarea.code {
   font-weight: 600;
 }
 .tag-row .meta {
-  grid-column: 2 / -1;
+  grid-column: 3 / -1;
   font-size: 12.5px;
   color: var(--muted);
 }
@@ -545,8 +568,8 @@ textarea.code {
 /* ------------------------------------------------------------------ lists */
 .list-row {
   display: grid;
-  grid-template-columns: 16px minmax(0, 1fr) auto;
-  gap: 4px 12px;
+  grid-template-columns: 20px 16px minmax(0, 1fr) auto;
+  gap: 4px 10px;
   padding: 16px 0;
   border-top: 1px solid var(--line);
 }
@@ -588,15 +611,44 @@ textarea.code {
 }
 .list-row .side {
   display: flex;
+  align-self: start;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 }
 .list-row .side .switch {
-  margin-inline-end: 8px;
+  margin-inline-end: 10px;
+}
+/* The list's page and Suggest changes, in a row of small text buttons. */
+.list-row .list-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+  margin-top: 4px;
+  font-size: 12.5px;
+}
+.list-row .list-actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+.list-row .list-actions a:hover {
+  text-decoration: underline;
+}
+.list-row .list-actions svg {
+  width: 11px;
+  height: 11px;
+  opacity: 0.7;
+}
+.list-row .list-actions .text-btn {
+  font-size: 12.5px;
 }
 /* Suggest changes, a row of its own under the list: the site and the change on one line, then why. */
 .list-row .suggest-form {
-  grid-column: 2 / -1;
+  grid-column: 3 / -1;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -674,6 +726,41 @@ textarea.code {
   color: var(--muted);
 }
 
+/* A row you can move: its handle, and where it will land while dragged. */
+.grip {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--dim);
+  cursor: grab;
+  touch-action: none;
+}
+.grip svg {
+  width: 14px;
+  height: 14px;
+}
+.grip:hover,
+.grip:focus-visible {
+  color: var(--text);
+}
+.grip:active {
+  cursor: grabbing;
+}
+[data-order].dragging {
+  opacity: 0.55;
+}
+[data-order].drop-before {
+  box-shadow: inset 0 2px 0 var(--accent);
+}
+[data-order].drop-after {
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
 /* ------------------------------------------------------------- appearance */
 .setting {
   display: flex;
@@ -707,6 +794,11 @@ textarea.code {
 }
 .setting .tip.warn {
   color: var(--text);
+}
+/* A setting's drop-down, as wide as the tags' on every row. */
+.setting > select {
+  flex: none;
+  width: 170px;
 }
 /* A number typed in, with its unit after it. */
 .amount {
@@ -761,8 +853,16 @@ textarea.code {
     padding: 16px;
   }
   nav .brand,
-  nav .foot {
+  nav .foot .links {
     display: none;
+  }
+  /* The colour scheme stays reachable: its button ends the row of sections. */
+  nav .foot {
+    margin: 0;
+    margin-inline-start: auto;
+  }
+  nav .foot .theme-btn {
+    margin: 0;
   }
   main {
     padding: 20px 16px 60px;
@@ -782,11 +882,14 @@ textarea.code {
     grid-column: 1;
   }
   .tag-row {
-    grid-template-columns: 26px minmax(0, 1fr) 28px;
+    grid-template-columns: 20px 26px minmax(0, 1fr) 28px;
+  }
+  .tag-head {
+    display: none;
   }
   .tag-row .controls {
     grid-row: 2;
-    grid-column: 2 / -1;
+    grid-column: 3 / -1;
     gap: 12px;
   }
   .tag-row select {
@@ -797,7 +900,7 @@ textarea.code {
   /* A list's buttons go under its description, which keeps the width. */
   .list-row .side {
     grid-row: 2;
-    grid-column: 2 / -1;
+    grid-column: 3 / -1;
     flex-wrap: wrap;
   }
 }
@@ -832,6 +935,35 @@ main {
 /* Remove panels: each group's switch, with its parts indented under it. */
 .setting-group + .setting-group .setting.lead {
   margin-top: 6px;
+}
+/* A group's name opens its parts, which stay folded until then. */
+.disclose {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: start;
+  cursor: pointer;
+}
+.disclose:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+.setting.lead .parts-on {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.setting-parts[hidden] {
+  display: none;
 }
 .setting.child {
   margin-inline-start: 24px;

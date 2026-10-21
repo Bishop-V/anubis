@@ -879,16 +879,10 @@
     "message": "Anubis’in burada ve arama sayfalarındaki görünümü."
   },
   "paletteHeading": {
-    "message": "Arama sayfalarındaki renkler"
+    "message": "Arama sayfalarında etiket renkleri"
   },
   "paletteHint": {
-    "message": "“Sade” etiketleri gri çizer; etiketler adlarıyla ayırt edilir."
-  },
-  "paletteGold": {
-    "message": "Etiket renkleri"
-  },
-  "palettePlain": {
-    "message": "Sade"
+    "message": "Kapalıyken etiketler gri çizilir; adlarıyla ayırt edilir."
   },
   "hideStyleHeading": {
     "message": "Gizlenen sonuçlar"
@@ -1337,14 +1331,11 @@
   "listsFacts": {
     "message": "$1."
   },
-  "listsLinks": {
-    "message": "$1"
-  },
   "listsNotDownloaded": {
     "message": "henüz indirilmedi"
   },
   "listsHomepage": {
-    "message": "ana sayfa"
+    "message": "Ana sayfa"
   },
   "listsUsingBundled": {
     "message": "Güncellenene kadar yerleşik kopya kullanılıyor ($1)."
@@ -1792,5 +1783,20 @@
   },
   "themeButtonTitle": {
     "message": "Renk düzeni: $1"
+  },
+  "moveTitle": {
+    "message": "Taşımak için sürükleyin ya da yukarı ve aşağı oklara basın"
+  },
+  "moveItem": {
+    "message": "Taşı: $1, $2 / $3"
+  },
+  "cleanupPartsOn": {
+    "message": "$1 / $2 açık"
+  },
+  "tagHeadDoes": {
+    "message": "Ne yapar"
+  },
+  "tagHeadShown": {
+    "message": "Gösterilir"
   }
 }

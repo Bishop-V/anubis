@@ -879,16 +879,10 @@
     "message": "L’apparence d’Anubis ici et sur les pages de recherche."
   },
   "paletteHeading": {
-    "message": "Couleurs sur les pages de recherche"
+    "message": "Couleurs des étiquettes sur les pages de recherche"
   },
   "paletteHint": {
-    "message": " « Sobre »  dessine les étiquettes en gris, distinguées par leur nom."
-  },
-  "paletteGold": {
-    "message": "Couleurs des étiquettes"
-  },
-  "palettePlain": {
-    "message": "Sobre"
+    "message": "Désactivé, les étiquettes sont dessinées en gris, distinguées par leur nom."
   },
   "hideStyleHeading": {
     "message": "Résultats masqués"
@@ -1337,14 +1331,11 @@
   "listsFacts": {
     "message": "$1."
   },
-  "listsLinks": {
-    "message": "$1"
-  },
   "listsNotDownloaded": {
     "message": "pas encore téléchargée"
   },
   "listsHomepage": {
-    "message": "page d’accueil"
+    "message": "Page d’accueil"
   },
   "listsUsingBundled": {
     "message": "Utilisation de la copie intégrée jusqu’à la prochaine mise à jour ($1)."
@@ -1792,5 +1783,20 @@
   },
   "themeButtonTitle": {
     "message": "Jeu de couleurs : $1"
+  },
+  "moveTitle": {
+    "message": "Faites glisser pour déplacer, ou appuyez sur les flèches haut et bas"
+  },
+  "moveItem": {
+    "message": "Déplacer $1, $2 sur $3"
+  },
+  "cleanupPartsOn": {
+    "message": "$1 sur $2 activés"
+  },
+  "tagHeadDoes": {
+    "message": "Ce qu’elle fait"
+  },
+  "tagHeadShown": {
+    "message": "Affichée"
   }
 }

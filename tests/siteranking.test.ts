@@ -101,11 +101,12 @@ describe('rankingHint', () => {
 });
 
 describe('tagOrder', () => {
-  it('puts your tags first, then those from lists, then the rest, each by label', () => {
-    const tags = new Map(['d', 'c', 'b', 'a'].map((id) => [id, { label: id.toUpperCase() }]));
+  it('puts your tags first, then those from lists, then the rest, each in the order the tags come in', () => {
+    // collectTags gives them in your order, then by name: here b was moved before a.
+    const tags = new Map(['b', 'a', 'c', 'd'].map((id) => [id, { label: id.toUpperCase() }]));
     const v = verdict('normal', [], { tags: ['c', 'd'], tagSources: { c: ['A list'], d: [PERSONAL_NAME] } });
     const { mine, fromList, ids } = tagOrder(tags, site('normal', ['d']), v);
-    expect(ids).toEqual(['d', 'c', 'a', 'b']);
+    expect(ids).toEqual(['d', 'c', 'b', 'a']);
     expect([...mine]).toEqual(['d']);
     expect([...fromList]).toEqual(['c']);
   });

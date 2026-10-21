@@ -1,13 +1,13 @@
 import { browser } from '#imports';
 import { h, icon } from '@/utils/dom';
 import { normalizeDomain } from '@/utils/domain';
-import { t, tJoin, tList, tn, tParts, type MessageKey } from '@/utils/i18n';
-import { ICON_REFRESH, ICON_TRASH } from '@/utils/icons';
+import { t, tJoin, tn, tParts, type MessageKey } from '@/utils/i18n';
+import { ICON_EXTERNAL, ICON_REFRESH, ICON_TRASH } from '@/utils/icons';
 import { readSubscribeLink, REPO_URL, type SubscribeLink } from '@/utils/links';
 import { colorForTag, parseList, type ListFormat, type ParsedList } from '@/utils/listformat';
 import { send } from '@/utils/messages';
 import { flash, flashed, rerender } from './flash';
-import { foldable, helpLink, pageTitle } from './parts';
+import { foldable, grip, helpLink, pageTitle } from './parts';
 import { editListCache, listCacheItem, type CachedList, type Subscription } from '@/utils/storage';
 import {
   builtinId,
@@ -40,9 +40,6 @@ function kindOf(format: string | undefined, lens?: boolean): string {
   const label = format && format in FORMAT_LABEL ? t(FORMAT_LABEL[format as ListFormat]) : format;
   return tJoin([label, lens ? t('listKindLens') : null].filter((x): x is string => !!x), 'unit');
 }
-
-/** Your lists start folded once there are more than this many. */
-const FOLD_AFTER = 5;
 
 let directory: DirectoryEntry[] | undefined;
 const busy = new Set<string>();
@@ -143,7 +140,7 @@ export async function renderLists(): Promise<HTMLElement> {
   }
   const notice = flashed('lists');
 
-  const cards = subs.map((sub) => listCard(sub, listText(sub, cache), cache[sub.id]));
+  const cards = listCards(subs, cache);
   const discover = listsToDiscover(directory, subs);
 
   return h(
@@ -182,12 +179,12 @@ export async function renderLists(): Promise<HTMLElement> {
       form,
       offer ? null : notice,
     ),
-    // A long list of your own folds away, so the lists to add below stay in reach.
+    // Open to start with; it folds away when a long one is in the way.
     foldable(
       'yours',
       t('welcomeListsHeading'),
       subs.length,
-      subs.length <= FOLD_AFTER,
+      true,
       flashed('unsubscribed'),
       cards.length ? cards : h('p', { class: 'empty' }, t('listsNone')),
     ),
@@ -273,7 +270,19 @@ function offerPanel(link: SubscribeLink, notice: HTMLElement | null): HTMLElemen
   );
 }
 
-function listCard(sub: Subscription, text: string | undefined, cached: CachedList | undefined): HTMLElement {
+/** A card for each of your lists, in your order. */
+function listCards(subs: Subscription[], cache: Record<string, CachedList>): HTMLElement[] {
+  const order = subs.map((s) => s.id);
+  return subs.map((sub) => listCard(sub, listText(sub, cache), cache[sub.id], order));
+}
+
+/** Puts your lists in this order; lists not named (added meanwhile) keep their place at the end. */
+function reorderLists(ids: string[]): void {
+  const at = (id: string) => (ids.includes(id) ? ids.indexOf(id) : ids.length);
+  void editSubscriptions((subs) => [...subs].sort((a, b) => at(a.id) - at(b.id)));
+}
+
+function listCard(sub: Subscription, text: string | undefined, cached: CachedList | undefined, order: string[]): HTMLElement {
   const parsed: ParsedList | undefined = text ? parseList(text) : undefined;
   const meta = parsed?.meta ?? {};
   const name = displayName(sub, meta);
@@ -319,10 +328,10 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
     });
   };
 
-  // Kept to what someone choosing whether to keep a list needs: what it does. Suggest changes is a button beside it.
-  const links = [meta.homepage ? h('a', { href: meta.homepage, target: '_blank', rel: 'noopener noreferrer' }, t('listsHomepage')) : null].filter(
-    (a): a is HTMLAnchorElement => a !== null,
-  );
+  // Under the description, the list's page and Suggest changes: what someone choosing whether to keep a list needs.
+  const homepage = meta.homepage
+    ? h('a', { href: meta.homepage, target: '_blank', rel: 'noopener noreferrer' }, t('listsHomepage'), icon(ICON_EXTERNAL))
+    : null;
   // Only lists that ask for suggestions with `! issues:` offer them: a list that never did may not want them.
   const tracker = meta.issues;
   const open = !!tracker && suggesting === sub.id;
@@ -330,7 +339,7 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
     ? h(
         'button',
         {
-          class: 'btn small',
+          class: 'text-btn',
           type: 'button',
           attrs: { 'aria-label': t('listsSuggestChangesTo', name), 'aria-expanded': String(open) },
           on: {
@@ -347,7 +356,8 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
 
   return h(
     'div',
-    { class: `list-row${sub.enabled ? '' : ' off'}` },
+    { class: `list-row${sub.enabled ? '' : ' off'}`, attrs: { 'data-order': sub.id } },
+    grip('lists', sub.id, name, order, reorderLists),
     h('i', { class: 'gem mark', style: `--c: ${color}` }),
     h(
       'div',
@@ -356,7 +366,7 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
       // A list's own words, often English: laid out in their own direction in Arabic or Urdu.
       meta.description ? h('p', { attrs: { dir: 'auto' } }, meta.description) : null,
       parsed ? null : h('div', { class: 'facts' }, t('listsFacts', t('listsNotDownloaded'))),
-      links.length ? h('div', { class: 'facts' }, tList('listsLinks', links, 'unit')) : null,
+      homepage || suggest ? h('div', { class: 'list-actions' }, homepage, suggest) : null,
       cached?.error
         ? sub.builtin && !cached.text
           ? h('div', { class: 'facts', style: 'margin-top:6px' }, t('listsUsingBundled', cached.error))
@@ -369,7 +379,6 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
     h(
       'div',
       { class: 'side' },
-      suggest,
       h('label', { class: 'switch', title: sub.enabled ? t('listsOn') : t('listsOff') }, toggle, h('span')),
       h('button', { class: 'icon-btn', type: 'button', title: t('listsUpdateNow'), attrs: { 'aria-label': t('listsUpdateOne', name) }, on: { click: update } }, icon(ICON_REFRESH)),
       h('button', { class: 'icon-btn danger', type: 'button', title: t('listsUnsubscribe'), attrs: { 'aria-label': t('listsUnsubscribeOne', name) }, on: { click: remove } }, icon(ICON_TRASH)),

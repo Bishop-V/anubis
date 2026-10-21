@@ -14,6 +14,8 @@ Nhãn là các chữ nhỏ dưới tiêu đề của kết quả, như “Offici
 
 Nhãn bạn gắn cho trang web được in đậm và gạch chân. Nhãn từ danh sách ghi tên danh sách đó; chỉ danh sách đó mới gỡ được.
 
+Để sắp xếp nhãn theo ý bạn, kéo chúng bằng các chấm trong **Cài đặt → Nhãn**, hoặc đặt tiêu điểm vào các chấm rồi nhấn mũi tên lên và xuống. Cửa sổ bật lên và menu kết quả theo thứ tự đó.
+
 ![Cài đặt, Nhãn, với một nhãn đang mở cho thấy ô giải thích không bắt buộc cho một trang web](../../img/options-tags.png)
 
 ## Quyết định nhãn làm gì

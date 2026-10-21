@@ -81,12 +81,13 @@ export function yourListTag(entry: SiteEntry | undefined, classes: string[]): HT
   return h('div', { class: 'tags' }, h('span', { class: classes.join(' '), style: '--c: var(--text)' }, tagMark(effect), PERSONAL_NAME, tagEffectText(effect)));
 }
 
-/** Your tags first, then those lists gave the site, then the rest, each by label. */
+/** Your tags first, then those lists gave the site, then the rest, each in the order `tags` has them (`collectTags`). */
 export function tagOrder(tags: Map<string, { label: string }>, entry: SiteEntry | undefined, verdict: Verdict) {
   const mine = new Set(entry?.tags ?? []);
   const fromList = new Set(verdict.tags.filter((id) => (verdict.tagSources[id] ?? []).some((s) => s !== PERSONAL_NAME)));
   const rank = (id: string) => (mine.has(id) ? 0 : fromList.has(id) ? 1 : 2);
-  const ids = [...tags.keys()].sort((a, b) => rank(a) - rank(b) || tags.get(a)!.label.localeCompare(tags.get(b)!.label));
+  // A stable sort keeps the tags' own order within each group.
+  const ids = [...tags.keys()].sort((a, b) => rank(a) - rank(b));
   return { mine, fromList, ids };
 }
 

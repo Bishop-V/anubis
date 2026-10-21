@@ -171,8 +171,15 @@ describe('tag choices from a backup or sync file', () => {
   const read = (tagPrefs: unknown) => readBackup(JSON.stringify({ anubis: 1, tagPrefs })).tagPrefs;
 
   it('keeps what Settings saves', () => {
-    const prefs = { reference: { action: 'raise', color: '#3FA37A', label: 'Docs', muted: true }, paywall: { action: 'hide' } };
-    expect(read(prefs)).toEqual({ reference: { action: 'raise', color: '#3fa37a', label: 'Docs', muted: true }, paywall: { action: 'hide' } });
+    const prefs = { reference: { action: 'raise', color: '#3FA37A', label: 'Docs', muted: true, order: 2 }, paywall: { action: 'hide' } };
+    expect(read(prefs)).toEqual({ reference: { action: 'raise', color: '#3fa37a', label: 'Docs', muted: true, order: 2 }, paywall: { action: 'hide' } });
+    expect(read({ reference: { order: -1 }, paywall: { order: 1.5 }, docs: { order: '3' } })).toEqual({ reference: {}, paywall: {}, docs: {} });
+  });
+
+  it('lists tags in the order you gave them, and the rest by name after them', () => {
+    const list = compileList('a', parseList('! tag: zeta | Zeta\n! tag: alpha | Alpha\n! tag: mid | Mid\n! tag: beta | Beta\nexample.com$tag=zeta\n'));
+    expect([...collectTags([list]).keys()]).toEqual(['alpha', 'beta', 'mid', 'zeta']);
+    expect([...collectTags([list], { zeta: { order: 0 }, mid: { order: 1 } }).keys()]).toEqual(['zeta', 'mid', 'alpha', 'beta']);
   });
 
   it('drops entries search pages couldn’t read', () => {

@@ -48,6 +48,10 @@ Các danh sách này được dựng lại hằng tuần từ dữ liệu của 
 
 Mỗi danh sách có một công tắc và một nút hủy đăng ký. Để bác bỏ một danh sách cho một trang web, hãy tự xếp hạng trang đó.
 
+## Sắp xếp danh sách
+
+Kéo một danh sách bằng các chấm ở đầu nó, hoặc đặt tiêu điểm vào đó rồi nhấn mũi tên lên và xuống. Nhãn từ các danh sách ở trên hiện trước trong kết quả.
+
 ## Báo lỗi trong danh sách
 
 Menu của kết quả nêu các danh sách quyết định thứ hạng của nó. Nhấn **Đề xuất thay đổi** bên cạnh danh sách trong **Cài đặt → Danh sách**, chọn **Gỡ khỏi danh sách** hoặc **Việc khác**, rồi nêu lý do.

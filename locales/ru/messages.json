@@ -1017,16 +1017,10 @@
     "message": "Как Anubis выглядит здесь и на страницах поиска."
   },
   "paletteHeading": {
-    "message": "Цвета на страницах поиска"
+    "message": "Цвета меток на страницах поиска"
   },
   "paletteHint": {
-    "message": "«Простая» рисует метки серым, различая их по названию."
-  },
-  "paletteGold": {
-    "message": "Цвета меток"
-  },
-  "palettePlain": {
-    "message": "Простая"
+    "message": "Если выключено, метки рисуются серым и различаются по названию."
   },
   "hideStyleHeading": {
     "message": "Скрытые результаты"
@@ -1499,14 +1493,11 @@
   "listsFacts": {
     "message": "$1."
   },
-  "listsLinks": {
-    "message": "$1"
-  },
   "listsNotDownloaded": {
     "message": "ещё не скачан"
   },
   "listsHomepage": {
-    "message": "домашняя страница"
+    "message": "Домашняя страница"
   },
   "listsUsingBundled": {
     "message": "До обновления используется встроенная копия ($1)."
@@ -2044,5 +2035,20 @@
   },
   "themeButtonTitle": {
     "message": "Цветовая схема: $1"
+  },
+  "moveTitle": {
+    "message": "Перетащите, чтобы переместить, или нажимайте стрелки вверх и вниз"
+  },
+  "moveItem": {
+    "message": "Переместить «$1», $2 из $3"
+  },
+  "cleanupPartsOn": {
+    "message": "Включено $1 из $2"
+  },
+  "tagHeadDoes": {
+    "message": "Что делает"
+  },
+  "tagHeadShown": {
+    "message": "Показана"
   }
 }

@@ -5,7 +5,7 @@
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
 //                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options,
-//                               responsive, axe, welcome, sync, webdav, popup-tags, tag-notes, settings-undo, suggest-changes, checks (layout, lifecycle, pin/hidden chips, DDG icon colors, Undo in Settings, Suggest changes)
+//                               responsive, axe, welcome, sync, webdav, popup-tags, tag-notes, settings-undo, suggest-changes, organise, checks (layout, lifecycle, pin/hidden chips, DDG icon colors, Undo in Settings, Suggest changes)
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slides
 //                               in docs/public/
 //
@@ -2407,6 +2407,7 @@ if (!only || only === 'responsive') {
             .slice(0, 8)
             .map((el) => `${el.tagName.toLowerCase()}.${String(el.className).replaceAll(' ', '.')}`),
         }));
+        if (width === 360 && ['tags', 'lists', 'cleanup'].includes(section)) await opt.screenshot({ path: `${SHOTS}options-${section}-360-${colorScheme}.png`, fullPage: true });
         if (layout.document > layout.viewport) {
           throw new Error(`Settings → ${section} overflows at ${width}px in ${colorScheme} mode (${layout.document}px wide): ${layout.overflowing.join(', ')}`);
         }
@@ -3159,6 +3160,78 @@ async function openYourLists(page) {
   const closed = page.locator('details.fold:not([open]) > summary', { hasText: 'Your lists' });
   await page.locator('details.fold > summary', { hasText: 'Your lists' }).waitFor({ timeout: 5000 });
   if (await closed.count()) await closed.click();
+}
+
+if (!only || only === 'organise' || checks) {
+  // Settings: Your lists starts open; a list moves with its handle, by the keyboard and
+  // by dragging; tags move the same way; and Remove panels folds each group's parts.
+  const [sw] = ctx.serviceWorkers();
+  const subsBefore = await sw.evaluate(async () => (await chrome.storage.sync.get('subscriptions')).subscriptions ?? null);
+  const page = await ctx.newPage();
+  // Tall enough that the first and last lists are both in view for the drag.
+  await page.setViewportSize({ width: 1180, height: 2200 });
+  await page.goto(`chrome-extension://${extId}/options.html#lists`);
+  await page.locator('.list-row').first().waitFor({ timeout: 5000 });
+  const yoursOpen = await page.locator('details.fold', { hasText: 'Your lists' }).evaluate((d) => d.open);
+  const names = () => page.locator('.list-row h4').evaluateAll((els) => els.map((el) => el.firstChild?.textContent));
+  const before = await names();
+  // The keyboard: the first list's handle, then the down arrow.
+  await page.locator('.list-row .grip').first().focus();
+  await page.keyboard.press('ArrowDown');
+  await page.waitForFunction((first) => document.querySelectorAll('.list-row h4')[1]?.firstChild?.textContent === first, before[0]);
+  const afterKey = await names();
+  const handleFocused = await page.evaluate(() => document.activeElement?.classList.contains('grip') && document.activeElement.closest('.list-row')?.querySelector('h4')?.firstChild?.textContent);
+  // A drag: the last list's handle up to the top.
+  const handle = page.locator('.list-row .grip').last();
+  const from = await handle.boundingBox();
+  const top = await page.locator('.list-row').first().boundingBox();
+  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(from.x + from.width / 2, top.y + 4, { steps: 8 });
+  await page.mouse.up();
+  await page.waitForFunction((last) => document.querySelector('.list-row h4')?.firstChild?.textContent === last, before[before.length - 1]);
+  const afterDrag = await names();
+  const stored = await sw.evaluate(async () => (await chrome.storage.sync.get('subscriptions')).subscriptions.map((s) => s.id));
+
+  // Tags from lists: move the first one down, and the popup's picker follows.
+  await page.goto(`chrome-extension://${extId}/options.html#tags`);
+  await page.locator('.tag-row').first().waitFor({ timeout: 5000 });
+  const tagNames = () => page.locator('.tag-rows').last().locator('.tag-row .name').allTextContents();
+  const tagsBefore = await tagNames();
+  await page.locator('.tag-rows').last().locator('.grip').first().focus();
+  await page.keyboard.press('ArrowDown');
+  await page.waitForFunction((first) => [...document.querySelectorAll('.tag-rows')].pop()?.querySelectorAll('.tag-row .name')[1]?.textContent === first, tagsBefore[0]);
+  const tagsAfter = await tagNames();
+
+  // Remove panels: a group's parts are folded until its name is pressed.
+  await page.goto(`chrome-extension://${extId}/options.html#cleanup`);
+  const media = page.getByRole('button', { name: 'Videos, images, and news' });
+  await media.waitFor({ timeout: 5000 });
+  const foldedFirst = !(await page.getByRole('checkbox', { name: 'Video panels', exact: true }).isVisible());
+  await media.click();
+  const opens = await page.getByRole('checkbox', { name: 'Video panels', exact: true }).isVisible();
+
+  const results = {
+    'Your lists starts open': yoursOpen,
+    'the down arrow moves a list': afterKey[1] === before[0] && afterKey[0] === before[1],
+    'the handle keeps focus after moving': handleFocused === before[0],
+    'dragging moves a list to the top': afterDrag[0] === before[before.length - 1],
+    'the order is saved': stored.length === before.length,
+    'the down arrow moves a tag': tagsAfter[1] === tagsBefore[0],
+    'Remove panels starts folded': foldedFirst,
+    'pressing a group shows its parts': opens,
+  };
+  console.log('\n== organising Settings:', JSON.stringify(results));
+  await page.close();
+  // Put the lists and tags back for the checks after this one.
+  await sw.evaluate(async (subs) => {
+    if (subs) await chrome.storage.sync.set({ subscriptions: subs });
+    else await chrome.storage.sync.remove('subscriptions');
+    const { tagPrefs = {} } = await chrome.storage.sync.get('tagPrefs');
+    for (const pref of Object.values(tagPrefs)) delete pref.order;
+    await chrome.storage.sync.set({ tagPrefs });
+  }, subsBefore);
+  assertChecks('organising Settings', results);
 }
 
 if (!only || only === 'suggest-changes' || checks) {

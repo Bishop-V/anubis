@@ -14,7 +14,6 @@ import {
   MAX_DEEPER,
   clampDeeper,
   type HideStyle,
-  type Palette,
   type Settings,
 } from '@/utils/storage';
 import { applyData, collectData, readBackup, toBackup } from '@/utils/backup';
@@ -66,32 +65,26 @@ function toggleRow(label: string, hint: string, key: keyof Settings, settings: S
   return switchRow(label, hint, Boolean(settings[key]), (on) => void updateSettings({ [key]: on }), help);
 }
 
-function segRow<T extends string>(
+/** A setting chosen from a few named options, in a drop-down beside its description. */
+function selectRow<T extends string>(
+  id: string,
   label: string,
   hint: string,
   options: { value: T; label: string }[],
   current: T,
   onPick: (v: T) => void,
 ): HTMLElement {
-  const seg = h('div', { class: 'seg', attrs: { role: 'group', 'aria-label': label } });
-  const buttons = options.map((o) =>
-    h(
-      'button',
-      {
-        type: 'button',
-        attrs: { 'aria-pressed': String(o.value === current) },
-        on: {
-          click: () => {
-            buttons.forEach((b, i) => b.setAttribute('aria-pressed', String(options[i]!.value === o.value)));
-            onPick(o.value);
-          },
-        },
-      },
-      o.label,
-    ),
+  const select = h(
+    'select',
+    { id, on: { change: () => onPick(select.value as T) } },
+    options.map((o) => h('option', { value: o.value, selected: o.value === current }, o.label)),
   );
-  seg.append(...buttons);
-  return h('div', { class: 'setting' }, h('div', null, h('b', null, label), h('span', { class: 'muted' }, hint)), seg);
+  return h(
+    'div',
+    { class: 'setting' },
+    h('div', null, h('label', { attrs: { for: id } }, h('b', null, label)), h('span', { class: 'muted' }, hint)),
+    select,
+  );
 }
 
 export async function renderAppearance(): Promise<HTMLElement> {
@@ -103,17 +96,8 @@ export async function renderAppearance(): Promise<HTMLElement> {
     h(
       'div',
       { class: 'panel' },
-      segRow<Palette>(
-        t('paletteHeading'),
-        t('paletteHint'),
-        [
-          { value: 'gold', label: t('paletteGold') },
-          { value: 'plain', label: t('palettePlain') },
-        ],
-        settings.palette,
-        (palette) => void updateSettings({ palette }),
-      ),
-      segRow<HideStyle>(
+      selectRow<HideStyle>(
+        'hide-style',
         t('hideStyleHeading'),
         t('hideStyleHint'),
         [
@@ -124,6 +108,7 @@ export async function renderAppearance(): Promise<HTMLElement> {
         settings.hideStyle,
         (hideStyle) => void updateSettings({ hideStyle }),
       ),
+      switchRow(t('paletteHeading'), t('paletteHint'), settings.palette !== 'plain', (on) => void updateSettings({ palette: on ? 'gold' : 'plain' })),
       toggleRow(
         t('rerankHeading'),
         t('rerankHint'),
@@ -256,6 +241,37 @@ export async function renderShare(): Promise<HTMLElement> {
     'div',
     null,
     pageTitle(t('shareHeading'), t('shareIntro')),
+    // What people come here for most first: their own backup, then moving from another tool, then publishing.
+    h(
+      'div',
+      { class: 'panel' },
+      h('h3', null, t('backupHeading')),
+      h('p', { class: 'muted' }, t('backupIntro')),
+      h(
+        'div',
+        { class: 'toolbar' },
+        h('button', { class: 'btn', type: 'button', on: { click: () => void exportAll() } }, icon(ICON_DOWNLOAD), t('backupExport')),
+        h('button', { class: 'btn', type: 'button', on: { click: () => file.click() } }, icon(ICON_UPLOAD), t('backupRestore')),
+        h('button', { class: 'btn danger', type: 'button', on: { click: () => void reset() } }, t('resetButton')),
+        file,
+      ),
+      status,
+    ),
+    h(
+      'div',
+      { class: 'panel' },
+      h('h3', null, t('importHeading')),
+      h('p', { class: 'muted' }, t('importIntro'), ' ', helpLink('guide/import-and-backup#import-sites', t('importHelp'))),
+      importArea,
+      h(
+        'div',
+        { class: 'toolbar', style: 'margin-top:10px' },
+        h('button', { class: 'btn primary', type: 'button', on: { click: () => void runImport() } }, t('importButton')),
+        h('button', { class: 'text-btn', type: 'button', on: { click: () => importFile.click() } }, t('importChooseFile')),
+        importFile,
+      ),
+      importStatus,
+    ),
     h(
       'div',
       { class: 'panel' },
@@ -284,36 +300,6 @@ export async function renderShare(): Promise<HTMLElement> {
         h('button', { class: 'btn primary', type: 'button', on: { click: () => download('my-anubis-list.anubis', rules.personalText) } }, icon(ICON_DOWNLOAD), t('publishDownload')),
         h('a', { class: 'btn', href: wiki('list-format'), target: '_blank', rel: 'noopener noreferrer' }, t('publishFormat')),
       ),
-    ),
-    h(
-      'div',
-      { class: 'panel' },
-      h('h3', null, t('importHeading')),
-      h('p', { class: 'muted' }, t('importIntro'), ' ', helpLink('guide/import-and-backup#import-sites', t('importHelp'))),
-      importArea,
-      h(
-        'div',
-        { class: 'toolbar', style: 'margin-top:10px' },
-        h('button', { class: 'btn primary', type: 'button', on: { click: () => void runImport() } }, t('importButton')),
-        h('button', { class: 'text-btn', type: 'button', on: { click: () => importFile.click() } }, t('importChooseFile')),
-        importFile,
-      ),
-      importStatus,
-    ),
-    h(
-      'div',
-      { class: 'panel' },
-      h('h3', null, t('backupHeading')),
-      h('p', { class: 'muted' }, t('backupIntro')),
-      h(
-        'div',
-        { class: 'toolbar' },
-        h('button', { class: 'btn', type: 'button', on: { click: () => void exportAll() } }, icon(ICON_DOWNLOAD), t('backupExport')),
-        h('button', { class: 'btn', type: 'button', on: { click: () => file.click() } }, icon(ICON_UPLOAD), t('backupRestore')),
-        h('button', { class: 'btn danger', type: 'button', on: { click: () => void reset() } }, t('resetButton')),
-        file,
-      ),
-      status,
     ),
   );
 }

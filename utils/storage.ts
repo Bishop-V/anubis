@@ -130,6 +130,15 @@ export function setTagPref(id: string, patch: Partial<TagPref>): Promise<void> {
   });
 }
 
+/** Puts these tags in this order, ahead of the tags not named, in one write. */
+export function setTagOrder(ids: string[]): Promise<void> {
+  return tagPrefsQueue(async () => {
+    const prefs = { ...(await tagPrefsItem.getValue()) };
+    ids.forEach((id, order) => (prefs[id] = { ...prefs[id], order }));
+    await tagPrefsItem.setValue(prefs);
+  });
+}
+
 // ---------------------------------------------------------------------------
 // Subscriptions
 
