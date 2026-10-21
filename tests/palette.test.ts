@@ -56,6 +56,13 @@ describe('palette', () => {
     expect(read(path).replace(/\/\*[\s\S]*?\*\//g, '')).not.toMatch(GOLD);
   });
 
+  it('draws the docs site\'s warning callouts in grey, not VitePress\'s yellow', () => {
+    const css = read('docs/.vitepress/theme/brand.css');
+    for (const k of ['1', '2', '3', 'soft']) {
+      expect(css).toMatch(new RegExp(`--vp-c-warning-${k}:\\s*var\\(--vp-c-(brand|bg)-`));
+    }
+  });
+
   it('gives the logo and the toolbar badge Graphite', () => {
     const logo = read('public/anubis.svg');
     expect(logo).toContain(`fill="${dark['--text']}"`);

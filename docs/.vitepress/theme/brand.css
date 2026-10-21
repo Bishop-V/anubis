@@ -43,6 +43,15 @@
   --vp-home-hero-name-color: #e8e8ea;
 }
 
+/* Callouts (the "Languages" and "Lenses" notes): VitePress draws warnings in yellow,
+   so draw them in grey like everything else. */
+:root {
+  --vp-c-warning-1: var(--vp-c-brand-1);
+  --vp-c-warning-2: var(--vp-c-brand-2);
+  --vp-c-warning-3: var(--vp-c-brand-3);
+  --vp-c-warning-soft: var(--vp-c-bg-soft);
+}
+
 /* Screenshots: a hairline, so they don't melt into the page. */
 .vp-doc img {
   border: 1px solid var(--vp-c-divider);
