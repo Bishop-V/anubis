@@ -878,12 +878,6 @@
   "appearanceIntro": {
     "message": "Como o Anubis aparece aqui e nas páginas de busca."
   },
-  "themeHeading": {
-    "message": "Esquema de cores"
-  },
-  "themeHint": {
-    "message": "“Automático” segue seu navegador e, nas páginas de cada buscador, o modo próprio dele."
-  },
   "paletteHeading": {
     "message": "Cores nas páginas de busca"
   },
@@ -921,34 +915,13 @@
     "message": "Como a reordenação funciona"
   },
   "deeperAuto": {
-    "message": "Carregar mais resultados automaticamente"
-  },
-  "deeperAutoHint": {
-    "message": "Páginas a adicionar a toda pesquisa, de 0 (desativado) a $1."
-  },
-  "deeperHelp": {
-    "message": "Como carregar mais funciona"
-  },
-  "deeperUnit": {
-    "message": "páginas a mais"
-  },
-  "deeperTipOff": {
-    "message": "Desativado. Clique em “Carregar mais resultados” quando quiser mais."
-  },
-  "deeperTipTime_one": {
-    "message": "Acrescenta cerca de $1 segundo a cada busca."
-  },
-  "deeperTipTime_other": {
-    "message": "Acrescenta cerca de $1 segundos a cada busca."
-  },
-  "deeperTipFew": {
-    "message": "$1 Os buscadores raramente se importam com algumas páginas."
+    "message": "Páginas extras por pesquisa"
   },
   "deeperTipSome": {
-    "message": "$1 Alguns buscadores podem pedir uma verificação de robô."
+    "message": "Alguns buscadores podem pedir uma verificação de robô."
   },
   "deeperTipMany": {
-    "message": "$1 O Google e o Bing já costumam pedir uma verificação de robô."
+    "message": "O Google e o Bing já costumam pedir uma verificação de robô."
   },
   "chipsHeading": {
     "message": "Etiquetas nos resultados"
@@ -961,12 +934,6 @@
   },
   "summaryHint": {
     "message": "Dizer acima dos resultados o que o Anubis mudou."
-  },
-  "enabledHeading": {
-    "message": "O Anubis está ligado"
-  },
-  "enabledHint": {
-    "message": "Desligue isto para deixar as páginas de busca como estão sem desinstalar."
   },
   "enginesHeading": {
     "message": "Buscadores"
@@ -1808,15 +1775,6 @@
   "themeDark": {
     "message": "Escuro"
   },
-  "themeAutoTitle": {
-    "message": "Tema automático"
-  },
-  "themeLightTitle": {
-    "message": "Tema claro"
-  },
-  "themeDarkTitle": {
-    "message": "Tema escuro"
-  },
   "personalListName": {
     "message": "Sua lista"
   },
@@ -1831,5 +1789,8 @@
   },
   "listsUnsubscribed": {
     "message": "Assinatura de $1 cancelada."
+  },
+  "themeButtonTitle": {
+    "message": "Esquema de cores: $1"
   }
 }

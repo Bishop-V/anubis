@@ -10,7 +10,7 @@ import { wiki } from '@/utils/wiki';
 import { listSites } from '@/utils/personal';
 import { loadRuleSet, watchRuleSet } from '@/utils/ruleset';
 import { getSubscriptions } from '@/utils/subscriptions';
-import { initTheme, themeSwitcher } from '@/utils/theme';
+import { initTheme, themeButton } from '@/utils/theme';
 import { renderCleanup } from './cleanup';
 import { renderAppearance, renderEngines, renderShare } from './general';
 import { renderLists } from './lists';
@@ -80,7 +80,7 @@ async function renderNav() {
     h(
       'div',
       { class: 'foot' },
-      themeSwitcher(rules.settings.theme),
+      themeButton(rules.settings.theme),
       h(
         'div',
         { class: 'links' },

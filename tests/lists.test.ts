@@ -27,6 +27,18 @@ describe('bundled lists', () => {
     }
   });
 
+  // List names show as a tag's source ("from Independent wikis") in the same menu and popup, so they're held to the same limit.
+  it('keeps the name of every list published from here to 20 characters', () => {
+    const files = ['lists', 'lists/sources'].flatMap((d) => readdirSync(d).filter((f) => f.endsWith('.anubis')).map((f) => `${d}/${f}`));
+    for (const file of files) {
+      const name = parseList(readFileSync(file, 'utf8')).meta.name ?? '';
+      expect(name.length, `${file}: ${name}`).toBeLessThanOrEqual(20);
+    }
+    const ours = BUNDLED_DIRECTORY.filter((e) => e.url.startsWith('https://raw.githubusercontent.com/Bishop-V/anubis/'));
+    expect(ours.length).toBe(files.length);
+    for (const entry of ours) expect(entry.name.length, entry.name).toBeLessThanOrEqual(20);
+  });
+
   it('has a directory entry for each built-in list', () => {
     for (const entry of BUNDLED_DIRECTORY.filter((e) => e.builtin)) {
       expect(BUILTIN_TEXT[`builtin:${entry.id}`]).toBeTruthy();

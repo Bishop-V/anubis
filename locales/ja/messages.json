@@ -809,12 +809,6 @@
   "appearanceIntro": {
     "message": "この設定ページと検索ページでの Anubis の見た目です。"
   },
-  "themeHeading": {
-    "message": "配色"
-  },
-  "themeHint": {
-    "message": "「自動」はブラウザーの設定に従い、各検索エンジンのページでは、そのエンジン独自のモードに従います。"
-  },
   "paletteHeading": {
     "message": "検索ページでの色"
   },
@@ -852,31 +846,13 @@
     "message": "並べ替えのしくみ"
   },
   "deeperAuto": {
-    "message": "さらに結果を自動で読み込む"
-  },
-  "deeperAutoHint": {
-    "message": "すべての検索に追加するページ数です。0（オフ）から $1 までです。"
-  },
-  "deeperHelp": {
-    "message": "追加読み込みのしくみ"
-  },
-  "deeperUnit": {
-    "message": "ページを追加"
-  },
-  "deeperTipOff": {
-    "message": "オフです。もっと見たいときは「さらに結果を読み込む」を押します。"
-  },
-  "deeperTipTime_other": {
-    "message": "検索ごとに約 $1 秒長くかかります。"
-  },
-  "deeperTipFew": {
-    "message": "$1数ページ程度なら、検索エンジンが問題にすることはほとんどありません。"
+    "message": "検索ごとに追加で読み込むページ数"
   },
   "deeperTipSome": {
-    "message": "$1 検索エンジンによっては、ロボット確認が求められることがあります。"
+    "message": "検索エンジンによっては、ロボット確認が求められることがあります。"
   },
   "deeperTipMany": {
-    "message": "$1 この数だと、Google や Bing はたいていロボット確認を求めます。"
+    "message": "この数だと、Google や Bing はたいていロボット確認を求めます。"
   },
   "chipsHeading": {
     "message": "タグのラベル"
@@ -889,12 +865,6 @@
   },
   "summaryHint": {
     "message": "Anubis が変更した内容を、結果の上に表示します。"
-  },
-  "enabledHeading": {
-    "message": "Anubis オン"
-  },
-  "enabledHint": {
-    "message": "オフにすると、アンインストールせずに検索ページをそのままにできます。"
   },
   "enginesHeading": {
     "message": "検索エンジン"
@@ -1682,15 +1652,6 @@
   "themeDark": {
     "message": "ダーク"
   },
-  "themeAutoTitle": {
-    "message": "自動テーマ"
-  },
-  "themeLightTitle": {
-    "message": "ライトテーマ"
-  },
-  "themeDarkTitle": {
-    "message": "ダークテーマ"
-  },
   "personalListName": {
     "message": "マイリスト"
   },
@@ -1702,5 +1663,8 @@
   },
   "listsUnsubscribed": {
     "message": "$1 の購読を解除しました。"
+  },
+  "themeButtonTitle": {
+    "message": "配色：$1"
   }
 }

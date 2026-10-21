@@ -40,7 +40,7 @@ Anubis 無法使用的規則會被跳過並計數。
 | 清單 | 來源 | 作用 |
 | --- | --- | --- |
 | **AI content** | laylavish 的 [HUGE AI Blocklist](https://github.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist)（CC0） | 給 AI 生成的網站加標籤。 |
-| **Official docs (DevDocs)** | [DevDocs](https://github.com/freeCodeCamp/devdocs) 及其貢獻者（MPL-2.0） | 給約 210 個文件網站加標籤並略微提升。 |
+| **DevDocs** | [DevDocs](https://github.com/freeCodeCamp/devdocs) 及其貢獻者（MPL-2.0） | 給約 210 個文件網站加標籤並略微提升。 |
 | **Self-hosted FOSS** | [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted-data) 及其貢獻者（CC BY-SA 3.0） | 給約 1,000 個可自託管的程式加上 FOSS 標籤。 |
 | **Independent wikis** | Kevin Payravi 的 [Indie Wiki Buddy](https://github.com/KevinPayravi/indie-wiki-buddy)（MIT） | 提升獨立 wiki，降低被它們取代的 Fandom wiki。 |
 

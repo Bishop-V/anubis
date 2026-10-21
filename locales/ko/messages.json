@@ -809,12 +809,6 @@
   "appearanceIntro": {
     "message": "여기와 검색 페이지에서 Anubis가 보이는 방식입니다."
   },
-  "themeHeading": {
-    "message": "색 구성표"
-  },
-  "themeHint": {
-    "message": "‘자동’은 브라우저를 따르며, 각 검색엔진 페이지에서는 해당 엔진의 모드를 따릅니다."
-  },
   "paletteHeading": {
     "message": "검색 페이지의 색"
   },
@@ -852,31 +846,13 @@
     "message": "순위 재조정 방식"
   },
   "deeperAuto": {
-    "message": "결과 자동으로 더 불러오기"
-  },
-  "deeperAutoHint": {
-    "message": "모든 검색에 추가할 페이지 수입니다. 0(끔)부터 $1까지입니다."
-  },
-  "deeperHelp": {
-    "message": "더 불러오기 방식"
-  },
-  "deeperUnit": {
-    "message": "페이지 추가"
-  },
-  "deeperTipOff": {
-    "message": "꺼져 있습니다. 더 보려면 ‘결과 더 불러오기’를 누르세요."
-  },
-  "deeperTipTime_other": {
-    "message": "검색할 때마다 약 $1초가 더 걸립니다."
-  },
-  "deeperTipFew": {
-    "message": "$1 몇 페이지 정도는 검색엔진에서 대개 문제 삼지 않습니다."
+    "message": "검색당 추가 페이지 수"
   },
   "deeperTipSome": {
-    "message": "$1 일부 검색엔진은 로봇 확인을 요구할 수 있습니다."
+    "message": "일부 검색엔진은 로봇 확인을 요구할 수 있습니다."
   },
   "deeperTipMany": {
-    "message": "$1 이 정도면 Google과 Bing은 보통 로봇 확인을 요구합니다."
+    "message": "이 정도면 Google과 Bing은 보통 로봇 확인을 요구합니다."
   },
   "chipsHeading": {
     "message": "태그 칩"
@@ -889,12 +865,6 @@
   },
   "summaryHint": {
     "message": "결과 위에 Anubis가 바꾼 내용을 알려 줍니다."
-  },
-  "enabledHeading": {
-    "message": "Anubis 사용"
-  },
-  "enabledHint": {
-    "message": "삭제하지 않고 검색 페이지를 그대로 두려면 끄세요."
   },
   "enginesHeading": {
     "message": "검색엔진"
@@ -1682,15 +1652,6 @@
   "themeDark": {
     "message": "다크"
   },
-  "themeAutoTitle": {
-    "message": "자동 테마"
-  },
-  "themeLightTitle": {
-    "message": "라이트 테마"
-  },
-  "themeDarkTitle": {
-    "message": "다크 테마"
-  },
   "personalListName": {
     "message": "내 목록"
   },
@@ -1702,5 +1663,8 @@
   },
   "listsUnsubscribed": {
     "message": "$1 목록의 구독을 취소했습니다."
+  },
+  "themeButtonTitle": {
+    "message": "색 구성표: $1"
   }
 }

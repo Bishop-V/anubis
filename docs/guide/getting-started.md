@@ -63,20 +63,12 @@ Press the Anubis toolbar button on any website to rank or tag that site. On a se
 
 <img src="../img/popup.png" width="364" alt="The toolbar popup on wikipedia.org: the Reference tag is selected and underlined among the site's tags">
 
-## Turn Anubis off
-
-Use the switch in the toolbar popup. The icon turns grey.
-
 ## Keyboard shortcuts
 
 - **Alt+Shift+O** turns Anubis on or off.
 - **Alt+Shift+H** shows or hides the hidden results.
 
 On a Mac, use Control instead of Alt. Change them in `chrome://extensions/shortcuts`, or in Firefox under `about:addons` → gear → **Manage Extension Shortcuts**.
-
-## Help
-
-**Help** in the popup opens this wiki, and each section of **Settings** links to its page.
 
 ## Next
 

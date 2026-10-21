@@ -129,7 +129,7 @@ describe('hugeAi', () => {
   });
 
   it('matches a channel page with or without a trailing path', () => {
-    const compiled = compileList('ai', parsed, false, 'AI content (HUGE AI Blocklist)');
+    const compiled = compileList('ai', parsed, false, 'AI content');
     expect(evaluate({ url: 'https://www.youtube.com/@someone', title: '' }, [compiled]).tags).toContain('ai-generated');
     expect(evaluate({ url: 'https://www.youtube.com/@someone/videos', title: '' }, [compiled]).tags).toContain('ai-generated');
     expect(evaluate({ url: 'https://www.youtube.com/@someoneelse', title: '' }, [compiled]).tags).toEqual([]);
@@ -185,7 +185,7 @@ describe('indieWikis', () => {
     expect(parsed.errors).toEqual([]);
     expect(text).toContain('! Copyright (c) 2026 Someone');
     expect(parsed.meta).toMatchObject({
-      name: 'Independent wikis (Indie Wiki Buddy)',
+      name: 'Independent wikis',
       license: 'MIT',
       version: '2026-09-25',
       homepage: 'https://github.com/KevinPayravi/indie-wiki-buddy',
@@ -193,7 +193,7 @@ describe('indieWikis', () => {
   });
 
   it('moves a Fandom result below its independent wiki', () => {
-    const compiled = compileList('wikis', parsed, false, 'Independent wikis (Indie Wiki Buddy)');
+    const compiled = compileList('wikis', parsed, false, 'Independent wikis');
     const fandom = evaluate({ url: 'https://minecraft.fandom.com/wiki/Creeper', title: '' }, [compiled]);
     const independent = evaluate({ url: 'https://minecraft.wiki/w/Creeper', title: '' }, [compiled]);
     expect(fandom).toMatchObject({ score: -3, tags: ['independent-elsewhere'] });
@@ -246,7 +246,7 @@ describe('devDocs', () => {
   });
 
   it('matches a docs path with or without its trailing slash', () => {
-    const compiled = compileList('devdocs', parsed, false, 'Official docs (DevDocs)');
+    const compiled = compileList('devdocs', parsed, false, 'DevDocs');
     expect(evaluate({ url: 'https://prettier.io/docs', title: '' }, [compiled]).tags).toEqual(['docs']);
     expect(evaluate({ url: 'https://prettier.io/docs/options', title: '' }, [compiled]).tags).toEqual(['docs']);
     expect(evaluate({ url: 'https://prettier.io/blog/', title: '' }, [compiled]).tags).toEqual([]);
@@ -268,7 +268,7 @@ describe('devDocs', () => {
 
   it('credits the source and its commit, and parses cleanly', () => {
     expect(parsed.errors).toEqual([]);
-    expect(parsed.meta).toMatchObject({ name: 'Official docs (DevDocs)', license: 'MPL-2.0', homepage: 'https://github.com/freeCodeCamp/devdocs' });
+    expect(parsed.meta).toMatchObject({ name: 'DevDocs', license: 'MPL-2.0', homepage: 'https://github.com/freeCodeCamp/devdocs' });
     expect(text).toContain('commit fed789');
     expect(text).toContain('https://mozilla.org/MPL/2.0/');
   });

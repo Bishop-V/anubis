@@ -132,7 +132,7 @@ export function hugeAi({ main, nuclear, commit, date }) {
   return {
     header: header(
       {
-        name: 'AI content (HUGE AI Blocklist)',
+        name: 'AI content',
         description: 'Tags AI-generated sites, from the HUGE AI Blocklist.',
         author: 'laylavish and the HUGE AI Blocklist contributors',
         homepage: HUGE_AI.repository,
@@ -213,7 +213,7 @@ export function indieWikis(data, { commit, licence }) {
   return {
     header: header(
       {
-        name: 'Independent wikis (Indie Wiki Buddy)',
+        name: 'Independent wikis',
         description: "Raises independent wikis over Fandom, from Indie Wiki Buddy.",
         author: 'Kevin Payravi and the Indie Wiki Buddy contributors',
         homepage: INDIE_WIKIS.repository,
@@ -330,7 +330,7 @@ export function devDocs(files, { commit }) {
   return {
     header: header(
       {
-        name: 'Official docs (DevDocs)',
+        name: 'DevDocs',
         description: 'Tags and raises the docs DevDocs collects.',
         author: 'The DevDocs contributors',
         homepage: DEVDOCS.repository,
@@ -436,7 +436,7 @@ export function awesomeSelfhosted(files, { commit, free }) {
   return {
     header: header(
       {
-        name: 'Self-hosted FOSS (awesome-selfhosted)',
+        name: 'Self-hosted FOSS',
         description: 'Tags self-hostable FOSS, from awesome-selfhosted.',
         author: 'The awesome-selfhosted contributors',
         homepage: AWESOME_SELFHOSTED.repository,

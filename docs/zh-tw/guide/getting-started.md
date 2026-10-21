@@ -61,20 +61,12 @@ Anubis 不需要工具列按鈕也能正常運作。如果想把按鈕放在工�
 
 <img src="../../img/popup.png" width="364" alt="wikipedia.org 上的工具列彈出視窗：Reference 標籤在網站的標籤中被選中並加了下劃線">
 
-## 關閉 Anubis
-
-使用工具列彈出視窗中的開關。圖示會變成灰色。
-
 ## 鍵盤快捷鍵
 
 - **Alt+Shift+O** 開啟或關閉 Anubis。
 - **Alt+Shift+H** 顯示或重新隱藏已隱藏的結果。
 
 在 Mac 上，用 Control 代替 Alt。可以在 `chrome://extensions/shortcuts` 中修改，或在 Firefox 的 `about:addons` → 齒輪 → **管理擴充套件快捷鍵**中修改。
-
-## 幫助
-
-彈出視窗中的**說明**會開啟本 wiki，**設定**的每個部分都連結到對應的頁面。
 
 ## 下一步
 

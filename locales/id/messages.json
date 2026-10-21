@@ -809,12 +809,6 @@
   "appearanceIntro": {
     "message": "Tampilan Anubis di sini dan di halaman penelusuran."
   },
-  "themeHeading": {
-    "message": "Skema warna"
-  },
-  "themeHint": {
-    "message": "“Otomatis” mengikuti browser Anda, dan mode bawaan tiap mesin telusur di halamannya."
-  },
   "paletteHeading": {
     "message": "Warna di halaman penelusuran"
   },
@@ -852,31 +846,13 @@
     "message": "Cara kerja pengurutan ulang"
   },
   "deeperAuto": {
-    "message": "Muat hasil lainnya secara otomatis"
-  },
-  "deeperAutoHint": {
-    "message": "Halaman yang ditambahkan ke setiap penelusuran, dari 0 (nonaktif) hingga $1."
-  },
-  "deeperHelp": {
-    "message": "Cara kerja memuat hasil lainnya"
-  },
-  "deeperUnit": {
-    "message": "halaman lagi"
-  },
-  "deeperTipOff": {
-    "message": "Nonaktif. Tekan “Muat hasil lainnya” saat Anda ingin lebih banyak."
-  },
-  "deeperTipTime_other": {
-    "message": "Menambah sekitar $1 detik pada setiap penelusuran."
-  },
-  "deeperTipFew": {
-    "message": "$1 Mesin telusur jarang keberatan dengan beberapa halaman."
+    "message": "Halaman tambahan per penelusuran"
   },
   "deeperTipSome": {
-    "message": "$1 Beberapa mesin telusur mungkin meminta pemeriksaan robot."
+    "message": "Beberapa mesin telusur mungkin meminta pemeriksaan robot."
   },
   "deeperTipMany": {
-    "message": "$1 Google dan Bing sering meminta pemeriksaan robot pada jumlah ini."
+    "message": "Google dan Bing sering meminta pemeriksaan robot pada jumlah ini."
   },
   "chipsHeading": {
     "message": "Chip tag"
@@ -889,12 +865,6 @@
   },
   "summaryHint": {
     "message": "Sebutkan di atas hasil apa yang diubah Anubis."
-  },
-  "enabledHeading": {
-    "message": "Anubis aktif"
-  },
-  "enabledHint": {
-    "message": "Nonaktifkan ini untuk membiarkan halaman penelusuran apa adanya tanpa menghapus Anubis."
   },
   "enginesHeading": {
     "message": "Mesin telusur"
@@ -1682,15 +1652,6 @@
   "themeDark": {
     "message": "Gelap"
   },
-  "themeAutoTitle": {
-    "message": "Tema otomatis"
-  },
-  "themeLightTitle": {
-    "message": "Tema terang"
-  },
-  "themeDarkTitle": {
-    "message": "Tema gelap"
-  },
   "personalListName": {
     "message": "Daftar Anda"
   },
@@ -1702,5 +1663,8 @@
   },
   "listsUnsubscribed": {
     "message": "Langganan $1 dihentikan."
+  },
+  "themeButtonTitle": {
+    "message": "Skema warna: $1"
   }
 }

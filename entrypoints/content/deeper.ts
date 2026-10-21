@@ -23,7 +23,7 @@ export interface DeeperState {
   request?: PagerRequest;
   /** Why the last load stopped before bringing in a page, shown in the summary until the next load. */
   stopped?: DeeperStop;
-  /** "Load more results automatically" already ran for this search. */
+  /** "Extra pages per search" already ran for this search. */
   auto?: boolean;
   /** How many results there were when you pressed the engine's own "More results" button yourself. */
   manualFrom?: number;

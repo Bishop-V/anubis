@@ -878,12 +878,6 @@
   "appearanceIntro": {
     "message": "Anubis یہاں اور تلاش کے صفحات پر کیسا دکھتا ہے۔"
   },
-  "themeHeading": {
-    "message": "رنگ سکیم"
-  },
-  "themeHint": {
-    "message": "“خودکار” آپ کے براؤزر کی پیروی کرتا ہے، اور ہر سرچ انجن کے اپنے صفحات پر اسی انجن کے اپنے موڈ کی۔"
-  },
   "paletteHeading": {
     "message": "تلاش کے صفحات پر رنگ"
   },
@@ -921,34 +915,13 @@
     "message": "ترتیب بدلنا کیسے کام کرتا ہے"
   },
   "deeperAuto": {
-    "message": "مزید نتائج خودبخود لوڈ کریں"
-  },
-  "deeperAutoHint": {
-    "message": "ہر تلاش میں شامل کیے جانے والے صفحات، 0 (بند) سے $1 تک۔"
-  },
-  "deeperHelp": {
-    "message": "مزید لوڈ کرنا کیسے کام کرتا ہے"
-  },
-  "deeperUnit": {
-    "message": "مزید صفحات"
-  },
-  "deeperTipOff": {
-    "message": "بند ہے۔ مزید چاہیے ہوں تو “مزید نتائج لوڈ کریں” دبائیں۔"
-  },
-  "deeperTipTime_one": {
-    "message": "ہر تلاش میں تقریباً $1 سیکنڈ کا اضافہ کرتا ہے۔"
-  },
-  "deeperTipTime_other": {
-    "message": "ہر تلاش میں تقریباً $1 سیکنڈ کا اضافہ کرتا ہے۔"
-  },
-  "deeperTipFew": {
-    "message": "$1 سرچ انجن عموماً چند صفحات پر اعتراض نہیں کرتے۔"
+    "message": "ہر تلاش پر اضافی صفحات"
   },
   "deeperTipSome": {
-    "message": "$1 کچھ سرچ انجن روبوٹ کی جانچ مانگ سکتے ہیں۔"
+    "message": "کچھ سرچ انجن روبوٹ کی جانچ مانگ سکتے ہیں۔"
   },
   "deeperTipMany": {
-    "message": "$1 اتنے صفحات پر Google اور Bing اکثر روبوٹ کی جانچ مانگتے ہیں۔"
+    "message": "اتنے صفحات پر Google اور Bing اکثر روبوٹ کی جانچ مانگتے ہیں۔"
   },
   "chipsHeading": {
     "message": "ٹیگ لیبل"
@@ -961,12 +934,6 @@
   },
   "summaryHint": {
     "message": "نتائج کے اوپر بتائیں کہ Anubis نے کیا بدلا۔"
-  },
-  "enabledHeading": {
-    "message": "Anubis آن ہے"
-  },
-  "enabledHint": {
-    "message": "ان انسٹال کیے بغیر تلاش کے صفحات کو جوں کا توں چھوڑنے کے لیے اسے آف کریں۔"
   },
   "enginesHeading": {
     "message": "سرچ انجن"
@@ -1808,15 +1775,6 @@
   "themeDark": {
     "message": "گہرا"
   },
-  "themeAutoTitle": {
-    "message": "خودکار تھیم"
-  },
-  "themeLightTitle": {
-    "message": "ہلکی تھیم"
-  },
-  "themeDarkTitle": {
-    "message": "گہری تھیم"
-  },
   "personalListName": {
     "message": "آپ کی فہرست"
   },
@@ -1831,5 +1789,8 @@
   },
   "listsUnsubscribed": {
     "message": "$1 سے ان سبسکرائب کر دیا۔"
+  },
+  "themeButtonTitle": {
+    "message": "رنگ سکیم: $1"
   }
 }

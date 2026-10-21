@@ -182,7 +182,7 @@ A listener that answers calls `sendResponse`, and returns `true` if the answer c
 
 ### Extension pages
 
-The popup, settings, and welcome page are plain DOM, built with `h()` from `utils/dom.ts`: no framework and no `innerHTML`. Text from lists always goes in as text nodes. Settings sections live in `entrypoints/options/` and are listed in `SECTIONS` in `options/main.ts`; each renders from storage and renders again when storage changes, unless someone is typing in it. `options/parts.ts` has the pieces they share (a section's title, a setting with a switch, a file to save) and `options/flash.ts` the messages shown after an action.
+The popup, settings, and welcome page are plain DOM, built with `h()` from `utils/dom.ts`: no framework and no `innerHTML`. Text from lists always goes in as text nodes. Settings sections live in `entrypoints/options/` and are listed in `SECTIONS` in `options/main.ts`; each renders from storage and renders again when storage changes, unless someone is typing in it. `options/parts.ts` has the pieces they share (a section's title, a part that folds away and stays open or closed across those renders, a setting with a switch, a file to save) and `options/flash.ts` the messages shown after an action.
 
 ## Recipes
 

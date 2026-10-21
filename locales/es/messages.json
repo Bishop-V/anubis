@@ -878,12 +878,6 @@
   "appearanceIntro": {
     "message": "Cómo se ve Anubis aquí y en las páginas de búsqueda."
   },
-  "themeHeading": {
-    "message": "Esquema de colores"
-  },
-  "themeHint": {
-    "message": "«Automático» sigue a tu navegador y, en sus páginas, el modo propio de cada buscador."
-  },
   "paletteHeading": {
     "message": "Colores en las páginas de búsqueda"
   },
@@ -921,34 +915,13 @@
     "message": "Cómo funciona el reordenamiento"
   },
   "deeperAuto": {
-    "message": "Cargar más resultados automáticamente"
-  },
-  "deeperAutoHint": {
-    "message": "Páginas que añadir a cada búsqueda, de 0 (desactivado) a $1."
-  },
-  "deeperHelp": {
-    "message": "Cómo funciona cargar más"
-  },
-  "deeperUnit": {
-    "message": "páginas más"
-  },
-  "deeperTipOff": {
-    "message": "Desactivado. Pulsa «Cargar más resultados» cuando quieras más."
-  },
-  "deeperTipTime_one": {
-    "message": "Añade aproximadamente $1 segundo a cada búsqueda."
-  },
-  "deeperTipTime_other": {
-    "message": "Añade unos $1 segundos a cada búsqueda."
-  },
-  "deeperTipFew": {
-    "message": "$1 A los buscadores rara vez les importan unas pocas páginas."
+    "message": "Páginas extra por búsqueda"
   },
   "deeperTipSome": {
-    "message": "$1 Algunos buscadores pueden pedir una comprobación de robots."
+    "message": "Algunos buscadores pueden pedir una comprobación de robots."
   },
   "deeperTipMany": {
-    "message": "$1 Google y Bing suelen pedir ya una comprobación de robots."
+    "message": "Google y Bing suelen pedir ya una comprobación de robots."
   },
   "chipsHeading": {
     "message": "Etiquetas bajo los resultados"
@@ -961,12 +934,6 @@
   },
   "summaryHint": {
     "message": "Indicar sobre los resultados qué cambió Anubis."
-  },
-  "enabledHeading": {
-    "message": "Anubis está activado"
-  },
-  "enabledHint": {
-    "message": "Desactívalo para dejar las páginas de búsqueda como están sin desinstalarlo."
   },
   "enginesHeading": {
     "message": "Buscadores"
@@ -1808,15 +1775,6 @@
   "themeDark": {
     "message": "Oscuro"
   },
-  "themeAutoTitle": {
-    "message": "Tema automático"
-  },
-  "themeLightTitle": {
-    "message": "Tema claro"
-  },
-  "themeDarkTitle": {
-    "message": "Tema oscuro"
-  },
   "personalListName": {
     "message": "Tu lista"
   },
@@ -1831,5 +1789,8 @@
   },
   "listsUnsubscribed": {
     "message": "Cancelada la suscripción a $1."
+  },
+  "themeButtonTitle": {
+    "message": "Esquema de colores: $1"
   }
 }

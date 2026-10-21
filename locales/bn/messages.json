@@ -878,12 +878,6 @@
   "appearanceIntro": {
     "message": "এখানে আর সার্চ পৃষ্ঠায় Anubis দেখতে কেমন হবে।"
   },
-  "themeHeading": {
-    "message": "রঙের থিম"
-  },
-  "themeHint": {
-    "message": "“অটো” আপনার ব্রাউজার অনুসরণ করে, আর প্রতিটি সার্চ ইঞ্জিনের নিজস্ব পৃষ্ঠায় সেই ইঞ্জিনের নিজস্ব মোড অনুসরণ করে।"
-  },
   "paletteHeading": {
     "message": "সার্চ পৃষ্ঠার রঙ"
   },
@@ -921,34 +915,13 @@
     "message": "নতুন করে সাজানো কীভাবে কাজ করে"
   },
   "deeperAuto": {
-    "message": "আরও ফলাফল নিজে থেকেই লোড করুন"
-  },
-  "deeperAutoHint": {
-    "message": "প্রতিটি সার্চে যোগ করার পৃষ্ঠা, 0 (বন্ধ) থেকে $1 পর্যন্ত।"
-  },
-  "deeperHelp": {
-    "message": "আরও লোড করা কীভাবে কাজ করে"
-  },
-  "deeperUnit": {
-    "message": "অতিরিক্ত পৃষ্ঠা"
-  },
-  "deeperTipOff": {
-    "message": "বন্ধ। আরও চাইলে “আরও ফলাফল লোড করুন” চাপুন।"
-  },
-  "deeperTipTime_one": {
-    "message": "প্রতিটি সার্চে প্রায় $1 সেকেন্ড যোগ করে।"
-  },
-  "deeperTipTime_other": {
-    "message": "প্রতিটি সার্চে প্রায় $1 সেকেন্ড যোগ করে।"
-  },
-  "deeperTipFew": {
-    "message": "$1 কয়েকটি পৃষ্ঠায় ইঞ্জিনগুলির সাধারণত আপত্তি থাকে না।"
+    "message": "প্রতি সার্চে অতিরিক্ত পৃষ্ঠা"
   },
   "deeperTipSome": {
-    "message": "$1 কিছু সার্চ ইঞ্জিন রোবট যাচাই চাইতে পারে।"
+    "message": "কিছু সার্চ ইঞ্জিন রোবট যাচাই চাইতে পারে।"
   },
   "deeperTipMany": {
-    "message": "$1 এত পৃষ্ঠায় Google ও Bing প্রায়ই রোবট যাচাই চায়।"
+    "message": "এত পৃষ্ঠায় Google ও Bing প্রায়ই রোবট যাচাই চায়।"
   },
   "chipsHeading": {
     "message": "ট্যাগ চিপ"
@@ -961,12 +934,6 @@
   },
   "summaryHint": {
     "message": "ফলাফলের উপরে জানান Anubis কী বদলেছে।"
-  },
-  "enabledHeading": {
-    "message": "Anubis চালু আছে"
-  },
-  "enabledHint": {
-    "message": "আনইনস্টল না করে সার্চ পৃষ্ঠা যেমন আছে তেমন রাখতে এটি বন্ধ করুন।"
   },
   "enginesHeading": {
     "message": "সার্চ ইঞ্জিন"
@@ -1808,15 +1775,6 @@
   "themeDark": {
     "message": "গাঢ়"
   },
-  "themeAutoTitle": {
-    "message": "অটো থিম"
-  },
-  "themeLightTitle": {
-    "message": "হালকা থিম"
-  },
-  "themeDarkTitle": {
-    "message": "গাঢ় থিম"
-  },
   "personalListName": {
     "message": "আপনার তালিকা"
   },
@@ -1831,5 +1789,8 @@
   },
   "listsUnsubscribed": {
     "message": "$1 আনসাবস্ক্রাইব করা হয়েছে।"
+  },
+  "themeButtonTitle": {
+    "message": "রঙের থিম: $1"
   }
 }

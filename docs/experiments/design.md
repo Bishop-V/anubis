@@ -2,6 +2,10 @@
 
 The look, the wording, and Anubis's own pages. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Less crowded settings (2026-10-21)
+
+Asked for. The colour scheme was a three-word choice row in Appearance and again in the sidebar; it is now one icon button in the sidebar that steps Auto, Light, Dark (`themeButton` in `utils/theme.ts`). Appearance lost its "Anubis is on" switch, which repeated the popup's. "Load more results automatically" had a hint, a help link, a unit, and a cost tip that changed with the amount; it is now "Extra pages per search" with a warning only from 4 pages up. On Lists, a long Your lists pushed More lists and its Subscribe buttons out of sight: the three parts fold under their headings (`foldable` in `options/parts.ts`), and Your lists starts folded past five, which the nine default lists already are. Names of lists published from this repo were up to 37 characters ("Independent wikis (Indie Wiki Buddy)") and show after "from" beside each tag, so they are held to 20 like tag labels (`tests/lists.test.ts`); the source is still credited in the description and author. Lists by other people have no limit. The wiki lost "Turn Anubis off" and "Help", which said only what the popup shows.
+
 ## Filter by pressing a result's tag (2026-10-17)
 
 The summary used to carry a row of every tag on the page, each with a count, to show only that tag. It made the header tall and repeated what the extension's menu already offers under This page. Now the tag under each result is the button (pressed again, it clears), and the summary keeps only Show all.

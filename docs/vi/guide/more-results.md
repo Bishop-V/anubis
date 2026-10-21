@@ -4,7 +4,7 @@
 
 ## Tự động
 
-**Cài đặt → Giao diện → Tự động tải thêm kết quả** tải thêm trang trong mỗi lần tìm kiếm: mặc định là 3, tối đa 20. Đặt về 0 để chỉ tải thêm khi bạn yêu cầu. Mỗi trang tốn khoảng một giây, và quá nhiều có thể gây ra kiểm tra robot.
+**Cài đặt → Giao diện → Số trang thêm mỗi lần tìm kiếm** tải thêm trang trong mỗi lần tìm kiếm: mặc định là 3, tối đa 20. Đặt về 0 để chỉ tải thêm khi bạn yêu cầu. Mỗi trang tốn khoảng một giây, và quá nhiều có thể gây ra kiểm tra robot.
 
 ## Cách hoạt động
 

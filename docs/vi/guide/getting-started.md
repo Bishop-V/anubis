@@ -61,20 +61,12 @@ Nhấn nút Anubis trên thanh công cụ ở bất kỳ trang web nào để x�
 
 <img src="../../img/popup.png" width="364" alt="Cửa sổ bật lên trên thanh công cụ ở wikipedia.org: nhãn Reference được chọn và gạch chân giữa các nhãn của trang web">
 
-## Tắt Anubis
-
-Dùng công tắc trong cửa sổ bật lên. Biểu tượng chuyển sang màu xám.
-
 ## Phím tắt
 
 - **Alt+Shift+O** bật hoặc tắt Anubis.
 - **Alt+Shift+H** hiện hoặc ẩn lại các kết quả đã ẩn.
 
 Trên Mac, dùng Control thay cho Alt. Đổi chúng trong `chrome://extensions/shortcuts`, hoặc trên Firefox ở `about:addons` → bánh răng → **Quản lý phím tắt tiện ích**.
-
-## Trợ giúp
-
-**Trợ giúp** trong cửa sổ bật lên mở wiki này, và mỗi mục trong **Cài đặt** liên kết tới trang của nó.
 
 ## Tiếp theo
 

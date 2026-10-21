@@ -22,27 +22,21 @@ import { t, tn, tParts } from '@/utils/i18n';
 import { importIntoPersonal } from '@/utils/importers';
 import { REPO_URL } from '@/utils/links';
 import { wiki } from '@/utils/wiki';
-import { themeSwitcher } from '@/utils/theme';
 import { flash, flashed, rerender } from './flash';
 import { download, helpLink, pageTitle, switchRow } from './parts';
 
-/** What loading this many extra pages costs, said as the amount changes. */
-export function deeperTip(pages: number): { text: string; warn: boolean } {
-  if (pages === 0) return { text: t('deeperTipOff'), warn: false };
-  // Each page waits 0.7 s after the last, plus the time to load it.
-  const time = tn('deeperTipTime', Math.max(1, Math.round(pages * 1.2)));
-  if (pages <= 3) return { text: t('deeperTipFew', time), warn: false };
-  if (pages < 10) return { text: t('deeperTipSome', time), warn: true };
-  return { text: t('deeperTipMany', time), warn: true };
+/** A warning once this many extra pages risks a robot check, or nothing. */
+export function deeperWarning(pages: number): string | undefined {
+  if (pages >= 10) return t('deeperTipMany');
+  if (pages > 3) return t('deeperTipSome');
+  return undefined;
 }
 
 function deeperRow(stored: number): HTMLElement {
   const initial = clampDeeper(stored);
-  const tip = h('span', { class: 'tip', attrs: { id: 'deeper-tip', 'aria-live': 'polite' } });
+  const tip = h('span', { class: 'tip warn', attrs: { id: 'deeper-tip', 'aria-live': 'polite' } });
   const showTip = (pages: number) => {
-    const { text, warn } = deeperTip(pages);
-    tip.textContent = text;
-    tip.classList.toggle('warn', warn);
+    tip.textContent = deeperWarning(pages) ?? '';
   };
   showTip(initial);
   const input = h('input', {
@@ -63,20 +57,8 @@ function deeperRow(stored: number): HTMLElement {
   return h(
     'div',
     { class: 'setting' },
-    h(
-      'div',
-      null,
-      h('label', { attrs: { for: 'deeper' } }, h('b', null, t('deeperAuto'))),
-      h(
-        'span',
-        { class: 'muted' },
-        t('deeperAutoHint', MAX_DEEPER),
-        ' ',
-        helpLink('guide/more-results', t('deeperHelp')),
-      ),
-      tip,
-    ),
-    h('span', { class: 'amount' }, input, h('span', { attrs: { 'aria-hidden': 'true' } }, t('deeperUnit'))),
+    h('div', null, h('label', { attrs: { for: 'deeper' } }, h('b', null, t('deeperAuto'))), tip),
+    h('span', { class: 'amount' }, input),
   );
 }
 
@@ -121,17 +103,6 @@ export async function renderAppearance(): Promise<HTMLElement> {
     h(
       'div',
       { class: 'panel' },
-      h(
-        'div',
-        { class: 'setting' },
-        h(
-          'div',
-          null,
-          h('b', null, t('themeHeading')),
-          h('span', { class: 'muted' }, t('themeHint')),
-        ),
-        themeSwitcher(settings.theme),
-      ),
       segRow<Palette>(
         t('paletteHeading'),
         t('paletteHint'),
@@ -163,7 +134,6 @@ export async function renderAppearance(): Promise<HTMLElement> {
       deeperRow(settings.deeper),
       toggleRow(t('chipsHeading'), t('chipsHint'), 'showChips', settings),
       toggleRow(t('summaryHeading'), t('summaryHint'), 'showSummary', settings),
-      toggleRow(t('enabledHeading'), t('enabledHint'), 'enabled', settings),
     ),
   );
 }

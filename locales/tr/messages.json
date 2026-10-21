@@ -878,12 +878,6 @@
   "appearanceIntro": {
     "message": "Anubis’in burada ve arama sayfalarındaki görünümü."
   },
-  "themeHeading": {
-    "message": "Renk düzeni"
-  },
-  "themeHint": {
-    "message": "“Otomatik” tarayıcını, arama motorlarının kendi sayfalarında ise her motorun kendi modunu izler."
-  },
   "paletteHeading": {
     "message": "Arama sayfalarındaki renkler"
   },
@@ -921,34 +915,13 @@
     "message": "Yeniden sıralama nasıl çalışır"
   },
   "deeperAuto": {
-    "message": "Daha fazla sonucu otomatik yükle"
-  },
-  "deeperAutoHint": {
-    "message": "Her aramaya eklenecek sayfalar; 0 (kapalı) ile $1 arasında."
-  },
-  "deeperHelp": {
-    "message": "Daha fazla yükleme nasıl çalışır"
-  },
-  "deeperUnit": {
-    "message": "sayfa daha"
-  },
-  "deeperTipOff": {
-    "message": "Kapalı. Daha fazlasını istediğinde “Daha fazla sonuç yükle”ye bas."
-  },
-  "deeperTipTime_one": {
-    "message": "Her aramaya yaklaşık $1 saniye ekler."
-  },
-  "deeperTipTime_other": {
-    "message": "Her aramaya yaklaşık $1 saniye ekler."
-  },
-  "deeperTipFew": {
-    "message": "$1 Arama motorları birkaç sayfaya nadiren takılır."
+    "message": "Arama başına ek sayfa"
   },
   "deeperTipSome": {
-    "message": "$1 Bazı arama motorları robot denetimi isteyebilir."
+    "message": "Bazı arama motorları robot denetimi isteyebilir."
   },
   "deeperTipMany": {
-    "message": "$1 Google ve Bing bu noktada çoğu zaman robot denetimi ister."
+    "message": "Google ve Bing bu noktada çoğu zaman robot denetimi ister."
   },
   "chipsHeading": {
     "message": "Etiket rozetleri"
@@ -961,12 +934,6 @@
   },
   "summaryHint": {
     "message": "Sonuçların üstünde Anubis’in neyi değiştirdiğini söyle."
-  },
-  "enabledHeading": {
-    "message": "Anubis açık"
-  },
-  "enabledHint": {
-    "message": "Kaldırmadan arama sayfalarına dokunmamasını istiyorsanız bunu kapatın."
   },
   "enginesHeading": {
     "message": "Arama Motorları"
@@ -1808,15 +1775,6 @@
   "themeDark": {
     "message": "Koyu"
   },
-  "themeAutoTitle": {
-    "message": "Otomatik tema"
-  },
-  "themeLightTitle": {
-    "message": "Açık tema"
-  },
-  "themeDarkTitle": {
-    "message": "Koyu tema"
-  },
   "personalListName": {
     "message": "Listeniz"
   },
@@ -1831,5 +1789,8 @@
   },
   "listsUnsubscribed": {
     "message": "$1 aboneliğinden çıkıldı."
+  },
+  "themeButtonTitle": {
+    "message": "Renk düzeni: $1"
   }
 }

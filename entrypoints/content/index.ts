@@ -242,7 +242,7 @@ export default defineContentScript({
         }, changed);
       } else renderSummary(undefined, stats, theme, { toggleReveal() {}, settings() {}, deeper() {}, filter() {}, undo() {} });
 
-      // "Load more results automatically": once per search.
+      // "Extra pages per search": once per search.
       if (clampDeeper(rules.settings.deeper) > 0 && stats.canGoDeeper && deeper.pages === 1 && !deeper.auto) {
         deeper.auto = true;
         goDeeper(clampDeeper(rules.settings.deeper));
