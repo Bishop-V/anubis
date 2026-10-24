@@ -8,10 +8,12 @@ import {
   getSubscriptions,
   listsToDiscover,
   migrateDefaultLists,
+  refreshStale,
   saveSubscriptions,
   subscriptionId,
   type DirectoryEntry,
 } from '@/utils/subscriptions';
+import { listCacheItem } from '@/utils/storage';
 import { installEnglish } from './english';
 
 const MB = 1024 * 1024;
@@ -111,5 +113,35 @@ describe('the lists offered under More lists', () => {
     for (const d of BUNDLED_DIRECTORY) {
       for (const id of d.overlaps ?? []) expect(byId.get(id)?.overlaps, `${d.id} overlaps ${id}`).toContain(d.id);
     }
+  });
+});
+
+describe('updating lists', () => {
+  beforeEach(() => {
+    fakeBrowser.reset();
+    installEnglish();
+  });
+  afterEach(() => vi.restoreAllMocks());
+
+  // Saving one list's copy can fail (local storage full); the lists after it still update.
+  it('goes on to the next list when one can’t be saved', async () => {
+    const subs = ['https://example.org/a.txt', 'https://example.org/b.txt'].map((url) => ({ id: subscriptionId(url), url, enabled: true, addedAt: 0 }));
+    await saveSubscriptions(subs);
+    const fetched: string[] = [];
+    vi.stubGlobal('fetch', async (url: string) => {
+      fetched.push(url);
+      return new Response('example.com\n');
+    });
+    const setValue = listCacheItem.setValue.bind(listCacheItem);
+    vi.spyOn(listCacheItem, 'setValue')
+      .mockRejectedValueOnce(new Error('QUOTA_BYTES quota exceeded'))
+      .mockImplementation(setValue);
+    try {
+      expect(await refreshStale()).toBe(1);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+    expect(fetched).toEqual(subs.map((s) => s.url));
+    expect(Object.keys(await listCacheItem.getValue())).toEqual([subs[1]!.id]);
   });
 });

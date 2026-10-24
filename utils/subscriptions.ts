@@ -295,8 +295,13 @@ export async function refreshStale(force = false): Promise<number> {
     const due = !entry || now - entry.fetchedAt > hours * 3600_000;
     const backingOff = entry?.errorAt && now - entry.errorAt < RETRY_AFTER_ERROR_MS;
     if (force || (due && !backingOff)) {
-      await refreshList(sub);
-      updated++;
+      try {
+        await refreshList(sub);
+        updated++;
+      } catch (error) {
+        // Saving its copy failed (local storage full): the lists after it still get their turn.
+        console.warn('[anubis] could not save list', sub.url, error);
+      }
     }
   }
   return updated;
@@ -321,14 +326,17 @@ export function issueUrl(issues: string | undefined, title: string, body: string
   if (!safe) return undefined;
   try {
     const u = new URL(safe);
-    const base = u.pathname.replace(/\/+$/, '').replace(/\/new$/, '');
+    let base = u.pathname.replace(/\/+$/, '').replace(/\/new$/, '');
+    // A list may name its repository rather than its tracker: `/owner/repo/new` would add a file.
     if (u.hostname === 'github.com' || u.hostname === 'codeberg.org') {
+      if (base.split('/').filter(Boolean).length === 2) base += '/issues';
       const url = new URL(`${u.origin}${base}/new`);
       url.searchParams.set('title', title);
       url.searchParams.set('body', body);
       return url.toString();
     }
     if (u.hostname === 'gitlab.com') {
+      if (!base.includes('/-/') && !base.endsWith('/issues')) base += '/-/issues';
       const url = new URL(`${u.origin}${base}/new`);
       url.searchParams.set('issue[title]', title);
       url.searchParams.set('issue[description]', body);
