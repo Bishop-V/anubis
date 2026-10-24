@@ -8,6 +8,10 @@ titleTemplate: 隱藏、排名和標記搜尋結果
 intro:
   title: 隱藏、排名和標記搜尋結果
   lead: 就在你已在使用的搜尋引擎上，還有任何人都能發布的清單。
+  # The button for the reader's browser, when the page can tell (home.ts).
+  install:
+    firefox: 新增至 Firefox
+    chrome: 新增至 Chrome
   actions:
     - text: 開始使用
       link: /zh-tw/guide/getting-started
@@ -45,7 +49,7 @@ highlights:
     link: /zh-tw/guide/lists
     linkText: 訂閱清單
   - title: 移除面板
-    details: 移除 AI 回答、影片面板和“相關問題”。
+    details: 把 AI 回答、影片面板和“相關問題”從頁面上去掉。去掉哪些由你選擇。
     link: /zh-tw/guide/clean-up
     linkText: 它會移除什麼
 
@@ -55,5 +59,5 @@ closing:
     - Anubis 沒有伺服器，也不收集任何內容。你的選擇儲存在你的瀏覽器中。
     - 支援 Google、DuckDuckGo、Bing、Brave Search、Startpage、Ecosia、Kagi、Yahoo 和 Yandex，可用於 Firefox 和 Chrome。
   link: /zh-tw/guide/privacy
-  linkText: 隱私與許可權
+  linkText: 隱私與權限
 ---

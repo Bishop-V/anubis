@@ -149,6 +149,29 @@ body .VPContent .VPHome {
   border-color: var(--vp-button-brand-hover-bg);
   background: var(--vp-button-brand-hover-bg);
 }
+/* The store button for the reader's browser (home.ts) leads; without one, Get started
+   does. With one, Get started steps back to an outlined button, and Browse lists,
+   which the nav has too, makes room. */
+.home-button.install {
+  display: none;
+}
+html[data-browser='firefox'] .home-button.install-firefox,
+html[data-browser='chrome'] .home-button.install-chrome {
+  display: inline-flex;
+}
+html[data-browser] .home-button.brand:not(.install) {
+  border-color: var(--vp-c-divider);
+  background: none;
+  color: var(--vp-c-text-1);
+  font-weight: 500;
+}
+html[data-browser] .home-button.brand:not(.install):hover {
+  border-color: var(--vp-c-brand-3);
+  background: none;
+}
+html[data-browser] .home-button:not(.brand) {
+  display: none;
+}
 .home a:focus-visible {
   outline: 2px solid var(--vp-c-brand-3);
   outline-offset: 2px;

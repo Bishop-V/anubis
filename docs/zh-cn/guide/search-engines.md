@@ -1,24 +1,24 @@
 # 搜索引擎
 
-可以在**设置 → 搜索引擎**中关闭任意搜索引擎。
+Anubis 适用于这些搜索引擎。可以在**设置 → 搜索引擎**中关闭任意一个。
 
-| 搜索引擎 | 支持情况 | 加载更多结果 |
-| --- | --- | --- |
-| Google | 支持 | 是 |
-| DuckDuckGo | 支持 | 是 |
-| DuckDuckGo HTML 和 Lite | 支持 | 否 |
-| Bing | 支持 | 是* |
-| Brave Search | 支持 | 是 |
-| Startpage | 支持 | 是 |
-| Ecosia | 支持 | 是* |
-| Kagi | 支持 | 否 |
-| Yahoo | 支持 | 是* |
-| Yandex | 支持 | 是* |
-| Mojeek | 实验性 | 是 |
-
-**支持**的搜索引擎已在真实网站上检查过；**实验性**的还没有。在 Android 版 Firefox 上，Google、DuckDuckGo 和 Bing 可以使用。
+| 搜索引擎 | 加载更多结果 |
+| --- | --- |
+| Google | 是，手机上除外 |
+| DuckDuckGo | 是 |
+| DuckDuckGo HTML 和 Lite | 否 |
+| Bing | 是\* |
+| Brave Search | 是 |
+| Startpage | 是 |
+| Ecosia | 是\* |
+| Kagi | 否 |
+| Yahoo | 是\* |
+| Yandex | 是\* |
+| Mojeek（实验性） | 是 |
 
 \* 这些搜索引擎有时会在下一页之前要求 [人机验证](./more-results.md)。
+
+除 Mojeek 外，每个搜索引擎都已在真实网站上检查过。在 Android 版 Firefox 上，Google、DuckDuckGo 和 Bing 可以使用。
 
 网页结果在所有地方都会被称量。在大多数搜索引擎上，图片、视频和新闻标签页中的结果会加标签和隐藏，但不重新排序。购物标签页保持原样。
 

@@ -1,8 +1,8 @@
 # 訂閱清單
 
-清單會替你給網站加標籤、排名或隱藏網站。任何人都可以把清單作為文字檔案釋出在網上。
+清單會替你給網站加標籤、排名或隱藏網站。任何人都可以把清單作為文字檔案發布在網上。
 
-Anubis 一開始就帶有這些清單：**Official docs**、**Discussions**、**Reference**、**Paywalls**、**FOSS tools**、**AI content** 和 **Independent wikis**。可以在**設定 → 清單**中關閉任意一個。
+Anubis 一開始就帶有九個清單。大多數為官方文件、討論、參考網站、付費牆、自由軟體或 AI 內容加標籤；有一個把獨立 wiki 提升到 Fandom 之上。[清單目錄](../../lists.md)（英文）標出了它們。可以在**設定 → 清單**中關閉任意一個。
 
 <!-- Maintainer: Traditional Chinese translation of docs/guide/lists.md. The screenshots are the English ones. -->
 
@@ -10,11 +10,11 @@ Anubis 一開始就帶有這些清單：**Official docs**、**Discussions**、**
 
 ## 訂閱
 
-- **設定 → 清單 → 更多清單**，然後點選**訂閱**。
+- 在**設定 → 清單 → 更多清單**中點選**訂閱**。
 - 或在 [清單目錄](../../lists.md) 或清單自己的頁面上點選**訂閱**。
-- 或把它的地址貼上到**新增清單**中。GitHub、GitLab、Codeberg、gist 和 Goggle 連結都可以。
+- 或把清單的網址貼到**新增清單**中。GitHub、GitLab、Codeberg、gist 和 Goggle 連結都可以。
 
-託管在 GitHub 以外的清單會請求讀取該網站的許可權。
+託管在 GitHub 以外的清單會請求讀取該網站的權限。
 
 ## 哪些清單可用
 
@@ -26,12 +26,18 @@ Anubis 一開始就帶有這些清單：**Official docs**、**Discussions**、**
 Anubis 無法使用的規則會被跳過並計數。
 
 ::: warning 濾鏡
-有些 Goggle 是*濾鏡*：它們會隱藏所有未列出的網站。Anubis 會給它們標上“lens”。
+有些 Goggle 是*濾鏡*：它們會隱藏所有未列出的網站。Anubis 會給它們標上“濾鏡”。
 :::
 
-## 更新
+## 管理你訂閱的清單
 
-清單大約每天更新一次。**設定 → 清單**中的**全部更新**會立即檢查。
+- **關閉或取消訂閱：** 每個清單都有一個開關和一個取消訂閱按鈕。若要在某個網站上推翻清單，請自己[為該網站排名](./ranking.md)。
+- **排列：** 拖曳清單開頭的圓點，或將焦點放在圓點上並按上下方向鍵。排在前面的清單的標籤在結果中先顯示。
+- **更新：** 清單大約每天更新一次。**全部更新**會立即檢查。
+
+## 向清單建議更改
+
+結果的選單會列出決定其排名的清單。若要向其中一個清單新增網站、移除網站或回報其他問題，請點選**設定 → 清單**中清單旁的**建議更改**。Anubis 會在該清單的問題追蹤器上開啟一個已填好的 issue，在你自己提交之前不會傳送任何內容。
 
 ## 來自其他專案的清單
 
@@ -43,19 +49,3 @@ Anubis 無法使用的規則會被跳過並計數。
 | **DevDocs** | [DevDocs](https://github.com/freeCodeCamp/devdocs) 及其貢獻者（MPL-2.0） | 給約 210 個文件網站加標籤並略微提升。 |
 | **Self-hosted FOSS** | [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted-data) 及其貢獻者（CC BY-SA 3.0） | 給約 1,000 個可自託管的程式加上 FOSS 標籤。 |
 | **Independent wikis** | Kevin Payravi 的 [Indie Wiki Buddy](https://github.com/KevinPayravi/indie-wiki-buddy)（MIT） | 提升獨立 wiki，降低被它們取代的 Fandom wiki。 |
-
-## 關閉或取消訂閱
-
-每個清單都有一個開關和一個取消訂閱按鈕。若要在某個網站上推翻清單，請自己給該網站排名。
-
-## 排列清單
-
-拖曳清單開頭的圓點，或將焦點放在圓點上並按上下方向鍵。排在前面的清單的標籤在結果中先顯示。
-
-## 報告清單中的錯誤
-
-結果的選單會列出決定其排名的清單。點選**設定 → 清單**中清單旁的**建議更改**，選擇**從清單中移除**或**其他**，並說明原因。
-
-## 向清單推薦網站
-
-點選**設定 → 清單**中清單旁的**建議更改**，輸入網站並選擇一個標籤。Anubis 會在該清單的問題追蹤器上開啟一個 issue，並填好要新增的規則。在你自己提交之前不會傳送任何內容。

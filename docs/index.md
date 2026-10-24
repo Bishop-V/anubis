@@ -9,6 +9,10 @@ titleTemplate: Hide, rank, and tag search results
 intro:
   title: Hide, rank, and tag search results
   lead: On the search engine you already use, with lists anyone can publish.
+  # The button for the reader's browser, when the page can tell (home.ts).
+  install:
+    firefox: Add to Firefox
+    chrome: Add to Chrome
   actions:
     - text: Get started
       link: /guide/getting-started
@@ -30,7 +34,7 @@ highlights:
     link: /guide/lists
     linkText: Subscribing to lists
   - title: Remove panels
-    details: Remove AI answers, video panels, and “People also ask”.
+    details: Take AI answers, video panels, and “People also ask” off the page. You pick which.
     link: /guide/clean-up
     linkText: What it removes
 

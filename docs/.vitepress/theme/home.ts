@@ -7,6 +7,15 @@ import ScrollDemo from './scroll-demo';
 // then what else Anubis does, as plain text between hairlines rather than cards;
 // then a short closing section. Links go through withBase, so they work under the
 // site's base path, and the router still follows them without a page load.
+//
+// When the page knows the reader's browser (data-browser, set by browserForInstall in
+// config.ts), its store's button leads, and brand.css steps the other actions back.
+// The page names both stores, so no-JavaScript and server renders stay the same.
+
+const STORES = {
+  firefox: 'https://addons.mozilla.org/addon/anubis-search/',
+  chrome: 'https://chromewebstore.google.com/detail/aninblefigadaigfppckanjgiijcmmhi',
+} as const;
 
 type Action = { text: string; link: string; brand?: boolean };
 type Highlight = { title: string; details: string; link: string; linkText: string };
@@ -17,7 +26,9 @@ export default defineComponent({
   setup() {
     const { frontmatter } = useData();
     return () => {
-      const intro = frontmatter.value.intro as { title: string; lead: string; actions: Action[] } | undefined;
+      const intro = frontmatter.value.intro as
+        | { title: string; lead: string; install?: Record<keyof typeof STORES, string>; actions: Action[] }
+        | undefined;
       const highlights = (frontmatter.value.highlights ?? []) as Highlight[];
       const closing = frontmatter.value.closing as Closing | undefined;
       const highlightsLabel = (frontmatter.value.highlightsLabel as string | undefined) ?? 'What else Anubis does';
@@ -29,7 +40,14 @@ export default defineComponent({
           h(
             'div',
             { class: 'home-actions' },
-            intro.actions.map((a) => h('a', { class: ['home-button', { brand: a.brand }], href: withBase(a.link) }, a.text)),
+            [
+              ...(intro.install
+                ? (Object.keys(STORES) as (keyof typeof STORES)[]).map((store) =>
+                    h('a', { class: ['home-button', 'brand', 'install', `install-${store}`], href: STORES[store] }, intro.install![store]),
+                  )
+                : []),
+              ...intro.actions.map((a) => h('a', { class: ['home-button', { brand: a.brand }], href: withBase(a.link) }, a.text)),
+            ],
           ),
         ]),
         highlights.length

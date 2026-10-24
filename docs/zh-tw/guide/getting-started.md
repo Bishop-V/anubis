@@ -1,43 +1,18 @@
 # 開始使用
 
-::: warning 語言
-如果有對應的翻譯，Anubis 會使用瀏覽器的語言。只有英語得到完整支援；其他語言（包括中文）都是機器翻譯，請謹慎使用。[幫助翻譯](./translate.md) 有更多說明。
-:::
+安裝 Anubis，像平時一樣搜尋，然後隱藏你的第一個網站。
 
-## 在 Firefox 中安裝
+## 安裝
 
-獲取 [Firefox Add-ons 上的 Anubis](https://addons.mozilla.org/addon/anubis-search/)。
+- **Firefox：** [Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/)。
+- **Chrome、Brave、Vivaldi、Opera 和 Edge：** [Chrome Web Store](https://chromewebstore.google.com/detail/aninblefigadaigfppckanjgiijcmmhi)。在 Edge 中，請先選擇**允許來自其他應用商店的擴充套件**。
+- **Android 版 Firefox**（實驗性）：在手機上從 [Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/) 安裝，然後從 Firefox 的選單中開啟 Anubis。Google、DuckDuckGo 和 Bing 可以使用；其他搜尋引擎可能還不行。
 
-## 在 Android 版 Firefox 中安裝
-
-實驗性支援。在手機上從 [Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/) 安裝，然後從 Firefox 的選單中開啟。Google、DuckDuckGo 和 Bing 可以使用；其他搜尋引擎可能還不行。每個結果標題末尾都有一個 ⚖ 按鈕。
-
-## 在 Chrome 中安裝
-
-獲取 [Chrome Web Store 上的 Anubis](https://chromewebstore.google.com/detail/aninblefigadaigfppckanjgiijcmmhi)。
-
-## 其他瀏覽器
-
-Brave、Vivaldi、Opera 和 Edge 都從 [Chrome Web Store](https://chromewebstore.google.com/detail/aninblefigadaigfppckanjgiijcmmhi) 安裝。在 Edge 中，請先選擇**允許來自其他應用商店的擴充套件**。
-
-若要手動載入，請從 [GitHub Releases](https://github.com/Bishop-V/anubis/releases) 下載安裝包，或使用 [Node.js](https://nodejs.org) 22.12 或更新版本自行構建：
-
-```sh
-git clone https://github.com/Bishop-V/anubis.git
-cd anubis
-npm install
-npm run build          # Firefox
-npm run build:chrome   # Chrome、Edge 和其他 Chromium 浏览器
-```
-
-- **Firefox：** 在 `about:debugging` 中選擇**此 Firefox → 臨時載入附加元件**，然後選擇 `.output/firefox-mv2/manifest.json`。Firefox 關閉時它會被移除。
-- **Chrome 或 Edge：** 在 `chrome://extensions` 或 `edge://extensions` 中開啟**開發者模式**，選擇**載入已解壓的擴充套件程式**，然後選擇 `.output/chrome-mv3` 或解壓後的安裝包。
-
-Anubis 不需要工具列按鈕也能正常運作。如果想把按鈕放在工具列上，請開啟拼圖選單並固定它。
+Anubis 不需要工具列按鈕也能正常運作。如果想在 Chrome 中把按鈕放在工具列上，請開啟拼圖選單並固定它。
 
 ## 照常搜尋
 
-在任意 [支援的搜尋引擎](./search-engines.md) 上搜尋。Anubis 一開始就帶有一些清單，為官方文件、討論、參考網站、付費牆、FOSS 工具和 AI 生成的內容加標籤，並把獨立 wiki 提升到 Fandom 之上。
+在任意 [支援的搜尋引擎](./search-engines.md) 上搜尋。Anubis 一開始就帶有一些清單，為官方文件、討論、參考網站、付費牆、FOSS 工具和 AI 生成的內容加標籤。另一個清單把獨立 wiki 提升到 Fandom 之上。
 
 結果上方的摘要會說明 Anubis 做了什麼。在手機上，**詳情**會顯示其餘內容。
 
@@ -45,12 +20,12 @@ Anubis 不需要工具列按鈕也能正常運作。如果想把按鈕放在工�
 
 ## 隱藏一個網站
 
-點選結果左側的圓形按鈕，選擇**隱藏**。該網站的每個結果現在都會在每次搜尋中被隱藏。摘要中的**復原**可以恢復。
+點選結果左側的圓形按鈕，選擇**隱藏**。該網站會從每次搜尋中消失，摘要中的**復原**可以恢復。在手機上，這個按鈕是標題末尾的 ⚖。
 
 ![結果上的選單：隱藏、降低、正常、提升和釘選，下方是標籤](../../img/menu.png)
 
 - 摘要中的**顯示已隱藏**會顯示此頁面上已隱藏的結果。
-- 若要取消隱藏一個網站，請把它顯示出來，開啟它的選單，選擇**正常**。
+- 若要徹底取消隱藏一個網站，請把它顯示出來，開啟它的選單，選擇**正常**。
 - 若要在每個已隱藏的結果處留下一行，請在**設定 → 外觀 → 已隱藏的結果**中選擇**摺疊**。
 
 ![“摺疊”樣式下的已隱藏結果：一行文字和一個“顯示”按鈕](../../img/hidden.png)
@@ -70,7 +45,26 @@ Anubis 不需要工具列按鈕也能正常運作。如果想把按鈕放在工�
 
 ## 下一步
 
-- [為網站排名](./ranking.md)
-- [標籤](./tags.md)
-- [訂閱清單](./lists.md)
-- [移除面板](./clean-up.md)
+- [為網站排名](./ranking.md)：降低、提升或釘選一個網站，並選擇排名涵蓋網站的哪一部分。
+- [標籤](./tags.md)：自己給網站加標籤，並決定每個標籤的作用。
+- [訂閱清單](./lists.md)：新增為你給網站加標籤和排名的清單。
+- [移除面板](./clean-up.md)：從每次搜尋中去掉 AI 回答和其他面板。
+
+## 手動載入
+
+從 [GitHub Releases](https://github.com/Bishop-V/anubis/releases) 下載安裝包，或使用 [Node.js](https://nodejs.org) 22.12 或更新版本自行建置：
+
+```sh
+git clone https://github.com/Bishop-V/anubis.git
+cd anubis
+npm install
+npm run build          # Firefox
+npm run build:chrome   # Chrome、Edge 和其他 Chromium 瀏覽器
+```
+
+- **Firefox：** 在 `about:debugging` 中選擇**此 Firefox → 臨時載入附加元件**，然後選擇 `.output/firefox-mv2/manifest.json`。Firefox 關閉時它會被移除。
+- **Chrome 或 Edge：** 在 `chrome://extensions` 或 `edge://extensions` 中開啟**開發人員模式**，選擇**載入未封裝項目**，然後選擇 `.output/chrome-mv3` 或解壓後的安裝包。
+
+::: warning 語言
+如果有對應的翻譯，Anubis 會使用瀏覽器的語言。只有英語得到完整支援；其他語言（包括中文）都是機器翻譯，請謹慎使用。[幫助翻譯](./translate.md) 有更多說明。
+:::

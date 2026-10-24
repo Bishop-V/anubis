@@ -8,7 +8,7 @@
 | --- | --- |
 | **uBlacklist** | 被屏蔽的网站会被隐藏；高亮变成标签。 |
 | **HOHSER** | 隐藏的仍然隐藏，部分隐藏变成降低，高亮变成标签。 |
-| **Brave Goggle** | discard 被隐藏，boost 被提升，downrank 被降低。 |
+| **Brave Goggle** | `discard` 变为隐藏，`boost` 变为提升，`downrank` 变为降低。 |
 | **域名列表** | 每个域名都被隐藏。 |
 
 需要网站名称以外信息的规则会被跳过。对于别人发布的列表，请 [订阅](./lists.md) 它，以便获得更新。

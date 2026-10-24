@@ -8,6 +8,10 @@ titleTemplate: 隐藏、排名和标记搜索结果
 intro:
   title: 隐藏、排名和标记搜索结果
   lead: 就在你已在使用的搜索引擎上，还有任何人都能发布的列表。
+  # The button for the reader's browser, when the page can tell (home.ts).
+  install:
+    firefox: 添加到 Firefox
+    chrome: 添加到 Chrome
   actions:
     - text: 开始使用
       link: /zh-cn/guide/getting-started
@@ -45,7 +49,7 @@ highlights:
     link: /zh-cn/guide/lists
     linkText: 订阅列表
   - title: 移除面板
-    details: 移除 AI 回答、视频面板和“相关问题”。
+    details: 把 AI 回答、视频面板和“相关问题”从页面上去掉。去掉哪些由你选择。
     link: /zh-cn/guide/clean-up
     linkText: 它会移除什么
 

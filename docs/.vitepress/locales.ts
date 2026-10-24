@@ -30,7 +30,8 @@ interface Words {
   publishing: string;
   publish: string;
   directory: string;
-  about: string;
+  help: string;
+  involved: string;
   engines: string;
   privacyFull: string;
   troubleshooting: string;
@@ -96,6 +97,14 @@ function sidebar(p: string, w: Words) {
       ],
     },
     {
+      text: w.help,
+      items: [
+        { text: w.troubleshooting, link: `${p}/guide/troubleshooting` },
+        { text: w.engines, link: `${p}/guide/search-engines` },
+        { text: w.privacyFull, link: `${p}/guide/privacy` },
+      ],
+    },
+    {
       text: w.publishing,
       items: [
         { text: w.publish, link: `${p}/guide/publish-a-list` },
@@ -104,15 +113,12 @@ function sidebar(p: string, w: Words) {
       ],
     },
     {
-      text: w.about,
+      text: w.involved,
       items: [
-        { text: w.engines, link: `${p}/guide/search-engines` },
-        { text: w.privacyFull, link: `${p}/guide/privacy` },
-        { text: w.troubleshooting, link: `${p}/guide/troubleshooting` },
         { text: w.translate, link: `${p}/guide/translate` },
-        { text: w.experiments, link: '/experiments' },
         { text: w.contributing, link: `${repo}/blob/main/CONTRIBUTING.md` },
         { text: w.developing, link: `${repo}/blob/main/DEVELOPMENT.md` },
+        { text: w.experiments, link: '/experiments' },
       ],
     },
   ];
@@ -189,7 +195,8 @@ const vi: Words = {
   publishing: 'Xuất bản danh sách',
   publish: 'Xuất bản danh sách',
   directory: 'Thư mục danh sách (tiếng Anh)',
-  about: 'Giới thiệu thêm',
+  help: 'Trợ giúp',
+  involved: 'Tham gia',
   engines: 'Công cụ tìm kiếm',
   privacyFull: 'Quyền riêng tư và quyền hạn',
   troubleshooting: 'Khắc phục sự cố',
@@ -246,7 +253,8 @@ const de: Words = {
   publishing: 'Listen veröffentlichen',
   publish: 'Eine Liste veröffentlichen',
   directory: 'Listenverzeichnis (auf Englisch)',
-  about: 'Mehr erfahren',
+  help: 'Hilfe',
+  involved: 'Mitmachen',
   engines: 'Suchmaschinen',
   privacyFull: 'Datenschutz und Berechtigungen',
   troubleshooting: 'Fehlerbehebung',
@@ -303,7 +311,8 @@ const zhCN: Words = {
   publishing: '发布列表',
   publish: '发布列表',
   directory: '列表目录（英文）',
-  about: '更多信息',
+  help: '帮助',
+  involved: '参与',
   engines: '搜索引擎',
   privacyFull: '隐私与权限',
   troubleshooting: '疑难解答',
@@ -360,7 +369,8 @@ const zhTW: Words = {
   publishing: '發布清單',
   publish: '發布清單',
   directory: '清單目錄（英文）',
-  about: '更多資訊',
+  help: '說明',
+  involved: '參與',
   engines: '搜尋引擎',
   privacyFull: '隱私與權限',
   troubleshooting: '疑難排解',

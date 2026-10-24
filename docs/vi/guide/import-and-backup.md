@@ -8,7 +8,7 @@
 | --- | --- |
 | **uBlacklist** | Trang bị chặn sẽ bị ẩn; tô sáng thành nhãn. |
 | **HOHSER** | Ẩn vẫn ẩn, ẩn một phần thành Hạ, tô sáng thành nhãn. |
-| **Brave Goggle** | Discard bị ẩn, boost được nâng, downrank bị hạ. |
+| **Brave Goggle** | `discard` thành Ẩn, `boost` thành Nâng, `downrank` thành Hạ. |
 | **Danh sách tên miền** | Mọi tên miền bị ẩn. |
 
 Quy tắc cần nhiều hơn tên trang web sẽ bị bỏ qua. Với danh sách người khác xuất bản, hãy [đăng ký](./lists.md) để nhận cập nhật của họ.

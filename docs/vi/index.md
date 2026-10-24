@@ -8,6 +8,10 @@ titleTemplate: Ẩn, xếp hạng và gắn nhãn kết quả tìm kiếm
 intro:
   title: Ẩn, xếp hạng và gắn nhãn kết quả tìm kiếm
   lead: Ngay trên công cụ tìm kiếm bạn đang dùng, với các danh sách ai cũng có thể xuất bản.
+  # The button for the reader's browser, when the page can tell (home.ts).
+  install:
+    firefox: Thêm vào Firefox
+    chrome: Thêm vào Chrome
   actions:
     - text: Bắt đầu
       link: /vi/guide/getting-started
@@ -45,7 +49,7 @@ highlights:
     link: /vi/guide/lists
     linkText: Đăng ký danh sách
   - title: Gỡ khung
-    details: Gỡ câu trả lời AI, khung video và “Mọi người cũng hỏi”.
+    details: Bỏ câu trả lời AI, khung video và “Mọi người cũng hỏi” khỏi trang. Bạn chọn bỏ những gì.
     link: /vi/guide/clean-up
     linkText: Anubis gỡ những gì
 

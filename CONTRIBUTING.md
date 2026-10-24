@@ -14,7 +14,7 @@ Issues for reports and ideas, pull requests for changes.
 
 ## Getting set up
 
-Run `nix develop`, or install Node.js 22.12+ and run `npm install`. Then `npm run dev` (Firefox) or `npm run dev:chrome`. [DEVELOPMENT.md](DEVELOPMENT.md#commands) has the other commands, and [Getting started](docs/guide/getting-started.md#other-browsers) how to load a build by hand.
+Run `nix develop`, or install Node.js 22.12+ and run `npm install`. Then `npm run dev` (Firefox) or `npm run dev:chrome`. [DEVELOPMENT.md](DEVELOPMENT.md#commands) has the other commands, and [Getting started](docs/guide/getting-started.md#load-it-by-hand) how to load a build by hand.
 
 ## Making a change
 

@@ -1,6 +1,6 @@
 # Einführung
 
-Anubis ist eine Erweiterung für Firefox und Chrome, die Suchergebnisse verändert. Sie blendet Websites aus, die du nicht willst, wertet die auf, denen du vertraust, versieht Ergebnisse mit Tags und entfernt KI-Antworten und andere Bereiche. Sie funktioniert mit der Suchmaschine, die du ohnehin benutzt.
+Anubis ist eine Erweiterung für Firefox und Chrome, die die Suchergebnisse der Suchmaschine aufräumt, die du ohnehin benutzt. Sie blendet Websites aus, die du nicht willst, wertet die auf, denen du vertraust, versieht Ergebnisse mit Tags, damit du weißt, was du anklickst, und entfernt KI-Antworten und andere Bereiche.
 
 <!-- Maintainer: German translation of docs/guide/introduction.md. HideDemo (docs/.vitepress/theme/hide-demo.ts) draws a site being hidden, and the picture below, for reading on GitHub, is hidden. The picture is a generated screenshot from a mock page in English. -->
 
@@ -16,25 +16,25 @@ Anubis ist eine Erweiterung für Firefox und Chrome, die Suchergebnisse verände
 
 ## Funktionen
 
-- **Jede Website direkt im Ergebnis einstufen.** Blende eine Website über die Schaltfläche neben einem Ergebnis aus, werte sie ab oder auf, oder hefte sie an. [Websites einstufen](./ranking.md)
-- **Tags.** Beschriftungen wie „Official docs“ oder „Paywalled“ unter jedem Titel. Du entscheidest, was jedes Tag bewirkt. [Tags](./tags.md)
-- **Listen, die jeder veröffentlichen kann.** Abonniere Listen, die Websites für dich mit Tags versehen und einstufen, auch Brave Goggles und uBlacklist-Regelsätze. [Listen abonnieren](./lists.md) und [Eine Liste veröffentlichen](./publish-a-list.md)
-- **Bereiche entfernen.** Nimm KI-Antworten, Videobereiche und „Ähnliche Fragen“ aus jeder Suche. [Bereiche entfernen](./clean-up.md)
-- **Mehr als eine Ergebnisseite.** Hole spätere Seiten auf die erste und stufe sie gemeinsam ein. [Mehr Ergebnisse laden](./more-results.md)
-- **Synchronisierung.** Über die Synchronisierung deines Browsers, oder zwischen Firefox und Chrome über einen WebDAV-Server. [Zwischen Computern synchronisieren](./sync.md)
-- **Alte Listen mitnehmen.** Importiere aus uBlacklist, HOHSER oder einem Brave Goggle. [Von anderen Werkzeugen umziehen](./import-and-backup.md)
-- **Leicht rückgängig zu machen.** Eine Zusammenfassung über den Ergebnissen sagt, was Anubis geändert hat, und „Ausgeblendete zeigen“ bringt es zurück.
+- **[Jede Website direkt im Ergebnis einstufen](./ranking.md)**: Blende eine Website über die Schaltfläche neben einem Ergebnis aus, werte sie ab oder auf, oder hefte sie an.
+- **[Tags](./tags.md)**: Beschriftungen wie „Official docs“ oder „Paywalled“ unter jedem Titel. Du entscheidest, was jedes Tag bewirkt.
+- **[Listen, die jeder veröffentlichen kann](./lists.md)**: Abonniere Listen, die Websites für dich mit Tags versehen und einstufen, auch Brave Goggles und uBlacklist-Regelsätze, oder [veröffentliche deine eigene](./publish-a-list.md).
+- **[Bereiche entfernen](./clean-up.md)**: Nimm KI-Antworten, Videobereiche und „Ähnliche Fragen“ aus jeder Suche.
+- **[Mehr als eine Ergebnisseite](./more-results.md)**: Hole spätere Seiten auf die erste und stufe sie gemeinsam ein.
+- **[Synchronisierung](./sync.md)**: Über die Synchronisierung deines Browsers, oder zwischen Firefox und Chrome über einen WebDAV-Server.
+- **[Alte Listen mitnehmen](./import-and-backup.md)**: Importiere aus uBlacklist, HOHSER oder einem Brave Goggle.
+- **Leicht rückgängig zu machen**: Eine Zusammenfassung über den Ergebnissen sagt, was Anubis geändert hat, und **Ausgeblendete zeigen** bringt es zurück.
 
-::: warning Sprachen
-Anubis ist auf Englisch geschrieben. Alle anderen Sprachen, auch Deutsch, sind maschinelle Übersetzungen, die noch niemand geprüft hat: Verwende sie mit Vorsicht. Siehe [Bei der Übersetzung helfen](./translate.md).
-:::
-
-Anubis funktioniert mit Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo und Yandex; Mojeek ist experimentell. Siehe [Suchmaschinen](./search-engines.md).
+Anubis funktioniert mit Google, DuckDuckGo, Bing, Brave Search, Startpage, Ecosia, Kagi, Yahoo und Yandex, und versuchsweise mit Mojeek. Siehe [Suchmaschinen](./search-engines.md).
 
 ## Woher der Name kommt
 
 Im ägyptischen Mythos wog Anubis jedes Herz gegen eine Feder. Websites, die die Wägung nicht bestehen, werden ausgeblendet.
 
-## Stand
+## Anubis holen
 
-Anubis ist jung. Du bekommst es bei [Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/) und im [Chrome Web Store](https://chromewebstore.google.com/detail/aninblefigadaigfppckanjgiijcmmhi); [GitHub Releases](https://github.com/Bishop-V/anubis/releases) hat ebenfalls Pakete. Siehe [Erste Schritte](./getting-started.md), und [Fehlerbehebung](./troubleshooting.md), wenn etwas falsch aussieht.
+[Erste Schritte](./getting-started.md) hat die Links zum Installieren und deine ersten Schritte. Anubis ist jung: Wenn etwas falsch aussieht, siehe [Fehlerbehebung](./troubleshooting.md).
+
+::: warning Sprachen
+Anubis ist auf Englisch geschrieben. Alle anderen Sprachen, auch Deutsch, sind maschinelle Übersetzungen, die noch niemand geprüft hat: Verwende sie mit Vorsicht. Siehe [Bei der Übersetzung helfen](./translate.md).
+:::

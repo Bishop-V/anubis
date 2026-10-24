@@ -1,10 +1,10 @@
 # Removing panels
 
-**Settings → Remove panels** takes the parts you choose off every search page. All start off. Each group's switch turns its parts on or off together; press the group's name to choose its parts one by one.
+**Settings → Remove panels** takes the parts you choose off every search page. They're all off until you turn them on. A group's switch turns all its parts on or off; press the group's name to choose them one by one.
 
 <!-- Maintainer: the generated screenshots on this page come from mock pages. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark images and their descriptions together. -->
 
-![Settings, Clean up](../img/options-cleanup.png)
+![Settings, Remove panels](../img/options-cleanup.png)
 
 | Switch | Removes |
 | --- | --- |
@@ -27,7 +27,7 @@ The summary says what went. **Show hidden** brings it back, outlined.
 
 ## How panels are found
 
-By their headings, in English, French, German, Spanish, Portuguese, Italian, and Dutch. If one isn't removed in your language, [open an issue](https://github.com/Bishop-V/anubis/issues) with its heading.
+By their headings, in English, French, German, Spanish, Portuguese, Italian, and Dutch. If a panel stays in your language, [open an issue](https://github.com/Bishop-V/anubis/issues) with its heading.
 
 ## Stopping AI answers at the source
 

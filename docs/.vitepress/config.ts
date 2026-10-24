@@ -33,6 +33,17 @@ export const darkWhenUnknown = `(() => {
   window.matchMedia = (media) => query(media.replace(/\\(\\s*prefers-color-scheme\\s*:\\s*dark\\s*\\)/g, '(min-width: 0px)'));
 })()`;
 
+// The homepage offers the store for the browser it's opened in (home.ts): Firefox,
+// on a computer or Android, or Chrome and the browsers that look like it and install
+// from the Chrome Web Store as it does. Edge and Opera need a setting changed first,
+// and other phones can't run extensions, so they keep Get started. It runs before the
+// first paint, so the buttons don't change under the reader.
+export const browserForInstall = `(() => {
+  const ua = navigator.userAgent;
+  const browser = /Firefox\\//.test(ua) ? 'firefox' : /Chrome\\//.test(ua) && !/Edg|OPR|Mobile|Android/.test(ua) ? 'chrome' : '';
+  if (browser) document.documentElement.dataset.browser = browser;
+})()`;
+
 export default defineConfig({
   title: 'Anubis',
   description: 'A browser extension that hides, ranks, and tags search results, with lists anyone can publish.',
@@ -44,6 +55,7 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}anubis.svg` }],
     ['script', { id: 'dark-when-unknown' }, darkWhenUnknown],
+    ['script', { id: 'browser-for-install' }, browserForInstall],
   ],
   themeConfig: {
     logo: '/anubis.svg',
@@ -75,6 +87,14 @@ export default defineConfig({
         ],
       },
       {
+        text: 'Help',
+        items: [
+          { text: 'Troubleshooting', link: '/guide/troubleshooting' },
+          { text: 'Search engines', link: '/guide/search-engines' },
+          { text: 'Privacy and permissions', link: '/guide/privacy' },
+        ],
+      },
+      {
         text: 'Publishing lists',
         items: [
           { text: 'Publish a list', link: '/guide/publish-a-list' },
@@ -83,15 +103,12 @@ export default defineConfig({
         ],
       },
       {
-        text: 'About',
+        text: 'Get involved',
         items: [
-          { text: 'Search engines', link: '/guide/search-engines' },
-          { text: 'Privacy and permissions', link: '/guide/privacy' },
-          { text: 'Troubleshooting', link: '/guide/troubleshooting' },
           { text: 'Help translate', link: '/guide/translate' },
-          { text: 'Experiments and decisions', link: '/experiments' },
           { text: 'Contributing', link: `${repo}/blob/main/CONTRIBUTING.md` },
           { text: 'Developing Anubis', link: `${repo}/blob/main/DEVELOPMENT.md` },
+          { text: 'Experiments and decisions', link: '/experiments' },
         ],
       },
     ],

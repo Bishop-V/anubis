@@ -8,7 +8,7 @@
 
 ## 工作原理
 
-Anubis 会向你正在使用的搜索引擎请求下一页，就像它自己的“下一页”链接一样。Startpage、Kagi、Yandex、Mojeek 以及 DuckDuckGo HTML 和 Lite 版尚不支持。
+Anubis 会向你正在使用的搜索引擎请求下一页，就像它自己的“下一页”链接一样。在 Kagi、DuckDuckGo 的 HTML 和 Lite 版以及手机上的 Google 中还不能这样做。完整列表见 [搜索引擎](./search-engines.md)。
 
 ## 何时停止
 
