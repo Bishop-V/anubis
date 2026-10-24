@@ -1,9 +1,11 @@
 import { storage } from '#imports';
+import { NO_CLEANUP } from './cleanup';
 import { t } from './i18n';
 import { normalizeColor } from './listformat';
 import type { TagAction, TagPref } from './matcher';
 import { deepEqual, mergeById, mergeLists, mergeValue, type Side } from './merge';
 import {
+  clampDeeper,
   DEFAULT_PERSONAL,
   DEFAULT_SETTINGS,
   loadPersonal,
@@ -11,8 +13,11 @@ import {
   savePersonal,
   settingsItem,
   tagPrefsItem,
+  type HideStyle,
+  type Palette,
   type Settings,
   type Subscription,
+  type Theme,
 } from './storage';
 import { defaultSubscriptions, saveSubscriptions } from './subscriptions';
 
@@ -80,6 +85,50 @@ function readTagPrefs(value: unknown): Record<string, TagPref> {
   return prefs;
 }
 
+/** The entries of an object that are true or false, as the engine and clean-up switches are stored. */
+function switches(value: unknown): Record<string, boolean> {
+  return isRecord(value) ? (Object.fromEntries(Object.entries(value).filter(([, on]) => typeof on === 'boolean')) as Record<string, boolean>) : {};
+}
+
+const bool = (v: unknown) => (typeof v === 'boolean' ? v : undefined);
+const oneOf =
+  <T>(options: readonly T[]) =>
+  (v: unknown) =>
+    options.find((o) => o === v);
+
+/**
+ * How to read each setting from a file: the value Settings could have saved, or
+ * undefined for the default. Every setting needs one, so a new setting can't be
+ * forgotten here.
+ */
+const READ_SETTING: { [K in keyof Settings]: (v: unknown) => Settings[K] | undefined } = {
+  enabled: bool,
+  theme: oneOf<Theme>(['auto', 'dark', 'light']),
+  palette: oneOf<Palette>(['gold', 'plain']),
+  hideStyle: oneOf<HideStyle>(['remove', 'collapse', 'dim']),
+  rerank: bool,
+  showChips: bool,
+  showSummary: bool,
+  engines: switches,
+  updateHours: (v) => (typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : undefined),
+  deeper: (v) => (typeof v === 'number' ? clampDeeper(v) : undefined),
+  cleanup: (v) => ({ ...NO_CLEANUP, ...switches(v) }),
+  googleWebTab: bool,
+};
+
+/**
+ * Settings from a file, each kept only if it's a value Settings could have saved,
+ * else the default. Search pages read `engines[id]` and `cleanup[kind]`, so a file
+ * with `engines: null` would stop Anubis on every search. Keys this version doesn't
+ * know stay as they are, for a newer version syncing through the same file.
+ */
+function readSettings(value: unknown): Settings {
+  const stored = isRecord(value) ? value : {};
+  const out: Record<string, unknown> = { ...stored };
+  for (const [key, read] of Object.entries(READ_SETTING)) out[key] = read(stored[key]) ?? DEFAULT_SETTINGS[key as keyof Settings];
+  return out as unknown as Settings;
+}
+
 /** A backup or sync file's contents, checked and filled in; throws if it isn't one. */
 export function readBackup(text: string): SyncData {
   let data: unknown;
@@ -91,7 +140,7 @@ export function readBackup(text: string): SyncData {
   if (!isRecord(data) || data.anubis !== 1) throw new Error(t('backupNotBackup'));
   const subs = Array.isArray(data.subscriptions) ? data.subscriptions : undefined;
   return {
-    settings: normalizeSettings(isRecord(data.settings) ? (data.settings as Partial<Settings>) : undefined),
+    settings: readSettings(data.settings),
     tagPrefs: readTagPrefs(data.tagPrefs),
     subscriptions: subs
       ? subs.filter((s): s is Subscription => isRecord(s) && typeof s.id === 'string' && typeof s.url === 'string')

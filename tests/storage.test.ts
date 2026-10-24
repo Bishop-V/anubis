@@ -167,6 +167,41 @@ describe('colours on search pages', () => {
   });
 });
 
+describe('settings from a backup or sync file', () => {
+  const read = (settings: unknown) => readBackup(JSON.stringify({ anubis: 1, settings })).settings;
+
+  it('keeps what Settings saves', () => {
+    const saved = {
+      ...DEFAULT_SETTINGS,
+      enabled: false,
+      theme: 'dark',
+      palette: 'plain',
+      hideStyle: 'dim',
+      engines: { google: false, bing: true },
+      deeper: 5,
+      cleanup: { ...DEFAULT_SETTINGS.cleanup, ai: true },
+      googleWebTab: true,
+    };
+    expect(read(saved)).toEqual(saved);
+  });
+
+  // Search pages read `engines[id]` and `cleanup[kind]`: a null there stopped Anubis on every search.
+  it('drops values search pages couldn’t use', () => {
+    expect(read({ engines: null, cleanup: 'all', theme: 'neon', hideStyle: 7, deeper: 'lots', enabled: 'yes', updateHours: -1, palette: null })).toEqual(DEFAULT_SETTINGS);
+    expect(read({ engines: { google: false, bing: 'off' }, cleanup: { ai: true, videos: 'yes' }, deeper: 99 })).toEqual({
+      ...DEFAULT_SETTINGS,
+      engines: { google: false },
+      cleanup: { ...DEFAULT_SETTINGS.cleanup, ai: true },
+      deeper: 20,
+    });
+  });
+
+  it('keeps settings a newer version added, for it to read back', () => {
+    const newer = { ...DEFAULT_SETTINGS, later: 'x', cleanup: { ...DEFAULT_SETTINGS.cleanup, laterPanels: true } };
+    expect(read(newer)).toEqual(newer);
+  });
+});
+
 describe('tag choices from a backup or sync file', () => {
   const read = (tagPrefs: unknown) => readBackup(JSON.stringify({ anubis: 1, tagPrefs })).tagPrefs;
 
