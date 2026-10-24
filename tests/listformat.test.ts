@@ -150,6 +150,16 @@ describe('slow regular expressions', () => {
     }
   });
 
+  // `/(a|aa)+$/` took 43 ms on 30 a's, and about 1.6 times as long with each one more.
+  it('spots a repeated group whose choices can match the same text', () => {
+    for (const bad of ['(a|aa)+$', '(?:\\w|a)+$', '(a|a)*', '(ab|a)+', '(a|)+', '((?:a|aa)b)+', '(?:x|(?:a|aa))+']) {
+      expect(nestedRepeat(bad), bad).toBe(true);
+    }
+    for (const ok of ['(?:com|org)+', '(a|aa)$', '(\\.|-)+', '(a|aa){2}', 'x(a|aa)?y', 'a|aa+']) {
+      expect(nestedRepeat(ok), ok).toBe(false);
+    }
+  });
+
   it('turns them down as list errors, and keeps the rest of the list', () => {
     const list = parseList('*://*.example.com/*\n/(a+)+$/\n/example\\.net/');
     expect(list.format).toBe('ublacklist');

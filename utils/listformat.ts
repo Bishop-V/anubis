@@ -344,7 +344,6 @@ export function parseList(text: string, defer = false): ParsedList {
   return list;
 }
 
-/** Goggles/Anubis instruction: `pattern$option,option=value`. */
 /** Whether `options` (`,key=value` pairs) give a tag that isn't one of `ids`. */
 function usesTagOtherThan(options: string, ids: Set<string>): boolean {
   for (let at = options.indexOf(',tag='); at !== -1; at = options.indexOf(',tag=', at + 5)) {
@@ -378,6 +377,7 @@ export function fastDomain(value: string): string | undefined {
   return /[a-z]/.test(last) && !/^0x[0-9a-f]*$/.test(last) ? value : undefined;
 }
 
+/** Goggles/Anubis instruction: `pattern$option,option=value`. */
 export function parseGoggleLine(line: string, lineNo: number): Rule | 'lens' | string {
   if (line.length > 500) return t('lineTooLong', 500);
   const rule = emptyRule(lineNo, line);
@@ -489,15 +489,29 @@ export function compileGogglePattern(pattern: string): RegExp | string {
 const MAX_REGEX = 1000;
 
 /**
+ * Whether a group's choices are plain words none of which starts another (`com|org`):
+ * at most one of them can match in any place, so repeating the group can't
+ * backtrack. `a|aa`, `\w|a`, or an empty choice can.
+ */
+function distinctChoices(group: string): boolean {
+  const choices = group.replace(/^\?(?::|=|!|<=|<!|<[^>]*>)/, '').split('|');
+  if (!choices.every((c) => /^(?:[\w -]|\\[^\w\s])+$/.test(c))) return false;
+  const words = choices.map((c) => c.replace(/\\(.)/g, '$1').toLowerCase());
+  return words.every((a, i) => words.every((b, j) => i === j || !b.startsWith(a)));
+}
+
+/**
  * Whether a regular expression repeats a group that repeats something inside, like
- * `(a+)+` or `(\w+\s?)*`. On the wrong address those backtrack for seconds, and
- * rules run on every result of every search, in the page. Judged by structure
- * alone, so it also turns down a few safe patterns like `([a-z]+\.)*`; none of
- * the directory's lists uses a repeated group at all.
+ * `(a+)+` or `(\w+\s?)*`, or that offers choices which can match the same text, like
+ * `(a|aa)+`. On the wrong address those backtrack for seconds, and rules run on
+ * every result of every search, in the page. Judged by structure alone, so it also
+ * turns down a few safe patterns like `([a-z]+\.)*`; none of the directory's lists
+ * uses a repeated group at all.
  */
 export function nestedRepeat(source: string): boolean {
-  // For each open group: whether something inside it repeats.
-  const groups: boolean[] = [];
+  // For each open group: where its contents start, whether something inside it
+  // repeats, and whether it offers choices.
+  const groups: { start: number; repeats: boolean; choices: boolean }[] = [];
   // Whether the atom just read is a group with a repeat inside.
   let afterRepeatingGroup = false;
   for (let i = 0; i < source.length; i++) {
@@ -511,20 +525,23 @@ export function nestedRepeat(source: string): boolean {
       if (source[i] === ']') i++;
       while (i < source.length && source[i] !== ']') i += source[i] === '\\' ? 2 : 1;
     } else if (ch === '(') {
-      groups.push(false);
+      groups.push({ start: i + 1, repeats: false, choices: false });
       // (?:…), (?=…), (?<name>…): that ? isn't a quantifier.
       if (source[i + 1] === '?') i++;
     } else if (ch === ')') {
-      const inner = groups.pop() ?? false;
-      if (inner && groups.length) groups[groups.length - 1] = true;
+      const group = groups.pop();
+      const inner = !!group && (group.repeats || (group.choices && !distinctChoices(source.slice(group.start, i))));
+      if (inner && groups.length) groups[groups.length - 1]!.repeats = true;
       afterRepeatingGroup = inner;
       continue;
+    } else if (ch === '|') {
+      if (groups.length) groups[groups.length - 1]!.choices = true;
     } else {
       // A quantifier: *, +, and {n,} or {n,m} repeat; ? and {n} don't.
       const range = ch === '{' ? /^\{(\d+)(,(\d*))?\}/.exec(source.slice(i)) : null;
       const repeats = ch === '*' || ch === '+' || (!!range && range[2] !== undefined && (range[3] === '' || Number(range[3]) > Number(range[1])));
       if (repeats && afterRepeatingGroup) return true;
-      if (repeats && groups.length) groups[groups.length - 1] = true;
+      if (repeats && groups.length) groups[groups.length - 1]!.repeats = true;
       if (range) i += range[0].length - 1;
       // A lazy quantifier's ?.
       if ((repeats || ch === '?' || range) && source[i + 1] === '?') i++;
