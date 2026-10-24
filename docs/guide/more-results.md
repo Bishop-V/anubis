@@ -4,11 +4,11 @@
 
 ## Automatically
 
-**Settings → Appearance → Extra pages per search** loads extra pages on every search: 3 by default, up to 20. Set it to 0 to load more only on request. Each page adds about a second, and too many can trigger a robot check.
+**Settings → Appearance → Extra pages per search** loads extra pages on every search: 3 by default, up to 20. Set it to 0 to load more only when you ask. Each page adds about a second, and too many can bring a robot check.
 
 ## How it works
 
-Anubis asks the engine you're on for its next page, as its own "Next" link would. Startpage, Kagi, Yandex, Mojeek, and DuckDuckGo HTML and Lite aren't supported yet.
+Anubis asks the engine you're on for its next page, as its own "Next" link would. It can't yet on Kagi, on DuckDuckGo's HTML and Lite pages, or on Google on a phone. See [Search engines](./search-engines.md).
 
 ## When it stops
 

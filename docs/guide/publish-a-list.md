@@ -1,6 +1,6 @@
 # Publish a list
 
-A list is a text file in a public repository. Issues and pull requests are how people contribute.
+A list is a text file in a public repository, and people contribute to it with issues and pull requests.
 
 ## 1. Write it
 
@@ -17,7 +17,7 @@ $site=developer.mozilla.org,tag=docs,boost=1 # MDN publishes first-party web pla
 $site=docs.python.org,tag=docs,boost=1 # This is Python's official documentation.
 ```
 
-Give each tagged site a `#` comment saying why. Lists that only tag are friendliest: subscribers choose what tags do. Reuse [existing tag ids](../list-format.md#tags) where they fit, and never change one once published. See the [list format](../list-format.md).
+Give each tagged site a `#` comment saying why it fits. Lists that only tag are friendliest: subscribers choose what tags do. Reuse [existing tag ids](../list-format.md#tags) where they fit, and never change one once published. See the [list format](../list-format.md).
 
 ## 2. Put it online
 
@@ -27,9 +27,9 @@ Add it to a public repository on GitHub, GitLab, or Codeberg, or a gist. A name 
 
 People paste it into **Settings → Lists → Add a list**, or use a one-click [subscribe link](../subscribe.md#make-a-subscribe-link).
 
-## 4. Hear about mistakes, and let people suggest sites
+## 4. Let people suggest changes
 
-Set `! issues:` to your tracker, and subscribers get a **Suggest changes** button that opens a filled-in issue there.
+Set `! issues:` to your tracker. Subscribers then get a **Suggest changes** button that opens a filled-in issue there.
 
 ## 5. Add it to the directory
 

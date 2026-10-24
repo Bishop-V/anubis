@@ -4,11 +4,11 @@
 
 ## Automatisch
 
-**Einstellungen → Darstellung → Zusätzliche Seiten pro Suche** lädt bei jeder Suche zusätzliche Seiten: standardmäßig 3, höchstens 20. Mit 0 lädst du nur auf Wunsch mehr. Jede Seite kostet etwa eine Sekunde, und zu viele können eine Roboterprüfung auslösen.
+**Einstellungen → Darstellung → Zusätzliche Seiten pro Suche** lädt bei jeder Suche zusätzliche Seiten: standardmäßig 3, höchstens 20. Mit 0 lädst du nur dann mehr, wenn du darum bittest. Jede Seite kostet etwa eine Sekunde, und zu viele können eine Roboterprüfung auslösen.
 
 ## So funktioniert es
 
-Anubis fragt die Suchmaschine, auf der du bist, nach ihrer nächsten Seite, so wie ihr eigener Link „Weiter“. Startpage, Kagi, Yandex, Mojeek sowie DuckDuckGo HTML und Lite werden noch nicht unterstützt.
+Anubis fragt die Suchmaschine, auf der du bist, nach ihrer nächsten Seite, so wie ihr eigener Link „Weiter“. Bei Kagi, bei den Seiten HTML und Lite von DuckDuckGo und bei Google auf dem Smartphone geht das noch nicht. [Suchmaschinen](./search-engines.md) hat die ganze Liste.
 
 ## Wann es aufhört
 

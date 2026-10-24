@@ -1,6 +1,6 @@
 # Syncing between computers
 
-Your sites, settings, tag choices, and subscriptions sync through your browser. To sync between Firefox and Chrome, connect a WebDAV server. Subscribed lists aren't copied; each browser downloads its own.
+Your sites, settings, tag choices, and subscriptions sync through your browser on their own. To sync between Firefox and Chrome, connect a WebDAV server. Subscribed lists aren't copied; each browser downloads its own.
 
 ## Browser sync
 
@@ -13,7 +13,7 @@ It only reaches the same browser on other computers. Firefox for Android doesn't
 
 ## Between browsers
 
-Connect the same WebDAV storage in each browser. Anubis keeps one file there, `anubis-sync.json`.
+Connect each browser to the same WebDAV storage. Anubis keeps one file there, `anubis-sync.json`.
 
 ### Get an address and a password
 
@@ -38,7 +38,7 @@ Any WebDAV server over `https://` works.
 3. Press **Connect**, and allow the browser's prompts.
 4. Repeat in your other browser.
 
-The file is encrypted with AES-256-GCM, so the server can't read it. If you forget the passphrase, the server copy can't be recovered, but each browser keeps its data.
+The file is encrypted with AES-256-GCM, so the server can't read it. A forgotten passphrase can't be recovered, but each browser keeps its own data.
 
 ### Change the passphrase
 
@@ -47,8 +47,6 @@ Use **Change encryption passphrase** in **Settings → Sync**, then enter the ne
 ### When it syncs
 
 A few seconds after a change, when the browser starts, and when you search, at most every 5 minutes. **Sync now** syncs straight away.
-
-### Changes from both browsers
 
 Changes from both browsers are merged. If both change the same thing, the last to sync wins.
 

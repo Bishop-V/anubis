@@ -18,7 +18,7 @@ This use complies with the Chrome Web Store User Data Policy, including its Limi
 
 Only these:
 
-- **The lists you subscribe to**, about once a day. Anubis starts with seven lists hosted on GitHub; turn them off in **Settings → Lists**.
+- **The lists you subscribe to**, about once a day. Anubis starts with nine lists hosted on GitHub; turn them off in **Settings → Lists**.
 - **The list directory** on GitHub, when you open **Settings → Lists**.
 - **The search engine you're on**, for [Load more results](./more-results.md). On Ecosia, site icons for those results come from Ecosia's icon service.
 - **Your WebDAV server**, if you connect one. It receives your sites, settings, tag choices, and subscriptions, encrypted by default. Without encryption, its operator can read them.

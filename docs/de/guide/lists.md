@@ -2,7 +2,7 @@
 
 Eine Liste versieht Websites für dich mit Tags, stuft sie ein oder blendet sie aus. Jeder kann eine als Textdatei im Web veröffentlichen.
 
-Anubis startet mit diesen Listen: **Official docs**, **Discussions**, **Reference**, **Paywalls**, **FOSS tools**, **AI content** und **Independent wikis**. Schalte jede unter **Einstellungen → Listen** aus.
+Anubis startet mit neun Listen. Die meisten versehen offizielle Dokumentation, Diskussionen, Nachschlagewerke, Paywalls, freie Software oder KI-Inhalte mit Tags; eine wertet unabhängige Wikis über Fandom auf. Das [Listenverzeichnis](../../lists.md) (auf Englisch) markiert sie. Schalte jede unter **Einstellungen → Listen** aus.
 
 <!-- Maintainer: German translation of docs/guide/lists.md. The screenshots are the English ones. -->
 
@@ -10,11 +10,11 @@ Anubis startet mit diesen Listen: **Official docs**, **Discussions**, **Referenc
 
 ## Abonnieren
 
-- **Einstellungen → Listen → Weitere Listen**, dann **Abonnieren**.
-- Oder **Abonnieren** im [Listenverzeichnis](../../lists.md) oder auf der eigenen Seite einer Liste.
-- Oder füge ihre Adresse unter **Liste hinzufügen** ein. Links zu GitHub, GitLab, Codeberg, Gists und Goggles funktionieren.
+- Drücke unter **Einstellungen → Listen → Weitere Listen** auf **Abonnieren**.
+- Oder drücke **Abonnieren** im [Listenverzeichnis](../../lists.md) oder auf der eigenen Seite einer Liste.
+- Oder füge die Adresse einer Liste unter **Liste hinzufügen** ein. Links zu GitHub, GitLab, Codeberg, Gists und Goggles funktionieren.
 
-Listen außerhalb von GitHub bitten um die Erlaubnis, diese eine Website zu lesen.
+Eine Liste außerhalb von GitHub bittet um die Erlaubnis, diese eine Website zu lesen.
 
 ## Welche Listen funktionieren
 
@@ -26,12 +26,18 @@ Listen außerhalb von GitHub bitten um die Erlaubnis, diese eine Website zu lese
 Regeln, die Anubis nicht nutzen kann, werden übersprungen und gezählt.
 
 ::: warning Linsen
-Manche Goggles sind *Linsen*: Sie blenden jede Website aus, die sie nicht nennen. Anubis markiert sie mit „lens“.
+Manche Goggles sind *Linsen*: Sie blenden jede Website aus, die sie nicht nennen. Anubis markiert sie mit „Linse“.
 :::
 
-## Aktualisierungen
+## Deine Listen verwalten
 
-Listen werden etwa einmal am Tag aktualisiert. **Alle aktualisieren** unter **Einstellungen → Listen** prüft sofort.
+- **Ausschalten oder abbestellen:** Jede Liste hat einen Schalter und eine Schaltfläche zum Abbestellen. Um eine Liste bei einer Website zu überstimmen, [stufe die Website](./ranking.md) selbst ein.
+- **Ordnen:** Ziehe eine Liste an den Punkten an ihrem Anfang, oder setze den Fokus darauf und drücke die Pfeiltasten nach oben und unten. Tags aus weiter oben stehenden Listen kommen bei Ergebnissen zuerst.
+- **Aktualisieren:** Listen werden etwa einmal am Tag aktualisiert. **Alle aktualisieren** prüft sofort.
+
+## Änderungen an einer Liste vorschlagen
+
+Das Menü eines Ergebnisses nennt die Listen hinter seiner Einstufung. Um einer davon eine Website hinzuzufügen, eine zu entfernen oder etwas anderes zu melden, drücke **Änderungen vorschlagen** neben der Liste unter **Einstellungen → Listen**. Anubis öffnet im Tracker der Liste ein ausgefülltes Issue, und nichts wird gesendet, bis du es dort absendest.
 
 ## Listen aus anderen Projekten
 
@@ -43,19 +49,3 @@ Diese werden jede Woche aus den Daten anderer Projekte neu erstellt. Um eine zu 
 | **DevDocs** | [DevDocs](https://github.com/freeCodeCamp/devdocs) von seinen Mitwirkenden (MPL-2.0) | Markiert rund 210 Dokumentationsseiten und wertet sie leicht auf. |
 | **Self-hosted FOSS** | [awesome-selfhosted](https://github.com/awesome-selfhosted/awesome-selfhosted-data) von seinen Mitwirkenden (CC BY-SA 3.0) | Markiert rund 1.000 selbst hostbare Programme als FOSS. |
 | **Independent wikis** | [Indie Wiki Buddy](https://github.com/KevinPayravi/indie-wiki-buddy) von Kevin Payravi (MIT) | Wertet unabhängige Wikis auf und die Fandom-Wikis ab, die sie ersetzen. |
-
-## Ausschalten oder abbestellen
-
-Jede Liste hat einen Schalter und eine Schaltfläche zum Abbestellen. Um eine Liste bei einer Website zu überstimmen, stufe die Website selbst ein.
-
-## Listen ordnen
-
-Ziehe eine Liste an den Punkten an ihrem Anfang, oder setze den Fokus darauf und drücke die Pfeiltasten nach oben und unten. Tags aus weiter oben stehenden Listen kommen bei Ergebnissen zuerst.
-
-## Einen Fehler in einer Liste melden
-
-Das Menü eines Ergebnisses nennt die Listen hinter seiner Einstufung. Drücke **Änderungen vorschlagen** neben der Liste unter **Einstellungen → Listen**, wähle **Von der Liste entfernen** oder **Etwas anderes** und sag, warum.
-
-## Einer Liste eine Website vorschlagen
-
-Drücke **Änderungen vorschlagen** neben der Liste unter **Einstellungen → Listen**, gib die Website ein und wähle ein Tag. Anubis öffnet im Tracker der Liste ein Issue, in dem die neue Regel schon eingetragen ist. Nichts wird gesendet, bis du es dort absendest.

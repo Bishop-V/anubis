@@ -1,26 +1,26 @@
 # Search engines
 
-Turn any engine off in **Settings → Search engines**.
+Anubis works on these engines. Turn any of them off in **Settings → Search engines**.
 
-| Engine | Support | Load more results |
-| --- | --- | --- |
-| Google | Supported | Yes |
-| DuckDuckGo | Supported | Yes |
-| DuckDuckGo HTML and Lite | Supported | No |
-| Bing | Supported | Yes* |
-| Brave Search | Supported | Yes |
-| Startpage | Supported | Yes |
-| Ecosia | Supported | Yes* |
-| Kagi | Supported | No |
-| Yahoo | Supported | Yes* |
-| Yandex | Supported | Yes* |
-| Mojeek | Experimental | Yes |
-
-**Supported** engines have been checked on their live sites; **experimental** ones haven't yet. On Firefox for Android, Google, DuckDuckGo, and Bing work.
+| Engine | Load more results |
+| --- | --- |
+| Google | Yes, except on a phone |
+| DuckDuckGo | Yes |
+| DuckDuckGo HTML and Lite | No |
+| Bing | Yes\* |
+| Brave Search | Yes |
+| Startpage | Yes |
+| Ecosia | Yes\* |
+| Kagi | No |
+| Yahoo | Yes\* |
+| Yandex | Yes\* |
+| Mojeek (experimental) | Yes |
 
 \* These sometimes ask for a [robot check](./more-results.md#robot-checks) before the next page.
 
-Web results are weighed everywhere. Images, Videos, and News tabs are tagged and hidden but not reordered, on most engines. Shopping tabs are left alone.
+Every engine but Mojeek has been checked on its live site. On Firefox for Android, Google, DuckDuckGo, and Bing work.
+
+Web results are weighed everywhere. On most engines, the Images, Videos, and News tabs are tagged and hidden but not reordered. Shopping tabs are left alone.
 
 ## How results are found
 

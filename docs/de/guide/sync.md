@@ -46,8 +46,6 @@ Verwende **Verschlüsselungs-Passphrase ändern** unter **Einstellungen → Sync
 
 Ein paar Sekunden nach einer Änderung, beim Start des Browsers und bei einer Suche, höchstens alle 5 Minuten. **Jetzt synchronisieren** synchronisiert sofort.
 
-### Änderungen aus beiden Browsern
-
 Änderungen aus beiden Browsern werden zusammengeführt. Ändern beide dasselbe, gewinnt der, der zuletzt synchronisiert.
 
 ### Trennen

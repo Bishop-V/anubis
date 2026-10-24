@@ -22,7 +22,7 @@ The button left of each result shows its ranking and opens the menu. On images a
 | **Raise** | Up five places. Press again for ten, and a third time to undo. |
 | **Pin** | To the top. |
 
-Raise and Lower add to what your lists and tags do. Pin and Hide override them. **Undo** in the summary reverses your last change.
+Raise and Lower add to what your lists and tags do; Pin and Hide override them. **Undo** in the summary reverses your last change.
 
 ## How much of the site
 
@@ -30,7 +30,7 @@ A ranking covers the site and its subdomains. The name at the top of the menu pi
 
 ## Reranking
 
-Anubis only reorders results already on the page. To reach later pages, use [Load more results](./more-results.md). To keep the engine's order, turn off **Settings → Appearance → Rerank results**.
+Anubis reorders only the results already on the page. To rank later pages too, use [Load more results](./more-results.md). To keep the engine's order, turn off **Settings → Appearance → Rerank results**.
 
 ## Hidden results
 
@@ -42,6 +42,6 @@ Anubis only reorders results already on the page. To reach later pages, use [Loa
 
 ## Your sites
 
-**Settings → Your sites** lists every site you've ranked. Edit them there, one by one or as text. The list syncs with your browser and can be [published](./publish-a-list.md).
+**Settings → Your sites** lists every site you've ranked. Edit them one by one or as text. The list syncs with your browser, and you can [publish it](./publish-a-list.md).
 
 ![Settings, Your sites](../img/options-sites.png)

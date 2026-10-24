@@ -8,7 +8,7 @@
 | --- | --- |
 | **uBlacklist** | Blockierte Websites ausgeblendet; Hervorhebungen werden Tags. |
 | **HOHSER** | Ausgeblendet bleibt ausgeblendet, teilweise ausgeblendet wird Abwerten, Hervorhebungen werden Tags. |
-| **Brave Goggle** | Discards ausgeblendet, Boosts aufgewertet, Downranks abgewertet. |
+| **Brave Goggle** | `discard` wird Ausblenden, `boost` Aufwerten und `downrank` Abwerten. |
 | **Eine Liste von Domains** | Jede Domain ausgeblendet. |
 
 Regeln, die mehr als einen Websitenamen brauchen, werden übersprungen. Eine Liste, die jemand anderes veröffentlicht, [abonnierst](./lists.md) du besser, um ihre Aktualisierungen zu bekommen.

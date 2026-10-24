@@ -27,9 +27,9 @@ $site=docs.python.org,tag=docs,boost=1 # This is Python's official documentation
 
 大家可以把它粘贴到**设置 → 列表 → 添加列表**中，或使用一键 [订阅链接](../../subscribe.md#make-a-subscribe-link)。
 
-## 4. 了解错误，接受推荐
+## 4. 让大家建议更改
 
-把 `! issues:` 设为你的问题跟踪器，订阅者就会看到**建议更改**按钮，点击后会在那里打开一个填好内容的 issue。
+把 `! issues:` 设为你的问题跟踪器。订阅者就会看到**建议更改**按钮，点击后会在那里打开一个填好内容的 issue，用来添加网站或报告错误。
 
 ## 5. 加入目录
 

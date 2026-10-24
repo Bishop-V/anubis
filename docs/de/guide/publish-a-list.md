@@ -27,9 +27,9 @@ Leg sie in ein öffentliches Repository auf GitHub, GitLab oder Codeberg, oder i
 
 Andere fügen ihn unter **Einstellungen → Listen → Liste hinzufügen** ein oder verwenden einen [Abonnieren-Link](../../subscribe.md#make-a-subscribe-link) mit einem Klick.
 
-## 4. Von Fehlern erfahren und Vorschläge annehmen
+## 4. Änderungsvorschläge ermöglichen
 
-Setze `! issues:` auf deinen Tracker, dann bekommen Abonnenten eine Schaltfläche **Änderungen vorschlagen**, die dort ein vorausgefülltes Issue öffnet.
+Setze `! issues:` auf deinen Tracker. Abonnenten bekommen dann eine Schaltfläche **Änderungen vorschlagen**, die dort ein vorausgefülltes Issue öffnet, um eine Website hinzuzufügen oder einen Fehler zu melden.
 
 ## 5. Ins Verzeichnis aufnehmen
 

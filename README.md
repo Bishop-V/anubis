@@ -25,7 +25,7 @@ Works on Google, DuckDuckGo, Bing, and [more](https://bishop-v.github.io/anubis/
 
 - **Firefox:** [Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/), or the [latest build](https://github.com/Bishop-V/anubis/releases/latest/download/anubis-firefox.zip).
 - **Chrome, Edge, and other Chromium browsers:** [Chrome Web Store](https://chromewebstore.google.com/detail/aninblefigadaigfppckanjgiijcmmhi), or the [latest build](https://github.com/Bishop-V/anubis/releases/latest/download/anubis-chrome.zip).
-- **Firefox for Android (experimental):** [Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/). See [Getting started](https://bishop-v.github.io/anubis/guide/getting-started#install-in-firefox-for-android).
+- **Firefox for Android (experimental):** [Firefox Add-ons](https://addons.mozilla.org/addon/anubis-search/). See [Getting started](https://bishop-v.github.io/anubis/guide/getting-started#install).
 
 ## Develop
 

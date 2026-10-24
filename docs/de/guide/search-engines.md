@@ -1,26 +1,26 @@
 # Suchmaschinen
 
-Schalte jede Suchmaschine unter **Einstellungen → Suchmaschinen** aus.
+Anubis funktioniert mit diesen Suchmaschinen. Schalte jede unter **Einstellungen → Suchmaschinen** aus.
 
-| Suchmaschine | Unterstützung | Mehr Ergebnisse laden |
-| --- | --- | --- |
-| Google | Unterstützt | Ja |
-| DuckDuckGo | Unterstützt | Ja |
-| DuckDuckGo HTML und Lite | Unterstützt | Nein |
-| Bing | Unterstützt | Ja* |
-| Brave Search | Unterstützt | Ja |
-| Startpage | Unterstützt | Ja |
-| Ecosia | Unterstützt | Ja* |
-| Kagi | Unterstützt | Nein |
-| Yahoo | Unterstützt | Ja* |
-| Yandex | Unterstützt | Ja* |
-| Mojeek | Experimentell | Ja |
-
-**Unterstützte** Suchmaschinen wurden auf ihren echten Websites geprüft, **experimentelle** noch nicht. In Firefox für Android funktionieren Google, DuckDuckGo und Bing.
+| Suchmaschine | Mehr Ergebnisse laden |
+| --- | --- |
+| Google | Ja, außer auf dem Smartphone |
+| DuckDuckGo | Ja |
+| DuckDuckGo HTML und Lite | Nein |
+| Bing | Ja\* |
+| Brave Search | Ja |
+| Startpage | Ja |
+| Ecosia | Ja\* |
+| Kagi | Nein |
+| Yahoo | Ja\* |
+| Yandex | Ja\* |
+| Mojeek (experimentell) | Ja |
 
 \* Diese verlangen manchmal eine [Roboterprüfung](./more-results.md) vor der nächsten Seite.
 
-Webergebnisse werden überall gewogen. Die Tabs Bilder, Videos und News werden bei den meisten Suchmaschinen mit Tags versehen und ausgeblendet, aber nicht neu geordnet. Shopping-Tabs bleiben unberührt.
+Jede Suchmaschine außer Mojeek wurde auf ihrer echten Website geprüft. In Firefox für Android funktionieren Google, DuckDuckGo und Bing.
+
+Webergebnisse werden überall gewogen. Bei den meisten Suchmaschinen werden die Tabs Bilder, Videos und News mit Tags versehen und ausgeblendet, aber nicht neu geordnet. Shopping-Tabs bleiben unberührt.
 
 ## Wie Ergebnisse gefunden werden
 

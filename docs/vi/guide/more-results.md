@@ -8,7 +8,7 @@
 
 ## Cách hoạt động
 
-Anubis xin công cụ tìm kiếm bạn đang dùng trang tiếp theo, như liên kết “Next” của chính nó. Startpage, Kagi, Yandex, Mojeek, cùng DuckDuckGo HTML và Lite chưa được hỗ trợ.
+Anubis xin công cụ tìm kiếm bạn đang dùng trang tiếp theo, như liên kết “Next” của chính nó. Việc này chưa làm được trên Kagi, trên các trang HTML và Lite của DuckDuckGo, và trên Google ở điện thoại. [Công cụ tìm kiếm](./search-engines.md) có danh sách đầy đủ.
 
 ## Khi nào nó dừng
 

@@ -18,7 +18,7 @@ Việc sử dụng này tuân thủ Chính sách dữ liệu người dùng củ
 
 Chỉ những nơi sau:
 
-- **Các danh sách bạn đăng ký**, khoảng mỗi ngày một lần. Anubis bắt đầu với bảy danh sách lưu trên GitHub; tắt chúng trong **Cài đặt → Danh sách**.
+- **Các danh sách bạn đăng ký**, khoảng mỗi ngày một lần. Anubis bắt đầu với chín danh sách lưu trên GitHub; tắt chúng trong **Cài đặt → Danh sách**.
 - **Thư mục danh sách** trên GitHub, khi bạn mở **Cài đặt → Danh sách**.
 - **Công cụ tìm kiếm bạn đang dùng**, cho [Tải thêm kết quả](./more-results.md). Trên Ecosia, biểu tượng trang web của các kết quả đó đến từ dịch vụ biểu tượng của Ecosia.
 - **Máy chủ WebDAV của bạn**, nếu bạn kết nối. Nó nhận trang web, cài đặt, lựa chọn nhãn và đăng ký của bạn, được mã hóa theo mặc định. Không mã hóa thì người vận hành đọc được.

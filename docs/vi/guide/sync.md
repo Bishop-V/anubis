@@ -46,8 +46,6 @@ Dùng **Đổi cụm mật khẩu mã hóa** trong **Cài đặt → Đồng b�
 
 Vài giây sau một thay đổi, khi trình duyệt khởi động, và khi bạn tìm kiếm, tối đa mỗi 5 phút. **Đồng bộ hóa ngay** đồng bộ ngay lập tức.
 
-### Thay đổi từ cả hai trình duyệt
-
 Thay đổi từ cả hai trình duyệt được gộp lại. Nếu cả hai đổi cùng một thứ, trình duyệt đồng bộ sau cùng thắng.
 
 ### Ngắt kết nối

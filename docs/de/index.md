@@ -8,6 +8,10 @@ titleTemplate: Suchergebnisse ausblenden, einstufen und mit Tags versehen
 intro:
   title: Suchergebnisse ausblenden, einstufen und mit Tags versehen
   lead: Direkt in der Suchmaschine, die du ohnehin benutzt, mit Listen, die jeder veröffentlichen kann.
+  # The button for the reader's browser, when the page can tell (home.ts).
+  install:
+    firefox: Zu Firefox hinzufügen
+    chrome: Zu Chrome hinzufügen
   actions:
     - text: Loslegen
       link: /de/guide/getting-started
@@ -45,7 +49,7 @@ highlights:
     link: /de/guide/lists
     linkText: Listen abonnieren
   - title: Bereiche entfernen
-    details: Entferne KI-Antworten, Videobereiche und „Ähnliche Fragen“.
+    details: Nimm KI-Antworten, Videobereiche und „Ähnliche Fragen“ von der Seite. Du wählst, welche.
     link: /de/guide/clean-up
     linkText: Was entfernt wird
 

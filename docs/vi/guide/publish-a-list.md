@@ -27,9 +27,9 @@ Thêm nó vào một kho mã công khai trên GitHub, GitLab hoặc Codeberg, ho
 
 Mọi người dán nó vào **Cài đặt → Danh sách → Thêm danh sách**, hoặc dùng [liên kết đăng ký](../../subscribe.md#make-a-subscribe-link) một lần nhấn.
 
-## 4. Nhận báo lỗi và đề xuất trang web
+## 4. Cho phép đề xuất thay đổi
 
-Đặt `! issues:` thành trình theo dõi của bạn, và người đăng ký sẽ có nút **Đề xuất thay đổi** mở một issue điền sẵn tại đó.
+Đặt `! issues:` thành trình theo dõi vấn đề của bạn. Người đăng ký sẽ có nút **Đề xuất thay đổi** mở một issue điền sẵn tại đó, để thêm một trang web hoặc báo lỗi.
 
 ## 5. Thêm vào thư mục
 

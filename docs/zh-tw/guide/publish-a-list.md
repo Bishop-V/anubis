@@ -1,4 +1,4 @@
-# 釋出清單
+# 發布清單
 
 清單是公開程式碼倉庫中的一個文字檔案。大家透過 issue 和Pull Request來貢獻。
 
@@ -17,7 +17,7 @@ $site=developer.mozilla.org,tag=docs,boost=1 # MDN publishes first-party web pla
 $site=docs.python.org,tag=docs,boost=1 # This is Python's official documentation.
 ```
 
-給每個加了標籤的網站寫一條 `#` 註釋說明原因。只加標籤的清單最友好：訂閱者自己決定標籤的作用。在合適的地方複用 [已有的標籤 ID](../../list-format.md#tags)，ID 一旦釋出就不要更改。參見 [清單格式](../../list-format.md)（英文）。
+給每個加了標籤的網站寫一條 `#` 註釋說明原因。只加標籤的清單最友好：訂閱者自己決定標籤的作用。在合適的地方複用 [已有的標籤 ID](../../list-format.md#tags)，ID 一旦發布就不要更改。參見 [清單格式](../../list-format.md)（英文）。
 
 ## 2. 放到網上
 
@@ -27,9 +27,9 @@ $site=docs.python.org,tag=docs,boost=1 # This is Python's official documentation
 
 大家可以把它貼上到**設定 → 清單 → 新增清單**中，或使用一鍵 [訂閱連結](../../subscribe.md#make-a-subscribe-link)。
 
-## 4. 瞭解錯誤，接受推薦
+## 4. 讓大家建議更改
 
-把 `! issues:` 設為你的問題追蹤器，訂閱者就會看到**建議更改**按鈕，點選後會在那裡開啟一個填好內容的 issue。
+把 `! issues:` 設為你的問題追蹤器。訂閱者就會看到**建議更改**按鈕，點選後會在那裡開啟一個填好內容的 issue，用來新增網站或回報錯誤。
 
 ## 5. 加入目錄
 
