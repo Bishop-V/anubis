@@ -295,8 +295,13 @@ export async function refreshStale(force = false): Promise<number> {
     const due = !entry || now - entry.fetchedAt > hours * 3600_000;
     const backingOff = entry?.errorAt && now - entry.errorAt < RETRY_AFTER_ERROR_MS;
     if (force || (due && !backingOff)) {
-      await refreshList(sub);
-      updated++;
+      try {
+        await refreshList(sub);
+        updated++;
+      } catch (error) {
+        // Saving its copy failed (local storage full): the lists after it still get their turn.
+        console.warn('[anubis] could not save list', sub.url, error);
+      }
     }
   }
   return updated;
@@ -321,7 +326,7 @@ export function issueUrl(issues: string | undefined, title: string, body: string
   if (!safe) return undefined;
   try {
     const u = new URL(safe);
-    const base = u.pathname.replace(/\/+$/, '').replace(/\/new$/, '');
+    const base = trackerPath(u.hostname, u.pathname);
     if (u.hostname === 'github.com' || u.hostname === 'codeberg.org') {
       const url = new URL(`${u.origin}${base}/new`);
       url.searchParams.set('title', title);
@@ -338,6 +343,16 @@ export function issueUrl(issues: string | undefined, title: string, body: string
   } catch {
     return undefined;
   }
+}
+
+/**
+ * A forge's issue tracker, from the path a list gives: the tracker's, or its
+ * repository's, since `/owner/repo/new` would add a file rather than an issue.
+ */
+function trackerPath(host: string, path: string): string {
+  const base = path.replace(/\/+$/, '').replace(/\/new$/, '');
+  if (host === 'gitlab.com') return base.includes('/-/') || base.endsWith('/issues') ? base : `${base}/-/issues`;
+  return base.split('/').filter(Boolean).length === 2 ? `${base}/issues` : base;
 }
 
 /** The issue tracker of the forge repository an address points into: a raw file, a page, the repository itself. */

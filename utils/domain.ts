@@ -60,6 +60,8 @@ function suffixLabels(parts: string[]): number {
  */
 export function domainChoices(hostname: string, ranked: (domain: string) => boolean = () => false): string[] {
   const all = hostSuffixes(hostname);
+  // An address as numbers ("192.168.1.1") is one place: its endings aren't wider sites.
+  if (/^\d+(\.\d+){3}$/.test(all[0] ?? '')) return all.slice(0, 1);
   const minLabels = suffixLabels((all[0] ?? '').split('.')) + 1;
   return all.filter((d) => {
     const labels = d.split('.').length;
@@ -95,7 +97,9 @@ export function decodeBingRedirect(href: string): string | undefined {
     const u = url.searchParams.get('u');
     if (!u?.startsWith('a1')) return undefined;
     const b64 = u.slice(2).replace(/-/g, '+').replace(/_/g, '/');
-    const decoded = atob(b64 + '='.repeat((4 - (b64.length % 4)) % 4));
+    // The address is UTF-8: atob gives its bytes, one character each.
+    const bytes = Uint8Array.from(atob(b64 + '='.repeat((4 - (b64.length % 4)) % 4)), (c) => c.charCodeAt(0));
+    const decoded = new TextDecoder().decode(bytes);
     return /^https?:\/\//.test(decoded) ? decoded : undefined;
   } catch {
     return undefined;

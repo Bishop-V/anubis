@@ -120,7 +120,7 @@ Two builds of the same commit are identical file for file. Firefox's reviewers r
 | `local:lastUpdateCheck` | This computer | When the background script last checked lists for updates. |
 | `local:colorScheme` | This computer | Light or dark as the extension's own pages see it, written by the popup, settings, and (in Firefox) the background page. On Auto the result menu uses it, since a search page can be told otherwise (Firefox's Website appearance). |
 | `sync:blockedSites`, `sync:hideStyleMoved`, `sync:defaultListsAdded` | Sync | Migration leftovers: the old block list, and flags for a one-time settings change and a one-time subscription to every default list. |
-| `local:webdav` | This computer | The WebDAV server connected for syncing between browsers: its address, user name, and password. Never in sync. |
+| `local:webdav` | This computer | The WebDAV server connected for syncing between browsers: its address, user name, and password, and the passphrase the file is encrypted with if one is set. Never in sync. |
 | `local:webdavBase` | This computer | What this browser and the server both had at the last sync: the starting point for the next merge. |
 | `local:webdavStatus` | This computer | When the last sync with the server ended, and why it failed if it did. |
 
@@ -173,6 +173,7 @@ Parts talk through `browser.runtime` messages, all typed in `utils/messages.ts`:
 | `refresh-stale` | Content script | Background | Update lists that are due (at most every 30 minutes), and sync with a WebDAV server if one is connected (at most every 5 minutes) |
 | `refresh-all` | Settings | Background | "Update all" |
 | `sync-server` | Settings | Background | Connect and "Sync now": sync with the WebDAV server, answering with the outcome |
+| `change-passphrase` | Settings | Background | Encrypt the file on the WebDAV server with a new passphrase, answering with the outcome. Here so it can't overlap a sync |
 | `open-options` | Content script, popup | Background | Open settings |
 | `open-subscribe` | Subscribe page | Background | Open Settings → Lists with a list filled in |
 | `get-page-stats`, `set-reveal`, `go-deeper`, `set-filter` | Popup | Content script | "This page" in the popup: its numbers, Show hidden, Load more results, and Show only |
@@ -212,12 +213,13 @@ Clean-up kinds live in `utils/cleanup.ts`:
 ### Add a setting
 
 1. Add it to `Settings` and `DEFAULT_SETTINGS` in `utils/storage.ts`. `getSettings` fills it in for anyone whose stored settings predate it.
-2. Add a row to the right settings section: `toggleRow` or `selectRow` in `options/general.ts`, or `switchRow` from `options/parts.ts`.
-3. Read it where it's needed: `rules.settings` in the content script, `getSettings()` elsewhere.
-4. Changing a default for people who already use Anubis needs a one-time migration, run from the background script's `onInstalled` (see `migrateSettings`, which moved hidden results from Collapse to Remove).
-5. Describe it in the wiki page for that section. Settings links each section to its page (`help` in `SECTIONS`), and panels or settings that a heading explains to that heading (`helpLink` in `parts.ts`), so keep page paths and headings as they are. `tests/help-links.test.ts` fails on a link that leads nowhere.
+2. Say how to read it from a backup or sync file in `READ_SETTING` (`utils/backup.ts`): the values Settings can save, anything else giving the default. The type-check fails until you do.
+3. Add a row to the right settings section: `toggleRow` or `selectRow` in `options/general.ts`, or `switchRow` from `options/parts.ts`.
+4. Read it where it's needed: `rules.settings` in the content script, `getSettings()` elsewhere.
+5. Changing a default for people who already use Anubis needs a one-time migration, run from the background script's `onInstalled` (see `migrateSettings`, which moved hidden results from Collapse to Remove).
+6. Describe it in the wiki page for that section. Settings links each section to its page (`help` in `SECTIONS`), and panels or settings that a heading explains to that heading (`helpLink` in `parts.ts`), so keep page paths and headings as they are. `tests/help-links.test.ts` fails on a link that leads nowhere.
 
-Backups and the sync between browsers include every setting without further work.
+Backups and the sync between browsers then include it without further work.
 
 ### Add interface text
 

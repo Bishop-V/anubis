@@ -569,9 +569,6 @@ export default defineContentScript({
   },
 });
 
-// Reranking moves results with CSS `order` inside a flex column, so the page's own
-// scripts (which own these nodes) never see them move. Each boost point moves a
-// result up one position; pins go to the top.
 /** Whether anything in this list moves. Cards keep the page's layout, so only a list that honours `order` can move them. */
 function movesList(parent: HTMLElement, scores: Map<HTMLElement, number>, enabled: boolean, cards: boolean): boolean {
   const ordered = !cards || /flex|grid/.test(getComputedStyle(parent).display);
@@ -581,6 +578,9 @@ function movesList(parent: HTMLElement, scores: Map<HTMLElement, number>, enable
 /** The value `order` on a reranked list leaves its own layout alone (page.css); the empty one makes it a flex column. */
 const rerankMark = (cards: boolean) => (cards ? 'order' : '');
 
+// Reranking moves results with CSS `order` inside a flex column, so the page's own
+// scripts (which own these nodes) never see them move. Each boost point moves a
+// result up one position; pins go to the top.
 function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enabled: boolean, cards = false) {
   const parents = new Set<HTMLElement>();
   const containers = new Set<Element>(results.map((r) => r.container));
@@ -702,13 +702,6 @@ function summaryAnchor(results: FoundResult[], engine: EngineDef): { before?: HT
   return { before: results[0]?.container, area, column: main };
 }
 
-/**
- * Above an AI answer that comes before the results area (Google can put its AI
- * Overview above the results column), so what Anubis did is the first thing on
- * the page and "Show hidden" doesn't push it down. Otherwise at the top of the
- * results area, which is also the fallback if the page lays the first place out
- * somewhere else.
- */
 /** The blocks the summary goes above, found whether or not their switches are on. */
 function leadingBlocks(engine: EngineDef, results: FoundResult[], wanted: Cleanup, found: Clutter[]): Clutter[] {
   return wanted.ai && wanted.ads ? found : findClutter(engine, results, { ...NO_CLEANUP, ai: true, ads: true });
@@ -727,6 +720,13 @@ function blocksAbove(before: HTMLElement, engine: EngineDef, clutter: Clutter[])
     .sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
 }
 
+/**
+ * Above an AI answer that comes before the results area (Google can put its AI
+ * Overview above the results column), so what Anubis did is the first thing on
+ * the page and "Show hidden" doesn't push it down. Otherwise at the top of the
+ * results area, which is also the fallback if the page lays the first place out
+ * somewhere else.
+ */
 function summaryPlace(results: FoundResult[], engine: EngineDef, clutter: Clutter[]): SummaryPlace | undefined {
   const { before, area, column } = summaryAnchor(results, engine);
   if (!before) return undefined;

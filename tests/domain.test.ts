@@ -38,6 +38,11 @@ describe('domains', () => {
     expect(splitSuffix('github.io')).toEqual(['github', '.io']);
   });
 
+  it('offers an address given as numbers as it is', () => {
+    expect(domainChoices('192.168.1.1')).toEqual(['192.168.1.1']);
+    expect(siteOf('10.0.0.2')).toBe('10.0.0.2');
+  });
+
   it('still offers a wider domain that already has a ranking', () => {
     const ranked = (d: string) => d === 'github.io';
     expect(domainChoices('someone.github.io', ranked)).toEqual(['someone.github.io', 'github.io']);
@@ -54,6 +59,13 @@ describe('domains', () => {
     const u = 'a1' + btoa(target).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     expect(decodeBingRedirect(`https://www.bing.com/ck/a?!&&p=abc&u=${u}&ntb=1`)).toBe(target);
     expect(decodeBingRedirect('https://example.com/ck/a?u=a1xyz')).toBeUndefined();
+  });
+
+  it('decodes Bing redirects to addresses with letters beyond ASCII', () => {
+    const target = 'https://de.wikipedia.org/wiki/Köln';
+    const bytes = String.fromCharCode(...new TextEncoder().encode(target));
+    const u = 'a1' + btoa(bytes).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    expect(decodeBingRedirect(`https://www.bing.com/ck/a?!&&p=abc&u=${u}&ntb=1`)).toBe(target);
   });
 
   it('reads displayed domains', () => {
@@ -97,6 +109,17 @@ describe('subscription URLs', () => {
     expect(gh.searchParams.get('title')).toBe('Add x');
     const gl = new URL(issueUrl('https://gitlab.com/g/r/-/issues', 'Add x', 'body')!);
     expect(gl.searchParams.get('issue[title]')).toBe('Add x');
+  });
+
+  // `/o/r/new` on GitHub is the page for adding a file, not an issue.
+  it('opens a new issue when a list names its repository instead of its tracker', () => {
+    const path = (issues: string) => new URL(issueUrl(issues, 'Add x', 'body')!).pathname;
+    expect(path('https://github.com/o/r')).toBe('/o/r/issues/new');
+    expect(path('https://github.com/o/r/')).toBe('/o/r/issues/new');
+    expect(path('https://codeberg.org/o/r')).toBe('/o/r/issues/new');
+    expect(path('https://gitlab.com/g/sub/r')).toBe('/g/sub/r/-/issues/new');
+    expect(path('https://github.com/o/r/issues/new')).toBe('/o/r/issues/new');
+    expect(path('https://gitlab.com/g/r/-/issues')).toBe('/g/r/-/issues/new');
   });
 
   it('never builds a link from a non-web address', () => {
