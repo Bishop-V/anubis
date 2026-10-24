@@ -3,7 +3,7 @@
 // updates them as the engines change their markup. Anubis keeps a copy of the
 // files for the engines it supports in upstream/serpinfo/, so a change upstream
 // arrives as a pull request whose diff shows exactly what moved, and whose CI
-// (tests/serpinfo.test.ts) fails when upstream matches an address Anubis doesn't.
+// (tests/engine-watch.test.ts) fails when upstream matches an address Anubis doesn't.
 //
 //   node .github/scripts/sync-serpinfo.mjs <builtin clone> [pr.md]
 //
@@ -89,7 +89,7 @@ const body = [
   ]),
   '### What to check',
   '',
-  '- [ ] If CI fails in `tests/serpinfo.test.ts`, upstream now matches an address Anubis doesn\'t: add it to the engine in `utils/engines.ts`, or to `ignoredHosts` in `.github/engine-watch.json` with a reason.',
+  '- [ ] If CI fails in `tests/engine-watch.test.ts`, upstream now matches an address Anubis doesn\'t: add it to the engine in `utils/engines.ts`, or to `ignoredHosts` in `.github/engine-watch.json` with a reason.',
   '- [ ] Compare each change with the engine in `utils/engines.ts` (and `cleanupSelectors` for panels and AI answers).',
   '- [ ] Load the extension on a live results page for that engine.',
   '- [ ] If something broke, model the new markup in `e2e/fixtures.mjs`, confirm the check fails, then fix it on this branch.',

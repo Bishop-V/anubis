@@ -2,6 +2,12 @@
 
 Where things are stored, sync between browsers, and subscribing to lists. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Reading a backup or sync file's settings (2026-10-24)
+
+- **Before:** `readBackup` (`utils/backup.ts`) checked each tag choice but took settings on trust. A file with `"engines": null` (hand-edited, damaged, or written by a faulty server) stopped Anubis on every search page, since search pages read `engines[id]`.
+- **Now:** each setting is kept only if it's a value Settings could have saved, else the default (`READ_SETTING`, typed over every key of `Settings`, so a new setting fails the type-check until it has a reader).
+- **Rejected: keeping only the settings this version knows.** Today a setting added by a newer version on another browser survives a sync through an older one. Dropping unknown keys would make the older browser's merge take it away again, so they stay as they are.
+
 ## Suggest changes as a form in Settings (2026-10-20)
 
 - **Before:** "suggest changes" was a lower-case link in a list's small print, and it opened the tracker's issues page, so people had to find the template and write the instruction themselves. Beside it, the side column's external-link icon opened the list's raw file, which few people need.
@@ -11,10 +17,10 @@ Where things are stored, sync between browsers, and subscribing to lists. Part o
 
 ## Review findings on list parsing and subscriptions (2026-10-10)
 
-- **Source:** a whole-codebase review, split across six draft pull requests (#129 to #134, closed unmerged). Only the list-parsing one produced findings worth keeping; the rest held automated code-health comments and nothing else. None of the findings below has been reproduced or fixed yet.
-- **Unverified, possibly real:** `nestedRepeat` (`utils/listformat.ts`) only finds a repeated group that contains a quantifier, so a pattern that backtracks through alternation, like `/(a|aa)+$/`, passes the slow-pattern check from "Slow patterns" below. Reproduce with a timed match before changing it.
-- **Unverified, possibly real:** an exact-host uBlacklist rule imported into the personal list (`importIntoPersonal`, `utils/importers.ts`) becomes a site entry, which also matches subdomains, so the import widens the rule.
-- **Unverified, possibly real:** `refreshStale` (`utils/subscriptions.ts`) has no error handling per subscription, so one list that throws (for example when saving its cached text fails) stops the lists after it from refreshing.
+- **Source:** a whole-codebase review, split across six draft pull requests (#129 to #134, closed unmerged). Only the list-parsing one produced findings worth keeping; the rest held automated code-health comments and nothing else. The three below were checked on 2026-10-24: two were real and are fixed, and one was left as it is.
+- **Fixed (2026-10-24):** `nestedRepeat` (`utils/listformat.ts`) only found a repeated group that contains a quantifier, so `/(a|aa)+$/` passed the slow-pattern check from "Slow patterns" below, and took 43 ms on 30 a's, about 1.6 times as long with each one more. A repeated group with choices now passes only if they're plain words none of which starts another (`(?:com|org)+`), since then at most one can match in any place. Every bundled and directory list still parses.
+- **Confirmed, left as it is (2026-10-24):** an exact-host uBlacklist rule imported into the personal list (`importIntoPersonal`, `utils/importers.ts`) becomes a site entry, which also matches subdomains, so the import widens the rule. The only faithful import is a pattern line (`|https://example.com/$discard`), which Settings → Sites can't show or change, so the import keeps the site entry. Subscribing to the ruleset keeps the exact rule.
+- **Fixed (2026-10-24):** `refreshStale` (`utils/subscriptions.ts`) had no error handling per subscription, so one list whose copy couldn't be saved (local storage full) stopped the lists after it from updating. It now goes on to the next.
 - **Already known:** `migrateDefaultLists` switches every default list back on, not only new ones. That was the project owner's choice (see "Existing installs").
 - **Smaller:** the import counts a site once per rule that covers it; the regex-escaping pattern is written out twice in `utils/listformat.ts`; turning a list off drops its compiled cache, so turning it back on parses it again.
 - **Code-health scores:** CodeScene flagged long, branching functions across the content script, options page, and list parser (`main.pass` at complexity 61, `parseList` at 36, `importIntoPersonal` at 20). Not acted on; the project has no complexity threshold.

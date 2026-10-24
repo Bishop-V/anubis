@@ -62,6 +62,8 @@ function withRepo(run: (repo: string, dest: string, sync: () => string) => void)
       execFileSync(process.execPath, [scriptPath, repo, join(temp, 'pr.md')], {
         encoding: 'utf8',
         env: { ...process.env, SERPINFO_DEST: dest, GITHUB_OUTPUT: '' },
+        // Kept with the error, not printed: one test expects the script to fail.
+        stdio: ['ignore', 'pipe', 'pipe'],
       });
     run(repo, dest, sync);
   } finally {

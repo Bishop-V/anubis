@@ -47,6 +47,7 @@ What Anubis draws and changes on search pages.
 
 Where things are stored, sync between browsers, and subscribing to lists.
 
+- Reading a backup or sync file's settings (2026-10-24)
 - Suggest changes as a form in Settings (2026-10-20)
 - Review findings on list parsing and subscriptions (2026-10-10)
 - Whose tag is it: lists' tags on your sites (2026-10-08)
