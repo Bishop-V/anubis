@@ -2366,7 +2366,7 @@ if (!only || only === 'options') {
       await opt.locator('.theme-btn').click();
       await opt.waitForTimeout(150);
     }
-    for (const section of ['sites', 'tags', 'lists', 'cleanup', 'appearance', 'sync', 'share']) {
+    for (const section of ['sites', 'tags', 'lists', 'cleanup', 'results', 'appearance', 'sync', 'share']) {
       await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
       await opt.waitForTimeout(500);
       await opt.screenshot({ path: `${SHOTS}options-${section}-${theme}.png`, fullPage: true });
@@ -2404,10 +2404,10 @@ if (!only || only === 'responsive') {
     await opt.emulateMedia({ colorScheme });
     for (const width of [320, 360, 375, 389, 390]) {
       await opt.setViewportSize({ width, height: 900 });
-      for (const section of ['sites', 'tags', 'lists', 'cleanup', 'appearance', 'engines', 'sync', 'share']) {
+      for (const section of ['sites', 'tags', 'lists', 'cleanup', 'results', 'appearance', 'engines', 'sync', 'share']) {
         await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
         const heading = builtMessage(
-          { sites: 'sitesHeading', tags: 'tagsHeading', lists: 'listsHeading', cleanup: 'cleanupHeading', appearance: 'appearanceHeading', engines: 'enginesHeading', sync: 'syncHeading', share: 'shareHeading' }[section],
+          { sites: 'sitesHeading', tags: 'tagsHeading', lists: 'listsHeading', cleanup: 'cleanupHeading', results: 'resultsHeading', appearance: 'appearanceHeading', engines: 'enginesHeading', sync: 'syncHeading', share: 'shareHeading' }[section],
         );
         await opt.waitForFunction((text) => document.querySelector('main h2')?.textContent === text, heading);
         const layout = await opt.evaluate(() => ({
@@ -2612,7 +2612,7 @@ if (!only || only === 'axe') {
   // than excluding it; when one has to stay, name the rule and why next to AXE_ALLOWED.
   const { AxeBuilder } = await import('@axe-core/playwright');
   const AXE_ALLOWED = {};
-  const sections = ['sites', 'tags', 'lists', 'cleanup', 'appearance', 'engines', 'sync', 'share'];
+  const sections = ['sites', 'tags', 'lists', 'cleanup', 'results', 'appearance', 'engines', 'sync', 'share'];
   const targets = [
     ...sections.map((section) => [`Settings → ${section}`, `options.html#${section}`, 1180, 900]),
     ['Popup', 'popup.html', 364, 620],

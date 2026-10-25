@@ -30,7 +30,7 @@ A ranking covers the site and its subdomains. The name at the top of the menu pi
 
 ## Reranking
 
-Anubis reorders only the results already on the page. To rank later pages too, use [Load more results](./more-results.md). To keep the engine's order, turn off **Settings → Appearance → Rerank results**.
+Anubis reorders only the results already on the page. To rank later pages too, use [Load more results](./more-results.md). To keep the engine's order, turn off **Settings → Results → Rerank results**.
 
 ## Hidden results
 

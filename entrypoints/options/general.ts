@@ -56,7 +56,7 @@ function deeperRow(stored: number): HTMLElement {
   return h(
     'div',
     { class: 'setting' },
-    h('div', null, h('label', { attrs: { for: 'deeper' } }, h('b', null, t('deeperAuto'))), tip),
+    h('div', null, h('label', { attrs: { for: 'deeper' } }, h('b', null, t('deeperAuto'))), h('span', { class: 'muted' }, t('deeperHint')), tip),
     h('span', { class: 'amount' }, input),
   );
 }
@@ -109,16 +109,24 @@ export async function renderAppearance(): Promise<HTMLElement> {
         (hideStyle) => void updateSettings({ hideStyle }),
       ),
       switchRow(t('paletteHeading'), t('paletteHint'), settings.palette !== 'plain', (on) => void updateSettings({ palette: on ? 'gold' : 'plain' })),
-      toggleRow(
-        t('rerankHeading'),
-        t('rerankHint'),
-        'rerank',
-        settings,
-        helpLink('guide/ranking#reranking', t('rerankHelp')),
-      ),
-      deeperRow(settings.deeper),
       toggleRow(t('chipsHeading'), t('chipsHint'), 'showChips', settings),
       toggleRow(t('summaryHeading'), t('summaryHint'), 'showSummary', settings),
+    ),
+  );
+}
+
+/** Settings → Results: what Anubis does to the order of results, and how many pages it brings in. */
+export async function renderResults(): Promise<HTMLElement> {
+  const settings = await getSettings();
+  return h(
+    'div',
+    null,
+    pageTitle(t('resultsHeading'), t('resultsIntro')),
+    h(
+      'div',
+      { class: 'panel' },
+      toggleRow(t('rerankHeading'), t('rerankHint'), 'rerank', settings, helpLink('guide/ranking#reranking', t('rerankHelp'))),
+      deeperRow(settings.deeper),
     ),
   );
 }

@@ -12,7 +12,7 @@ import { loadRuleSet, watchRuleSet } from '@/utils/ruleset';
 import { getSubscriptions } from '@/utils/subscriptions';
 import { initTheme, themeButton } from '@/utils/theme';
 import { renderCleanup } from './cleanup';
-import { renderAppearance, renderEngines, renderShare } from './general';
+import { renderAppearance, renderEngines, renderResults, renderShare } from './general';
 import { renderLists } from './lists';
 import { helpLink } from './parts';
 import { renderSites } from './sites';
@@ -35,6 +35,7 @@ const SECTIONS: Section[] = [
   { id: 'tags', label: t('tagsHeading'), render: renderTags, help: ['guide/tags', t('tagsHelp')] },
   { id: 'lists', label: t('listsHeading'), render: renderLists, help: ['guide/lists', t('listsHelp')] },
   { id: 'cleanup', label: t('cleanupHeading'), render: renderCleanup, help: ['guide/clean-up', t('cleanupHelp')] },
+  { id: 'results', label: t('resultsHeading'), render: renderResults, help: ['guide/more-results', t('resultsHelp')] },
   { id: 'appearance', label: t('appearanceHeading'), render: renderAppearance, help: ['guide/ranking#hidden-results', t('appearanceHelp')] },
   { id: 'engines', label: t('enginesHeading'), render: renderEngines, help: ['guide/search-engines', t('enginesHelp')] },
   { id: 'sync', label: t('syncHeading'), render: renderSync, help: ['guide/sync', t('syncHelp')] },
