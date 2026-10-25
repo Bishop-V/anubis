@@ -234,8 +234,10 @@ export async function renderTags(): Promise<HTMLElement> {
       // one a list dropped that your sites still use. Your list keeps a copy of a list's
       // tag you use, for then.
       const sourceLists = rules.lists.filter((l) => !l.personal && l.tags.some((d) => d.id === tag.id));
-      // The sentence above names the lists that mark sites; this names only those that just define the tag.
-      const sources = sourceLists.filter((l) => ruleCount(l, tag.id) === 0).map((l) => l.name);
+      // The sentence above names the lists that mark sites. Only when none does, this names
+      // the lists that define the tag, so a list that only shares a tag's definition
+      // (FOSS tools with AI slop) isn't credited for the sites another list marks.
+      const sources = sourceLists.some((l) => ruleCount(l, tag.id) > 0) ? [] : sourceLists.map((l) => l.name);
       const yours = !sourceLists.length;
       const pref = rules.prefs[tag.id] ?? {};
       const personalCount = sites.filter((s) => s.tags.includes(tag.id)).length;

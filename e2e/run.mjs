@@ -2370,6 +2370,17 @@ if (!only || only === 'options') {
       await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
       await opt.waitForTimeout(500);
       await opt.screenshot({ path: `${SHOTS}options-${section}-${theme}.png`, fullPage: true });
+      if (section === 'tags') {
+        // "From …" names the lists that only define a tag, and only when no list marks a
+        // site with it: FOSS tools defines AI slop, whose sites come from AI content.
+        const misCredited = await opt.evaluate(() =>
+          [...document.querySelectorAll('main .meta')]
+            .filter((m) => m.querySelector('.source') && / from /.test(m.querySelector('.effect')?.textContent ?? ''))
+            .map((m) => m.closest('.tag-card, li, div')?.querySelector('strong, h3, h4, .name')?.textContent ?? m.textContent),
+        );
+        if (misCredited.length) console.log('  credited a list that marks no site:', misCredited);
+        assertChecks('Settings → Tags', { creditsOnlyListsThatMarkSites: misCredited.length === 0 });
+      }
     }
     const pop = await ctx.newPage();
     await pop.setViewportSize({ width: 364, height: 620 });
