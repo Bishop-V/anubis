@@ -165,7 +165,7 @@ describe('slow regular expressions', () => {
     expect(list.format).toBe('ublacklist');
     expect(list.rules).toHaveLength(2);
     expect(list.errors).toEqual([{ line: 2, message: expect.stringContaining('could freeze search pages') }]);
-    expect(parseList(`*://*.example.com/*\n/${'a'.repeat(1001)}/`).errors[0]!.message).toContain('longer than 1000');
+    expect(parseList(`*://*.example.com/*\n/${'a'.repeat(1001)}/`).errors[0]!.message).toContain('longer than 1,000');
   });
 });
 

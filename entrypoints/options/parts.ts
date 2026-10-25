@@ -1,6 +1,6 @@
 import { h, icon } from '@/utils/dom';
 import { ICON_EXTERNAL, ICON_GRIP } from '@/utils/icons';
-import { t } from '@/utils/i18n';
+import { t, tNumber } from '@/utils/i18n';
 import { wiki } from '@/utils/wiki';
 
 // Pieces every settings section is built from, so they look and behave alike.
@@ -31,7 +31,7 @@ export function foldable(id: string, heading: string, count: number | null, open
   const details = h(
     'details',
     { class: 'fold', open: initial },
-    h('summary', null, h('span', { class: 'fold-title' }, heading), count === null ? null : h('span', { class: 'count' }, count)),
+    h('summary', null, h('span', { class: 'fold-title' }, heading), count === null ? null : h('span', { class: 'count' }, tNumber(count))),
     ...content,
   );
   // Opening it as it's built fires a toggle too, which isn't anyone's choice.
@@ -52,7 +52,7 @@ let movedGrip: string | undefined;
 export function grip(scope: string, id: string, name: string, ids: string[], save: (ids: string[]) => void): HTMLElement {
   const key = `${scope}:${id}`;
   const from = ids.indexOf(id);
-  const label = t('moveItem', name, String(from + 1), String(ids.length));
+  const label = t('moveItem', name, from + 1, ids.length);
   const button = h('button', { class: 'grip', type: 'button', title: t('moveTitle'), attrs: { 'aria-label': label } }, icon(ICON_GRIP));
   const moveTo = (to: number) => {
     if (to < 0 || to >= ids.length || to === from) return;

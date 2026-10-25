@@ -87,6 +87,11 @@ describe('t and tn', () => {
     expect(tn('popupTagCount', 12)).toBe('12 tags');
   });
 
+  it('writes numbers as the language does', () => {
+    expect(tn('popupTagCount', 1566)).toBe('1,566 tags');
+    expect(t('syncUsage', 2, 1024)).toBe('Using 2 KB of 1,024 KB.');
+  });
+
   it('puts a list of items, which can be elements, in place of a placeholder', () => {
     const a = { name: 'A' };
     const b = { name: 'B' };

@@ -10,7 +10,7 @@ import { wiki } from '@/utils/wiki';
 import { LEVELS, evaluate, listTagCards, listTagIds, type Level } from '@/utils/matcher';
 import { h, icon, siteName } from '@/utils/dom';
 import { ICON_GEAR, LEVEL_CHIPS, LEVEL_LABELS, levelIcon, rankIcon, tagEffectText, tagMark } from '@/utils/icons';
-import { localizePage, t, tJoin, tn, type MessageKey } from '@/utils/i18n';
+import { localizePage, t, tJoin, tn, tNumber, type MessageKey } from '@/utils/i18n';
 import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/messages';
 import { displayLevel, getSite, levelSteps, listSites, setSiteLevel, tagSite, upsertTagDef, type PersonalLevel } from '@/utils/personal';
@@ -336,7 +336,7 @@ function renderPage(next: PageStats | undefined) {
       },
       h('i', { class: 'gem' }),
       tag.label,
-      h('span', { class: 'count' }, tag.count),
+      h('span', { class: 'count' }, tNumber(tag.count)),
     );
   });
 

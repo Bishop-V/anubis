@@ -4,7 +4,7 @@ import './style.css';
 import { browser } from '#imports';
 import { h, icon } from '@/utils/dom';
 import { ICON_EXTERNAL } from '@/utils/icons';
-import { localizePage, t } from '@/utils/i18n';
+import { localizePage, t, tNumber } from '@/utils/i18n';
 import { bugReportLink, describeBrowser, REPO_URL } from '@/utils/links';
 import { wiki } from '@/utils/wiki';
 import { listSites } from '@/utils/personal';
@@ -74,7 +74,7 @@ async function renderNav() {
         'a',
         { href: `#${s.id}`, attrs: { 'aria-current': s.id === active ? 'page' : undefined } },
         s.label,
-        counts[s.id] !== undefined ? h('span', { class: 'count' }, counts[s.id]) : null,
+        counts[s.id] !== undefined ? h('span', { class: 'count' }, tNumber(counts[s.id]!)) : null,
       ),
     ),
     h(
