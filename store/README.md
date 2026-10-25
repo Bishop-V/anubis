@@ -144,7 +144,7 @@ From real search pages, not the e2e mocks: a listing has to show the product as 
 
 Take them in a fresh browser profile that isn't signed in, so no account picture, history, or location shows. Crop out the system's taskbar (its clock and status) and other tabs' titles; the store takes JPEG or 24-bit PNG without alpha, so JPEG is simplest. In Chrome: DevTools → device toolbar → Responsive, 1280 × 800, device pixel ratio 1 → ⋮ → Capture screenshot. Save them in `store/screenshots/`. Don't save page HTML here; it carries the account and location.
 
-In `store/screenshots/` now (2026-09-30, Chrome, Google in dark mode): `1-popup.jpg` (the toolbar popup over results, with a pinned result and the summary), and `2-menu.jpg` (the ⚖ menu open on the pinned result). Still to take: 1 and 3 above.
+In `store/screenshots/` now, from 2026-09-30 (Chrome, Google in dark mode): `1-popup.jpg` (the toolbar popup over results, with a pinned result and the summary), and `2-menu.jpg` (the ⚖ menu open on the pinned result). Both show the earlier gold look, not Graphite. From 2026-10-25 (DuckDuckGo and Settings in dark mode, in Graphite): `3-results.png` (a pinned result at the top under the summary, with DuckDuckGo's region control cut out), `4-result-menu.png` (the result menu open with Raise chosen), and `5-remove-panels.png` (Settings → Remove panels). Still to take: 3 above, and 4 in Graphite.
 
 1. Google results for a programming question: tags under titles, a pinned documentation result at the top, and the summary counting a hidden result.
 2. The result menu open on a result: the site's name, the five rankings, and its tags.
