@@ -956,15 +956,6 @@
   "publishHelp": {
     "message": "فہرست کیسے شائع کریں"
   },
-  "publishStepDownload": {
-    "message": "اپنی فہرست ڈاؤن لوڈ کریں اور اس کی $1، $2 اور $3 سطریں ترتیب دیں۔"
-  },
-  "publishStepRepository": {
-    "message": "اسے کسی عوامی GitHub ریپوزٹری یا gist میں شامل کریں، جیسے $1۔"
-  },
-  "publishStepIssues": {
-    "message": "$1 شامل کریں تاکہ لوگ سائٹیں تجویز کر سکیں۔"
-  },
   "publishStepShare": {
     "message": "“فہرستیں” ← “فہرست شامل کریں” کے لیے فائل کا لنک شیئر کریں۔"
   },

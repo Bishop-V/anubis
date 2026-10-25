@@ -956,15 +956,6 @@
   "publishHelp": {
     "message": "Wie man eine Liste veröffentlicht"
   },
-  "publishStepDownload": {
-    "message": "Lade deine Liste herunter und setze ihre Zeilen $1, $2 und $3."
-  },
-  "publishStepRepository": {
-    "message": "Füge sie einem öffentlichen GitHub-Repository oder Gist hinzu, z. B. $1."
-  },
-  "publishStepIssues": {
-    "message": "Füge $1 hinzu, damit andere Websites vorschlagen können."
-  },
   "publishStepShare": {
     "message": "Teile den Link zur Datei für „Listen“ → „Liste hinzufügen“."
   },

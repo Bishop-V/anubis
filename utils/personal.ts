@@ -336,6 +336,40 @@ export function removeTag(text: string, id: string): string {
   return next;
 }
 
+/** The header lines Publish your list fills in, in the order a new one is written. */
+const LIST_INFO_KEYS = ['name', 'description', 'author', 'issues'] as const;
+export type ListInfo = Partial<Record<(typeof LIST_INFO_KEYS)[number], string>>;
+
+/**
+ * Set the list's `! name:`, `! description:`, `! author:`, and `! issues:` lines, in place
+ * when the header has one, else after the header's other lines. An empty value removes
+ * its line; a key left out leaves it alone.
+ */
+export function setListInfo(text: string, info: ListInfo): string {
+  const lines = text.split(/\r?\n/);
+  for (const key of LIST_INFO_KEYS) {
+    if (!(key in info)) continue;
+    const value = (info[key] ?? '').replace(/\s+/g, ' ').trim();
+    const bodyStart = lines.findIndex((l) => l.trim() && !l.trim().startsWith('!'));
+    const headerEnd = bodyStart === -1 ? lines.length : bodyStart;
+    const own = new RegExp(`^!\\s*${key === 'name' ? '(name|title)' : key}\\s*:`, 'i');
+    const idx = lines.findIndex((l, i) => i < headerEnd && own.test(l.trim()));
+    if (idx !== -1) {
+      if (value) lines[idx] = `! ${key}: ${value}`;
+      else lines.splice(idx, 1);
+      continue;
+    }
+    if (!value) continue;
+    // With the list's other details, ahead of its tags.
+    let at = 0;
+    lines.forEach((l, i) => {
+      if (i < headerEnd && /^!\s*[a-z]+\s*:/i.test(l.trim()) && !/^!\s*tag\s*:/i.test(l.trim())) at = i + 1;
+    });
+    lines.splice(at, 0, `! ${key}: ${value}`);
+  }
+  return lines.join('\n');
+}
+
 /** Old versions stored a plain array of blocked domains. */
 export function fromBlockedSites(domains: string[]): string {
   let text = PERSONAL_HEADER;

@@ -956,15 +956,6 @@
   "publishHelp": {
     "message": "কীভাবে একটি তালিকা প্রকাশ করবেন"
   },
-  "publishStepDownload": {
-    "message": "আপনার তালিকা ডাউনলোড করুন এবং এর $1, $2 ও $3 লাইন সেট করুন।"
-  },
-  "publishStepRepository": {
-    "message": "এটি একটি পাবলিক GitHub রিপোজিটরি বা gist-এ যোগ করুন, যেমন $1।"
-  },
-  "publishStepIssues": {
-    "message": "$1 যোগ করুন, যাতে লোকে সাইট সাজেস্ট করতে পারে।"
-  },
   "publishStepShare": {
     "message": "“তালিকা” → “তালিকা যোগ করুন”-এর জন্য ফাইলের লিংক শেয়ার করুন।"
   },

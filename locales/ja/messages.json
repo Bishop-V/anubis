@@ -887,15 +887,6 @@
   "publishHelp": {
     "message": "リストの公開方法"
   },
-  "publishStepDownload": {
-    "message": "マイリストをダウンロードし、$1、$2、$3 の行を設定します。"
-  },
-  "publishStepRepository": {
-    "message": "公開の GitHub リポジトリまたは gist に追加します（例：$1）。"
-  },
-  "publishStepIssues": {
-    "message": "$1 を追加すると、ほかの人がサイトを提案できます。"
-  },
   "publishStepShare": {
     "message": "ファイルのリンクを共有し、「リスト」→「リストを追加」で使ってもらいます。"
   },

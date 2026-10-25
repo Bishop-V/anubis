@@ -2390,6 +2390,37 @@ if (!only || only === 'options') {
     await pop.close();
     await opt.close();
   }
+  // Publish your list: the details typed in go into the list's header, and the download is named after it.
+  {
+    const [sw] = ctx.serviceWorkers();
+    const before = await sw.evaluate(async () => (await chrome.storage.sync.get('personal.0'))['personal.0']);
+    const opt = await ctx.newPage();
+    await opt.goto(`chrome-extension://${extId}/options.html#share`);
+    await opt.waitForSelector('#publish-name');
+    await opt.fill('#publish-issues', 'not a link');
+    await opt.click('form.publish button[type="submit"]');
+    const refused = await opt.waitForSelector('.notice.error', { timeout: 3000 }).then(() => true, () => false);
+    await opt.fill('#publish-name', 'Docs I trust');
+    await opt.fill('#publish-issues', 'https://github.com/you/lists/issues');
+    const [file] = await Promise.all([opt.waitForEvent('download'), opt.click('form.publish button[type="submit"]')]);
+    const stored = await sw.evaluate(async () => {
+      for (let i = 0; i < 20; i++) {
+        const { personal } = await chrome.storage.sync.get('personal');
+        if (personal) break;
+        await new Promise((r) => setTimeout(r, 100));
+      }
+      return (await chrome.storage.sync.get('personal.0'))['personal.0'];
+    });
+    const header = await opt.evaluate(() => [document.querySelector('#publish-name')?.value, document.querySelector('#publish-issues')?.value]);
+    await opt.close();
+    await sw.evaluate(async (text) => chrome.storage.sync.set({ 'personal.0': text }), before);
+    assertChecks('Publish your list', {
+      refusesATrackerThatIsntALink: refused,
+      namesTheFileAfterTheList: file.suggestedFilename() === 'docs-i-trust.anubis',
+      keepsTheDetails: header[0] === 'Docs I trust' && header[1] === 'https://github.com/you/lists/issues',
+      changedTheStoredList: stored !== before,
+    });
+  }
   console.log('\n== options + popup screenshots done');
 }
 

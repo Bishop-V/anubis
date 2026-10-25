@@ -887,15 +887,6 @@
   "publishHelp": {
     "message": "如何發布清單"
   },
-  "publishStepDownload": {
-    "message": "下載你的清單，並設定它的 $1、$2 和 $3 行。"
-  },
-  "publishStepRepository": {
-    "message": "把它新增到公開的 GitHub 儲存庫或 gist，例如 $1。"
-  },
-  "publishStepIssues": {
-    "message": "加入 $1，方便大家推薦網站。"
-  },
   "publishStepShare": {
     "message": "分享檔案連結，用於“清單”→“新增清單”。"
   },

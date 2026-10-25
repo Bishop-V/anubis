@@ -956,15 +956,6 @@
   "publishHelp": {
     "message": "सूची कैसे प्रकाशित करें"
   },
-  "publishStepDownload": {
-    "message": "अपनी सूची डाउनलोड करें और उसकी $1, $2 और $3 पंक्तियां सेट करें।"
-  },
-  "publishStepRepository": {
-    "message": "इसे किसी सार्वजनिक GitHub रिपॉज़िटरी या gist में जोड़ें, जैसे $1।"
-  },
-  "publishStepIssues": {
-    "message": "$1 जोड़ें, ताकि लोग साइटें सुझा सकें।"
-  },
   "publishStepShare": {
     "message": "फ़ाइल का लिंक “सूचियां” → “सूची जोड़ें” के लिए साझा करें।"
   },

@@ -839,6 +839,13 @@ textarea.code {
 .steps code {
   font-size: 12.5px;
 }
+/* Publish your list: the details form sits inside its step. */
+.steps .fields {
+  margin: 10px 0 14px;
+}
+.fields .toolbar {
+  grid-column: 2;
+}
 
 @media (max-width: 760px) {
   .shell {
@@ -872,7 +879,8 @@ textarea.code {
     gap: 6px;
   }
   .fields .hint,
-  .fields button {
+  .fields button,
+  .fields .toolbar {
     grid-column: 1;
   }
   .fields .passphrase-fields {

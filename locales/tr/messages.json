@@ -956,15 +956,6 @@
   "publishHelp": {
     "message": "Liste nasıl yayınlanır"
   },
-  "publishStepDownload": {
-    "message": "Listeni indir ve $1, $2 ile $3 satırlarını ayarla."
-  },
-  "publishStepRepository": {
-    "message": "Herkese açık bir GitHub deposuna veya gist’e ekle, örneğin $1."
-  },
-  "publishStepIssues": {
-    "message": "İnsanların site önerebilmesi için $1 ekle."
-  },
   "publishStepShare": {
     "message": "Dosyanın bağlantısını “Listeler” → “Liste ekle” için paylaş."
   },

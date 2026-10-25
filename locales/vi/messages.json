@@ -887,15 +887,6 @@
   "publishHelp": {
     "message": "Cách xuất bản danh sách"
   },
-  "publishStepDownload": {
-    "message": "Tải danh sách của bạn xuống và đặt các dòng $1, $2 và $3 của nó."
-  },
-  "publishStepRepository": {
-    "message": "Thêm nó vào một kho GitHub công khai hoặc gist, ví dụ $1."
-  },
-  "publishStepIssues": {
-    "message": "Thêm $1 để mọi người có thể đề xuất trang web."
-  },
   "publishStepShare": {
     "message": "Chia sẻ liên kết của tệp cho Danh sách → Thêm danh sách."
   },

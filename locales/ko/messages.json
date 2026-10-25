@@ -887,15 +887,6 @@
   "publishHelp": {
     "message": "목록을 게시하는 방법"
   },
-  "publishStepDownload": {
-    "message": "내 목록을 다운로드하고 $1, $2, $3 줄을 설정합니다."
-  },
-  "publishStepRepository": {
-    "message": "공개 GitHub 저장소나 gist에 추가합니다(예: $1)."
-  },
-  "publishStepIssues": {
-    "message": "사람들이 사이트를 제안할 수 있도록 $1 줄을 추가합니다."
-  },
   "publishStepShare": {
     "message": "‘목록’ → ‘목록 추가’에서 쓸 수 있도록 파일 링크를 공유합니다."
   },

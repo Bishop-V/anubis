@@ -1025,15 +1025,6 @@
   "publishHelp": {
     "message": "Come pubblicare una lista"
   },
-  "publishStepDownload": {
-    "message": "Scarica la tua lista e imposta le sue righe $1, $2 e $3."
-  },
-  "publishStepRepository": {
-    "message": "Aggiungila a un repository GitHub pubblico o a un gist, per esempio $1."
-  },
-  "publishStepIssues": {
-    "message": "Aggiungi $1 perché le persone possano suggerire dei siti."
-  },
   "publishStepShare": {
     "message": "Condividi il link del file per «Liste» → «Aggiungi una lista»."
   },

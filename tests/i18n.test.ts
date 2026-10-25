@@ -151,8 +151,8 @@ describe('in another language', () => {
   it('puts elements where a message’s placeholders are', () => {
     bracketed();
     try {
-      const code = { el: 'code' };
-      expect(tParts('publishStepIssues', code)).toEqual(['[Add ', code, ' so people can suggest sites.]']);
+      const link = { el: 'a' };
+      expect(tParts('publishStepUpload', link)).toEqual(['[Upload the file to ', link, ', or to a public repository.]']);
     } finally {
       installEnglish();
     }

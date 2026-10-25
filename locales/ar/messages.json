@@ -1232,15 +1232,6 @@
   "publishHelp": {
     "message": "كيف تنشر قائمة"
   },
-  "publishStepDownload": {
-    "message": "نزّل قائمتك واضبط أسطرها $1 و$2 و$3."
-  },
-  "publishStepRepository": {
-    "message": "أضفها إلى مستودع GitHub عام أو إلى gist، مثل $1."
-  },
-  "publishStepIssues": {
-    "message": "أضف $1 ليتمكن الناس من اقتراح مواقع."
-  },
   "publishStepShare": {
     "message": "شارك رابط الملف لاستخدامه في «القوائم» ← «إضافة قائمة»."
   },

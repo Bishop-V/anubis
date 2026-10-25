@@ -887,15 +887,6 @@
   "publishHelp": {
     "message": "Cara menerbitkan daftar"
   },
-  "publishStepDownload": {
-    "message": "Unduh daftar Anda dan atur baris $1, $2, dan $3."
-  },
-  "publishStepRepository": {
-    "message": "Tambahkan ke repositori GitHub publik atau gist, misalnya $1."
-  },
-  "publishStepIssues": {
-    "message": "Tambahkan $1 agar orang dapat menyarankan situs."
-  },
   "publishStepShare": {
     "message": "Bagikan tautan file untuk Daftar → Tambahkan daftar."
   },

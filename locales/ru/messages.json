@@ -1094,15 +1094,6 @@
   "publishHelp": {
     "message": "Как опубликовать список"
   },
-  "publishStepDownload": {
-    "message": "Скачайте свой список и задайте в нём строки $1, $2 и $3."
-  },
-  "publishStepRepository": {
-    "message": "Добавьте его в публичный репозиторий или gist на GitHub, например $1."
-  },
-  "publishStepIssues": {
-    "message": "Добавьте $1, чтобы люди могли предлагать сайты."
-  },
   "publishStepShare": {
     "message": "Поделитесь ссылкой на файл для «Списки» → «Добавить список»."
   },

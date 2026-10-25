@@ -887,15 +887,6 @@
   "publishHelp": {
     "message": "如何发布列表"
   },
-  "publishStepDownload": {
-    "message": "下载你的列表，并设置它的 $1、$2 和 $3 行。"
-  },
-  "publishStepRepository": {
-    "message": "把它添加到公开的 GitHub 仓库或 gist，例如 $1。"
-  },
-  "publishStepIssues": {
-    "message": "添加 $1，方便大家推荐网站。"
-  },
   "publishStepShare": {
     "message": "分享文件链接，用于“列表”→“添加列表”。"
   },
