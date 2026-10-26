@@ -1663,5 +1663,8 @@
   },
   "tagHeadShown": {
     "message": "Tampil"
+  },
+  "timeJustNow": {
+    "message": "baru saja"
   }
 }

@@ -2041,5 +2041,8 @@
   },
   "tagHeadShown": {
     "message": "Показана"
+  },
+  "timeJustNow": {
+    "message": "только что"
   }
 }

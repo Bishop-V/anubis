@@ -1789,5 +1789,8 @@
   },
   "tagHeadShown": {
     "message": "دکھایا گیا"
+  },
+  "timeJustNow": {
+    "message": "ابھی ابھی"
   }
 }

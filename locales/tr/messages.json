@@ -1789,5 +1789,8 @@
   },
   "tagHeadShown": {
     "message": "Gösterilir"
+  },
+  "timeJustNow": {
+    "message": "az önce"
   }
 }

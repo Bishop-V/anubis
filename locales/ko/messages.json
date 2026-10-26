@@ -1663,5 +1663,8 @@
   },
   "tagHeadShown": {
     "message": "표시"
+  },
+  "timeJustNow": {
+    "message": "방금"
   }
 }

@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { check, freshMessages, languages, sourceKey, translation } from '../scripts/locales.mjs';
 import { describe, expect, it } from 'vitest';
 import { andList } from '@/utils/dom';
-import { dir, t, tJoin, tList, tn, tParts } from '@/utils/i18n';
+import { dir, t, tAgo, tJoin, tList, tn, tParts } from '@/utils/i18n';
 import type { SiteChange } from '@/utils/personal';
 import { changeSentence } from '@/utils/summary';
 import { hiddenReason } from '@/entrypoints/content/ui';
@@ -85,6 +85,14 @@ describe('t and tn', () => {
     expect(tn('popupListCount', 1)).toBe('1 list');
     expect(tn('popupListCount', 0)).toBe('0 lists');
     expect(tn('popupTagCount', 12)).toBe('12 tags');
+  });
+
+  it('says how long ago something happened', () => {
+    const now = Date.UTC(2026, 9, 26, 12);
+    expect(tAgo(now - 20_000, now)).toBe('just now');
+    expect(tAgo(now - 5 * 60_000, now)).toBe('5 minutes ago');
+    expect(tAgo(now - 3 * 3600_000, now)).toBe('3 hours ago');
+    expect(tAgo(now - 3 * 86400_000, now)).toBe('3 days ago');
   });
 
   it('writes numbers as the language does', () => {

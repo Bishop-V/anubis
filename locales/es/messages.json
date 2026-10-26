@@ -1789,5 +1789,8 @@
   },
   "tagHeadShown": {
     "message": "Visible"
+  },
+  "timeJustNow": {
+    "message": "justo ahora"
   }
 }

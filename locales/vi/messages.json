@@ -1663,5 +1663,8 @@
   },
   "tagHeadShown": {
     "message": "Hiện"
+  },
+  "timeJustNow": {
+    "message": "vừa xong"
   }
 }

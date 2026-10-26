@@ -1663,5 +1663,8 @@
   },
   "tagHeadShown": {
     "message": "显示"
+  },
+  "timeJustNow": {
+    "message": "刚刚"
   }
 }

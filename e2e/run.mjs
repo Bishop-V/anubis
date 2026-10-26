@@ -2381,6 +2381,13 @@ if (!only || only === 'options') {
         if (misCredited.length) console.log('  credited a list that marks no site:', misCredited);
         assertChecks('Settings → Tags', { creditsOnlyListsThatMarkSites: misCredited.length === 0 });
       }
+      if (section === 'lists') {
+        // Each list's update button says how big the list is and when it last arrived.
+        const titles = await opt.evaluate(() => [...document.querySelectorAll('.list-row .side .icon-btn:not(.danger)')].map((b) => b.title));
+        assertChecks('Settings → Lists', {
+          updateButtonsSayWhen: titles.length > 0 && titles.every((x) => /^[\d,]+ instructions?, (updated .+|in the copy built into Anubis)\. Update now\.$/.test(x)),
+        });
+      }
     }
     const pop = await ctx.newPage();
     await pop.setViewportSize({ width: 364, height: 620 });

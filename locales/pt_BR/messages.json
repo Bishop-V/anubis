@@ -1789,5 +1789,8 @@
   },
   "tagHeadShown": {
     "message": "Mostrada"
+  },
+  "timeJustNow": {
+    "message": "agora mesmo"
   }
 }

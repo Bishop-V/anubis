@@ -2293,5 +2293,8 @@
   },
   "tagHeadShown": {
     "message": "ظاهر"
+  },
+  "timeJustNow": {
+    "message": "الآن"
   }
 }

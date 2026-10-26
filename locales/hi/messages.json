@@ -1789,5 +1789,8 @@
   },
   "tagHeadShown": {
     "message": "दिखता है"
+  },
+  "timeJustNow": {
+    "message": "अभी-अभी"
   }
 }

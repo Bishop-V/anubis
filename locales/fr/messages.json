@@ -1789,5 +1789,8 @@
   },
   "tagHeadShown": {
     "message": "Affichée"
+  },
+  "timeJustNow": {
+    "message": "à l’instant"
   }
 }

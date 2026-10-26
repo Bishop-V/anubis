@@ -679,5 +679,6 @@
   "moveItem": "Move $1, $2 of $3",
   "cleanupPartsOn": "$1 of $2 on",
   "tagHeadDoes": "What it does",
-  "tagHeadShown": "Shown"
+  "tagHeadShown": "Shown",
+  "timeJustNow": "just now"
 }

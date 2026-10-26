@@ -1915,5 +1915,8 @@
   },
   "tagHeadShown": {
     "message": "Mostrata"
+  },
+  "timeJustNow": {
+    "message": "proprio ora"
   }
 }

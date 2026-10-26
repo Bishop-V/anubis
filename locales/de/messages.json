@@ -1789,5 +1789,8 @@
   },
   "tagHeadShown": {
     "message": "Gezeigt"
+  },
+  "timeJustNow": {
+    "message": "gerade eben"
   }
 }
