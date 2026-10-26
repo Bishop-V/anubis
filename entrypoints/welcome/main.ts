@@ -2,6 +2,7 @@ import { machineTranslationNote } from '@/utils/translated';
 import '@/assets/theme.css';
 import './style.css';
 import { browser } from '#imports';
+import { renderChoices } from './choices';
 import { renderDemo } from './demo';
 import { renderListsExample, renderPanelsExample, renderTagsExample } from './extras';
 import { localizePage, t, type MessageKey } from '@/utils/i18n';
@@ -60,7 +61,7 @@ async function main() {
   $<HTMLAnchorElement>('#guide').href = wiki();
   $<HTMLAnchorElement>('#privacy').href = wiki('guide/privacy');
   await initTheme();
-  await Promise.all([renderPin(), renderExtras()]);
+  await Promise.all([renderPin(), renderExtras(), renderChoices($('#choices'))]);
   // Pinning happens in the browser's toolbar, outside this page.
   action?.onUserSettingsChanged?.addListener(() => void renderPin());
   window.addEventListener('focus', () => void renderPin());

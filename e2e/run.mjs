@@ -2679,6 +2679,26 @@ if (!only || only === 'welcome') {
     throw new Error('the welcome page extras did not respond');
   }
   await welcome.screenshot({ path: `${SHOTS}welcome-extras.png`, fullPage: true });
+
+  // Start with these: real settings, unlike the examples. Each switch sets its setting, and off puts it back.
+  const [worker] = ctx.serviceWorkers();
+  const choices = () =>
+    worker.evaluate(async () => {
+      const { settings, tagPrefs } = await chrome.storage.sync.get(['settings', 'tagPrefs']);
+      return { ai: !!settings?.cleanup?.ai, aiSites: tagPrefs?.['ai-generated']?.action ?? null, paywalls: tagPrefs?.paywall?.action ?? null };
+    });
+  const choicesBefore = await choices();
+  for (const n of [1, 2, 3]) await welcome.click(`#choices li:nth-child(${n}) .switch input`);
+  await welcome.waitForTimeout(300);
+  const choicesOn = await choices();
+  for (const n of [1, 2, 3]) await welcome.click(`#choices li:nth-child(${n}) .switch input`);
+  await welcome.waitForTimeout(300);
+  const choicesOff = await choices();
+  assertChecks('welcome page choices', {
+    startOff: !choicesBefore.ai && !choicesBefore.aiSites && !choicesBefore.paywalls,
+    setTheSettings: choicesOn.ai && choicesOn.aiSites === 'hide' && choicesOn.paywalls === 'lower',
+    putThemBack: !choicesOff.ai && !choicesOff.aiSites && !choicesOff.paywalls,
+  });
   const desktop = await check();
   await welcome.setViewportSize({ width: 390, height: 844 });
   await welcome.waitForTimeout(200);

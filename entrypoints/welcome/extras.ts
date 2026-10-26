@@ -13,7 +13,7 @@ import { STARTER_LISTS, STARTER_TAGS, resultRow, sample, tagChip, type DemoResul
 const settingsLink = (section: string, key: MessageKey) =>
   h('a', { class: 'btn small', href: `/options.html#${section}`, target: '_blank' }, t(key));
 
-const switchFor = (label: string, on: boolean, change: (on: boolean) => void) => {
+export const switchFor = (label: string, on: boolean, change: (on: boolean) => void) => {
   const input = h('input', { type: 'checkbox', checked: on, attrs: { 'aria-label': label } });
   input.addEventListener('change', () => change(input.checked));
   return h('span', { class: 'switch' }, input, h('span'));
