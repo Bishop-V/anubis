@@ -669,7 +669,7 @@
     "message": "Выберите, какие сайты показывать первыми, а какие больше никогда не видеть."
   },
   "welcomeLead": {
-    "message": "Anubis помещает небольшую кнопку рядом с каждым результатом в Google, Bing, DuckDuckGo и других системах. Сначала попробуйте на этом пробном поиске. Ничего из того, что вы здесь сделаете, не сохраняется."
+    "message": "Anubis помещает небольшую кнопку рядом с каждым результатом в Google, Bing, DuckDuckGo и других системах. Сначала попробуйте на этом пробном поиске. Ничего из того, что вы в нём сделаете, не сохраняется."
   },
   "welcomeStepsLabel": {
     "message": "Три действия для пробы"
@@ -1047,7 +1047,7 @@
     "message": "Как меняется порядок"
   },
   "deeperAuto": {
-    "message": "Дополнительные страницы при каждом поиске"
+    "message": "Загрузить ещё результаты"
   },
   "deeperTipSome": {
     "message": "Некоторые поисковые системы могут потребовать проверку на робота."
@@ -1089,7 +1089,7 @@
     "message": "Опубликовать свой список"
   },
   "publishIntro": {
-    "message": "Опубликуйте свой список из публичного репозитория Git."
+    "message": "Поделитесь своими сайтами как списком, на который могут подписаться другие."
   },
   "publishHelp": {
     "message": "Как опубликовать список"
@@ -2044,5 +2044,77 @@
   },
   "timeJustNow": {
     "message": "только что"
+  },
+  "resultsHeading": {
+    "message": "Результаты"
+  },
+  "resultsIntro": {
+    "message": "Как Anubis упорядочивает результаты и сколько их подгружает."
+  },
+  "resultsHelp": {
+    "message": "Как загрузить больше результатов"
+  },
+  "deeperHint": {
+    "message": "Сколько страниц добавлять к каждому поиску. При 0 — только по вашей просьбе."
+  },
+  "publishStepName": {
+    "message": "Заполните сведения о списке, затем скачайте его."
+  },
+  "publishName": {
+    "message": "Название"
+  },
+  "publishNamePlaceholder": {
+    "message": "Документация, которой я доверяю"
+  },
+  "publishDescription": {
+    "message": "Описание"
+  },
+  "publishDescriptionPlaceholder": {
+    "message": "Поднимает документацию, на которую я опираюсь."
+  },
+  "publishAuthor": {
+    "message": "Автор"
+  },
+  "publishIssues": {
+    "message": "Предложения"
+  },
+  "publishIssuesHint": {
+    "message": "Необязательно: трекер задач, чтобы подписчики могли предлагать изменения."
+  },
+  "publishIssuesHttps": {
+    "message": "Адрес для предложений должен начинаться с https://."
+  },
+  "publishStepUpload": {
+    "message": "Загрузите файл на $1 или в публичный репозиторий."
+  },
+  "listsUpdateTitle": {
+    "message": "$1, обновлено $2. Обновить сейчас."
+  },
+  "listsUpdateTitleBundled": {
+    "message": "$1, из копии, встроенной в Anubis. Обновить сейчас."
+  },
+  "welcomeChoicesHeading": {
+    "message": "Для начала"
+  },
+  "welcomeChoicesHow": {
+    "message": "Эти переключатели сразу меняют ваши настройки. Изменить их снова можно в настройках в любое время."
+  },
+  "welcomeChoiceAi": {
+    "message": "Убрать ответы ИИ"
+  },
+  "welcomeChoiceAiHint": {
+    "message": "«Обзор от ИИ» в Google, Duck.ai и ответы ИИ в Bing и Brave."
+  },
+  "welcomeChoiceAiSites": {
+    "message": "Скрыть сайты, созданные ИИ"
+  },
+  "welcomeChoiceAiSitesHint": {
+    "message": "Сайты, которые список «AI content» помечает как «AI-generated»."
+  },
+  "welcomeChoicePaywalls": {
+    "message": "Понизить сайты с платным доступом"
+  },
+  "welcomeChoicePaywallsHint": {
+    "message": "Новостные сайты и журналы с платным доступом опускаются на пять позиций."
   }
 }

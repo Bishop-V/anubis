@@ -471,7 +471,7 @@
     "message": "先に表示するサイトと、二度と見たくないサイトを選びます。"
   },
   "welcomeLead": {
-    "message": "Anubis は、Google、Bing、DuckDuckGo などの各検索結果の横に小さなボタンを表示します。まずはこの練習用の検索で試してみましょう。ここで行ったことは保存されません。"
+    "message": "Anubis は、Google、Bing、DuckDuckGo などの各検索結果の横に小さなボタンを表示します。まずはこの練習用の検索で試してみましょう。そこで行ったことは保存されません。"
   },
   "welcomeStepsLabel": {
     "message": "試してみる 3 つのこと"
@@ -840,7 +840,7 @@
     "message": "並べ替えのしくみ"
   },
   "deeperAuto": {
-    "message": "検索ごとに追加で読み込むページ数"
+    "message": "さらに結果を読み込む"
   },
   "deeperTipSome": {
     "message": "検索エンジンによっては、ロボット確認が求められることがあります。"
@@ -882,7 +882,7 @@
     "message": "マイリストを公開"
   },
   "publishIntro": {
-    "message": "公開 Git リポジトリからマイリストを公開します。"
+    "message": "あなたのサイトを、ほかの人が購読できるリストとして共有します。"
   },
   "publishHelp": {
     "message": "リストの公開方法"
@@ -1666,5 +1666,77 @@
   },
   "timeJustNow": {
     "message": "たった今"
+  },
+  "resultsHeading": {
+    "message": "検索結果"
+  },
+  "resultsIntro": {
+    "message": "Anubis が結果を並べる順番と、読み込む量です。"
+  },
+  "resultsHelp": {
+    "message": "さらに結果を読み込むには"
+  },
+  "deeperHint": {
+    "message": "検索ごとに追加するページ数です。0 にすると、頼んだときだけ読み込みます。"
+  },
+  "publishStepName": {
+    "message": "リストの情報を入力してから、ダウンロードします。"
+  },
+  "publishName": {
+    "message": "名前"
+  },
+  "publishNamePlaceholder": {
+    "message": "信頼できるドキュメント"
+  },
+  "publishDescription": {
+    "message": "説明"
+  },
+  "publishDescriptionPlaceholder": {
+    "message": "よく使うドキュメントを格上げします。"
+  },
+  "publishAuthor": {
+    "message": "作成者"
+  },
+  "publishIssues": {
+    "message": "提案の受付先"
+  },
+  "publishIssuesHint": {
+    "message": "任意：購読者が変更を提案できるよう、Issue トラッカーを指定します。"
+  },
+  "publishIssuesHttps": {
+    "message": "提案の受付先のアドレスは https:// で始めてください。"
+  },
+  "publishStepUpload": {
+    "message": "ファイルを $1 か、公開リポジトリにアップロードします。"
+  },
+  "listsUpdateTitle": {
+    "message": "$1、更新：$2。今すぐ更新。"
+  },
+  "listsUpdateTitleBundled": {
+    "message": "$1、Anubis に内蔵のコピー。今すぐ更新。"
+  },
+  "welcomeChoicesHeading": {
+    "message": "まずはここから"
+  },
+  "welcomeChoicesHow": {
+    "message": "これらのスイッチは、すぐに設定を変更します。設定でいつでも変更し直せます。"
+  },
+  "welcomeChoiceAi": {
+    "message": "AI による回答を削除"
+  },
+  "welcomeChoiceAiHint": {
+    "message": "Google の「AI による概要」、Duck.ai、Bing と Brave の AI の回答。"
+  },
+  "welcomeChoiceAiSites": {
+    "message": "AI 生成サイトを非表示"
+  },
+  "welcomeChoiceAiSitesHint": {
+    "message": "「AI content」リストが「AI-generated」とタグ付けしたサイト。"
+  },
+  "welcomeChoicePaywalls": {
+    "message": "有料記事のサイトを格下げ"
+  },
+  "welcomeChoicePaywallsHint": {
+    "message": "ペイウォールのあるニュースや雑誌のサイトが 5 つ下がります。"
   }
 }

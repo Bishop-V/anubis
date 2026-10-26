@@ -4,7 +4,7 @@
 
 ## 1. 編寫
 
-從**設定 → 備份 → 下載我的清單**開始，或者自己寫一個：
+在**設定 → 備份 → 發布你的清單**中填寫名稱、說明和作者，然後點選**下載我的清單**。或者自己寫一個：
 
 ```
 ! name: Official docs
@@ -21,7 +21,7 @@ $site=docs.python.org,tag=docs,boost=1 # This is Python's official documentation
 
 ## 2. 放到網上
 
-把它加到 GitHub、GitLab 或 Codeberg 上的公開程式碼倉庫，或一個 gist 中。以 `.anubis` 結尾的檔名更容易識別。
+把它上傳到一個 [gist](https://gist.github.com/)，或 GitHub、GitLab 或 Codeberg 上的公開程式碼倉庫。以 `.anubis` 結尾的檔名更容易識別。
 
 ## 3. 分享連結
 
@@ -29,7 +29,7 @@ $site=docs.python.org,tag=docs,boost=1 # This is Python's official documentation
 
 ## 4. 讓大家建議更改
 
-把 `! issues:` 設為你的問題追蹤器。訂閱者就會看到**建議更改**按鈕，點選後會在那裡開啟一個填好內容的 issue，用來新增網站或回報錯誤。
+下載前在**建議回報**中填寫你的問題追蹤器網址，或寫在 `! issues:` 行中。訂閱者就會看到**建議更改**按鈕，點選後會在那裡開啟一個填好內容的 issue，用來新增網站或回報錯誤。
 
 ## 5. 加入目錄
 

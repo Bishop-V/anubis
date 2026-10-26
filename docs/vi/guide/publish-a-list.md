@@ -4,7 +4,7 @@ Danh sách là một tệp văn bản trong kho mã công khai. Mọi người �
 
 ## 1. Viết
 
-Bắt đầu từ **Cài đặt → Sao lưu → Tải danh sách của tôi xuống**, hoặc tự viết:
+Trong **Cài đặt → Sao lưu → Xuất bản danh sách của bạn**, điền tên, mô tả và tác giả, rồi nhấn **Tải danh sách của tôi xuống**. Hoặc tự viết:
 
 ```
 ! name: Official docs
@@ -21,7 +21,7 @@ Cho mỗi trang web được gắn nhãn một chú thích `#` nói lý do. Danh
 
 ## 2. Đưa lên mạng
 
-Thêm nó vào một kho mã công khai trên GitHub, GitLab hoặc Codeberg, hoặc một gist. Tên kết thúc bằng `.anubis` sẽ dễ nhận ra.
+Tải nó lên một [gist](https://gist.github.com/), hoặc lên một kho mã công khai trên GitHub, GitLab hoặc Codeberg. Tên kết thúc bằng `.anubis` sẽ dễ nhận ra.
 
 ## 3. Chia sẻ liên kết
 
@@ -29,7 +29,7 @@ Mọi người dán nó vào **Cài đặt → Danh sách → Thêm danh sách**
 
 ## 4. Cho phép đề xuất thay đổi
 
-Đặt `! issues:` thành trình theo dõi vấn đề của bạn. Người đăng ký sẽ có nút **Đề xuất thay đổi** mở một issue điền sẵn tại đó, để thêm một trang web hoặc báo lỗi.
+Điền địa chỉ trình theo dõi vấn đề của bạn vào **Nơi góp ý** trước khi tải xuống, hoặc vào dòng `! issues:`. Người đăng ký sẽ có nút **Đề xuất thay đổi** mở một issue điền sẵn tại đó, để thêm một trang web hoặc báo lỗi.
 
 ## 5. Thêm vào thư mục
 

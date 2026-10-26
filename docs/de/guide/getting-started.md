@@ -14,6 +14,8 @@ Anubis funktioniert auch ohne seine Schaltfläche in der Symbolleiste. Wenn du s
 
 Suche in einer beliebigen [unterstützten Suchmaschine](./search-engines.md). Anubis startet mit Listen, die offizielle Dokumentation, Diskussionen, Nachschlagewerke, Paywalls, FOSS-Werkzeuge und KI-generierte Inhalte mit Tags versehen. Eine weitere wertet unabhängige Wikis über Fandom auf.
 
+Die Seite, die sich nach der Installation öffnet, bietet drei Schalter für den Anfang: KI-Antworten entfernen, KI-generierte Websites ausblenden und Websites mit Bezahlschranke abwerten. Jeden davon gibt es auch in den Einstellungen.
+
 Eine Zusammenfassung über den Ergebnissen sagt, was Anubis getan hat. Auf dem Smartphone zeigt **Details** den Rest.
 
 ![Die Zusammenfassung über den Ergebnissen](../../img/summary.png)

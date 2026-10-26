@@ -471,7 +471,7 @@
     "message": "选择哪些网站排在最前，哪些网站你再也不想看到。"
   },
   "welcomeLead": {
-    "message": "Anubis 会在 Google、Bing、DuckDuckGo 等搜索引擎的每条结果旁放一个小按钮。先在这个练习搜索上试一试。你在这里做的任何操作都不会保存。"
+    "message": "Anubis 会在 Google、Bing、DuckDuckGo 等搜索引擎的每条结果旁放一个小按钮。先在这个练习搜索上试一试。你在上面做的任何操作都不会保存。"
   },
   "welcomeStepsLabel": {
     "message": "试试这三件事"
@@ -840,7 +840,7 @@
     "message": "重新排序的原理"
   },
   "deeperAuto": {
-    "message": "每次搜索额外加载的页数"
+    "message": "加载更多结果"
   },
   "deeperTipSome": {
     "message": "部分搜索引擎可能会要求人机验证。"
@@ -882,7 +882,7 @@
     "message": "发布你的列表"
   },
   "publishIntro": {
-    "message": "从公开的 Git 仓库发布你的列表。"
+    "message": "把你的网站分享成别人可以订阅的列表。"
   },
   "publishHelp": {
     "message": "如何发布列表"
@@ -1666,5 +1666,77 @@
   },
   "timeJustNow": {
     "message": "刚刚"
+  },
+  "resultsHeading": {
+    "message": "结果"
+  },
+  "resultsIntro": {
+    "message": "Anubis 如何排列结果，以及加载多少结果。"
+  },
+  "resultsHelp": {
+    "message": "如何加载更多结果"
+  },
+  "deeperHint": {
+    "message": "每次搜索额外加载的页数。设为 0 时，只在你要求时加载。"
+  },
+  "publishStepName": {
+    "message": "填写列表的信息，然后下载。"
+  },
+  "publishName": {
+    "message": "名称"
+  },
+  "publishNamePlaceholder": {
+    "message": "我信任的文档"
+  },
+  "publishDescription": {
+    "message": "描述"
+  },
+  "publishDescriptionPlaceholder": {
+    "message": "提升我常用的文档。"
+  },
+  "publishAuthor": {
+    "message": "作者"
+  },
+  "publishIssues": {
+    "message": "建议反馈"
+  },
+  "publishIssuesHint": {
+    "message": "可选：一个 issue 跟踪器，让订阅者可以建议更改。"
+  },
+  "publishIssuesHttps": {
+    "message": "建议反馈的地址必须以 https:// 开头。"
+  },
+  "publishStepUpload": {
+    "message": "把文件上传到 $1，或上传到公开仓库。"
+  },
+  "listsUpdateTitle": {
+    "message": "$1，$2更新。立即更新。"
+  },
+  "listsUpdateTitleBundled": {
+    "message": "$1，来自 Anubis 内置的副本。立即更新。"
+  },
+  "welcomeChoicesHeading": {
+    "message": "从这些开始"
+  },
+  "welcomeChoicesHow": {
+    "message": "这些开关会立即更改你的设置。之后可以随时在设置中再改。"
+  },
+  "welcomeChoiceAi": {
+    "message": "移除 AI 回答"
+  },
+  "welcomeChoiceAiHint": {
+    "message": "Google 的“AI 概览”、Duck.ai，以及 Bing 和 Brave 的 AI 回答。"
+  },
+  "welcomeChoiceAiSites": {
+    "message": "隐藏 AI 生成的网站"
+  },
+  "welcomeChoiceAiSitesHint": {
+    "message": "“AI content”列表标记为“AI-generated”的网站。"
+  },
+  "welcomeChoicePaywalls": {
+    "message": "降低付费墙网站"
+  },
+  "welcomeChoicePaywallsHint": {
+    "message": "有付费墙的新闻和杂志网站会下移五位。"
   }
 }

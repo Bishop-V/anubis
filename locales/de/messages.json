@@ -537,7 +537,7 @@
     "message": "Lege fest, welche Websites zuerst kommen und welche du nie wieder siehst."
   },
   "welcomeLead": {
-    "message": "Anubis setzt bei jedem Suchergebnis auf Google, Bing, DuckDuckGo und anderen eine kleine Schaltfläche. Probiere es zuerst an dieser Übungssuche aus. Nichts, was du hier tust, wird gespeichert."
+    "message": "Anubis setzt bei jedem Suchergebnis auf Google, Bing, DuckDuckGo und anderen eine kleine Schaltfläche. Probiere es zuerst an dieser Übungssuche aus. Nichts, was du dort tust, wird gespeichert."
   },
   "welcomeStepsLabel": {
     "message": "Drei Dinge zum Ausprobieren"
@@ -909,7 +909,7 @@
     "message": "Wie das Neuordnen funktioniert"
   },
   "deeperAuto": {
-    "message": "Zusätzliche Seiten pro Suche"
+    "message": "Mehr Ergebnisse laden"
   },
   "deeperTipSome": {
     "message": "Manche Suchmaschinen verlangen vielleicht eine Roboterprüfung."
@@ -951,7 +951,7 @@
     "message": "Deine Liste veröffentlichen"
   },
   "publishIntro": {
-    "message": "Veröffentliche deine Liste aus einem öffentlichen Git-Repository."
+    "message": "Teile deine Websites als Liste, die andere abonnieren können."
   },
   "publishHelp": {
     "message": "Wie man eine Liste veröffentlicht"
@@ -1792,5 +1792,77 @@
   },
   "timeJustNow": {
     "message": "gerade eben"
+  },
+  "resultsHeading": {
+    "message": "Ergebnisse"
+  },
+  "resultsIntro": {
+    "message": "Wie Anubis Ergebnisse ordnet und wie viele es dazulädt."
+  },
+  "resultsHelp": {
+    "message": "So lädt Anubis mehr Ergebnisse"
+  },
+  "deeperHint": {
+    "message": "Seiten, die jede Suche zusätzlich lädt. Bei 0 nur, wenn du darum bittest."
+  },
+  "publishStepName": {
+    "message": "Trag die Angaben zu deiner Liste ein und lade sie dann herunter."
+  },
+  "publishName": {
+    "message": "Name"
+  },
+  "publishNamePlaceholder": {
+    "message": "Dokus, denen ich vertraue"
+  },
+  "publishDescription": {
+    "message": "Beschreibung"
+  },
+  "publishDescriptionPlaceholder": {
+    "message": "Wertet die Dokumentation auf, die ich nutze."
+  },
+  "publishAuthor": {
+    "message": "Autor"
+  },
+  "publishIssues": {
+    "message": "Vorschläge"
+  },
+  "publishIssuesHint": {
+    "message": "Optional: ein Issue-Tracker, damit Abonnenten Änderungen vorschlagen können."
+  },
+  "publishIssuesHttps": {
+    "message": "Die Adresse für Vorschläge muss mit https:// beginnen."
+  },
+  "publishStepUpload": {
+    "message": "Lade die Datei auf $1 oder in ein öffentliches Repository hoch."
+  },
+  "listsUpdateTitle": {
+    "message": "$1, aktualisiert $2. Jetzt aktualisieren."
+  },
+  "listsUpdateTitleBundled": {
+    "message": "$1, aus der Kopie, die Anubis mitbringt. Jetzt aktualisieren."
+  },
+  "welcomeChoicesHeading": {
+    "message": "Für den Anfang"
+  },
+  "welcomeChoicesHow": {
+    "message": "Diese Schalter ändern deine Einstellungen sofort. In den Einstellungen kannst du sie jederzeit wieder ändern."
+  },
+  "welcomeChoiceAi": {
+    "message": "KI-Antworten entfernen"
+  },
+  "welcomeChoiceAiHint": {
+    "message": "Googles „Übersicht mit KI“, Duck.ai und die KI-Antworten von Bing und Brave."
+  },
+  "welcomeChoiceAiSites": {
+    "message": "KI-generierte Websites ausblenden"
+  },
+  "welcomeChoiceAiSitesHint": {
+    "message": "Websites, die die Liste „AI content“ als „AI-generated“ markiert."
+  },
+  "welcomeChoicePaywalls": {
+    "message": "Websites mit Bezahlschranke abwerten"
+  },
+  "welcomeChoicePaywallsHint": {
+    "message": "Nachrichten- und Magazin-Websites mit Bezahlschranke rutschen fünf Plätze nach unten."
   }
 }

@@ -4,7 +4,9 @@
 
 ## Automatisch
 
-**Einstellungen → Darstellung → Zusätzliche Seiten pro Suche** lädt bei jeder Suche zusätzliche Seiten: standardmäßig 3, höchstens 20. Mit 0 lädst du nur dann mehr, wenn du darum bittest. Jede Seite kostet etwa eine Sekunde, und zu viele können eine Roboterprüfung auslösen.
+**Einstellungen → Ergebnisse → Mehr Ergebnisse laden** lädt bei jeder Suche zusätzliche Seiten: standardmäßig 3, höchstens 20. Mit 0 lädst du nur dann mehr, wenn du darum bittest. Jede Seite kostet etwa eine Sekunde, und zu viele können eine Roboterprüfung auslösen.
+
+Sobald du scrollst, klickst oder auf ein Ergebnis zeigst, bleibt stehen, was auf dem Bildschirm ist: Ergebnisse von Seiten, die noch laden, warten darunter.
 
 ## So funktioniert es
 

@@ -33,7 +33,7 @@ Một số Goggle là *lăng kính*: chúng ẩn mọi trang web không có tron
 
 - **Tắt hoặc hủy đăng ký:** mỗi danh sách có một công tắc và một nút hủy đăng ký. Để bác bỏ một danh sách cho một trang web, hãy tự [xếp hạng trang đó](./ranking.md).
 - **Sắp xếp:** kéo một danh sách bằng các chấm ở đầu nó, hoặc đặt tiêu điểm vào đó rồi nhấn mũi tên lên và xuống. Nhãn từ các danh sách ở trên hiện trước trong kết quả.
-- **Cập nhật:** danh sách cập nhật khoảng mỗi ngày một lần. **Cập nhật tất cả** kiểm tra ngay.
+- **Cập nhật:** danh sách cập nhật khoảng mỗi ngày một lần. **Cập nhật tất cả** kiểm tra ngay. Trỏ vào nút ↻ của một danh sách để xem kích thước và lần cập nhật gần nhất.
 
 ## Đề xuất thay đổi cho danh sách
 

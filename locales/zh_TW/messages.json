@@ -471,7 +471,7 @@
     "message": "選擇哪些網站排在最前，哪些網站你再也不想看到。"
   },
   "welcomeLead": {
-    "message": "Anubis 會在 Google、Bing、DuckDuckGo 等搜尋引擎的每則結果旁放一個小按鈕。先在這個練習搜尋上試一試。你在這裡做的任何操作都不會儲存。"
+    "message": "Anubis 會在 Google、Bing、DuckDuckGo 等搜尋引擎的每則結果旁放一個小按鈕。先在這個練習搜尋上試一試。你在上面做的任何操作都不會儲存。"
   },
   "welcomeStepsLabel": {
     "message": "試試這三件事"
@@ -840,7 +840,7 @@
     "message": "重新排序的原理"
   },
   "deeperAuto": {
-    "message": "每次搜尋額外載入的頁數"
+    "message": "載入更多結果"
   },
   "deeperTipSome": {
     "message": "部分搜尋引擎可能會要求人機驗證。"
@@ -882,7 +882,7 @@
     "message": "發布你的清單"
   },
   "publishIntro": {
-    "message": "從公開的 Git 儲存庫發布你的清單。"
+    "message": "把你的網站分享成別人可以訂閱的清單。"
   },
   "publishHelp": {
     "message": "如何發布清單"
@@ -1666,5 +1666,77 @@
   },
   "timeJustNow": {
     "message": "剛剛"
+  },
+  "resultsHeading": {
+    "message": "結果"
+  },
+  "resultsIntro": {
+    "message": "Anubis 如何排列結果，以及載入多少結果。"
+  },
+  "resultsHelp": {
+    "message": "如何載入更多結果"
+  },
+  "deeperHint": {
+    "message": "每次搜尋額外載入的頁數。設為 0 時，只在你要求時載入。"
+  },
+  "publishStepName": {
+    "message": "填寫清單的資訊，然後下載。"
+  },
+  "publishName": {
+    "message": "名稱"
+  },
+  "publishNamePlaceholder": {
+    "message": "我信任的文件"
+  },
+  "publishDescription": {
+    "message": "說明"
+  },
+  "publishDescriptionPlaceholder": {
+    "message": "提升我常用的文件。"
+  },
+  "publishAuthor": {
+    "message": "作者"
+  },
+  "publishIssues": {
+    "message": "建議回報"
+  },
+  "publishIssuesHint": {
+    "message": "選填：一個 issue 追蹤器，讓訂閱者可以建議更改。"
+  },
+  "publishIssuesHttps": {
+    "message": "建議回報的網址必須以 https:// 開頭。"
+  },
+  "publishStepUpload": {
+    "message": "把檔案上傳到 $1，或上傳到公開儲存庫。"
+  },
+  "listsUpdateTitle": {
+    "message": "$1，$2更新。立即更新。"
+  },
+  "listsUpdateTitleBundled": {
+    "message": "$1，來自 Anubis 內建的副本。立即更新。"
+  },
+  "welcomeChoicesHeading": {
+    "message": "從這些開始"
+  },
+  "welcomeChoicesHow": {
+    "message": "這些開關會立即變更你的設定。之後可以隨時在設定中再改。"
+  },
+  "welcomeChoiceAi": {
+    "message": "移除 AI 回答"
+  },
+  "welcomeChoiceAiHint": {
+    "message": "Google 的“AI 總覽”、Duck.ai，以及 Bing 和 Brave 的 AI 回答。"
+  },
+  "welcomeChoiceAiSites": {
+    "message": "隱藏 AI 生成的網站"
+  },
+  "welcomeChoiceAiSitesHint": {
+    "message": "“AI content”清單標記為“AI-generated”的網站。"
+  },
+  "welcomeChoicePaywalls": {
+    "message": "降低付費牆網站"
+  },
+  "welcomeChoicePaywallsHint": {
+    "message": "有付費牆的新聞和雜誌網站會下移五位。"
   }
 }

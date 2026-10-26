@@ -4,7 +4,7 @@ Eine Liste ist eine Textdatei in einem öffentlichen Repository. Über Issues un
 
 ## 1. Schreiben
 
-Fang mit **Einstellungen → Sicherung → Meine Liste herunterladen** an, oder schreib eine:
+Trag unter **Einstellungen → Sicherung → Deine Liste veröffentlichen** Name, Beschreibung und Autor ein, und drück dann **Meine Liste herunterladen**. Oder schreib eine:
 
 ```
 ! name: Official docs
@@ -21,7 +21,7 @@ Gib jeder markierten Website einen `#`-Kommentar, der sagt, warum. Listen, die n
 
 ## 2. Online stellen
 
-Leg sie in ein öffentliches Repository auf GitHub, GitLab oder Codeberg, oder in einen Gist. Ein Name auf `.anubis` hilft.
+Lade sie in einen [Gist](https://gist.github.com/) hoch, oder in ein öffentliches Repository auf GitHub, GitLab oder Codeberg. Ein Name auf `.anubis` hilft.
 
 ## 3. Den Link teilen
 
@@ -29,7 +29,7 @@ Andere fügen ihn unter **Einstellungen → Listen → Liste hinzufügen** ein o
 
 ## 4. Änderungsvorschläge ermöglichen
 
-Setze `! issues:` auf deinen Tracker. Abonnenten bekommen dann eine Schaltfläche **Änderungen vorschlagen**, die dort ein vorausgefülltes Issue öffnet, um eine Website hinzuzufügen oder einen Fehler zu melden.
+Trag vor dem Herunterladen die Adresse deines Trackers unter **Vorschläge** ein, oder setze die Zeile `! issues:`. Abonnenten bekommen dann eine Schaltfläche **Änderungen vorschlagen**, die dort ein vorausgefülltes Issue öffnet, um eine Website hinzuzufügen oder einen Fehler zu melden.
 
 ## 5. Ins Verzeichnis aufnehmen
 

@@ -537,7 +537,7 @@
     "message": "چنیں کہ کون سی سائٹیں پہلے آئیں، اور کون سی آپ کو دوبارہ کبھی نظر نہ آئیں۔"
   },
   "welcomeLead": {
-    "message": "Anubis Google، Bing، DuckDuckGo اور دوسرے سرچ انجنوں پر ہر نتیجے کے پاس ایک چھوٹا بٹن لگاتا ہے۔ پہلے اس مشقی تلاش پر آزما کر دیکھیں۔ یہاں آپ جو کچھ بھی کریں گے وہ محفوظ نہیں ہوگا۔"
+    "message": "Anubis Google، Bing، DuckDuckGo اور دوسرے سرچ انجنوں پر ہر نتیجے کے پاس ایک چھوٹا بٹن لگاتا ہے۔ پہلے اس مشقی تلاش پر آزما کر دیکھیں۔ اس پر آپ جو کچھ بھی کریں گے وہ محفوظ نہیں ہوگا۔"
   },
   "welcomeStepsLabel": {
     "message": "آزمانے کے لیے تین کام"
@@ -909,7 +909,7 @@
     "message": "ترتیب بدلنا کیسے کام کرتا ہے"
   },
   "deeperAuto": {
-    "message": "ہر تلاش پر اضافی صفحات"
+    "message": "مزید نتائج لوڈ کریں"
   },
   "deeperTipSome": {
     "message": "کچھ سرچ انجن روبوٹ کی جانچ مانگ سکتے ہیں۔"
@@ -951,7 +951,7 @@
     "message": "اپنی فہرست شائع کریں"
   },
   "publishIntro": {
-    "message": "اپنی فہرست کسی عوامی Git ریپوزٹری سے شائع کریں۔"
+    "message": "اپنی سائٹوں کو ایسی فہرست کے طور پر شیئر کریں جسے دوسرے سبسکرائب کر سکیں۔"
   },
   "publishHelp": {
     "message": "فہرست کیسے شائع کریں"
@@ -1792,5 +1792,77 @@
   },
   "timeJustNow": {
     "message": "ابھی ابھی"
+  },
+  "resultsHeading": {
+    "message": "نتائج"
+  },
+  "resultsIntro": {
+    "message": "Anubis نتائج کو کیسے ترتیب دیتا ہے، اور کتنے نتائج لاتا ہے۔"
+  },
+  "resultsHelp": {
+    "message": "مزید نتائج کیسے لوڈ کریں"
+  },
+  "deeperHint": {
+    "message": "ہر تلاش میں شامل کیے جانے والے صفحات۔ 0 پر یہ صرف آپ کے کہنے پر لوڈ ہوتے ہیں۔"
+  },
+  "publishStepName": {
+    "message": "اپنی فہرست کی تفصیلات بھریں، پھر اسے ڈاؤن لوڈ کریں۔"
+  },
+  "publishName": {
+    "message": "نام"
+  },
+  "publishNamePlaceholder": {
+    "message": "دستاویزات جن پر مجھے بھروسا ہے"
+  },
+  "publishDescription": {
+    "message": "تفصیل"
+  },
+  "publishDescriptionPlaceholder": {
+    "message": "ان دستاویزات کو اوپر کرتی ہے جن پر میرا انحصار ہے۔"
+  },
+  "publishAuthor": {
+    "message": "مصنف"
+  },
+  "publishIssues": {
+    "message": "تجاویز"
+  },
+  "publishIssuesHint": {
+    "message": "اختیاری: ایک issue ٹریکر، تاکہ سبسکرائبر تبدیلیاں تجویز کر سکیں۔"
+  },
+  "publishIssuesHttps": {
+    "message": "تجاویز کا پتہ https:// سے شروع ہونا چاہیے۔"
+  },
+  "publishStepUpload": {
+    "message": "فائل $1 پر یا کسی عوامی ریپوزٹری میں اپ لوڈ کریں۔"
+  },
+  "listsUpdateTitle": {
+    "message": "$1، $2 اپ ڈیٹ ہوئی۔ ابھی اپ ڈیٹ کریں۔"
+  },
+  "listsUpdateTitleBundled": {
+    "message": "$1، Anubis میں شامل نقل سے۔ ابھی اپ ڈیٹ کریں۔"
+  },
+  "welcomeChoicesHeading": {
+    "message": "ان سے شروع کریں"
+  },
+  "welcomeChoicesHow": {
+    "message": "یہ سوئچ آپ کی ترتیبات فوراً بدل دیتے ہیں۔ آپ جب چاہیں ترتیبات میں انہیں دوبارہ بدل سکتے ہیں۔"
+  },
+  "welcomeChoiceAi": {
+    "message": "AI جوابات ہٹائیں"
+  },
+  "welcomeChoiceAiHint": {
+    "message": "Google کا “AI کا جائزہ”، Duck.ai، اور Bing اور Brave کے AI جوابات۔"
+  },
+  "welcomeChoiceAiSites": {
+    "message": "AI سے بنی سائٹیں چھپائیں"
+  },
+  "welcomeChoiceAiSitesHint": {
+    "message": "وہ سائٹیں جنہیں “AI content” فہرست “AI-generated” کا ٹیگ دیتی ہے۔"
+  },
+  "welcomeChoicePaywalls": {
+    "message": "پے وال والی سائٹیں نیچے کریں"
+  },
+  "welcomeChoicePaywallsHint": {
+    "message": "پے وال والی خبروں اور رسالوں کی سائٹیں پانچ درجے نیچے چلی جاتی ہیں۔"
   }
 }

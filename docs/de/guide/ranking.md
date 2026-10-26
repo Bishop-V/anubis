@@ -28,9 +28,11 @@ Aufwerten und Abwerten kommen zu dem hinzu, was deine Listen und Tags bewirken. 
 
 Eine Einstufung gilt für die Website und ihre Subdomains. Der Name oben im Menü wählt die Ebene, etwa `en.wikipedia.org` oder ganz `wikipedia.org`. Die genaueste gewinnt.
 
+Auf Reddit, YouTube, Medium, GitHub und ähnlichen Websites bietet es auch den Teil an, der jemandem selbst gehört, etwa `reddit.com/r/rust` oder `youtube.com/@name`, wenn die Adresse ihn nennt. Die Adresse eines YouTube-Videos nennt seinen Kanal nicht, deshalb wird ein Video mit ganz YouTube eingestuft.
+
 ## Neu ordnen
 
-Anubis ordnet nur Ergebnisse neu, die schon auf der Seite stehen. Für spätere Seiten verwende [Mehr Ergebnisse laden](./more-results.md). Um die Reihenfolge der Suchmaschine zu behalten, schalte **Einstellungen → Darstellung → Ergebnisse neu ordnen** aus.
+Anubis ordnet nur Ergebnisse neu, die schon auf der Seite stehen. Für spätere Seiten verwende [Mehr Ergebnisse laden](./more-results.md). Um die Reihenfolge der Suchmaschine zu behalten, schalte **Einstellungen → Ergebnisse → Ergebnisse neu ordnen** aus.
 
 ## Ausgeblendete Ergebnisse
 

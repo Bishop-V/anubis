@@ -28,9 +28,11 @@ Nâng và Hạ cộng thêm vào những gì danh sách và nhãn của bạn l�
 
 Thứ hạng áp dụng cho trang web và các tên miền phụ của nó. Tên ở đầu menu chọn phạm vi, như `en.wikipedia.org` hay toàn bộ `wikipedia.org`. Lựa chọn cụ thể nhất được ưu tiên.
 
+Trên Reddit, YouTube, Medium, GitHub và các trang tương tự, menu còn đưa ra phần thuộc về riêng một người, như `reddit.com/r/rust` hay `youtube.com/@name`, khi địa chỉ có nêu phần đó. Địa chỉ của một video YouTube không nêu kênh của nó, nên video được xếp hạng theo toàn bộ YouTube.
+
 ## Xếp hạng lại
 
-Anubis chỉ sắp xếp lại các kết quả đã có trên trang. Để tới các trang sau, hãy dùng [Tải thêm kết quả](./more-results.md). Để giữ thứ tự của công cụ tìm kiếm, tắt **Cài đặt → Giao diện → Xếp hạng lại kết quả**.
+Anubis chỉ sắp xếp lại các kết quả đã có trên trang. Để tới các trang sau, hãy dùng [Tải thêm kết quả](./more-results.md). Để giữ thứ tự của công cụ tìm kiếm, tắt **Cài đặt → Kết quả → Xếp hạng lại kết quả**.
 
 ## Kết quả bị ẩn
 

@@ -537,7 +537,7 @@
     "message": "Hangi sitelerin önce geleceğini ve hangilerini bir daha hiç görmeyeceğini sen seç."
   },
   "welcomeLead": {
-    "message": "Anubis; Google, Bing, DuckDuckGo ve diğerlerinde her sonucun yanına küçük bir düğme koyar. Önce bu deneme aramasında dene. Burada yaptığın hiçbir şey kaydedilmez."
+    "message": "Anubis; Google, Bing, DuckDuckGo ve diğerlerinde her sonucun yanına küçük bir düğme koyar. Önce bu deneme aramasında dene. Orada yaptığın hiçbir şey kaydedilmez."
   },
   "welcomeStepsLabel": {
     "message": "Denemen gereken üç şey"
@@ -909,7 +909,7 @@
     "message": "Yeniden sıralama nasıl çalışır"
   },
   "deeperAuto": {
-    "message": "Arama başına ek sayfa"
+    "message": "Daha fazla sonuç yükle"
   },
   "deeperTipSome": {
     "message": "Bazı arama motorları robot denetimi isteyebilir."
@@ -951,7 +951,7 @@
     "message": "Listenizi yayınlayın"
   },
   "publishIntro": {
-    "message": "Listeni herkese açık bir Git deposundan yayımla."
+    "message": "Sitelerini başkalarının abone olabileceği bir liste olarak paylaş."
   },
   "publishHelp": {
     "message": "Liste nasıl yayınlanır"
@@ -1792,5 +1792,77 @@
   },
   "timeJustNow": {
     "message": "az önce"
+  },
+  "resultsHeading": {
+    "message": "Sonuçlar"
+  },
+  "resultsIntro": {
+    "message": "Anubis’in sonuçları nasıl sıraladığı ve kaç tane getirdiği."
+  },
+  "resultsHelp": {
+    "message": "Daha fazla sonuç yükleme"
+  },
+  "deeperHint": {
+    "message": "Her aramaya eklenecek sayfa sayısı. 0 olursa yalnızca sen istediğinde yüklenir."
+  },
+  "publishStepName": {
+    "message": "Listenin bilgilerini doldur, sonra indir."
+  },
+  "publishName": {
+    "message": "Ad"
+  },
+  "publishNamePlaceholder": {
+    "message": "Güvendiğim belgeler"
+  },
+  "publishDescription": {
+    "message": "Açıklama"
+  },
+  "publishDescriptionPlaceholder": {
+    "message": "Güvendiğim belgeleri yükseltir."
+  },
+  "publishAuthor": {
+    "message": "Yazar"
+  },
+  "publishIssues": {
+    "message": "Öneriler"
+  },
+  "publishIssuesHint": {
+    "message": "İsteğe bağlı: abonelerin değişiklik önerebilmesi için bir konu takipçisi."
+  },
+  "publishIssuesHttps": {
+    "message": "Öneri adresi https:// ile başlamalı."
+  },
+  "publishStepUpload": {
+    "message": "Dosyayı $1 adresine ya da herkese açık bir depoya yükle."
+  },
+  "listsUpdateTitle": {
+    "message": "$1, $2 güncellendi. Şimdi güncelle."
+  },
+  "listsUpdateTitleBundled": {
+    "message": "$1, Anubis’le gelen kopyada. Şimdi güncelle."
+  },
+  "welcomeChoicesHeading": {
+    "message": "Bunlarla başla"
+  },
+  "welcomeChoicesHow": {
+    "message": "Bu anahtarlar ayarlarını hemen değiştirir. İstediğin zaman Ayarlar’dan yeniden değiştirebilirsin."
+  },
+  "welcomeChoiceAi": {
+    "message": "Yapay zekâ yanıtlarını kaldır"
+  },
+  "welcomeChoiceAiHint": {
+    "message": "Google’ın “Yapay zekâ genel bakışı”, Duck.ai ile Bing ve Brave’in yapay zekâ yanıtları."
+  },
+  "welcomeChoiceAiSites": {
+    "message": "Yapay zekâyla üretilmiş siteleri gizle"
+  },
+  "welcomeChoiceAiSitesHint": {
+    "message": "“AI content” listesinin “AI-generated” olarak etiketlediği siteler."
+  },
+  "welcomeChoicePaywalls": {
+    "message": "Ödeme duvarlı siteleri düşür"
+  },
+  "welcomeChoicePaywallsHint": {
+    "message": "Ödeme duvarı olan haber ve dergi siteleri beş sıra aşağı iner."
   }
 }
