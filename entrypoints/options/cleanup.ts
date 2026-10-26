@@ -92,7 +92,7 @@ export async function renderCleanup(): Promise<HTMLElement> {
     title.replaceWith(disclose);
     // How many parts are on, said beside the name while they're folded away.
     const count = h('span', { class: 'parts-on' });
-    const say = () => (count.textContent = t('cleanupPartsOn', String(inputs.filter((i) => i.checked).length), String(inputs.length)));
+    const say = () => (count.textContent = t('cleanupPartsOn', inputs.filter((i) => i.checked).length, inputs.length));
     say();
     for (const input of [...inputs, leadInput]) input.addEventListener('change', say);
     disclose.after(count);

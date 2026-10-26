@@ -147,13 +147,13 @@ export function tagPicker(ids: string[], fromLists: Set<string>, item: (id: stri
     for (const el of folded) el.hidden = true;
     more.hidden = !folded.length;
     more.setAttribute('aria-expanded', 'false');
-    more.textContent = t('tagsShowMore', String(folded.length));
+    more.textContent = t('tagsShowMore', folded.length);
   };
   more.addEventListener('click', () => {
     const open = more.getAttribute('aria-expanded') !== 'true';
     for (const el of folded) el.hidden = !open;
     more.setAttribute('aria-expanded', String(open));
-    more.textContent = open ? t('tagsShowFewer') : t('tagsShowMore', String(folded.length));
+    more.textContent = open ? t('tagsShowFewer') : t('tagsShowMore', folded.length);
   });
   // Folds once the picker has a size, and again when its width changes, unless it is opened out.
   if (typeof ResizeObserver !== 'undefined') {

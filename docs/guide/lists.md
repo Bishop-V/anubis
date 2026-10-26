@@ -33,7 +33,7 @@ Some Goggles are *lenses*: they hide every site they don't list. Anubis marks th
 
 - **Turn off or unsubscribe:** each list has a switch and an unsubscribe button. To overrule a list on one site, [rank the site](./ranking.md) yourself.
 - **Reorder:** drag a list by the dots at its start, or focus them and press the up and down arrows. Tags from lists higher up come first on results.
-- **Update:** lists update about once a day. **Update all** checks now.
+- **Update:** lists update about once a day. **Update all** checks now. Point at a list's ↻ to see its size and when it last updated.
 
 ## Suggest changes to a list
 

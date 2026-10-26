@@ -9,6 +9,7 @@ import {
   PERSONAL_HEADER,
   recordChange,
   removeTag,
+  setListInfo,
   setSite,
   setSiteLevel,
   tagSite,
@@ -195,5 +196,49 @@ describe('tags from lists on your sites', () => {
     const tagged = tagSite(PERSONAL_HEADER, 'a.org', 'indie', cards);
     const change = recordChange(undefined, 'a.org', PERSONAL_HEADER, tagged)!;
     expect(listTagDefs(undoChange(tagged, change))).toEqual([]);
+  });
+});
+
+describe('setListInfo', () => {
+  const text = `${PERSONAL_HEADER}! tag: docs | Docs | #2f5fae\n\n$site=a.org,tag=docs\n`;
+
+  it('replaces the details in place and keeps the tags and sites', () => {
+    const next = setListInfo(text, { name: 'Docs I trust', description: 'Tags the docs I use.', author: 'you' });
+    expect(next).toBe(`! name: Docs I trust\n! description: Tags the docs I use.\n! author: you\n! tag: docs | Docs | #2f5fae\n\n$site=a.org,tag=docs\n`);
+  });
+
+  it('adds a missing line after the other details, ahead of the tags', () => {
+    const next = setListInfo(text, { issues: 'https://github.com/you/lists/issues' });
+    expect(next.split('\n').slice(0, 5)).toEqual([
+      '! name: My list',
+      "! description: Sites I've weighed myself.",
+      '! author: me',
+      '! issues: https://github.com/you/lists/issues',
+      '! tag: docs | Docs | #2f5fae',
+    ]);
+  });
+
+  it('removes a line left empty, and leaves alone what it isn’t given', () => {
+    const withIssues = setListInfo(text, { issues: 'https://github.com/you/lists/issues' });
+    expect(setListInfo(withIssues, { issues: '' })).toBe(text);
+    expect(setListInfo(text, {})).toBe(text);
+  });
+
+  it('writes a title line as name, and keeps a value on one line', () => {
+    expect(setListInfo('! title: Old\n$site=a.org', { name: 'New\nname' })).toBe('! name: New name\n$site=a.org');
+  });
+});
+
+describe('a space on a site', () => {
+  it('is written as a path before the site, and read back as one entry', () => {
+    const text = setSite(PERSONAL_HEADER, 'reddit.com/r/rust', 'hide', ['forum']);
+    expect(text).toContain('/r/rust^$site=reddit.com,discard,tag=forum');
+    expect(listSites(text)).toEqual([expect.objectContaining({ site: 'reddit.com/r/rust', level: 'hide', tags: ['forum'] })]);
+    expect(getSite(text, 'reddit.com')).toBeUndefined();
+    expect(setSite(text, 'reddit.com/r/rust', 'normal', [])).toBe(PERSONAL_HEADER);
+  });
+
+  it('leaves other path rules hand-written', () => {
+    expect(listSites(`${PERSONAL_HEADER}/blog/$site=medium.com,discard\n`)).toEqual([]);
   });
 });

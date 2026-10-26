@@ -17,7 +17,9 @@ import {
   type Settings,
 } from '@/utils/storage';
 import { applyData, collectData, readBackup, toBackup } from '@/utils/backup';
-import { t, tn, tParts } from '@/utils/i18n';
+import { t, tn, tParts, type MessageKey } from '@/utils/i18n';
+import { parseList } from '@/utils/listformat';
+import { PERSONAL_HEADER, setListInfo, type ListInfo } from '@/utils/personal';
 import { importIntoPersonal } from '@/utils/importers';
 import { REPO_URL } from '@/utils/links';
 import { wiki } from '@/utils/wiki';
@@ -56,7 +58,7 @@ function deeperRow(stored: number): HTMLElement {
   return h(
     'div',
     { class: 'setting' },
-    h('div', null, h('label', { attrs: { for: 'deeper' } }, h('b', null, t('deeperAuto'))), tip),
+    h('div', null, h('label', { attrs: { for: 'deeper' } }, h('b', null, t('deeperAuto'))), h('span', { class: 'muted' }, t('deeperHint')), tip),
     h('span', { class: 'amount' }, input),
   );
 }
@@ -109,16 +111,24 @@ export async function renderAppearance(): Promise<HTMLElement> {
         (hideStyle) => void updateSettings({ hideStyle }),
       ),
       switchRow(t('paletteHeading'), t('paletteHint'), settings.palette !== 'plain', (on) => void updateSettings({ palette: on ? 'gold' : 'plain' })),
-      toggleRow(
-        t('rerankHeading'),
-        t('rerankHint'),
-        'rerank',
-        settings,
-        helpLink('guide/ranking#reranking', t('rerankHelp')),
-      ),
-      deeperRow(settings.deeper),
       toggleRow(t('chipsHeading'), t('chipsHint'), 'showChips', settings),
       toggleRow(t('summaryHeading'), t('summaryHint'), 'showSummary', settings),
+    ),
+  );
+}
+
+/** Settings → Results: what Anubis does to the order of results, and how many pages it brings in. */
+export async function renderResults(): Promise<HTMLElement> {
+  const settings = await getSettings();
+  return h(
+    'div',
+    null,
+    pageTitle(t('resultsHeading'), t('resultsIntro')),
+    h(
+      'div',
+      { class: 'panel' },
+      toggleRow(t('rerankHeading'), t('rerankHint'), 'rerank', settings, helpLink('guide/ranking#reranking', t('rerankHelp'))),
+      deeperRow(settings.deeper),
     ),
   );
 }
@@ -272,34 +282,86 @@ export async function renderShare(): Promise<HTMLElement> {
       ),
       importStatus,
     ),
+    publishPanel(rules.personalText),
+  );
+}
+
+// The details a fresh personal list starts with: shown as empty fields, so the placeholders
+// suggest something better than "My list" and "me".
+const UNSET_INFO = parseList(PERSONAL_HEADER).meta;
+
+/** Publish your list: fill in its details here, download it, put it online, and share the link. */
+function publishPanel(personalText: string): HTMLElement {
+  return h(
+    'div',
+    { class: 'panel' },
+    h('h3', null, t('publishHeading')),
+    h('p', { class: 'muted' }, t('publishIntro'), ' ', helpLink('guide/publish-a-list', t('publishHelp'))),
     h(
-      'div',
-      { class: 'panel' },
-      h('h3', null, t('publishHeading')),
-      h('p', { class: 'muted' }, t('publishIntro'), ' ', helpLink('guide/publish-a-list', t('publishHelp'))),
+      'ol',
+      { class: 'steps' },
+      h('li', null, t('publishStepName'), publishForm(personalText), flashed('publish')),
+      h('li', null, tParts('publishStepUpload', h('a', { href: 'https://gist.github.com/', target: '_blank', rel: 'noopener noreferrer' }, 'gist.github.com'))),
+      h('li', null, t('publishStepShare')),
       h(
-        'ol',
-        { class: 'steps' },
-        h('li', null, tParts('publishStepDownload', h('code', null, '! name:'), h('code', null, '! description:'), h('code', null, '! author:'))),
-        h('li', null, tParts('publishStepRepository', h('code', null, 'lists/my-list.anubis'))),
-        // Not translated: a line of the list format.
-        h('li', null, tParts('publishStepIssues', h('code', null, '! issues: https://github.com/you/repo/issues'))),
-        h('li', null, t('publishStepShare')),
-        h(
-          'li',
-          null,
-          tParts(
-            'publishStepDirectory',
-            h('a', { href: `${REPO_URL}/blob/main/lists/directory.json`, target: '_blank', rel: 'noopener noreferrer' }, 'lists/directory.json'),
-          ),
+        'li',
+        null,
+        tParts(
+          'publishStepDirectory',
+          h('a', { href: `${REPO_URL}/blob/main/lists/directory.json`, target: '_blank', rel: 'noopener noreferrer' }, 'lists/directory.json'),
         ),
       ),
-      h(
-        'div',
-        { class: 'toolbar', style: 'margin-top:12px' },
-        h('button', { class: 'btn primary', type: 'button', on: { click: () => download('my-anubis-list.anubis', rules.personalText) } }, icon(ICON_DOWNLOAD), t('publishDownload')),
-        h('a', { class: 'btn', href: wiki('list-format'), target: '_blank', rel: 'noopener noreferrer' }, t('publishFormat')),
-      ),
+    ),
+  );
+}
+
+/** The list's details, saved into your list as it downloads. */
+function publishForm(personalText: string): HTMLElement {
+  const meta = parseList(personalText).meta;
+  const field = (key: 'name' | 'description' | 'author' | 'issues', label: MessageKey, placeholder: string, hint?: MessageKey) => {
+    const stored = meta[key] ?? '';
+    const input = h('input', {
+      id: `publish-${key}`,
+      type: key === 'issues' ? 'url' : 'text',
+      value: stored === UNSET_INFO[key] ? '' : stored,
+      placeholder,
+      spellcheck: key === 'description',
+    });
+    return { input, row: [h('label', { attrs: { for: `publish-${key}` } }, t(label)), input, hint ? h('span', { class: 'hint' }, t(hint)) : null] };
+  };
+  const name = field('name', 'publishName', t('publishNamePlaceholder'));
+  const description = field('description', 'publishDescription', t('publishDescriptionPlaceholder'));
+  const author = field('author', 'publishAuthor', 'you');
+  // Not translated: an example address.
+  const issues = field('issues', 'publishIssues', 'https://github.com/you/lists/issues', 'publishIssuesHint');
+
+  const save = async () => {
+    const tracker = issues.input.value.trim();
+    if (tracker && !/^https:\/\/[^/\s]+\.[^/\s]+/.test(tracker)) {
+      flash('publish', 'error', t('publishIssuesHttps'));
+      rerender();
+      return;
+    }
+    // An empty name, description, or author keeps the line the list has; an empty tracker drops it.
+    const info: ListInfo = { issues: tracker };
+    for (const [key, f] of [['name', name], ['description', description], ['author', author]] as const) if (f.input.value.trim()) info[key] = f.input.value;
+    const text = await editPersonal((now) => setListInfo(now, info));
+    const slug = (info.name ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    download(`${slug || 'my-anubis-list'}.anubis`, text);
+  };
+
+  return h(
+    'form',
+    { class: 'fields publish', attrs: { novalidate: '' }, on: { submit: (e: Event) => (e.preventDefault(), void save()) } },
+    ...name.row,
+    ...description.row,
+    ...author.row,
+    ...issues.row,
+    h(
+      'div',
+      { class: 'toolbar' },
+      h('button', { class: 'btn primary', type: 'submit' }, icon(ICON_DOWNLOAD), t('publishDownload')),
+      h('a', { class: 'btn', href: wiki('list-format'), target: '_blank', rel: 'noopener noreferrer' }, t('publishFormat')),
     ),
   );
 }

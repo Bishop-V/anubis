@@ -801,7 +801,7 @@
     "message": "اختر المواقع التي تأتي أولًا، وتلك التي لا تريد رؤيتها مجددًا."
   },
   "welcomeLead": {
-    "message": "يضع Anubis زرًا صغيرًا بجانب كل نتيجة في Google وBing وDuckDuckGo وغيرها. جرّب أولًا على هذا البحث التجريبي. لا يُحفظ شيء مما تفعله هنا."
+    "message": "يضع Anubis زرًا صغيرًا بجانب كل نتيجة في Google وBing وDuckDuckGo وغيرها. جرّب أولًا على هذا البحث التجريبي. لا يُحفظ شيء مما تفعله فيه."
   },
   "welcomeStepsLabel": {
     "message": "ثلاثة أشياء لتجربتها"
@@ -1185,7 +1185,7 @@
     "message": "كيف تعمل إعادة الترتيب"
   },
   "deeperAuto": {
-    "message": "صفحات إضافية لكل بحث"
+    "message": "تحميل المزيد من النتائج"
   },
   "deeperTipSome": {
     "message": "قد تطلب بعض محركات البحث التحقق من أنك لست روبوتًا."
@@ -1227,19 +1227,10 @@
     "message": "نشر قائمتك"
   },
   "publishIntro": {
-    "message": "انشر قائمتك من مستودع Git عام."
+    "message": "شارك مواقعك كقائمة يمكن للآخرين الاشتراك فيها."
   },
   "publishHelp": {
     "message": "كيف تنشر قائمة"
-  },
-  "publishStepDownload": {
-    "message": "نزّل قائمتك واضبط أسطرها $1 و$2 و$3."
-  },
-  "publishStepRepository": {
-    "message": "أضفها إلى مستودع GitHub عام أو إلى gist، مثل $1."
-  },
-  "publishStepIssues": {
-    "message": "أضف $1 ليتمكن الناس من اقتراح مواقع."
   },
   "publishStepShare": {
     "message": "شارك رابط الملف لاستخدامه في «القوائم» ← «إضافة قائمة»."
@@ -2302,5 +2293,80 @@
   },
   "tagHeadShown": {
     "message": "ظاهر"
+  },
+  "timeJustNow": {
+    "message": "الآن"
+  },
+  "resultsHeading": {
+    "message": "النتائج"
+  },
+  "resultsIntro": {
+    "message": "كيف يرتّب Anubis النتائج، وكم نتيجة يجلب."
+  },
+  "resultsHelp": {
+    "message": "كيف تحمّل المزيد من النتائج"
+  },
+  "deeperHint": {
+    "message": "عدد الصفحات التي تُضاف إلى كل بحث. عند 0 لا تُحمَّل إلا حين تطلبها."
+  },
+  "publishStepName": {
+    "message": "املأ تفاصيل قائمتك، ثم نزّلها."
+  },
+  "publishName": {
+    "message": "الاسم"
+  },
+  "publishNamePlaceholder": {
+    "message": "وثائق أثق بها"
+  },
+  "publishDescription": {
+    "message": "الوصف"
+  },
+  "publishDescriptionPlaceholder": {
+    "message": "يرفع الوثائق التي أعتمد عليها."
+  },
+  "publishAuthor": {
+    "message": "المؤلف"
+  },
+  "publishIssues": {
+    "message": "الاقتراحات"
+  },
+  "publishIssuesHint": {
+    "message": "اختياري: متتبّع مشكلات، ليقترح المشتركون تغييرات."
+  },
+  "publishIssuesHttps": {
+    "message": "يجب أن يبدأ عنوان الاقتراحات بـ https://."
+  },
+  "publishStepUpload": {
+    "message": "ارفع الملف إلى $1، أو إلى مستودع عام."
+  },
+  "listsUpdateTitle": {
+    "message": "$1، حُدّثت $2. التحديث الآن."
+  },
+  "listsUpdateTitleBundled": {
+    "message": "$1، من النسخة المضمّنة في Anubis. التحديث الآن."
+  },
+  "welcomeChoicesHeading": {
+    "message": "ابدأ بهذه"
+  },
+  "welcomeChoicesHow": {
+    "message": "تغيّر هذه المفاتيح إعداداتك فورًا. يمكنك تغييرها مجددًا من الإعدادات متى شئت."
+  },
+  "welcomeChoiceAi": {
+    "message": "إزالة إجابات الذكاء الاصطناعي"
+  },
+  "welcomeChoiceAiHint": {
+    "message": "«نظرة عامة بالذكاء الاصطناعي» من Google وDuck.ai وإجابات الذكاء الاصطناعي في Bing وBrave."
+  },
+  "welcomeChoiceAiSites": {
+    "message": "إخفاء المواقع المولَّدة بالذكاء الاصطناعي"
+  },
+  "welcomeChoiceAiSitesHint": {
+    "message": "المواقع التي تَسِمها قائمة «AI content» بـ«AI-generated»."
+  },
+  "welcomeChoicePaywalls": {
+    "message": "خفض المواقع ذات جدار الدفع"
+  },
+  "welcomeChoicePaywallsHint": {
+    "message": "تنزل مواقع الأخبار والمجلات ذات جدار الدفع خمسة مراكز."
   }
 }

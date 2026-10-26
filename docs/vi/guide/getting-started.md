@@ -14,6 +14,8 @@ Anubis vẫn hoạt động khi không có nút trên thanh công cụ. Nếu mu
 
 Hãy tìm kiếm trên bất kỳ [công cụ được hỗ trợ](./search-engines.md) nào. Anubis bắt đầu với các danh sách gắn nhãn tài liệu chính thức, thảo luận, trang tham khảo, tường phí, công cụ mã nguồn mở và nội dung do AI tạo. Một danh sách khác nâng các wiki độc lập lên trên Fandom.
 
+Trang mở ra khi bạn cài Anubis có ba lựa chọn để bắt đầu: gỡ câu trả lời AI, ẩn trang web do AI tạo và hạ các trang web có tường phí. Mỗi lựa chọn cũng có trong Cài đặt.
+
 Bản tóm tắt phía trên kết quả cho biết Anubis đã làm gì. Trên điện thoại, **Chi tiết** hiện phần còn lại.
 
 ![Bản tóm tắt phía trên kết quả](../../img/summary.png)

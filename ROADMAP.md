@@ -11,6 +11,7 @@ Work that's planned but not started, or started and not finished. Each item says
 - **Take real screenshots** for any new store listings, following the shot list in `store/README.md`.
 - **Take new store screenshots for Chrome and Firefox**, from the current build on live search pages, following the same shot list. Replace the ones on both listings.
 - **Recheck GitHub Pages before submission.** The docs site and privacy-policy URL loaded on 2026-09-29; confirm Pages still publishes from GitHub Actions before a store submission. Then try a subscribe link in Firefox, where it hasn't been run yet.
+- **A way to report problems without a GitHub account.** Report a problem opens a GitHub issue, and the wiki points there too. Every issue so far was opened by a workflow, so either few people use Anubis yet or an account is too high a bar. Open GitHub Discussions or give an email address, and answer reviews on both stores.
 
 ## Releases
 
@@ -48,7 +49,7 @@ Ready for translators: every word of the interface is in `public/_locales/en/mes
 ## Features
 
 - **Proper support for the Videos, Images, and News tabs.** Done against mocks for DuckDuckGo, Google (Images and News), Bing, Brave, Ecosia, Kagi, Startpage, and Yandex (Videos) (`cards` in `utils/engines.ts`, `engineTab` in `e2e/tab-fixtures.mjs`); check each on a live page. Left: Yahoo Japan (a separate engine to add first), Yandex's Images tab, and Google's phone Videos tab, whose markup differs (`.Ww4FFb`, `.J4ORzd`). uBlacklist's SERPINFO has the selectors; see `docs/experiments/live-pages.md`.
-- **Engine definitions fetched from the repo,** like uBlacklist's SERPINFO, so a selector fix doesn't need a store release. Chrome forbids downloading code, so they have to be data: `isResultsPage` is a function today and would need a declarative form.
+- **Engine definitions fetched from the repo,** like uBlacklist's SERPINFO, so a selector fix doesn't need a store release. Next, in a pull request of its own: when an engine changes its page, Anubis stays broken for everyone until a store review passes. Chrome forbids downloading code, so they have to be data: `isResultsPage` is a function today and would need a declarative form.
 - **An archived copy for paywalled results:** a link to `https://web.archive.org/web/<address>` beside the Paywalls label. It fetches nothing until clicked and needs no permission.
 - **SearXNG and Yahoo Japan.** uBlacklist's SERPINFO has `searxng.yml` and `yahoo-japan.yml`. SearXNG runs on many hosts, so let people add their instance: ask for that one host through the existing optional `https://*/*` permission, then register the content script for it (`scripting.registerContentScripts` in MV3, `contentScripts.register` in MV2). Nothing changes at install.
 

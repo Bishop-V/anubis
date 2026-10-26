@@ -1,7 +1,7 @@
 import { browser } from '#imports';
 import { h, icon } from '@/utils/dom';
 import { normalizeDomain } from '@/utils/domain';
-import { t, tJoin, tn, tParts, type MessageKey } from '@/utils/i18n';
+import { t, tAgo, tJoin, tn, tParts, type MessageKey } from '@/utils/i18n';
 import { ICON_EXTERNAL, ICON_REFRESH, ICON_TRASH } from '@/utils/icons';
 import { readSubscribeLink, REPO_URL, type SubscribeLink } from '@/utils/links';
 import { colorForTag, parseList, type ListFormat, type ParsedList } from '@/utils/listformat';
@@ -380,11 +380,21 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
       'div',
       { class: 'side' },
       h('label', { class: 'switch', title: sub.enabled ? t('listsOn') : t('listsOff') }, toggle, h('span')),
-      h('button', { class: 'icon-btn', type: 'button', title: t('listsUpdateNow'), attrs: { 'aria-label': t('listsUpdateOne', name) }, on: { click: update } }, icon(ICON_REFRESH)),
+      h('button', { class: 'icon-btn', type: 'button', title: updateTitle(parsed, cached), attrs: { 'aria-label': t('listsUpdateOne', name) }, on: { click: update } }, icon(ICON_REFRESH)),
       h('button', { class: 'icon-btn danger', type: 'button', title: t('listsUnsubscribe'), attrs: { 'aria-label': t('listsUnsubscribeOne', name) }, on: { click: remove } }, icon(ICON_TRASH)),
     ),
     open ? suggestForm(tracker, name, parsed) : null,
   );
+}
+
+/**
+ * The update button's tooltip: how big the list is and when it last arrived. The row
+ * itself stays to what someone deciding whether to keep a list needs.
+ */
+function updateTitle(parsed: ParsedList | undefined, cached: CachedList | undefined): string {
+  if (!parsed) return t('listsUpdateNow');
+  const size = tn('listInstructions', parsed.rules.length);
+  return cached?.fetchedAt ? t('listsUpdateTitle', size, tAgo(cached.fetchedAt)) : t('listsUpdateTitleBundled', size);
 }
 
 /**

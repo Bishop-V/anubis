@@ -19,9 +19,9 @@ export type PluralKey = MessageKey extends infer K ? (K extends `${infer Base}_o
 const getMessage = (key: string, subs: string[]): string =>
   (browser.i18n.getMessage as (key: string, subs?: string[]) => string)(key, subs);
 
-/** A message, with `$1`, `$2`… filled in. */
+/** A message, with `$1`, `$2`… filled in. Numbers are written as the language writes them. */
 export function t(key: MessageKey, ...subs: (string | number)[]): string {
-  return getMessage(key, subs.map(String)) || key;
+  return getMessage(key, subs.map(sub)) || key;
 }
 
 /** The language the messages are in, as a BCP 47 tag (pt-BR) for Intl and `lang`; English if a translation's code is wrong. */
@@ -38,11 +38,32 @@ const listFormat = (type: ListType) => new Intl.ListFormat(lang(), { type, style
 type ListType = 'conjunction' | 'disjunction' | 'unit';
 
 let pluralRules: Intl.PluralRules | undefined;
+let numberFormat: Intl.NumberFormat | undefined;
+
+/** A number as the language writes it: "1,566" in English, with Bengali digits in Bengali. */
+export function tNumber(n: number): string {
+  numberFormat ??= new Intl.NumberFormat(lang());
+  return numberFormat.format(n);
+}
+
+const sub = (s: string | number): string => (typeof s === 'number' ? tNumber(s) : s);
+
+/** How long ago a time was, in the language's words: "just now", "5 minutes ago", "2 days ago". */
+export function tAgo(ms: number, now = Date.now()): string {
+  const s = Math.round((now - ms) / 1000);
+  if (s < 60) return t('timeJustNow');
+  const format = new Intl.RelativeTimeFormat(lang(), { numeric: 'auto' });
+  const m = Math.round(s / 60);
+  if (m < 60) return format.format(-m, 'minute');
+  const hr = Math.round(m / 60);
+  if (hr < 48) return format.format(-hr, 'hour');
+  return format.format(-Math.round(hr / 24), 'day');
+}
 
 /** A message about `count` things, in the right plural form. `$1` is the count. */
 export function tn(key: PluralKey, count: number, ...subs: (string | number)[]): string {
   pluralRules ??= new Intl.PluralRules(lang());
-  const args = [String(count), ...subs.map(String)];
+  const args = [tNumber(count), ...subs.map(sub)];
   return getMessage(`${key}_${pluralRules.select(count)}`, args) || getMessage(`${key}_other`, args) || key;
 }
 

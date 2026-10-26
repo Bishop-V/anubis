@@ -127,6 +127,9 @@ function mockPages() {
     'https://search.brave.com/search?q=anubis': brave('anubis', ANUBIS_RESULTS),
     'https://www.google.com/search?q=anubis&deep=1': google('anubis', ANUBIS_RESULTS, { next: '/search?q=anubis&start=10' }),
     'https://www.google.com/search?q=anubis&start=10': google('anubis', ANUBIS_PAGE2),
+    // Page 2 arriving a moment late, after someone has started reading page 1.
+    'https://www.google.com/search?q=anubis&deep=slow': google('anubis', ANUBIS_RESULTS, { next: '/search?q=anubis&start=10&slow=1' }),
+    'https://www.google.com/search?q=anubis&start=10&slow=1': () => new Promise((resolve) => setTimeout(() => resolve(google('anubis', ANUBIS_PAGE2)), 1500)),
     'https://www.google.com/search?q=anubis&deep=late': google('anubis', ANUBIS_RESULTS, { next: '/search?q=anubis&start=10', latePager: true }),
     'https://www.google.com/search?q=anubis&hostile=1': google('anubis', ANUBIS_RESULTS, { hostile: true }),
     'https://www.google.com/search?q=anubis&grouped=1': google('anubis', ANUBIS_RESULTS, { grouped: true }),
@@ -260,9 +263,9 @@ async function launch(settings = {}, ext = EXT) {
     { personal: PERSONAL, settings },
   );
   const pages = mockPages();
-  await ctx.route(/^https:\/\/((noai\.|html\.|lite\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com|www\.ecosia\.org|search\.yahoo\.com|kagi\.com|www\.startpage\.com|yandex\.com)\//, (route) => {
+  await ctx.route(/^https:\/\/((noai\.|html\.|lite\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com|www\.ecosia\.org|search\.yahoo\.com|kagi\.com|www\.startpage\.com|yandex\.com)\//, async (route) => {
     const page = pages[route.request().url()];
-    return answerRoute(route, typeof page === 'function' ? page(route.request()) : page);
+    return answerRoute(route, typeof page === 'function' ? await page(route.request()) : page);
   });
   // Ecosia's favicon service: a one-pixel picture for any site.
   await ctx.route('https://api.ecosia.org/**', (route) =>
@@ -1966,6 +1969,43 @@ if (!only || only === 'popover') {
   console.log('== site name after choosing the whole site:', JSON.stringify(menu.split(' ')[0]), '| focus in the menu:', focused === 'anubis-popover');
   await page.screenshot({ path: `${SHOTS}popover-site.png`, fullPage: false });
   await page.keyboard.press('Escape');
+
+  // Part of a site: a Reddit result's menu offers its subreddit before reddit.com. Hide on
+  // the subreddit hides that result only and is saved as a line for that path.
+  {
+    await page.goto('https://www.google.com/search?q=anubis');
+    await page.waitForTimeout(600);
+    const reddit = page.locator('[data-anubis-result]', { hasText: 'AskHistorians' });
+    await reddit.hover();
+    await pressWeigh(reddit.locator('anubis-weigh'));
+    await page.waitForTimeout(300);
+    const cdp = await page.context().newCDPSession(page);
+    const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+    const kids = (node) => [...(node.children ?? []), ...(node.shadowRoots ?? [])];
+    const hostOf = (node) => (node.localName === 'anubis-popover' ? node : kids(node).map(hostOf).find(Boolean));
+    const selectIn = (node) => (node.nodeName === 'SELECT' ? node : kids(node).map(selectIn).find(Boolean));
+    const select = selectIn(hostOf(root));
+    const valueOf = (option) => (option.attributes ?? []).find((v, i, all) => i % 2 === 1 && all[i - 1] === 'value');
+    const offered = (select?.children ?? []).filter((c) => c.nodeName === 'OPTION').map(valueOf);
+    if (select) await cdp.send('DOM.focus', { nodeId: select.nodeId });
+    await cdp.detach();
+    await page.keyboard.press('ArrowUp');
+    await page.waitForTimeout(300);
+    await clickShadowButton('anubis-popover', 'Hide');
+    await page.waitForTimeout(900);
+    const states = await report(page, 'after hiding reddit.com/r/askhistorians');
+    await page.keyboard.press('Escape');
+    // The summary names what was saved: the subreddit, not reddit.com.
+    const said = await shadowText('anubis-summary');
+    await clickShadowButton('anubis-summary', 'Undo');
+    await page.waitForTimeout(600);
+    console.log('== part of a site:', JSON.stringify({ offered, said }));
+    assertChecks('ranking part of a site', {
+      offersTheSubredditFirst: offered[0] === 'reddit.com/r/askhistorians' && offered.includes('reddit.com'),
+      hidesThatResult: states.some((r) => r.text.includes('jackal') && r.state.startsWith('hide')),
+      savesTheSubreddit: said.includes('Hid reddit.com/r/askhistorians.'),
+    });
+  }
 }
 
 // What a screen reader hears, from the accessibility tree (it sees inside closed
@@ -2242,7 +2282,45 @@ if (!only || only === 'deeper' || checks) {
   };
   await page.screenshot({ path: `${SHOTS}bing-deeper-stopped.png`, fullPage: false });
 
-  console.log('\n== load more results:', JSON.stringify({ googleByHand, afterRewrite, googleAuto, ddgAuto, ddgByHandPages, braveAuto, bravePagerBelow, bingPages, bingPagerBelow, bingFrameGone, bingRedirectedPages, bingIcons, bingStopped }));
+  // Load more results by itself, with page 2 arriving late: metmuseum.org is pinned and on page 2.
+  // Nobody reading yet, it goes to the top. Once the pointer has moved over a result, nothing on
+  // screen moves for it: it waits below the last result that was on screen.
+  const lateArrival = async (read) => {
+    await setDeeper(1);
+    await page.goto('https://www.google.com/search?q=anubis&deep=slow', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('[data-anubis-result]');
+    await page.waitForTimeout(300);
+    const tops = () =>
+      page.evaluate(() =>
+        Object.fromEntries(
+          [...document.querySelectorAll('[data-anubis-result]')]
+            .filter((el) => el.getClientRects().length && el.getBoundingClientRect().top < innerHeight)
+            .map((el) => [el.querySelector('a[href]')?.href, Math.round(el.getBoundingClientRect().top)]),
+        ),
+      );
+    let before = {};
+    if (read) {
+      const box = await page.locator('[data-anubis-result]').first().boundingBox();
+      await page.mouse.move(box.x + 40, box.y + 10);
+      await page.mouse.move(box.x + 60, box.y + 14);
+      before = await tops();
+    }
+    await page.waitForSelector('[data-anubis-page="2"]', { timeout: 8000 });
+    await page.waitForTimeout(600);
+    const after = await tops();
+    const place = await page.evaluate(() => {
+      const shown = [...document.querySelectorAll('[data-anubis-result]')]
+        .filter((el) => el.getClientRects().length)
+        .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
+      return shown.findIndex((el) => el.querySelector('a[href*="metmuseum.org"]'));
+    });
+    await setDeeper(0);
+    return { place, moved: Object.keys(before).filter((href) => after[href] !== before[href]), seen: Object.keys(before).length };
+  };
+  const lateUnread = await lateArrival(false);
+  const lateRead = await lateArrival(true);
+
+  console.log('\n== load more results:', JSON.stringify({ googleByHand, afterRewrite, googleAuto, ddgAuto, ddgByHandPages, braveAuto, bravePagerBelow, bingPages, bingPagerBelow, bingFrameGone, bingRedirectedPages, bingIcons, bingStopped, lateUnread, lateRead }));
   if (checks) {
     assertChecks('load more results', {
       googleByHand: googleByHand === 1,
@@ -2259,6 +2337,9 @@ if (!only || only === 'deeper' || checks) {
       bingNextLinkWithoutRedirectFlag: bingRedirectedPages === 1,
       bingIconsOnLoadedResults: bingIcons,
       bingSaysWhyItStopped: bingStopped.said && bingStopped.linked && bingStopped.offeredAgain,
+      latePinnedFirstBeforeReading: lateUnread.place === 0,
+      latePinnedWaitsWhileReading: lateRead.place > 0 && lateRead.seen > 0,
+      nothingOnScreenMovesWhileReading: lateRead.moved.length === 0,
     });
   }
 }
@@ -2366,10 +2447,28 @@ if (!only || only === 'options') {
       await opt.locator('.theme-btn').click();
       await opt.waitForTimeout(150);
     }
-    for (const section of ['sites', 'tags', 'lists', 'cleanup', 'appearance', 'sync', 'share']) {
+    for (const section of ['sites', 'tags', 'lists', 'cleanup', 'results', 'appearance', 'sync', 'share']) {
       await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
       await opt.waitForTimeout(500);
       await opt.screenshot({ path: `${SHOTS}options-${section}-${theme}.png`, fullPage: true });
+      if (section === 'tags') {
+        // "From …" names the lists that only define a tag, and only when no list marks a
+        // site with it: FOSS tools defines AI slop, whose sites come from AI content.
+        const wronglyCredited = await opt.evaluate(() =>
+          [...document.querySelectorAll('main .meta')]
+            .filter((m) => m.querySelector('.source') && / from /.test(m.querySelector('.effect')?.textContent ?? ''))
+            .map((m) => m.closest('.tag-card, li, div')?.querySelector('strong, h3, h4, .name')?.textContent ?? m.textContent),
+        );
+        if (wronglyCredited.length) console.log('  credited a list that marks no site:', wronglyCredited);
+        assertChecks('Settings → Tags', { creditsOnlyListsThatMarkSites: wronglyCredited.length === 0 });
+      }
+      if (section === 'lists') {
+        // Each list's update button says how big the list is and when it last arrived.
+        const titles = await opt.evaluate(() => [...document.querySelectorAll('.list-row .side .icon-btn:not(.danger)')].map((b) => b.title));
+        assertChecks('Settings → Lists', {
+          updateButtonsSayWhen: titles.length > 0 && titles.every((x) => /^[\d,]+ instructions?, (updated .+|in the copy built into Anubis)\. Update now\.$/.test(x)),
+        });
+      }
     }
     const pop = await ctx.newPage();
     await pop.setViewportSize({ width: 364, height: 620 });
@@ -2378,6 +2477,37 @@ if (!only || only === 'options') {
     await pop.screenshot({ path: `${SHOTS}popup-${theme}.png`, fullPage: true });
     await pop.close();
     await opt.close();
+  }
+  // Publish your list: the details typed in go into the list's header, and the download is named after it.
+  {
+    const [sw] = ctx.serviceWorkers();
+    const before = await sw.evaluate(async () => (await chrome.storage.sync.get('personal.0'))['personal.0']);
+    const opt = await ctx.newPage();
+    await opt.goto(`chrome-extension://${extId}/options.html#share`);
+    await opt.waitForSelector('#publish-name');
+    await opt.fill('#publish-issues', 'not a link');
+    await opt.click('form.publish button[type="submit"]');
+    const refused = await opt.waitForSelector('.notice.error', { timeout: 3000 }).then(() => true, () => false);
+    await opt.fill('#publish-name', 'Docs I trust');
+    await opt.fill('#publish-issues', 'https://github.com/you/lists/issues');
+    const [file] = await Promise.all([opt.waitForEvent('download'), opt.click('form.publish button[type="submit"]')]);
+    const stored = await sw.evaluate(async () => {
+      for (let i = 0; i < 20; i++) {
+        const { personal } = await chrome.storage.sync.get('personal');
+        if (personal) break;
+        await new Promise((r) => setTimeout(r, 100));
+      }
+      return (await chrome.storage.sync.get('personal.0'))['personal.0'];
+    });
+    const header = await opt.evaluate(() => [document.querySelector('#publish-name')?.value, document.querySelector('#publish-issues')?.value]);
+    await opt.close();
+    await sw.evaluate(async (text) => chrome.storage.sync.set({ 'personal.0': text }), before);
+    assertChecks('Publish your list', {
+      refusesATrackerThatIsntALink: refused,
+      namesTheFileAfterTheList: file.suggestedFilename() === 'docs-i-trust.anubis',
+      keepsTheDetails: header[0] === 'Docs I trust' && header[1] === 'https://github.com/you/lists/issues',
+      changedTheStoredList: stored !== before,
+    });
   }
   console.log('\n== options + popup screenshots done');
 }
@@ -2393,10 +2523,10 @@ if (!only || only === 'responsive') {
     await opt.emulateMedia({ colorScheme });
     for (const width of [320, 360, 375, 389, 390]) {
       await opt.setViewportSize({ width, height: 900 });
-      for (const section of ['sites', 'tags', 'lists', 'cleanup', 'appearance', 'engines', 'sync', 'share']) {
+      for (const section of ['sites', 'tags', 'lists', 'cleanup', 'results', 'appearance', 'engines', 'sync', 'share']) {
         await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
         const heading = builtMessage(
-          { sites: 'sitesHeading', tags: 'tagsHeading', lists: 'listsHeading', cleanup: 'cleanupHeading', appearance: 'appearanceHeading', engines: 'enginesHeading', sync: 'syncHeading', share: 'shareHeading' }[section],
+          { sites: 'sitesHeading', tags: 'tagsHeading', lists: 'listsHeading', cleanup: 'cleanupHeading', results: 'resultsHeading', appearance: 'appearanceHeading', engines: 'enginesHeading', sync: 'syncHeading', share: 'shareHeading' }[section],
         );
         await opt.waitForFunction((text) => document.querySelector('main h2')?.textContent === text, heading);
         const layout = await opt.evaluate(() => ({
@@ -2586,6 +2716,26 @@ if (!only || only === 'welcome') {
     throw new Error('the welcome page extras did not respond');
   }
   await welcome.screenshot({ path: `${SHOTS}welcome-extras.png`, fullPage: true });
+
+  // Start with these: real settings, unlike the examples. Each switch sets its setting, and off puts it back.
+  const [worker] = ctx.serviceWorkers();
+  const choices = () =>
+    worker.evaluate(async () => {
+      const { settings, tagPrefs } = await chrome.storage.sync.get(['settings', 'tagPrefs']);
+      return { ai: !!settings?.cleanup?.ai, aiSites: tagPrefs?.['ai-generated']?.action ?? null, paywalls: tagPrefs?.paywall?.action ?? null };
+    });
+  const choicesBefore = await choices();
+  for (const n of [1, 2, 3]) await welcome.click(`#choices li:nth-child(${n}) .switch input`);
+  await welcome.waitForTimeout(300);
+  const choicesOn = await choices();
+  for (const n of [1, 2, 3]) await welcome.click(`#choices li:nth-child(${n}) .switch input`);
+  await welcome.waitForTimeout(300);
+  const choicesOff = await choices();
+  assertChecks('welcome page choices', {
+    startOff: !choicesBefore.ai && !choicesBefore.aiSites && !choicesBefore.paywalls,
+    setTheSettings: choicesOn.ai && choicesOn.aiSites === 'hide' && choicesOn.paywalls === 'lower',
+    putThemBack: !choicesOff.ai && !choicesOff.aiSites && !choicesOff.paywalls,
+  });
   const desktop = await check();
   await welcome.setViewportSize({ width: 390, height: 844 });
   await welcome.waitForTimeout(200);
@@ -2601,7 +2751,7 @@ if (!only || only === 'axe') {
   // than excluding it; when one has to stay, name the rule and why next to AXE_ALLOWED.
   const { AxeBuilder } = await import('@axe-core/playwright');
   const AXE_ALLOWED = {};
-  const sections = ['sites', 'tags', 'lists', 'cleanup', 'appearance', 'engines', 'sync', 'share'];
+  const sections = ['sites', 'tags', 'lists', 'cleanup', 'results', 'appearance', 'engines', 'sync', 'share'];
   const targets = [
     ...sections.map((section) => [`Settings → ${section}`, `options.html#${section}`, 1180, 900]),
     ['Popup', 'popup.html', 364, 620],

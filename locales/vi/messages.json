@@ -471,7 +471,7 @@
     "message": "Chọn trang web nào đứng đầu và trang web nào bạn không bao giờ muốn thấy nữa."
   },
   "welcomeLead": {
-    "message": "Anubis đặt một nút nhỏ cạnh mỗi kết quả trên Google, Bing, DuckDuckGo và các trang khác. Hãy thử trước trên lượt tìm kiếm thử này. Không có gì bạn làm ở đây được lưu lại."
+    "message": "Anubis đặt một nút nhỏ cạnh mỗi kết quả trên Google, Bing, DuckDuckGo và các trang khác. Hãy thử trước trên lượt tìm kiếm thử này. Không có gì bạn làm trên đó được lưu lại."
   },
   "welcomeStepsLabel": {
     "message": "Ba việc để thử"
@@ -840,7 +840,7 @@
     "message": "Cách xếp hạng lại hoạt động"
   },
   "deeperAuto": {
-    "message": "Số trang thêm mỗi lần tìm kiếm"
+    "message": "Tải thêm kết quả"
   },
   "deeperTipSome": {
     "message": "Một số công cụ tìm kiếm có thể yêu cầu kiểm tra robot."
@@ -882,19 +882,10 @@
     "message": "Xuất bản danh sách của bạn"
   },
   "publishIntro": {
-    "message": "Xuất bản danh sách của bạn từ một kho Git công khai."
+    "message": "Chia sẻ các trang web của bạn thành một danh sách mà người khác có thể đăng ký."
   },
   "publishHelp": {
     "message": "Cách xuất bản danh sách"
-  },
-  "publishStepDownload": {
-    "message": "Tải danh sách của bạn xuống và đặt các dòng $1, $2 và $3 của nó."
-  },
-  "publishStepRepository": {
-    "message": "Thêm nó vào một kho GitHub công khai hoặc gist, ví dụ $1."
-  },
-  "publishStepIssues": {
-    "message": "Thêm $1 để mọi người có thể đề xuất trang web."
   },
   "publishStepShare": {
     "message": "Chia sẻ liên kết của tệp cho Danh sách → Thêm danh sách."
@@ -1672,5 +1663,80 @@
   },
   "tagHeadShown": {
     "message": "Hiện"
+  },
+  "timeJustNow": {
+    "message": "vừa xong"
+  },
+  "resultsHeading": {
+    "message": "Kết quả"
+  },
+  "resultsIntro": {
+    "message": "Cách Anubis sắp xếp kết quả và tải thêm bao nhiêu."
+  },
+  "resultsHelp": {
+    "message": "Cách tải thêm kết quả"
+  },
+  "deeperHint": {
+    "message": "Số trang thêm vào mỗi lần tìm kiếm. Đặt 0 thì chỉ tải khi bạn yêu cầu."
+  },
+  "publishStepName": {
+    "message": "Điền thông tin danh sách của bạn, rồi tải xuống."
+  },
+  "publishName": {
+    "message": "Tên"
+  },
+  "publishNamePlaceholder": {
+    "message": "Tài liệu tôi tin cậy"
+  },
+  "publishDescription": {
+    "message": "Mô tả"
+  },
+  "publishDescriptionPlaceholder": {
+    "message": "Nâng các tài liệu tôi hay dùng."
+  },
+  "publishAuthor": {
+    "message": "Tác giả"
+  },
+  "publishIssues": {
+    "message": "Nơi góp ý"
+  },
+  "publishIssuesHint": {
+    "message": "Không bắt buộc: một trình theo dõi issue, để người đăng ký có thể đề xuất thay đổi."
+  },
+  "publishIssuesHttps": {
+    "message": "Địa chỉ góp ý phải bắt đầu bằng https://."
+  },
+  "publishStepUpload": {
+    "message": "Tải tệp lên $1 hoặc lên một kho công khai."
+  },
+  "listsUpdateTitle": {
+    "message": "$1, cập nhật $2. Cập nhật ngay."
+  },
+  "listsUpdateTitleBundled": {
+    "message": "$1, từ bản sao có sẵn trong Anubis. Cập nhật ngay."
+  },
+  "welcomeChoicesHeading": {
+    "message": "Bắt đầu với những mục này"
+  },
+  "welcomeChoicesHow": {
+    "message": "Các công tắc này thay đổi cài đặt của bạn ngay lập tức. Bạn có thể đổi lại trong Cài đặt bất cứ lúc nào."
+  },
+  "welcomeChoiceAi": {
+    "message": "Gỡ câu trả lời AI"
+  },
+  "welcomeChoiceAiHint": {
+    "message": "“Tổng quan do AI tạo” của Google, Duck.ai và câu trả lời AI của Bing và Brave."
+  },
+  "welcomeChoiceAiSites": {
+    "message": "Ẩn trang web do AI tạo"
+  },
+  "welcomeChoiceAiSitesHint": {
+    "message": "Các trang web mà danh sách “AI content” gắn nhãn “AI-generated”."
+  },
+  "welcomeChoicePaywalls": {
+    "message": "Hạ các trang web có tường phí"
+  },
+  "welcomeChoicePaywallsHint": {
+    "message": "Các trang tin tức và tạp chí có tường phí bị đẩy xuống năm bậc."
   }
 }

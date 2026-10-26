@@ -4,7 +4,9 @@
 
 ## Automatically
 
-**Settings → Appearance → Extra pages per search** loads extra pages on every search: 3 by default, up to 20. Set it to 0 to load more only when you ask. Each page adds about a second, and too many can bring a robot check.
+**Settings → Results → Load more results** loads extra pages on every search: 3 by default, up to 20. Set it to 0 to load more only when you ask. Each page adds about a second, and too many can bring a robot check.
+
+Once you scroll, click, or point at a result, what's on screen stays put: results from pages still loading wait below it.
 
 ## How it works
 

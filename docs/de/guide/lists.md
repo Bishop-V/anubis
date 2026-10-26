@@ -33,7 +33,7 @@ Manche Goggles sind *Linsen*: Sie blenden jede Website aus, die sie nicht nennen
 
 - **Ausschalten oder abbestellen:** Jede Liste hat einen Schalter und eine Schaltfläche zum Abbestellen. Um eine Liste bei einer Website zu überstimmen, [stufe die Website](./ranking.md) selbst ein.
 - **Ordnen:** Ziehe eine Liste an den Punkten an ihrem Anfang, oder setze den Fokus darauf und drücke die Pfeiltasten nach oben und unten. Tags aus weiter oben stehenden Listen kommen bei Ergebnissen zuerst.
-- **Aktualisieren:** Listen werden etwa einmal am Tag aktualisiert. **Alle aktualisieren** prüft sofort.
+- **Aktualisieren:** Listen werden etwa einmal am Tag aktualisiert. **Alle aktualisieren** prüft sofort. Zeig auf das ↻ einer Liste, um ihre Größe und ihre letzte Aktualisierung zu sehen.
 
 ## Änderungen an einer Liste vorschlagen
 

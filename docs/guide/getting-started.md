@@ -14,6 +14,8 @@ Anubis works without its toolbar button. To have it there in Chrome, open the pu
 
 Search on any [supported engine](./search-engines.md). Anubis starts with lists that tag official docs, discussions, reference sites, paywalls, FOSS tools, and AI-generated content. Another raises independent wikis over Fandom.
 
+The page that opens when you install Anubis offers three choices to start with: removing AI answers, hiding AI-generated sites, and lowering paywalled ones. Each is also in Settings.
+
 A summary above the results says what Anubis did. On a phone, **Details** shows the rest.
 
 <!-- Maintainer: the generated screenshots on this page come from mock pages. If the shown interface changes, run `node e2e/run.mjs docs`, then update the affected light/dark images and their descriptions together. -->

@@ -23,6 +23,7 @@ import { findClutter, mainColumn, redirectFor, watchAllTab, type Clutter } from 
 import { freshState, nextPageReady, weighDeeper } from './deeper';
 import './page.css';
 import { findResults, OWN_TAGS, type FoundResult } from './results';
+import { freshSteady, holdBelow, lookAtScreen, noteArrivals } from './steady';
 import {
   applyPalette,
   applyTheme,
@@ -89,6 +90,10 @@ export default defineContentScript({
     let shown = new Set<string>();
     let filter: string | undefined;
     let deeper = freshState(engine);
+    // What an automatic Load more results may move once someone is reading (steady.ts).
+    let steady = freshSteady();
+    // Set while pages that Anubis loaded by itself are arriving, until a pass has placed the last of them.
+    let autoLoad = false;
     let verdicts = new Map<string, Verdict>();
     let lastResults: FoundResult[] = [];
     let lastStats: PageStats | undefined;
@@ -127,6 +132,8 @@ export default defineContentScript({
       if (deeper.url !== location.href && !deeper.busy && sameSearch(deeper.url, location.href)) deeper.url = location.href;
       if (deeper.url !== location.href && !deeper.busy) {
         deeper = freshState(engine);
+        steady = freshSteady();
+        autoLoad = false;
         filter = undefined;
         reveal = false;
         shown = new Set();
@@ -208,9 +215,11 @@ export default defineContentScript({
       // Cards sit in a grid, which reranking's flex column would break: they move with `order` alone,
       // and only where their list is a grid or a flex row (a script-placed layout ignores `order`).
       const cards = results.some((r) => r.card);
-      rerank(results, scores, rules.settings.rerank && !engine.table, cards);
+      placeArrivals(results);
+      rerank(results, scores, rules.settings.rerank && !engine.table, { cards, below: steady.below });
       const pinned = results.filter((r) => verdictFor(r).level === 'pin' && !verdictFor(r).hidden).map((r) => r.container);
       makeRoomForPins(new Set(engine.table || cards ? [] : pinned));
+      lookWhileLoading(results);
       nudgeLayout(results, (r) => !verdictFor(r).hidden || reveal || shown.has(r.url));
 
       if (rules.settings.showSummary && !engine.table) {
@@ -242,9 +251,10 @@ export default defineContentScript({
         }, changed);
       } else renderSummary(undefined, stats, theme, { toggleReveal() {}, settings() {}, deeper() {}, filter() {}, undo() {} });
 
-      // "Extra pages per search": once per search.
+      // Settings → Results → Load more results: once per search.
       if (clampDeeper(rules.settings.deeper) > 0 && stats.canGoDeeper && deeper.pages === 1 && !deeper.auto) {
         deeper.auto = true;
+        autoLoad = true;
         goDeeper(clampDeeper(rules.settings.deeper));
       }
 
@@ -346,6 +356,16 @@ export default defineContentScript({
       }
     };
 
+    // Results that arrived since the last pass are held below what's on screen while someone
+    // reads (steady.ts), and what's on screen is looked at again after each pass while pages load.
+    const placeArrivals = (results: FoundResult[]) => {
+      noteArrivals(steady, results.map((r) => r.container), autoLoad);
+      if (!deeper.busy) autoLoad = false;
+    };
+    const lookWhileLoading = (results: FoundResult[]) => {
+      if (autoLoad && steady.reading) lookAtScreen(steady, results.map((r) => r.container));
+    };
+
     const goDeeper = (count: number) => {
       void weighDeeper(engine, deeper, count, schedule);
     };
@@ -355,6 +375,8 @@ export default defineContentScript({
     // Edits a site from the menu and remembers the change, so the summary can offer
     // to undo it. Recorded inside the edit, as edits run one after another.
     const editSite = (site: string, edit: (text: string) => string) => {
+      // A ranking asked for: results held below what was on screen may move now.
+      steady.below.clear();
       const prev = change;
       editPersonal((text) => {
         const next = edit(text);
@@ -516,6 +538,39 @@ export default defineContentScript({
       true,
     );
 
+    // Someone has started reading: from now on, pages loading by themselves don't move what's on screen.
+    let looking = false;
+    const look = () => {
+      if (!autoLoad || looking) return;
+      looking = true;
+      requestAnimationFrame(() => {
+        looking = false;
+        lookAtScreen(steady, lastResults.map((r) => r.container));
+      });
+    };
+    const startReading = () => {
+      if (!steady.reading) {
+        steady.reading = true;
+        if (autoLoad) lookAtScreen(steady, lastResults.map((r) => r.container));
+      }
+    };
+    for (const type of ['pointerdown', 'keydown'] as const) window.addEventListener(type, startReading, { capture: true, passive: true });
+    window.addEventListener(
+      'scroll',
+      () => {
+        startReading();
+        look();
+      },
+      { capture: true, passive: true },
+    );
+    window.addEventListener(
+      'pointermove',
+      (e) => {
+        if (e.target instanceof Element && e.target.closest('[data-anubis-result]')) startReading();
+      },
+      { capture: true, passive: true },
+    );
+
     colorSchemeItem.watch((next) => {
       scheme = next;
       refreshOpenPopover();
@@ -581,7 +636,13 @@ const rerankMark = (cards: boolean) => (cards ? 'order' : '');
 // Reranking moves results with CSS `order` inside a flex column, so the page's own
 // scripts (which own these nodes) never see them move. Each boost point moves a
 // result up one position; pins go to the top.
-function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enabled: boolean, cards = false) {
+/** How a list is reranked: whether its results are cards in a grid, and results held below others (steady.ts). */
+interface RerankOptions {
+  cards?: boolean;
+  below?: Map<HTMLElement, HTMLElement>;
+}
+
+function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enabled: boolean, { cards = false, below = new Map() }: RerankOptions = {}) {
   const parents = new Set<HTMLElement>();
   const containers = new Set<Element>(results.map((r) => r.container));
   for (const r of results) if (r.container.parentElement) parents.add(r.container.parentElement);
@@ -597,24 +658,26 @@ function rerank(results: FoundResult[], scores: Map<HTMLElement, number>, enable
       continue;
     }
     if (!parent.hasAttribute('data-anubis-rerank')) parent.setAttribute('data-anubis-rerank', rerankMark(cards));
-    // What follows the last result (the engine's pager, related searches) stays
-    // below them all, however far a result is lowered.
-    let lastResult = -1;
-    children.forEach((child, index) => {
-      if (containers.has(child)) lastResult = index;
-    });
-    const ranked = children
-      .map((child, index) => ({
-        child,
-        index,
-        key: child.tagName === 'ANUBIS-SUMMARY' ? -Infinity : index > lastResult ? Infinity : index - (scores.get(child) ?? 0),
-      }))
-      // On a tie the higher score wins, so boost=1 really moves a result past its neighbour.
-      .sort((a, b) => a.key - b.key || (scores.get(b.child) ?? 0) - (scores.get(a.child) ?? 0) || a.index - b.index);
-    ranked.forEach(({ child }, order) => {
-      if (child.style.order !== String(order)) child.style.setProperty('order', String(order));
-    });
+    orderList(children, containers, scores, below);
   }
+}
+
+/** Each child's CSS `order` in a reranked list: the summary first, then the results by score, then whatever follows them. */
+function orderList(children: HTMLElement[], containers: Set<Element>, scores: Map<HTMLElement, number>, below: Map<HTMLElement, HTMLElement>) {
+  // What follows the last result (the engine's pager, related searches) stays
+  // below them all, however far a result is lowered.
+  const lastResult = children.findLastIndex((child) => containers.has(child));
+  const keys = new Map(
+    children.map((child, index) => [child, child.tagName === 'ANUBIS-SUMMARY' ? -Infinity : index > lastResult ? Infinity : index - (scores.get(child) ?? 0)]),
+  );
+  const held = holdBelow(keys, below);
+  const ranked = children
+    .map((child, index) => ({ child, index, key: held.get(child)! }))
+    // On a tie the higher score wins, so boost=1 really moves a result past its neighbour.
+    .sort((a, b) => a.key - b.key || (scores.get(b.child) ?? 0) - (scores.get(a.child) ?? 0) || a.index - b.index);
+  ranked.forEach(({ child }, order) => {
+    if (child.style.order !== String(order)) child.style.setProperty('order', String(order));
+  });
 }
 
 // Some engines place cards with a script (DuckDuckGo's Images tab sets each picture's size and

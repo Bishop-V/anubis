@@ -471,7 +471,7 @@
     "message": "어떤 사이트를 먼저 보고, 어떤 사이트를 다시는 보지 않을지 정하세요."
   },
   "welcomeLead": {
-    "message": "Anubis는 Google, Bing, DuckDuckGo 등의 모든 검색 결과 옆에 작은 버튼을 둡니다. 먼저 이 연습 검색에서 해 보세요. 여기서 한 일은 저장되지 않습니다."
+    "message": "Anubis는 Google, Bing, DuckDuckGo 등의 모든 검색 결과 옆에 작은 버튼을 둡니다. 먼저 이 연습 검색에서 해 보세요. 연습 검색에서 한 일은 저장되지 않습니다."
   },
   "welcomeStepsLabel": {
     "message": "해 볼 세 가지"
@@ -840,7 +840,7 @@
     "message": "순위 재조정 방식"
   },
   "deeperAuto": {
-    "message": "검색당 추가 페이지 수"
+    "message": "결과 더 불러오기"
   },
   "deeperTipSome": {
     "message": "일부 검색엔진은 로봇 확인을 요구할 수 있습니다."
@@ -882,19 +882,10 @@
     "message": "내 목록 게시"
   },
   "publishIntro": {
-    "message": "공개 Git 저장소에서 내 목록을 게시하세요."
+    "message": "다른 사람이 구독할 수 있는 목록으로 내 사이트를 공유하세요."
   },
   "publishHelp": {
     "message": "목록을 게시하는 방법"
-  },
-  "publishStepDownload": {
-    "message": "내 목록을 다운로드하고 $1, $2, $3 줄을 설정합니다."
-  },
-  "publishStepRepository": {
-    "message": "공개 GitHub 저장소나 gist에 추가합니다(예: $1)."
-  },
-  "publishStepIssues": {
-    "message": "사람들이 사이트를 제안할 수 있도록 $1 줄을 추가합니다."
   },
   "publishStepShare": {
     "message": "‘목록’ → ‘목록 추가’에서 쓸 수 있도록 파일 링크를 공유합니다."
@@ -1672,5 +1663,80 @@
   },
   "tagHeadShown": {
     "message": "표시"
+  },
+  "timeJustNow": {
+    "message": "방금"
+  },
+  "resultsHeading": {
+    "message": "검색 결과"
+  },
+  "resultsIntro": {
+    "message": "Anubis가 결과를 정렬하는 방식과 불러오는 양입니다."
+  },
+  "resultsHelp": {
+    "message": "결과를 더 불러오는 방법"
+  },
+  "deeperHint": {
+    "message": "검색마다 추가할 페이지 수입니다. 0이면 요청할 때만 불러옵니다."
+  },
+  "publishStepName": {
+    "message": "목록 정보를 입력한 다음 다운로드하세요."
+  },
+  "publishName": {
+    "message": "이름"
+  },
+  "publishNamePlaceholder": {
+    "message": "믿을 수 있는 문서"
+  },
+  "publishDescription": {
+    "message": "설명"
+  },
+  "publishDescriptionPlaceholder": {
+    "message": "자주 보는 문서의 순위를 올립니다."
+  },
+  "publishAuthor": {
+    "message": "작성자"
+  },
+  "publishIssues": {
+    "message": "제안 받을 곳"
+  },
+  "publishIssuesHint": {
+    "message": "선택 사항: 구독자가 변경을 제안할 수 있는 이슈 트래커입니다."
+  },
+  "publishIssuesHttps": {
+    "message": "제안 받을 곳의 주소는 https://로 시작해야 합니다."
+  },
+  "publishStepUpload": {
+    "message": "파일을 $1 또는 공개 저장소에 올리세요."
+  },
+  "listsUpdateTitle": {
+    "message": "$1, $2 업데이트됨. 지금 업데이트."
+  },
+  "listsUpdateTitleBundled": {
+    "message": "$1, Anubis에 내장된 사본. 지금 업데이트."
+  },
+  "welcomeChoicesHeading": {
+    "message": "이것부터 시작하기"
+  },
+  "welcomeChoicesHow": {
+    "message": "이 스위치는 설정을 바로 바꿉니다. 설정에서 언제든 다시 바꿀 수 있습니다."
+  },
+  "welcomeChoiceAi": {
+    "message": "AI 답변 제거"
+  },
+  "welcomeChoiceAiHint": {
+    "message": "Google의 ‘AI 개요’, Duck.ai, Bing과 Brave의 AI 답변."
+  },
+  "welcomeChoiceAiSites": {
+    "message": "AI 생성 사이트 숨기기"
+  },
+  "welcomeChoiceAiSitesHint": {
+    "message": "‘AI content’ 목록이 ‘AI-generated’로 태그한 사이트."
+  },
+  "welcomeChoicePaywalls": {
+    "message": "유료 사이트 순위 내리기"
+  },
+  "welcomeChoicePaywallsHint": {
+    "message": "페이월이 있는 뉴스·잡지 사이트가 다섯 자리 아래로 내려갑니다."
   }
 }

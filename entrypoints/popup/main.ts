@@ -3,14 +3,14 @@ import '@/assets/theme.css';
 import './style.css';
 import { browser } from '#imports';
 import { balanceSvg, setBalance } from '@/utils/balance';
-import { domainChoices, normalizeDomain, siteOf } from '@/utils/domain';
+import { normalizeDomain, normalizeSite, siteChoices, siteOf } from '@/utils/domain';
 import { engineFor } from '@/utils/engines';
 import { bugReportLink, describeBrowser } from '@/utils/links';
 import { wiki } from '@/utils/wiki';
 import { LEVELS, evaluate, listTagCards, listTagIds, type Level } from '@/utils/matcher';
 import { h, icon, siteName } from '@/utils/dom';
 import { ICON_GEAR, LEVEL_CHIPS, LEVEL_LABELS, levelIcon, rankIcon, tagEffectText, tagMark } from '@/utils/icons';
-import { localizePage, t, tJoin, tn, type MessageKey } from '@/utils/i18n';
+import { localizePage, t, tJoin, tn, tNumber, type MessageKey } from '@/utils/i18n';
 import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { hiddenCount, send, sendToActiveTab, type PageStats } from '@/utils/messages';
 import { displayLevel, getSite, levelSteps, listSites, setSiteLevel, tagSite, upsertTagDef, type PersonalLevel } from '@/utils/personal';
@@ -142,7 +142,7 @@ function renderHere(rules: RuleSet) {
   const active = document.activeElement;
   const focusKey = hereFocusKey ?? (here.contains(active) && active instanceof HTMLElement ? active.dataset.focusKey : undefined);
   const host = tabUrl && !engineFor(tabUrl.hostname) ? tabUrl.hostname : '';
-  const choices = host ? domainChoices(host, (d) => !!getSite(rules.personalText, d)) : [];
+  const choices = host ? siteChoices(host, tabUrl!.href, (d) => !!getSite(rules.personalText, d)) : [];
   const domain =
     hereDomain && choices.includes(hereDomain)
       ? hereDomain
@@ -336,7 +336,7 @@ function renderPage(next: PageStats | undefined) {
       },
       h('i', { class: 'gem' }),
       tag.label,
-      h('span', { class: 'count' }, tag.count),
+      h('span', { class: 'count' }, tNumber(tag.count)),
     );
   });
 
@@ -356,7 +356,7 @@ function renderPage(next: PageStats | undefined) {
 
 $<HTMLFormElement>('#add-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const domain = normalizeDomain(input.value);
+  const domain = normalizeSite(input.value);
   if (!domain) {
     input.focus();
     input.select();

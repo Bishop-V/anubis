@@ -1,4 +1,4 @@
-import { normalizeDomain } from '@/utils/domain';
+import { normalizeSite } from '@/utils/domain';
 import { h, icon, siteName } from '@/utils/dom';
 import { t, tn } from '@/utils/i18n';
 import { ICON_CLOSE, ICON_DOWNLOAD, ICON_EDIT, LEVEL_ICONS, LEVEL_LABELS } from '@/utils/icons';
@@ -71,7 +71,7 @@ function addForm(): HTMLElement {
   );
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const domain = normalizeDomain(input.value);
+    const domain = normalizeSite(input.value);
     if (!domain) {
       error.textContent = t('sitesNotDomain');
       error.hidden = false;

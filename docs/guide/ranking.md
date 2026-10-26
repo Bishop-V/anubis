@@ -28,9 +28,11 @@ Raise and Lower add to what your lists and tags do; Pin and Hide override them. 
 
 A ranking covers the site and its subdomains. The name at the top of the menu picks the level, such as `en.wikipedia.org` or all of `wikipedia.org`. The most specific one wins.
 
+On Reddit, YouTube, Medium, GitHub, and similar sites, it also offers the part that's someone's own, such as `reddit.com/r/rust` or `youtube.com/@name`, when the address names it. A YouTube video's address doesn't name its channel, so a video is ranked with all of YouTube.
+
 ## Reranking
 
-Anubis reorders only the results already on the page. To rank later pages too, use [Load more results](./more-results.md). To keep the engine's order, turn off **Settings → Appearance → Rerank results**.
+Anubis reorders only the results already on the page. To rank later pages too, use [Load more results](./more-results.md). To keep the engine's order, turn off **Settings → Results → Rerank results**.
 
 ## Hidden results
 

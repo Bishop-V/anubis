@@ -13,6 +13,14 @@ describe('evaluate', () => {
     expect([at('a.com'), at('b.com'), at('c.com'), at('d.com')]).toEqual([2 * PERSONAL_STRENGTH, -2 * PERSONAL_STRENGTH, PERSONAL_STRENGTH, PERSONAL_STRENGTH]);
   });
 
+  it('lets a ranking for part of a site beat the site’s own, whatever their order', () => {
+    const me = list('me', '$site=reddit.com,boost=5\n/r/rust^$site=reddit.com,discard', true);
+    expect(weigh('https://www.reddit.com/r/Rust/comments/x', [me]).hidden).toBe(true);
+    expect(weigh('https://old.reddit.com/r/rust', [me]).hidden).toBe(true);
+    const other = weigh('https://www.reddit.com/r/rustaceans/', [me]);
+    expect([other.hidden, other.level]).toEqual([false, 'raise']);
+  });
+
   it('matches a site and its subdomains, with or without www', () => {
     const l = list('l', '$discard,site=fandom.com');
     expect(weigh('https://harrypotter.fandom.com/wiki/x', [l]).hidden).toBe(true);

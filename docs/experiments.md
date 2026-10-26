@@ -70,6 +70,7 @@ Where things are stored, sync between browsers, and subscribing to lists.
 
 The look, the wording, and Anubis's own pages.
 
+- A new user's walk through Anubis (2026-10-26)
 - Organising Settings (2026-10-21)
 - Less crowded settings (2026-10-21)
 - Grouped switches in Remove panels, and quieter list rows (2026-10-17)

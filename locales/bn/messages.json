@@ -537,7 +537,7 @@
     "message": "বেছে নিন কোন সাইটগুলি আগে আসবে, আর কোনগুলি আপনি আর কখনও দেখবেন না।"
   },
   "welcomeLead": {
-    "message": "Anubis Google, Bing, DuckDuckGo ও অন্যান্য সার্চ ইঞ্জিনে প্রতিটি ফলাফলের পাশে একটি ছোট বোতাম বসায়। আগে এই অনুশীলন সার্চে চেষ্টা করে দেখুন। এখানে আপনি যা করবেন তার কিছুই সেভ হবে না।"
+    "message": "Anubis Google, Bing, DuckDuckGo ও অন্যান্য সার্চ ইঞ্জিনে প্রতিটি ফলাফলের পাশে একটি ছোট বোতাম বসায়। আগে এই অনুশীলন সার্চে চেষ্টা করে দেখুন। সেখানে আপনি যা করবেন তার কিছুই সেভ হবে না।"
   },
   "welcomeStepsLabel": {
     "message": "চেষ্টা করার তিনটি কাজ"
@@ -909,7 +909,7 @@
     "message": "নতুন করে সাজানো কীভাবে কাজ করে"
   },
   "deeperAuto": {
-    "message": "প্রতি সার্চে অতিরিক্ত পৃষ্ঠা"
+    "message": "আরও ফলাফল লোড করুন"
   },
   "deeperTipSome": {
     "message": "কিছু সার্চ ইঞ্জিন রোবট যাচাই চাইতে পারে।"
@@ -951,19 +951,10 @@
     "message": "আপনার তালিকা প্রকাশ করুন"
   },
   "publishIntro": {
-    "message": "একটি পাবলিক Git রিপোজিটরি থেকে আপনার তালিকা প্রকাশ করুন।"
+    "message": "আপনার সাইটগুলো এমন একটি তালিকা হিসেবে শেয়ার করুন যা অন্যরা সাবস্ক্রাইব করতে পারে।"
   },
   "publishHelp": {
     "message": "কীভাবে একটি তালিকা প্রকাশ করবেন"
-  },
-  "publishStepDownload": {
-    "message": "আপনার তালিকা ডাউনলোড করুন এবং এর $1, $2 ও $3 লাইন সেট করুন।"
-  },
-  "publishStepRepository": {
-    "message": "এটি একটি পাবলিক GitHub রিপোজিটরি বা gist-এ যোগ করুন, যেমন $1।"
-  },
-  "publishStepIssues": {
-    "message": "$1 যোগ করুন, যাতে লোকে সাইট সাজেস্ট করতে পারে।"
   },
   "publishStepShare": {
     "message": "“তালিকা” → “তালিকা যোগ করুন”-এর জন্য ফাইলের লিংক শেয়ার করুন।"
@@ -1798,5 +1789,80 @@
   },
   "tagHeadShown": {
     "message": "দেখানো"
+  },
+  "timeJustNow": {
+    "message": "এইমাত্র"
+  },
+  "resultsHeading": {
+    "message": "ফলাফল"
+  },
+  "resultsIntro": {
+    "message": "Anubis কীভাবে ফলাফল সাজায়, আর কতগুলো আনে।"
+  },
+  "resultsHelp": {
+    "message": "কীভাবে আরও ফলাফল লোড করবেন"
+  },
+  "deeperHint": {
+    "message": "প্রতি সার্চে যতগুলো পৃষ্ঠা যোগ হবে। ০ হলে শুধু আপনি চাইলে লোড হয়।"
+  },
+  "publishStepName": {
+    "message": "তালিকার তথ্য পূরণ করুন, তারপর ডাউনলোড করুন।"
+  },
+  "publishName": {
+    "message": "নাম"
+  },
+  "publishNamePlaceholder": {
+    "message": "যে ডকুমেন্টেশনে আমি ভরসা করি"
+  },
+  "publishDescription": {
+    "message": "বিবরণ"
+  },
+  "publishDescriptionPlaceholder": {
+    "message": "যে ডকুমেন্টেশন আমি ব্যবহার করি তা উপরে তোলে।"
+  },
+  "publishAuthor": {
+    "message": "লেখক"
+  },
+  "publishIssues": {
+    "message": "পরামর্শ"
+  },
+  "publishIssuesHint": {
+    "message": "ঐচ্ছিক: একটি ইস্যু ট্র্যাকার, যাতে সাবস্ক্রাইবাররা পরিবর্তন সাজেস্ট করতে পারেন।"
+  },
+  "publishIssuesHttps": {
+    "message": "পরামর্শের ঠিকানা https:// দিয়ে শুরু হতে হবে।"
+  },
+  "publishStepUpload": {
+    "message": "ফাইলটি $1-এ বা কোনো পাবলিক রিপোজিটরিতে আপলোড করুন।"
+  },
+  "listsUpdateTitle": {
+    "message": "$1, $2 আপডেট হয়েছে। এখনই আপডেট করুন।"
+  },
+  "listsUpdateTitleBundled": {
+    "message": "$1, Anubis-এর সঙ্গে আসা কপি থেকে। এখনই আপডেট করুন।"
+  },
+  "welcomeChoicesHeading": {
+    "message": "এগুলো দিয়ে শুরু করুন"
+  },
+  "welcomeChoicesHow": {
+    "message": "এই সুইচগুলো সঙ্গে সঙ্গে আপনার সেটিংস বদলে দেয়। যেকোনো সময় সেটিংসে আবার বদলাতে পারবেন।"
+  },
+  "welcomeChoiceAi": {
+    "message": "এআই উত্তর সরান"
+  },
+  "welcomeChoiceAiHint": {
+    "message": "Google-এর “এআই ওভারভিউ”, Duck.ai এবং Bing ও Brave-এর এআই উত্তর।"
+  },
+  "welcomeChoiceAiSites": {
+    "message": "এআই দিয়ে তৈরি সাইট লুকান"
+  },
+  "welcomeChoiceAiSitesHint": {
+    "message": "“AI content” তালিকা যেসব সাইটকে “AI-generated” ট্যাগ দেয়।"
+  },
+  "welcomeChoicePaywalls": {
+    "message": "পেওয়াল থাকা সাইট নিচে নামান"
+  },
+  "welcomeChoicePaywallsHint": {
+    "message": "পেওয়াল থাকা খবর ও পত্রিকার সাইট পাঁচ ধাপ নিচে নামে।"
   }
 }

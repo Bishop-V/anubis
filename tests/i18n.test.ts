@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { check, freshMessages, languages, sourceKey, translation } from '../scripts/locales.mjs';
 import { describe, expect, it } from 'vitest';
 import { andList } from '@/utils/dom';
-import { dir, t, tJoin, tList, tn, tParts } from '@/utils/i18n';
+import { dir, t, tAgo, tJoin, tList, tn, tParts } from '@/utils/i18n';
 import type { SiteChange } from '@/utils/personal';
 import { changeSentence } from '@/utils/summary';
 import { hiddenReason } from '@/entrypoints/content/ui';
@@ -87,6 +87,19 @@ describe('t and tn', () => {
     expect(tn('popupTagCount', 12)).toBe('12 tags');
   });
 
+  it('says how long ago something happened', () => {
+    const now = Date.UTC(2026, 9, 26, 12);
+    expect(tAgo(now - 20_000, now)).toBe('just now');
+    expect(tAgo(now - 5 * 60_000, now)).toBe('5 minutes ago');
+    expect(tAgo(now - 3 * 3600_000, now)).toBe('3 hours ago');
+    expect(tAgo(now - 3 * 86400_000, now)).toBe('3 days ago');
+  });
+
+  it('writes numbers as the language does', () => {
+    expect(tn('popupTagCount', 1566)).toBe('1,566 tags');
+    expect(t('syncUsage', 2, 1024)).toBe('Using 2 KB of 1,024 KB.');
+  });
+
   it('puts a list of items, which can be elements, in place of a placeholder', () => {
     const a = { name: 'A' };
     const b = { name: 'B' };
@@ -146,8 +159,8 @@ describe('in another language', () => {
   it('puts elements where a message’s placeholders are', () => {
     bracketed();
     try {
-      const code = { el: 'code' };
-      expect(tParts('publishStepIssues', code)).toEqual(['[Add ', code, ' so people can suggest sites.]']);
+      const link = { el: 'a' };
+      expect(tParts('publishStepUpload', link)).toEqual(['[Upload the file to ', link, ', or to a public repository.]']);
     } finally {
       installEnglish();
     }

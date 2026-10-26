@@ -69,15 +69,81 @@ export function domainChoices(hostname: string, ranked: (domain: string) => bool
   });
 }
 
+// Sites where part of an address is someone's own space: a subreddit, a channel, an author,
+// an account. The menu offers that space as well as the whole site, as "reddit.com/r/rust".
+// Only where the address names it: a YouTube video's doesn't name its channel, so a video
+// gets the whole site alone. A space's letters are lowercased, as list patterns ignore case.
+const ACCOUNT = /^\/([\w.~-]+)(?=\/|$)/;
+const SPACES = new Map<string, RegExp>([
+  ['youtube.com', /^\/(@[\w.~%-]+|(?:c|channel|user)\/[\w.~%-]+)/],
+  ['reddit.com', /^\/((?:r|u|user)\/[\w.~-]+)/],
+  ['medium.com', /^\/(@[\w.~-]+)/],
+  ['tiktok.com', /^\/(@[\w.~-]+)/],
+  ['linkedin.com', /^\/((?:in|company)\/[\w.~%-]+)/],
+  ['github.com', ACCOUNT],
+  ['gitlab.com', ACCOUNT],
+  ['codeberg.org', ACCOUNT],
+  ['x.com', ACCOUNT],
+  ['twitter.com', ACCOUNT],
+  ['dev.to', ACCOUNT],
+]);
+// First parts of an address on those sites that are the site's own pages, not someone's.
+// Not translated: parts of addresses.
+const NOT_SPACES = new Set(
+  `about apps blog collections dashboard enterprise events explore features hashtag help home i intent issues latest login
+marketplace messages new notifications orgs pricing privacy pulls search security settings share signup site sponsors t
+terms top topics tos trending user users watch`.split(/\s+/),
+);
+
+/** Someone's space on a shared site, from an address: "https://old.reddit.com/r/Rust/comments/…" → "reddit.com/r/rust". */
+export function spaceOf(url: string): string | undefined {
+  let u: URL;
+  try {
+    u = new URL(url);
+  } catch {
+    return undefined;
+  }
+  const site = siteOf(normalizeHostname(u.hostname));
+  const m = SPACES.get(site)?.exec(u.pathname.toLowerCase());
+  if (!m || NOT_SPACES.has(m[1]!.split('/')[0]!)) return undefined;
+  return `${site}/${m[1]}`;
+}
+
+/** A site, or a space on one: "reddit.com/r/rust" → ["reddit.com", "/r/rust"], "reddit.com" → ["reddit.com", ""]. */
+export function splitSpace(site: string): [host: string, path: string] {
+  const slash = site.indexOf('/');
+  return slash === -1 ? [site, ''] : [site.slice(0, slash), site.slice(slash)];
+}
+
+/** Choices for "apply to…" in the weigh menu: someone's space when the address names one, then `domainChoices`. */
+export function siteChoices(hostname: string, url: string | undefined, ranked: (site: string) => boolean = () => false): string[] {
+  const space = url ? spaceOf(url) : undefined;
+  const hosts = domainChoices(hostname, ranked);
+  return space && hosts.includes(splitSpace(space)[0]) ? [space, ...hosts] : hosts;
+}
+
+/** A site as typed into Add a site: a domain, or a space when the address is just that space ("reddit.com/r/rust/"). */
+export function normalizeSite(input: string): string {
+  const domain = normalizeDomain(input);
+  if (!domain) return '';
+  const typed = input.trim();
+  const space = spaceOf(typed.includes('://') ? typed : `https://${typed}`);
+  if (!space) return domain;
+  const path = new URL(typed.includes('://') ? typed : `https://${typed}`).pathname.toLowerCase().replace(/\/+$/, '');
+  return path === splitSpace(space)[1] ? space : domain;
+}
+
 /**
  * A domain's name and the ending it shares with other sites, for display:
  * "metmuseum.org" → ["metmuseum", ".org"], "bbc.co.uk" → ["bbc", ".co.uk"].
  */
 export function splitSuffix(domain: string): [name: string, suffix: string] {
-  const parts = domain.split('.');
+  // A space keeps its path after the ending: "reddit.com/r/rust" → ["reddit", ".com/r/rust"].
+  const [host, path] = splitSpace(domain);
+  const parts = host.split('.');
   const labels = suffixLabels(parts);
   if (parts.length <= labels || parts.some((p) => !p)) return [domain, ''];
-  return [parts.slice(0, -labels).join('.'), `.${parts.slice(-labels).join('.')}`];
+  return [parts.slice(0, -labels).join('.'), `.${parts.slice(-labels).join('.')}${path}`];
 }
 
 /** The registrable-ish domain: "docs.github.com" → "github.com", "news.bbc.co.uk" → "bbc.co.uk", "a.github.io" → "a.github.io". */

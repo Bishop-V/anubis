@@ -537,7 +537,7 @@
     "message": "Escolha quais sites vêm primeiro e quais você nunca mais vê."
   },
   "welcomeLead": {
-    "message": "O Anubis coloca um pequeno botão ao lado de cada resultado no Google, no Bing, no DuckDuckGo e em outros. Experimente primeiro nesta pesquisa de treino. Nada do que você fizer aqui é salvo."
+    "message": "O Anubis coloca um pequeno botão ao lado de cada resultado no Google, no Bing, no DuckDuckGo e em outros. Experimente primeiro nesta pesquisa de treino. Nada do que você fizer nela é salvo."
   },
   "welcomeStepsLabel": {
     "message": "Três coisas para experimentar"
@@ -909,7 +909,7 @@
     "message": "Como a reordenação funciona"
   },
   "deeperAuto": {
-    "message": "Páginas extras por pesquisa"
+    "message": "Carregar mais resultados"
   },
   "deeperTipSome": {
     "message": "Alguns buscadores podem pedir uma verificação de robô."
@@ -951,19 +951,10 @@
     "message": "Publique sua lista"
   },
   "publishIntro": {
-    "message": "Publique sua lista a partir de um repositório Git público."
+    "message": "Compartilhe seus sites como uma lista que outras pessoas podem assinar."
   },
   "publishHelp": {
     "message": "Como publicar uma lista"
-  },
-  "publishStepDownload": {
-    "message": "Baixe sua lista e defina as linhas $1, $2 e $3 dela."
-  },
-  "publishStepRepository": {
-    "message": "Adicione-a a um repositório público do GitHub ou a um gist, por exemplo $1."
-  },
-  "publishStepIssues": {
-    "message": "Adicione $1 para que as pessoas possam sugerir sites."
   },
   "publishStepShare": {
     "message": "Compartilhe o link do arquivo para “Listas” → “Adicionar uma lista”."
@@ -1798,5 +1789,80 @@
   },
   "tagHeadShown": {
     "message": "Mostrada"
+  },
+  "timeJustNow": {
+    "message": "agora mesmo"
+  },
+  "resultsHeading": {
+    "message": "Resultados"
+  },
+  "resultsIntro": {
+    "message": "Como o Anubis ordena os resultados e quantos ele traz."
+  },
+  "resultsHelp": {
+    "message": "Carregar mais resultados"
+  },
+  "deeperHint": {
+    "message": "Páginas adicionadas a cada pesquisa. Com 0, elas só carregam quando você pede."
+  },
+  "publishStepName": {
+    "message": "Preencha os dados da sua lista e depois baixe-a."
+  },
+  "publishName": {
+    "message": "Nome"
+  },
+  "publishNamePlaceholder": {
+    "message": "Documentação em que confio"
+  },
+  "publishDescription": {
+    "message": "Descrição"
+  },
+  "publishDescriptionPlaceholder": {
+    "message": "Eleva a documentação que eu uso."
+  },
+  "publishAuthor": {
+    "message": "Autor"
+  },
+  "publishIssues": {
+    "message": "Sugestões"
+  },
+  "publishIssuesHint": {
+    "message": "Opcional: um rastreador de issues, para que os assinantes possam sugerir alterações."
+  },
+  "publishIssuesHttps": {
+    "message": "O endereço para sugestões precisa começar com https://."
+  },
+  "publishStepUpload": {
+    "message": "Envie o arquivo para $1 ou para um repositório público."
+  },
+  "listsUpdateTitle": {
+    "message": "$1, atualizada $2. Atualizar agora."
+  },
+  "listsUpdateTitleBundled": {
+    "message": "$1, na cópia que vem com o Anubis. Atualizar agora."
+  },
+  "welcomeChoicesHeading": {
+    "message": "Para começar"
+  },
+  "welcomeChoicesHow": {
+    "message": "Estas chaves mudam suas configurações na hora. Você pode mudá-las de novo nas configurações quando quiser."
+  },
+  "welcomeChoiceAi": {
+    "message": "Remover respostas de IA"
+  },
+  "welcomeChoiceAiHint": {
+    "message": "“Visão geral criada por IA” do Google, Duck.ai e as respostas de IA do Bing e do Brave."
+  },
+  "welcomeChoiceAiSites": {
+    "message": "Ocultar sites gerados por IA"
+  },
+  "welcomeChoiceAiSitesHint": {
+    "message": "Sites que a lista “AI content” marca como “AI-generated”."
+  },
+  "welcomeChoicePaywalls": {
+    "message": "Rebaixar sites com paywall"
+  },
+  "welcomeChoicePaywallsHint": {
+    "message": "Sites de notícias e revistas com paywall descem cinco posições."
   }
 }

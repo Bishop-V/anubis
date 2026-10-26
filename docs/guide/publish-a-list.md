@@ -4,7 +4,7 @@ A list is a text file in a public repository, and people contribute to it with i
 
 ## 1. Write it
 
-Start from **Settings → Backup → Download my list**, or write one:
+In **Settings → Backup → Publish your list**, fill in its name, description, and author, then press **Download my list**. Or write one:
 
 ```
 ! name: Official docs
@@ -21,7 +21,7 @@ Give each tagged site a `#` comment saying why it fits. Lists that only tag are 
 
 ## 2. Put it online
 
-Add it to a public repository on GitHub, GitLab, or Codeberg, or a gist. A name ending `.anubis` helps.
+Upload it to a [gist](https://gist.github.com/), or to a public repository on GitHub, GitLab, or Codeberg. A name ending `.anubis` helps.
 
 ## 3. Share the link
 
@@ -29,7 +29,7 @@ People paste it into **Settings → Lists → Add a list**, or use a one-click [
 
 ## 4. Let people suggest changes
 
-Set `! issues:` to your tracker. Subscribers then get a **Suggest changes** button that opens a filled-in issue there.
+Put your issue tracker's address in **Suggestions** before downloading, or in the `! issues:` line. Subscribers then get a **Suggest changes** button that opens a filled-in issue there.
 
 ## 5. Add it to the directory
 

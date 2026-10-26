@@ -1,3 +1,4 @@
+import { splitSpace } from './domain';
 import { t } from './i18n';
 import { formatTagDef, parseTagDef, type TagDef } from './listformat';
 import { PERSONAL_STRENGTH, type Level } from './matcher';
@@ -37,9 +38,10 @@ export interface SiteEntry {
   line: number;
 }
 
-// A "simple" site line: only options, one of which is site=. Anything with a URL
-// pattern is treated as hand-written and never rewritten.
-const SIMPLE_SITE_LINE = /^\$([a-z_]+(?:=[^,\s]*)?(?:,[a-z_]+(?:=[^,\s]*)?)*)(?:\s+#\s*(.*))?$/i;
+// A "simple" site line: only options, one of which is site=, after at most a space on the
+// site ("/r/rust^", from spaceOf in domain.ts). Anything else with a URL pattern is
+// treated as hand-written and never rewritten.
+const SIMPLE_SITE_LINE = /^(?:(\/[\w@.~%/-]+)\^)?\$([a-z_]+(?:=[^,\s]*)?(?:,[a-z_]+(?:=[^,\s]*)?)*)(?:\s+#\s*(.*))?$/i;
 
 /** A boost's strength as steps: ten places or more is two Raises, anything less one. */
 function stepsOf(value: string | undefined): 1 | 2 {
@@ -52,7 +54,7 @@ export function parseSimpleLine(line: string): { site: string; level: PersonalLe
   let site = '';
   let level: PersonalLevel = 'normal';
   const tags: string[] = [];
-  for (const opt of m[1]!.split(',')) {
+  for (const opt of m[2]!.split(',')) {
     const [key, value] = opt.split('=') as [string, string | undefined];
     switch (key.toLowerCase()) {
       case 'site':
@@ -78,12 +80,16 @@ export function parseSimpleLine(line: string): { site: string; level: PersonalLe
         break;
     }
   }
-  const description = m[2]?.trim();
+  const description = m[3]?.trim();
+  // A space is its site and path together, "reddit.com/r/rust", as spaceOf gives it.
+  if (site && m[1]) site += m[1].toLowerCase();
   return site ? { site, level, tags, ...(description ? { description } : {}) } : undefined;
 }
 
 export function formatSiteLine(site: string, level: PersonalLevel, tags: string[], description?: string): string | undefined {
-  const opts = [`site=${site}`];
+  // A space on a site matches addresses with its path, ending there or at a separator: "/r/rust^" isn't "/r/rustaceans".
+  const [host, path] = splitSpace(site);
+  const opts = [`site=${host}`];
   if (level === 'hide') opts.push('discard');
   else if (level === 'pin') opts.push('pin');
   else if (level === 'allow') opts.push('allow');
@@ -91,7 +97,7 @@ export function formatSiteLine(site: string, level: PersonalLevel, tags: string[
   else if (level === 'lower' || level === 'lower2') opts.push(`downrank=${PERSONAL_STRENGTH * levelSteps(level)}`);
   for (const t of tags) opts.push(`tag=${t}`);
   if (level === 'normal' && !tags.length) return undefined;
-  const line = `$${opts.join(',')}`;
+  const line = `${path ? `${path}^` : ''}$${opts.join(',')}`;
   const note = description?.replace(/[\r\n]+/g, ' ').trim();
   return note ? `${line} # ${note}` : line;
 }
@@ -334,6 +340,42 @@ export function removeTag(text: string, id: string): string {
     }
   }
   return next;
+}
+
+/** The header lines Publish your list fills in, in the order a new one is written. */
+const LIST_INFO_KEYS = ['name', 'description', 'author', 'issues'] as const;
+export type ListInfo = Partial<Record<(typeof LIST_INFO_KEYS)[number], string>>;
+
+/**
+ * Set the list's `! name:`, `! description:`, `! author:`, and `! issues:` lines, in place
+ * when the header has one, else after the header's other lines. An empty value removes
+ * its line; a key left out leaves it alone.
+ */
+export function setListInfo(text: string, info: ListInfo): string {
+  const lines = text.split(/\r?\n/);
+  for (const key of LIST_INFO_KEYS) {
+    if (!(key in info)) continue;
+    const value = (info[key] ?? '').replace(/\s+/g, ' ').trim();
+    const line = value ? [`! ${key}: ${value}`] : [];
+    const end = headerEnd(lines);
+    const own = new RegExp(`^!\\s*${key === 'name' ? '(name|title)' : key}\\s*:`, 'i');
+    const idx = lines.findIndex((l, i) => i < end && own.test(l.trim()));
+    if (idx !== -1) lines.splice(idx, 1, ...line);
+    else lines.splice(detailsEnd(lines, end), 0, ...line);
+  }
+  return lines.join('\n');
+}
+
+/** Where a list's header ends: its first line that is neither a `!` line nor blank. */
+function headerEnd(lines: string[]): number {
+  const body = lines.findIndex((l) => l.trim() && !l.trim().startsWith('!'));
+  return body === -1 ? lines.length : body;
+}
+
+/** Just after the header's last detail line, ahead of its tags; the top when it has none. */
+function detailsEnd(lines: string[], end: number): number {
+  const isDetail = (l: string) => /^!\s*[a-z]+\s*:/i.test(l) && !/^!\s*tag\s*:/i.test(l);
+  return lines.slice(0, end).findLastIndex((l) => isDetail(l.trim())) + 1;
 }
 
 /** Old versions stored a plain array of blocked domains. */

@@ -537,7 +537,7 @@
     "message": "Choisissez quels sites passent en premier, et lesquels vous ne verrez plus jamais."
   },
   "welcomeLead": {
-    "message": "Anubis place un petit bouton à côté de chaque résultat sur Google, Bing, DuckDuckGo et d’autres. Essayez d’abord sur cette recherche d’essai. Rien de ce que vous faites ici n’est enregistré."
+    "message": "Anubis place un petit bouton à côté de chaque résultat sur Google, Bing, DuckDuckGo et d’autres. Essayez d’abord sur cette recherche d’essai. Rien de ce que vous y faites n’est enregistré."
   },
   "welcomeStepsLabel": {
     "message": "Trois choses à essayer"
@@ -909,7 +909,7 @@
     "message": "Comment fonctionne le reclassement"
   },
   "deeperAuto": {
-    "message": "Pages en plus par recherche"
+    "message": "Charger plus de résultats"
   },
   "deeperTipSome": {
     "message": "Certains moteurs peuvent demander une vérification anti-robot."
@@ -951,19 +951,10 @@
     "message": "Publier votre liste"
   },
   "publishIntro": {
-    "message": "Publiez votre liste depuis un dépôt Git public."
+    "message": "Partagez vos sites sous forme de liste à laquelle d’autres peuvent s’abonner."
   },
   "publishHelp": {
     "message": "Comment publier une liste"
-  },
-  "publishStepDownload": {
-    "message": "Téléchargez votre liste et renseignez ses lignes $1, $2 et $3."
-  },
-  "publishStepRepository": {
-    "message": "Ajoutez-la à un dépôt GitHub public ou à un gist, par exemple $1."
-  },
-  "publishStepIssues": {
-    "message": "Ajoutez $1 pour que les gens puissent suggérer des sites."
   },
   "publishStepShare": {
     "message": "Partagez le lien du fichier pour  « Listes »  →  « Ajouter une liste » ."
@@ -1798,5 +1789,80 @@
   },
   "tagHeadShown": {
     "message": "Affichée"
+  },
+  "timeJustNow": {
+    "message": "à l’instant"
+  },
+  "resultsHeading": {
+    "message": "Résultats"
+  },
+  "resultsIntro": {
+    "message": "Comment Anubis ordonne les résultats, et combien il en charge."
+  },
+  "resultsHelp": {
+    "message": "Charger plus de résultats"
+  },
+  "deeperHint": {
+    "message": "Pages ajoutées à chaque recherche. À 0, elles ne se chargent que si vous le demandez."
+  },
+  "publishStepName": {
+    "message": "Remplissez les informations de votre liste, puis téléchargez-la."
+  },
+  "publishName": {
+    "message": "Nom"
+  },
+  "publishNamePlaceholder": {
+    "message": "Docs de confiance"
+  },
+  "publishDescription": {
+    "message": "Description"
+  },
+  "publishDescriptionPlaceholder": {
+    "message": "Promeut la documentation que j’utilise."
+  },
+  "publishAuthor": {
+    "message": "Auteur"
+  },
+  "publishIssues": {
+    "message": "Suggestions"
+  },
+  "publishIssuesHint": {
+    "message": "Facultatif : un suivi des tickets, pour que les abonnés puissent suggérer des modifications."
+  },
+  "publishIssuesHttps": {
+    "message": "L’adresse des suggestions doit commencer par https://."
+  },
+  "publishStepUpload": {
+    "message": "Mettez le fichier sur $1, ou dans un dépôt public."
+  },
+  "listsUpdateTitle": {
+    "message": "$1, mis à jour $2. Mettre à jour maintenant."
+  },
+  "listsUpdateTitleBundled": {
+    "message": "$1, dans la copie fournie avec Anubis. Mettre à jour maintenant."
+  },
+  "welcomeChoicesHeading": {
+    "message": "Pour commencer"
+  },
+  "welcomeChoicesHow": {
+    "message": "Ces interrupteurs modifient vos paramètres tout de suite. Vous pourrez les changer à nouveau dans les paramètres quand vous voudrez."
+  },
+  "welcomeChoiceAi": {
+    "message": "Retirer les réponses d’IA"
+  },
+  "welcomeChoiceAiHint": {
+    "message": "« Aperçu IA » de Google, Duck.ai et les réponses IA de Bing et de Brave."
+  },
+  "welcomeChoiceAiSites": {
+    "message": "Masquer les sites générés par IA"
+  },
+  "welcomeChoiceAiSitesHint": {
+    "message": "Sites que la liste « AI content » étiquette « AI-generated »."
+  },
+  "welcomeChoicePaywalls": {
+    "message": "Rétrograder les sites payants"
+  },
+  "welcomeChoicePaywallsHint": {
+    "message": "Les sites d’actualité et de magazines avec un paywall descendent de cinq places."
   }
 }

@@ -471,7 +471,7 @@
     "message": "Pilih situs mana yang tampil pertama, dan mana yang tidak ingin Anda lihat lagi."
   },
   "welcomeLead": {
-    "message": "Anubis menaruh tombol kecil di samping setiap hasil di Google, Bing, DuckDuckGo, dan lainnya. Coba dulu di penelusuran latihan ini. Tidak ada yang Anda lakukan di sini yang disimpan."
+    "message": "Anubis menaruh tombol kecil di samping setiap hasil di Google, Bing, DuckDuckGo, dan lainnya. Coba dulu di penelusuran latihan ini. Tidak ada yang Anda lakukan di sana yang disimpan."
   },
   "welcomeStepsLabel": {
     "message": "Tiga hal untuk dicoba"
@@ -840,7 +840,7 @@
     "message": "Cara kerja pengurutan ulang"
   },
   "deeperAuto": {
-    "message": "Halaman tambahan per penelusuran"
+    "message": "Muat hasil lainnya"
   },
   "deeperTipSome": {
     "message": "Beberapa mesin telusur mungkin meminta pemeriksaan robot."
@@ -882,19 +882,10 @@
     "message": "Terbitkan daftar Anda"
   },
   "publishIntro": {
-    "message": "Publikasikan daftar Anda dari repositori Git publik."
+    "message": "Bagikan situs Anda sebagai daftar yang bisa diikuti orang lain."
   },
   "publishHelp": {
     "message": "Cara menerbitkan daftar"
-  },
-  "publishStepDownload": {
-    "message": "Unduh daftar Anda dan atur baris $1, $2, dan $3."
-  },
-  "publishStepRepository": {
-    "message": "Tambahkan ke repositori GitHub publik atau gist, misalnya $1."
-  },
-  "publishStepIssues": {
-    "message": "Tambahkan $1 agar orang dapat menyarankan situs."
   },
   "publishStepShare": {
     "message": "Bagikan tautan file untuk Daftar → Tambahkan daftar."
@@ -1672,5 +1663,80 @@
   },
   "tagHeadShown": {
     "message": "Tampil"
+  },
+  "timeJustNow": {
+    "message": "baru saja"
+  },
+  "resultsHeading": {
+    "message": "Hasil"
+  },
+  "resultsIntro": {
+    "message": "Cara Anubis mengurutkan hasil, dan berapa banyak yang dimuatnya."
+  },
+  "resultsHelp": {
+    "message": "Memuat hasil lainnya"
+  },
+  "deeperHint": {
+    "message": "Halaman yang ditambahkan ke setiap penelusuran. Jika 0, halaman hanya dimuat saat Anda memintanya."
+  },
+  "publishStepName": {
+    "message": "Isi detail daftar Anda, lalu unduh."
+  },
+  "publishName": {
+    "message": "Nama"
+  },
+  "publishNamePlaceholder": {
+    "message": "Dokumentasi yang saya percaya"
+  },
+  "publishDescription": {
+    "message": "Deskripsi"
+  },
+  "publishDescriptionPlaceholder": {
+    "message": "Menaikkan dokumentasi yang saya andalkan."
+  },
+  "publishAuthor": {
+    "message": "Penulis"
+  },
+  "publishIssues": {
+    "message": "Saran"
+  },
+  "publishIssuesHint": {
+    "message": "Opsional: pelacak isu, agar pelanggan bisa menyarankan perubahan."
+  },
+  "publishIssuesHttps": {
+    "message": "Alamat untuk saran harus diawali https://."
+  },
+  "publishStepUpload": {
+    "message": "Unggah file ke $1, atau ke repositori publik."
+  },
+  "listsUpdateTitle": {
+    "message": "$1, diperbarui $2. Perbarui sekarang."
+  },
+  "listsUpdateTitleBundled": {
+    "message": "$1, dari salinan bawaan Anubis. Perbarui sekarang."
+  },
+  "welcomeChoicesHeading": {
+    "message": "Mulai dengan ini"
+  },
+  "welcomeChoicesHow": {
+    "message": "Sakelar ini langsung mengubah setelan Anda. Ubah lagi di Setelan kapan saja."
+  },
+  "welcomeChoiceAi": {
+    "message": "Hapus jawaban AI"
+  },
+  "welcomeChoiceAiHint": {
+    "message": "“Ringkasan AI” Google, Duck.ai, dan jawaban AI di Bing dan Brave."
+  },
+  "welcomeChoiceAiSites": {
+    "message": "Sembunyikan situs buatan AI"
+  },
+  "welcomeChoiceAiSitesHint": {
+    "message": "Situs yang ditandai daftar “AI content” sebagai “AI-generated”."
+  },
+  "welcomeChoicePaywalls": {
+    "message": "Turunkan situs berbayar"
+  },
+  "welcomeChoicePaywallsHint": {
+    "message": "Situs berita dan majalah dengan paywall turun lima peringkat."
   }
 }

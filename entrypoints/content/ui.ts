@@ -1,5 +1,5 @@
 import { balanceSvg, setBalance } from '@/utils/balance';
-import { domainChoices, normalizeHostname, siteOf } from '@/utils/domain';
+import { normalizeHostname, siteChoices, siteOf } from '@/utils/domain';
 import { h, icon } from '@/utils/dom';
 import type { EngineDef } from '@/utils/engines';
 import { ICON_CLOSE, ICON_GEAR, ICON_HIDE, LEVEL_CHIPS, TAG_EFFECTS, tagEffectText, tagMark, WEIGH_ICONS } from '@/utils/icons';
@@ -1304,7 +1304,7 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
     anchor.setAttribute('aria-expanded', 'true');
   }
 
-  const choices = domainChoices(data.result.host, (d) => !!getSite(data.personalText, d));
+  const choices = siteChoices(data.result.host, data.result.url, (d) => !!getSite(data.personalText, d));
   const existing = choices.find((d) => getSite(data.personalText, d));
   const domain = keepDomain && choices.includes(keepDomain) ? keepDomain : (existing ?? siteOf(data.result.host));
   popover.domain = domain;
@@ -1428,7 +1428,7 @@ function buildPopover(
 ): HTMLElement {
   const entry = getSite(data.personalText, domain);
   const r = rankingOf(entry, data.baseline);
-  const choices = domainChoices(data.result.host, (d) => !!getSite(data.personalText, d));
+  const choices = siteChoices(data.result.host, data.result.url, (d) => !!getSite(data.personalText, d));
   // Hide and Pin stand apart from Lower, Normal, and Raise, which move a site up or down.
   const levels = h(
     'div',

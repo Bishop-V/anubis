@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { decodeBingRedirect, displayedDomainToUrl, domainChoices, normalizeDomain, normalizeHostname, siteNameToUrl, siteOf, splitSuffix } from '@/utils/domain';
+import { decodeBingRedirect, displayedDomainToUrl, domainChoices, normalizeDomain, normalizeHostname, normalizeSite, siteChoices, siteNameToUrl, siteOf, spaceOf, splitSuffix } from '@/utils/domain';
 import { existsSync } from 'node:fs';
 import { DOCS_URL, readSubscribeLink, SUBSCRIBE_PAGE, subscribeLink } from '@/utils/links';
 import { changeRequestUrl, issueUrl, originPermissionFor, reportTracker, reportUrl, suggestionUrl, toRawUrl } from '@/utils/subscriptions';
@@ -219,5 +219,42 @@ describe('subscribe links', () => {
   it('points at a page the wiki has', () => {
     expect(SUBSCRIBE_PAGE.startsWith(DOCS_URL)).toBe(true);
     expect(existsSync(`docs/${SUBSCRIBE_PAGE.slice(DOCS_URL.length)}.md`)).toBe(true);
+  });
+});
+
+describe('spaces on shared sites', () => {
+  it('finds whose space an address is in, where the address names it', () => {
+    expect(spaceOf('https://old.reddit.com/r/Rust/comments/abc/title')).toBe('reddit.com/r/rust');
+    expect(spaceOf('https://www.youtube.com/@Veritasium/videos')).toBe('youtube.com/@veritasium');
+    expect(spaceOf('https://medium.com/@someone/a-post-123')).toBe('medium.com/@someone');
+    expect(spaceOf('https://github.com/rust-lang/rust/issues/1')).toBe('github.com/rust-lang');
+    expect(spaceOf('https://www.linkedin.com/in/someone')).toBe('linkedin.com/in/someone');
+  });
+
+  it('finds none where the address doesn’t say, or names the site’s own page', () => {
+    // A video's address doesn't name its channel.
+    expect(spaceOf('https://www.youtube.com/watch?v=abc')).toBeUndefined();
+    expect(spaceOf('https://github.com/topics/rust')).toBeUndefined();
+    expect(spaceOf('https://x.com/search?q=rust')).toBeUndefined();
+    expect(spaceOf('https://www.reddit.com/')).toBeUndefined();
+    expect(spaceOf('https://example.com/r/rust')).toBeUndefined();
+  });
+
+  it('offers the space first in the menu, then the site', () => {
+    expect(siteChoices('old.reddit.com', 'https://old.reddit.com/r/rust/comments/abc')).toEqual(['reddit.com/r/rust', 'old.reddit.com', 'reddit.com']);
+    expect(siteChoices('youtube.com', 'https://www.youtube.com/watch?v=abc')).toEqual(['youtube.com']);
+    expect(siteChoices('reddit.com', undefined)).toEqual(['reddit.com']);
+  });
+
+  it('takes a space typed into Add a site only when the address is just that space', () => {
+    expect(normalizeSite('reddit.com/r/rust/')).toBe('reddit.com/r/rust');
+    expect(normalizeSite('https://www.youtube.com/@Veritasium')).toBe('youtube.com/@veritasium');
+    expect(normalizeSite('https://www.reddit.com/r/rust/comments/abc')).toBe('reddit.com');
+    expect(normalizeSite('fandom.com')).toBe('fandom.com');
+    expect(normalizeSite('not a site')).toBe('');
+  });
+
+  it('shows a space’s path after the site’s ending', () => {
+    expect(splitSuffix('reddit.com/r/rust')).toEqual(['reddit', '.com/r/rust']);
   });
 });
