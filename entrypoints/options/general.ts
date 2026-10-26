@@ -292,6 +292,31 @@ const UNSET_INFO = parseList(PERSONAL_HEADER).meta;
 
 /** Publish your list: fill in its details here, download it, put it online, and share the link. */
 function publishPanel(personalText: string): HTMLElement {
+  return h(
+    'div',
+    { class: 'panel' },
+    h('h3', null, t('publishHeading')),
+    h('p', { class: 'muted' }, t('publishIntro'), ' ', helpLink('guide/publish-a-list', t('publishHelp'))),
+    h(
+      'ol',
+      { class: 'steps' },
+      h('li', null, t('publishStepName'), publishForm(personalText), flashed('publish')),
+      h('li', null, tParts('publishStepUpload', h('a', { href: 'https://gist.github.com/', target: '_blank', rel: 'noopener noreferrer' }, 'gist.github.com'))),
+      h('li', null, t('publishStepShare')),
+      h(
+        'li',
+        null,
+        tParts(
+          'publishStepDirectory',
+          h('a', { href: `${REPO_URL}/blob/main/lists/directory.json`, target: '_blank', rel: 'noopener noreferrer' }, 'lists/directory.json'),
+        ),
+      ),
+    ),
+  );
+}
+
+/** The list's details, saved into your list as it downloads. */
+function publishForm(personalText: string): HTMLElement {
   const meta = parseList(personalText).meta;
   const field = (key: 'name' | 'description' | 'author' | 'issues', label: MessageKey, placeholder: string, hint?: MessageKey) => {
     const stored = meta[key] ?? '';
@@ -326,43 +351,17 @@ function publishPanel(personalText: string): HTMLElement {
   };
 
   return h(
-    'div',
-    { class: 'panel' },
-    h('h3', null, t('publishHeading')),
-    h('p', { class: 'muted' }, t('publishIntro'), ' ', helpLink('guide/publish-a-list', t('publishHelp'))),
+    'form',
+    { class: 'fields publish', attrs: { novalidate: '' }, on: { submit: (e: Event) => (e.preventDefault(), void save()) } },
+    ...name.row,
+    ...description.row,
+    ...author.row,
+    ...issues.row,
     h(
-      'ol',
-      { class: 'steps' },
-      h(
-        'li',
-        null,
-        t('publishStepName'),
-        h(
-          'form',
-          { class: 'fields publish', attrs: { novalidate: '' }, on: { submit: (e: Event) => (e.preventDefault(), void save()) } },
-          ...name.row,
-          ...description.row,
-          ...author.row,
-          ...issues.row,
-          h(
-            'div',
-            { class: 'toolbar' },
-            h('button', { class: 'btn primary', type: 'submit' }, icon(ICON_DOWNLOAD), t('publishDownload')),
-            h('a', { class: 'btn', href: wiki('list-format'), target: '_blank', rel: 'noopener noreferrer' }, t('publishFormat')),
-          ),
-        ),
-        flashed('publish'),
-      ),
-      h('li', null, tParts('publishStepUpload', h('a', { href: 'https://gist.github.com/', target: '_blank', rel: 'noopener noreferrer' }, 'gist.github.com'))),
-      h('li', null, t('publishStepShare')),
-      h(
-        'li',
-        null,
-        tParts(
-          'publishStepDirectory',
-          h('a', { href: `${REPO_URL}/blob/main/lists/directory.json`, target: '_blank', rel: 'noopener noreferrer' }, 'lists/directory.json'),
-        ),
-      ),
+      'div',
+      { class: 'toolbar' },
+      h('button', { class: 'btn primary', type: 'submit' }, icon(ICON_DOWNLOAD), t('publishDownload')),
+      h('a', { class: 'btn', href: wiki('list-format'), target: '_blank', rel: 'noopener noreferrer' }, t('publishFormat')),
     ),
   );
 }

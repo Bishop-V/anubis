@@ -32,14 +32,18 @@ export function lookAtScreen(steady: Steady, containers: HTMLElement[]): void {
  * someone is reading, they're kept below the lowest result that was on screen.
  */
 export function noteArrivals(steady: Steady, containers: HTMLElement[], hold: boolean): void {
-  const fresh = containers.filter((el) => !steady.seen.has(el));
-  if (!fresh.length) return;
-  const anchor = hold && steady.reading && steady.horizon?.isConnected ? steady.horizon : undefined;
-  for (const el of fresh) {
+  const anchor = anchorFor(steady, hold);
+  for (const el of containers.filter((c) => !steady.seen.has(c))) {
     steady.seen.add(el);
     // Reranking moves results within one list; a result in another list can't pass this one.
-    if (anchor && anchor.parentElement === el.parentElement) steady.below.set(el, anchor);
+    if (anchor?.parentElement === el.parentElement) steady.below.set(el, anchor!);
   }
+}
+
+/** What arriving results are held below: the last result on screen, while someone reads and pages load by themselves. */
+function anchorFor(steady: Steady, hold: boolean): HTMLElement | undefined {
+  if (!hold || !steady.reading) return undefined;
+  return steady.horizon?.isConnected ? steady.horizon : undefined;
 }
 
 /** The result drawn lowest whose top is on screen or above it: as far as someone may have read. */
@@ -66,8 +70,9 @@ export function holdBelow<T>(keys: Map<T, number>, below: Map<T, T>): Map<T, num
   const keyOf = (el: T, depth: number): number => {
     const own = keys.get(el)!;
     const anchor = below.get(el);
+    if (anchor === undefined || !keys.has(anchor)) return own;
     // Anchors only point back to results placed earlier, so this ends; the depth is a guard.
-    if (anchor === undefined || !keys.has(anchor) || depth > 100) return own;
+    if (depth > 100) return own;
     // A sliver past the anchor's key: after it, and before whatever comes next, however long the chain.
     return Math.max(own, keyOf(anchor, depth + 1) + 0.001);
   };

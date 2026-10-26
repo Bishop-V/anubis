@@ -189,14 +189,16 @@ function ruleMatches(rule: Rule, target: Target): boolean {
 export function matchList(list: CompiledList, target: Target): Rule[] {
   const out: Rule[] = [];
   for (const rule of list.byHost.get(target.host) ?? []) if (ruleMatches(rule, target)) out.push(rule);
-  for (const suffix of hostSuffixes(target.host)) {
-    // On one site, a rule for part of it (a subreddit, a channel) comes before the site's own.
-    const rules = siteRules(list, suffix);
-    for (const rule of rules) if ((rule.pattern || rule.pathPattern) && ruleMatches(rule, target)) out.push(rule);
-    for (const rule of rules) if (!rule.pattern && !rule.pathPattern && ruleMatches(rule, target)) out.push(rule);
-  }
+  for (const suffix of hostSuffixes(target.host)) out.push(...matchSite(siteRules(list, suffix), target));
   for (const rule of list.generic) if (ruleMatches(rule, target)) out.push(rule);
   return out;
+}
+
+/** A site's rules that match, those for part of the site (a subreddit, a channel) before the site's own. */
+function matchSite(rules: Rule[], target: Target): Rule[] {
+  const matched = rules.filter((rule) => ruleMatches(rule, target));
+  const forPart = (rule: Rule) => !!(rule.pattern || rule.pathPattern);
+  return [...matched.filter(forPart), ...matched.filter((rule) => !forPart(rule))];
 }
 
 /** The words a list's reasons are told in. */

@@ -356,24 +356,26 @@ export function setListInfo(text: string, info: ListInfo): string {
   for (const key of LIST_INFO_KEYS) {
     if (!(key in info)) continue;
     const value = (info[key] ?? '').replace(/\s+/g, ' ').trim();
-    const bodyStart = lines.findIndex((l) => l.trim() && !l.trim().startsWith('!'));
-    const headerEnd = bodyStart === -1 ? lines.length : bodyStart;
+    const line = value ? [`! ${key}: ${value}`] : [];
+    const end = headerEnd(lines);
     const own = new RegExp(`^!\\s*${key === 'name' ? '(name|title)' : key}\\s*:`, 'i');
-    const idx = lines.findIndex((l, i) => i < headerEnd && own.test(l.trim()));
-    if (idx !== -1) {
-      if (value) lines[idx] = `! ${key}: ${value}`;
-      else lines.splice(idx, 1);
-      continue;
-    }
-    if (!value) continue;
-    // With the list's other details, ahead of its tags.
-    let at = 0;
-    lines.forEach((l, i) => {
-      if (i < headerEnd && /^!\s*[a-z]+\s*:/i.test(l.trim()) && !/^!\s*tag\s*:/i.test(l.trim())) at = i + 1;
-    });
-    lines.splice(at, 0, `! ${key}: ${value}`);
+    const idx = lines.findIndex((l, i) => i < end && own.test(l.trim()));
+    if (idx !== -1) lines.splice(idx, 1, ...line);
+    else lines.splice(detailsEnd(lines, end), 0, ...line);
   }
   return lines.join('\n');
+}
+
+/** Where a list's header ends: its first line that is neither a `!` line nor blank. */
+function headerEnd(lines: string[]): number {
+  const body = lines.findIndex((l) => l.trim() && !l.trim().startsWith('!'));
+  return body === -1 ? lines.length : body;
+}
+
+/** Just after the header's last detail line, ahead of its tags; the top when it has none. */
+function detailsEnd(lines: string[], end: number): number {
+  const isDetail = (l: string) => /^!\s*[a-z]+\s*:/i.test(l) && !/^!\s*tag\s*:/i.test(l);
+  return lines.slice(0, end).findLastIndex((l) => isDetail(l.trim())) + 1;
 }
 
 /** Old versions stored a plain array of blocked domains. */
