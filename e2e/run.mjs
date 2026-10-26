@@ -3408,6 +3408,10 @@ if (!only || only === 'suggest-changes' || checks) {
   const expanded = (await button.getAttribute('aria-expanded')) === 'true';
   const site = form.getByRole('textbox', { name: 'Site' });
   const focused = await site.evaluate((el) => el === document.activeElement);
+  // The site field's name is shown, not only read out, and its placeholder can't be
+  // mistaken for a site already filled in (it was go.dev, beside "Official docs").
+  const labelsShown = await form.locator('label.field > span').evaluateAll((spans) => spans.slice(0, 2).map((s) => s.textContent));
+  const placeholder = await site.getAttribute('placeholder');
   const fits = await options.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth);
   await options.screenshot({ path: `${SHOTS}options-suggest-changes.png`, fullPage: true });
   await form.getByRole('button', { name: 'Open the issue' }).click();
@@ -3424,6 +3428,8 @@ if (!only || only === 'suggest-changes' || checks) {
     noFileLink,
     opensForm: expanded,
     focusesSite: focused,
+    labelsSiteAndChange: labelsShown.join() === 'Site,What should change',
+    placeholderIsExample: placeholder === 'example.com',
     fitsAt320: fits,
     asksForSite,
     opensTracker: url.pathname === '/Bishop-V/anubis/issues/new',

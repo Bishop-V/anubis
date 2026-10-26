@@ -10,6 +10,7 @@ Where things are stored, sync between browsers, and subscribing to lists. Part o
 
 ## Suggest changes as a form in Settings (2026-10-20)
 
+- **Labels on screen (2026-10-26):** the site field had no visible label and `go.dev` as its placeholder. Beside "Tag it “Official docs”", the row read as a suggestion already filled in, and people didn't know what to type. The site and the change are now labelled above their fields, like Why, and the placeholder is `example.com`, which no list would name.
 - **Before:** "suggest changes" was a lower-case link in a list's small print, and it opened the tracker's issues page, so people had to find the template and write the instruction themselves. Beside it, the side column's external-link icon opened the list's raw file, which few people need.
 - **Now:** a **Suggest changes** button takes the file link's place among the list's buttons. It opens a short form under the list: the site, what should change (one of the list's tags, Take it off the list, or Something else), and why. The form opens a filled-in issue in a new tab, with the `$site=…,tag=…` instruction to paste in (`changeRequestUrl` in `utils/subscriptions.ts`), laid out like the "Suggest a site" template.
 - **Still opt-in:** only lists with `! issues:` get the button, as before. A list that never asked for suggestions still doesn't get them.
