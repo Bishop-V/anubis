@@ -2454,13 +2454,13 @@ if (!only || only === 'options') {
       if (section === 'tags') {
         // "From …" names the lists that only define a tag, and only when no list marks a
         // site with it: FOSS tools defines AI slop, whose sites come from AI content.
-        const misCredited = await opt.evaluate(() =>
+        const wronglyCredited = await opt.evaluate(() =>
           [...document.querySelectorAll('main .meta')]
             .filter((m) => m.querySelector('.source') && / from /.test(m.querySelector('.effect')?.textContent ?? ''))
             .map((m) => m.closest('.tag-card, li, div')?.querySelector('strong, h3, h4, .name')?.textContent ?? m.textContent),
         );
-        if (misCredited.length) console.log('  credited a list that marks no site:', misCredited);
-        assertChecks('Settings → Tags', { creditsOnlyListsThatMarkSites: misCredited.length === 0 });
+        if (wronglyCredited.length) console.log('  credited a list that marks no site:', wronglyCredited);
+        assertChecks('Settings → Tags', { creditsOnlyListsThatMarkSites: wronglyCredited.length === 0 });
       }
       if (section === 'lists') {
         // Each list's update button says how big the list is and when it last arrived.

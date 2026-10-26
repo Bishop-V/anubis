@@ -284,8 +284,9 @@ Arabic, Bengali, Chinese (Simplified), Chinese (Traditional), French, German, Hi
 | `webdav.test.ts` | Syncing two browsers through a fake WebDAV server: first sync, changes on both sides (to the list, settings, and tag choices), a save in between, errors |
 | `lists.test.ts` | Every bundled list, and the directory |
 | `cleanup.test.ts` | Clean-up headings and markers, the summary sentence, redirects |
-| `domain.test.ts` | Domains, redirect links, raw list addresses, issue links, subscribe links |
+| `domain.test.ts` | Domains, someone's part of a shared site (a subreddit, a channel), redirect links, raw list addresses, issue links, subscribe links |
 | `engines.test.ts` | Picking an engine's phone layout |
+| `steady.test.ts` | Results from pages loading by themselves staying below what's on screen |
 | `i18n.test.ts` | Message keys, plural forms, and placeholders; translations recorded against their English and left out once it changes; the undo line's wording, and reasons that stay English in reports |
 | `i18n-coverage.test.ts` | No interface text outside the messages; every message described and used |
 | `readme.test.ts` | The README's features against the wiki's introduction, and its links |
