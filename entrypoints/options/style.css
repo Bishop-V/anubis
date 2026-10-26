@@ -646,7 +646,7 @@ textarea.code {
 .list-row .list-actions .text-btn {
   font-size: 12.5px;
 }
-/* Suggest changes, a row of its own under the list: the site and the change on one line, then why. */
+/* Suggest changes, a row of its own under the list: the site and the change on one line, then why, each labelled above. */
 .list-row .suggest-form {
   grid-column: 3 / -1;
   display: flex;
@@ -655,13 +655,15 @@ textarea.code {
   max-width: 560px;
   margin-top: 8px;
 }
-.list-row .suggest-form .inline-form input[type='text'] {
+.list-row .suggest-form .inline-form {
+  align-items: flex-end;
+}
+.list-row .suggest-form .inline-form .field {
   flex: 1 1 160px;
   min-width: 0;
 }
-.list-row .suggest-form select {
-  flex: 1 1 200px;
-  min-width: 0;
+.list-row .suggest-form .inline-form .field + .field {
+  flex-basis: 200px;
 }
 .list-row .suggest-form .field {
   display: flex;
@@ -669,6 +671,11 @@ textarea.code {
   gap: 4px;
   font-size: 12.5px;
   color: var(--muted);
+}
+.list-row .suggest-form .field input,
+.list-row .suggest-form .field select {
+  flex: 0 0 auto;
+  min-width: 0;
 }
 .list-row .suggest-form .notice,
 .list-row .suggest-form .facts {

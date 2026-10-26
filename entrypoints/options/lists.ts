@@ -405,12 +405,10 @@ function updateTitle(parsed: ParsedList | undefined, cached: CachedList | undefi
 function suggestForm(tracker: string, list: string, parsed: ParsedList | undefined): HTMLElement {
   const changes = suggestChoices(parsed);
 
-  const site = h('input', { type: 'text', placeholder: 'go.dev', autocomplete: 'off', spellcheck: false, attrs: { 'aria-label': t('listsSuggestSite') } });
-  const what = h(
-    'select',
-    { attrs: { 'aria-label': t('listsSuggestWhat') } },
-    ...changes.map((c, i) => h('option', { value: String(i) }, c.label)),
-  );
+  // Labelled on screen, with a placeholder no list would name: an unlabelled "go.dev" beside
+  // "Tag it “Official docs”" read as a suggestion already filled in.
+  const site = h('input', { type: 'text', placeholder: 'example.com', autocomplete: 'off', spellcheck: false });
+  const what = h('select', null, ...changes.map((c, i) => h('option', { value: String(i) }, c.label)));
   const why = h('input', { type: 'text', maxLength: 300 });
   const error = h('p', { class: 'notice error', hidden: true });
   const close = () => {
@@ -421,7 +419,12 @@ function suggestForm(tracker: string, list: string, parsed: ParsedList | undefin
   const form = h(
     'form',
     { class: 'suggest-form' },
-    h('div', { class: 'inline-form' }, site, what),
+    h(
+      'div',
+      { class: 'inline-form' },
+      h('label', { class: 'field' }, h('span', null, t('listsSuggestSite')), site),
+      h('label', { class: 'field' }, h('span', null, t('listsSuggestWhat')), what),
+    ),
     h('label', { class: 'field' }, h('span', null, t('listsSuggestWhy')), why),
     error,
     h(
