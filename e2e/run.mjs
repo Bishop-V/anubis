@@ -127,6 +127,9 @@ function mockPages() {
     'https://search.brave.com/search?q=anubis': brave('anubis', ANUBIS_RESULTS),
     'https://www.google.com/search?q=anubis&deep=1': google('anubis', ANUBIS_RESULTS, { next: '/search?q=anubis&start=10' }),
     'https://www.google.com/search?q=anubis&start=10': google('anubis', ANUBIS_PAGE2),
+    // Page 2 arriving a moment late, after someone has started reading page 1.
+    'https://www.google.com/search?q=anubis&deep=slow': google('anubis', ANUBIS_RESULTS, { next: '/search?q=anubis&start=10&slow=1' }),
+    'https://www.google.com/search?q=anubis&start=10&slow=1': () => new Promise((resolve) => setTimeout(() => resolve(google('anubis', ANUBIS_PAGE2)), 1500)),
     'https://www.google.com/search?q=anubis&deep=late': google('anubis', ANUBIS_RESULTS, { next: '/search?q=anubis&start=10', latePager: true }),
     'https://www.google.com/search?q=anubis&hostile=1': google('anubis', ANUBIS_RESULTS, { hostile: true }),
     'https://www.google.com/search?q=anubis&grouped=1': google('anubis', ANUBIS_RESULTS, { grouped: true }),
@@ -260,9 +263,9 @@ async function launch(settings = {}, ext = EXT) {
     { personal: PERSONAL, settings },
   );
   const pages = mockPages();
-  await ctx.route(/^https:\/\/((noai\.|html\.|lite\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com|www\.ecosia\.org|search\.yahoo\.com|kagi\.com|www\.startpage\.com|yandex\.com)\//, (route) => {
+  await ctx.route(/^https:\/\/((noai\.|html\.|lite\.)?duckduckgo\.com|www\.google\.com|www\.bing\.com|search\.brave\.com|www\.ecosia\.org|search\.yahoo\.com|kagi\.com|www\.startpage\.com|yandex\.com)\//, async (route) => {
     const page = pages[route.request().url()];
-    return answerRoute(route, typeof page === 'function' ? page(route.request()) : page);
+    return answerRoute(route, typeof page === 'function' ? await page(route.request()) : page);
   });
   // Ecosia's favicon service: a one-pixel picture for any site.
   await ctx.route('https://api.ecosia.org/**', (route) =>
@@ -2242,7 +2245,45 @@ if (!only || only === 'deeper' || checks) {
   };
   await page.screenshot({ path: `${SHOTS}bing-deeper-stopped.png`, fullPage: false });
 
-  console.log('\n== load more results:', JSON.stringify({ googleByHand, afterRewrite, googleAuto, ddgAuto, ddgByHandPages, braveAuto, bravePagerBelow, bingPages, bingPagerBelow, bingFrameGone, bingRedirectedPages, bingIcons, bingStopped }));
+  // Load more results by itself, with page 2 arriving late: metmuseum.org is pinned and on page 2.
+  // Nobody reading yet, it goes to the top. Once the pointer has moved over a result, nothing on
+  // screen moves for it: it waits below the last result that was on screen.
+  const lateArrival = async (read) => {
+    await setDeeper(1);
+    await page.goto('https://www.google.com/search?q=anubis&deep=slow', { waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('[data-anubis-result]');
+    await page.waitForTimeout(300);
+    const tops = () =>
+      page.evaluate(() =>
+        Object.fromEntries(
+          [...document.querySelectorAll('[data-anubis-result]')]
+            .filter((el) => el.getClientRects().length && el.getBoundingClientRect().top < innerHeight)
+            .map((el) => [el.querySelector('a[href]')?.href, Math.round(el.getBoundingClientRect().top)]),
+        ),
+      );
+    let before = {};
+    if (read) {
+      const box = await page.locator('[data-anubis-result]').first().boundingBox();
+      await page.mouse.move(box.x + 40, box.y + 10);
+      await page.mouse.move(box.x + 60, box.y + 14);
+      before = await tops();
+    }
+    await page.waitForSelector('[data-anubis-page="2"]', { timeout: 8000 });
+    await page.waitForTimeout(600);
+    const after = await tops();
+    const place = await page.evaluate(() => {
+      const shown = [...document.querySelectorAll('[data-anubis-result]')]
+        .filter((el) => el.getClientRects().length)
+        .sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
+      return shown.findIndex((el) => el.querySelector('a[href*="metmuseum.org"]'));
+    });
+    await setDeeper(0);
+    return { place, moved: Object.keys(before).filter((href) => after[href] !== before[href]), seen: Object.keys(before).length };
+  };
+  const lateUnread = await lateArrival(false);
+  const lateRead = await lateArrival(true);
+
+  console.log('\n== load more results:', JSON.stringify({ googleByHand, afterRewrite, googleAuto, ddgAuto, ddgByHandPages, braveAuto, bravePagerBelow, bingPages, bingPagerBelow, bingFrameGone, bingRedirectedPages, bingIcons, bingStopped, lateUnread, lateRead }));
   if (checks) {
     assertChecks('load more results', {
       googleByHand: googleByHand === 1,
@@ -2259,6 +2300,9 @@ if (!only || only === 'deeper' || checks) {
       bingNextLinkWithoutRedirectFlag: bingRedirectedPages === 1,
       bingIconsOnLoadedResults: bingIcons,
       bingSaysWhyItStopped: bingStopped.said && bingStopped.linked && bingStopped.offeredAgain,
+      latePinnedFirstBeforeReading: lateUnread.place === 0,
+      latePinnedWaitsWhileReading: lateRead.place > 0 && lateRead.seen > 0,
+      nothingOnScreenMovesWhileReading: lateRead.moved.length === 0,
     });
   }
 }

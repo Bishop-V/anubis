@@ -6,6 +6,8 @@
 
 **Settings → Results → Load more results** loads extra pages on every search: 3 by default, up to 20. Set it to 0 to load more only when you ask. Each page adds about a second, and too many can bring a robot check.
 
+Once you scroll, click, or point at a result, what's on screen stays put: results from pages still loading wait below it.
+
 ## How it works
 
 Anubis asks the engine you're on for its next page, as its own "Next" link would. It can't yet on Kagi, on DuckDuckGo's HTML and Lite pages, or on Google on a phone. See [Search engines](./search-engines.md).
