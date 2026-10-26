@@ -1,3 +1,4 @@
+import { splitSpace } from './domain';
 import { t } from './i18n';
 import { formatTagDef, parseTagDef, type TagDef } from './listformat';
 import { PERSONAL_STRENGTH, type Level } from './matcher';
@@ -37,9 +38,10 @@ export interface SiteEntry {
   line: number;
 }
 
-// A "simple" site line: only options, one of which is site=. Anything with a URL
-// pattern is treated as hand-written and never rewritten.
-const SIMPLE_SITE_LINE = /^\$([a-z_]+(?:=[^,\s]*)?(?:,[a-z_]+(?:=[^,\s]*)?)*)(?:\s+#\s*(.*))?$/i;
+// A "simple" site line: only options, one of which is site=, after at most a space on the
+// site ("/r/rust^", from spaceOf in domain.ts). Anything else with a URL pattern is
+// treated as hand-written and never rewritten.
+const SIMPLE_SITE_LINE = /^(?:(\/[\w@.~%/-]+)\^)?\$([a-z_]+(?:=[^,\s]*)?(?:,[a-z_]+(?:=[^,\s]*)?)*)(?:\s+#\s*(.*))?$/i;
 
 /** A boost's strength as steps: ten places or more is two Raises, anything less one. */
 function stepsOf(value: string | undefined): 1 | 2 {
@@ -52,7 +54,7 @@ export function parseSimpleLine(line: string): { site: string; level: PersonalLe
   let site = '';
   let level: PersonalLevel = 'normal';
   const tags: string[] = [];
-  for (const opt of m[1]!.split(',')) {
+  for (const opt of m[2]!.split(',')) {
     const [key, value] = opt.split('=') as [string, string | undefined];
     switch (key.toLowerCase()) {
       case 'site':
@@ -78,12 +80,16 @@ export function parseSimpleLine(line: string): { site: string; level: PersonalLe
         break;
     }
   }
-  const description = m[2]?.trim();
+  const description = m[3]?.trim();
+  // A space is its site and path together, "reddit.com/r/rust", as spaceOf gives it.
+  if (site && m[1]) site += m[1].toLowerCase();
   return site ? { site, level, tags, ...(description ? { description } : {}) } : undefined;
 }
 
 export function formatSiteLine(site: string, level: PersonalLevel, tags: string[], description?: string): string | undefined {
-  const opts = [`site=${site}`];
+  // A space on a site matches addresses with its path, ending there or at a separator: "/r/rust^" isn't "/r/rustaceans".
+  const [host, path] = splitSpace(site);
+  const opts = [`site=${host}`];
   if (level === 'hide') opts.push('discard');
   else if (level === 'pin') opts.push('pin');
   else if (level === 'allow') opts.push('allow');
@@ -91,7 +97,7 @@ export function formatSiteLine(site: string, level: PersonalLevel, tags: string[
   else if (level === 'lower' || level === 'lower2') opts.push(`downrank=${PERSONAL_STRENGTH * levelSteps(level)}`);
   for (const t of tags) opts.push(`tag=${t}`);
   if (level === 'normal' && !tags.length) return undefined;
-  const line = `$${opts.join(',')}`;
+  const line = `${path ? `${path}^` : ''}$${opts.join(',')}`;
   const note = description?.replace(/[\r\n]+/g, ' ').trim();
   return note ? `${line} # ${note}` : line;
 }

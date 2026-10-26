@@ -3,7 +3,7 @@ import '@/assets/theme.css';
 import './style.css';
 import { browser } from '#imports';
 import { balanceSvg, setBalance } from '@/utils/balance';
-import { domainChoices, normalizeDomain, siteOf } from '@/utils/domain';
+import { normalizeDomain, normalizeSite, siteChoices, siteOf } from '@/utils/domain';
 import { engineFor } from '@/utils/engines';
 import { bugReportLink, describeBrowser } from '@/utils/links';
 import { wiki } from '@/utils/wiki';
@@ -142,7 +142,7 @@ function renderHere(rules: RuleSet) {
   const active = document.activeElement;
   const focusKey = hereFocusKey ?? (here.contains(active) && active instanceof HTMLElement ? active.dataset.focusKey : undefined);
   const host = tabUrl && !engineFor(tabUrl.hostname) ? tabUrl.hostname : '';
-  const choices = host ? domainChoices(host, (d) => !!getSite(rules.personalText, d)) : [];
+  const choices = host ? siteChoices(host, tabUrl!.href, (d) => !!getSite(rules.personalText, d)) : [];
   const domain =
     hereDomain && choices.includes(hereDomain)
       ? hereDomain
@@ -356,7 +356,7 @@ function renderPage(next: PageStats | undefined) {
 
 $<HTMLFormElement>('#add-form').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const domain = normalizeDomain(input.value);
+  const domain = normalizeSite(input.value);
   if (!domain) {
     input.focus();
     input.select();

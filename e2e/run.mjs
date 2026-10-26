@@ -1969,6 +1969,43 @@ if (!only || only === 'popover') {
   console.log('== site name after choosing the whole site:', JSON.stringify(menu.split(' ')[0]), '| focus in the menu:', focused === 'anubis-popover');
   await page.screenshot({ path: `${SHOTS}popover-site.png`, fullPage: false });
   await page.keyboard.press('Escape');
+
+  // Part of a site: a Reddit result's menu offers its subreddit before reddit.com. Hide on
+  // the subreddit hides that result only and is saved as a line for that path.
+  {
+    await page.goto('https://www.google.com/search?q=anubis');
+    await page.waitForTimeout(600);
+    const reddit = page.locator('[data-anubis-result]', { hasText: 'AskHistorians' });
+    await reddit.hover();
+    await pressWeigh(reddit.locator('anubis-weigh'));
+    await page.waitForTimeout(300);
+    const cdp = await page.context().newCDPSession(page);
+    const { root } = await cdp.send('DOM.getDocument', { depth: -1, pierce: true });
+    const kids = (node) => [...(node.children ?? []), ...(node.shadowRoots ?? [])];
+    const hostOf = (node) => (node.localName === 'anubis-popover' ? node : kids(node).map(hostOf).find(Boolean));
+    const selectIn = (node) => (node.nodeName === 'SELECT' ? node : kids(node).map(selectIn).find(Boolean));
+    const select = selectIn(hostOf(root));
+    const valueOf = (option) => (option.attributes ?? []).find((v, i, all) => i % 2 === 1 && all[i - 1] === 'value');
+    const offered = (select?.children ?? []).filter((c) => c.nodeName === 'OPTION').map(valueOf);
+    if (select) await cdp.send('DOM.focus', { nodeId: select.nodeId });
+    await cdp.detach();
+    await page.keyboard.press('ArrowUp');
+    await page.waitForTimeout(300);
+    await clickShadowButton('anubis-popover', 'Hide');
+    await page.waitForTimeout(900);
+    const states = await report(page, 'after hiding reddit.com/r/askhistorians');
+    await page.keyboard.press('Escape');
+    // The summary names what was saved: the subreddit, not reddit.com.
+    const said = await shadowText('anubis-summary');
+    await clickShadowButton('anubis-summary', 'Undo');
+    await page.waitForTimeout(600);
+    console.log('== part of a site:', JSON.stringify({ offered, said }));
+    assertChecks('ranking part of a site', {
+      offersTheSubredditFirst: offered[0] === 'reddit.com/r/askhistorians' && offered.includes('reddit.com'),
+      hidesThatResult: states.some((r) => r.text.includes('jackal') && r.state.startsWith('hide')),
+      savesTheSubreddit: said.includes('Hid reddit.com/r/askhistorians.'),
+    });
+  }
 }
 
 // What a screen reader hears, from the accessibility tree (it sees inside closed

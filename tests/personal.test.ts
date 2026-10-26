@@ -228,3 +228,17 @@ describe('setListInfo', () => {
     expect(setListInfo('! title: Old\n$site=a.org', { name: 'New\nname' })).toBe('! name: New name\n$site=a.org');
   });
 });
+
+describe('a space on a site', () => {
+  it('is written as a path before the site, and read back as one entry', () => {
+    const text = setSite(PERSONAL_HEADER, 'reddit.com/r/rust', 'hide', ['forum']);
+    expect(text).toContain('/r/rust^$site=reddit.com,discard,tag=forum');
+    expect(listSites(text)).toEqual([expect.objectContaining({ site: 'reddit.com/r/rust', level: 'hide', tags: ['forum'] })]);
+    expect(getSite(text, 'reddit.com')).toBeUndefined();
+    expect(setSite(text, 'reddit.com/r/rust', 'normal', [])).toBe(PERSONAL_HEADER);
+  });
+
+  it('leaves other path rules hand-written', () => {
+    expect(listSites(`${PERSONAL_HEADER}/blog/$site=medium.com,discard\n`)).toEqual([]);
+  });
+});
