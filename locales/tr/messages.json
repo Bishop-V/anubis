@@ -1188,7 +1188,7 @@
     "message": "Listen senkronizasyon için çok büyük, bu yüzden bu cihazda kalıyor. Bir kopyasını saklamak için indir."
   },
   "sitesAddPlaceholder": {
-    "message": "Alan adı veya URL, örn. fandom.com"
+    "message": "Alan adı veya URL, örn. example.com"
   },
   "sitesAdd": {
     "message": "Ekle"
@@ -1509,7 +1509,7 @@
     "message": "“$1” bir siteye benzemiyor."
   },
   "tagTypeSite": {
-    "message": "Bir site yazın, örn. fandom.com."
+    "message": "Bir site yazın, örn. example.com."
   },
   "tagSiteNote": {
     "message": "$1: $2"

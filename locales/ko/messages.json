@@ -1113,7 +1113,7 @@
     "message": "내 목록이 동기화하기에는 너무 커서 이 기기에만 저장됩니다. 사본을 보관하려면 다운로드하세요."
   },
   "sitesAddPlaceholder": {
-    "message": "도메인 또는 URL(예: fandom.com)"
+    "message": "도메인 또는 URL(예: example.com)"
   },
   "sitesAdd": {
     "message": "추가"
@@ -1401,7 +1401,7 @@
     "message": "사이트 형식이 아닌 것 같습니다: ‘$1’"
   },
   "tagTypeSite": {
-    "message": "fandom.com처럼 사이트를 입력하세요."
+    "message": "example.com처럼 사이트를 입력하세요."
   },
   "tagSiteNote": {
     "message": "$1: $2"

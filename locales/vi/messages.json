@@ -1113,7 +1113,7 @@
     "message": "Danh sách của bạn quá lớn để đồng bộ hóa nên chỉ nằm trên thiết bị này. Hãy tải xuống để giữ một bản sao."
   },
   "sitesAddPlaceholder": {
-    "message": "Tên miền hoặc URL, ví dụ fandom.com"
+    "message": "Tên miền hoặc URL, ví dụ example.com"
   },
   "sitesAdd": {
     "message": "Thêm"
@@ -1401,7 +1401,7 @@
     "message": "“$1” có vẻ không phải là trang web."
   },
   "tagTypeSite": {
-    "message": "Nhập một trang web, ví dụ fandom.com."
+    "message": "Nhập một trang web, ví dụ example.com."
   },
   "tagSiteNote": {
     "message": "$1: $2"

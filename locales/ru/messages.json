@@ -1338,7 +1338,7 @@
     "message": "Ваш список слишком велик для синхронизации и остаётся на этом устройстве. Скачайте его, чтобы сохранить копию."
   },
   "sitesAddPlaceholder": {
-    "message": "Домен или URL, например fandom.com"
+    "message": "Домен или URL, например example.com"
   },
   "sitesAdd": {
     "message": "Добавить"
@@ -1725,7 +1725,7 @@
     "message": "«$1» не похоже на сайт."
   },
   "tagTypeSite": {
-    "message": "Введите сайт, например fandom.com."
+    "message": "Введите сайт, например example.com."
   },
   "tagSiteNote": {
     "message": "$1: $2"

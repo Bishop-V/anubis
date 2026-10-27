@@ -1488,7 +1488,7 @@
     "message": "قائمتك أكبر من أن تُزامَن، لذا تبقى على هذا الجهاز. نزّلها للاحتفاظ بنسخة."
   },
   "sitesAddPlaceholder": {
-    "message": "نطاق أو رابط، مثل fandom.com"
+    "message": "نطاق أو رابط، مثل example.com"
   },
   "sitesAdd": {
     "message": "إضافة"
@@ -1941,7 +1941,7 @@
     "message": "لا يبدو «$1» موقعًا."
   },
   "tagTypeSite": {
-    "message": "اكتب موقعًا، مثل fandom.com."
+    "message": "اكتب موقعًا، مثل example.com."
   },
   "tagSiteNote": {
     "message": "$1: $2"

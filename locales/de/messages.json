@@ -1188,7 +1188,7 @@
     "message": "Deine Liste ist zu groß für die Synchronisierung und bleibt deshalb auf diesem Gerät. Lade sie herunter, um eine Kopie zu behalten."
   },
   "sitesAddPlaceholder": {
-    "message": "Domain oder URL, z. B. fandom.com"
+    "message": "Domain oder URL, z. B. example.com"
   },
   "sitesAdd": {
     "message": "Hinzufügen"
@@ -1509,7 +1509,7 @@
     "message": "„$1“ sieht nicht wie eine Website aus."
   },
   "tagTypeSite": {
-    "message": "Gib eine Website ein, etwa fandom.com."
+    "message": "Gib eine Website ein, etwa example.com."
   },
   "tagSiteNote": {
     "message": "$1: $2"
