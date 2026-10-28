@@ -1188,7 +1188,7 @@
     "message": "آپ کی فہرست ہم وقت سازی کے لیے بہت بڑی ہے، اس لیے یہ اسی آلے پر رہتی ہے۔ کاپی رکھنے کے لیے اسے ڈاؤن لوڈ کریں۔"
   },
   "sitesAddPlaceholder": {
-    "message": "ڈومین یا URL، جیسے fandom.com"
+    "message": "ڈومین یا URL، جیسے example.com"
   },
   "sitesAdd": {
     "message": "شامل کریں"
@@ -1509,7 +1509,7 @@
     "message": "“$1” سائٹ نہیں لگتی۔"
   },
   "tagTypeSite": {
-    "message": "کوئی سائٹ لکھیں، جیسے fandom.com۔"
+    "message": "کوئی سائٹ لکھیں، جیسے example.com۔"
   },
   "tagSiteNote": {
     "message": "$1: $2"

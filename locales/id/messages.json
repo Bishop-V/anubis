@@ -1113,7 +1113,7 @@
     "message": "Daftar Anda terlalu besar untuk sinkronisasi, jadi tetap berada di perangkat ini. Unduh untuk menyimpan salinan."
   },
   "sitesAddPlaceholder": {
-    "message": "Domain atau URL, misalnya fandom.com"
+    "message": "Domain atau URL, misalnya example.com"
   },
   "sitesAdd": {
     "message": "Tambahkan"
@@ -1401,7 +1401,7 @@
     "message": "“$1” sepertinya bukan situs."
   },
   "tagTypeSite": {
-    "message": "Ketik situs, misalnya fandom.com."
+    "message": "Ketik situs, misalnya example.com."
   },
   "tagSiteNote": {
     "message": "$1: $2"

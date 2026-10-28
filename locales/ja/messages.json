@@ -1113,7 +1113,7 @@
     "message": "マイリストは同期するには大きすぎるため、このデバイスにのみ保存されます。コピーを残すにはダウンロードしてください。"
   },
   "sitesAddPlaceholder": {
-    "message": "ドメインまたは URL（例：fandom.com）"
+    "message": "ドメインまたは URL（例：example.com）"
   },
   "sitesAdd": {
     "message": "追加"
@@ -1401,7 +1401,7 @@
     "message": "「$1」はサイトではないようです。"
   },
   "tagTypeSite": {
-    "message": "fandom.com のように、サイトを入力してください。"
+    "message": "example.com のように、サイトを入力してください。"
   },
   "tagSiteNote": {
     "message": "$1：$2"

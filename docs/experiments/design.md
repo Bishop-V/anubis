@@ -2,6 +2,11 @@
 
 The look, the wording, and Anubis's own pages. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Tag and list marks in Settings (2026-10-27)
+
+- **Marks:** list rows wore a diamond in the list's colour, the mark tags wear on search pages, while Settings → Tags showed each tag's colour as a round swatch. Lists now have no mark, and a tag's colour picker is a diamond (`input[type='color']` in `assets/theme.css`).
+- **Tag rows:** spaced like list rows (16px above and below), and an open tag's Add site form labels both fields above them, so they line up when the "Why" label wraps. The site field's placeholder is example.com, as is Your sites' and the tag menu's prompt, in every language.
+
 ## A new user's walk through Anubis (2026-10-26)
 
 A review of the welcome page, the popup, Settings, and the mock search pages, as someone who has just installed Anubis. The owner chose what to change; what was left, and why, is below.

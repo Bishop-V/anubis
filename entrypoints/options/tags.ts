@@ -126,7 +126,7 @@ function sitesPanel(
 
   const input = h('input', {
     type: 'text',
-    placeholder: 'fandom.com',
+    placeholder: 'example.com',
     autocomplete: 'off',
     spellcheck: false,
     attrs: { 'aria-label': t('tagSitesToTag', tag.label) },
@@ -134,7 +134,8 @@ function sitesPanel(
   const reasonInput = h('input', { type: 'text', maxLength: 120 });
   const reasonField = h('label', { class: 'field' }, h('span', null, t('tagSiteReason', tag.label)), reasonInput);
   const error = h('p', { class: 'notice error', hidden: true });
-  const form = h('form', { class: 'inline-form' }, input, reasonField, h('button', { class: 'btn small', type: 'submit' }, t('tagAddSite')));
+  const siteField = h('label', { class: 'field' }, h('span', null, t('listsSuggestSite')), input);
+  const form = h('form', { class: 'inline-form' }, siteField, reasonField, h('button', { class: 'btn small', type: 'submit' }, t('tagAddSite')));
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     // Several at once, separated by spaces or commas.

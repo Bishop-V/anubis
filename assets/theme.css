@@ -239,12 +239,15 @@ input::placeholder,
 textarea::placeholder {
   color: var(--muted);
 }
+/* A tag's colour, picked from its diamond: the same mark the tag wears on search pages. */
 input[type='color'] {
-  width: 26px;
-  height: 26px;
+  width: 17px;
+  height: 17px;
+  margin: 4px;
   padding: 0;
   border: 1px solid var(--line-strong);
-  border-radius: 50%;
+  border-radius: 0;
+  transform: rotate(45deg);
   background: none;
   cursor: pointer;
   overflow: hidden;
@@ -254,11 +257,11 @@ input[type='color']::-webkit-color-swatch-wrapper {
 }
 input[type='color']::-webkit-color-swatch {
   border: 0;
-  border-radius: 50%;
+  border-radius: 0;
 }
 input[type='color']::-moz-color-swatch {
   border: 0;
-  border-radius: 50%;
+  border-radius: 0;
 }
 
 /* Switch: <label class="switch"><input type="checkbox"><span></span></label> */

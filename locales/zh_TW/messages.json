@@ -1113,7 +1113,7 @@
     "message": "你的清單太大，無法同步，因此只保留在此裝置上。請下載以保留一份副本。"
   },
   "sitesAddPlaceholder": {
-    "message": "網域或網址，例如 fandom.com"
+    "message": "網域或網址，例如 example.com"
   },
   "sitesAdd": {
     "message": "新增"
@@ -1401,7 +1401,7 @@
     "message": "“$1”看起來不像網站。"
   },
   "tagTypeSite": {
-    "message": "請輸入一個網站，例如 fandom.com。"
+    "message": "請輸入一個網站，例如 example.com。"
   },
   "tagSiteNote": {
     "message": "$1：$2"

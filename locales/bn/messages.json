@@ -1188,7 +1188,7 @@
     "message": "আপনার তালিকা সিঙ্কের জন্য অনেক বড়, তাই এটি এই ডিভাইসেই থাকে। একটি কপি রাখতে এটি ডাউনলোড করুন।"
   },
   "sitesAddPlaceholder": {
-    "message": "ডোমেন বা URL, যেমন fandom.com"
+    "message": "ডোমেন বা URL, যেমন example.com"
   },
   "sitesAdd": {
     "message": "যোগ করুন"
@@ -1509,7 +1509,7 @@
     "message": "“$1” সাইট বলে মনে হচ্ছে না।"
   },
   "tagTypeSite": {
-    "message": "একটি সাইট লিখুন, যেমন fandom.com।"
+    "message": "একটি সাইট লিখুন, যেমন example.com।"
   },
   "tagSiteNote": {
     "message": "$1: $2"

@@ -4,7 +4,7 @@ import { normalizeDomain } from '@/utils/domain';
 import { t, tAgo, tJoin, tn, tParts, type MessageKey } from '@/utils/i18n';
 import { ICON_EXTERNAL, ICON_REFRESH, ICON_TRASH } from '@/utils/icons';
 import { readSubscribeLink, REPO_URL, type SubscribeLink } from '@/utils/links';
-import { colorForTag, parseList, type ListFormat, type ParsedList } from '@/utils/listformat';
+import { parseList, type ListFormat, type ParsedList } from '@/utils/listformat';
 import { send } from '@/utils/messages';
 import { flash, flashed, rerender } from './flash';
 import { foldable, grip, helpLink, pageTitle } from './parts';
@@ -286,7 +286,6 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
   const parsed: ParsedList | undefined = text ? parseList(text) : undefined;
   const meta = parsed?.meta ?? {};
   const name = displayName(sub, meta);
-  const color = meta.avatar ?? colorForTag(sub.id);
 
   const toggle = h('input', { type: 'checkbox', checked: sub.enabled, attrs: { 'aria-label': t('listsUse', name) } });
   toggle.addEventListener('change', () => {
@@ -358,7 +357,6 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
     'div',
     { class: `list-row${sub.enabled ? '' : ' off'}`, attrs: { 'data-order': sub.id } },
     grip('lists', sub.id, name, order, reorderLists),
-    h('i', { class: 'gem mark', style: `--c: ${color}` }),
     h(
       'div',
       { class: 'body' },

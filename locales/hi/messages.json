@@ -1188,7 +1188,7 @@
     "message": "आपकी सूची सिंक के लिए बहुत बड़ी है, इसलिए यह इसी डिवाइस पर रहती है। कॉपी रखने के लिए इसे डाउनलोड करें।"
   },
   "sitesAddPlaceholder": {
-    "message": "डोमेन या यूआरएल, जैसे fandom.com"
+    "message": "डोमेन या यूआरएल, जैसे example.com"
   },
   "sitesAdd": {
     "message": "जोड़ें"
@@ -1509,7 +1509,7 @@
     "message": "“$1” साइट जैसा नहीं लगता।"
   },
   "tagTypeSite": {
-    "message": "कोई साइट लिखें, जैसे fandom.com।"
+    "message": "कोई साइट लिखें, जैसे example.com।"
   },
   "tagSiteNote": {
     "message": "$1: $2"
