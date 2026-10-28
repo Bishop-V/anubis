@@ -8,7 +8,7 @@
 ! tag: foss | FOSS | #3f6d8a | Free and open-source software.
 !
 ! Made from awesome-selfhosted's data (https://github.com/awesome-selfhosted/awesome-selfhosted-data),
-! commit 73ee825d3368cee695f177cdca7802025f515272, under the Creative Commons Attribution-ShareAlike 3.0
+! commit 67184350dbf91d229643e30d3f1eae6b7e223218, under the Creative Commons Attribution-ShareAlike 3.0
 ! Unported licence (https://creativecommons.org/licenses/by-sa/3.0/). This list
 ! is shared under the same licence.
 !
@@ -200,6 +200,7 @@ $site=bludit.com,tag=foss # awesome-selfhosted lists Bludit (MIT).
 $site=board.asm32.info,tag=foss # awesome-selfhosted lists AsmBB (EUPL-1.2).
 $site=boltcms.io,tag=foss # awesome-selfhosted lists Bolt CMS (MIT).
 $site=bookstackapp.com,tag=foss # awesome-selfhosted lists BookStack (MIT).
+$site=bottle-rocket.app,tag=foss # awesome-selfhosted lists Bottle Rocket (MIT).
 $site=botwave.dpip.lol,tag=foss # awesome-selfhosted lists BotWave (GPL-3.0).
 $site=btcpayserver.org,tag=foss # awesome-selfhosted lists BTCPay Server (MIT).
 $site=budgetboard.net,tag=foss # awesome-selfhosted lists Budget Board (GPL-3.0).
@@ -329,6 +330,7 @@ $site=dovecot.org,tag=foss # awesome-selfhosted lists Dovecot (MIT, LGPL-2.1).
 $site=downtify.henriquesebastiao.com,tag=foss # awesome-selfhosted lists Downtify (GPL-3.0).
 $site=dpaste.org,tag=foss # awesome-selfhosted lists dpaste (MIT).
 $site=draw.io,tag=foss # awesome-selfhosted lists draw.io (Apache-2.0).
+$site=drawdb.app,tag=foss # awesome-selfhosted lists drawDB (AGPL-3.0).
 $site=dreamfactory.com,tag=foss # awesome-selfhosted lists DreamFactory (Apache-2.0).
 $site=dreeve.app,tag=foss # awesome-selfhosted lists Dreeve (AGPL-3.0).
 $site=droposs.org,tag=foss # awesome-selfhosted lists Drop (AGPL-3.0).
@@ -448,6 +450,7 @@ $site=gotify.net,tag=foss # awesome-selfhosted lists Gotify (MIT).
 $site=grampsweb.org,tag=foss # awesome-selfhosted lists Gramps Web (AGPL-3.0).
 $site=graphhopper.com,tag=foss # awesome-selfhosted lists GraphHopper (Apache-2.0).
 $site=graphweaver.com,tag=foss # awesome-selfhosted lists Graphweaver (MIT).
+$site=grimmory.org,tag=foss # awesome-selfhosted lists Grimmory (AGPL-3.0).
 $site=grocy.info,tag=foss # awesome-selfhosted lists grocy (MIT).
 $site=group-office.com,tag=foss # awesome-selfhosted lists Group Office (AGPL-3.0).
 $site=grr.devome.com,tag=foss # awesome-selfhosted lists GRR (GPL-2.0).
@@ -722,7 +725,6 @@ $site=operational.co,tag=foss # awesome-selfhosted lists Operational.co (AGPL-3.
 $site=opnform.com,tag=foss # awesome-selfhosted lists OpnForm (AGPL-3.0).
 $site=orca-q.com,tag=foss # awesome-selfhosted lists OrcaQ (MIT).
 $site=osem.io,tag=foss # awesome-selfhosted lists osem (MIT).
-$site=oss.medama.io,tag=foss # awesome-selfhosted lists Medama Analytics (Apache-2.0, MIT).
 $site=ossrs.io,tag=foss # awesome-selfhosted lists SRS (MIT).
 $site=otobo.io,tag=foss # awesome-selfhosted lists OTOBO (GPL-3.0).
 $site=ots.fyi,tag=foss # awesome-selfhosted lists OTS (Apache-2.0).
