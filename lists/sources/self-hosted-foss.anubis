@@ -8,7 +8,7 @@
 ! tag: foss | FOSS | #3f6d8a | Free and open-source software.
 !
 ! Made from awesome-selfhosted's data (https://github.com/awesome-selfhosted/awesome-selfhosted-data),
-! commit 67184350dbf91d229643e30d3f1eae6b7e223218, under the Creative Commons Attribution-ShareAlike 3.0
+! commit b43a9a6aeeb47242eb04cec1be937ebc58b0be6c, under the Creative Commons Attribution-ShareAlike 3.0
 ! Unported licence (https://creativecommons.org/licenses/by-sa/3.0/). This list
 ! is shared under the same licence.
 !
@@ -724,6 +724,7 @@ $site=openziti.io,tag=foss # awesome-selfhosted lists OpenZiti (Apache-2.0).
 $site=operational.co,tag=foss # awesome-selfhosted lists Operational.co (AGPL-3.0).
 $site=opnform.com,tag=foss # awesome-selfhosted lists OpnForm (AGPL-3.0).
 $site=orca-q.com,tag=foss # awesome-selfhosted lists OrcaQ (MIT).
+$site=orkyo.com,tag=foss # awesome-selfhosted lists Orkyo Community (AGPL-3.0).
 $site=osem.io,tag=foss # awesome-selfhosted lists osem (MIT).
 $site=ossrs.io,tag=foss # awesome-selfhosted lists SRS (MIT).
 $site=otobo.io,tag=foss # awesome-selfhosted lists OTOBO (GPL-3.0).
@@ -926,6 +927,7 @@ $site=thelia.net,tag=foss # awesome-selfhosted lists Thelia (LGPL-3.0).
 $site=thelounge.chat,tag=foss # awesome-selfhosted lists The Lounge (MIT).
 $site=thingsboard.io,tag=foss # awesome-selfhosted lists Thingsboard (Apache-2.0).
 $site=thumbor.org,tag=foss # awesome-selfhosted lists Thumbor (MIT).
+$site=tickets.chobble.com,tag=foss # awesome-selfhosted lists Chobble Tickets (AGPL-3.0).
 $site=tiddlywiki.com,tag=foss # awesome-selfhosted lists TiddlyWiki (BSD-3-Clause).
 $site=tiledesk.com,tag=foss # awesome-selfhosted lists Tiledesk (MIT).
 $site=tileserver.readthedocs.io,tag=foss # awesome-selfhosted lists TileServer GL (BSD-2-Clause).

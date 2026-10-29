@@ -3,14 +3,14 @@
 ! author: Kevin Payravi and the Indie Wiki Buddy contributors
 ! homepage: https://github.com/KevinPayravi/indie-wiki-buddy
 ! license: MIT
-! version: 2026-09-25
+! version: 2026-10-26
 ! avatar: #3a8a67
 ! expires: 7 days
 ! tag: independent-wiki | Independent wiki | #3a8a67 | A wiki run by its community or the game's developers, not a commercial wiki host.
 ! tag: independent-elsewhere | Has independent wiki | #8c6a4f | A wiki on Fandom, Fextralife, or Neoseeker whose topic has an independent wiki. The rule's comment names it.
 !
 ! Made from Indie Wiki Buddy's data (https://github.com/KevinPayravi/indie-wiki-buddy),
-! commit 13f37952db2bae39f4150c2b0600a158fdcda341, under its MIT licence:
+! commit 3f68e16712bf1a33fd5cb64429b68cbebb8deea5, under its MIT licence:
 !
 ! MIT License
 !
@@ -81,6 +81,8 @@
 /wiki/Sons_of_Valhalla/$site=hoodedhorse.com,tag=independent-wiki,boost=3 # Sons of Valhalla Wiki, the official wiki.
 /wiki/Terra_Invicta/$site=hoodedhorse.com,tag=independent-wiki,boost=3 # Terra Invicta Wiki, the official wiki.
 /zh/$site=cookie.fandom.com,tag=independent-elsewhere,downrank=3 # Cookie☆Wiki is at cookie.wiki.
+/zh/$site=kartrider.fandom.com,tag=independent-elsewhere,downrank=3 # 跑跑卡丁车Wiki is at kartrider.wiki.gg/zh.
+/zh/$site=kartrider.wiki.gg,tag=independent-wiki,boost=3 # 跑跑卡丁车Wiki.
 /zh/$site=pvz.fandom.com,tag=independent-elsewhere,downrank=3 # Plants vs. Zombies Wiki is at plantsvszombies.wiki.gg/zh.
 /zh/$site=terraria-calamity-mod.fandom.com,tag=independent-elsewhere,downrank=3 # Calamity Mod Wiki, the official wiki, is at calamitymod.wiki.gg/zh.
 $site=1000xresist.fandom.com,tag=independent-elsewhere,downrank=3 # 1000xRESIST Wiki, the official wiki, is at 1000xresist.wiki.gg.
@@ -155,6 +157,8 @@ $site=apex--legends-archive.fandom.com,tag=independent-elsewhere,downrank=3 # Ap
 $site=apexlegends.fandom.com,tag=independent-elsewhere,downrank=3 # Apex Legends Wiki is at apexlegends.wiki.gg.
 $site=apexlegends.wiki.gg,tag=independent-wiki,boost=3 # Apex Legends Wiki.
 $site=apico.fandom.com,tag=independent-elsewhere,downrank=3 # APICO Wiki, the official wiki, is at wiki.apico.buzz.
+$site=approximately-up.fandom.com,tag=independent-elsewhere,downrank=3 # Approximately Up Wiki is at approximatelyup.wiki.gg.
+$site=approximatelyup.wiki.gg,tag=independent-wiki,boost=3 # Approximately Up Wiki.
 $site=arc-raiders.fandom.com,tag=independent-elsewhere,downrank=3 # ARC Raiders Wiki is at arcraiders.wiki.
 $site=arcanefr.miraheze.org,tag=independent-wiki,boost=3 # Arcane Wiki.
 $site=archive.guildofarchivists.org,tag=independent-wiki,boost=3 # Guild of Archivists Wiki.
@@ -342,6 +346,7 @@ $site=consolidatedpower.co,tag=independent-wiki,boost=3 # Highway 0.
 $site=content-warning-landfall.fandom.com,tag=independent-elsewhere,downrank=3 # Content Warning Wiki is at contentwarning.wiki.gg.
 $site=content-warning.fandom.com,tag=independent-elsewhere,downrank=3 # Content Warning Wiki is at contentwarning.wiki.gg.
 $site=contentwarning.wiki.gg,tag=independent-wiki,boost=3 # Content Warning Wiki.
+$site=convallaria.fandom.com,tag=independent-elsewhere,downrank=3 # Sword of Convallaria Wiki is at swordofconvallaria.wiki.gg.
 $site=conwaylife.com,tag=independent-wiki,boost=3 # LifeWiki.
 $site=conways-game-of-life.fandom.com,tag=independent-elsewhere,downrank=3 # LifeWiki is at conwaylife.com.
 $site=cookie.wiki,tag=independent-wiki,boost=3 # Cookie☆Wiki.
@@ -446,6 +451,8 @@ $site=discoelysium.wiki.gg,tag=independent-wiki,boost=3 # Disco Elysium Wiki.
 $site=discworld.fandom.com,tag=independent-elsewhere,downrank=3 # Terry Pratchett Wiki is at wiki.lspace.org.
 $site=disfigure.fandom.com,tag=independent-elsewhere,downrank=3 # Disfigure Wiki is at disfigure.wiki.gg.
 $site=disfigure.wiki.gg,tag=independent-wiki,boost=3 # Disfigure Wiki.
+$site=disillusion-st.fandom.com,tag=independent-elsewhere,downrank=3 # Disillusion ST Wiki is at disillusionst.wiki.gg.
+$site=disillusionst.wiki.gg,tag=independent-wiki,boost=3 # Disillusion ST Wiki.
 $site=disney-dreamlight-valley.fandom.com,tag=independent-elsewhere,downrank=3 # Dreamlight Valley Wiki is at dreamlightvalleywiki.com.
 $site=disneydreamlightvalley.fandom.com,tag=independent-elsewhere,downrank=3 # Dreamlight Valley Wiki is at dreamlightvalleywiki.com.
 $site=dnd-wiki.org,tag=independent-wiki,boost=3 # Dungeons and Dragons Wiki.
@@ -455,6 +462,8 @@ $site=doctorwhothetimetravlingtardis.fandom.com,tag=independent-elsewhere,downra
 $site=doctorwhotv.fandom.com,tag=independent-elsewhere,downrank=3 # Tardis (Doctor Who) Wiki is at tardis.wiki.
 $site=dogcraft.fandom.com,tag=independent-elsewhere,downrank=3 # Dogcraft Wiki is at dogcraft.net.
 $site=dogcraft.net,tag=independent-wiki,boost=3 # Dogcraft Wiki.
+$site=doloctown.fandom.com,tag=independent-elsewhere,downrank=3 # Doloc Town Wiki is at doloctown.wiki.gg.
+$site=doloctown.wiki.gg,tag=independent-wiki,boost=3 # Doloc Town Wiki.
 $site=dome-keeper.fandom.com,tag=independent-elsewhere,downrank=3 # Dome Keeper Wiki is at domekeeper.wiki.gg.
 $site=domekeeper.wiki.gg,tag=independent-wiki,boost=3 # Dome Keeper Wiki.
 $site=dominioncg.fandom.com,tag=independent-elsewhere,downrank=3 # Dominion Strategy Wiki is at wiki.dominionstrategy.com.
@@ -587,6 +596,8 @@ $site=fatalframe.fandom.com,tag=independent-elsewhere,downrank=3 # Zero Wiki is 
 $site=fatt.wiki,tag=independent-wiki,boost=3 # FatTWiki.
 $site=fearandhunger.fandom.com,tag=independent-elsewhere,downrank=3 # Fear & Hunger Wiki is at fearandhunger.wiki.gg.
 $site=fearandhunger.wiki.gg,tag=independent-wiki,boost=3 # Fear & Hunger Wiki.
+$site=feed-the-pit.fandom.com,tag=independent-elsewhere,downrank=3 # Feed The Pit Wiki is at feedthepit.wiki.gg.
+$site=feedthepit.wiki.gg,tag=independent-wiki,boost=3 # Feed The Pit Wiki.
 $site=ffxiv.consolegameswiki.com,tag=independent-wiki,boost=3 # Final Fantasy XIV Online Wiki.
 $site=ffxiv.fandom.com,tag=independent-elsewhere,downrank=3 # Final Fantasy XIV Online Wiki is at ffxiv.consolegameswiki.com.
 $site=fields-of-mistria.fandom.com,tag=independent-elsewhere,downrank=3 # Fields of Mistria Wiki is at fieldsofmistria.wiki.gg.
@@ -660,6 +671,8 @@ $site=gineipaedia.com,tag=independent-wiki,boost=3 # Gineipaedia.
 $site=girls-frontline.fandom.com,tag=independent-elsewhere,downrank=3 # IOP Wiki is at iopwiki.com.
 $site=girls-last-tour.fandom.com,tag=independent-elsewhere,downrank=3 # Girls' Last Tour Wiki is at girlslasttour.miraheze.org.
 $site=girlslasttour.miraheze.org,tag=independent-wiki,boost=3 # Girls' Last Tour Wiki.
+$site=gloomwood.fandom.com,tag=independent-elsewhere,downrank=3 # Gloomwood Wiki is at gloomwood.wiki.gg.
+$site=gloomwood.wiki.gg,tag=independent-wiki,boost=3 # Gloomwood Wiki.
 $site=gnorp-apologue.fandom.com,tag=independent-elsewhere,downrank=3 # (the) Gnorp Apologue Wiki is at gnorp.wiki.gg.
 $site=gnorp.wiki.gg,tag=independent-wiki,boost=3 # (the) Gnorp Apologue Wiki.
 $site=godzilla.fandom.com,tag=independent-elsewhere,downrank=3 # Wikizilla is at wikizilla.org.
@@ -677,6 +690,8 @@ $site=grace.miraheze.org,tag=independent-wiki,boost=3 # Grace Wiki.
 $site=granblue.fandom.com,tag=independent-elsewhere,downrank=3 # Granblue Wiki is at gbf.wiki.
 $site=greenday.fandom.com,tag=independent-elsewhere,downrank=3 # Green Day Wiki is at greenday.shoutwiki.com.
 $site=greenday.shoutwiki.com,tag=independent-wiki,boost=3 # Green Day Wiki.
+$site=grimdawn.fandom.com,tag=independent-elsewhere,downrank=3 # Grim Dawn Wiki, the official wiki, is at grimdawn.miraheze.org.
+$site=grimdawn.miraheze.org,tag=independent-wiki,boost=3 # Grim Dawn Wiki, the official wiki.
 $site=gronkh-wiki.de,tag=independent-wiki,boost=3 # Gronkh-Wiki.
 $site=grounded.fandom.com,tag=independent-elsewhere,downrank=3 # Grounded Wiki is at grounded.wiki.gg.
 $site=grounded.wiki.gg,tag=independent-wiki,boost=3 # Grounded Wiki.
@@ -738,6 +753,8 @@ $site=horticular.wiki.gg,tag=independent-wiki,boost=3 # Horticular Wiki.
 $site=houkai2nd.fandom.com,tag=independent-elsewhere,downrank=3 # Houkai Gakuen 2 Wiki is at houkai2nd.miraheze.org.
 $site=houkai2nd.miraheze.org,tag=independent-wiki,boost=3 # Houkai Gakuen 2 Wiki.
 $site=hundredline.miraheze.org,tag=independent-wiki,boost=3 # The Hundred Line Wiki.
+$site=huntdown.fandom.com,tag=independent-elsewhere,downrank=3 # Huntdown Wiki is at huntdown.wiki.gg.
+$site=huntdown.wiki.gg,tag=independent-wiki,boost=3 # Huntdown Wiki.
 $site=hunter-the-parenting.fandom.com,tag=independent-elsewhere,downrank=3 # Hunter: The Parenting Wiki is at huntertheparenting.miraheze.org.
 $site=huntertheparenting.miraheze.org,tag=independent-wiki,boost=3 # Hunter: The Parenting Wiki.
 $site=hyblock.fandom.com,tag=independent-elsewhere,downrank=3 # Hypixel SkyBlock Wiki is at hypixelskyblock.minecraft.wiki.
@@ -756,7 +773,9 @@ $site=hytalewiki.org,tag=independent-wiki,boost=3 # Hytale Wiki.
 $site=icarus.fandom.com,tag=independent-elsewhere,downrank=3 # ICARUS Wiki is at icarus.wiki.gg.
 $site=icarus.wiki.gg,tag=independent-wiki,boost=3 # ICARUS Wiki.
 $site=iceandfire.fandom.com,tag=independent-elsewhere,downrank=3 # A Wiki of Ice and Fire is at awoiaf.westeros.org.
+$site=idle-boss-rush.fandom.com,tag=independent-elsewhere,downrank=3 # IDLE BOSS RUSH Wiki is at idlebossrush.wiki.gg.
 $site=idle-wizard.fandom.com,tag=independent-elsewhere,downrank=3 # Idle Wizard Wiki is at idlewizard.wiki.gg.
+$site=idlebossrush.wiki.gg,tag=independent-wiki,boost=3 # IDLE BOSS RUSH Wiki.
 $site=idlewizard.wiki.gg,tag=independent-wiki,boost=3 # Idle Wizard Wiki.
 $site=idling-to-rule-the-gods.fandom.com,tag=independent-elsewhere,downrank=3 # Idling to Rule the Gods Wiki is at itrtg.wiki.gg.
 $site=idolish7.fandom.com,tag=independent-elsewhere,downrank=3 # IDOLiSH7 Wiki is at idolish7.miraheze.org.
@@ -888,6 +907,8 @@ $site=luigi-mansion.fandom.com,tag=independent-elsewhere,downrank=3 # Super Mari
 $site=lzh.minecraft.wiki,tag=independent-wiki,boost=3 # Minecraft Wiki.
 $site=mabinogi.fandom.com,tag=independent-elsewhere,downrank=3 # Mabinogi World Wiki is at wiki.mabinogiworld.com.
 $site=madoka.fandom.com,tag=independent-elsewhere,downrank=3 # Puella Magi Wiki is at wiki.puella-magi.net.
+$site=mafia.wiki.gg,tag=independent-wiki,boost=3 # Mafia Wiki.
+$site=mafiagame.fandom.com,tag=independent-elsewhere,downrank=3 # Mafia Wiki is at mafia.wiki.gg.
 $site=magicalstarsign.fandom.com,tag=independent-elsewhere,downrank=3 # Kovopedia is at kovopedia.com.
 $site=magicalvacation.fandom.com,tag=independent-elsewhere,downrank=3 # Kovopedia is at kovopedia.com.
 $site=mahjong.fandom.com,tag=independent-elsewhere,downrank=3 # Japanese Mahjong Wiki is at riichi.wiki.
@@ -1063,6 +1084,8 @@ $site=palia.fandom.com,tag=independent-elsewhere,downrank=3 # Palia Wiki, the of
 $site=palia.wiki.gg,tag=independent-wiki,boost=3 # Palia Wiki, the official wiki.
 $site=palworld.fandom.com,tag=independent-elsewhere,downrank=3 # Palworld Wiki is at palworld.wiki.gg.
 $site=palworld.wiki.gg,tag=independent-wiki,boost=3 # Palworld Wiki.
+$site=paper-lily.fandom.com,tag=independent-elsewhere,downrank=3 # Paper Lily Wiki is at paperlilywiki.com.
+$site=paperlilywiki.com,tag=independent-wiki,boost=3 # Paper Lily Wiki.
 $site=papermario.fandom.com,tag=independent-elsewhere,downrank=3 # Super Mario Wiki is at www.mariowiki.com.
 $site=papers-pls.fandom.com,tag=independent-elsewhere,downrank=3 # Revolutionary Computer Union Wiki, the official wiki, is at computerunion.miraheze.org.
 $site=parkour-reborn.fandom.com,tag=independent-elsewhere,downrank=3 # PARKOUR Reborn Wiki, the official wiki, is at parkourreborn.wiki.
@@ -1167,6 +1190,8 @@ $site=rammstein.fandom.com,tag=independent-elsewhere,downrank=3 # RammWiki is at
 $site=rammwiki.net,tag=independent-wiki,boost=3 # RammWiki.
 $site=ratatan.fandom.com,tag=independent-elsewhere,downrank=3 # Ratatan Wiki is at ratatan.wiki.gg.
 $site=ratatan.wiki.gg,tag=independent-wiki,boost=3 # Ratatan Wiki.
+$site=ravenswatch.fandom.com,tag=independent-elsewhere,downrank=3 # Ravenswatch Wiki is at ravenswatch.wiki.gg.
+$site=ravenswatch.wiki.gg,tag=independent-wiki,boost=3 # Ravenswatch Wiki.
 $site=rayman-game.fandom.com,tag=independent-elsewhere,downrank=3 # RayWiki is at raymanpc.com.
 $site=rayman.fandom.com,tag=independent-elsewhere,downrank=3 # RayWiki is at raymanpc.com.
 $site=raymanpc.com,tag=independent-wiki,boost=3 # RayWiki.
@@ -1303,12 +1328,13 @@ $site=soulframe.wiki.fextralife.com,tag=independent-elsewhere,downrank=3 # Soulf
 $site=southpark.fandom.com,tag=independent-elsewhere,downrank=3 # South Park Archives is at southpark.wiki.gg.
 $site=southpark.wiki.gg,tag=independent-wiki,boost=3 # South Park Archives.
 $site=space-pioneers.fandom.com,tag=independent-elsewhere,downrank=3 # Space Pioneers Wiki is at spacepioneers.miraheze.org.
-$site=space-station-14.fandom.com,tag=independent-elsewhere,downrank=3 # Space Station 14 Wiki is at wiki.spacestation14.com.
+$site=space-station-14.fandom.com,tag=independent-elsewhere,downrank=3 # Space Station 14 Wiki is at spacestation14.wiki.
 $site=spaceengineers.fandom.com,tag=independent-elsewhere,downrank=3 # Space Engineers Wiki, the official wiki, is at spaceengineers.wiki.gg.
 $site=spaceengineers.wiki.gg,tag=independent-wiki,boost=3 # Space Engineers Wiki, the official wiki.
 $site=spacepioneers.miraheze.org,tag=independent-wiki,boost=3 # Space Pioneers Wiki.
 $site=spacestation.fandom.com,tag=independent-elsewhere,downrank=3 # Viki is at vsix.dev.
 $site=spacestation13.fandom.com,tag=independent-elsewhere,downrank=3 # Space Station 13 Wiki is at wiki.ss13.co.
+$site=spacestation14.wiki,tag=independent-wiki,boost=3 # Space Station 14 Wiki.
 $site=spiritmod.fandom.com,tag=independent-elsewhere,downrank=3 # Spirit Mod Wiki is at spiritmod.wiki.gg.
 $site=spiritmod.wiki.gg,tag=independent-wiki,boost=3 # Spirit Mod Wiki.
 $site=splatoon.fandom.com,tag=independent-elsewhere,downrank=3 # Inkipedia is at splatoonwiki.org.
@@ -1372,6 +1398,7 @@ $site=supersnail.wiki.gg,tag=independent-wiki,boost=3 # Super Snail Wiki.
 $site=survivingmars.fandom.com,tag=independent-elsewhere,downrank=3 # Surviving Mars Wiki, the official wiki, is at survivingmars.paradoxwikis.com.
 $site=survivingmars.paradoxwikis.com,tag=independent-wiki,boost=3 # Surviving Mars Wiki, the official wiki.
 $site=sv.simpsonswiki.com,tag=independent-wiki,boost=3 # Svenska Wikisimpsons.
+$site=swordofconvallaria.wiki.gg,tag=independent-wiki,boost=3 # Sword of Convallaria Wiki.
 $site=synthetik.fandom.com,tag=independent-elsewhere,downrank=3 # SYNTHETIK Universe Wiki is at synthetikuniverse.wiki.gg.
 $site=synthetikuniverse.wiki.gg,tag=independent-wiki,boost=3 # SYNTHETIK Universe Wiki.
 $site=tallyhall.fandom.com,tag=independent-elsewhere,downrank=3 # Tally Hallmanac is at www.hiddeninthesand.com.
@@ -1631,7 +1658,6 @@ $site=wiki.rhythm.cafe,tag=independent-wiki,boost=3 # Rhythm Doctor Wiki.
 $site=wiki.ricochetuniverse.com,tag=independent-wiki,boost=3 # Ricochet Wiki.
 $site=wiki.shippinglanes.net,tag=independent-wiki,boost=3 # Shipping Lanes Wiki.
 $site=wiki.solarconquest.net,tag=independent-wiki,boost=3 # Solar Conquest Wiki, the official wiki.
-$site=wiki.spacestation14.com,tag=independent-wiki,boost=3 # Space Station 14 Wiki.
 $site=wiki.ss13.co,tag=independent-wiki,boost=3 # Space Station 13 Wiki.
 $site=wiki.subnautica.com,tag=independent-wiki,boost=3 # Subnautica Wiki, the official wiki.
 $site=wiki.teamfortress.com,tag=independent-wiki,boost=3 # Team Fortress Wiki, the official wiki.
@@ -1672,6 +1698,8 @@ $site=witchhatatelier.telepedia.net,tag=independent-wiki,boost=3 # Witch Hat Ate
 $site=wizard101.fandom.com,tag=independent-elsewhere,downrank=3 # Wizard101 Wiki is at wiki.wizard101central.com/wiki.
 $site=wizardry.fandom.com,tag=independent-elsewhere,downrank=3 # Wizardry Wiki is at wizardry.wiki.gg.
 $site=wizardry.wiki.gg,tag=independent-wiki,boost=3 # Wizardry Wiki.
+$site=wobbly-life.fandom.com,tag=independent-elsewhere,downrank=3 # Wobbly Life Wiki is at wobblylife.wiki.gg.
+$site=wobblylife.wiki.gg,tag=independent-wiki,boost=3 # Wobbly Life Wiki.
 $site=world-of-babel.fandom.com,tag=independent-elsewhere,downrank=3 # World of Babel Wiki is at worldofbabel.wiki.gg.
 $site=worldofbabel.wiki.gg,tag=independent-wiki,boost=3 # World of Babel Wiki.
 $site=worldtrigger.fandom.com,tag=independent-elsewhere,downrank=3 # World Trigger Wiki is at worldtriggerwiki.com.
