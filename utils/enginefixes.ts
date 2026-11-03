@@ -99,13 +99,19 @@ function readFields(value: unknown): FixFields | undefined {
   });
 }
 
-/** One fix, if it's for an engine Anubis has, its versions are versions, and it changes something. */
-function readFix(fix: unknown): EngineFix[] {
-  if (!isRecord(fix) || !ENGINE_IDS.has(fix.engine as string)) return [];
+/** Whether a fix names an engine Anubis has, and its versions, where given, are versions. */
+function readable(fix: unknown): fix is Record<string, unknown> & { engine: string } {
   const badVersion = (v: unknown) => v !== undefined && !versionOf(v);
-  if (badVersion(fix.from) || badVersion(fix.until)) return [];
-  const read = compact({ from: versionOf(fix.from), until: versionOf(fix.until), set: readFields(fix.set), mobile: readFields(fix.mobile) });
-  return read?.set || read?.mobile ? [{ engine: fix.engine as string, ...read }] : [];
+  return isRecord(fix) && ENGINE_IDS.has(fix.engine as string) && !badVersion(fix.from) && !badVersion(fix.until);
+}
+
+/** One fix, if it's readable and changes something. */
+function readFix(fix: unknown): EngineFix[] {
+  if (!readable(fix)) return [];
+  const set = readFields(fix.set);
+  const mobile = readFields(fix.mobile);
+  if (!set && !mobile) return [];
+  return [{ engine: fix.engine, ...compact({ from: versionOf(fix.from), until: versionOf(fix.until), set, mobile }) }];
 }
 
 /** The fixes in a downloaded file, keeping only what a fix can change, for engines Anubis has. */
