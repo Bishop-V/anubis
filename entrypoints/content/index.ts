@@ -67,7 +67,7 @@ export default defineContentScript({
       return;
     }
     // The bundled definition with any downloaded fixes for this version (utils/enginefixes.ts).
-    const engine = fixedEngineFor(location.hostname, mobile, fixes, browser.runtime.getManifest().version, isSelector)!;
+    const engine = fixedEngineFor(location.hostname, { mobile, fixes, version: browser.runtime.getManifest().version, isSelector })!;
 
     // Clean-up that works by sending the page elsewhere: Google's Web tab. Checked
     // again on each pass, as Google can change the search without reloading.

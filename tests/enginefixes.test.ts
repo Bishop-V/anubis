@@ -86,7 +86,7 @@ describe('the engine with its fixes', () => {
       { engine: 'yahoo', until: '0.1.0', set: { boundary: '#old' } },
       { engine: 'bing', set: { title: 'h3' } },
     ];
-    const yahoo = fixedEngineFor('search.yahoo.com', false, fixes, '0.10.0', any)!;
+    const yahoo = fixedEngineFor('search.yahoo.com', { mobile: false, fixes: fixes, version: '0.10.0', isSelector: any })!;
     const bundled = engineFor('search.yahoo.com')!;
     expect([yahoo.heading, yahoo.ads, yahoo.more, yahoo.boundary]).toEqual(['h4', '.new-ads', { kind: 'link', next: 'a.more' }, bundled.boundary]);
     expect(yahoo.isResultsPage).toBe(bundled.isResultsPage);
@@ -94,14 +94,14 @@ describe('the engine with its fixes', () => {
 
   it('keeps the bundled value where a fix’s selector doesn’t parse, or names another kind of Load more results', () => {
     const fixes: EngineFix[] = [{ engine: 'yahoo', set: { heading: 'h3[', displayed: '.ok', more: { button: '#more' } } }];
-    const yahoo = fixedEngineFor('search.yahoo.com', false, fixes, '0.10.0', parses)!;
+    const yahoo = fixedEngineFor('search.yahoo.com', { mobile: false, fixes: fixes, version: '0.10.0', isSelector: parses })!;
     const bundled = engineFor('search.yahoo.com')!;
     expect([yahoo.heading, yahoo.displayed, yahoo.more]).toEqual([bundled.heading, '.ok', bundled.more]);
   });
 
   it('changes a card kind by its place, keeping what a fix can’t give', () => {
     const fixes: EngineFix[] = [{ engine: 'bing', set: { cards: { '0': { item: '.new-image' }, '9': { item: '.nothing' } } } }];
-    const bing = fixedEngineFor('www.bing.com', false, fixes, '0.10.0', any)!;
+    const bing = fixedEngineFor('www.bing.com', { mobile: false, fixes: fixes, version: '0.10.0', isSelector: any })!;
     const bundled = engineFor('www.bing.com')!;
     expect(bing.cards![0]).toEqual({ ...bundled.cards![0], item: '.new-image' });
     expect(bing.cards!.slice(1)).toEqual(bundled.cards!.slice(1));
@@ -110,16 +110,16 @@ describe('the engine with its fixes', () => {
 
   it('keeps the phone layout’s own values, which a fix for phones changes', () => {
     const desktop: EngineFix[] = [{ engine: 'google', set: { heading: 'h3.fixed', boundary: '#fixed' } }];
-    const phone = fixedEngineFor('www.google.com', true, desktop, '0.10.0', any)!;
+    const phone = fixedEngineFor('www.google.com', { mobile: true, fixes: desktop, version: '0.10.0', isSelector: any })!;
     expect([phone.heading, phone.boundary]).toEqual([engineFor('www.google.com', true)!.heading, '#fixed']);
     const both: EngineFix[] = [...desktop, { engine: 'google', mobile: { heading: '.phone-title' } }];
-    expect(fixedEngineFor('www.google.com', true, both, '0.10.0', any)!.heading).toBe('.phone-title');
-    expect(fixedEngineFor('www.google.com', false, both, '0.10.0', any)!.heading).toBe('h3.fixed');
+    expect(fixedEngineFor('www.google.com', { mobile: true, fixes: both, version: '0.10.0', isSelector: any })!.heading).toBe('.phone-title');
+    expect(fixedEngineFor('www.google.com', { mobile: false, fixes: both, version: '0.10.0', isSelector: any })!.heading).toBe('h3.fixed');
   });
 
   it('gives the bundled engine when there are no fixes', () => {
-    expect(fixedEngineFor('www.google.com', true, [], '0.10.0', any)).toEqual(engineFor('www.google.com', true));
-    expect(fixedEngineFor('example.com', false, [], '0.10.0', any)).toBeUndefined();
+    expect(fixedEngineFor('www.google.com', { mobile: true, fixes: [], version: '0.10.0', isSelector: any })).toEqual(engineFor('www.google.com', true));
+    expect(fixedEngineFor('example.com', { mobile: false, fixes: [], version: '0.10.0', isSelector: any })).toBeUndefined();
   });
 });
 

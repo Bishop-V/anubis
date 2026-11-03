@@ -1,6 +1,6 @@
 import { storage } from '#imports';
 import type { CleanupKind } from './cleanup';
-import { ENGINES, engineFor, type CardDef, type EngineDef } from './engines';
+import { ENGINES, engineFor, type CardDef, type EngineDef, type MoreResults } from './engines';
 import { fetchText } from './subscriptions';
 
 // Fixes to the engine definitions in utils/engines.ts, downloaded from the repository,
@@ -65,59 +65,53 @@ const VERSION = /^\d+(\.\d+){0,3}$/;
 /** An offset as the bundled definitions write them: `0`, `4px`, `-28px`. */
 const OFFSET = /^(0|-?\d{1,3}(\.\d+)?px)$/;
 
-const selector = (v: unknown): string | undefined => (typeof v === 'string' && v.trim() && v.length <= MAX_SELECTOR ? v : undefined);
+const selector = (v: unknown) => (typeof v === 'string' && v.trim() && v.length <= MAX_SELECTOR ? v : undefined);
+const offset = (v: unknown) => (typeof v === 'string' && OFFSET.test(v) ? v : undefined);
+const versionOf = (v: unknown) => (typeof v === 'string' && VERSION.test(v) ? v : undefined);
+const ENGINE_IDS = new Set(ENGINES.map((e) => e.id));
 
-/** Only the named string fields of an object, each passing `keep`. */
+/** The object without its undefined values; undefined when nothing is left. */
+function compact<T extends object>(value: T): T | undefined {
+  const entries = Object.entries(value).filter(([, v]) => v !== undefined);
+  return entries.length ? (Object.fromEntries(entries) as T) : undefined;
+}
+
+/** Only the named fields of an object, each as `keep` reads it. */
 function pick<K extends string>(value: unknown, keys: readonly K[], keep: (v: unknown) => string | undefined): Partial<Record<K, string>> | undefined {
+  return isRecord(value) ? compact(Object.fromEntries(keys.map((key) => [key, keep(value[key])])) as Partial<Record<K, string>>) : undefined;
+}
+
+/** Card kinds by their place in `cards`, as `"0"`, `"1"`… */
+function readCards(value: unknown): FixFields['cards'] {
   if (!isRecord(value)) return undefined;
-  const out: Partial<Record<K, string>> = {};
-  for (const key of keys) {
-    const v = keep(value[key]);
-    if (v !== undefined) out[key] = v;
-  }
-  return Object.keys(out).length ? out : undefined;
+  const cards = Object.entries(value).filter(([index]) => /^\d{1,2}$/.test(index));
+  return compact(Object.fromEntries(cards.map(([index, card]) => [index, pick(card, CARD_FIELDS, selector)])) as NonNullable<FixFields['cards']>);
 }
 
 function readFields(value: unknown): FixFields | undefined {
   if (!isRecord(value)) return undefined;
-  const out: FixFields = { ...pick(value, SELECTOR_FIELDS, selector) };
-  const cleanup = pick(value.cleanupSelectors, CLEANUP_KINDS, selector);
-  if (cleanup) out.cleanupSelectors = cleanup;
-  const more = pick(value.more, ['button', 'next', 'form'], selector);
-  if (more) out.more = more;
-  const button = pick(value.button, ['top', 'right'], (v) => (typeof v === 'string' && OFFSET.test(v) ? v : undefined));
-  if (button) out.button = button;
-  if (isRecord(value.cards)) {
-    const cards: NonNullable<FixFields['cards']> = {};
-    for (const [index, card] of Object.entries(value.cards)) {
-      const fields = /^\d{1,2}$/.test(index) ? pick(card, CARD_FIELDS, selector) : undefined;
-      if (fields) cards[index] = fields;
-    }
-    if (Object.keys(cards).length) out.cards = cards;
-  }
-  return Object.keys(out).length ? out : undefined;
+  return compact<FixFields>({
+    ...pick(value, SELECTOR_FIELDS, selector),
+    cleanupSelectors: pick(value.cleanupSelectors, CLEANUP_KINDS, selector),
+    more: pick(value.more, ['button', 'next', 'form'], selector),
+    button: pick(value.button, ['top', 'right'], offset),
+    cards: readCards(value.cards),
+  });
+}
+
+/** One fix, if it's for an engine Anubis has, its versions are versions, and it changes something. */
+function readFix(fix: unknown): EngineFix[] {
+  if (!isRecord(fix) || !ENGINE_IDS.has(fix.engine as string)) return [];
+  const badVersion = (v: unknown) => v !== undefined && !versionOf(v);
+  if (badVersion(fix.from) || badVersion(fix.until)) return [];
+  const read = compact({ from: versionOf(fix.from), until: versionOf(fix.until), set: readFields(fix.set), mobile: readFields(fix.mobile) });
+  return read?.set || read?.mobile ? [{ engine: fix.engine as string, ...read }] : [];
 }
 
 /** The fixes in a downloaded file, keeping only what a fix can change, for engines Anubis has. */
 export function readEngineFixes(data: unknown): EngineFix[] {
-  if (!isRecord(data) || data.anubis !== 'engine-fixes' || !Array.isArray(data.fixes)) return [];
-  const ids = new Set(ENGINES.map((e) => e.id));
-  return data.fixes.flatMap((fix): EngineFix[] => {
-    if (!isRecord(fix) || typeof fix.engine !== 'string' || !ids.has(fix.engine)) return [];
-    if ([fix.from, fix.until].some((v) => v !== undefined && !(typeof v === 'string' && VERSION.test(v)))) return [];
-    const set = readFields(fix.set);
-    const mobile = readFields(fix.mobile);
-    if (!set && !mobile) return [];
-    return [
-      {
-        engine: fix.engine,
-        ...(fix.from ? { from: fix.from as string } : {}),
-        ...(fix.until ? { until: fix.until as string } : {}),
-        ...(set ? { set } : {}),
-        ...(mobile ? { mobile } : {}),
-      },
-    ];
-  });
+  const fixes = isRecord(data) && data.anubis === 'engine-fixes' ? data.fixes : undefined;
+  return Array.isArray(fixes) ? fixes.flatMap(readFix) : [];
 }
 
 /** Negative, zero, or positive as version `a` comes before, is, or comes after `b`. */
@@ -135,31 +129,62 @@ export function fixApplies(fix: EngineFix, version: string): boolean {
   return (!fix.from || compareVersions(version, fix.from) >= 0) && (!fix.until || compareVersions(version, fix.until) < 0);
 }
 
+/** Whether a fix's selector can go in: given, and the page parses it. */
+type Usable = (s: string | undefined) => s is string;
+
+/** The fields of `fix` that are usable, as an object to spread over the bundled ones. */
+function usableFields<K extends string>(fix: Partial<Record<K, string>>, keys: readonly K[], ok: Usable): Partial<Record<K, string>> {
+  return Object.fromEntries(keys.filter((key) => ok(fix[key])).map((key) => [key, fix[key]])) as Partial<Record<K, string>>;
+}
+
+function fixedCleanup(bundled: EngineDef['cleanupSelectors'], fix: FixFields['cleanupSelectors'], ok: Usable): EngineDef['cleanupSelectors'] {
+  const fixed = fix && usableFields(fix, CLEANUP_KINDS, ok);
+  return fixed && Object.keys(fixed).length ? { ...bundled, ...fixed } : undefined;
+}
+
+/** Each kind of Load more results, and the one selector of it a fix can change. */
+const MORE_FIELD = { click: 'button', link: 'next', form: 'form' } as const;
+
+/** Only the selector of the kind this version has: a fix can't turn a Next link into a button. */
+function fixedMore(more: MoreResults | undefined, fix: FixFields['more'], ok: Usable): MoreResults | undefined {
+  const field = more && more.kind !== 'param' ? MORE_FIELD[more.kind] : undefined;
+  const value = field ? fix?.[field] : undefined;
+  return field && ok(value) ? ({ ...more, [field]: value } as MoreResults) : undefined;
+}
+
+function fixedCards(cards: CardDef[] | undefined, fixes: FixFields['cards'], ok: Usable): CardDef[] | undefined {
+  if (!cards || !fixes) return undefined;
+  return cards.map((card, i) => {
+    const fix = fixes[String(i)];
+    return fix ? { ...card, ...usableFields(fix, CARD_FIELDS, ok) } : card;
+  });
+}
+
 /**
  * A definition with a fix's fields put in, each only where `isSelector` takes it
  * (the page checks it parses); anything else keeps the bundled value.
  */
 export function applyFields(engine: EngineDef, fields: FixFields | undefined, isSelector: (s: string) => boolean): EngineDef {
   if (!fields) return engine;
-  const out: EngineDef = { ...engine };
-  const ok = (s: string | undefined): s is string => s !== undefined && isSelector(s);
-  for (const key of SELECTOR_FIELDS) if (ok(fields[key])) out[key] = fields[key];
-  const cleanup = Object.entries(fields.cleanupSelectors ?? {}).filter(([, s]) => ok(s));
-  if (cleanup.length) out.cleanupSelectors = { ...engine.cleanupSelectors, ...Object.fromEntries(cleanup) };
-  // Only the selector of the kind this version has: a fix can't turn a Next link into a button.
-  const more = engine.more;
-  if (more?.kind === 'click' && ok(fields.more?.button)) out.more = { ...more, button: fields.more.button };
-  if (more?.kind === 'link' && ok(fields.more?.next)) out.more = { ...more, next: fields.more.next };
-  if (more?.kind === 'form' && ok(fields.more?.form)) out.more = { ...more, form: fields.more.form };
-  if (fields.button && engine.button) out.button = { ...engine.button, ...fields.button };
-  if (fields.cards && engine.cards) {
-    out.cards = engine.cards.map((card, i) => {
-      const fix = fields.cards![String(i)];
-      if (!fix) return card;
-      return { ...card, ...Object.fromEntries(CARD_FIELDS.filter((k) => ok(fix[k])).map((k) => [k, fix[k]])) };
-    });
-  }
-  return out;
+  const ok: Usable = (s): s is string => s !== undefined && isSelector(s);
+  return {
+    ...engine,
+    ...usableFields(fields, SELECTOR_FIELDS, ok),
+    ...compact({
+      cleanupSelectors: fixedCleanup(engine.cleanupSelectors, fields.cleanupSelectors, ok),
+      more: fixedMore(engine.more, fields.more, ok),
+      button: engine.button && fields.button ? { ...engine.button, ...fields.button } : undefined,
+      cards: fixedCards(engine.cards, fields.cards, ok),
+    }),
+  };
+}
+
+/** What `fixedEngineFor` needs besides the site: the layout, the fixes, this version, and the page's selector check. */
+export interface FixContext {
+  mobile: boolean;
+  fixes: EngineFix[];
+  version: string;
+  isSelector: (s: string) => boolean;
 }
 
 /**
@@ -167,20 +192,13 @@ export function applyFields(engine: EngineDef, fields: FixFields | undefined, is
  * put in: `set` into the definition, then `mobile` into the phone layout, whose own
  * values come before `set`'s, as they come before the bundled ones.
  */
-export function fixedEngineFor(
-  hostname: string,
-  mobile: boolean,
-  fixes: EngineFix[],
-  version: string,
-  isSelector: (s: string) => boolean,
-): EngineDef | undefined {
+export function fixedEngineFor(hostname: string, { mobile, fixes, version, isSelector }: FixContext): EngineDef | undefined {
   const bundled = engineFor(hostname);
   if (!bundled) return undefined;
   const mine = fixes.filter((f) => f.engine === bundled.id && fixApplies(f, version));
-  let engine = mine.reduce((def, fix) => applyFields(def, fix.set, isSelector), bundled);
-  if (mobile && bundled.mobile) engine = { ...engine, ...bundled.mobile };
-  if (mobile) engine = mine.reduce((def, fix) => applyFields(def, fix.mobile, isSelector), engine);
-  return engine;
+  const apply = (def: EngineDef, part: 'set' | 'mobile') => mine.reduce((d, fix) => applyFields(d, fix[part], isSelector), def);
+  const desktop = apply(bundled, 'set');
+  return mobile ? apply({ ...desktop, ...bundled.mobile }, 'mobile') : desktop;
 }
 
 /** The fixes this browser has, as last downloaded. */
@@ -188,11 +206,15 @@ export async function storedEngineFixes(): Promise<EngineFix[]> {
   return (await engineFixesItem.getValue())?.fixes ?? [];
 }
 
+/** Whether it's time to download: six hours after the last download, and an hour after a failure. */
+function due(stored: StoredFixes | null, now: number): boolean {
+  const waited = (since: number | undefined, ms: number) => since === undefined || now - since >= ms;
+  return !stored || (waited(stored.fetchedAt, FETCH_EVERY_MS) && waited(stored.errorAt, RETRY_AFTER_ERROR_MS));
+}
+
 /** Download the fixes, at most every six hours, keeping the last ones when it fails. */
 export async function refreshEngineFixes(now = Date.now()): Promise<void> {
-  const stored = await engineFixesItem.getValue();
-  if (stored && now - stored.fetchedAt < FETCH_EVERY_MS) return;
-  if (stored?.errorAt && now - stored.errorAt < RETRY_AFTER_ERROR_MS) return;
+  if (!due(await engineFixesItem.getValue(), now)) return;
   try {
     const fixes = readEngineFixes(JSON.parse(await fetchText(ENGINE_FIXES_URL, 10000)));
     await engineFixesItem.setValue({ fixes, fetchedAt: now });
