@@ -202,6 +202,12 @@ const CHUNK_BYTES = 7000;
 
 /** What storage.sync holds in all, in both Chrome and Firefox. */
 export const SYNC_QUOTA_BYTES = 102400;
+/**
+ * Room the personal list leaves free in sync for settings, tag choices, and
+ * subscriptions to grow into: one item's worth. A list that filled sync would make
+ * their next save fail, so it moves to this device first.
+ */
+export const SYNC_HEADROOM_BYTES = 8192;
 
 interface PersonalMeta {
   chunks: number;
@@ -319,8 +325,17 @@ export async function savePersonal(text: string): Promise<{ synced: boolean }> {
   );
   // The copy first, so this device reads its own change without unpacking it.
   await storage.setItem(PERSONAL_COPY, { sum, text } satisfies PersonalCopy);
+  const keepLocal = async (): Promise<{ synced: boolean }> => {
+    await storage.setItem(PERSONAL_LOCAL, text);
+    await storage.setItem(PERSONAL_META, { chunks: 0, local: true, updatedAt: Date.now() } satisfies PersonalMeta);
+    // The last list that fit is no use now, and its space is.
+    await storage.removeItems(Array.from({ length: prev?.chunks ?? 0 }, (_, i) => chunkKey(i)));
+    return { synced: false };
+  };
+  const meta: PersonalMeta = { chunks: chunks.length, updatedAt: Date.now(), sum, ...(encoding && { encoding }) };
+  const needed = chunks.reduce((n, value, i) => n + itemBytes(`personal.${i}`, value), itemBytes('personal', meta));
+  if ((await otherSyncBytes()) + needed > SYNC_QUOTA_BYTES - SYNC_HEADROOM_BYTES) return keepLocal();
   try {
-    const meta: PersonalMeta = { chunks: chunks.length, updatedAt: Date.now(), sum, ...(encoding && { encoding }) };
     await storage.setItems([...chunks.map((value, i) => ({ key: chunkKey(i), value })), { key: PERSONAL_META, value: meta }]);
     if (stale.length) await storage.removeItems(stale);
     if (prev?.local) await storage.removeItem(PERSONAL_LOCAL);
@@ -328,11 +343,7 @@ export async function savePersonal(text: string): Promise<{ synced: boolean }> {
   } catch (error) {
     // Most likely QUOTA_BYTES: keep the list on this device instead of losing edits.
     console.warn('[anubis] personal list too big for sync, keeping it local', error);
-    await storage.setItem(PERSONAL_LOCAL, text);
-    await storage.setItem(PERSONAL_META, { chunks: 0, local: true, updatedAt: Date.now() } satisfies PersonalMeta);
-    // The last list that fit is no use now, and its space is.
-    await storage.removeItems(Array.from({ length: prev?.chunks ?? 0 }, (_, i) => chunkKey(i)));
-    return { synced: false };
+    return keepLocal();
   }
 }
 
@@ -382,11 +393,21 @@ export function watchPersonal(cb: (text: string) => void): () => void {
   };
 }
 
-/** How much of storage.sync Anubis uses, counted as the browsers count it: each key plus its value as JSON. */
+/** An item's size as the browsers count it against sync's quota: its key plus its value as JSON. */
+function itemBytes(key: string, value: unknown): number {
+  return new TextEncoder().encode(key + JSON.stringify(value)).length;
+}
+
+/** How much of storage.sync Anubis uses. */
 export async function syncBytesInUse(): Promise<number> {
   const all = await browser.storage.sync.get(null);
-  const encoder = new TextEncoder();
-  return Object.entries(all).reduce((n, [key, value]) => n + encoder.encode(key + JSON.stringify(value)).length, 0);
+  return Object.entries(all).reduce((n, [key, value]) => n + itemBytes(key, value), 0);
+}
+
+/** What sync holds besides the personal list, which a save replaces. */
+async function otherSyncBytes(): Promise<number> {
+  const all = await browser.storage.sync.get(null);
+  return Object.entries(all).reduce((n, [key, value]) => (/^personal(\.\d+)?$/.test(key) ? n : n + itemBytes(key, value)), 0);
 }
 
 /**

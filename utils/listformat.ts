@@ -89,6 +89,11 @@ export interface DeferredRule {
 
 export const MAX_STRENGTH = 10;
 const TAG_ID = /^[a-z0-9][a-z0-9-]{0,31}$/;
+
+/** Whether this is a tag's id as lists write it: lowercase letters, digits, and hyphens, up to 32. */
+export function isTagId(id: string): boolean {
+  return TAG_ID.test(id);
+}
 const META_KEYS = new Set([
   'name',
   'description',

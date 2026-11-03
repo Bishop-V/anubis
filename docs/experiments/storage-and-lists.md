@@ -2,6 +2,13 @@
 
 Where things are stored, sync between browsers, and subscribing to lists. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Room in sync, and what a file can restore (2026-11-03)
+
+- **Source:** the whole-codebase review of 2026-11-03. Each fix has a unit test that failed before it.
+- **Room in sync:** the personal list only moved to this device when its own save failed, so a list that nearly filled sync made the next save of settings, tag choices, or subscriptions fail instead, and some callers (the keyboard shortcut) dropped that failure unseen. A save now counts what the other sync items take and keeps 8 KB free (`SYNC_HEADROOM_BYTES`, one item's limit) before writing; otherwise the list stays on this device, as when it's too big. The next save that fits moves it back. That's about 8% fewer sites in sync than before.
+- **What a file can restore:** subscriptions from a backup or sync file only needed a string `id` and `url`, so a file could add a list Settings would refuse (an `http:`, `file:`, or `javascript:` address) or mark any list as built in. They now need an https address, `builtin` only stays on `builtin:` ids, and a name is cut to one short line, as a subscribe link's is. Fields a newer version adds are kept, as with settings. Tag choices under ids no tag can have are dropped, which also stops a `__proto__` key replacing the object's prototype.
+- **Smaller:** Firefox's consent check read whether `permissions.getAll()` had a `data_collection` key, which Firefox gives whether or not anything was consented to; it now looks for `browsingActivity` in it. A Brave Goggle link whose `goggles_id` isn't a web address now stays the Goggle link, instead of turning into a `javascript:` link in the subscribe offer, where the page's security policy blocked it anyway.
+
 ## Reading a backup or sync file's settings (2026-10-24)
 
 - **Before:** `readBackup` (`utils/backup.ts`) checked each tag choice but took settings on trust. A file with `"engines": null` (hand-edited, damaged, or written by a faulty server) stopped Anubis on every search page, since search pages read `engines[id]`.

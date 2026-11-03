@@ -114,7 +114,7 @@ Two builds of the same commit are identical file for file. Firefox's reviewers r
 | `sync:tagPrefs` | Sync | What the user chose for each tag: its action, colour, label, whether it's shown, and its place in their order (`order`, which `collectTags` sorts by and every list of tags follows). |
 | `sync:subscriptions` | Sync | The lists the user subscribes to. Absent means the default subscriptions, so a second computer's sync can't be overwritten by defaults on install. |
 | `sync:personal`, `sync:personal.N` | Sync | The personal list: text in the list format, compressed (deflate, then base64) and split into chunks under sync's 8 KB per item. `sync:personal` counts the chunks and holds the text's checksum; lists saved before compression are plain text with no checksum, and still read. |
-| `local:personal` | This computer | The personal list, once it's too big for sync (about 100 KB in total, some 10,000 sites compressed). |
+| `local:personal` | This computer | The personal list, once it's too big for sync (about 100 KB in total, some 10,000 sites compressed). It moves here while it would leave less than 8 KB of sync free (`SYNC_HEADROOM_BYTES`), so settings, tag choices, and subscriptions can still be saved. |
 | `local:personalCopy` | This computer | The last personal list read whole, with its checksum. Read instead of unpacking the chunks while the checksum matches, and in their place while chunks arriving from sync don't match it yet. |
 | `local:listCache` | This computer | Downloaded lists, with when they were fetched and the last error. |
 | `local:lastUpdateCheck` | This computer | When the background script last checked lists for updates. |
