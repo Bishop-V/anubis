@@ -20,6 +20,7 @@ Nur hiermit:
 
 - **Den Listen, die du abonniert hast**, etwa einmal am Tag. Anubis startet mit neun Listen auf GitHub; schalte sie unter **Einstellungen → Listen** aus.
 - **Dem Listenverzeichnis** auf GitHub, wenn du **Einstellungen → Listen** öffnest.
+- **Korrekturen für Suchseiten** auf GitHub, höchstens alle sechs Stunden, damit Anubis weiter funktioniert, wenn eine Suchmaschine ihre Seite ändert.
 - **Der Suchmaschine, auf der du bist**, für [Mehr Ergebnisse laden](./more-results.md). Bei Ecosia kommen die Website-Symbole dieser Ergebnisse von Ecosias Symboldienst.
 - **Deinem WebDAV-Server**, wenn du einen verbindest. Er bekommt deine Websites, Einstellungen, Tag-Einstellungen und Abonnements, standardmäßig verschlüsselt. Ohne Verschlüsselung kann sein Betreiber sie lesen.
 - **Issue-Trackern**, wenn du **Problem melden** wählst (vorausgefüllt mit der Version von Anubis, deinem Browser und der Suchmaschine) oder **Änderungen vorschlagen** an einer Liste. Sie öffnen sich in einem neuen Tab, und nichts wird gesendet, bis du absendest.

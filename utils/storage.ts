@@ -15,6 +15,7 @@ import { fromBlockedSites, PERSONAL_HEADER } from './personal';
 //   local:listCache      downloaded list texts; too big for sync, re-fetched per device
 //   local:lastUpdateCheck  when the background last checked lists for updates
 //   local:colorScheme    light or dark, as the extension's own pages see it (see utils/theme.ts)
+//   local:engineFixes    fixes to the engine definitions, downloaded from the repository (utils/enginefixes.ts)
 //   sync:blockedSites    legacy block list, migrated into the personal list
 //   sync:hideStyleMoved  the one-time move from Collapse to Remove as the default
 //   sync:defaultListsAdded  the one-time subscription of existing installs to every default list

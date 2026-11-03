@@ -20,6 +20,7 @@ Only these:
 
 - **The lists you subscribe to**, about once a day. Anubis starts with nine lists hosted on GitHub; turn them off in **Settings → Lists**.
 - **The list directory** on GitHub, when you open **Settings → Lists**.
+- **Fixes for search pages** on GitHub, at most every six hours, so Anubis keeps working when an engine changes its page.
 - **The search engine you're on**, for [Load more results](./more-results.md). On Ecosia, site icons for those results come from Ecosia's icon service.
 - **Your WebDAV server**, if you connect one. It receives your sites, settings, tag choices, and subscriptions, encrypted by default. Without encryption, its operator can read them.
 - **Issue trackers**, when you choose **Report a problem** (prefilled with Anubis's version, your browser, and the engine) or a list's **Suggest changes**. They open in a new tab, and nothing is sent until you submit.

@@ -96,6 +96,7 @@ Two builds of the same commit are identical file for file. Firefox's reviewers r
 - `utils/backup.ts`: everything that follows the user (settings, tag choices, subscriptions, and the personal list), as a backup file and as the sync file. `utils/merge.ts`: three-way merges of it. `utils/webdav.ts`: the optional sync between browsers through a WebDAV server.
 - `utils/links.ts`: the wiki and repository addresses the extension links to, and subscribe links.
 - `utils/cleanup.ts`: the clean-up kinds, the headings that identify each one (with translations), and per-engine selectors.
+- `utils/enginefixes.ts` and `engines/fixes.json`: fixes to those definitions that installs download from `main`, so a changed search page can be followed between releases (see [Fix an engine without a release](#fix-an-engine-without-a-release)).
 - `upstream/serpinfo/`: a copy of uBlacklist's rules for the engines Anubis supports, kept current by the weekly engine sync. Tests read it; the build doesn't.
 - `lists/`: the bundled lists and `directory.json` (the "More lists" directory). `docs/list-format.md` is the format reference. `lists/sources/` holds lists made from other projects' data, rewritten weekly by `.github/workflows/sources.yml` (`.github/scripts/update-sources.mjs`, with the conversions in `.github/scripts/sources/convert.mjs`).
 - `docs/`: the documentation site. `guide/` holds the wiki's pages, `vi/`, `de/`, `zh-cn/`, and `zh-tw/` its machine-translated home page and guide (see [Translations](#translations)), `lists.md` renders `lists/directory.json`, and `.vitepress/` holds the config and brand theme. The extension links to the published site through `utils/links.ts` (the manifest's `homepage_url`, the popup's Help link, a wiki link on each settings section, and `helpLink` in `entrypoints/options/parts.ts` on panels and settings that a heading explains). Earlier builds link to `docs/list-format.md` on GitHub, so don't move that file, and keep page paths and headings stable or the links from settings break (`tests/help-links.test.ts` checks them). `subscribe.md` is where subscribe links lead and what the subscribe content script matches, so it can't move either. `.github/workflows/docs.yml` builds the site on pull requests and publishes it to GitHub Pages from main.
@@ -118,6 +119,7 @@ Two builds of the same commit are identical file for file. Firefox's reviewers r
 | `local:personalCopy` | This computer | The last personal list read whole, with its checksum. Read instead of unpacking the chunks while the checksum matches, and in their place while chunks arriving from sync don't match it yet. |
 | `local:listCache` | This computer | Downloaded lists, with when they were fetched and the last error. |
 | `local:lastUpdateCheck` | This computer | When the background script last checked lists for updates. |
+| `local:engineFixes` | This computer | Fixes to the engine definitions, downloaded from `engines/fixes.json` at most every six hours, with when and whether the last download failed (`utils/enginefixes.ts`). |
 | `local:colorScheme` | This computer | Light or dark as the extension's own pages see it, written by the popup, settings, and (in Firefox) the background page. On Auto the result menu uses it, since a search page can be told otherwise (Firefox's Website appearance). |
 | `sync:blockedSites`, `sync:hideStyleMoved`, `sync:defaultListsAdded` | Sync | Migration leftovers: the old block list, and flags for a one-time settings change and a one-time subscription to every default list. |
 | `local:webdav` | This computer | The WebDAV server connected for syncing between browsers: its address, user name, and password, and the passphrase the file is encrypted with if one is set. Never in sync. |
@@ -194,6 +196,18 @@ The popup, settings, and welcome page are plain DOM, built with `h()` from `util
 3. Model the engine's page as a mock in `e2e/fixtures.mjs`, serve it from the `pages` map in `e2e/run.mjs` at the engine's real address, and add a check. For a fix, first confirm the check fails on the current build.
 4. Update the engine table in `docs/guide/search-engines.md`, the engine list in `docs/guide/introduction.md`, and `store/README.md`. If it loads more results, add it to `docs/guide/more-results.md` too.
 5. Load it on the live engine and record what you confirmed, with the date, in `docs/experiments.md`.
+
+### Fix an engine without a release
+
+When an engine changes its page and Anubis stops finding its results, a fix in `engines/fixes.json` reaches every install within about six hours, with no store review. The background script downloads the file from `main`, and each search page puts the fixes for its engine and Anubis's version over the bundled definition (`utils/enginefixes.ts`).
+
+1. Reproduce it first: change the engine's mock in `e2e/fixtures.mjs` to the new markup and confirm a check fails.
+2. Add a fix: `{ "engine": "<id>", "from": "<oldest version it's for>", "set": { … } }`, and `"mobile": { … }` for the phone layout. A fix can change `heading`, `boundary`, `item`, `link`, `title`, `displayed`, `blocks`, `ads`, `cleanupSelectors.<kind>`, the selector of the bundled kind of `more` (`button`, `next`, or `form`), `button.top` and `button.right`, and a card kind's `item`, `link`, `title`, and `displayed` by its place in `cards` (`"cards": { "0": { … } }`). Nothing else is read: no functions, addresses, or new engines, so `isResultsPage`, `when`, and `matches` still need a release. A selector the page can't parse is left out, and the bundled one stays.
+3. Make the same change in `utils/engines.ts`, so the next release has it, and check the mock passes with it.
+4. Merge it into `main`. `tests/enginefixes.test.ts` checks that the file reads back whole and its selectors parse.
+5. At the next release, give the fix `"until": "<that version>"`: `npm run release:prep` stops while a fix still applies to the version being released.
+
+The `fixes` e2e part checks the mechanism with a renamed Yahoo page. Data, not code, is what Chrome's and Firefox's review rules allow; the store answers on remote code (`store/README.md`) still hold.
 
 ### Recognise another clean-up panel or language
 
@@ -335,7 +349,7 @@ npm run zip:chrome   # .output/anubis-<version>-chrome.zip, also used for Edge
 
 The extension itself is in `.output/firefox-mv2/` (and `.output/chrome-mv3/`) after the zips are made.
 
-To publish a version, run `npm run release:prep -- 0.3.0` (or `patch`, `minor`, or `major`; `scripts/release-prep.mjs`). It sets `version` in `package.json` and `package-lock.json`, then runs the type-check, unit tests, Firefox build and zips, the add-on linter, and the end-to-end checks, stopping at the first failure. Merge the change, then push a matching tag (`git tag v0.3.0 && git push origin v0.3.0`). `.github/workflows/release.yml` checks the tag against `package.json`, runs CI, builds the zips, and creates a GitHub Release with the packages attached. It then submits to each store whose keys are set in the protected `release` environment. A store with no keys is skipped; a store with only some keys fails the release. The environment needs required-reviewer protection restricted to `v*` tags and the store credentials; see [`store/README.md`](store/README.md) for setup and release details.
+To publish a version, run `npm run release:prep -- 0.3.0` (or `patch`, `minor`, or `major`; `scripts/release-prep.mjs`). It stops if `engines/fixes.json` still has a fix for that version (see "Fix an engine without a release"), sets `version` in `package.json` and `package-lock.json`, then runs the type-check, unit tests, Firefox build and zips, the add-on linter, and the end-to-end checks, stopping at the first failure. Merge the change, then push a matching tag (`git tag v0.3.0 && git push origin v0.3.0`). `.github/workflows/release.yml` checks the tag against `package.json`, runs CI, builds the zips, and creates a GitHub Release with the packages attached. It then submits to each store whose keys are set in the protected `release` environment. A store with no keys is skipped; a store with only some keys fails the release. The environment needs required-reviewer protection restricted to `v*` tags and the store credentials; see [`store/README.md`](store/README.md) for setup and release details.
 
 ## Pitfalls
 

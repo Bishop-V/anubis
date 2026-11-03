@@ -18,6 +18,7 @@ What was checked on real search pages, and what is still unverified.
 
 Keeping engine definitions current, and engine bugs found while testing.
 
+- Engine fixes from the repository (2026-11-03)
 - Keeping platform and engine maintenance current (2026-09-29)
 - Keeping engine definitions in sync (2026-09-29)
 - Engine watch

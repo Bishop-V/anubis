@@ -12,6 +12,7 @@ import {
   updateSettings,
   watchPersonal,
 } from '@/utils/storage';
+import { refreshEngineFixes } from '@/utils/enginefixes';
 import { copyListTags } from '@/utils/ruleset';
 import { migrateDefaultLists, refreshStale } from '@/utils/subscriptions';
 import { recordColorScheme } from '@/utils/theme';
@@ -20,7 +21,8 @@ import { changeEncryptionPassphrase, syncChanges, syncIfDue, syncWithServer } fr
 // The background script keeps subscribed lists fresh, shows the hidden-result
 // count on the toolbar icon, greys the icon out while Anubis is off, unpacks your
 // list when it arrives from sync, syncs with a WebDAV server if one is connected,
-// and opens the welcome page on first install. Updates run when the browser starts and when a
+// downloads fixes for how search pages are read (utils/enginefixes.ts), and opens
+// the welcome page on first install. Updates run when the browser starts and when a
 // search page asks, at most every 30 minutes, so no "alarms" permission is needed.
 
 const LAST_CHECK = 'local:lastUpdateCheck' as const;
@@ -102,12 +104,14 @@ export default defineBackground(() => {
     await migrateLegacy();
     await migrateSettings();
     await migrateDefaultLists();
+    void refreshEngineFixes();
     await refresh();
     await copyListTags();
     await syncWithServer();
   });
   browser.runtime.onStartup.addListener(() => {
     void maybeRefresh();
+    void refreshEngineFixes();
     void syncWithServer();
   });
 
@@ -139,6 +143,7 @@ export default defineBackground(() => {
       }
       case 'refresh-stale':
         void maybeRefresh();
+        void refreshEngineFixes();
         void syncIfDue();
         return;
       case 'refresh-all':

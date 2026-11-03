@@ -1,5 +1,6 @@
 import { browser, defineContentScript } from '#imports';
 import { NO_CLEANUP, type Cleanup } from '@/utils/cleanup';
+import { fixedEngineFor, storedEngineFixes, type EngineFix } from '@/utils/enginefixes';
 import { engineFor, ENGINE_MATCHES, isMobileAgent, sameSearch, type EngineDef } from '@/utils/engines';
 import { colorForTag, slugifyTag } from '@/utils/listformat';
 import { evaluate, listTagCards, listTagIds, type Verdict } from '@/utils/matcher';
@@ -50,20 +51,23 @@ export default defineContentScript({
 
   async main(ctx) {
     // Phones get a different layout from some engines (Firefox for Android).
-    const engine = engineFor(location.hostname, isMobileAgent(navigator.userAgent));
-    if (!engine) return;
+    const mobile = isMobileAgent(navigator.userAgent);
+    if (!engineFor(location.hostname, mobile)) return;
     // When the extension reloads or updates while this page is open, Firefox runs
     // the new copy in the same page, and the old copy's summary and tags stay behind.
     clearPreviousCopy();
 
     let rules: RuleSet;
+    let fixes: EngineFix[];
     try {
-      rules = await loadRuleSet();
+      [rules, fixes] = await Promise.all([loadRuleSet(), storedEngineFixes().catch(() => [])]);
     } catch (error) {
       // storage.sync can fail in some setups; don't let that kill the script.
       console.warn('[anubis] could not load lists', error);
       return;
     }
+    // The bundled definition with any downloaded fixes for this version (utils/enginefixes.ts).
+    const engine = fixedEngineFor(location.hostname, mobile, fixes, browser.runtime.getManifest().version, isSelector)!;
 
     // Clean-up that works by sending the page elsewhere: Google's Web tab. Checked
     // again on each pass, as Google can change the search without reloading.
@@ -820,6 +824,16 @@ function pageTheme(setting: Theme): PageTheme {
     return 0.2126 * r + 0.7152 * g + 0.0722 * b < 128 ? 'dark' : 'light';
   }
   return browserScheme();
+}
+
+/** Whether the page can use this as a selector: a downloaded fix's that doesn't parse is left out. */
+function isSelector(selector: string): boolean {
+  try {
+    document.createDocumentFragment().querySelector(selector);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /** Anubis's elements and attributes left on the page by an earlier copy of the extension. */
