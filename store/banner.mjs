@@ -18,7 +18,7 @@ const require = createRequire(import.meta.url);
 const { chromium } = require('playwright');
 const here = (p) => fileURLToPath(new URL(p, import.meta.url));
 
-const FPS = 15;
+const FPS = 25;
 // The timeline below is written in story time; SLOW stretches it for viewing.
 const SLOW = 1.7;
 const SECONDS = 10.4 * SLOW;
@@ -285,7 +285,7 @@ await browser.close();
 
 const out = here('banner.gif');
 execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(FPS), '-i', join(dir, '%04d.png'),
-  '-vf', 'split[a][b];[a]palettegen=max_colors=96:stats_mode=full[p];[b][p]paletteuse=dither=none',
+  '-vf', 'split[a][b];[a]palettegen=max_colors=96:stats_mode=full[p];[b][p]paletteuse=dither=none:diff_mode=rectangle',
   '-loop', '0', out]);
 rmSync(dir, { recursive: true, force: true });
 console.log('store/banner.gif');
