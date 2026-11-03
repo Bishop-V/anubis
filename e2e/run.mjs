@@ -161,6 +161,7 @@ function mockPages() {
       ['https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then', 'Promise.prototype.then() - MDN', 'The then() method of Promise instances takes up to two arguments.'],
     ], { inner: true }),
     'https://www.google.com/search?q=anubis&mobile=1': googleMobile('anubis', ANUBIS_RESULTS),
+    'https://www.google.com/search?q=javascript+promises&udm=7&mobile=1': engineTab('google', 'videos', JS_RESULTS),
     'https://duckduckgo.com/?q=javascript+promises&mobile=1': duckduckgoMobile('javascript promises', JS_RESULTS),
     'https://www.bing.com/search?q=javascript+promises&mobile=1': bingMobile('javascript promises', JS_RESULTS),
     // What an earlier copy of the extension leaves on the page when it reloads or
@@ -856,6 +857,29 @@ if (!only || only === 'mobile' || checks) {
     detailsShowsFullSentence: opened.short === false && opened.long === true && opened.detailsText === 'Fewer details',
     phoneNothingUnderMark: folded.underMark.length === 0 && opened.underMark.length === 0,
     wideSummaryIsFull: wide.long === true && wide.short === false && wide.details === false,
+  });
+
+  // Google's Videos tab on a phone: a card per video, found as the tabs' cards are, some hidden, each with its button.
+  await phone.goto('https://www.google.com/search?q=javascript+promises&udm=7&mobile=1');
+  await phone.waitForFunction(() => !!document.querySelector('.Ww4FFb[data-anubis-state~="hide"]'), null, { timeout: 5000 }).catch(() => {});
+  await phone.waitForTimeout(200);
+  const videos = await phone.evaluate(() => {
+    const cards = [...document.querySelectorAll('.Ww4FFb')];
+    const buttons = [...document.querySelectorAll('anubis-weigh')].filter((b) => b.getBoundingClientRect().width);
+    return {
+      cards: cards.length,
+      found: cards.filter((c) => c.hasAttribute('data-anubis-result')).length,
+      hidden: cards.filter((c) => c.getBoundingClientRect().height === 0).length,
+      buttons: buttons.length,
+      buttonsInCards: buttons.length > 0 && buttons.every((b) => cards.some((c) => c.contains(b))),
+    };
+  });
+  console.log('\n== google phone videos tab:', JSON.stringify(videos));
+  await phone.screenshot({ path: `${SHOTS}google-mobile-videos.png`, fullPage: true });
+  assertChecks('google phone videos tab', {
+    allFound: videos.cards > 0 && videos.found === videos.cards,
+    hidesSome: videos.hidden > 0,
+    buttonOnEachShownCard: videos.buttonsInCards && videos.buttons === videos.cards - videos.hidden,
   });
 
   // Every engine's phone layout: each result gets a ⚖ button that sits clear of the
