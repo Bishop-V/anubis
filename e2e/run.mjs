@@ -242,7 +242,9 @@ async function launch(settings = {}, ext = EXT) {
   if (!sw) sw = await ctx.waitForEvent('serviceworker');
   const extId = new URL(sw.url()).host;
   await waitForWorker(sw, () => typeof chrome !== 'undefined' && !!chrome.storage, 'Extension storage API did not become ready');
-  await waitForWorker(sw, async () => !!(await chrome.storage.sync.get('personal')).personal, 'Extension personal-list migration did not finish');
+  // Install's migrations (migrateLegacy, migrateSettings, migrateDefaultLists) end by setting
+  // defaultListsAdded. A fresh install writes no personal list, so that can't be waited for.
+  await waitForWorker(sw, async () => !!(await chrome.storage.sync.get('defaultListsAdded')).defaultListsAdded, 'Extension install migrations did not finish');
   // On install the extension moves a stored "Collapse" to "Remove" once. Writing the
   // settings below while that runs can land between its reads, so the tests would
   // run with "Remove": wait until it has set its flag.

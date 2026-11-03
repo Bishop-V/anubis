@@ -47,6 +47,7 @@ What Anubis draws and changes on search pages.
 
 Where things are stored, sync between browsers, and subscribing to lists.
 
+- Review fixes: allow, hosts files, user spaces, and the first install (2026-11-03)
 - Reading a backup or sync file's settings (2026-10-24)
 - Suggest changes as a form in Settings (2026-10-20)
 - Review findings on list parsing and subscriptions (2026-10-10)

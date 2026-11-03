@@ -50,6 +50,14 @@ describe('personal list storage', () => {
     expect(await storage.getItem('sync:personal.1')).toBeNull();
   });
 
+  // On a second computer, sync can bring the list after the install: writing the default
+  // to sync then could replace it.
+  it('leaves sync alone on a fresh install', async () => {
+    await migrateLegacy();
+    expect(await fakeBrowser.storage.sync.get(null)).toEqual({});
+    expect(await loadPersonal()).toBe(DEFAULT_PERSONAL);
+  });
+
   it('migrates the legacy sync:blockedSites array once', async () => {
     await storage.setItem('sync:blockedSites', ['fandom.com', 'pinterest.com']);
     await migrateLegacy();

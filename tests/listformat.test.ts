@@ -179,6 +179,21 @@ describe('plain domain lists', () => {
       ['tracker.io', true],
     ]);
   });
+
+  it('reads a hosts file, comments and all', () => {
+    const list = parseList('# Blocked hosts\n# from somewhere\n0.0.0.0 spam.example\n127.0.0.1 junk.example # tracker\n0.0.0.0 ads.example');
+    expect(list.format).toBe('domains');
+    expect(list.rules.map((r) => [r.site, r.discard])).toEqual([
+      ['spam.example', true],
+      ['junk.example', true],
+      ['ads.example', true],
+    ]);
+    expect(parseList('0.0.0.0 spam.example\n0.0.0.0 junk.example').format).toBe('domains');
+  });
+
+  it('reads a domain list with a comment at the top', () => {
+    expect(parseList('# My domains\nexample.com\nspam.net').format).toBe('domains');
+  });
 });
 
 describe('detectFormat', () => {
@@ -187,6 +202,8 @@ describe('detectFormat', () => {
     expect(detectFormat(['$site=a.com,tag=x'])).toBe('anubis');
     expect(detectFormat(['*://*.a.com/*'])).toBe('ublacklist');
     expect(detectFormat(['a.com', 'b.org'])).toBe('domains');
+    // A ruleset of regular expressions alone is still told by its comments.
+    expect(detectFormat(['# My ruleset', '/example\\.(net|org)/'])).toBe('ublacklist');
   });
 });
 

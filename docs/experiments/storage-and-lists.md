@@ -2,6 +2,14 @@
 
 Where things are stored, sync between browsers, and subscribing to lists. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Review fixes: allow, hosts files, user spaces, and the first install (2026-11-03)
+
+- **Source:** a whole-codebase review. Each bug was reproduced with a unit test that failed before the fix.
+- **A list's `allow` did nothing:** subscribed lists only read discard and boost, so a uBlacklist ruleset's `@` unblock rule didn't beat its own block, and an `allow` didn't override other lists as `docs/list-format.md` says. A list's allow now keeps the result at normal against every list's hide, lens, and moves. Your own ranking and tag choices still come first. A lens's "leaves it out" reason is dropped from Why once an allow holds (`tests/matcher.test.ts`).
+- **Hosts files didn't load:** format detection didn't count `0.0.0.0 host` lines as domains, and any `#` comment made a list a uBlacklist ruleset. So a hosts file, or a domain list with a comment at the top, failed with "no usable rules". `#` comments and `---` no longer count as uBlacklist on their own: they decide only when nothing else does, which keeps a ruleset of regular expressions alone working (`tests/listformat.test.ts`).
+- **`/user/` spaces:** `reddit.com/user/…` and `youtube.com/user/…` were never offered in the result menu, because the list of the sites' own pages (`NOT_SPACES`) has `user` in it. That list now only applies to a one-part space like GitHub's `/users` (`tests/domain.test.ts`).
+- **First install wrote to sync:** `migrateLegacy` saved the default personal list on every new install. On a second computer, sync can bring the real list after `onInstalled`, and that write could compete with it. As with subscriptions, no stored list now means the default; only a legacy block list is migrated (`tests/storage.test.ts`).
+
 ## Reading a backup or sync file's settings (2026-10-24)
 
 - **Before:** `readBackup` (`utils/backup.ts`) checked each tag choice but took settings on trust. A file with `"engines": null` (hand-edited, damaged, or written by a faulty server) stopped Anubis on every search page, since search pages read `engines[id]`.

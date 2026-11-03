@@ -229,12 +229,15 @@ describe('spaces on shared sites', () => {
     expect(spaceOf('https://medium.com/@someone/a-post-123')).toBe('medium.com/@someone');
     expect(spaceOf('https://github.com/rust-lang/rust/issues/1')).toBe('github.com/rust-lang');
     expect(spaceOf('https://www.linkedin.com/in/someone')).toBe('linkedin.com/in/someone');
+    expect(spaceOf('https://www.reddit.com/user/Someone/comments/abc')).toBe('reddit.com/user/someone');
+    expect(spaceOf('https://www.youtube.com/user/Someone')).toBe('youtube.com/user/someone');
   });
 
   it('finds none where the address doesn’t say, or names the site’s own page', () => {
     // A video's address doesn't name its channel.
     expect(spaceOf('https://www.youtube.com/watch?v=abc')).toBeUndefined();
     expect(spaceOf('https://github.com/topics/rust')).toBeUndefined();
+    expect(spaceOf('https://github.com/users/someone/projects/1')).toBeUndefined();
     expect(spaceOf('https://x.com/search?q=rust')).toBeUndefined();
     expect(spaceOf('https://www.reddit.com/')).toBeUndefined();
     expect(spaceOf('https://example.com/r/rust')).toBeUndefined();

@@ -402,10 +402,16 @@ export async function migrateSettings(): Promise<void> {
   await storage.setItem(HIDE_STYLE_MOVED, true);
 }
 
-/** Moves the legacy `sync:blockedSites` array into the personal list. Safe to call repeatedly. */
+/**
+ * Moves the legacy `sync:blockedSites` array into the personal list. Safe to call repeatedly.
+ * Without one it writes nothing: no stored list means the default, and on a second
+ * computer sync may still be bringing the real one, which a default saved now could replace.
+ */
 export async function migrateLegacy(): Promise<void> {
   const meta = await storage.getItem<PersonalMeta>(PERSONAL_META);
   if (meta) return;
-  await savePersonal(await loadPersonal());
+  const legacy = await storage.getItem<string[]>(LEGACY_BLOCKED);
+  if (!legacy) return;
+  await savePersonal(fromBlockedSites(legacy));
   await storage.removeItem(LEGACY_BLOCKED);
 }
