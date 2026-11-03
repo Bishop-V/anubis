@@ -315,8 +315,16 @@ async function pack(text: string): Promise<{ data: string; encoding?: 'deflate' 
   }
 }
 
+/** One save of the personal list: its text, the chunks and meta item it becomes, and the meta item it replaces. */
+interface PersonalSave {
+  text: string;
+  chunks: string[];
+  meta: PersonalMeta;
+  prev: PersonalMeta | null;
+}
+
 /** Keep the list on this device, and free the space its last copy in sync took. */
-async function keepLocal(text: string, prev: PersonalMeta | null): Promise<{ synced: false }> {
+async function keepLocal({ text, prev }: PersonalSave): Promise<{ synced: false }> {
   await storage.setItem(PERSONAL_LOCAL, text);
   await storage.setItem(PERSONAL_META, { chunks: 0, local: true, updatedAt: Date.now() } satisfies PersonalMeta);
   // The last list that fit is no use now, and its space is.
@@ -324,14 +332,14 @@ async function keepLocal(text: string, prev: PersonalMeta | null): Promise<{ syn
   return { synced: false };
 }
 
-/** Whether these chunks and their meta item fit in sync beside the rest, leaving the room kept free. */
-async function fitsInSync(chunks: string[], meta: PersonalMeta): Promise<boolean> {
-  const needed = chunks.reduce((n, value, i) => n + itemBytes(`personal.${i}`, value), itemBytes('personal', meta));
+/** Whether the chunks and their meta item fit in sync beside the rest, leaving the room kept free. */
+async function fitsInSync({ chunks, meta }: PersonalSave): Promise<boolean> {
+  const needed = chunks.reduce((n, value, i) => n + itemBytes([`personal.${i}`, value]), itemBytes(['personal', meta]));
   return (await otherSyncBytes()) + needed <= SYNC_QUOTA_BYTES - SYNC_HEADROOM_BYTES;
 }
 
 /** Write the chunks and their meta item, then drop chunks the last copy had beyond them, and its local copy. */
-async function writeChunks(chunks: string[], meta: PersonalMeta, prev: PersonalMeta | null): Promise<void> {
+async function writeChunks({ chunks, meta, prev }: PersonalSave): Promise<void> {
   await storage.setItems([...chunks.map((value, i) => ({ key: chunkKey(i), value })), { key: PERSONAL_META, value: meta }]);
   const stale = Array.from({ length: Math.max(0, (prev?.chunks ?? 0) - chunks.length) }, (_, i) => chunkKey(chunks.length + i));
   if (stale.length) await storage.removeItems(stale);
@@ -345,15 +353,15 @@ export async function savePersonal(text: string): Promise<{ synced: boolean }> {
   const chunks = splitIntoChunks(data);
   // The copy first, so this device reads its own change without unpacking it.
   await storage.setItem(PERSONAL_COPY, { sum, text } satisfies PersonalCopy);
-  const meta: PersonalMeta = { chunks: chunks.length, updatedAt: Date.now(), sum, ...(encoding && { encoding }) };
-  if (!(await fitsInSync(chunks, meta))) return keepLocal(text, prev);
+  const save: PersonalSave = { text, chunks, prev, meta: { chunks: chunks.length, updatedAt: Date.now(), sum, ...(encoding && { encoding }) } };
+  if (!(await fitsInSync(save))) return keepLocal(save);
   try {
-    await writeChunks(chunks, meta, prev);
+    await writeChunks(save);
     return { synced: true };
   } catch (error) {
     // Most likely QUOTA_BYTES: keep the list on this device instead of losing edits.
     console.warn('[anubis] personal list too big for sync, keeping it local', error);
-    return keepLocal(text, prev);
+    return keepLocal(save);
   }
 }
 
@@ -404,20 +412,20 @@ export function watchPersonal(cb: (text: string) => void): () => void {
 }
 
 /** An item's size as the browsers count it against sync's quota: its key plus its value as JSON. */
-function itemBytes(key: string, value: unknown): number {
+function itemBytes([key, value]: [string, unknown]): number {
   return new TextEncoder().encode(key + JSON.stringify(value)).length;
 }
 
 /** How much of storage.sync Anubis uses. */
 export async function syncBytesInUse(): Promise<number> {
   const all = await browser.storage.sync.get(null);
-  return Object.entries(all).reduce((n, [key, value]) => n + itemBytes(key, value), 0);
+  return Object.entries(all).reduce((n, item) => n + itemBytes(item), 0);
 }
 
 /** What sync holds besides the personal list, which a save replaces. */
 async function otherSyncBytes(): Promise<number> {
   const all = await browser.storage.sync.get(null);
-  return Object.entries(all).reduce((n, [key, value]) => (/^personal(\.\d+)?$/.test(key) ? n : n + itemBytes(key, value)), 0);
+  return Object.entries(all).reduce((n, item) => (/^personal(\.\d+)?$/.test(item[0]) ? n : n + itemBytes(item)), 0);
 }
 
 /**
