@@ -19,7 +19,9 @@ const { chromium } = require('playwright');
 const here = (p) => fileURLToPath(new URL(p, import.meta.url));
 
 const FPS = 15;
-const SECONDS = 10.4;
+// The timeline below is written in story time; SLOW stretches it for viewing.
+const SLOW = 1.7;
+const SECONDS = 10.4 * SLOW;
 const W = 1200;
 const H = 600;
 // The example page is drawn at the extension's own sizes, then scaled up to fill the right.
@@ -276,7 +278,7 @@ const page = await browser.newPage({ viewport: { width: W, height: H }, deviceSc
 await page.setContent(html);
 const frames = Math.round(FPS * SECONDS);
 for (let i = 0; i < frames; i++) {
-  await page.evaluate((t) => window.frame(t), i / FPS);
+  await page.evaluate((t) => window.frame(t), i / FPS / SLOW);
   await page.screenshot({ path: join(dir, `${String(i).padStart(4, '0')}.png`) });
 }
 await browser.close();
