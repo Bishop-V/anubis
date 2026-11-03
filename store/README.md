@@ -43,7 +43,7 @@ The listing is live at https://chromewebstore.google.com/detail/aninblefigadaigf
 - **Screenshots:** at least one, at most five, 1280×800. See [Screenshots](#screenshots).
 - **Small promo tile:** [`promo-440x280.png`](promo-440x280.png).
 - **Marquee promo tile:** [`marquee-1400x560.png`](marquee-1400x560.png), optional and shown only if the store features Anubis. **Video:** skipped.
-- **Animated banner:** [`banner.gif`](banner.gif), 1400×560, for project pages that take a GIF banner. It shows Anubis hiding, pinning, and lowering results on an example search page. Redraw it with `node store/banner.mjs` (needs ffmpeg).
+- **Animated banner:** [`banner.gif`](banner.gif), 1200×600, for project pages that take a GIF banner. On an example search page, it opens the result menu to hide one site and pin another. Redraw it with `node store/banner.mjs` (needs ffmpeg).
 - **Homepage:** `https://bishop-v.github.io/anubis/`. **Support:** `https://github.com/Bishop-V/anubis/issues`.
 - **Official URL:** `https://bishop-v.github.io/anubis/`, verified in Google Search Console as a URL-prefix property with the file [`docs/public/googleccef4dde1509753c.html`](../docs/public/googleccef4dde1509753c.html). Keep that file: Google checks it again from time to time, and the listing loses its verified link without it.
 
