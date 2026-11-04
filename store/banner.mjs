@@ -185,7 +185,7 @@ const html = `<!doctype html><meta charset="utf-8">
     const btn = $(id).querySelector('.btn');
     const want = '<span style="opacity:' + (1 - k) + '">' + ICONS[a] + '</span><span style="opacity:' + k + '">' + ICONS[b] + '</span>';
     if (btn.innerHTML !== want) btn.innerHTML = want;
-    btn.querySelectorAll('span').forEach((s) => (s.style.position = 'absolute', s.style.display = 'grid'));
+    btn.querySelectorAll('span').forEach((s) => (s.style.cssText += ';position:absolute;inset:0;display:grid;place-items:center'));
   };
 
   // Where things sit, in the page's own pixels.
