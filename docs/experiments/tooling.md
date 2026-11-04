@@ -2,6 +2,16 @@
 
 Builds, tests, the end-to-end run, stores, and releases. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## The animated banner (2026-11-04)
+
+`store/banner.gif`, drawn by `store/banner.mjs`.
+
+- **Kept:** 1200×600, with the logo on the left and the welcome page's practice search on the right at 1.26× the extension's own sizes. A pointer opens the result menu, hides studocu.com, and pins plato.stanford.edu. It runs at 25 frames a second over 18 seconds, in about 2.6 MB.
+- **Click feedback:** a ring spreads from the pointer's tip and fades, over a faint dot. Shrinking the pointer on a click read as a glitch. The tip lands low and to the right of what it clicks, so the pointer doesn't cover the ranking's word. Targets are read from the page each frame, not typed in as coordinates, so they stay right when the layout moves.
+- **Tried and dropped:** a 1400×560 first version, where the example page was too small to read. 15 frames a second looked jerky, and the first pace was too fast to follow (`SLOW` stretches the whole timeline). ffmpeg's `diff_mode=rectangle` made no difference, and sending whole frames (`-gifflags -offsetting-transdiff`) made a 20 MB file.
+- **Bug fixed:** the icons in each result's button were placed from the button's corner instead of its centre, so the button's fill sat off its icon.
+- **A menu fading in** shows the page through it for a frame or two. The fade is kept to about two frames, close to the real menu's 120 ms.
+
 ## Spelling, workflow, link, accessibility, and supply-chain checks (2026-10-13)
 
 - **Flaky cleanup in `tests/engine-watch.test.ts` (2026-10-17):** CI failed once with ENOTEMPTY removing the fake repository's `.git/objects`. Newer git than the cloud sessions' 2.43 runs maintenance in the background after a commit, so it can still be writing while the test deletes the folder. The test repository now turns off `maintenance.auto` and `gc.auto`, and the delete retries. Not reproduced locally.
