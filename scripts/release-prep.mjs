@@ -54,6 +54,22 @@ if (compare(version, current) < 0) {
   process.exit(1);
 }
 
+// A downloaded engine fix still for this version would go on fixing a release that should have it built in:
+// fold each into utils/engines.ts and end it with `until` (DEVELOPMENT.md, "Fix an engine without a release").
+const before = (a, b) => {
+  const [x, y] = [a, b].map((v) => v.split('.').map(Number));
+  for (let i = 0; i < Math.max(x.length, y.length); i++) if ((x[i] ?? 0) !== (y[i] ?? 0)) return (x[i] ?? 0) < (y[i] ?? 0);
+  return false;
+};
+const open = JSON.parse(readFileSync(new URL('../engines/fixes.json', import.meta.url), 'utf8')).fixes.filter(
+  (fix) => !(fix.from && before(version, fix.from)) && !(fix.until && !before(version, fix.until)),
+);
+if (open.length) {
+  console.error(`engines/fixes.json has ${open.length} fix(es) for ${version}: ${open.map((f) => f.engine).join(', ')}.`);
+  console.error(`Make each change in utils/engines.ts too, then set its "until" to "${version}".`);
+  process.exit(1);
+}
+
 if (version === current) {
   console.log(`Keeping version ${current}.`);
 } else {

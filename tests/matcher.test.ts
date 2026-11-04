@@ -36,6 +36,35 @@ describe('evaluate', () => {
     expect(weigh('https://a.com/ok', [d]).score).toBe(5);
   });
 
+  it('lets a uBlacklist unblock rule beat a block in the same ruleset', () => {
+    const ub = list('ub', '*://*.example.com/*\n@*://good.example.com/*');
+    const good = weigh('https://good.example.com/x', [ub]);
+    expect([good.hidden, good.level, good.score]).toEqual([false, 'normal', 0]);
+    expect(weigh('https://spam.example.com/x', [ub]).hidden).toBe(true);
+  });
+
+  it('keeps a site a list allows at normal, overriding other lists', () => {
+    const allows = list('allows', '$site=x.com,allow');
+    expect(weigh('https://x.com/', [list('hides', '$site=x.com,discard'), allows]).hidden).toBe(false);
+    expect(weigh('https://x.com/', [allows, list('hides', '$site=x.com,discard')]).hidden).toBe(false);
+    const boosted = weigh('https://x.com/', [list('boosts', '$site=x.com,boost=4'), allows]);
+    expect([boosted.level, boosted.score]).toEqual(['normal', 0]);
+    // Another list's lens leaves out what it doesn't mention; an allow keeps it.
+    const lensed = weigh('https://x.com/', [list('lens', '$discard\n$site=y.com'), allows]);
+    expect([lensed.hidden, lensed.reasons.map((r) => r.listId)]).toEqual([false, ['allows']]);
+    // Sites the allow doesn't name are left to the other lists.
+    expect(weigh('https://z.com/', [list('hides', '$site=z.com,discard'), allows]).hidden).toBe(true);
+  });
+
+  it('puts your own choices above a list’s allow', () => {
+    const allows = list('allows', '$site=x.com,allow');
+    const tagged = list('tags', '$site=x.com,tag=spam');
+    expect(weigh('https://x.com/', [tagged, allows], { spam: { action: 'hide' } }).hidden).toBe(true);
+    const me = list('me', '$site=x.com,boost=5', true);
+    expect(weigh('https://x.com/', [me, list('hides', '$site=x.com,discard'), allows]).score).toBe(PERSONAL_STRENGTH);
+    expect(weigh('https://x.com/', [list('me', '$site=x.com,discard', true), allows]).hidden).toBe(true);
+  });
+
   it('adds up scores across lists', () => {
     const a = list('a', '$boost=2,site=x.com');
     const b = list('b', '$downrank=5,site=x.com');

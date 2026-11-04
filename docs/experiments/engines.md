@@ -2,6 +2,14 @@
 
 Keeping engine definitions current, and engine bugs found while testing. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Engine fixes from the repository (2026-11-03)
+
+- **Why:** when an engine changed its page, Anubis stayed broken for everyone until a release passed store review, often days. uBlacklist avoids that by downloading its SERPINFO definitions.
+- **Built:** `engines/fixes.json` on `main`, downloaded by the background script at most every six hours (an hour after a failure, keeping the last good copy), and put over the bundled definition by each search page (`fixedEngineFor` in `utils/enginefixes.ts`). A fix names one engine and a range of Anubis versions (`from`, `until`), and can only replace selectors, the ⚖ button's offsets, and a card kind's selectors by its place. Everything else in the file is dropped when it's read, and a selector the page can't parse keeps the bundled one. A phone layout's own values come before a desktop fix's, as they come before the bundled ones; `mobile` in a fix changes them. `npm run release:prep` stops while a fix still applies to the version being released, so each fix is folded into `utils/engines.ts` and ended there.
+- **Checked:** unit tests for reading, versions, applying, downloading, and the committed file (`tests/enginefixes.test.ts`); the `fixes` e2e part, in `checks`, serves a Yahoo page with its titles in `h4`, which the bundled definition misses, and finds every result once a fix says `h4`, while a fix that doesn't parse leaves the bundled one working. It fails on the previous build.
+- **Not done:** what is code today. `isResultsPage` and a card's `when` are functions, and `matches` is in the manifest, so they still need a release; so does a new engine. A failed download keeps the last fixes, and an install that never downloaded uses none.
+- **Weighed:** fixes are data, read field by field, so they fit Chrome's and Firefox's rules on remote code, as SERPINFO does. The file's trust is the repository's: whoever can merge into `main` can already ship a release, but a fix skips store review, so it should stay small and reviewed. The request goes to raw.githubusercontent.com, which subscribed lists already use, so no permission was added; the privacy policy lists it.
+
 ## Keeping platform and engine maintenance current (2026-09-29)
 
 - **Firefox minimum:** AMO lint warned that Firefox for Android 140 predates support for the built-in data-collection manifest key. Raised `gecko.strict_min_version` to 142, the first Android version with that key; deliberately did not add `gecko_android`, which would advertise untested phone support. The generated Firefox manifest now declares 142.0 and `web-ext lint` reports zero warnings.
