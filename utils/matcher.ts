@@ -17,7 +17,9 @@ import { PERSONAL_NAME } from './personal';
 //      any ranking of yours: a site you ranked yourself isn't hidden by a tag.
 //   3. Without a personal ranking, the subscribed lists' own instructions add to the
 //      tag choices. Within one list, Goggles precedence applies: discard > boost >
-//      downrank. Across lists, boosts and downranks add up.
+//      downrank. Across lists, boosts and downranks add up. A list's `allow` (a
+//      uBlacklist `@` unblock rule) keeps the result at normal against every list,
+//      its own included, but not against your tag choices.
 
 export type Level = 'pin' | 'raise' | 'normal' | 'lower' | 'hide';
 export const LEVELS: Level[] = ['hide', 'lower', 'normal', 'raise', 'pin'];
@@ -292,6 +294,8 @@ export function evaluate(
   let listScore = 0;
   let highlight: string | undefined;
   let tagPin = false;
+  /** A subscribed list allows the result: no list hides or moves it. */
+  let listAllow = false;
   /** How far your own raise or lower moves the result, signed. */
   let ownPull = 0;
   const hides: NonNullable<Verdict['hiddenBy']>[] = [];
@@ -361,7 +365,8 @@ export function evaluate(
       reason(describe(rule, label, words), describe(rule, label, REPORT_WORDS), rule);
       if (applyChoices(rule)) continue;
       const boost = rule.pin ? MAX_LIST_BOOST : rule.boost;
-      if (rule.discard) listDiscard = true;
+      if (rule.allow) listAllow = true;
+      else if (rule.discard) listDiscard = true;
       else if (boost > 0) up = Math.max(up, boost);
       else if (boost < 0) down = Math.min(down, boost);
     }
@@ -393,9 +398,15 @@ export function evaluate(
   const choices = describeChoices(counted, (id) => prefs[id]?.label ?? tagLabel(lists, id));
   if (choices) verdict.reasons.push({ list: t('reasonYourTagSettings'), listId: TAG_CHOICES, personal: true, text: choices, report: choices });
   for (const [id, action] of counted) if (action === 'hide' || action === 'pin' || action === 'raise' || action === 'lower') verdict.tagEffects[id] = action;
-  if (!p || moves) for (const [id, effect] of listEffects) if (effect !== 'normal') verdict.tagEffects[id] = effect;
+  if ((!p || moves) && !listAllow) for (const [id, effect] of listEffects) if (effect !== 'normal') verdict.tagEffects[id] = effect;
+  if (listAllow) {
+    listScore = 0;
+    // A lens's "leaves it out" is the one list reason without a rule, and it no longer holds.
+    verdict.reasons = verdict.reasons.filter((r) => r.rule || r.listId === TAG_CHOICES);
+  }
 
-  const hiddenBy = p ? undefined : hides[0];
+  // A list's allow outweighs the lists, not your tag choices.
+  const hiddenBy = p ? undefined : hides.find((h) => !listAllow || h.kind === 'tag');
   const own = p === 'pin' ? PIN_SCORE : p === 'raise' || p === 'lower' ? ownPull : 0;
   // A Pin tag pins as your own Pin does, and the rest still order the pinned results.
   const pinned = p === 'pin' || tagPin;

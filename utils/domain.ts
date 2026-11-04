@@ -105,7 +105,9 @@ export function spaceOf(url: string): string | undefined {
   }
   const site = siteOf(normalizeHostname(u.hostname));
   const m = SPACES.get(site)?.exec(u.pathname.toLowerCase());
-  if (!m || NOT_SPACES.has(m[1]!.split('/')[0]!)) return undefined;
+  // Only an address's first part alone can be the site's own page: "reddit.com/user/x" names
+  // its space in two parts, and "github.com/users" is GitHub's.
+  if (!m || (!m[1]!.includes('/') && NOT_SPACES.has(m[1]!))) return undefined;
   return `${site}/${m[1]}`;
 }
 
