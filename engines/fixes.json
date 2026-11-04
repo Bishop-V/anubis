@@ -1,0 +1,5 @@
+{
+  "anubis": "engine-fixes",
+  "about": "Fixes to the engine definitions in utils/engines.ts that Anubis downloads, so a search engine that changes its page can be followed between releases. How to write one: DEVELOPMENT.md, \"Fixing an engine without a release\".",
+  "fixes": []
+}
