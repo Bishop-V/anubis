@@ -201,6 +201,8 @@ function mockPages() {
     'https://www.bing.com/search?q=javascript+promises&sponsored=1': bing('javascript promises', JS_RESULTS, { sponsored: true }),
     'https://search.yahoo.com/search?p=javascript+promises': yahoo('javascript promises', JS_RESULTS),
     'https://search.yahoo.com/search?p=javascript+promises&long=1': yahoo('javascript promises', JS_RESULTS, { longTitle: true, rail: true }),
+    // Yahoo after a made-up change to its page: titles in h4, which the bundled definition doesn't look for.
+    'https://search.yahoo.com/search?p=javascript+promises&renamed=1': yahoo('javascript promises', JS_RESULTS).replaceAll('<h3', '<h4').replaceAll('</h3>', '</h4>'),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
     'https://duckduckgo.com/?q=javascript+promises&ad=1': duckduckgoAd('javascript promises', JS_RESULTS),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
@@ -1051,6 +1053,37 @@ if (!only || only === 'off') {
       return chrome.action.getTitle({});
     }, on);
   console.log('\n== toolbar title:', JSON.stringify({ off: await title(false), on: await title(true) }));
+}
+
+if (!only || only === 'fixes' || checks) {
+  // Engine fixes downloaded from the repository (utils/enginefixes.ts): a fix's selector finds results the
+  // bundled definition misses, and one that doesn't parse leaves the bundled one in place.
+  const sw = ctx.serviceWorkers()[0];
+  // Install starts a download, which always leaves a record: wait for it, so it can't land on the seeded fixes.
+  await waitForWorker(sw, async () => !!(await chrome.storage.local.get('engineFixes')).engineFixes, 'Engine fixes download did not finish');
+  const seed = (fixes) => sw.evaluate((fixes) => chrome.storage.local.set({ engineFixes: { fixes, fetchedAt: Date.now() } }), fixes);
+  const found = async (url) => {
+    await page.goto(url);
+    await page.waitForTimeout(600);
+    return page.evaluate(() => document.querySelectorAll('[data-anubis-result]').length);
+  };
+  const plain = 'https://search.yahoo.com/search?p=javascript+promises';
+  const renamed = `${plain}&renamed=1`;
+  await seed([]);
+  const bundled = await found(plain);
+  const without = await found(renamed);
+  await seed([{ engine: 'yahoo', set: { heading: 'h4' } }]);
+  const fixed = await found(renamed);
+  await seed([{ engine: 'yahoo', set: { heading: 'h3[' } }]);
+  const broken = await found(plain);
+  await seed([]);
+  console.log('\n== engine fixes:', JSON.stringify({ bundled, without, fixed, broken }));
+  assertChecks('engine fixes', {
+    bundledFindsResults: bundled > 0,
+    renamedPageMissedWithoutFix: without === 0,
+    fixFindsThem: fixed === bundled,
+    badSelectorKeepsBundled: broken === bundled,
+  });
 }
 
 if (!only || only === 'palette') {
