@@ -126,7 +126,10 @@ const html = `<!doctype html><meta charset="utf-8">
   .hint div { position: absolute; inset: 0; text-align: center; }
   .menu-tags { padding: 10px 14px 12px; border-top: 1px solid #37373b; font-size: 13px; font-weight: 600; }
 
-  .pointer { position: absolute; left: 0; top: 0; transform-origin: 2px 2px; }
+  /* The pointer's tip is at (2, 2) of its drawing. */
+  .pointer { position: absolute; left: -2px; top: -2px; }
+  .ring { position: absolute; left: 0; top: 0; border: 2px solid #e8e8ea; border-radius: 50%; opacity: 0; }
+  .dot { position: absolute; left: 0; top: 0; width: 12px; height: 12px; border-radius: 50%; background: #e8e8ea; opacity: 0; }
 </style>
 <div class="brand">
   ${jackal}
@@ -163,6 +166,8 @@ const html = `<!doctype html><meta charset="utf-8">
     <div class="hint"><div id="hint0">Your choice applies on every search.</div><div id="hint1"></div></div>
     <div class="menu-tags">+ Tag</div>
   </div>
+  <div class="dot" id="dot"></div>
+  <div class="ring" id="ring"></div>
   <div class="pointer" id="pointer">${POINTER}</div>
 </div>
 <script>
@@ -191,20 +196,38 @@ const html = `<!doctype html><meta charset="utf-8">
 
   // Where things sit, in the page's own pixels.
   const TOP = 100, FULL = 92, FOLDED = 36;
-  // The pointer's path: [time, x, y].
+  // The pointer's path: [time, where]. A place is a point in the page's own pixels, or the
+  // id of what it goes to, whose centre is read from the page as it's laid out that frame.
+  const REST = [560, 420];
   const PATH = [
-    [0, 560, 420], [0.5, 560, 420], [1.3, 30, 20 + TOP], [1.8, 30, 20 + TOP], [2.5, 46, 228], [3.2, 46, 228],
-    [4.3, 30, 18 + TOP + FOLDED + FULL], [4.5, 30, 18 + TOP + FOLDED + FULL], [5.2, 300, 128], [6.6, 300, 128],
-    [8.4, 560, 420], [10.4, 560, 420],
+    [0, REST], [0.5, REST], [1.15, 'farmBtn'], [1.8, 'farmBtn'], [2.3, 'l-hide'], [3.2, 'l-hide'],
+    [4.35, 'docsBtn'], [4.65, 'docsBtn'], [5.6, 'l-pin'], [6.6, 'l-pin'], [8.4, REST], [10.4, REST],
   ];
+  // The clicks, each answered by a ring that spreads from the pointer's tip and fades.
+  const CLICKS = [1.4, 2.6, 4.6, 6.0];
+  // Where on each thing the tip lands, as fractions of its box: low and to the right, so
+  // the pointer's body doesn't cover the icon and word it's choosing.
+  const TARGETS = { farmBtn: ['farm', 0.72, 0.72], docsBtn: ['docs', 0.72, 0.72], 'l-hide': ['l-hide', 0.78, 0.6], 'l-pin': ['l-pin', 0.78, 0.6] };
+  const place = (where) => {
+    if (Array.isArray(where)) return where;
+    const [id, fx, fy] = TARGETS[where];
+    const el = id.startsWith('l-') ? $(id) : $(id).querySelector('.btn');
+    const r = el.getBoundingClientRect(), st = $('stage').getBoundingClientRect();
+    return [(r.left + r.width * fx - st.left) / ${SCALE}, (r.top + r.height * fy - st.top) / ${SCALE}];
+  };
   const pointerAt = (t) => {
     for (let i = 1; i < PATH.length; i++) {
-      const [t1, x1, y1] = PATH[i], [t0, x0, y0] = PATH[i - 1];
-      if (t <= t1) { const k = ease((t - t0) / (t1 - t0 || 1)); return [mix(x0, x1, k), mix(y0, y1, k)]; }
+      const [t1, w1] = PATH[i], [t0, w0] = PATH[i - 1];
+      if (t > t1) continue;
+      const [x0, y0] = place(w0), [x1, y1] = place(w1);
+      const k = ease((t - t0) / (t1 - t0 || 1));
+      // A gentle arc rather than a ruler-straight line, as a hand moves a mouse.
+      const bow = Math.sin(Math.PI * k) * 0.12;
+      return [mix(x0, x1, k) + (y1 - y0) * bow, mix(y0, y1, k) - (x1 - x0) * bow];
     }
-    return PATH[PATH.length - 1].slice(1);
+    return place(PATH[PATH.length - 1][1]);
   };
-  const press = (t, at) => (t >= at && t < at + 0.16 ? 0.86 : 1);
+  const easeOut = (x) => 1 - Math.pow(1 - clamp(x), 3);
 
   window.frame = (t) => {
     // The loop: the page fades out and back in at the start.
@@ -212,17 +235,11 @@ const html = `<!doctype html><meta charset="utf-8">
     $('stage').style.opacity = t < 9.9 ? 1 - out : back;
     if (t >= 9.9) t = 0;
 
-    const [px, py] = pointerAt(t);
-    const clicks = [1.4, 2.6, 4.6, 6.0];
-    const s = clicks.reduce((m, c) => Math.min(m, press(t, c)), 1);
-    $('pointer').style.transform = 'translate(' + px + 'px,' + py + 'px) scale(' + s + ')';
-    $('pointer').style.opacity = 1 - span(t, 8.0, 8.4) + span(t, 0, 0.3) * 0 ;
-
     // Hide on the content farm: the menu opens below it (no room above), Hide is chosen,
     // the balance sinks, the menu closes, and the result folds into one line.
-    const m1 = span(t, 1.4, 1.52) * (1 - span(t, 3.3, 3.42));
+    const m1 = span(t, 1.4, 1.45) * (1 - span(t, 3.3, 3.35));
     // Pin on the encyclopedia: the menu opens above it, Pin is chosen, it rises to the top.
-    const m2 = span(t, 4.6, 4.72) * (1 - span(t, 6.6, 6.72));
+    const m2 = span(t, 4.6, 4.65) * (1 - span(t, 6.6, 6.65));
     const fold = span(t, 3.5, 4.1), rise = span(t, 6.9, 7.7);
 
     const menu = $('menu');
@@ -236,7 +253,7 @@ const html = `<!doctype html><meta charset="utf-8">
     else { menu.style.top = ''; menu.style.bottom = (436 - (docsTop + 4) + 10) + 'px'; }
 
     const hovering = (id, a, b) => $(id).classList.toggle('hover', t >= a && t < b);
-    hovering('l-hide', 2.4, 2.6); hovering('l-pin', 5.1, 6.0);
+    hovering('l-hide', 2.2, 2.6); hovering('l-pin', 5.5, 6.0);
     $('l-hide').classList.toggle('on', first && t >= 2.6);
     $('l-pin').classList.toggle('on', !first && t >= 6.0);
     const chosen = first ? t >= 2.6 : t >= 6.0;
@@ -245,9 +262,11 @@ const html = `<!doctype html><meta charset="utf-8">
     $('hint1').textContent = 'Your choice for ' + (first ? 'studocu.com' : 'plato.stanford.edu') + ', on every search.';
     tilt(first ? -13 * swing(t, 2.6) : 13 * swing(t, 6.0));
 
-    // The buttons on each result: a fill while their menu is open.
-    $('farm').querySelector('.btn').style.background = 'rgba(255,255,255,' + 0.09 * m1 + ')';
-    $('docs').querySelector('.btn').style.background = 'rgba(255,255,255,' + 0.09 * m2 + ')';
+    // The buttons on each result: a fill while pointed at, and while their menu is open.
+    const farmLit = Math.max(span(t, 1.05, 1.15) * (1 - span(t, 1.8, 1.9)), m1);
+    const docsLit = Math.max(span(t, 4.25, 4.35) * (1 - span(t, 4.65, 4.75)), m2);
+    $('farm').querySelector('.btn').style.background = 'rgba(255,255,255,' + 0.09 * farmLit + ')';
+    $('docs').querySelector('.btn').style.background = 'rgba(255,255,255,' + 0.09 * docsLit + ')';
     setBtn('farm', 'normal', 'hide', fold);
     setBtn('docs', 'normal', 'pin', rise);
 
@@ -270,6 +289,19 @@ const html = `<!doctype html><meta charset="utf-8">
     $('sum0').style.opacity = 1 - fold;
     $('sum1').style.opacity = fold * (1 - rise);
     $('sum2').style.opacity = rise;
+
+    // The pointer, placed last so it finds things where this frame put them.
+    const [px, py] = pointerAt(t);
+    $('pointer').style.transform = 'translate(' + px + 'px,' + py + 'px)';
+    $('pointer').style.opacity = 1 - span(t, 8.0, 8.4);
+    const click = CLICKS.find((c) => t >= c && t < c + 0.34);
+    const k = click === undefined ? 1 : (t - click) / 0.34;
+    const ring = $('ring'), r = 6 + 18 * easeOut(k);
+    ring.style.opacity = click === undefined ? 0 : 0.9 * (1 - easeOut(k));
+    ring.style.transform = 'translate(' + (px - r) + 'px,' + (py - r) + 'px)';
+    ring.style.width = ring.style.height = 2 * r + 'px';
+    $('dot').style.opacity = click === undefined ? 0 : 0.4 * (1 - k);
+    $('dot').style.transform = 'translate(' + (px - 6) + 'px,' + (py - 6) + 'px)';
   };
 </script>`;
 
