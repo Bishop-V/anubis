@@ -285,7 +285,7 @@ await browser.close();
 
 const out = here('banner.gif');
 execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', String(FPS), '-i', join(dir, '%04d.png'),
-  '-vf', 'split[a][b];[a]palettegen=max_colors=96:stats_mode=full[p];[b][p]paletteuse=dither=none:diff_mode=rectangle',
+  '-vf', 'split[a][b];[a]palettegen=max_colors=96:stats_mode=full[p];[b][p]paletteuse=dither=none',
   '-loop', '0', out]);
 rmSync(dir, { recursive: true, force: true });
 console.log('store/banner.gif');
