@@ -37,9 +37,11 @@ const CARD_MARKUP = {
     other: (url, title) => `<div class="news-card"><a class="title" href="${url}">${title}</a></div>`,
   },
   // Google's Images tab keeps a picture's address in `data-lpage`, and its link goes through Google;
-  // its News tab is a list of clusters whose titles are ARIA headings (uBlacklist's rules).
+  // its News tab is a list of clusters whose titles are ARIA headings, and its Videos tab on phones has cards (uBlacklist's rules).
   google: {
     images: (url, title, i) => `<div class="kb0PBd"><div class="ivg-i" data-lpage="${url}">${THUMB}</div><a class="LBcIee" href="/imgres?imgurl=x${i}&imgrefurl=y"><div class="ddBkwd">${title}</div></a></div>`,
+    // The phone layout's Videos tab: a card per video, linking straight to the site.
+    videos: (url, title) => `<div class="Ww4FFb"><a href="${url}">${THUMB}<div class="J4ORzd">${title}</div></a></div>`,
     other: (url, title) => `<div data-news-cluster-id="${hostOf(url)}"><a href="${url}">${THUMB}<div role="heading" aria-level="3">${title}</div></a></div>`,
   },
   brave: {

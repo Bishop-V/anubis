@@ -161,6 +161,7 @@ function mockPages() {
       ['https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then', 'Promise.prototype.then() - MDN', 'The then() method of Promise instances takes up to two arguments.'],
     ], { inner: true }),
     'https://www.google.com/search?q=anubis&mobile=1': googleMobile('anubis', ANUBIS_RESULTS),
+    'https://www.google.com/search?q=javascript+promises&udm=7&mobile=1': engineTab('google', 'videos', JS_RESULTS),
     'https://duckduckgo.com/?q=javascript+promises&mobile=1': duckduckgoMobile('javascript promises', JS_RESULTS),
     'https://www.bing.com/search?q=javascript+promises&mobile=1': bingMobile('javascript promises', JS_RESULTS),
     // What an earlier copy of the extension leaves on the page when it reloads or
@@ -200,6 +201,8 @@ function mockPages() {
     'https://www.bing.com/search?q=javascript+promises&sponsored=1': bing('javascript promises', JS_RESULTS, { sponsored: true }),
     'https://search.yahoo.com/search?p=javascript+promises': yahoo('javascript promises', JS_RESULTS),
     'https://search.yahoo.com/search?p=javascript+promises&long=1': yahoo('javascript promises', JS_RESULTS, { longTitle: true, rail: true }),
+    // Yahoo after a made-up change to its page: titles in h4, which the bundled definition doesn't look for.
+    'https://search.yahoo.com/search?p=javascript+promises&renamed=1': yahoo('javascript promises', JS_RESULTS).replaceAll('<h3', '<h4').replaceAll('</h3>', '</h4>'),
     'https://duckduckgo.com/?q=javascript+promises&ai=1': duckduckgo('javascript promises', JS_RESULTS, false, [], { ai: true }),
     'https://duckduckgo.com/?q=javascript+promises&ad=1': duckduckgoAd('javascript promises', JS_RESULTS),
     'https://duckduckgo.com/?q=javascript+promises&more=1': duckduckgo('javascript promises', JS_RESULTS, false, JS_MORE),
@@ -242,7 +245,9 @@ async function launch(settings = {}, ext = EXT) {
   if (!sw) sw = await ctx.waitForEvent('serviceworker');
   const extId = new URL(sw.url()).host;
   await waitForWorker(sw, () => typeof chrome !== 'undefined' && !!chrome.storage, 'Extension storage API did not become ready');
-  await waitForWorker(sw, async () => !!(await chrome.storage.sync.get('personal')).personal, 'Extension personal-list migration did not finish');
+  // Install's migrations (migrateLegacy, migrateSettings, migrateDefaultLists) end by setting
+  // defaultListsAdded. A fresh install writes no personal list, so that can't be waited for.
+  await waitForWorker(sw, async () => !!(await chrome.storage.sync.get('defaultListsAdded')).defaultListsAdded, 'Extension install migrations did not finish');
   // On install the extension moves a stored "Collapse" to "Remove" once. Writing the
   // settings below while that runs can land between its reads, so the tests would
   // run with "Remove": wait until it has set its flag.
@@ -858,6 +863,29 @@ if (!only || only === 'mobile' || checks) {
     wideSummaryIsFull: wide.long === true && wide.short === false && wide.details === false,
   });
 
+  // Google's Videos tab on a phone: a card per video, found as the tabs' cards are, some hidden, each with its button.
+  await phone.goto('https://www.google.com/search?q=javascript+promises&udm=7&mobile=1');
+  await phone.waitForFunction(() => !!document.querySelector('.Ww4FFb[data-anubis-state~="hide"]'), null, { timeout: 5000 }).catch(() => {});
+  await phone.waitForTimeout(200);
+  const videos = await phone.evaluate(() => {
+    const cards = [...document.querySelectorAll('.Ww4FFb')];
+    const buttons = [...document.querySelectorAll('anubis-weigh')].filter((b) => b.getBoundingClientRect().width);
+    return {
+      cards: cards.length,
+      found: cards.filter((c) => c.hasAttribute('data-anubis-result')).length,
+      hidden: cards.filter((c) => c.getBoundingClientRect().height === 0).length,
+      buttons: buttons.length,
+      buttonsInCards: buttons.length > 0 && buttons.every((b) => cards.some((c) => c.contains(b))),
+    };
+  });
+  console.log('\n== google phone videos tab:', JSON.stringify(videos));
+  await phone.screenshot({ path: `${SHOTS}google-mobile-videos.png`, fullPage: true });
+  assertChecks('google phone videos tab', {
+    allFound: videos.cards > 0 && videos.found === videos.cards,
+    hidesSome: videos.hidden > 0,
+    buttonOnEachShownCard: videos.buttonsInCards && videos.buttons === videos.cards - videos.hidden,
+  });
+
   // Every engine's phone layout: each result gets a ⚖ button that sits clear of the
   // engine's own controls (Google's ⋮ once lay under it) and of the title's words, and
   // the result menu opens as a sheet along the bottom of the screen.
@@ -1027,6 +1055,37 @@ if (!only || only === 'off') {
       return chrome.action.getTitle({});
     }, on);
   console.log('\n== toolbar title:', JSON.stringify({ off: await title(false), on: await title(true) }));
+}
+
+if (!only || only === 'fixes' || checks) {
+  // Engine fixes downloaded from the repository (utils/enginefixes.ts): a fix's selector finds results the
+  // bundled definition misses, and one that doesn't parse leaves the bundled one in place.
+  const sw = ctx.serviceWorkers()[0];
+  // Install starts a download, which always leaves a record: wait for it, so it can't land on the seeded fixes.
+  await waitForWorker(sw, async () => !!(await chrome.storage.local.get('engineFixes')).engineFixes, 'Engine fixes download did not finish');
+  const seed = (fixes) => sw.evaluate((fixes) => chrome.storage.local.set({ engineFixes: { fixes, fetchedAt: Date.now() } }), fixes);
+  const found = async (url) => {
+    await page.goto(url);
+    await page.waitForTimeout(600);
+    return page.evaluate(() => document.querySelectorAll('[data-anubis-result]').length);
+  };
+  const plain = 'https://search.yahoo.com/search?p=javascript+promises';
+  const renamed = `${plain}&renamed=1`;
+  await seed([]);
+  const bundled = await found(plain);
+  const without = await found(renamed);
+  await seed([{ engine: 'yahoo', set: { heading: 'h4' } }]);
+  const fixed = await found(renamed);
+  await seed([{ engine: 'yahoo', set: { heading: 'h3[' } }]);
+  const broken = await found(plain);
+  await seed([]);
+  console.log('\n== engine fixes:', JSON.stringify({ bundled, without, fixed, broken }));
+  assertChecks('engine fixes', {
+    bundledFindsResults: bundled > 0,
+    renamedPageMissedWithoutFix: without === 0,
+    fixFindsThem: fixed === bundled,
+    badSelectorKeepsBundled: broken === bundled,
+  });
 }
 
 if (!only || only === 'palette') {

@@ -96,6 +96,9 @@ describe('subscription URLs', () => {
         'https://search.brave.com/goggles?goggles_id=https%3A%2F%2Fraw.githubusercontent.com%2Fbrave%2Fgoggles-quickstart%2Fmain%2Fgoggles%2Fhacker_news.goggle',
       ),
     ).toBe('https://raw.githubusercontent.com/brave/goggles-quickstart/main/goggles/hacker_news.goggle');
+    // A Goggle link that wraps anything but a web address stays the Goggle link.
+    const wrapped = 'https://search.brave.com/goggles?goggles_id=javascript%3Aalert(1)';
+    expect(toRawUrl(wrapped)).toBe(wrapped);
   });
 
   it('only asks for permissions on hosts without open CORS', () => {
@@ -229,12 +232,15 @@ describe('spaces on shared sites', () => {
     expect(spaceOf('https://medium.com/@someone/a-post-123')).toBe('medium.com/@someone');
     expect(spaceOf('https://github.com/rust-lang/rust/issues/1')).toBe('github.com/rust-lang');
     expect(spaceOf('https://www.linkedin.com/in/someone')).toBe('linkedin.com/in/someone');
+    expect(spaceOf('https://www.reddit.com/user/Someone/comments/abc')).toBe('reddit.com/user/someone');
+    expect(spaceOf('https://www.youtube.com/user/Someone')).toBe('youtube.com/user/someone');
   });
 
   it('finds none where the address doesn’t say, or names the site’s own page', () => {
     // A video's address doesn't name its channel.
     expect(spaceOf('https://www.youtube.com/watch?v=abc')).toBeUndefined();
     expect(spaceOf('https://github.com/topics/rust')).toBeUndefined();
+    expect(spaceOf('https://github.com/users/someone/projects/1')).toBeUndefined();
     expect(spaceOf('https://x.com/search?q=rust')).toBeUndefined();
     expect(spaceOf('https://www.reddit.com/')).toBeUndefined();
     expect(spaceOf('https://example.com/r/rust')).toBeUndefined();

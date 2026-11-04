@@ -172,6 +172,21 @@ const YANDEX_TLDS = 'az by co.il com com.am com.ge com.tr ee eu kz lt lv md ru t
 const hasQuery = (url: URL, ...keys: string[]) => keys.some((k) => url.searchParams.get(k));
 const googleImages = (url: URL) => /^(2|imgs)$/.test(url.searchParams.get('udm') ?? '');
 const googleNews = (url: URL) => url.searchParams.get('tbm') === 'nws';
+const googleVideos = (url: URL) => /^(7|vids)$/.test(url.searchParams.get('udm') ?? '');
+
+// Google's Images and News tabs, from uBlacklist's rules (unverified on a live page), the same on phones. An
+// image's address is the link's if it goes to the site itself, else the `data-lpage` of its picture.
+const GOOGLE_CARDS: CardDef[] = [
+  {
+    item: '.kb0PBd:has(.ivg-i)',
+    link: '.LBcIee',
+    title: '.ddBkwd',
+    address: [{ from: '.LBcIee', attr: 'href' }, { from: '.ivg-i', attr: 'data-lpage' }],
+    when: googleImages,
+    replacesResults: true,
+  },
+  { item: '[data-news-cluster-id]', link: 'a', title: '[role="heading"][aria-level="3"]', when: googleNews, replacesResults: true },
+];
 const onPath = (pattern: RegExp) => (url: URL) => pattern.test(url.pathname);
 
 export const ENGINES: EngineDef[] = [
@@ -189,19 +204,7 @@ export const ENGINES: EngineDef[] = [
     heading: 'h3',
     boundary: '#search, #rso, #botstuff, main, [role="main"]',
     displayed: 'cite',
-    // The Images and News tabs, from uBlacklist's rules (unverified on a live page). An image's address is
-    // the link's if it goes to the site itself, else the `data-lpage` of its picture.
-    cards: [
-      {
-        item: '.kb0PBd:has(.ivg-i)',
-        link: '.LBcIee',
-        title: '.ddBkwd',
-        address: [{ from: '.LBcIee', attr: 'href' }, { from: '.ivg-i', attr: 'data-lpage' }],
-        when: googleImages,
-        replacesResults: true,
-      },
-      { item: '[data-news-cluster-id]', link: 'a', title: '[role="heading"][aria-level="3"]', when: googleNews, replacesResults: true },
-    ],
+    cards: GOOGLE_CARDS,
     // Seen on a live page (2026-09): div.A6K0A[data-rpos] inside each panel's div.MjjYud.
     blocks: '[data-rpos]',
     cleanupSelectors: { ai: '[data-attrid="AIOverview"], .M8OgIe, .YzCcne', questions: '.related-question-pair' },
@@ -213,6 +216,10 @@ export const ENGINES: EngineDef[] = [
     // layout's paging is unknown, so Load more results waits until it's checked.
     mobile: {
       heading: 'h3, [role="heading"][aria-level="3"]:not([data-news-cluster-id] *)',
+      // On phones the Videos tab (udm=7) is a list of video cards, each `.Ww4FFb` with its title in
+      // `.J4ORzd` and a link straight to the site (uBlacklist's "Videos (mobile)" rules; unverified on a
+      // live page). On the web tab the same class marks web results, which the heading finds.
+      cards: [...GOOGLE_CARDS, { item: '.Ww4FFb', link: 'a[href^="http"]', title: '.J4ORzd', when: googleVideos, replacesResults: true }],
       displayed: 'cite, .ob9lvb',
       button: { top: '12px', right: '12px', onTitle: true },
       more: undefined,

@@ -1,7 +1,7 @@
 import { storage } from '#imports';
 import { NO_CLEANUP } from './cleanup';
 import { t } from './i18n';
-import { normalizeColor } from './listformat';
+import { isTagId, normalizeColor } from './listformat';
 import type { TagAction, TagPref } from './matcher';
 import { deepEqual, mergeById, mergeLists, mergeValue, type Side } from './merge';
 import {
@@ -72,7 +72,8 @@ function readTagPrefs(value: unknown): Record<string, TagPref> {
   const prefs: Record<string, TagPref> = {};
   if (!isRecord(value)) return prefs;
   for (const [id, pref] of Object.entries(value)) {
-    if (!isRecord(pref)) continue;
+    // Only ids a tag can have: anything else names no tag, and `__proto__` would replace the object's prototype.
+    if (!isTagId(id) || !isRecord(pref)) continue;
     const out: TagPref = {};
     if (TAG_ACTIONS.includes(pref.action as TagAction)) out.action = pref.action as TagAction;
     const color = typeof pref.color === 'string' ? normalizeColor(pref.color) : undefined;
@@ -129,6 +130,35 @@ function readSettings(value: unknown): Settings {
   return out as unknown as Settings;
 }
 
+/**
+ * A subscription from a file, if Settings could have saved it: a list at an https
+ * address, as subscribing requires. Fields this version doesn't know are kept, so a
+ * newer version's file passes through unchanged.
+ */
+function readSubscription(value: unknown): Subscription[] {
+  if (!isRecord(value) || typeof value.id !== 'string' || !value.id || typeof value.url !== 'string') return [];
+  try {
+    if (new URL(value.url).protocol !== 'https:') return [];
+  } catch {
+    return [];
+  }
+  const { builtin, name, ...rest } = value;
+  // A name is one short line, as a subscribe link's is.
+  const shortName = typeof name === 'string' ? name.replace(/[\p{C}\s]+/gu, ' ').trim().slice(0, 80) : '';
+  return [
+    {
+      ...rest,
+      id: value.id,
+      url: value.url,
+      enabled: value.enabled !== false,
+      addedAt: typeof value.addedAt === 'number' && Number.isFinite(value.addedAt) ? value.addedAt : 0,
+      // Only lists shipped inside the extension are built in; a file can't make another one so.
+      ...(builtin === true && value.id.startsWith('builtin:') ? { builtin: true } : {}),
+      ...(shortName ? { name: shortName } : {}),
+    },
+  ];
+}
+
 /** A backup or sync file's contents, checked and filled in; throws if it isn't one. */
 export function readBackup(text: string): SyncData {
   let data: unknown;
@@ -142,9 +172,7 @@ export function readBackup(text: string): SyncData {
   return {
     settings: readSettings(data.settings),
     tagPrefs: readTagPrefs(data.tagPrefs),
-    subscriptions: subs
-      ? subs.filter((s): s is Subscription => isRecord(s) && typeof s.id === 'string' && typeof s.url === 'string')
-      : defaultSubs(),
+    subscriptions: subs ? subs.flatMap(readSubscription) : defaultSubs(),
     personal: typeof data.personal === 'string' ? data.personal : DEFAULT_PERSONAL,
   };
 }

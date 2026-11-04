@@ -3,7 +3,7 @@ import { fakeBrowser } from 'wxt/testing/fake-browser';
 import { collectData, toBackup } from '@/utils/backup';
 import { listSites, setSite, setSiteLevel } from '@/utils/personal';
 import { editPersonal, loadPersonal, setTagPref, tagPrefsItem, updateSettings } from '@/utils/storage';
-import { accountItem, changeEncryptionPassphrase, connect, disconnect, statusItem, syncChanges, syncFileUrl, syncWithServer } from '@/utils/webdav';
+import { accountItem, changeEncryptionPassphrase, connect, disconnect, hasDataConsent, statusItem, syncChanges, syncFileUrl, syncWithServer } from '@/utils/webdav';
 import { decryptSyncData, encryptSyncData, isEncryptedSyncFile } from '@/utils/webdav-crypto';
 
 // Two browsers (each with its own storage, as Firefox and Chrome have) syncing
@@ -116,6 +116,16 @@ describe('syncing through a WebDAV server', () => {
       data_collection: ['browsingActivity'],
     });
     expect(server.requests).toEqual([]);
+  });
+
+  // Firefox lists `data_collection` whether or not anything was consented to.
+  it('reads Firefox consent from what was granted, not from the list being there', async () => {
+    Object.assign(fakeBrowser.permissions, { getAll: async () => ({ origins: [], permissions: [], data_collection: [] }) });
+    expect(await hasDataConsent()).toBe(false);
+    Object.assign(fakeBrowser.permissions, { getAll: async () => ({ origins: [], permissions: [], data_collection: ['browsingActivity'] }) });
+    expect(await hasDataConsent()).toBe(true);
+    Object.assign(fakeBrowser.permissions, { getAll: async () => ({ origins: [], permissions: [] }) });
+    expect(await hasDataConsent()).toBe(false);
   });
 
   it('does not fall back to host-only access if checking Firefox consent fails', async () => {

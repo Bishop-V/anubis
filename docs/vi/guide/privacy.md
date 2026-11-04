@@ -20,6 +20,7 @@ Chỉ những nơi sau:
 
 - **Các danh sách bạn đăng ký**, khoảng mỗi ngày một lần. Anubis bắt đầu với chín danh sách lưu trên GitHub; tắt chúng trong **Cài đặt → Danh sách**.
 - **Thư mục danh sách** trên GitHub, khi bạn mở **Cài đặt → Danh sách**.
+- **Bản sửa cho trang tìm kiếm** trên GitHub, nhiều nhất sáu giờ một lần, để Anubis vẫn hoạt động khi một công cụ tìm kiếm thay đổi trang của nó.
 - **Công cụ tìm kiếm bạn đang dùng**, cho [Tải thêm kết quả](./more-results.md). Trên Ecosia, biểu tượng trang web của các kết quả đó đến từ dịch vụ biểu tượng của Ecosia.
 - **Máy chủ WebDAV của bạn**, nếu bạn kết nối. Nó nhận trang web, cài đặt, lựa chọn nhãn và đăng ký của bạn, được mã hóa theo mặc định. Không mã hóa thì người vận hành đọc được.
 - **Trình theo dõi issue**, khi bạn chọn **Báo cáo sự cố** (điền sẵn phiên bản Anubis, trình duyệt và công cụ tìm kiếm) hoặc **Đề xuất thay đổi** của một danh sách. Chúng mở trong thẻ mới, và không gì được gửi cho tới khi bạn tự gửi.

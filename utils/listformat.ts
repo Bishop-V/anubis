@@ -89,6 +89,11 @@ export interface DeferredRule {
 
 export const MAX_STRENGTH = 10;
 const TAG_ID = /^[a-z0-9][a-z0-9-]{0,31}$/;
+
+/** Whether this is a tag's id as lists write it: lowercase letters, digits, and hyphens, up to 32. */
+export function isTagId(id: string): boolean {
+  return TAG_ID.test(id);
+}
 const META_KEYS = new Set([
   'name',
   'description',
@@ -208,11 +213,16 @@ function setMeta(meta: ListMeta, key: string, value: string) {
 // ---------------------------------------------------------------------------
 // Format detection
 
+/** A hosts-file line that sends a host nowhere: `0.0.0.0 example.com`. */
+const HOSTS_LINE = /^(0\.0\.0\.0|127\.0\.0\.1)\s+\S/;
+
 export function detectFormat(lines: string[]): ListFormat {
   let goggle = 0;
   let anubis = 0;
   let ublacklist = 0;
   let domains = 0;
+  // `#` comments and `---` front matter: uBlacklist's, but plain domain lists and hosts files have them too.
+  let comments = 0;
   let seen = 0;
   for (const raw of lines) {
     const line = raw.trim();
@@ -220,17 +230,19 @@ export function detectFormat(lines: string[]): ListFormat {
     if (++seen > 300) break;
     if (/^!\s*tag\s*:/i.test(line)) anubis++;
     else if (line.startsWith('!')) goggle++;
-    else if (line === '---' || line.startsWith('#')) ublacklist++;
+    else if (line === '---' || line.startsWith('#')) comments++;
     else if (/\$([a-z]+(=[^,]*)?)(,[a-z]+(=[^,]*)?)*$/i.test(line)) {
       goggle++;
       if (/[$,](tag=|pin\b|allow\b)/.test(line)) anubis++;
     } else if (/^@?\d*(\*|https?|ftp|wss?):\/\//.test(line)) ublacklist++;
-    else if (normalizeDomain(line) === normalizeHostname(line)) domains++;
+    else if (HOSTS_LINE.test(line) || normalizeDomain(line) === normalizeHostname(line)) domains++;
   }
   if (anubis) return 'anubis';
-  if (goggle && goggle >= ublacklist) return 'goggle';
+  if (goggle && goggle >= ublacklist + comments) return 'goggle';
   if (ublacklist) return 'ublacklist';
   if (domains) return 'domains';
+  // A ruleset of regular expressions alone has nothing else to tell it by.
+  if (comments) return 'ublacklist';
   return 'goggle';
 }
 
@@ -608,7 +620,7 @@ export function parseUblacklistLine(input: string, lineNo: number): Rule | strin
 
 /** Plain domain lists: every line is a site to discard. Hosts-file lines are accepted too. */
 export function parseDomainLine(line: string, lineNo: number): Rule | string {
-  const bare = line.replace(/^(0\.0\.0\.0|127\.0\.0\.1)\s+/, '').split(/\s/)[0] ?? '';
+  const bare = (HOSTS_LINE.test(line) ? line.replace(/^\S+\s+/, '') : line).split(/\s/)[0] ?? '';
   const site = normalizeDomain(bare);
   if (!site) return t('lineNotDomain', line);
   return { ...emptyRule(lineNo, line), site, discard: true };

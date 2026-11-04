@@ -71,7 +71,7 @@ The listing is live at https://chromewebstore.google.com/detail/aninblefigadaigf
 
 **Remote code:** No.
 
-> All JavaScript ships in the package. Subscribed lists are plain-text data (site names and patterns) that Anubis parses; nothing in them is run.
+> All JavaScript ships in the package. Subscribed lists are plain-text data (site names and patterns) that Anubis parses; nothing in them is run. Anubis also downloads `engines/fixes.json` from its GitHub repository: CSS selectors and offsets that replace ones in its bundled search-engine definitions, so it keeps finding results when an engine changes its page. They are data, read field by field; nothing in them is run, and they can't add sites or functions.
 
 **Data usage:** Chrome's [User Data FAQ](https://developer.chrome.com/docs/webstore/program-policies/user-data-faq) says local processing can still be handling user data, so Anubis discloses its local use of search results and the current tab's address in its privacy policy. The FAQ's FTP/IRC example says a protocol client communicating with a server chosen by the user does not thereby collect data for the developer; it also says Limited Use does not apply to data exchanged with that server. Anubis has no sync server of its own: WebDAV runs only after the user connects their server, and sends the sync file there. New connections encrypt the file by default, but users can turn encryption off and existing connections require opting in; the privacy policy describes both cases. That exception concerns the user-directed server transfer; it does not change how Anubis locally uses browsing data.
 

@@ -18,6 +18,7 @@ What was checked on real search pages, and what is still unverified.
 
 Keeping engine definitions current, and engine bugs found while testing.
 
+- Engine fixes from the repository (2026-11-03)
 - Keeping platform and engine maintenance current (2026-09-29)
 - Keeping engine definitions in sync (2026-09-29)
 - Engine watch
@@ -47,6 +48,8 @@ What Anubis draws and changes on search pages.
 
 Where things are stored, sync between browsers, and subscribing to lists.
 
+- Room in sync, and what a file can restore (2026-11-03)
+- Review fixes: allow, hosts files, user spaces, and the first install (2026-11-03)
 - Reading a backup or sync file's settings (2026-10-24)
 - Suggest changes as a form in Settings (2026-10-20)
 - Review findings on list parsing and subscriptions (2026-10-10)

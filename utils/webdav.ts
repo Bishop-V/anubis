@@ -87,9 +87,10 @@ export async function supportsDataConsent(): Promise<boolean> {
   return major >= 140;
 }
 
-/** Whether this browser has Firefox's consent for sending data (`permissions.getAll` then lists `data_collection`). */
+/** Whether this browser has Firefox's consent for sending the list: `permissions.getAll` lists it under `data_collection`. */
 export async function hasDataConsent(): Promise<boolean> {
-  return 'data_collection' in (await browser.permissions.getAll());
+  const granted = (await browser.permissions.getAll()) as { data_collection?: unknown };
+  return Array.isArray(granted.data_collection) && granted.data_collection.includes('browsingActivity');
 }
 
 class SyncError extends Error {
