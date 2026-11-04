@@ -48,18 +48,18 @@ export function append(parent: Node, children: (Child | Child[])[]): void {
   }
 }
 
-const parsed = new Map<string, Element>();
-
-/**
- * Turn one of the constant SVG strings in utils/icons.ts into an element. Parsed as
- * XML rather than through innerHTML, and cached, so each icon is parsed once.
- */
 /** A site's name as text, with the ending it shares with other sites (".org") in a muted span. */
 export function siteName(domain: string): (string | HTMLSpanElement)[] {
   const [name, suffix] = splitSuffix(domain);
   return suffix ? [name, h('span', { class: 'suffix' }, suffix)] : [name];
 }
 
+const parsed = new Map<string, Element>();
+
+/**
+ * Turn one of the constant SVG strings in utils/icons.ts into an element. Parsed as
+ * XML rather than through innerHTML, and cached, so each icon is parsed once.
+ */
 export function icon(svg: string): Element {
   let el = parsed.get(svg);
   if (!el) {

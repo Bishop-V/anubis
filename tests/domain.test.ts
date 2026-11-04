@@ -96,6 +96,9 @@ describe('subscription URLs', () => {
         'https://search.brave.com/goggles?goggles_id=https%3A%2F%2Fraw.githubusercontent.com%2Fbrave%2Fgoggles-quickstart%2Fmain%2Fgoggles%2Fhacker_news.goggle',
       ),
     ).toBe('https://raw.githubusercontent.com/brave/goggles-quickstart/main/goggles/hacker_news.goggle');
+    // A Goggle link that wraps anything but a web address stays the Goggle link.
+    const wrapped = 'https://search.brave.com/goggles?goggles_id=javascript%3Aalert(1)';
+    expect(toRawUrl(wrapped)).toBe(wrapped);
   });
 
   it('only asks for permissions on hosts without open CORS', () => {

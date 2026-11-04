@@ -19,6 +19,7 @@ import {
   savePersonal,
   settingsItem,
   splitIntoChunks,
+  SYNC_HEADROOM_BYTES,
   SYNC_QUOTA_BYTES,
   syncBytesInUse,
   updateSettings,
@@ -87,6 +88,24 @@ describe('personal list in browser sync', () => {
     expect(await syncBytesInUse()).toBeLessThan(SYNC_QUOTA_BYTES);
     await storage.removeItem('local:personalCopy');
     expect(await loadPersonal()).toBe(text);
+  });
+
+  // Settings, tag choices, and subscriptions share sync with the list: a list that filled
+  // it would make their next save fail.
+  it('keeps room in sync for settings, tag choices, and subscriptions', async () => {
+    const text = sites(3000);
+    await savePersonal(text);
+    const listBytes = await syncBytesInUse();
+    const filler = SYNC_QUOTA_BYTES - SYNC_HEADROOM_BYTES - listBytes + 200;
+    await storage.setItem('sync:tagPrefs', { filler: { label: 'x'.repeat(filler) } });
+    expect(await savePersonal(`${text}\n`)).toEqual({ synced: false });
+    expect(await personalIsLocal()).toBe(true);
+    expect(await loadPersonal()).toBe(`${text}\n`);
+    expect(await syncBytesInUse()).toBeLessThan(SYNC_QUOTA_BYTES - SYNC_HEADROOM_BYTES);
+    // Once there's room again, the list goes back to sync.
+    await storage.removeItem('sync:tagPrefs');
+    expect(await savePersonal(text)).toEqual({ synced: true });
+    expect(await personalIsLocal()).toBe(false);
   });
 
   it('reads a list saved before lists were compressed', async () => {
@@ -225,11 +244,39 @@ describe('tag choices from a backup or sync file', () => {
     expect([...collectTags([list], { zeta: { order: 0 }, mid: { order: 1 } }).keys()]).toEqual(['zeta', 'mid', 'alpha', 'beta']);
   });
 
+  it('drops entries under ids no tag can have', () => {
+    const prefs = read(JSON.parse('{"__proto__": {"action": "hide"}, "Not a tag": {}, "docs": {"action": "raise"}}'));
+    expect(prefs).toEqual({ docs: { action: 'raise' } });
+    expect(Object.getPrototypeOf(prefs)).toBe(Object.prototype);
+  });
+
   it('drops entries search pages couldn’t read', () => {
     const prefs = read({ reference: null, paywall: 'hide', docs: { action: 'explode', color: 'red; background: url(https://x.test/)', muted: 'yes' } });
     expect(prefs).toEqual({ docs: {} });
     const list = compileList('a', parseList('! tag: reference | Reference\nexample.com$tag=reference\n'));
     expect(collectTags([list], read({ reference: null })).get('reference')?.label).toBe('Reference');
+  });
+});
+
+describe('subscriptions from a backup or sync file', () => {
+  const read = (subscriptions: unknown) => readBackup(JSON.stringify({ anubis: 1, subscriptions })).subscriptions;
+  const list = { id: 'sub:abc', url: 'https://example.com/list.txt', enabled: false, addedAt: 5, name: 'Mine' };
+
+  it('keeps what Settings saves, and what a newer version adds', () => {
+    expect(read([list])).toEqual([list]);
+    const builtin = { id: 'builtin:paywalls', url: 'https://raw.githubusercontent.com/o/r/main/p.anubis', enabled: true, addedAt: 1, builtin: true };
+    expect(read([builtin])).toEqual([builtin]);
+    expect(read([{ ...list, later: 'x' }])).toEqual([{ ...list, later: 'x' }]);
+  });
+
+  it('drops lists Settings couldn’t subscribe to, and fills in the rest', () => {
+    for (const url of ['http://example.com/l.txt', 'javascript:alert(1)', 'file:///etc/hosts', 'not an address', 42]) {
+      expect(read([{ ...list, url }]), String(url)).toEqual([]);
+    }
+    expect(read([{ ...list, id: '' }, { url: list.url }, null, 'x'])).toEqual([]);
+    expect(read([{ id: 'sub:abc', url: list.url, builtin: true, name: '  Two\nlines ', addedAt: 'soon' }])).toEqual([
+      { id: 'sub:abc', url: list.url, enabled: true, addedAt: 0, name: 'Two lines' },
+    ]);
   });
 });
 

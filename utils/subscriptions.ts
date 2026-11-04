@@ -144,7 +144,8 @@ export function toRawUrl(input: string): string {
   // https://search.brave.com/goggles?goggles_id=<url>
   if (url.hostname === 'search.brave.com') {
     const inner = url.searchParams.get('goggles_id');
-    if (inner) return toRawUrl(inner);
+    // Only a web address: anyone can make the link, and the result is shown as one.
+    if (inner && /^https?:\/\//i.test(inner.trim())) return toRawUrl(inner);
   }
   // https://github.com/owner/repo/blob/ref/path → raw.githubusercontent.com/owner/repo/ref/path
   if (url.hostname === 'github.com') {
