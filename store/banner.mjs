@@ -1,6 +1,6 @@
 // Renders store/banner.gif, the animated 1200×600 banner: the logo and tagline on the
 // left, and on the right a small example search page where a pointer opens the result
-// menu on a content farm and hides it, then opens it on the documentation and pins it.
+// menu on a notes site and hides it, then opens it on the encyclopedia and pins it.
 // The menu copies the real one (entrypoints/content/shadow.css, utils/balance.ts,
 // utils/icons.ts) in Graphite's dark scheme; the hidden result stays grey, never red.
 // Needs Chromium (Playwright) and ffmpeg:
@@ -56,7 +56,7 @@ const result = (id, site, title, snippet) => `
   <div class="result" id="${id}">
     <div class="btn">${NORMAL_BTN}</div>
     <div class="full">
-      <div class="site"><span class="fav"></span>${site}</div>
+      <div class="site"><span class="fav">${site[0].toUpperCase()}</span>${site}</div>
       <div class="title">${title}</div>
       <div class="snip">${snippet}</div>
     </div>
@@ -94,8 +94,9 @@ const html = `<!doctype html><meta charset="utf-8">
   .result .btn svg { position: absolute; }
   .full { position: absolute; left: 56px; right: 24px; top: 0; }
   .site { font-size: 12.5px; color: #9d9da3; display: flex; align-items: center; gap: 8px; height: 36px; }
-  .fav { width: 16px; height: 16px; border-radius: 50%; background: #37373b; }
-  .title { margin-top: -6px; font-size: 17px; line-height: 1.3; color: #e8e8ea; white-space: nowrap; }
+  .fav { width: 16px; height: 16px; border-radius: 50%; background: #37373b; display: grid; place-items: center;
+    font-size: 9.5px; font-weight: 600; color: #e8e8ea; }
+  .title { margin-top: -6px; font-size: 17px; line-height: 1.3; color: #e8e8ea; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .snip { margin-top: 4px; font-size: 13px; color: #9d9da3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .fold { position: absolute; left: 56px; top: 0; height: 36px; display: flex; align-items: center;
     font-size: 12.5px; color: #9d9da3; opacity: 0; }
@@ -136,21 +137,21 @@ const html = `<!doctype html><meta charset="utf-8">
 </div>
 <div class="stage" id="stage">
   <div class="page">
-    <div class="query">${SEARCH}sort a list in python</div>
+    <div class="query">${SEARCH}trolley problem</div>
     <div class="summary">
       <div id="sum0">Anubis left all 4 results as they were.</div>
-      <div id="sum1">Hid seo-farm.example.<u>Undo</u></div>
-      <div id="sum2">Pinned docs.example.<u>Undo</u></div>
+      <div id="sum1">Hid studocu.com.<u>Undo</u></div>
+      <div id="sum2">Pinned plato.stanford.edu.<u>Undo</u></div>
     </div>
     <div class="frame" id="frame"></div>
-    ${result('farm', 'seo-farm.example', 'Top 10 ways to sort a list (updated for 2026)', 'You won’t believe number 7. Sorting is easy once you know these…')}
-    ${result('forum', 'forum.example', 'Sorting a list of dictionaries by a key', 'Use sorted() with key=lambda d: d["name"], or operator.itemgetter…')}
-    ${result('docs', 'docs.example', 'Sorting techniques: the official guide', 'Sort a list in place with list.sort(), or make a new one with sorted()…')}
-    ${result('notes', 'notes.example', 'Python lists: a short cheat sheet', 'Slicing, sorting, and copying lists, with an example for each…')}
+    ${result('farm', 'studocu.com', 'Trolley Problem - Ethics Lecture Notes - Studocu', 'Notes from PHIL 101, week 4. Sign up or upload a document to read the full text.')}
+    ${result('forum', 'youtube.com', 'Would You Pull the Lever? The Trolley Problem Explained', 'Five people, one lever, and a very hard choice. Here’s why this thought experiment won’t go away.')}
+    ${result('docs', 'plato.stanford.edu', 'Doing vs. Allowing Harm (Stanford Encyclopedia of Philosophy)', 'Is it worse to kill someone than to let them die? The trolley problem is one of the cases philosophers use to ask.')}
+    ${result('notes', 'en.wikipedia.org', 'Trolley problem - Wikipedia', 'The trolley problem is a series of thought experiments in ethics about whether to sacrifice one person to save a larger number.')}
   </div>
   <div class="menu" id="menu">
     <div class="arrow"></div>
-    <div class="cartouche"><span id="mname">seo-farm.example</span>${CLOSE}</div>
+    <div class="cartouche"><span id="mname">studocu.com</span>${CLOSE}</div>
     ${BALANCE}
     <div class="levels">
       <div class="level" id="l-hide">${HIDE}Hide</div><div class="sep"></div>
@@ -220,7 +221,7 @@ const html = `<!doctype html><meta charset="utf-8">
     // Hide on the content farm: the menu opens below it (no room above), Hide is chosen,
     // the balance sinks, the menu closes, and the result folds into one line.
     const m1 = span(t, 1.4, 1.52) * (1 - span(t, 3.3, 3.42));
-    // Pin on the documentation: the menu opens above it, Pin is chosen, it rises to the top.
+    // Pin on the encyclopedia: the menu opens above it, Pin is chosen, it rises to the top.
     const m2 = span(t, 4.6, 4.72) * (1 - span(t, 6.6, 6.72));
     const fold = span(t, 3.5, 4.1), rise = span(t, 6.9, 7.7);
 
@@ -229,7 +230,7 @@ const html = `<!doctype html><meta charset="utf-8">
     menu.className = 'menu ' + (first ? 'below' : 'above');
     menu.style.opacity = first ? m1 : m2;
     menu.style.transform = 'translateY(' + (first ? 4 * (1 - m1) : -4 * (1 - m2)) + 'px)';
-    $('mname').textContent = first ? 'seo-farm.example' : 'docs.example';
+    $('mname').textContent = first ? 'studocu.com' : 'plato.stanford.edu';
     const docsTop = TOP + mix(2 * FULL, FOLDED + FULL, fold);
     if (first) { menu.style.top = (TOP + 4 + 28 + 10) + 'px'; menu.style.bottom = ''; }
     else { menu.style.top = ''; menu.style.bottom = (436 - (docsTop + 4) + 10) + 'px'; }
@@ -241,7 +242,7 @@ const html = `<!doctype html><meta charset="utf-8">
     const chosen = first ? t >= 2.6 : t >= 6.0;
     $('hint0').style.opacity = chosen ? 0 : 1;
     $('hint1').style.opacity = chosen ? 1 : 0;
-    $('hint1').textContent = 'Your choice for ' + (first ? 'seo-farm.example' : 'docs.example') + ', on every search.';
+    $('hint1').textContent = 'Your choice for ' + (first ? 'studocu.com' : 'plato.stanford.edu') + ', on every search.';
     tilt(first ? -13 * swing(t, 2.6) : 13 * swing(t, 6.0));
 
     // The buttons on each result: a fill while their menu is open.
