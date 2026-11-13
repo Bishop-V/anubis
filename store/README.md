@@ -156,3 +156,7 @@ In `store/screenshots/` now, from 2026-09-30 (Chrome, Google in dark mode): `1-p
 ## Images in this folder
 
 `icon-128.png`, `promo-440x280.png`, `marquee-1400x560.png`, and the toolbar icons in `public/icon/` are rendered from `public/anubis.svg`, in Graphite. After changing the logo, copy it to `anubis.svg` and `docs/public/anubis.svg`, then run `CHROMIUM_PATH=$(which chromium) node store/render.mjs`.
+
+## Print poster
+
+[Download poster](posters/README.md) has Letter and A4 PDFs, a 300 dpi PNG, and an editable SVG, with QR codes for the Chrome and Firefox listings.
