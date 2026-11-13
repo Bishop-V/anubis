@@ -2,6 +2,12 @@
 
 Builds, tests, the end-to-end run, stores, and releases. Part of [Experiments and decisions](../experiments.md). Newest notes go at the top of each section.
 
+## Shared agent instructions (2026-11-13)
+
+- **Found:** `AGENTS.md` covered safety, but project context, commands, conventions, and reusable skills were only in Claude's files.
+- **Changed:** consolidated the guidance in `AGENTS.md`, moved skills with their licences and references to `.agents/skills`, and added Claude, Gemini, Copilot, and Cursor entry points. Claude and Copilot skill directories link to the shared skills. Source archives omit the new agent tooling directories as they already omitted `.claude`.
+- **Limit:** automatic discovery depends on each agent's support and settings. Tools without a supported entry point must be configured to read `AGENTS.md`.
+
 ## The animated banner (2026-11-04)
 
 `store/banner.gif`, drawn by `store/banner.mjs`.

@@ -2,7 +2,7 @@
 
 How Anubis looks and reads on every surface it has: the popup, settings, the welcome page, and the tags, summary, and result menu it adds to search pages. Follow it for any change to the interface.
 
-- `CLAUDE.md` and `CONTRIBUTING.md` give the short version of these rules.
+- `AGENTS.md` and `CONTRIBUTING.md` give the short version of these rules.
 - [`ACCESSIBILITY.md`](ACCESSIBILITY.md) covers the keyboard and screen readers. This guide only repeats what's visual (contrast, sizes, the focus ring).
 - `docs/experiments.md` records why things are the way they are, including what was tried and dropped.
 

@@ -3,7 +3,7 @@
 # #headings, offline; a weekly run also checks every address on the web
 # (.github/workflows/links.yml).
 
-exclude_path = ["node_modules", ".output", ".wxt", ".claude", "locales", "upstream", "docs/.vitepress"]
+exclude_path = ["node_modules", ".output", ".wxt", ".claude", ".agents", ".github/skills", "locales", "upstream", "docs/.vitepress"]
 include_fragments = "full"
 
 # Web addresses only: retries, and 429 (rate limited) isn't a dead link.

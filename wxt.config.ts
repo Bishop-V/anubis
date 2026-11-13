@@ -12,7 +12,10 @@ export default defineConfig({
   // what the build doesn't use: the documentation site (mostly screenshots), the
   // end-to-end harness, store listing assets, agent skills, and local agent notes.
   zip: {
-    excludeSources: ['docs/**', 'e2e/**', 'store/**', '.claude/**', 'CLAUDE.local.md'],
+    excludeSources: [
+      'docs/**', 'e2e/**', 'store/**', '.claude/**', '.agents/**', '.cursor/**',
+      '.github/skills/**', 'GEMINI.md', 'CLAUDE.local.md',
+    ],
   },
   hooks: {
     // Translations (locales/<lang>) ship only the messages whose English hasn't changed
