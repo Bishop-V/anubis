@@ -1,0 +1,6 @@
+---
+description: Shared Anubis project instructions
+alwaysApply: true
+---
+
+Read and follow `AGENTS.md` at the repository root before working in this repository. It contains the project context, commands, conventions, safety rules, and shared skill locations.

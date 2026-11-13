@@ -1,0 +1,3 @@
+# Anubis
+
+@AGENTS.md

@@ -38,7 +38,7 @@ Use `nix develop`, or Node.js 22.12+ and `npm install`. Then `npm run dev` (Fire
 
 ## How it's made
 
-Almost all of Anubis's code, tests, and docs were written by AI coding assistants (mostly [Claude Code](https://claude.ai/code)), directed and reviewed by the maintainer. Their instructions are in [`CLAUDE.md`](CLAUDE.md) and [`AGENTS.md`](AGENTS.md).
+Almost all of Anubis's code, tests, and docs were written by AI coding assistants (mostly [Claude Code](https://claude.ai/code)), directed and reviewed by the maintainer. Their shared instructions are in [`AGENTS.md`](AGENTS.md).
 
 ## Inspirations
 
@@ -50,4 +50,4 @@ Almost all of Anubis's code, tests, and docs were written by AI coding assistant
 
 ## License
 
-[GNU AGPL v3.0](LICENSE) or later. The lists in [`lists/`](lists) are CC0; those in [`lists/sources/`](lists/sources) keep their sources' licences. Third-party notices are in [`public/THIRD_PARTY_NOTICES.txt`](public/THIRD_PARTY_NOTICES.txt). The skills in [`.claude/skills/`](.claude/skills) keep their own licences (Apache-2.0 for `frontend-design`, MIT for `ux-heuristics`).
+[GNU AGPL v3.0](LICENSE) or later. The lists in [`lists/`](lists) are CC0; those in [`lists/sources/`](lists/sources) keep their sources' licences. Third-party notices are in [`public/THIRD_PARTY_NOTICES.txt`](public/THIRD_PARTY_NOTICES.txt). The skills in [`.agents/skills/`](.agents/skills) keep their own licences (Apache-2.0 for `frontend-design`, MIT for `ux-heuristics`).

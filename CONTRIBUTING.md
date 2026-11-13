@@ -18,7 +18,7 @@ Run `nix develop`, or install Node.js 22.12+ and run `npm install`. Then `npm ru
 
 ## Making a change
 
-One topic per pull request.
+One topic per pull request. All coding agents use [`AGENTS.md`](AGENTS.md) and the shared skills in [`.agents/skills/`](.agents/skills); tool-specific entry points refer there.
 
 - **Protect working behaviour:** follow [`AGENTS.md`](AGENTS.md). Reproduce a bug and add a regression check before fixing it.
 - **Interface:** DOM built with `h()` from `utils/dom.ts`, never `innerHTML`. Text goes in `public/_locales/en/messages.json`, used through `utils/i18n.ts`.
