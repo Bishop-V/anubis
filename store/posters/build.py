@@ -3,6 +3,7 @@ from pathlib import Path
 from xml.sax.saxutils import escape
 import base64
 import json
+import re
 import argparse
 
 import fitz
@@ -24,6 +25,7 @@ URLS = {
     'Chrome': 'https://chromewebstore.google.com/detail/aninblefigadaigfppckanjgiijcmmhi',
     'Firefox': 'https://addons.mozilla.org/addon/anubis-search/',
 }
+families = {'Display': 'Liberation Serif', 'Sans': 'Liberation Sans', 'Bold': 'Liberation Sans Bold', 'Mono': 'DejaVu Sans Mono'}
 fonts = {
     'Display': '/usr/share/fonts/truetype/liberation/LiberationSerif-Regular.ttf',
     'Sans': '/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf',
@@ -51,7 +53,7 @@ def make(size_name, width, height):
     svg = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}pt" height="{height}pt" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title desc">',
            '<title id="title">Get Anubis. It’s free.</title>',
            '<desc id="desc">A free browser extension to hide unwanted search results and raise trusted sites. Scan the Chrome or Firefox QR code to open its official store listing.</desc>']
-    styles = ''.join('@font-face{font-family:'+n+';src:url(data:font/ttf;base64,'+base64.b64encode(Path(p).read_bytes()).decode()+') format("truetype");}' for n,p in fonts.items())
+    styles = ''.join('@font-face{font-family:"'+families[n]+'";src:url(data:font/ttf;base64,'+base64.b64encode(Path(p).read_bytes()).decode()+') format("truetype");}' for n,p in fonts.items())
     svg += ['<defs><style>'+styles+'</style></defs>', f'<rect width="{width}" height="{height}" fill="white"/>', f'<g transform="translate(0 {dy}) scale({scale})">']
 
     def rect(x,y,w,h,fill,stroke=None):
@@ -66,7 +68,7 @@ def make(size_name, width, height):
         elif align=='right': c.drawRightString(x,H-y,t)
         else: c.drawString(x,H-y,t)
         anchor={'left':'start','center':'middle','right':'end'}[align]
-        svg.append(f'<text x="{x}" y="{y}" font-family="{font}" font-size="{size}" fill="{color}" text-anchor="{anchor}">{escape(t)}</text>')
+        svg.append(f'<text x="{x}" y="{y}" font-family="{families[font]}, {'serif' if font == 'Display' else 'sans-serif'}" font-size="{size}" fill="{color}" text-anchor="{anchor}">{escape(t)}</text>')
 
     def link(x,y,w,h,url,label):
         c.linkURL(url,(x,H-y-h,x+w,H-y),relative=1,thickness=0)
@@ -75,8 +77,8 @@ def make(size_name, width, height):
     rect(0,0,W,H,'#ffffff')
     rect(0,0,W,367,PAPER)
     # Exact brand mark from the repository, embedded as a vector below.
-    logo = (REPO / 'anubis.svg').read_text().replace('<svg ', '<svg x="42" y="32" width="32" height="32" ',1)
-    svg.append(logo)
+    logo = re.sub(r'<svg[^>]*>|</svg>', '', (REPO / 'anubis.svg').read_text())
+    svg.append('<g transform="translate(42 32) scale(0.258064516) translate(-2 -6)">'+logo+'</g>')
     text(85,56,'Anubis','Display',24)
     text(570,52,'A free browser add-on','Sans',10.5,MUTED,'right')
     text(39,157,'Get Anubis.','Display',76)
