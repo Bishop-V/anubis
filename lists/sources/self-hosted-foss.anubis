@@ -8,7 +8,7 @@
 ! tag: foss | FOSS | #3f6d8a | Free and open-source software.
 !
 ! Made from awesome-selfhosted's data (https://github.com/awesome-selfhosted/awesome-selfhosted-data),
-! commit 67184350dbf91d229643e30d3f1eae6b7e223218, under the Creative Commons Attribution-ShareAlike 3.0
+! commit 8f22991fff9ab921339850f2af597971eb99febd, under the Creative Commons Attribution-ShareAlike 3.0
 ! Unported licence (https://creativecommons.org/licenses/by-sa/3.0/). This list
 ! is shared under the same licence.
 !
@@ -84,6 +84,7 @@
 /manage-my-damn-life^$site=intri.in,tag=foss # awesome-selfhosted lists Manage My Damn Life (GPL-3.0).
 /minus_games_user_guide^$site=accessory.github.io,tag=foss # awesome-selfhosted lists Minus Games (MIT).
 /mirumoji/docs^$site=svdc1.github.io,tag=foss # awesome-selfhosted lists Mirumoji (MIT).
+/mtlynch/picoshare^$site=codefloe.com,tag=foss # awesome-selfhosted lists PicoShare (AGPL-3.0).
 /multi-scrobbler^$site=foxxmd.github.io,tag=foss # awesome-selfhosted lists multi-scrobbler (MIT).
 /nefarious^$site=lardbit.github.io,tag=foss # awesome-selfhosted lists nefarious (GPL-3.0).
 /nextgis-web^$site=nextgis.com,tag=foss # awesome-selfhosted lists NextGIS Web (GPL-3.0).
@@ -221,6 +222,7 @@ $site=chamilo.org,tag=foss # awesome-selfhosted lists Chamilo LMS (GPL-3.0).
 $site=changedetection.io,tag=foss # awesome-selfhosted lists changedetection.io (Apache-2.0).
 $site=chartbrew.com,tag=foss # awesome-selfhosted lists Chartbrew (MIT).
 $site=chartdb.io,tag=foss # awesome-selfhosted lists ChartDB (AGPL-3.0).
+$site=cheezypizza.in,tag=foss # awesome-selfhosted lists CheezyPizza (BSD-3-Clause).
 $site=chevereto.com,tag=foss # awesome-selfhosted lists Chevereto (AGPL-3.0).
 $site=chhoto.link,tag=foss # awesome-selfhosted lists Chhoto URL (MIT).
 $site=chibisafe.app,tag=foss # awesome-selfhosted lists Chibisafe (MIT).
@@ -263,6 +265,7 @@ $site=cyrusimap.org,tag=foss # awesome-selfhosted lists Cyrus IMAP (BSD-3-Clause
 $site=d8a.tech,tag=foss # awesome-selfhosted lists d8a.tech (MIT).
 $site=d9.webcapsule.io,tag=foss # awesome-selfhosted lists d9 (GPL-3.0).
 $site=damselfly.info,tag=foss # awesome-selfhosted lists Damselfly (GPL-3.0).
+$site=dashbeam.net,tag=foss # awesome-selfhosted lists DashBeam (AGPL-3.0).
 $site=dashy.to,tag=foss # awesome-selfhosted lists Dashy (MIT).
 $site=databunker.org,tag=foss # awesome-selfhosted lists Databunker (MIT).
 $site=datannur.com,tag=foss # awesome-selfhosted lists datannur (MIT).
@@ -391,7 +394,6 @@ $site=fmd-foss.org,tag=foss # awesome-selfhosted lists FMD Server (GPL-3.0).
 $site=foodcoops.net,tag=foss # awesome-selfhosted lists Foodsoft (AGPL-3.0).
 $site=foodcoopshop.com,tag=foss # awesome-selfhosted lists FoodCoopShop (AGPL-3.0).
 $site=forgejo.org,tag=foss # awesome-selfhosted lists Forgejo (MIT).
-$site=form.io,tag=foss # awesome-selfhosted lists form.io (MIT).
 $site=formbricks.com,tag=foss # awesome-selfhosted lists Formbricks (AGPL-3.0).
 $site=fossbilling.org,tag=foss # awesome-selfhosted lists FOSSBilling (Apache-2.0).
 $site=fossil-scm.org,tag=foss # awesome-selfhosted lists Fossil (BSD-2-Clause-FreeBSD).
@@ -468,7 +470,6 @@ $site=heimdall.site,tag=foss # awesome-selfhosted lists Heimdall (MIT).
 $site=heliumedu.com,tag=foss # awesome-selfhosted lists Helium (MIT).
 $site=heyform.net,tag=foss # awesome-selfhosted lists HeyForm (AGPL-3.0).
 $site=hi.events,tag=foss # awesome-selfhosted lists Hi.Events (AGPL-3.0).
-$site=hister.org,tag=foss # awesome-selfhosted lists Hister (AGPL-3.0).
 $site=hitkeep.com,tag=foss # awesome-selfhosted lists HitKeep (MIT).
 $site=hitobito.com,tag=foss # awesome-selfhosted lists hitobito (AGPL-3.0).
 $site=hivepal.app,tag=foss # awesome-selfhosted lists Hive-Pal (MIT).
@@ -535,6 +536,7 @@ $site=karaoke-eternal.com,tag=foss # awesome-selfhosted lists Karaoke Eternal (I
 $site=kasmweb.com,tag=foss # awesome-selfhosted lists Kasm Workspaces (GPL-3.0).
 $site=kavitareader.com,tag=foss # awesome-selfhosted lists Kavita (GPL-3.0).
 $site=keeper.sh,tag=foss # awesome-selfhosted lists Keeper.sh (AGPL-3.0).
+$site=keepitkept.xyz,tag=foss # awesome-selfhosted lists Kept Notes (AGPL-3.0, MIT).
 $site=keila.io,tag=foss # awesome-selfhosted lists Keila (AGPL-3.0).
 $site=kestra.io,tag=foss # awesome-selfhosted lists Kestra (Apache-2.0).
 $site=keystonejs.com,tag=foss # awesome-selfhosted lists KeystoneJS (MIT).
@@ -666,6 +668,7 @@ $site=nimbus.turboot.com,tag=foss # awesome-selfhosted lists Nimbus (AGPL-3.0).
 $site=nirvati.org,tag=foss # awesome-selfhosted lists Nirvati (AGPL-3.0).
 $site=nodebb.org,tag=foss # awesome-selfhosted lists NodeBB (GPL-3.0).
 $site=nodered.org,tag=foss # awesome-selfhosted lists Node RED (Apache-2.0).
+$site=nogon.eu,tag=foss # awesome-selfhosted lists Hister (AGPL-3.0).
 $site=nominatim.org,tag=foss # awesome-selfhosted lists Nominatim (GPL-2.0).
 $site=nonaconfig.com,tag=foss # awesome-selfhosted lists Nona (Apache-2.0).
 $site=not-th.re,tag=foss # awesome-selfhosted lists not-th.re (AGPL-3.0).
@@ -724,6 +727,7 @@ $site=openziti.io,tag=foss # awesome-selfhosted lists OpenZiti (Apache-2.0).
 $site=operational.co,tag=foss # awesome-selfhosted lists Operational.co (AGPL-3.0).
 $site=opnform.com,tag=foss # awesome-selfhosted lists OpnForm (AGPL-3.0).
 $site=orca-q.com,tag=foss # awesome-selfhosted lists OrcaQ (MIT).
+$site=orkyo.com,tag=foss # awesome-selfhosted lists Orkyo Community (AGPL-3.0).
 $site=osem.io,tag=foss # awesome-selfhosted lists osem (MIT).
 $site=ossrs.io,tag=foss # awesome-selfhosted lists SRS (MIT).
 $site=otobo.io,tag=foss # awesome-selfhosted lists OTOBO (GPL-3.0).
@@ -814,6 +818,7 @@ $site=redaxo.org,tag=foss # awesome-selfhosted lists REDAXO (MIT).
 $site=redeclipse.net,tag=foss # awesome-selfhosted lists Red Eclipse 2 (Zlib, MIT, CC-BY-SA-4.0).
 $site=redmine.org,tag=foss # awesome-selfhosted lists Redmine (GPL-2.0).
 $site=relaticle.com,tag=foss # awesome-selfhosted lists Relaticle (AGPL-3.0).
+$site=relaytv.app,tag=foss # awesome-selfhosted lists RelayTV (GPL-3.0).
 $site=remark42.com,tag=foss # awesome-selfhosted lists remark42 (MIT).
 $site=request-inbox.com,tag=foss # awesome-selfhosted lists Request Inbox (Apache-2.0).
 $site=rero21.ch,tag=foss # awesome-selfhosted lists RERO ILS (AGPL-3.0).
@@ -836,6 +841,7 @@ $site=runtipi.io,tag=foss # awesome-selfhosted lists Tipi (GPL-3.0).
 $site=rxresu.me,tag=foss # awesome-selfhosted lists Reactive Resume (MIT).
 $site=rybbit.com,tag=foss # awesome-selfhosted lists Rybbit (AGPL-3.0).
 $site=s-cart.org,tag=foss # awesome-selfhosted lists s-cart (MIT).
+$site=s3-orchestrator.munchbox.cc,tag=foss # awesome-selfhosted lists s3-orchestrator (MIT).
 $site=sabre.io,tag=foss # awesome-selfhosted lists SabreDAV (MIT).
 $site=saleor.io,tag=foss # awesome-selfhosted lists Saleor (BSD-3-Clause).
 $site=saltcorn.com,tag=foss # awesome-selfhosted lists Saltcorn (MIT).
@@ -926,6 +932,7 @@ $site=thelia.net,tag=foss # awesome-selfhosted lists Thelia (LGPL-3.0).
 $site=thelounge.chat,tag=foss # awesome-selfhosted lists The Lounge (MIT).
 $site=thingsboard.io,tag=foss # awesome-selfhosted lists Thingsboard (Apache-2.0).
 $site=thumbor.org,tag=foss # awesome-selfhosted lists Thumbor (MIT).
+$site=tickets.chobble.com,tag=foss # awesome-selfhosted lists Chobble Tickets (AGPL-3.0).
 $site=tiddlywiki.com,tag=foss # awesome-selfhosted lists TiddlyWiki (BSD-3-Clause).
 $site=tiledesk.com,tag=foss # awesome-selfhosted lists Tiledesk (MIT).
 $site=tileserver.readthedocs.io,tag=foss # awesome-selfhosted lists TileServer GL (BSD-2-Clause).
@@ -936,6 +943,7 @@ $site=tinyfilemanager.github.io,tag=foss # awesome-selfhosted lists Tiny File Ma
 $site=tinyproxy.github.io,tag=foss # awesome-selfhosted lists Tinyproxy (GPL-2.0).
 $site=titra.io,tag=foss # awesome-selfhosted lists Titra (GPL-3.0).
 $site=tolgee.io,tag=foss # awesome-selfhosted lists Tolgee (Apache-2.0).
+$site=tome.bndct.sh,tag=foss # awesome-selfhosted lists Tome (AGPL-3.0).
 $site=tooljet.io,tag=foss # awesome-selfhosted lists ToolJet (GPL-3.0).
 $site=tox.chat,tag=foss # awesome-selfhosted lists Tox (GPL-3.0).
 $site=trac.edgewall.org,tag=foss # awesome-selfhosted lists Trac (BSD-3-Clause).
