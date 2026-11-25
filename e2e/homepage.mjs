@@ -204,6 +204,13 @@ for (const reducedMotion of ['no-preference', 'reduce']) {
   if (!state.done || !state.pinnedFirst || !state.loweredLast || !state.told || state.menu) failures.push(`${label}: doesn't end with the pinned site first and the lowered one last`);
   if (pointerSeen !== (reducedMotion === 'no-preference')) failures.push(`${label}: the pointer ${pointerSeen ? 'shows' : "doesn't show"}`);
   if (staticShown) failures.push(`${label}: the picture for GitHub shows on the site too`);
+  if (state.done) {
+    const [pin, ...scales] = await page.locator('.rank-demo .demo-col svg').evaluateAll((icons) => icons.map((icon) => getComputedStyle(icon).color));
+    const [text, muted] = colorScheme === 'light' ? ['rgb(31, 31, 34)', 'rgb(95, 95, 102)'] : ['rgb(232, 232, 234)', 'rgb(157, 157, 163)'];
+    if (pin !== text || scales.length !== 3 || scales.some((color) => color !== muted)) {
+      failures.push(`${label}: icon colours differ from the extension (${pin}; ${scales.join(', ')})`);
+    }
+  }
   if (screenshots && state.done) await page.locator('.rank-demo').screenshot({ path: `${SHOTS}ranking-demo-${colorScheme}.png`, animations: 'disabled' });
   if (reducedMotion === 'reduce' && state.done) {
     const replay = page.locator('.rank-demo .hd-replay');

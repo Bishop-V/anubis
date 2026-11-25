@@ -529,7 +529,7 @@ html[data-browser] .home-button:not(.brand) {
 }
 /* The button in the column left of each result, as the extension's .weigh.column
    (shadow.css): 28px and round, 12px left of the site's icon, centred on its row,
-   showing the ranking's icon in greys. */
+   using the extension's Graphite icon colours. */
 .demo-col {
   position: absolute;
   left: -40px;
@@ -540,7 +540,7 @@ html[data-browser] .home-button:not(.brand) {
   height: 28px;
   margin-top: -14px;
   border-radius: 50%;
-  color: var(--vp-c-text-2);
+  color: var(--vp-c-brand-3);
   transition:
     background 0.15s,
     color 0.15s;
@@ -551,7 +551,7 @@ html[data-browser] .home-button:not(.brand) {
 }
 .demo-col.pin,
 .demo-col.active {
-  color: var(--vp-c-text-1);
+  color: var(--vp-c-brand-1);
 }
 .demo-col.active {
   background: var(--vp-c-brand-soft);
