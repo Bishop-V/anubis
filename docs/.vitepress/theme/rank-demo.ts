@@ -1,4 +1,5 @@
-import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import { createStore } from '@inglorious/store';
+import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, reactive, ref, shallowRef } from 'vue';
 import { columnButton, fold, html, ICON, menu, placeMenu, tagMark, type Level, type MenuPlace } from './demo-parts';
 
 // Ranking sites, played out: a pointer opens the button beside the last result and
@@ -27,15 +28,45 @@ const STEPS: { id: string; level: Level; said: string }[] = [
   { id: 'pinterest', level: 'lower', said: 'Lowered pinterest.com.' },
 ];
 
+type RankDemoEntity = {
+  type: 'RankDemo';
+  levels: Record<string, Level>;
+  menuFor: string;
+  menuLevel: Level;
+  said: string;
+  done: boolean;
+};
+
+const initialDemo: RankDemoEntity = { type: 'RankDemo', levels: {}, menuFor: '', menuLevel: 'normal', said: '', done: false };
+
+const RankDemo = {
+  started(demo: RankDemoEntity) {
+    Object.assign(demo, initialDemo);
+  },
+  openedMenu(demo: RankDemoEntity, id: string) {
+    demo.menuFor = id;
+    demo.menuLevel = demo.levels[id] ?? 'normal';
+  },
+  previewedRank(demo: RankDemoEntity, level: Level) {
+    demo.menuLevel = level;
+  },
+  ranked(demo: RankDemoEntity, { id, level, said }: (typeof STEPS)[number]) {
+    demo.levels = { ...demo.levels, [id]: level };
+    demo.menuFor = '';
+    demo.said = said;
+  },
+  finished(demo: RankDemoEntity) {
+    demo.done = true;
+  },
+};
+
 export default defineComponent({
   name: 'RankDemo',
   setup() {
-    const state = reactive({
-      levels: {} as Record<string, Level>,
-      menuFor: '' as string,
-      menuLevel: 'normal' as Level,
-      said: '',
-      done: false,
+    const store = createStore({ types: { RankDemo }, entities: { demo: initialDemo } });
+    const state = shallowRef(store.getState().demo);
+    const unsubscribe = store.subscribe(() => { state.value = store.getState().demo; });
+    const cursor = reactive({
       pointer: false,
       x: 0,
       y: 0,
@@ -59,27 +90,27 @@ export default defineComponent({
     };
     const moveTo = async (el: HTMLElement | undefined, ms: number) => {
       const { x, y } = centre(el);
-      state.x = x;
-      state.y = y;
+      cursor.x = x;
+      cursor.y = y;
       await sleep(ms);
     };
     const click = async () => {
-      state.pressing = true;
-      state.clicks++;
+      cursor.pressing = true;
+      cursor.clicks++;
       await sleep(160);
-      state.pressing = false;
+      cursor.pressing = false;
     };
 
     /** Pinned first, lowered last, the rest in the engine's order: how the extension reranks a page this short. */
-    const order = () => {
-      const place = (r: Result) => (state.levels[r.id] === 'pin' ? 0 : state.levels[r.id] === 'lower' ? 2 : 1);
+    const order = (levels: RankDemoEntity['levels']) => {
+      const place = (r: Result) => (levels[r.id] === 'pin' ? 0 : levels[r.id] === 'lower' ? 2 : 1);
       return [...RESULTS].sort((a, b) => place(a) - place(b));
     };
 
     /** Change a ranking, and slide each result from where it was to where it lands (FLIP). */
-    const rank = async (id: string, level: Level) => {
+    const rank = async (step: (typeof STEPS)[number]) => {
       const before = new Map([...rows].map(([key, el]) => [key, el.getBoundingClientRect().top]));
-      state.levels = { ...state.levels, [id]: level };
+      store.notify('#demo:ranked', step);
       await nextTick();
       if (still()) return;
       for (const [key, el] of rows) {
@@ -98,27 +129,27 @@ export default defineComponent({
     const openMenu = async (id: string) => {
       // Over the button, pointing down at it, or under it where there's no room above.
       place = placeMenu(root.value!, weighs.get(id)!);
-      state.menuLevel = state.levels[id] ?? 'normal';
-      state.menuFor = id;
+      store.notify('#demo:openedMenu', id);
       await nextTick();
     };
 
     const play = async () => {
       const id = ++run;
       const alive = () => id === run && !!root.value;
-      Object.assign(state, { levels: {}, menuFor: '', said: '', done: false, pointer: false, pressing: false });
+      store.notify('#demo:started');
+      Object.assign(cursor, { pointer: false, pressing: false });
       for (const el of rows.values()) {
         el.style.transition = 'none';
         el.style.transform = '';
       }
       await nextTick();
       const box = root.value!.getBoundingClientRect();
-      state.x = box.width - 40;
-      state.y = box.height - 20;
+      cursor.x = box.width - 40;
+      cursor.y = box.height - 20;
       await sleep(900);
       if (!alive()) return;
       const pointer = !still();
-      state.pointer = pointer;
+      cursor.pointer = pointer;
       for (const step of STEPS) {
         if (pointer) await moveTo(weighs.get(step.id), 1000);
         if (!alive()) return;
@@ -129,22 +160,20 @@ export default defineComponent({
         if (pointer) await moveTo(levelRefs.get(step.level), 800);
         if (!alive()) return;
         if (pointer) await click();
-        state.menuLevel = step.level;
+        store.notify('#demo:previewedRank', step.level);
         await sleep(800);
         if (!alive()) return;
         // The menu closes and the page reranks, as it does after a choice.
-        state.menuFor = '';
-        state.said = step.said;
-        await rank(step.id, step.level);
+        await rank(step);
         if (pointer) {
-          state.x += 40;
-          state.y += 30;
+          cursor.x += 40;
+          cursor.y += 30;
         }
         await sleep(1300);
         if (!alive()) return;
       }
-      state.pointer = false;
-      state.done = true;
+      cursor.pointer = false;
+      store.notify('#demo:finished');
     };
 
     onMounted(() => {
@@ -162,15 +191,17 @@ export default defineComponent({
     onBeforeUnmount(() => {
       run++;
       observer?.disconnect();
+      unsubscribe();
     });
 
     return () => {
-      const pinned = Object.values(state.levels).filter((l) => l === 'pin').length;
-      const lowered = Object.values(state.levels).filter((l) => l === 'lower').length;
+      const demo = state.value;
+      const pinned = Object.values(demo.levels).filter((l) => l === 'pin').length;
+      const lowered = Object.values(demo.levels).filter((l) => l === 'lower').length;
       const parts = [pinned ? `pinned ${pinned}` : '', lowered ? `lowered ${lowered}` : ''].filter(Boolean);
       const sentence = parts.length ? `Anubis ${parts.join(' and ')} of 4 results.` : 'Anubis left all 4 results as they were.';
       const result = (r: Result) => {
-        const level = state.levels[r.id] ?? 'normal';
+        const level = demo.levels[r.id] ?? 'normal';
         return h(
           'div',
           {
@@ -182,7 +213,7 @@ export default defineComponent({
             h('div', { class: 'site' }, [
               columnButton(level, {
                 button: (el: unknown) => (el instanceof HTMLElement ? weighs.set(r.id, el) : weighs.delete(r.id)),
-                active: state.menuFor === r.id,
+                active: demo.menuFor === r.id,
               }),
               h('span', { class: 'favicon', style: { background: r.icon[0], color: r.icon[1] } }, r.icon[2]),
               h('span', { class: 'site-name' }, r.site),
@@ -194,24 +225,24 @@ export default defineComponent({
           ],
         );
       };
-      const menuResult = RESULTS.find((r) => r.id === state.menuFor);
+      const menuResult = RESULTS.find((r) => r.id === demo.menuFor);
 
       return h('figure', { class: 'hide-demo rank-demo' }, [
         h('div', { ref: root, class: 'hd-stage' }, [
           h('div', { class: 'demo-page hd-page', 'aria-hidden': 'true' }, [
             h('div', { class: 'demo-summary hd-summary' }, [
               h('p', [h('span', [sentence, ' ', html('span', 'hd-gear', ICON.gear)])]),
-              fold(!!state.said, 'hd-change', [h('span', state.said), ' ', h('span', { class: 'demo-link' }, 'Undo')]),
+              fold(!!demo.said, 'hd-change', [h('span', demo.said), ' ', h('span', { class: 'demo-link' }, 'Undo')]),
               h('div', { class: 'summary-tags hd-tags' }, [tagMark('Reference', '#2b9aa0', 2)]),
             ]),
-            h('div', { class: 'demo-results' }, order().map(result)),
+            h('div', { class: 'demo-results' }, order(demo.levels).map(result)),
           ]),
           menuResult
             ? menu(
                 place,
                 {
                   site: menuResult.host,
-                  level: state.menuLevel,
+                  level: demo.menuLevel,
                   hint: `Your choice for ${menuResult.host}, on every search.`,
                   tags: menuResult.tag ? [tagMark(menuResult.tag[0], menuResult.tag[1])] : [],
                 },
@@ -221,12 +252,12 @@ export default defineComponent({
           h(
             'span',
             {
-              class: ['hd-pointer', { shown: state.pointer, pressing: state.pressing }],
-              style: { transform: `translate(${state.x}px, ${state.y}px)` },
+              class: ['hd-pointer', { shown: cursor.pointer, pressing: cursor.pressing }],
+              style: { transform: `translate(${cursor.x}px, ${cursor.y}px)` },
               'aria-hidden': 'true',
             },
             [
-              h('span', { key: state.clicks, class: ['hd-ripple', { on: state.clicks > 0 }] }),
+              h('span', { key: cursor.clicks, class: ['hd-ripple', { on: cursor.clicks > 0 }] }),
               h('svg', { viewBox: '0 0 16 22', width: 16, height: 22 }, [
                 h('path', { d: 'M1 1v17l4.4-4.2 3 6.6 2.8-1.3-3-6.4H14z', fill: '#ffffff', stroke: '#1b1a16', 'stroke-width': 1.4, 'stroke-linejoin': 'round' }),
               ]),
@@ -235,7 +266,7 @@ export default defineComponent({
         ]),
         h('figcaption', { class: 'caption hd-caption' }, [
           'Pinning one site and lowering another from the button beside each result. ',
-          h('button', { type: 'button', class: 'hd-replay', disabled: !state.done, onClick: () => void play() }, 'Play again'),
+          h('button', { type: 'button', class: 'hd-replay', disabled: !demo.done, onClick: () => void play() }, 'Play again'),
         ]),
       ]);
     };

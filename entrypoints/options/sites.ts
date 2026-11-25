@@ -1,3 +1,4 @@
+import { createStore } from '@inglorious/store';
 import { normalizeSite } from '@/utils/domain';
 import { h, icon, siteName } from '@/utils/dom';
 import { t, tn } from '@/utils/i18n';
@@ -12,7 +13,20 @@ import { rerender } from './flash';
 import { download, helpLink, pageTitle } from './parts';
 
 let editingText = false;
-let filter = '';
+
+type SiteTableEntity = { type: 'SiteTable'; query: string };
+
+const SiteTable = {
+  searchChanged(table: SiteTableEntity, query: string) {
+    table.query = query;
+  },
+};
+
+// Keep the filter when the options page rebuilds the table after a storage update.
+const siteTable = createStore({
+  types: { SiteTable },
+  entities: { table: { type: 'SiteTable', query: '' } satisfies SiteTableEntity },
+});
 
 export async function renderSites(): Promise<HTMLElement> {
   const rules = await loadRuleSet();
@@ -117,14 +131,14 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
   const search = h('input', {
     type: 'search',
     placeholder: tn('sitesFilter', entries.length),
-    value: filter,
+    value: siteTable.getState().table.query,
     attrs: { 'aria-label': t('sitesFilterLabel') },
   });
   const body = h('tbody');
   const tagIds = [...rules.tags.keys()];
 
   const renderRows = () => {
-    const q = filter.trim().toLowerCase();
+    const q = siteTable.getState().table.query.trim().toLowerCase();
     const shown = entries
       .filter((e) => !q || e.site.includes(q) || e.tags.some((id) => id.includes(q)))
       .sort((a, b) => a.site.localeCompare(b.site))
@@ -192,7 +206,7 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
     );
   };
   search.addEventListener('input', () => {
-    filter = search.value;
+    siteTable.notify('#table:searchChanged', search.value);
     renderRows();
   });
   renderRows();

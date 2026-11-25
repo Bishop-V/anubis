@@ -3,19 +3,22 @@
 // phones don't scroll sideways. It also plays the Introduction's demo through.
 // Run it after `npm run docs:build`:
 //
-//   node e2e/homepage.mjs
+//   node e2e/homepage.mjs [--screenshots]
 //
 // It serves docs/.vitepress/dist itself, under the site's base path (DOCS_BASE, as
 // in docs/.vitepress/config.ts), and finds Chromium the way e2e/run.mjs does.
 
 import { chromium } from 'playwright-core';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { delimiter, extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const DIST = fileURLToPath(new URL('../docs/.vitepress/dist', import.meta.url));
+const SHOTS = fileURLToPath(new URL('./shots/', import.meta.url));
 const BASE = process.env.DOCS_BASE ?? '/anubis/';
+const screenshots = process.argv.includes('--screenshots');
+if (screenshots) mkdirSync(SHOTS, { recursive: true });
 
 function findChromium() {
   if (process.env.CHROMIUM_PATH) return process.env.CHROMIUM_PATH;
@@ -175,7 +178,8 @@ for (const reducedMotion of ['no-preference', 'reduce']) {
 // Ranking sites' demo (rank-demo.ts): the last result is pinned and moves to the top
 // in its frame, then another is lowered and moves to the bottom with its label.
 for (const reducedMotion of ['no-preference', 'reduce']) {
-  const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion });
+  const colorScheme = reducedMotion === 'reduce' ? 'dark' : 'light';
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion, colorScheme });
   await page.goto(`${url}guide/ranking`, { waitUntil: 'networkidle' });
   const staticShown = await page.evaluate(() => getComputedStyle(document.querySelector('.github-only')).display !== 'none');
   await page.evaluate(() => document.querySelector('.rank-demo').scrollIntoView({ block: 'center' }));
@@ -200,6 +204,18 @@ for (const reducedMotion of ['no-preference', 'reduce']) {
   if (!state.done || !state.pinnedFirst || !state.loweredLast || !state.told || state.menu) failures.push(`${label}: doesn't end with the pinned site first and the lowered one last`);
   if (pointerSeen !== (reducedMotion === 'no-preference')) failures.push(`${label}: the pointer ${pointerSeen ? 'shows' : "doesn't show"}`);
   if (staticShown) failures.push(`${label}: the picture for GitHub shows on the site too`);
+  if (screenshots && state.done) await page.locator('.rank-demo').screenshot({ path: `${SHOTS}ranking-demo-${colorScheme}.png`, animations: 'disabled' });
+  if (reducedMotion === 'reduce' && state.done) {
+    const replay = page.locator('.rank-demo .hd-replay');
+    await replay.click();
+    const reset = await page.evaluate(() => {
+      return !document.querySelector('.rank-demo .rd-result.pinned') && !document.querySelector('.rank-demo .rd-result .demo-col.lower');
+    });
+    await page.locator('.rank-demo .hd-replay:enabled').waitFor({ timeout: 12000 });
+    if (!reset || !(await page.locator('.rank-demo .rd-result:first-child.pinned').count()) || !(await page.locator('.rank-demo .rd-result:last-child .demo-col.lower').count())) {
+      failures.push(`${label}: replay doesn't reset and rerank the results`);
+    }
+  }
   await page.close();
 }
 

@@ -314,6 +314,10 @@ Most parts print their findings rather than failing on them, so read the output:
 
 ## Documentation
 
+Run `npm run screenshots` to build the Chrome extension and the wiki, exercise the Your sites filter and ranking demo, and capture desktop and phone views of Your sites plus the finished ranking demo. It uses Chromium, as the other e2e checks do. The PNGs go to `e2e/shots/` for review. Use `node e2e/run.mjs docs` when updating screenshots embedded in the wiki.
+
+On GitHub, run the **CI** workflow for your branch with **Capture Your sites and the wiki ranking demo** selected. It collects the same PNGs in the `anubis-review-screenshots` artifact.
+
 Each thing is explained in one place, and everything else links to it:
 
 | Where | For | What it holds |

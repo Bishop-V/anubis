@@ -5,7 +5,7 @@
 //   npm run e2e                 build, then run everything
 //   node e2e/run.mjs pages      one part: pages, hostile, grouped, reveal, runs, shortcuts, mobile, off, cleanup,
 //                               pins, popover, ddg-hide, filter, deeper, import, subscribe, subscribe-link, options,
-//                               responsive, axe, welcome, sync, webdav, popup-tags, tag-notes, settings-undo, suggest-changes, organise, checks (layout, lifecycle, pin/hidden chips, DDG icon colors, Undo in Settings, Suggest changes)
+//                               responsive, sites, axe, welcome, sync, webdav, popup-tags, tag-notes, settings-undo, suggest-changes, organise, checks (layout, lifecycle, pin/hidden chips, DDG icon colors, Undo in Settings, Suggest changes)
 //   node e2e/run.mjs docs       only: regenerate the screenshots in docs/img/ and the slides
 //                               in docs/public/
 //
@@ -2569,6 +2569,43 @@ if (!only || only === 'options') {
     });
   }
   console.log('\n== options + popup screenshots done');
+}
+
+if (only === 'sites') {
+  const options = await ctx.newPage();
+  await options.goto(`chrome-extension://${extId}/options.html#sites`);
+  const filter = options.locator('input[type="search"]');
+  const rows = options.locator('.sites tbody tr');
+  const tutorial = rows.filter({ hasText: 'javascript.info' });
+  await tutorial.waitFor();
+
+  for (const colorScheme of ['light', 'dark']) {
+    await options.emulateMedia({ colorScheme });
+    for (const width of [1100, 360]) {
+      await options.setViewportSize({ width, height: 900 });
+      await options.screenshot({ path: `${SHOTS}your-sites-${width}-${colorScheme}.png`, fullPage: true });
+    }
+  }
+
+  await filter.fill('  TUTORIAL  ');
+  assertChecks('Your sites filter', {
+    tagMatch: (await rows.count()) === 1 && (await tutorial.count()) === 1,
+    focusKept: await filter.evaluate((el) => document.activeElement === el),
+  });
+  await filter.fill('developer.mozilla');
+  assertChecks('Your sites domain filter', {
+    domainMatch: (await rows.count()) === 1 && (await rows.filter({ hasText: 'developer.mozilla.org' }).count()) === 1,
+  });
+
+  await filter.fill('javascript.info');
+  await tutorial.locator('button[data-level="pin"]').click();
+  const pinned = tutorial.locator('button[data-level="pin"][aria-pressed="true"]');
+  await pinned.waitFor();
+  assertChecks('Your sites storage refresh', { filterKept: (await filter.inputValue()) === 'javascript.info' && (await rows.count()) === 1 });
+  await options.reload();
+  await pinned.waitFor();
+  await options.close();
+  console.log('\n== Your sites filtering, focus, and saved ranking passed');
 }
 
 if (!only || only === 'responsive') {
