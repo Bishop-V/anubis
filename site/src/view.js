@@ -1,14 +1,16 @@
+import { Input } from '@inglorious/ui/input';
 import { html } from '@inglorious/web';
 import { unsafeHTML } from '@inglorious/web/directives/unsafe-html';
 import directory from '../../lists/directory.json';
 import { readSubscribeLink, subscribeQuery } from '../../utils/links.ts';
 import { blankDemo, guideDemo, homeView, playDemo, startScrollDemo } from './demos.js';
-import { base, headerLinks, href, neighbouringPages, pageLink, sidebar } from './navigation.js';
+import { translate } from './languages.js';
+import { base, headerLinks, homePath, href, languageMenu, neighbouringPages, pageLink, sidebar } from './navigation.js';
 
 const formatNames = { anubis: 'Anubis list', goggle: 'Brave Goggle', ublacklist: 'uBlacklist ruleset', domains: 'Domain list' };
 const issueBase = 'https://github.com/Bishop-V/anubis/edit/main/docs/';
 const searchDialog = () => document.querySelector('#site-search');
-let searchIndex;
+const searchIndexes = new Map();
 
 function matchSearch(index, query) {
   const terms = query.toLowerCase().trim().split(/\s+/);
@@ -28,15 +30,20 @@ function showSearch() {
   dialog.querySelector('input').focus();
 }
 
-function searchView(entity, emit) {
-  return html`<dialog id="site-search" aria-labelledby="search-title">
-    <div class="search-title"><h2 id="search-title">Search the wiki</h2>
-      <form method="dialog"><button type="submit">Close</button></form>
+function searchView(entity, emit, t) {
+  return html`<dialog id="site-search" aria-labelledby="search-title" @keydown=${(event) => {
+    if (event.key !== 'Escape') return;
+    event.preventDefault();
+    event.currentTarget.close();
+  }}>
+    <div class="search-title"><h2 id="search-title">${t('searchTitle')}</h2>
+      <form method="dialog"><button type="submit">${t('searchClose')}</button></form>
     </div>
-    <label for="search-query">Search guides</label>
-    <input id="search-query" type="search" autocomplete="off" .value=${entity.query}
-      @input=${(event) => emit('searchChanged', event.currentTarget.value)}>
-    <p role="status">${entity.searchError ? 'Search could not load. Try again.' : entity.searching ? 'Searching…' : entity.query && !entity.matches.length ? 'No results' : ''}</p>
+    ${Input.render({
+      id: 'search-query', label: t('searchLabel'), inputType: 'search', autocomplete: 'off',
+      value: entity.query, onChange: (value) => emit('searchChanged', value),
+    })}
+    <p role="status">${entity.searchError ? t('searchError') : entity.searching ? t('searching') : entity.query && !entity.matches.length ? t('searchNone') : ''}</p>
     <ul class="search-results">
       ${entity.matches.map(({ url, heading, title, snippet }) => html`<li>
         <a data-external href=${url} @click=${() => searchDialog().close()}><strong>${heading || title}</strong>
@@ -50,8 +57,10 @@ function searchView(entity, emit) {
 function directoryView(query, emit) {
   const term = query.trim().toLowerCase();
   const matches = directory.lists.filter(({ name, description, format }) => [name, description, format].some((value) => value?.toLowerCase().includes(term)));
-  return html`<label for="directory-filter">Filter lists</label>
-    <input id="directory-filter" type="search" .value=${query} @input=${(event) => emit('directoryFiltered', event.currentTarget.value)}>
+  return html`${Input.render({
+      id: 'directory-filter', label: 'Filter lists', inputType: 'search',
+      value: query, onChange: (value) => emit('directoryFiltered', value),
+    })}
     <p class="directory-count" role="status">${matches.length} of ${directory.lists.length} lists</p>
     <div class="table-scroll"><table class="list-directory">
       <thead><tr><th scope="col">List</th><th scope="col">What it does</th><th scope="col">Format</th><th scope="col">Subscribe</th></tr></thead>
@@ -83,28 +92,29 @@ function subscribeView({ link, broken }) {
     <p>A list can hide, rank, and tag sites in your results. Only subscribe to lists you trust.</p>`;
 }
 
-function article(page, entity, emit, replay) {
+function article(page, entity, emit, replay, t) {
   return html`<div class="wiki-layout">
-    <aside class="wiki-sidebar" aria-label="Wiki navigation">
-      <details open><summary>Wiki navigation</summary><nav>${sidebar(page.route)}</nav></details>
+    <aside class="wiki-sidebar" aria-label=${t('wikiNavigation')}>
+      <details open><summary>${t('wikiNavigation')}</summary><nav>${sidebar(page, t)}</nav></details>
     </aside>
     <main id="content" class="vp-doc wiki-article">
-      ${page.headings.length ? html`<details class="outline"><summary>On this page</summary><nav aria-label="On this page">
+      ${page.headings.length ? html`<details class="outline"><summary>${t('outline')}</summary><nav aria-label=${t('outline')}>
         ${page.headings.map(({ id, label, level }) => html`<a data-external class=${level === 3 ? 'subheading' : ''} href=${'#' + id}>${label}</a>`)}
       </nav></details>` : ''}
       ${page.parts.map((part, i) => {
         if (i % 2 === 0) return unsafeHTML(part); // Compiled from repository Markdown at build time.
         if (part === 'directory') return directoryView(entity.directoryQuery, emit);
         if (part === 'subscribe') return subscribeView(entity.subscribe);
-        return guideDemo(part, entity.demo, replay);
+        return guideDemo(part, entity.demo, replay, t);
       })}
-      ${page.route === '/subscribe' ? '' : html`<div class="article-footer"><a href=${issueBase + page.file}>Edit this page on GitHub</a>
-        ${neighbouringPages(page.route)}</div>`}
+      ${page.route === '/subscribe' ? '' : html`<div class="article-footer"><a href=${issueBase + page.file}>${t('editLink')}</a>
+        ${neighbouringPages(page, t)}</div>`}
     </main>
   </div>`;
 }
 
 export function createPage(page) {
+  const t = translate(page.lang);
   const demoKind = page.parts.includes('ranking') ? 'ranking' : page.parts.includes('hiding') ? 'hiding' : undefined;
   const replay = (emit) => playDemo(demoKind, emit);
   return {
@@ -149,12 +159,17 @@ export function createPage(page) {
       entity.searching = !!query.trim();
       entity.matches = [];
       if (!entity.searching) return;
-      searchIndex ??= fetch(base + '/search.json').then((response) => {
-        if (!response.ok) throw new Error('Search index unavailable');
-        return response.json();
-      }).catch((error) => { searchIndex = undefined; throw error; });
+      const { folder } = page;
+      if (!searchIndexes.has(folder)) {
+        const indexPath = folder === 'en' ? '/search.json' : '/search-' + folder + '.json';
+        const request = fetch(base + indexPath).then((response) => {
+          if (!response.ok) throw new Error('Search index unavailable');
+          return response.json();
+        }).catch((error) => { searchIndexes.delete(folder); throw error; });
+        searchIndexes.set(folder, request);
+      }
       const event = '#' + entity.id + ':searchReady';
-      void searchIndex.then(
+      void searchIndexes.get(folder).then(
         (index) => api.notify(event, { query, matches: matchSearch(index, query) }),
         () => api.notify(event, { query, matches: [], error: true }),
       );
@@ -180,20 +195,22 @@ export function createPage(page) {
     demoFinished(entity) { entity.demo.done = true; entity.demo.pointer = null; },
     render(entity, api) {
       const emit = (event, payload) => api.notify('#' + entity.id + ':' + event, payload);
-      return html`<a data-external class="skip-link" href="#content">Skip to content</a>
+      return html`<a data-external class="skip-link" href="#content">${t('skip')}</a>
         <header class="site-header">
-          <a data-external class="site-brand" href=${href('/')}><img src=${href('/anubis.svg')} alt="" width="25" height="25"> Anubis</a>
-          <nav aria-label="Main navigation">${headerLinks(page.route)}</nav>
-          <div class="header-actions"><button type="button" @click=${showSearch}>Search</button>
+          <a data-external class="site-brand" href=${href(homePath(page.folder))}><img src=${href('/anubis.svg')} alt="" width="25" height="25"> Anubis</a>
+          <nav aria-label=${t('mainNavigation')}>${headerLinks(page, t)}</nav>
+          <div class="header-actions"><button type="button" @click=${showSearch}>${t('search.button')}</button>
             <button type="button" @click=${() => {
               const dark = document.documentElement.classList.toggle('dark');
               try { localStorage.setItem('anubis-docs-theme', dark ? 'dark' : 'light'); } catch { /* The theme still works for this page. */ }
-            }}>Theme</button>
+            }}>${t('appearance')}</button>
+            ${languageMenu(page, t)}
           </div>
         </header>
-        ${searchView(entity, emit)}
-        ${page.home ? homeView(page.home, entity.step) : article(page, entity, emit, () => replay(emit))}
-        <footer class="site-footer">Released under the GNU AGPL v3. <a data-external href=${href('/THIRD_PARTY_NOTICES.txt')}>Third-party notices</a></footer>`;
+        ${searchView(entity, emit, t)}
+        ${page.home ? homeView(page.home, entity.step) : article(page, entity, emit, () => replay(emit), t)}
+        <footer class="site-footer">
+          ${t('footer')} <a data-external href=${href('/THIRD_PARTY_NOTICES.txt')}>${t('notices')}</a></footer>`;
     },
   };
 }

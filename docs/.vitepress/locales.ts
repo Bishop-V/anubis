@@ -406,8 +406,8 @@ const zhTW: Words = {
 };
 
 // The key is the folder in docs/ (and the path on the site), as in WIKI_FOLDERS.
-const LANGUAGES: Record<string, Words> = { vi, de, 'zh-cn': zhCN, 'zh-tw': zhTW };
+export const wikiWords: Record<string, Words> = { vi, de, 'zh-cn': zhCN, 'zh-tw': zhTW };
 
-export const translatedLocales = Object.fromEntries(Object.entries(LANGUAGES).map(([folder, w]) => [folder, locale(folder, w)]));
+export const translatedLocales = Object.fromEntries(Object.entries(wikiWords).map(([folder, w]) => [folder, locale(folder, w)]));
 
-export const searchLocales = Object.fromEntries(Object.entries(LANGUAGES).map(([folder, w]) => [folder, searchWords(w.search)]));
+export const searchLocales = Object.fromEntries(Object.entries(wikiWords).map(([folder, w]) => [folder, searchWords(w.search)]));

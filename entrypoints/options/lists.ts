@@ -1,4 +1,5 @@
 import { createStore } from '@inglorious/store';
+import { handleAsync } from '@inglorious/store/async';
 import { browser } from '#imports';
 import { h, icon } from '@/utils/dom';
 import { normalizeDomain } from '@/utils/domain';
@@ -51,9 +52,26 @@ type ListsView = {
   justOpened: boolean;
 };
 
+type ListDownload = { id: string; url: string; entry?: DirectoryEntry; name?: string };
+type ListDownloadOutcome = { id: string; url: string; kind: 'ok' | 'error'; message: string };
+
 const ListsView = {
-  downloadStarted(state: ListsView, id: string) { state.busy.add(id); },
-  downloadFinished(state: ListsView, id: string) { state.busy.delete(id); },
+  ...handleAsync('downloadRequested', {
+    start(state: ListsView, { id }: ListDownload) {
+      state.busy.add(id);
+      queueMicrotask(rerender);
+    },
+    run: subscribeList,
+    success(state: ListsView, { id, url, kind, message }: ListDownloadOutcome) {
+      state.busy.delete(id);
+      flash('lists', kind, message);
+      if (kind === 'ok' && state.offer && offered(state.offer).url === url) {
+        state.offer = undefined;
+        clearOfferAddress();
+      }
+      queueMicrotask(rerender);
+    },
+  }),
   offerDismissed(state: ListsView) { state.offer = undefined; },
   suggestionChanged(state: ListsView, id?: string) {
     state.suggesting = id;
@@ -67,6 +85,10 @@ const listView = () => listsStore.getState().lists;
 
 function dropOffer(): void {
   listsStore.notify('#lists:offerDismissed');
+  clearOfferAddress();
+}
+
+function clearOfferAddress(): void {
   history.replaceState(null, '', location.pathname + location.hash);
 }
 
@@ -98,10 +120,22 @@ async function subscribe(input: string, entry?: DirectoryEntry, name = entry?.na
     }
   }
   const id = entry?.builtin ? builtinId(entry) : subscriptionId(url);
-  listsStore.notify('#lists:downloadStarted', id);
-  rerender();
+  if (!listView().busy.has(id)) listsStore.notify('#lists:downloadRequested', { id, url, entry, name });
+}
+
+async function subscribeList({ id, url, entry, name }: ListDownload): Promise<ListDownloadOutcome> {
   try {
-    const download = await downloadList(url);
+    const download = await downloadList(url).catch((error: unknown) => {
+      if (!entry?.builtin) throw error;
+      return entry;
+    });
+    if (!('parsed' in download)) {
+      // Built-in lists still work from their bundled copy when the download fails.
+      await editSubscriptions((subs) =>
+        subs.some((s) => s.id === id) ? subs : [...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: true, name: download.name }],
+      );
+      return { id, url, kind: 'ok', message: t('listsSubscribedBundled', download.name) };
+    }
     const same = (s: Subscription) => s.id === id || s.url === url;
     // The copy first, so the list has its text as soon as it's subscribed.
     const existing = (await getSubscriptions()).find(same);
@@ -112,24 +146,9 @@ async function subscribe(input: string, entry?: DirectoryEntry, name = entry?.na
         : [...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: entry?.builtin || undefined, name }],
     );
     const { parsed } = download;
-    flash('lists', 'ok', t('listsSubscribed', displayName({ url, name }, parsed.meta), tn('listInstructions', parsed.rules.length), tn('popupTagCount', parsed.tags.length)));
-    const { offer } = listView();
-    if (offer && offered(offer).url === url) dropOffer();
+    return { id, url, kind: 'ok', message: t('listsSubscribed', displayName({ url, name }, parsed.meta), tn('listInstructions', parsed.rules.length), tn('popupTagCount', parsed.tags.length)) };
   } catch (error) {
-    // Built-in lists still work from their bundled copy when the download fails.
-    if (entry?.builtin) {
-      await editSubscriptions((subs) =>
-        subs.some((s) => s.id === id) ? subs : [...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: true, name: entry.name }],
-      );
-      flash('lists', 'ok', t('listsSubscribedBundled', entry.name));
-      const { offer } = listView();
-      if (offer && offered(offer).url === url) dropOffer();
-    } else {
-      flash('lists', 'error', t('listsSubscribeFailed', error instanceof Error ? error.message : String(error)));
-    }
-  } finally {
-    listsStore.notify('#lists:downloadFinished', id);
-    rerender();
+    return { id, url, kind: 'error', message: t('listsSubscribeFailed', error instanceof Error ? error.message : String(error)) };
   }
 }
 

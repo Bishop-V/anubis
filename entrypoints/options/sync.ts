@@ -1,3 +1,5 @@
+import { createStore } from '@inglorious/store';
+import { handleAsync } from '@inglorious/store/async';
 import { browser } from '#imports';
 import { h } from '@/utils/dom';
 import { t, type MessageKey } from '@/utils/i18n';
@@ -24,7 +26,27 @@ import { helpLink, pageTitle } from './parts';
 
 /** What's typed into the connect form, kept across re-renders (which replace the inputs). */
 const draft = { url: '', user: '', password: '', encryptionPassphrase: '', encryptionConfirmation: '', encrypt: true };
-let syncing = false;
+type SyncView = { type: 'SyncView'; busy: boolean };
+const sync: SyncView = { type: 'SyncView', busy: false };
+const SyncView = {
+  ...handleAsync('syncRequested', {
+    start(state: SyncView) {
+      state.busy = true;
+      queueMicrotask(rerender);
+    },
+    async run() {
+      if (await send<SyncStatus | null>({ type: 'sync-server' }) === undefined) throw new Error('WebDAV worker did not reply');
+    },
+    error() { flash('sync', 'error', t('webdavErrorFailed')); },
+    finally(state: SyncView) {
+      state.busy = false;
+      queueMicrotask(rerender);
+    },
+  }),
+  busyChanged(state: SyncView, busy: boolean) { state.busy = busy; },
+};
+const syncStore = createStore({ types: { SyncView }, entities: { sync } });
+const isSyncing = () => syncStore.getState().sync.busy;
 
 const ERRORS: Record<SyncErrorCode, MessageKey> = {
   auth: 'webdavErrorAuth',
@@ -70,22 +92,23 @@ async function browserSyncPanel(): Promise<HTMLElement> {
 
 /** Ask for what syncing needs, straight from the click (Firefox only asks during it), then sync. */
 function syncNow(account: WebdavAccount, requestDataConsent: boolean, first = false, saveAccount = false): void {
+  if (isSyncing()) return;
   const asked = browser.permissions.request(permissionsFor(account.url, requestDataConsent) as PermissionRequest).catch(() => false);
   void asked.then(async (granted) => {
     if (!granted) {
       flash('sync', 'error', t('webdavDenied', host(account)));
       return rerender();
     }
+    if (isSyncing()) return;
     if (first) {
       await connect(account);
       draft.password = '';
       draft.encryptionPassphrase = '';
       draft.encryptionConfirmation = '';
     } else if (saveAccount) await accountItem.setValue(account);
-    syncing = true;
-    rerender();
-    await send({ type: 'sync-server' });
-    syncing = false;
+    if (!isSyncing()) syncStore.notify('#sync:syncRequested');
+  }).catch(() => {
+    flash('sync', 'error', t('webdavErrorFailed'));
     rerender();
   });
 }
@@ -207,17 +230,22 @@ function changePassphrasePanel(): HTMLElement {
     input,
     h('label', { attrs: { for: 'webdav-new-passphrase-confirm' } }, t('webdavConfirmPassphrase')),
     confirmation,
-    h('button', { class: 'btn', type: 'submit', disabled: syncing }, t('webdavChangePassphrase')),
+    h('button', { class: 'btn', type: 'submit', disabled: isSyncing() }, t('webdavChangePassphrase')),
   );
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    if (syncing) return;
+    if (isSyncing()) return;
     if (!passphraseOk(input, confirmation)) return;
-    syncing = true;
+    syncStore.notify('#sync:busyChanged', true);
     rerender();
-    await send({ type: 'change-passphrase', passphrase: input.value });
-    syncing = false;
-    rerender();
+    try {
+      if (await send<SyncStatus | null>({ type: 'change-passphrase', passphrase: input.value }) === undefined) {
+        flash('sync', 'error', t('webdavErrorFailed'));
+      }
+    } finally {
+      syncStore.notify('#sync:busyChanged', false);
+      rerender();
+    }
   });
   return form;
 }
@@ -247,7 +275,7 @@ function connectedPanel(account: WebdavAccount, status: SyncStatus | null, dataC
     account.encryptionPassphrase && account.encryptionReady && status?.error !== 'passphrase' && status?.error !== 'encrypted'
       ? changePassphrasePanel()
       : null,
-    syncing
+    isSyncing()
       ? h('div', { class: 'notice' }, t('webdavSyncing'))
       : failed
         ? h('div', { class: 'notice error' }, failed, ' ', t('webdavLastTried', when(status!.at)))
@@ -257,8 +285,8 @@ function connectedPanel(account: WebdavAccount, status: SyncStatus | null, dataC
     h(
       'div',
       { class: 'toolbar', style: 'margin-top:12px' },
-      h('button', { class: 'btn primary', type: 'button', disabled: syncing, on: { click: () => syncNow(account, requestDataConsent) } }, t('webdavSyncNow')),
-      h('button', { class: 'btn', type: 'button', disabled: syncing, on: { click: () => void leave() } }, t('webdavDisconnect')),
+      h('button', { class: 'btn primary', type: 'button', disabled: isSyncing(), on: { click: () => syncNow(account, requestDataConsent) } }, t('webdavSyncNow')),
+      h('button', { class: 'btn', type: 'button', disabled: isSyncing(), on: { click: () => void leave() } }, t('webdavDisconnect')),
     ),
     flashed('sync'),
   );

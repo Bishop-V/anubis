@@ -6,23 +6,30 @@ import { join } from 'node:path';
 import { parseHTML } from 'linkedom';
 import { chromium } from 'playwright-core';
 import { builtResource, builtSite } from './ssx-site.mjs';
+import { TRANSLATED_PAGES, WIKI_FOLDERS } from '../utils/links.ts';
 
 const output = join(builtSite, 'anubis');
 const screenshots = process.argv.includes('--screenshots');
 const shotDir = join(output, 'screenshots');
 if (screenshots) mkdirSync(shotDir, { recursive: true });
+const folders = Object.values(WIKI_FOLDERS);
 const pages = readdirSync(output, { recursive: true }).filter((path) => path.endsWith('index.html'));
 assert.ok(pages.length > 20, 'the preview includes all English wiki pages');
 
 const documents = new Map(pages.map((file) => {
   const path = '/anubis/' + file.replace(/\/?index\.html$/, '');
   const document = parseHTML(readFileSync(join(output, file), 'utf8')).document;
-  assert.equal(document.documentElement.lang, 'en');
+  const folder = path.split('/')[2];
+  const [lang] = Intl.getCanonicalLocales(folders.includes(folder) ? folder : 'en');
+  assert.equal(document.documentElement.lang, lang, path);
   assert.ok(document.querySelector('main h1')?.textContent, path + ' must contain readable HTML');
   return [path, document];
 }));
+for (const folder of folders) {
+  for (const route of TRANSLATED_PAGES) assert.ok(documents.has('/anubis/' + folder + (route ? '/' + route : '')), folder + '/' + route);
+}
 for (const [path, document] of documents) {
-  for (const node of document.querySelectorAll('main a[href], main img[src]')) {
+  for (const node of document.querySelectorAll('a[href], main img[src]')) {
     const address = new URL(node.getAttribute('href') ?? node.getAttribute('src'), 'https://example.test' + path);
     if (address.origin !== 'https://example.test') continue;
     assert.ok(builtResource(address.pathname), path + ' links to ' + address.pathname);
@@ -44,7 +51,16 @@ try {
   browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH ?? chromium.executablePath() });
   const errors = [];
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
+  page.setDefaultTimeout(15_000);
   page.on('pageerror', (error) => errors.push(error.message));
+  await page.addInitScript(() => {
+    window.rankAnimations = [];
+    const animate = Element.prototype.animate;
+    Element.prototype.animate = function (keyframes, options) {
+      if (this.matches('.rank-motion')) window.rankAnimations.push(this.dataset.motionId);
+      return animate.call(this, keyframes, options);
+    };
+  });
   await page.goto(url);
   await page.getByRole('heading', { level: 1, name: 'Hide, rank, and tag search results' }).waitFor();
   await page.locator('.demo-step').last().scrollIntoViewIfNeeded();
@@ -55,19 +71,27 @@ try {
   await page.getByRole('searchbox', { name: 'Search guides' }).fill('hidden results');
   await page.locator('.search-results a[href$="#hidden-results"]').first().waitFor();
   await page.keyboard.press('Escape');
+  await page.locator('#site-search').waitFor({ state: 'hidden' });
   await page.goto(url + 'guide/ranking#hidden-results');
   assert.equal(await page.locator('h2#hidden-results').count(), 1);
   const demo = page.locator('.rank-demo');
   await demo.scrollIntoViewIfNeeded();
   const ready = demo.locator('button:enabled');
   await ready.waitFor();
-  assert.equal(await demo.locator('.demo-results > :first-child.pinned').count(), 1);
+  assert.equal(await demo.locator('.demo-results > :first-child .pinned').count(), 1);
   assert.equal(await demo.locator('.demo-results > :last-child .demo-col.lower').count(), 1);
   await ready.click();
   await demo.locator('button:disabled').waitFor();
   await ready.waitFor();
+  assert.deepEqual(await page.evaluate(() => window.rankAnimations), []);
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto(url + 'guide/ranking');
+  await demo.scrollIntoViewIfNeeded();
+  await page.waitForFunction(() => window.rankAnimations.some((id) => id.startsWith('ranking-')));
+  await ready.waitFor();
+  assert.equal(await demo.locator('.demo-results > :first-child .pinned').count(), 1);
   for (const mode of ['light', 'dark']) {
-    await page.emulateMedia({ colorScheme: mode });
+    await page.emulateMedia({ colorScheme: mode, reducedMotion: 'reduce' });
     await page.goto(url + 'guide/ranking');
     await demo.scrollIntoViewIfNeeded();
     await ready.waitFor();
@@ -108,17 +132,35 @@ try {
   await page.getByText('<b>example</b>', { exact: true }).waitFor();
   assert.equal(await page.locator('main b').count(), 0);
 
-  for (const width of [320, 360, 390]) {
-    await page.setViewportSize({ width, height: 900 });
-    for (const route of ['', 'guide/ranking', 'lists']) {
-      await page.goto(url + route);
-      await page.locator('main h1').waitFor();
-      assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), route + ' at ' + width);
+  await page.goto(url + 'guide/ranking');
+  await page.locator('.language-menu summary').click();
+  await page.getByRole('link', { name: 'Deutsch', exact: true }).click();
+  await page.waitForURL('**/de/guide/ranking');
+  await page.getByRole('button', { name: 'Suchen', exact: true }).click();
+  await page.getByRole('searchbox', { name: 'Anleitungen durchsuchen' }).fill('einstufen');
+  const germanResult = page.locator('.search-results a').first();
+  await germanResult.waitFor();
+  assert.match(await germanResult.getAttribute('href'), /^\/anubis\/de\//);
+  if (screenshots) await page.locator('#site-search').screenshot({ path: join(shotDir, 'search-de.png'), animations: 'disabled' });
+  await page.keyboard.press('Escape');
+  await page.locator('#site-search').waitFor({ state: 'hidden' });
+  await page.getByRole('navigation', { name: 'Hauptnavigation' }).getByRole('link', { name: 'Listen (auf Englisch)', exact: true }).click();
+  await page.waitForURL('**/lists');
+
+  for (const mode of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme: mode });
+    for (const width of [320, 360, 390]) {
+      await page.setViewportSize({ width, height: 900 });
+      for (const route of ['', 'guide/ranking', 'de/guide/ranking', 'vi/', 'zh-cn/', 'zh-tw/', 'lists']) {
+        await page.goto(url + route);
+        await page.locator('main h1').waitFor();
+        assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), route + ' at ' + width + ' in ' + mode);
+      }
     }
   }
   if (screenshots) await page.screenshot({ path: join(shotDir, 'lists-mobile.png'), fullPage: true, animations: 'disabled' });
   assert.deepEqual(errors, []);
-  console.log('All ' + pages.length + ' English pages and their local links passed, including search, demos, Subscribe, and responsive layout.');
+  console.log('All ' + pages.length + ' pages in five languages passed, including local links, search, motion, Subscribe, and responsive layout.');
 } finally {
   await browser?.close();
   server.close();

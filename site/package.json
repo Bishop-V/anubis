@@ -1,5 +1,5 @@
 {
-  "name": "anubis-english-site",
+  "name": "anubis-ssx-site",
   "private": true,
   "type": "module",
   "engines": {
@@ -12,8 +12,11 @@
     "preview": "ssx serve"
   },
   "dependencies": {
+    "@inglorious/i18n": "1.3.0",
+    "@inglorious/motion": "9.0.18",
     "@inglorious/ssx": "2.3.2",
     "@inglorious/store": "12.1.1",
+    "@inglorious/ui": "9.8.0",
     "@inglorious/utils": "5.1.0",
     "@inglorious/web": "6.11.0",
     "gray-matter": "4.0.3",

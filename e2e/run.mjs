@@ -2446,6 +2446,20 @@ if (only === 'ssx-subscribe') {
   });
   const catalogue = JSON.parse(readFileSync(new URL('../lists/directory.json', import.meta.url), 'utf8'));
   const optional = catalogue.lists.find((list) => !list.default);
+  const firstDownload = Promise.withResolvers();
+  let downloads = 0;
+  await ctx.route(optional.url, async (route) => {
+    const status = ++downloads === 1 ? await firstDownload.promise : 200;
+    return route.fulfill({
+      status,
+      headers: { 'access-control-allow-origin': '*' },
+      contentType: 'text/plain',
+      body: '*://example.org/*\n',
+    });
+  });
+  const subscribed = () => ctx.serviceWorkers()[0].evaluate(async (wanted) =>
+    Boolean((await chrome.storage.sync.get('subscriptions')).subscriptions?.some((sub) => sub.url === wanted)), optional.url);
+
   const directoryPage = await ctx.newPage();
   await directoryPage.goto('https://bishop-v.github.io/anubis/lists');
   const next = ctx.waitForEvent('page', { timeout: 6000 });
@@ -2458,12 +2472,27 @@ if (only === 'ssx-subscribe') {
   assertChecks('SSX directory handoff', {
     addressPassed: url.searchParams.get('url') === optional.url,
     namePassed: url.searchParams.get('name') === optional.name,
-    noAutomaticSubscription: !(await ctx.serviceWorkers()[0].evaluate(async (wanted) =>
-      (await chrome.storage.sync.get('subscriptions')).subscriptions?.some((sub) => sub.url === wanted), optional.url)),
+    noAutomaticSubscription: !await subscribed(),
   });
+  const offer = settings.locator('.panel.offer');
+  const confirm = offer.getByRole('button', { name: 'Subscribe', exact: true });
+  try {
+    await confirm.click();
+    await offer.locator('button.btn.primary:disabled').waitFor({ timeout: 6000 });
+  } finally {
+    firstDownload.resolve(503);
+  }
+  await settings.getByText(/^Couldn’t subscribe:/).waitFor({ timeout: 6000 });
+  assertChecks('failed download did not save the list', { stillUnsubscribed: !await subscribed() });
+
+  await confirm.click();
+  await settings.getByText('Subscribed to ' + optional.name + ':', { exact: false }).waitFor({ timeout: 6000 });
+  await offer.waitFor({ state: 'detached' });
+  await settings.waitForURL('**/options.html#lists');
+  assertChecks('confirmed retry subscribed and closed the offer', { subscribed: await subscribed(), retried: downloads === 2 });
   await settings.close();
   await directoryPage.close();
-  console.log('\n== SSX directory opened the extension confirmation');
+  console.log('\n== SSX directory opened Settings, showed download progress and error, and subscribed after retry');
 }
 
 if (!only || only === 'subscribe-link') {

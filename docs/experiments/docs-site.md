@@ -4,6 +4,8 @@ The documentation site and its screenshots. Part of [Experiments and decisions](
 
 ## Documentation site
 
+- **Multilingual SSX preview (2026-11-26).** SSX builds the five existing wiki languages from Markdown. Inglorious I18n resolves interface strings using the language in the URL. Inglorious UI renders the search and directory inputs with Graphite styles, and Inglorious Motion animates the demos' rank changes with support for reduced motion. The build checks preserve the English-only publishing routes and include a screenshot of German wiki search in the CI artifact.
+
 - **English SSX proof of concept (2026-11-26).** SSX renders the English wiki using the same Markdown and fixtures. Its own layout, search, demos, and directory use Inglorious Web and Store. SSX 2.3.2 declares a base path in its types but does not apply it to client routing or the entry script. The preview generates routes under `/anubis/` and packages the runtime alongside them. Heading IDs follow the VitePress rules, and the browser check opens the built directory with the extension to verify the Subscribe handoff.
 
 - **Ranking icons in the light demo (2026-11-25).** The pin and scales used VitePress's own text greys. The demos now use the extension's Graphite text colour for the pin and its muted colour for the scales. The ranking demo's browser check compares both schemes with those colours.

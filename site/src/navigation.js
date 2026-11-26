@@ -1,59 +1,84 @@
 import { html } from '@inglorious/web';
+import { TRANSLATED_PAGES } from '../../utils/links.ts';
+import { languages } from './languages.js';
 
 export const base = '/anubis';
 export const href = (path) => path.startsWith('/') ? base + path : path;
 
-export const sections = [
-  ['Start here', [
-    ['Introduction', '/guide/introduction'],
-    ['Getting started', '/guide/getting-started'],
+const sections = [
+  ['startHere', [
+    ['introduction', '/guide/introduction'],
+    ['gettingStarted', '/guide/getting-started'],
   ]],
-  ['Using Anubis', [
-    ['Ranking sites', '/guide/ranking'],
-    ['Tags', '/guide/tags'],
-    ['Subscribing to lists', '/guide/lists'],
-    ['Removing panels', '/guide/clean-up'],
-    ['Loading more results', '/guide/more-results'],
-    ['Moving from other tools', '/guide/import-and-backup'],
-    ['Syncing between computers', '/guide/sync'],
+  ['using', [
+    ['ranking', '/guide/ranking'],
+    ['tags', '/guide/tags'],
+    ['subscribing', '/guide/lists'],
+    ['panels', '/guide/clean-up'],
+    ['more', '/guide/more-results'],
+    ['moving', '/guide/import-and-backup'],
+    ['sync', '/guide/sync'],
   ]],
-  ['Help', [
-    ['Troubleshooting', '/guide/troubleshooting'],
-    ['Search engines', '/guide/search-engines'],
-    ['Privacy and permissions', '/guide/privacy'],
+  ['help', [
+    ['troubleshooting', '/guide/troubleshooting'],
+    ['engines', '/guide/search-engines'],
+    ['privacyFull', '/guide/privacy'],
   ]],
-  ['Publishing lists', [
-    ['Publish a list', '/guide/publish-a-list'],
-    ['List format', '/list-format'],
-    ['Lists directory', '/lists'],
+  ['publishing', [
+    ['publish', '/guide/publish-a-list'],
+    ['listFormat', '/list-format'],
+    ['directory', '/lists'],
   ]],
-  ['Get involved', [
-    ['Help translate', '/guide/translate'],
-    ['Experiments and decisions', '/experiments'],
-    ['Platform watch', '/platform-watch'],
-    ['Contributing', 'https://github.com/Bishop-V/anubis/blob/main/CONTRIBUTING.md'],
-    ['Developing Anubis', 'https://github.com/Bishop-V/anubis/blob/main/DEVELOPMENT.md'],
+  ['involved', [
+    ['translate', '/guide/translate'],
+    ['experiments', '/experiments'],
+    ['platformWatch', '/platform-watch'],
+    ['contributing', 'https://github.com/Bishop-V/anubis/blob/main/CONTRIBUTING.md'],
+    ['developing', 'https://github.com/Bishop-V/anubis/blob/main/DEVELOPMENT.md'],
   ]],
 ];
 
-const top = [['Wiki', '/guide/introduction'], ['Lists', '/lists'], ['List format', '/list-format'], ['Privacy', '/guide/privacy']];
+const top = [['wiki', '/guide/introduction'], ['lists', '/lists'], ['listFormat', '/list-format'], ['privacy', '/guide/privacy']];
 
 export function pageLink(label, path, current) {
   return html`<a data-external href=${href(path)} aria-current=${path === current ? 'page' : 'false'}>${label}</a>`;
 }
 
-export const headerLinks = (current) => top.map(([label, path]) => pageLink(label, path, current));
-export const sidebar = (current) => sections.map(([group, links]) => html`<section>
-  <h2>${group}</h2>
-  ${links.map(([label, path]) => pageLink(label, path, current))}
+function localPath(path, folder) {
+  return folder !== 'en' && TRANSLATED_PAGES.includes(path.slice(1)) ? '/' + folder + path : path;
+}
+
+export function homePath(folder) {
+  return localPath('/', folder);
+}
+
+export function languageMenu(page, t) {
+  const original = page.folder === 'en' ? page.route : page.route.slice(page.folder.length + 1);
+  const translated = TRANSLATED_PAGES.includes(original.slice(1));
+  return html`<details class="language-menu">
+    <summary aria-label=${t('langMenu')}>${t('label')}</summary>
+    <ul>${languages.map(({ folder, label, lang }) => {
+      const path = folder === page.folder ? page.route : translated ? localPath(original, folder) : homePath(folder);
+      return html`<li><a data-external href=${href(path)} lang=${lang} hreflang=${lang}
+        aria-current=${page.folder === folder ? 'true' : 'false'}>${label}</a></li>`;
+    })}</ul>
+  </details>`;
+}
+
+const navLink = ([label, path], page, t) => pageLink(t(label), localPath(path, page.folder), page.route);
+
+export const headerLinks = (page, t) => top.map((item) => navLink(item, page, t));
+export const sidebar = (page, t) => sections.map(([group, links]) => html`<section>
+  <h2>${t(group)}</h2>
+  ${links.map((item) => navLink(item, page, t))}
 </section>`);
 
-export function neighbouringPages(current) {
+export function neighbouringPages(page, t) {
   const pages = sections.flatMap(([, links]) => links.filter(([, path]) => path.startsWith('/')));
-  const index = pages.findIndex(([, path]) => path === current);
+  const index = pages.findIndex(([, path]) => localPath(path, page.folder) === page.route);
   if (index < 0) return '';
-  return html`<nav class="neighbours" aria-label="Adjacent pages">
-    ${pages.slice(Math.max(index - 1, 0), index).map(([label, path]) => pageLink(label, path, current))}
-    ${pages.slice(index + 1, index + 2).map(([label, path]) => pageLink(label, path, current))}
+  return html`<nav class="neighbours" aria-label=${t('adjacentPages')}>
+    ${pages.slice(Math.max(index - 1, 0), index).map((item) => navLink(item, page, t))}
+    ${pages.slice(index + 1, index + 2).map((item) => navLink(item, page, t))}
   </nav>`;
 }

@@ -1,4 +1,6 @@
+import { withMotion } from '@inglorious/motion';
 import { html } from '@inglorious/web';
+import { repeat } from '@inglorious/web/directives/repeat';
 import { unsafeHTML } from '@inglorious/web/directives/unsafe-html';
 import { ICON, LEVELS, rankIcon, WEIGH } from '../../docs/.vitepress/theme/demo-icons.ts';
 import {
@@ -37,6 +39,20 @@ function resultRow(result, { level = 'normal', hidden = false, active = false, b
   </div>`;
 }
 
+const rankMotion = withMotion({
+  animateOnMount: false,
+  classPrefix: 'rank-motion',
+  variants: {
+    pin: { frames: [{ transform: 'translateY(10px)', opacity: 0.7 }, { transform: 'none', opacity: 1 }], options: { duration: 240, easing: 'ease-out' } },
+    raise: { frames: [{ transform: 'translateY(8px)', opacity: 0.75 }, { transform: 'none', opacity: 1 }], options: { duration: 240, easing: 'ease-out' } },
+    lower: { frames: [{ transform: 'translateY(-10px)', opacity: 0.7 }, { transform: 'none', opacity: 1 }], options: { duration: 240, easing: 'ease-out' } },
+  },
+})({ render: ({ result, props }) => resultRow(result, props) });
+
+function rankedResult(scope, result, props) {
+  return rankMotion.render({ id: scope + '-' + result.id, motionVariant: props.level, result, props });
+}
+
 const panels = {
   news: ['cards', 'card'],
   questions: ['', 'question'],
@@ -72,7 +88,7 @@ function scrollStage(step) {
     `)}
     <div class="demo-results">
       ${SCROLL_ITEMS.map((item, index) => html`<div class="demo-item" style=${'order:' + (step < 4 ? index : SCROLL_RANKED.indexOf(item.id))}>
-        ${'heading' in item ? cleanupPanel(item, step) : resultRow(item, {
+        ${'heading' in item ? cleanupPanel(item, step) : rankedResult('home', item, {
           level: step >= 4 ? item.pinned ? 'pin' : item.raised ? 'raise' : item.lowered ? 'lower' : 'normal' : 'normal',
           hidden: item.hidden && step >= 3,
           badge: step >= 5 ? item.tag : undefined,
@@ -82,7 +98,7 @@ function scrollStage(step) {
   </div>`;
 }
 
-export function homeView({ intro, highlights, closing }, step) {
+export function homeView({ intro, highlights, closing, demo, highlightsLabel }, step) {
   return html`<main id="content" class="home">
     <div class="scroll-demo">
       <section class=${'demo-intro' + (step === 1 ? ' active' : '')}>
@@ -91,13 +107,13 @@ export function homeView({ intro, highlights, closing }, step) {
           ${Object.entries(stores).map(([store, address]) => html`<a class=${'home-button brand install install-' + store} href=${address}>${intro.install[store]}</a>`)}
           ${intro.actions.map(({ text, link, brand }) => html`<a data-external class=${'home-button' + (brand ? ' brand' : '')} href=${href(link)}>${text}</a>`)}
         </div>
-        <p class="demo-cue"><span class="arrow" aria-hidden="true">↓</span> Scroll, and watch Anubis tidy up this search</p>
+        <p class="demo-cue"><span class="arrow" aria-hidden="true">↓</span> ${demo?.cue ?? 'Scroll, and watch Anubis tidy up this search'}</p>
       </section>
       <div class="demo-stage">${scrollStage(step)}</div>
       <div class="demo-track">
         <div class="demo-rail" aria-hidden="true"><span class="demo-rail-fill"></span></div>
-        <ol class="demo-steps" aria-label="What Anubis does to a search">
-          ${SCROLL_STEPS.map(({ title, text }, i) => html`<li
+        <ol class="demo-steps" aria-label=${demo?.label ?? 'What Anubis does to a search'}>
+          ${(demo?.steps ?? SCROLL_STEPS).map(({ title, text }, i) => html`<li
             class=${'demo-step' + (step >= i + 2 ? ' reached' : '') + (step === i + 2 ? ' active' : '')}
             aria-current=${step === i + 2 ? 'step' : 'false'}>
             <h2><span class="demo-marker" aria-hidden="true"></span><span class="demo-step-title">${title}</span></h2><p>${text}</p>
@@ -105,7 +121,7 @@ export function homeView({ intro, highlights, closing }, step) {
         </ol>
       </div>
     </div>
-    <section class="home-highlights" aria-label="What else Anubis does">
+    <section class="home-highlights" aria-label=${highlightsLabel ?? 'What else Anubis does'}>
       ${highlights.map(({ title, details, link, linkText }) => html`<div class="home-highlight">
         <h2>${title}</h2><p>${details}</p>${pageLink(linkText, link)}
       </div>`)}
@@ -184,7 +200,7 @@ function rankMenu({ menu, selected }, results) {
   </div>`;
 }
 
-export function guideDemo(kind, demo, replay) {
+export function guideDemo(kind, demo, replay, t) {
   const rank = kind === 'ranking';
   const results = rank ? RANK_RESULTS : HIDE_RESULTS;
   const order = { pin: -1, lower: 1 };
@@ -201,7 +217,7 @@ export function guideDemo(kind, demo, replay) {
           ${fold(!!demo.said, 'hd-change', html`${demo.said} <span class="demo-link">Undo</span>`)}
           <div class="summary-tags hd-tags">${tag(REFERENCE, 2)}</div>
         </div>
-        <div class="demo-results">${ordered.map((result) => resultRow(result, {
+        <div class="demo-results">${repeat(ordered, (result) => result.id, (result) => rankedResult(kind, result, {
           demo: true,
           level: demo.levels[result.id] ?? (result.chip === 'raised' ? 'raise' : 'normal'),
           hidden: demo.levels[result.id] === 'hide',
@@ -215,8 +231,8 @@ export function guideDemo(kind, demo, replay) {
       </span>
     </div>
     <figcaption class="caption hd-caption">
-      ${rank ? 'Pinning one site and lowering another from the button beside each result.' : 'Hiding a site from the button beside its result.'}
-      <button type="button" class="hd-replay" ?disabled=${!demo.done} @click=${replay}>Play again</button>
+      ${t(rank ? 'rankCaption' : 'hideCaption')}
+      <button type="button" class="hd-replay" ?disabled=${!demo.done} @click=${replay}>${t('replay')}</button>
     </figcaption>
   </figure>`;
 }

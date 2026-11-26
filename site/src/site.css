@@ -146,3 +146,27 @@ button:disabled { cursor: default; }
   .wiki-sidebar summary { display: list-item; }
   .wiki-article h1, .wiki-article h2, .wiki-article h3 { scroll-margin-top: 1rem; }
 }
+
+.iw-input-label { display: block; }
+.iw-input-control { max-width: 100%; }
+.language-menu { position: relative; }
+.language-menu summary {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  padding: 0.3rem 0.55rem;
+  background: var(--vp-c-bg-elv);
+}
+.language-menu ul {
+  position: absolute;
+  z-index: 1;
+  inset-inline-end: 0;
+  min-width: max-content;
+  margin: 0.25rem 0 0;
+  padding: 0.4rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  background: var(--vp-c-bg-elv);
+  list-style: none;
+}
+.language-menu a { display: block; padding: 0.25rem 0.5rem; }
+.language-menu a[aria-current='true'] { font-weight: 650; }

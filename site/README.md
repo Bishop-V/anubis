@@ -1,6 +1,6 @@
 # Anubis on Inglorious
 
-This proof of concept builds the English Anubis site with Inglorious SSX, Web, and Store. It uses the wiki’s Markdown, Graphite stylesheet, sample results, and lists catalogue. The VitePress entry point serves the full set of languages.
+This proof of concept builds Anubis’s public site with Inglorious SSX, Web, and Store. It shares the wiki’s Markdown, Graphite stylesheet, sample results, and lists catalogue with VitePress. Inglorious I18n translates the navigation and search interface. Inglorious UI provides the wiki search and list filter fields, and Inglorious Motion animates ranking changes in the demos.
 
 Use Node 22.12 or newer. From the repository root, run:
 
@@ -10,7 +10,7 @@ npm --prefix site run build
 npm --prefix site run preview
 ```
 
-Open `http://localhost:3000/anubis/`. The static preview is in `site/dist/`. Preview builds include the English homepage, guides, lists directory, and Subscribe page, and omit locale-prefixed routes.
+Open `http://localhost:3000/anubis/`. The static preview is in `site/dist/`. The homepage and guides are available in English, German, Vietnamese, Simplified Chinese, and Traditional Chinese. The lists directory, Subscribe page, and contributor pages follow the existing English URLs.
 
 The site uses Store events for the demos, wiki search, list filtering, and Subscribe link state. Selecting **Subscribe** uses a full navigation to the published Anubis path. The packaged extension recognises that path on `bishop-v.github.io`. The end-to-end check serves the SSX build at that address inside the test browser.
 
@@ -23,4 +23,4 @@ npm run build:chrome
 node e2e/run.mjs ssx-subscribe
 ```
 
-The screenshots are in `site/dist/anubis/screenshots/`. The CI job includes them in the downloadable static preview.
+The screenshots are in `site/dist/anubis/screenshots/`. The **SSX preview** job includes them in the `anubis-ssx-preview` artifact. It runs for pushes to `inglorious-trial` and for pull requests. You can also choose **CI → Run workflow** in GitHub Actions and enable screenshots.

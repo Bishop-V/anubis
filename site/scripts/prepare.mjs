@@ -4,6 +4,7 @@ import matter from 'gray-matter';
 import MarkdownIt from 'markdown-it';
 import anchor from 'markdown-it-anchor';
 import container from 'markdown-it-container';
+import { WIKI_FOLDERS } from '../../utils/links.ts';
 
 const site = resolve(import.meta.dirname, '..');
 const repo = resolve(site, '..');
@@ -14,20 +15,22 @@ const base = '/anubis';
 const repository = 'https://github.com/Bishop-V/anubis/blob/main';
 
 function routeFor(file) {
-  return file === 'index.md' ? '/' : '/' + file.replace(/\.md$/, '');
+  return '/' + file.replace(/(^|\/)index\.md$/, '$1').replace(/\.md$/, '');
 }
 
-async function englishFiles() {
-  const root = (await readdir(docs)).filter((file) => file.endsWith('.md'));
-  for (const folder of ['guide', 'experiments']) {
-    for (const file of await readdir(join(docs, folder))) {
-      if (file.endsWith('.md')) root.push(folder + '/' + file);
-    }
-  }
-  return root.sort();
+const folders = Object.values(WIKI_FOLDERS);
+async function markdownFiles(folder = '', children = []) {
+  const files = (await readdir(join(docs, folder)))
+    .filter((file) => file.endsWith('.md'))
+    .map((file) => join(folder, file));
+  for (const child of children) files.push(...await markdownFiles(join(folder, child)));
+  return files;
 }
 
-const files = await englishFiles();
+const files = [
+  ...await markdownFiles('', ['guide', 'experiments']),
+  ...(await Promise.all(folders.map((folder) => markdownFiles(folder, ['guide'])))).flat(),
+].sort();
 const routes = new Map(files.map((file) => [file, routeFor(file)]));
 const previousAssets = new Set(await readdir(join(docs, 'img')));
 // Match VitePress's heading IDs so links from installed extensions still land.
@@ -99,7 +102,7 @@ const makeModule = (page, file) => {
   const importFrom = relative(join(source, file, '..'), join(site, 'src/view.js'));
   return `import { createPage } from ${JSON.stringify(importFrom.startsWith('.') ? importFrom : './' + importFrom)};\n` +
     `const page = ${JSON.stringify(page)};\n` +
-    `export const metadata = { title: page.title + (page.route === '/' ? ' | Hide, rank, and tag search results' : ' | Anubis') };\n` +
+    `export const metadata = { title: page.home ? page.title + ' | ' + page.home.titleTemplate : page.title + ' | Anubis', lang: page.lang };\n` +
     `export const ${'Anubis' + file.replace(/[^a-zA-Z0-9]+/g, ' ').trim().split(' ').map((part) => part[0].toUpperCase() + part.slice(1)).join('')} = createPage(page);\n`;
 };
 
@@ -111,17 +114,24 @@ await cp(join(docs, '.vitepress/theme/brand.css'), join(publicDir, 'brand.css'))
 await cp(join(site, 'src/site.css'), join(publicDir, 'site.css'));
 await cp(join(site, 'src/preferences.js'), join(publicDir, 'preferences.js'));
 const notices = await readFile(join(repo, 'public/THIRD_PARTY_NOTICES.txt'), 'utf8');
-const webLicense = await readFile(join(site, 'node_modules/@inglorious/web/LICENSE'), 'utf8');
-const litLicense = await readFile(join(site, 'node_modules/lit-html/LICENSE'), 'utf8');
-await writeFile(join(publicDir, 'THIRD_PARTY_NOTICES.txt'), notices +
-  '\nInglorious Web\nhttps://github.com/IngloriousCoderz/inglorious-forge\n\n' + webLicense +
-  '\nLit (lit-html, @lit-labs/ssr-client, @lit/reactive-element)\nhttps://github.com/lit/lit\n\n' + litLicense);
+const siteLicenses = [
+  ['Inglorious Web, Motion, UI, and I18n', 'https://github.com/IngloriousCoderz/inglorious-forge', '@inglorious/web'],
+  ['Lit (lit-html, @lit-labs/ssr-client, @lit/reactive-element)', 'https://github.com/lit/lit', 'lit-html'],
+  ['i18next', 'https://github.com/i18next/i18next', 'i18next'],
+];
+const licenses = await Promise.all(siteLicenses.map(async ([label, url, pkg]) =>
+  '\n' + label + '\n' + url + '\n\n' + await readFile(join(site, 'node_modules', pkg, 'LICENSE'), 'utf8'),
+));
+await writeFile(join(publicDir, 'THIRD_PARTY_NOTICES.txt'), notices + licenses.join(''));
 
-const search = [];
+const search = new Map(['en', ...folders].map((folder) => [folder, []]));
 for (const file of files) {
   const { content, data } = matter(await readFile(join(docs, file), 'utf8'));
   const markup = markdownFor(file, content);
   const route = routes.get(file);
+  const folder = folders.find((name) => file.startsWith(name + '/')) ?? 'en';
+  const [lang] = Intl.getCanonicalLocales(folder);
+  const home = data.layout === 'home' ? data : undefined;
   const tokens = md.parse(markup, { file });
   const headings = tokens.flatMap((token, index) => {
     if (token.type !== 'heading_open') return [];
@@ -130,7 +140,7 @@ for (const file of files) {
   const title = data.title || headings[0]?.label || file;
   const body = md.renderer.render(tokens, md.options, { file });
   if (file !== 'subscribe.md' && data.search !== false) {
-    const entries = [{ title, heading: '', url: base + route, text: route === '/' ? data.intro.lead : '' }];
+    const entries = [{ title, heading: '', url: base + route, text: home?.intro.lead ?? '' }];
     let section = entries[0];
     for (let index = 0; index < tokens.length; index++) {
       const token = tokens[index];
@@ -142,12 +152,15 @@ for (const file of files) {
         section.text += ' ' + token.children.filter((child) => child.type === 'text' || child.type === 'code_inline').map((child) => child.content).join(' ');
       }
     }
-    search.push(...entries);
+    search.get(folder).push(...entries);
   }
   const output = join(source, file.replace(/\.md$/, '.js'));
   await mkdir(resolve(output, '..'), { recursive: true });
   const parts = body.split(/<!-- anubis:(directory|subscribe|ranking|hiding) -->/);
-  await writeFile(output, makeModule({ route, file, title, headings: data.outline === false ? [] : headings.filter(({ level }) => level === 2 || level === 3), parts, home: route === '/' ? data : undefined }, file));
+  await writeFile(output, makeModule({ route, file, title, folder, lang, headings: data.outline === false ? [] : headings.filter(({ level }) => level === 2 || level === 3), parts, home }, file));
 }
-await writeFile(join(publicDir, 'search.json'), JSON.stringify(search));
-console.log('Prepared ' + files.length + ' English pages from the wiki');
+for (const [folder, index] of search) {
+  const name = folder === 'en' ? 'search.json' : 'search-' + folder + '.json';
+  await writeFile(join(publicDir, name), JSON.stringify(index));
+}
+console.log('Prepared ' + files.length + ' pages in ' + search.size + ' languages from the wiki');
