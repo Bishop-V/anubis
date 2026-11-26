@@ -4,6 +4,7 @@ import matter from 'gray-matter';
 import MarkdownIt from 'markdown-it';
 import anchor from 'markdown-it-anchor';
 import container from 'markdown-it-container';
+import { LEVELS, WEIGH } from '../../docs/.vitepress/theme/demo-icons.ts';
 import { WIKI_FOLDERS } from '../../utils/links.ts';
 
 const site = resolve(import.meta.dirname, '..');
@@ -65,6 +66,43 @@ for (const kind of ['warning', 'details']) {
   });
 }
 
+// Table headings stay associated with their cells when a wide table scrolls.
+md.core.ruler.after('inline', 'wiki_tables', ({ tokens, env }) => {
+  let caption = '';
+  let inBody = false;
+  let row = 0;
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+    if (token.type === 'heading_open') caption = tokens[i + 1].content;
+    if (token.type === 'table_open') {
+      token.meta = { caption };
+      row = 0;
+    }
+    if (token.type === 'tbody_open') inBody = true;
+    if (token.type === 'tbody_close') inBody = false;
+    if (token.type === 'th_open') token.attrSet('scope', 'col');
+    if (token.type === 'tr_open' && inBody) {
+      const first = tokens[i + 1];
+      first.tag = 'th';
+      first.attrSet('scope', 'row');
+      tokens[i + 3].tag = 'th';
+      if (env.file.endsWith('guide/ranking.md')) first.meta = { rank: LEVELS[row]?.[0] };
+      row++;
+    }
+  }
+});
+
+md.renderer.rules.table_open = (tokens, index) => {
+  const label = md.utils.escapeHtml(tokens[index].meta.caption);
+  return '<div class="wiki-table-scroll" role="region" aria-label="' + label + '"><table class="wiki-table">';
+};
+md.renderer.rules.table_close = () => '</table></div>';
+md.renderer.rules.td_open = (tokens, index, options, _env, self) => {
+  const token = tokens[index];
+  const icon = token.meta?.rank ? '<span class="wiki-rank-icon" aria-hidden="true">' + WEIGH[token.meta.rank] + '</span>' : '';
+  return self.renderToken(tokens, index, options) + icon;
+};
+
 md.renderer.rules.link_open = (tokens, index, options, { file }, self) => {
   const token = tokens[index];
   const href = token.attrGet('href');
@@ -73,6 +111,9 @@ md.renderer.rules.link_open = (tokens, index, options, { file }, self) => {
   if (href) token.attrSet('data-external', '');
   return self.renderToken(tokens, index, options);
 };
+
+const renderFence = md.renderer.rules.fence;
+md.renderer.rules.fence = (...args) => '<div class="wiki-code-frame">' + renderFence(...args) + '</div>';
 
 const renderImage = md.renderer.rules.image;
 md.renderer.rules.image = (tokens, index, options, env, self) => {
@@ -113,6 +154,7 @@ await cp(join(docs, 'img'), join(publicDir, 'img'), { recursive: true });
 await cp(join(docs, '.vitepress/theme/brand.css'), join(publicDir, 'brand.css'));
 await cp(join(repo, 'assets/typography.css'), join(publicDir, 'typography.css'));
 await cp(join(site, 'src/site.css'), join(publicDir, 'site.css'));
+await cp(join(site, 'src/wiki.css'), join(publicDir, 'wiki.css'));
 await cp(join(site, 'src/preferences.js'), join(publicDir, 'preferences.js'));
 const fonts = join(site, 'node_modules/@fontsource-variable/inter');
 const fontDir = join(publicDir, 'fonts');
@@ -147,7 +189,10 @@ for (const file of files) {
     return [{ id: token.attrGet('id'), label: tokens[index + 1].content, level: Number(token.tag.slice(1)) }];
   });
   const title = data.title || headings[0]?.label || file;
-  const body = md.renderer.render(tokens, md.options, { file });
+  const first = tokens.findIndex((token) => token.type === 'heading_open' && token.tag === 'h1');
+  const heading = first < 0 ? '' : md.renderer.render(tokens.slice(first, first + 3), md.options, { file });
+  const bodyTokens = first < 0 ? tokens : [...tokens.slice(0, first), ...tokens.slice(first + 3)];
+  const body = md.renderer.render(bodyTokens, md.options, { file });
   if (file !== 'subscribe.md' && data.search !== false) {
     const entries = [{ title, heading: '', url: base + route, text: home?.intro.lead ?? '' }];
     let section = entries[0];
@@ -166,7 +211,7 @@ for (const file of files) {
   const output = join(source, file.replace(/\.md$/, '.js'));
   await mkdir(resolve(output, '..'), { recursive: true });
   const parts = body.split(/<!-- anubis:(directory|subscribe|ranking|hiding) -->/);
-  await writeFile(output, makeModule({ route, file, title, folder, lang, headings: data.outline === false ? [] : headings.filter(({ level }) => level === 2 || level === 3), parts, home }, file));
+  await writeFile(output, makeModule({ route, file, title, folder, lang, heading, headings: data.outline === false ? [] : headings.filter(({ level }) => level === 2 || level === 3), parts, home }, file));
 }
 for (const [folder, index] of search) {
   const name = folder === 'en' ? 'search.json' : 'search-' + folder + '.json';

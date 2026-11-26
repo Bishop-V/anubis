@@ -1,4 +1,5 @@
 // Build with npm --prefix site run build before running this check.
+import { AxeBuilder } from '@axe-core/playwright';
 import assert from 'node:assert/strict';
 import { mkdirSync, readdirSync, readFileSync } from 'node:fs';
 import { createServer } from 'node:http';
@@ -46,11 +47,22 @@ const server = createServer((request, response) => {
 });
 await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
 const url = 'http://127.0.0.1:' + server.address().port + '/anubis/';
+
+function centeredButtonLabel(button) {
+  const range = document.createRange();
+  range.selectNodeContents(button);
+  const label = range.getBoundingClientRect();
+  const surface = button.getBoundingClientRect();
+  const center = (rect) => (rect.top + rect.bottom) / 2;
+  return surface.height >= 44 && Math.abs(center(surface) - center(label)) <= 2;
+}
+
 let browser;
 try {
   browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH ?? chromium.executablePath() });
   const errors = [];
-  const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce', colorScheme: 'light' });
+  const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce', colorScheme: 'light' });
+  const page = await context.newPage();
   page.setDefaultTimeout(15_000);
   page.on('pageerror', (error) => errors.push(error.message));
   await page.addInitScript(() => {
@@ -102,7 +114,8 @@ try {
     page: 'rgb(252, 252, 253)', text: 'rgb(31, 31, 34)', line: 'rgb(220, 220, 224)',
     marker: 'rgb(252, 252, 253)', nav: 'rgb(252, 252, 253)', font: true,
   });
-  assert.equal(await page.getByRole('button', { name: 'Search', exact: true }).count(), 0, 'utility actions belong inside the menu');
+  const searchButton = page.locator('.site-header').getByRole('button', { name: 'Search', exact: true });
+  assert.equal(await searchButton.count(), 1, 'the top bar exposes Search without opening a menu');
   await openMenu();
   const theme = menu.getByRole('switch', { name: 'Appearance' });
   await theme.click();
@@ -122,19 +135,31 @@ try {
   await page.evaluate(() => localStorage.removeItem('anubis-docs-theme'));
   await page.keyboard.press('Escape');
   await menu.waitFor({ state: 'hidden' });
-  await openMenu();
-  await menu.getByRole('button', { name: 'Search', exact: true }).click();
+  await page.route('**/search.json', (route) => route.abort(), { times: 1 });
+  await searchButton.click();
   await page.getByRole('searchbox', { name: 'Search guides' }).fill('hidden results');
+  await page.getByText('Search could not load.', { exact: true }).waitFor();
+  await page.getByRole('button', { name: 'Try again' }).click();
   await page.locator('.search-results a[href$="#hidden-results"]').first().waitFor();
+  await page.keyboard.press('ArrowDown');
+  assert.ok(await page.locator('.search-results a').first().evaluate((el) => el === document.activeElement));
+  await page.keyboard.press('ArrowUp');
+  assert.ok(await page.getByRole('searchbox', { name: 'Search guides' }).evaluate((el) => el === document.activeElement));
   await page.keyboard.press('Escape');
   await page.locator('#site-search').waitFor({ state: 'hidden' });
-  assert.ok(await menuToggle.evaluate((el) => el === document.activeElement), 'closing search restores menu focus');
+  assert.ok(await searchButton.evaluate((el) => el === document.activeElement), 'closing search restores search button focus');
   await page.keyboard.press('Control+k');
   await page.getByRole('searchbox', { name: 'Search guides' }).waitFor();
   await page.keyboard.press('Escape');
   await page.locator('#site-search').waitFor({ state: 'hidden' });
   await page.goto(url + 'guide/ranking#hidden-results');
   assert.equal(await page.locator('h2#hidden-results').count(), 1);
+  const currentTopic = page.locator('.wiki-sidebar [aria-current="page"]');
+  assert.equal((await currentTopic.textContent()).trim(), 'Ranking sites');
+  assert.match(await page.getByRole('navigation', { name: 'Breadcrumb' }).innerText(), /Using Anubis/);
+  await page.locator('.outline-sticky a[href="#hidden-results"][aria-current="location"]').waitFor();
+  await page.waitForURL((address) => address.hash === '#hidden-results');
+  assert.equal(await page.locator('.wiki-table tbody th[scope="row"] .wiki-rank-icon').count(), 5);
   const demo = page.locator('.rank-demo');
   await demo.scrollIntoViewIfNeeded();
   const ready = demo.locator('button:enabled');
@@ -183,7 +208,11 @@ try {
     assert.deepEqual(scales, [muted, muted, muted]);
     assert.equal(await demo.locator('.site-name').first().evaluate((el) => getComputedStyle(el).color), text);
     assert.equal(await demo.locator('.snippet').first().evaluate((el) => getComputedStyle(el).color), muted);
-    if (screenshots) await demo.screenshot({ path: join(shotDir, 'ranking-' + mode + '.png'), animations: 'disabled' });
+    if (screenshots) {
+      await demo.screenshot({ path: join(shotDir, 'ranking-' + mode + '.png'), animations: 'disabled' });
+      await page.locator('.wiki-table').scrollIntoViewIfNeeded();
+      await page.screenshot({ path: join(shotDir, 'wiki-ranking-' + mode + '.png'), animations: 'disabled' });
+    }
   }
   await page.goto(url + 'guide/introduction');
   const hiding = page.locator('.hide-demo');
@@ -191,13 +220,30 @@ try {
   await hiding.locator('button:enabled').waitFor();
   assert.match(await hiding.locator('.hd-change').innerText(), /Hid fandom\.com/);
 
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin: new URL(url).origin });
+  await page.goto(url + 'list-format');
+  const code = page.locator('.wiki-code-frame').first();
+  await code.getByRole('button', { name: 'Copy code' }).click();
+  await code.getByText('Code copied', { exact: true }).waitFor();
+  assert.equal(await page.evaluate(() => navigator.clipboard.readText()), await code.locator('code').textContent());
+  if (screenshots) await code.screenshot({ path: join(shotDir, 'wiki-code.png'), animations: 'disabled' });
   await page.goto(url + 'lists');
-  const rows = page.locator('.list-directory tbody tr');
+  const rows = page.locator('.directory-item');
   const count = await rows.count();
   assert.ok(count > 5);
+  const firstSubscribe = rows.first().getByRole('link', { name: /^Subscribe to/ });
+  assert.ok(await firstSubscribe.evaluate(centeredButtonLabel), 'Subscribe aligns the label and has a 44px target');
+  await page.getByLabel('Availability').selectOption('optional');
+  assert.equal(await rows.getByText('Included by default').count(), 0);
+  await page.getByRole('searchbox', { name: 'Filter lists' }).fill('not-a-real-list');
+  await page.getByText('No matching lists').waitFor();
+  await page.getByRole('button', { name: 'Clear filters' }).click();
+  assert.equal(await rows.count(), count);
+  assert.equal(await page.getByLabel('Availability').inputValue(), 'all');
+  if (screenshots) await page.screenshot({ path: join(shotDir, 'lists-desktop.png'), animations: 'disabled' });
   await page.getByRole('searchbox', { name: 'Filter lists' }).fill('paywall');
   await page.waitForFunction((total) => {
-    const found = document.querySelectorAll('.list-directory tbody tr').length;
+    const found = document.querySelectorAll('.directory-item').length;
     return found > 0 && found < total;
   }, count);
   const subscribe = rows.first().getByRole('link', { name: /^Subscribe to/ });
@@ -208,6 +254,9 @@ try {
   await page.waitForURL('**/subscribe?**');
   await page.locator('.list-address a').waitFor();
   assert.equal(await page.locator('.list-address a').getAttribute('href'), sameOrigin.searchParams.get('url'));
+  await page.getByRole('button', { name: 'Copy list address' }).click();
+  await page.getByText('Address copied.').waitFor();
+  assert.equal(await page.evaluate(() => navigator.clipboard.readText()), sameOrigin.searchParams.get('url'));
   await page.goto(url + 'subscribe?url=javascript%3Aalert(1)');
   await page.getByText('This link doesn’t name a list Anubis can subscribe to.', { exact: false }).waitFor();
   await page.goto(url + 'subscribe?url=https%3A%2F%2Fexample.org%2Flist&name=%3Cb%3Eexample%3C%2Fb%3E');
@@ -219,8 +268,7 @@ try {
   await page.locator('.language-menu summary').click();
   await page.getByRole('link', { name: 'Deutsch', exact: true }).click();
   await page.waitForURL('**/de/guide/ranking');
-  await openMenu();
-  await menu.getByRole('button', { name: 'Suchen', exact: true }).click();
+  await page.locator('.site-header').getByRole('button', { name: 'Suchen', exact: true }).click();
   const searchInput = page.getByRole('searchbox', { name: 'Anleitungen durchsuchen' });
   assert.match(await searchInput.evaluate((el) => getComputedStyle(el).fontFamily), /Inter Variable/);
   await searchInput.fill('einstufen');
@@ -247,6 +295,21 @@ try {
         await page.locator('main h1').waitFor();
         assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), route + ' at ' + width + ' in ' + mode);
       }
+      assert.ok(await searchButton.isVisible(), 'top bar Search remains visible at ' + width);
+      assert.ok(await firstSubscribe.evaluate(centeredButtonLabel), 'Subscribe aligns the label at ' + width + ' in ' + mode);
+      if (width === 320) {
+        await page.goto(url + 'guide/ranking');
+        const topics = page.locator('.wiki-sidebar details');
+        await page.waitForFunction(() => !document.querySelector('.wiki-sidebar details').open);
+        await topics.locator('summary').click();
+        await topics.getByRole('link', { name: 'Ranking sites', exact: true }).waitFor();
+        if (screenshots) await page.screenshot({ path: join(shotDir, 'wiki-topics-mobile-' + mode + '.png'), animations: 'disabled' });
+        await topics.locator('summary').click();
+        assert.ok(await page.locator('.wiki-table-scroll').evaluate((el) => el.scrollWidth <= el.clientWidth));
+        await page.goto(url + 'lists');
+        const audit = await new AxeBuilder({ page }).include('.site-header').include('.wiki-layout').withTags(['wcag2a', 'wcag2aa']).analyze();
+        assert.deepEqual(audit.violations.map(({ id, nodes }) => [id, nodes.map(({ target }) => target)]), [], 'directory accessibility in ' + mode);
+      }
       await openMenu();
       const box = await menu.boundingBox();
       assert.ok(box && box.x >= 0 && box.x + box.width <= width, 'open menu fits at ' + width);
@@ -256,9 +319,9 @@ try {
       await menu.waitFor({ state: 'hidden' });
     }
   }
-  if (screenshots) await page.screenshot({ path: join(shotDir, 'lists-mobile.png'), fullPage: true, animations: 'disabled' });
+  if (screenshots) await page.screenshot({ path: join(shotDir, 'lists-mobile.png'), animations: 'disabled' });
   assert.deepEqual(errors, []);
-  console.log('All ' + pages.length + ' pages in five languages passed, including the utility menu, Graphite palette, search, motion, Subscribe, and responsive layout.');
+  console.log('All ' + pages.length + ' pages in five languages passed, including navigation, tables, copy controls, top-bar search, list filters, Subscribe, and mobile accessibility.');
 } finally {
   await browser?.close();
   server.close();

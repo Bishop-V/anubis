@@ -1,4 +1,4 @@
-import { html } from '@inglorious/web';
+import { html, nothing } from '@inglorious/web';
 import { TRANSLATED_PAGES } from '../../utils/links.ts';
 import { languages } from './languages.js';
 
@@ -41,7 +41,7 @@ const sections = [
 const top = [['wiki', '/guide/introduction'], ['lists', '/lists'], ['listFormat', '/list-format'], ['privacy', '/guide/privacy']];
 
 export function pageLink(label, path, current) {
-  return html`<a data-external href=${href(path)} aria-current=${path === current ? 'page' : 'false'}>${label}</a>`;
+  return html`<a data-external href=${href(path)} aria-current=${path === current ? 'page' : nothing}>${label}</a>`;
 }
 
 function localPath(path, folder) {
@@ -67,10 +67,36 @@ export function languageMenu(page, t) {
 
 const navLink = ([label, path], page, t) => pageLink(t(label), localPath(path, page.folder), page.route);
 
-export const headerLinks = (page, t) => top.map((item) => navLink(item, page, t));
-export const sidebar = (page, t) => sections.map(([group, links]) => html`<section>
+export const headerLinks = (page, t) => top.map(([key, path]) => {
+  const guide = localPath('/guide/introduction', page.folder);
+  const active = key === 'wiki' && page.route !== localPath('/guide/privacy', page.folder)
+    && (page.route.includes('/guide/') || page.route.startsWith('/experiments'));
+  if (active && page.route !== guide) {
+    return html`<a data-external class="active-section" href=${href(guide)}>${t(key)}</a>`;
+  }
+  return navLink([key, path], page, t);
+});
+
+function activeGroup(page) {
+  return sections.find(([, links]) => links.some(([, path]) => localPath(path, page.folder) === page.route))?.[0]
+    ?? (page.route.startsWith('/experiments/') ? 'involved' : page.route === '/subscribe' ? 'publishing' : undefined);
+}
+
+export function breadcrumbs(page, t) {
+  const group = activeGroup(page);
+  if (!group) return '';
+  const introduction = localPath('/guide/introduction', page.folder);
+  return html`<nav class="breadcrumbs" aria-label=${t('breadcrumb')}>
+    <ol>
+      <li>${page.route === introduction ? t('wiki') : pageLink(t('wiki'), introduction)}</li>
+      <li>${t(group)}</li>
+    </ol>
+  </nav>`;
+}
+
+export const sidebar = (page, t) => sections.map(([group, links]) => html`<section class=${group === activeGroup(page) ? 'current-group' : nothing}>
   <h2>${t(group)}</h2>
-  ${links.map((item) => navLink(item, page, t))}
+  <ul>${links.map((item) => html`<li>${navLink(item, page, t)}</li>`)}</ul>
 </section>`);
 
 export function neighbouringPages(page, t) {
@@ -78,7 +104,13 @@ export function neighbouringPages(page, t) {
   const index = pages.findIndex(([, path]) => localPath(path, page.folder) === page.route);
   if (index < 0) return '';
   return html`<nav class="neighbours" aria-label=${t('adjacentPages')}>
-    ${pages.slice(Math.max(index - 1, 0), index).map((item) => navLink(item, page, t))}
-    ${pages.slice(index + 1, index + 2).map((item) => navLink(item, page, t))}
+    ${[[-1, 'prev'], [1, 'next']].map(([offset, direction]) => {
+      const entry = pages[index + offset];
+      if (!entry) return nothing;
+      const [label, path] = entry;
+      return html`<a class=${direction} data-external href=${href(localPath(path, page.folder))}>
+        <span>${t(direction)}</span><strong>${t(label)}</strong>
+      </a>`;
+    })}
   </nav>`;
 }

@@ -4,6 +4,8 @@ The documentation site and its screenshots. Part of [Experiments and decisions](
 
 ## Documentation site
 
+- **Wiki usability pass (2026-11-26).** The UX Heuristics audit found friction in finding search, placing a page in the wiki, scanning reference tables, and recovering from empty directory results. Search is in the top bar and works from the keyboard. Wiki topics show the current page, the outline follows the reader, and labelled previous and next links continue the reading path. Reference tables keep their row and column headers. Directory entries fit on phones and separate format, default availability, and subscription. Code examples and subscription addresses have copy actions.
+
 - **SSX and Web across Anubis (2026-11-26).** The regular docs commands build SSX, and the Pages workflow uses its output from the main branch. The VitePress build remains a local comparison. The website’s wordmark shares the extension’s display font stack, and controls inherit the interface font. Options, the popup, the welcome tour, and search overlays use Inglorious Web with an inert parser for Lit’s static templates in the extension.
 
 - **SSX appearance and motion (2026-11-26).** The preview now shares the full Graphite palette with the VitePress build and serves Inter locally. The header puts Search, Appearance, and language under one menu, with the main links also inside it on phones. Demo rows move from their measured positions when ranked. The guide uses the same menu placement and balance angles as VitePress, and clicks use Inglorious Motion.
