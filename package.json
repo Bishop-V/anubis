@@ -20,10 +20,11 @@
     "postinstall": "wxt prepare",
     "test": "vitest run",
     "e2e": "wxt build -b chrome && node e2e/run.mjs",
-    "screenshots": "npm run build:chrome && npm run docs:build && node e2e/run.mjs sites && node e2e/homepage.mjs --screenshots",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "screenshots": "npm run build:chrome && npm run docs:build && node e2e/run.mjs sites && node e2e/ssx.mjs --screenshots",
+    "docs:dev": "npm --prefix site run dev",
+    "docs:build": "npm --prefix site run build",
+    "docs:reference:build": "vitepress build docs",
+    "docs:preview": "npm --prefix site run preview"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
@@ -40,6 +41,8 @@
     "@inglorious/utils": "5.1.0"
   },
   "dependencies": {
-    "@inglorious/store": "12.1.1"
+    "@inglorious/store": "12.1.1",
+    "@inglorious/web": "6.11.0",
+    "lit-html": "3.3.3"
   }
 }

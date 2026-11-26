@@ -1,3 +1,5 @@
+@import './typography.css';
+
 /* Shared look for the popup, Settings, and the welcome page: Graphite, neutral greys with
    no gold, the same palette as what Anubis adds to search pages (entrypoints/content/shadow.css).
    Night is the default. Controls are flat and quiet; the accent, the text colour itself, is
@@ -52,16 +54,17 @@ body {
   background: var(--bg);
   color: var(--text);
 }
+:where(button, input, select, textarea, optgroup, option) { font: inherit; }
 a {
   color: var(--accent-ink);
   text-underline-offset: 3px;
 }
 .serif {
-  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+  font-family: var(--anubis-font-display);
 }
 code,
 textarea.code {
-  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-family: var(--anubis-font-code);
 }
 svg {
   display: block;
@@ -84,7 +87,7 @@ svg {
 }
 .brand h1 {
   margin: 0;
-  font: 500 19px/1.2 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+  font: 500 19px/1.2 var(--anubis-font-display);
   letter-spacing: 0.01em;
 }
 .brand p {
@@ -407,7 +410,8 @@ input[type='color']::-moz-color-swatch {
   line-height: 1.5;
   color: var(--text);
 }
-.machine-note a {
+.machine-note :where(button, input, select, textarea, optgroup, option) { font: inherit; }
+a {
   color: var(--accent-ink);
   font-weight: 600;
 }

@@ -1,0 +1,5 @@
+/* The display and code families are shared by the extension and the wiki. */
+:root {
+  --anubis-font-display: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+  --anubis-font-code: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}

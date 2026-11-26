@@ -4,8 +4,7 @@ import { defineConfig, type MarkdownEnv } from 'vitepress';
 import { REPO_URL as repo } from '../../utils/links';
 import { searchLocales, translatedLocales } from './locales';
 
-// The documentation site, built from the Markdown in docs/ with VitePress and
-// published to GitHub Pages by .github/workflows/docs.yml. The pages read fine on
+// The VitePress reference build of the wiki Markdown in docs/. The pages read fine on
 // GitHub too, so keep links relative between pages.
 
 // GitHub Pages serves a project site under /<repo>/. DOCS_BASE overrides it, for a

@@ -61,6 +61,17 @@ function hardCoded(file: string): Found[] {
   const visit = (n: Node, parents: Node[]) => {
     if (n.type === 'ImportDeclaration' || n.type === 'ExportAllDeclaration' || (n.type.startsWith('TS') && !['TSAsExpression', 'TSNonNullExpression', 'TSSatisfiesExpression'].includes(n.type))) return;
     if (onPurpose(n)) return;
+    if (n.type === 'TaggedTemplateExpression' && callee(n.tag as Node) === 'html') {
+      const markup = ((n.quasi as Node).quasis as { value: { cooked: string } }[]).map((q) => q.value.cooked).join('\u0000');
+      const line = (n.loc as { start: { line: number } }).start.line;
+      for (const match of markup.matchAll(/>([^<>]+)</g)) {
+        const text = match[1]!.trim();
+        if (looksLikeText(text)) found.push({ file, line, text });
+      }
+      for (const match of markup.matchAll(/\s(?:title|aria-label|placeholder|alt)="([^"]*)"/g)) {
+        if (looksLikeText(match[1]!)) found.push({ file, line, text: match[1]! });
+      }
+    }
     let text: string | undefined;
     if (n.type === 'StringLiteral') text = n.value as string;
     else if (n.type === 'TemplateLiteral') text = (n.quasis as { value: { cooked: string } }[]).map((q) => q.value.cooked).join('\u0000');
@@ -106,7 +117,7 @@ describe('interface text', () => {
 
   it('notices text written straight into the code', () => {
     const sample = 'tests/fixtures/hard-coded.ts';
-    expect(hardCoded(sample).map((f) => f.text)).toEqual(['Save your list', 'Done', 'Sites you ranked: ${…}']);
+    expect(hardCoded(sample).map((f) => f.text)).toEqual(['Save your list', 'Done', 'Sites you ranked: ${…}', 'Save this list']);
   });
 
   it('comes from messages on the static pages', () => {

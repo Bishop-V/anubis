@@ -1,3 +1,4 @@
+import { renderNodes } from '@/utils/view';
 import { createStore } from '@inglorious/store';
 import { normalizeSite } from '@/utils/domain';
 import { h, icon, siteName } from '@/utils/dom';
@@ -143,7 +144,7 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
       .filter((e) => !q || e.site.includes(q) || e.tags.some((id) => id.includes(q)))
       .sort((a, b) => a.site.localeCompare(b.site))
       .slice(0, 500);
-    body.replaceChildren(
+    renderNodes(body, [
       ...shown.map((entry) => {
         const level = displayLevel(entry.level);
         const setLevel = (l: Level) => void editPersonal((text) => setSite(text, entry.site, l, entry.tags));
@@ -203,7 +204,7 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
           ),
         );
       }),
-    );
+    ]);
   };
   search.addEventListener('input', () => {
     siteTable.notify('#table:searchChanged', search.value);
@@ -245,11 +246,11 @@ function textEditor(rules: RuleSet): HTMLElement {
   const status = h('div');
   const check = () => {
     const parsed = parseList(area.value);
-    status.replaceChildren(
+    renderNodes(status, [
       parsed.errors.length
         ? h('ul', { class: 'errors' }, parsed.errors.slice(0, 20).map((e) => h('li', null, t('listErrorLine', e.line, e.message))))
         : h('p', { class: 'muted', style: 'font-size:12.5px' }, t('sitesTextReadable', tn('listInstructions', parsed.rules.length), tn('popupTagCount', parsed.tags.length))),
-    );
+    ]);
   };
   area.addEventListener('input', check);
   check();

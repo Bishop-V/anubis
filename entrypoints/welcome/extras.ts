@@ -1,3 +1,4 @@
+import { html, render, renderNodes } from '@/utils/view';
 import { h, icon } from '@/utils/dom';
 import { ICON_SPARKLE, tagEffectText, tagMark } from '@/utils/icons';
 import type { Level } from '@/utils/matcher';
@@ -40,7 +41,7 @@ export function renderTagsExample(box: HTMLElement): void {
   const on = new Set<string>([tags[0]!.id]);
   const under = h('span', { class: 'chips' });
   const said = h('p', { class: 'said', attrs: { role: 'status' } });
-  const drawTags = () => under.replaceChildren(...tags.filter((x) => on.has(x.id)).map((x) => tagChip(x, x.effect)));
+  const drawTags = () => renderNodes(under, tags.filter((x) => on.has(x.id)).map((x) => tagChip(x, x.effect)));
   const choices = tags.map((tag) =>
     h(
       'button',
@@ -68,12 +69,12 @@ export function renderTagsExample(box: HTMLElement): void {
   const row = resultRow(result);
   row.querySelector('.chips')!.replaceWith(under);
   drawTags();
-  box.replaceChildren(
-    h('p', null, t('welcomeTagsHow')),
-    h('div', { class: 'choices', attrs: { role: 'group', 'aria-label': t('welcomeTagsHow') } }, choices),
-    h('div', { class: 'page small' }, h('ol', { class: 'results' }, row), said),
-    h('p', { class: 'more' }, h('span', null, t('welcomeTagsMore')), settingsLink('tags', 'welcomeTagsOpen')),
-  );
+  render(html`
+    <p>${t('welcomeTagsHow')}</p>
+    <div class="choices" role="group" aria-label=${t('welcomeTagsHow')}>${choices}</div>
+    <div class="page small"><ol class="results">${row}</ol>${said}</div>
+    <p class="more"><span>${t('welcomeTagsMore')}</span>${settingsLink('tags', 'welcomeTagsOpen')}</p>
+  `, box);
 }
 
 /** The starter list that defines a tag. */
@@ -101,7 +102,7 @@ export function renderListsExample(box: HTMLElement, subscribed: number): void {
   const list = h('ol', { class: 'results' }, [...rows.values()]);
 
   function draw() {
-    for (const [r, row] of rows) row.querySelector('.chips')!.replaceChildren(...(listed(r, on) ? [tagChip(STARTER_TAGS[r.tag!]!)] : []));
+    for (const [r, row] of rows) renderNodes(row.querySelector<HTMLElement>('.chips')!, listed(r, on) ? tagChip(STARTER_TAGS[r.tag!]!) : null);
   }
 
   const switches = STARTER_LISTS.map((parsed) =>
@@ -111,12 +112,12 @@ export function renderListsExample(box: HTMLElement, subscribed: number): void {
       draw();
     }),
   );
-  box.replaceChildren(
-    h('p', null, t('welcomeListsHow')),
-    h('ul', { class: 'switches' }, switches),
-    h('div', { class: 'page small' }, list),
-    h('p', { class: 'more' }, h('span', null, `${tn('welcomeListsCount', subscribed)} ${t('welcomeListsMore')}`), settingsLink('lists', 'welcomeListsOpen')),
-  );
+  render(html`
+    <p>${t('welcomeListsHow')}</p>
+    <ul class="switches">${switches}</ul>
+    <div class="page small">${list}</div>
+    <p class="more"><span>${tn('welcomeListsCount', subscribed)} ${t('welcomeListsMore')}</span>${settingsLink('lists', 'welcomeListsOpen')}</p>
+  `, box);
   draw();
 }
 
@@ -134,17 +135,13 @@ export function renderPanelsExample(box: HTMLElement): void {
   const summary = h('p', { class: 'summary', attrs: { role: 'status' } });
   const results = ['plato.stanford.edu', 'en.wikipedia.org', 'reddit.com'].map((host) => resultRow(sample(host)));
   const label = t('cleanupAi');
-  box.replaceChildren(
-    h(
-      'label',
-      { class: 'switch-row' },
-      h('span', { class: 'name' }, label),
-      switchFor(label, false, (checked) => {
-        panel.hidden = checked;
-        summary.textContent = checked ? t('summaryRemovedOnly', describeRemoved({ ai: 1 })) : '';
-      }),
-    ),
-    h('div', { class: 'page small' }, summary, panel, h('ol', { class: 'results' }, results)),
-    h('p', { class: 'more' }, h('span', null, t('welcomePanelsMore')), settingsLink('cleanup', 'welcomePanelsOpen')),
-  );
+  const toggle = switchFor(label, false, (checked) => {
+    panel.hidden = checked;
+    summary.textContent = checked ? t('summaryRemovedOnly', describeRemoved({ ai: 1 })) : '';
+  });
+  render(html`
+    <label class="switch-row"><span class="name">${label}</span>${toggle}</label>
+    <div class="page small">${summary}${panel}<ol class="results">${results}</ol></div>
+    <p class="more"><span>${t('welcomePanelsMore')}</span>${settingsLink('cleanup', 'welcomePanelsOpen')}</p>
+  `, box);
 }

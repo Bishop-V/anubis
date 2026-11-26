@@ -4,6 +4,7 @@ import { h } from 'vue';
 import HideDemo from './hide-demo';
 import Home from './home';
 import RankDemo from './rank-demo';
+import '../../../assets/typography.css';
 import './brand.css';
 
 export default {

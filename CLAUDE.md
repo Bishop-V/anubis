@@ -27,7 +27,7 @@ Firefox is the default target; `:chrome` variants override it.
 - `npx web-ext lint -s .output/firefox-mv2`: keep it at zero warnings.
 - `typos`: the spelling check CI runs, with British spelling in prose (`typos.toml` says what is checked). Not in cloud sessions; `pip install typos` gives the same binary.
 - `lychee --offline --config lychee.toml './**/*.md'`: links between the Markdown files and their #headings, which CI checks on pull requests; `docs:build` only covers the docs site. A weekly job also checks web addresses. Not in cloud sessions, where web addresses can't be reached anyway.
-- `npm run docs:build`: the documentation site; fails on a broken link. `node e2e/run.mjs docs` redraws its screenshots; commit only the ones a change affects.
+- `npm run docs:build`: build the SSX documentation site. `node e2e/ssx.mjs` checks its links and interactions. `node e2e/run.mjs docs` redraws its screenshots; commit only the ones a change affects.
 - `npm run release:prep -- <version>`: the checks before a release.
 - CI (`.github/workflows/ci.yml`) runs compile, tests, both builds, the `responsive` and `checks` e2e parts, and the lint. `main` is protected: changes land through a pull request.
 

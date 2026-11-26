@@ -4,6 +4,8 @@ The documentation site and its screenshots. Part of [Experiments and decisions](
 
 ## Documentation site
 
+- **SSX and Web across Anubis (2026-11-26).** The regular docs commands build SSX, and the Pages workflow uses its output from the main branch. The VitePress build remains a local comparison. The website’s wordmark shares the extension’s display font stack, and controls inherit the interface font. Options, the popup, the welcome tour, and search overlays use Inglorious Web with an inert parser for Lit’s static templates in the extension.
+
 - **SSX appearance and motion (2026-11-26).** The preview now shares the full Graphite palette with the VitePress build and serves Inter locally. The header puts Search, Appearance, and language under one menu, with the main links also inside it on phones. Demo rows move from their measured positions when ranked. The guide uses the same menu placement and balance angles as VitePress, and clicks use Inglorious Motion.
 
 - **Multilingual SSX preview (2026-11-26).** SSX builds the five existing wiki languages from Markdown. Inglorious I18n resolves interface strings using the language in the URL. Inglorious UI renders the search and directory inputs with Graphite styles, and Inglorious Motion animates the demos' rank changes with support for reduced motion. The build checks preserve the English-only publishing routes and include a screenshot of German wiki search in the CI artifact.

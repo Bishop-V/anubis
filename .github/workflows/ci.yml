@@ -54,10 +54,28 @@ jobs:
       - name: Assert core search-page behavior
         run: node e2e/run.mjs checks
       - run: npx web-ext lint --source-dir .output/firefox-mv2 --warnings-as-errors
+      - name: Capture trial extension screenshots
+        if: github.event_name == 'push' && github.ref_name == 'inglorious-trial'
+        run: |
+          node e2e/run.mjs options
+          node e2e/run.mjs welcome
+      - name: Upload trial browser builds
+        if: github.event_name == 'push' && github.ref_name == 'inglorious-trial'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: anubis-extension-preview
+          path: |
+            .output/firefox-mv2/
+            .output/chrome-mv3/
+            e2e/shots/options-*.png
+            e2e/shots/popup-*.png
+            e2e/shots/welcome-*.png
+          include-hidden-files: true
+          if-no-files-found: error
       - name: Capture review screenshots
         if: github.event_name == 'workflow_dispatch' && inputs.screenshots
         run: |
-          npm run docs:build
+          npm run docs:reference:build
           node e2e/run.mjs sites
           node e2e/homepage.mjs --screenshots
       - name: Upload review screenshots

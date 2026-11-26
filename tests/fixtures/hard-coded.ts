@@ -1,3 +1,4 @@
+declare function html(parts: TemplateStringsArray): unknown;
 // For tests/i18n-coverage.test.ts: text written straight in, and names in code that aren't text.
 declare const h: (...args: unknown[]) => unknown;
 declare const t: (key: string, ...subs: unknown[]) => string;
@@ -11,3 +12,5 @@ export const key = (e: { key: string }) => e.key === 'Escape';
 export const selector = (el: Element) => el.closest('.result h3');
 // English on purpose: sent to a list's maintainers.
 export const report = 'Wrong rule for this site';
+
+html`<button>Save this list</button>`;

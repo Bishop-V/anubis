@@ -128,7 +128,7 @@ main {
 }
 .page-title h2 {
   margin: 0;
-  font: 400 30px/1.15 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+  font: 400 30px/1.15 var(--anubis-font-display);
 }
 .page-title p {
   margin: 8px 0 0;

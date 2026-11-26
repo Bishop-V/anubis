@@ -86,7 +86,7 @@ html:not(.dark) .dark-only,
    the heading comes first, then the page stays at the top and the steps pass under
    it. Titles use the extension's serif, as its welcome page and settings do. */
 :root {
-  --home-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+  --home-serif: var(--anubis-font-display);
   --demo-page: #ffffff;
   --demo-link: #2a4fa8;
 }

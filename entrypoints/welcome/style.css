@@ -43,7 +43,7 @@ footer {
 }
 h1 {
   margin: 0;
-  font: 400 44px/1.1 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+  font: 400 44px/1.1 var(--anubis-font-display);
   text-wrap: balance;
 }
 .lead {
@@ -128,7 +128,7 @@ main > section + section:not(.try) {
 }
 h2 {
   margin: 0 0 8px;
-  font: 500 21px/1.3 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
+  font: 500 21px/1.3 var(--anubis-font-display);
 }
 section p {
   margin: 0 0 10px;

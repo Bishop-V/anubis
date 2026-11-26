@@ -65,7 +65,7 @@ One palette, Graphite, defined twice: `assets/theme.css` for extension pages and
 **Families**
 
 - Interface: `system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`, set once on `body` in `theme.css`. On search pages, the page's own font, except the result menu, which uses the interface stack.
-- Display: `'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif` (the `.serif` class). Only for the brand name, and page and section titles on extension pages.
+- Display: `'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif` (the `.serif` class). The brand name and display headings use this stack. The wiki and the extension share it through `assets/typography.css`.
 - Code: `ui-monospace, 'SF Mono', Menlo, Consolas, monospace`, for list text and code.
 
 **Scale.** Use these sizes and no others.

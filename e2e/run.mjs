@@ -2565,9 +2565,17 @@ if (!only || only === 'options') {
       await opt.locator('.theme-btn').click();
       await opt.waitForTimeout(150);
     }
-    for (const section of ['sites', 'tags', 'lists', 'cleanup', 'results', 'appearance', 'sync', 'share']) {
+    for (const section of ['sites', 'tags', 'lists', 'cleanup', 'results', 'appearance', 'engines', 'sync', 'share']) {
       await opt.goto(`chrome-extension://${extId}/options.html#${section}`);
       await opt.waitForTimeout(500);
+      const fonts = await opt.evaluate(() => {
+        const font = (selector) => getComputedStyle(document.querySelector(selector)).fontFamily;
+        return { brand: font('.brand h1'), heading: font('.page-title h2'), control: font('.theme-btn') };
+      });
+      assertChecks('Settings fonts', {
+        brandAndHeadingUseDisplay: [fonts.brand, fonts.heading].every((value) => value.includes('Iowan Old Style')),
+        controlUsesInterface: fonts.control.includes('system-ui'),
+      });
       await opt.screenshot({ path: `${SHOTS}options-${section}-${theme}.png`, fullPage: true });
       if (section === 'tags') {
         // "From …" names the lists that only define a tag, and only when no list marks a
@@ -2592,6 +2600,8 @@ if (!only || only === 'options') {
     await pop.setViewportSize({ width: 364, height: 620 });
     await pop.goto(`chrome-extension://${extId}/popup.html`);
     await pop.waitForTimeout(400);
+    const brand = await pop.locator('.brand h1').evaluate((el) => getComputedStyle(el).fontFamily);
+    assertChecks('popup wordmark font', { usesDisplay: brand.includes('Iowan Old Style') });
     await pop.screenshot({ path: `${SHOTS}popup-${theme}.png`, fullPage: true });
     await pop.close();
     await opt.close();
@@ -2762,6 +2772,11 @@ if (!only || only === 'welcome') {
     await welcome.setViewportSize({ width: 1180, height: 900 });
     await welcome.goto(`chrome-extension://${extId}/welcome.html`);
     await welcome.waitForTimeout(300);
+    const fonts = await welcome.evaluate(() => ({
+      headline: getComputedStyle(document.querySelector('.intro h1')).fontFamily,
+      control: getComputedStyle(document.querySelector('#demo .weigh')).fontFamily,
+    }));
+    assertChecks('welcome fonts', { displayHeadline: fonts.headline.includes('Iowan Old Style'), interfaceControls: fonts.control.includes('system-ui') });
     await welcome.screenshot({ path: `${SHOTS}welcome-${scheme}.png`, fullPage: true });
   }
   // The example search page: a result's button opens the menu, Pin puts its site first,
@@ -3397,6 +3412,16 @@ if (only === 'popup-tags' || checks) {
   assertChecks('popup duplicate tag name', {
     explained: (await popup.locator('#new-tag-error').textContent()) === 'That tag is already on this site.',
     markedInvalid: (await popup.getByRole('textbox', { name: 'New tag name' }).getAttribute('aria-invalid')) === 'true',
+  });
+
+  const markupLabel = 'Notes <b>example</b>';
+  await newTag.fill(markupLabel);
+  await newTag.press('Enter');
+  const literalTag = popup.locator('#here button.tag').filter({ hasText: markupLabel });
+  await literalTag.waitFor();
+  assertChecks('popup tag text stays literal', {
+    text: (await literalTag.textContent()).includes(markupLabel),
+    noMarkup: (await literalTag.locator('b').count()) === 0,
   });
 
   await popup.close();

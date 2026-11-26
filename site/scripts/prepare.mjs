@@ -111,6 +111,7 @@ await rm(publicDir, { recursive: true, force: true });
 await cp(join(docs, 'public'), publicDir, { recursive: true });
 await cp(join(docs, 'img'), join(publicDir, 'img'), { recursive: true });
 await cp(join(docs, '.vitepress/theme/brand.css'), join(publicDir, 'brand.css'));
+await cp(join(repo, 'assets/typography.css'), join(publicDir, 'typography.css'));
 await cp(join(site, 'src/site.css'), join(publicDir, 'site.css'));
 await cp(join(site, 'src/preferences.js'), join(publicDir, 'preferences.js'));
 const fonts = join(site, 'node_modules/@fontsource-variable/inter');
@@ -123,8 +124,7 @@ await writeFile(join(fontDir, 'inter.css'), fontCss);
 
 const notices = await readFile(join(repo, 'public/THIRD_PARTY_NOTICES.txt'), 'utf8');
 const siteLicenses = [
-  ['Inglorious Web, Motion, UI, and I18n', 'https://github.com/IngloriousCoderz/inglorious-forge', '@inglorious/web'],
-  ['Lit (lit-html, @lit-labs/ssr-client, @lit/reactive-element)', 'https://github.com/lit/lit', 'lit-html'],
+  ['Inglorious Motion, UI, and I18n', 'https://github.com/IngloriousCoderz/inglorious-forge', '@inglorious/motion'],
   ['i18next', 'https://github.com/i18next/i18next', 'i18next'],
   ['Inter', 'https://rsms.me/inter/', '@fontsource-variable/inter'],
 ];

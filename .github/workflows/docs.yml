@@ -1,16 +1,16 @@
 name: Docs
 
-# Builds the documentation site (VitePress fails the build on a broken link), checks
-# the homepage's layout (e2e/homepage.mjs), and, on main, publishes it to GitHub Pages.
+# Builds the documentation site with Inglorious SSX, checks links, layout, and demos,
+# and publishes it to GitHub Pages from main.
 # Publishing needs Pages set to deploy from GitHub Actions: repository Settings →
 # Pages → Build and deployment → Source.
 
 on:
   push:
     branches: [main]
-    paths: ['docs/**', 'lists/directory.json', 'utils/links.ts', 'package.json', 'package-lock.json', 'e2e/homepage.mjs', '.github/workflows/docs.yml']
+    paths: ['docs/**', 'site/**', 'assets/typography.css', 'lists/directory.json', 'utils/links.ts', 'package.json', 'package-lock.json', 'e2e/ssx*.mjs', '.github/workflows/docs.yml']
   pull_request:
-    paths: ['docs/**', 'lists/directory.json', 'utils/links.ts', 'package.json', 'package-lock.json', 'e2e/homepage.mjs', '.github/workflows/docs.yml']
+    paths: ['docs/**', 'site/**', 'assets/typography.css', 'lists/directory.json', 'utils/links.ts', 'package.json', 'package-lock.json', 'e2e/ssx*.mjs', '.github/workflows/docs.yml']
   workflow_dispatch:
 
 permissions:
@@ -29,21 +29,23 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      # No install scripts: npm worms spread through them. wxt prepare is the only one we need.
+          cache-dependency-path: |
+            package-lock.json
+            site/package-lock.json
       - run: npm ci --ignore-scripts
-      - run: npx wxt prepare
-      - run: npm run docs:build
+      - run: npm --prefix site ci --ignore-scripts
+      - run: npm --prefix site run build
       - name: Install Chromium for the homepage layout check
         run: npx playwright-core install --with-deps chromium
-      - name: Check the homepage layout
-        run: node e2e/homepage.mjs
-      - if: github.event_name != 'pull_request'
+      - name: Check generated pages and browser behavior
+        run: node e2e/ssx.mjs
+      - if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
-          path: docs/.vitepress/dist
+          path: site/dist/anubis
 
   deploy:
-    if: github.event_name != 'pull_request'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     permissions:

@@ -72,6 +72,8 @@ try {
   await page.waitForFunction(() => document.querySelector('.demo-step[aria-current="step"]')?.textContent.includes('Know before you click'));
   await page.evaluate(() => scrollTo(0, 0));
   await page.evaluate(() => document.fonts.ready);
+  const wordmark = await page.locator('.site-brand').evaluate((el) => getComputedStyle(el).fontFamily);
+  assert.match(wordmark, /Iowan Old Style/, 'the site wordmark uses the Anubis display family');
   const alignment = await page.evaluate(() => {
     const box = (selector) => document.querySelector(selector).getBoundingClientRect();
     const middle = (rect) => (rect.top + rect.bottom) / 2;
@@ -92,7 +94,8 @@ try {
     return {
       page: color('body', 'backgroundColor'), text: color('body', 'color'), line: color('.demo-rail', 'backgroundColor'),
       marker: color('.demo-marker', 'backgroundColor'), nav: color('.site-header', 'backgroundColor'),
-      font: document.fonts.check('16px "Inter Variable"') && color('body', 'fontFamily').includes('Inter Variable'),
+      font: [...document.fonts].some((face) => face.family.includes('Inter Variable') && face.status === 'loaded')
+        && color('body', 'fontFamily').includes('Inter Variable'),
     };
   });
   assert.deepEqual(await palette(), {
@@ -218,7 +221,9 @@ try {
   await page.waitForURL('**/de/guide/ranking');
   await openMenu();
   await menu.getByRole('button', { name: 'Suchen', exact: true }).click();
-  await page.getByRole('searchbox', { name: 'Anleitungen durchsuchen' }).fill('einstufen');
+  const searchInput = page.getByRole('searchbox', { name: 'Anleitungen durchsuchen' });
+  assert.match(await searchInput.evaluate((el) => getComputedStyle(el).fontFamily), /Inter Variable/);
+  await searchInput.fill('einstufen');
   const germanResult = page.locator('.search-results a').first();
   await germanResult.waitFor();
   assert.match(await germanResult.getAttribute('href'), /^\/anubis\/de\//);
@@ -227,6 +232,11 @@ try {
   await page.locator('#site-search').waitFor({ state: 'hidden' });
   await page.getByRole('navigation', { name: 'Hauptnavigation' }).getByRole('link', { name: 'Listen (auf Englisch)', exact: true }).click();
   await page.waitForURL('**/lists');
+  for (const [folder, family] of [['zh-cn', 'PingFang SC'], ['zh-tw', 'PingFang TC']]) {
+    await page.goto(url + folder + '/');
+    const bodyFont = await page.locator('body').evaluate((el) => getComputedStyle(el).fontFamily);
+    assert.ok(bodyFont.includes(family), folder + ' has its own fallback for Chinese glyphs');
+  }
 
   for (const mode of ['light', 'dark']) {
     await page.emulateMedia({ colorScheme: mode });

@@ -3,6 +3,12 @@
   --site-inline-padding: clamp(1rem, 4vw, 2rem);
   --vp-font-family-base: 'Inter Variable', -apple-system, BlinkMacSystemFont, sans-serif;
 }
+:root:lang(zh-CN) {
+  --vp-font-family-base: 'Inter Variable', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+}
+:root:lang(zh-TW) {
+  --vp-font-family-base: 'Inter Variable', 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans CJK TC', sans-serif;
+}
 *, *::before, *::after { box-sizing: border-box; }
 body {
   margin: 0;
@@ -11,7 +17,8 @@ body {
   background: var(--vp-c-bg);
 }
 h1, h2, h3, p, figure { margin: 0; }
-button, input { color: inherit; font: inherit; }
+:where(button, input, select, textarea, optgroup, option) { color: inherit; font: inherit; }
+:where(code, pre, kbd, samp) { font-family: var(--anubis-font-code); }
 a { color: inherit; text-underline-offset: 0.18em; }
 a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible {
   outline: 2px solid var(--vp-c-brand-1);
@@ -43,7 +50,14 @@ button:disabled { cursor: default; }
   font-size: 0.875rem;
   font-weight: 500;
 }
-.site-brand { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 650; text-decoration: none; }
+.site-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  font: 500 1.1875rem/1.2 var(--anubis-font-display);
+  letter-spacing: 0.01em;
+  text-decoration: none;
+}
 .site-brand img { display: block; }
 .site-header a { text-decoration: none; }
 .site-header .primary-nav { display: flex; align-items: center; gap: 1.5rem; margin-inline-start: auto; }
@@ -186,3 +200,6 @@ button:disabled { cursor: default; }
 
 .iw-input-label { display: block; }
 .iw-input-control { max-width: 100%; }
+
+.not-found { max-width: 46rem; margin: 4rem auto; padding-inline: var(--site-inline-padding); }
+.not-found h1 { font: 400 2.5rem/1.2 var(--anubis-font-display); margin-block-end: 1rem; }

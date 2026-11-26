@@ -1,3 +1,4 @@
+import { html, render as renderTemplate, renderNodes, type TemplateResult } from '@/utils/view';
 import { balanceSvg, setBalance } from '@/utils/balance';
 import { normalizeHostname, siteChoices, siteOf } from '@/utils/domain';
 import { h, icon } from '@/utils/dom';
@@ -22,6 +23,7 @@ export type PageTheme = 'light' | 'dark';
 // root: the page's CSS can't restyle it and its scripts can't read tag names out of it.
 const roots = new WeakMap<HTMLElement, ShadowRoot>();
 const renderKeys = new WeakMap<HTMLElement, string>();
+const viewEnds = new WeakMap<ShadowRoot, Comment>();
 // What each host currently shows. (`:scope` can't be used for this: inside a
 // shadow root it matches nothing, so old content would pile up.)
 const rendered = new WeakMap<HTMLElement, Node>();
@@ -59,7 +61,9 @@ let palette: Palette = 'gold';
 function makeHost(tag: string, theme: PageTheme, display = 'block'): { host: HTMLElement; root: ShadowRoot } {
   const host = document.createElement(tag);
   const root = host.attachShadow({ mode: 'closed' });
-  root.append(h('style', null, shadowCss));
+  const end = document.createComment('');
+  root.append(h('style', null, shadowCss), end);
+  viewEnds.set(root, end);
   host.dataset.theme = theme;
   host.dataset.palette = palette;
   // Anubis's own language and direction, not the page's: screen readers pronounce it
@@ -160,8 +164,15 @@ export function keepUpright(host: HTMLElement): void {
   host.style.setProperty('transform-origin', 'center', 'important');
 }
 
+/** Leave the stylesheet, scrim, and persistent live region outside the rendered view. */
+function commitHost(host: HTMLElement, node: Node) {
+  const root = roots.get(host)!;
+  renderNodes(root, node, viewEnds.get(root)!);
+  rendered.set(host, node);
+}
+
 /** Replace a host's content unless it's already showing the same thing. */
-function render(host: HTMLElement, key: string, build: () => Node): void {
+function render(host: HTMLElement, key: string, build: () => Node | TemplateResult): void {
   if (renderKeys.get(host) === key) return;
   renderKeys.set(host, key);
   // Replacing the focused button would send focus to the top of the page, so it
@@ -170,12 +181,10 @@ function render(host: HTMLElement, key: string, build: () => Node): void {
   const root = roots.get(host)!;
   const focusKey = root.activeElement?.getAttribute('data-focus-key');
   const next = build();
-  const prev = rendered.get(host);
-  if (prev?.parentNode) prev.parentNode.replaceChild(next, prev);
-  else root.append(next);
-  rendered.set(host, next);
-  if (focusKey && next instanceof Element) {
-    const target = [...next.querySelectorAll<HTMLElement>('[data-focus-key]')];
+  if (next instanceof Node) commitHost(host, next);
+  else renderTemplate(next, root, viewEnds.get(root)!);
+  if (focusKey) {
+    const target = [...root.querySelectorAll<HTMLElement>('[data-focus-key]')];
     (target.find((el) => el.dataset.focusKey === focusKey) ?? target[0])?.focus({ preventScroll: true });
   }
 }
@@ -330,8 +339,7 @@ export function ensureWeighButton(
       if (popover?.anchor === button) closePopover();
       else onOpen(button, weighResult.get(owner)!);
     });
-    made.root.append(button);
-    rendered.set(owner, button);
+    commitHost(owner, button);
     host = owner;
     weighHosts.set(container, host);
   }
@@ -442,7 +450,7 @@ function indentBar(bar: HTMLElement | undefined, container: HTMLElement, column:
 function showLevel(button: HTMLElement, level: Level): void {
   if (button.dataset.level === level) return;
   button.dataset.level = level;
-  button.replaceChildren(icon(WEIGH_ICONS[level]));
+  renderNodes(button, icon(WEIGH_ICONS[level]));
 }
 
 /** Not on a card, in a table, or on a phone's title line, which keep their own places. */
@@ -947,92 +955,36 @@ export function renderSummary(
   const short = shortSummary(stats);
   const compact = !!short || stats.canGoDeeper || stats.loading;
   const host = summaryHost;
-  const build = () =>
-    h(
-      'div',
-      { class: `summary${compact ? ' compact' : ''}${summaryDetails ? ' open' : ''}` },
-      // The sentence and its buttons: on phones they run on as one paragraph, so the
-      // buttons follow the words and wrap with them; wider, the line steps aside
-      // (display: contents) and each is laid out on its own.
-      h(
-        'span',
-        { class: 'line' },
-        short ? h('span', { class: 'sentence short' }, short) : null,
-        h('span', { class: short ? 'sentence long' : 'sentence' }, summarySentence(stats)),
-        stats.filter
-          ? h('button', { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'show-all' }, on: { click: () => actions.filter(undefined) } }, t('summaryShowAll'))
-          : null,
-        hiddenCount(stats) && !stats.filter
-          ? h(
-              'button',
-              { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'reveal' }, on: { click: actions.toggleReveal } },
-              stats.revealed ? t('hideAgain') : t('showHidden'),
-            )
-          : null,
-        stats.canGoDeeper || stats.loading
-          ? h(
-              'button',
-              {
-                class: 'text-btn deeper',
-                type: 'button',
-                disabled: stats.loading,
-                title: t('loadMoreTitle'),
-                attrs: { 'data-focus-key': 'deeper' },
-                on: { click: actions.deeper },
-              },
-              stats.loading ? t('loading') : t('loadMore'),
-            )
-          : null,
-        settingsButton(actions.settings, 'settings'),
-        compact
-          ? h(
-              'button',
-              {
-                class: 'text-btn details',
-                type: 'button',
-                attrs: { 'aria-expanded': String(summaryDetails), 'data-focus-key': 'details' },
-                on: {
-                  click: () => {
-                    summaryDetails = !summaryDetails;
-                    render(host, JSON.stringify([stats, change, summaryDetails]), build);
-                  },
-                },
-              },
-              summaryDetails ? t('summaryFewerDetails') : t('summaryDetails'),
-            )
-          : null,
-      ),
-      // Why Load more results stopped, with the page it tried, to see for yourself.
-      stats.stopped
-        ? h(
-            'div',
-            { class: 'change stopped', attrs: { role: 'status' } },
-            h('span', null, stoppedSentence(stats.stopped, stats.engine)),
-            stats.stopped.url
-              ? h(
-                  'a',
-                  {
-                    class: 'text-btn',
-                    href: stats.stopped.url,
-                    target: '_blank',
-                    rel: 'noopener noreferrer',
-                    title: t('loadMoreOpenTitle', stats.engine),
-                    attrs: { 'data-focus-key': 'open-page' },
-                  },
-                  t('loadMoreOpen', stats.stopped.page),
-                )
-              : null,
-          )
-        : null,
-      change
-        ? h(
-            'div',
-            { class: 'change' },
-            h('span', null, change),
-            h('button', { class: 'text-btn', type: 'button', attrs: { 'data-focus-key': 'undo' }, on: { click: actions.undo } }, t('summaryUndo')),
-          )
-        : null,
-    );
+  const toggleDetails = () => {
+    summaryDetails = !summaryDetails;
+    render(host, JSON.stringify([stats, change, summaryDetails]), build);
+  };
+  const build = () => html`
+    <div class=${`summary${compact ? ' compact' : ''}${summaryDetails ? ' open' : ''}`}>
+      <span class="line">
+        ${short ? html`<span class="sentence short">${short}</span>` : ''}
+        <span class="sentence ${short ? 'long' : ''}">${summarySentence(stats)}</span>
+        ${stats.filter ? html`<button class="text-btn" type="button" data-focus-key="show-all"
+          @click=${() => actions.filter(undefined)}>${t('summaryShowAll')}</button>` : ''}
+        ${hiddenCount(stats) && !stats.filter ? html`<button class="text-btn" type="button" data-focus-key="reveal"
+          @click=${actions.toggleReveal}>${stats.revealed ? t('hideAgain') : t('showHidden')}</button>` : ''}
+        ${stats.canGoDeeper || stats.loading ? html`<button class="text-btn deeper" type="button" data-focus-key="deeper"
+          title=${t('loadMoreTitle')} ?disabled=${stats.loading} @click=${actions.deeper}>${stats.loading ? t('loading') : t('loadMore')}</button>` : ''}
+        ${settingsButton(actions.settings, 'settings')}
+        ${compact ? html`<button class="text-btn details" type="button" data-focus-key="details"
+          aria-expanded=${String(summaryDetails)} @click=${toggleDetails}>${summaryDetails ? t('summaryFewerDetails') : t('summaryDetails')}</button>` : ''}
+      </span>
+      ${stats.stopped ? html`
+        <div class="change stopped" role="status">
+          <span>${stoppedSentence(stats.stopped, stats.engine)}</span>
+          ${stats.stopped.url ? html`<a class="text-btn" href=${stats.stopped.url} target="_blank" rel="noopener noreferrer"
+            title=${t('loadMoreOpenTitle', stats.engine)} data-focus-key="open-page">${t('loadMoreOpen', stats.stopped.page)}</a>` : ''}
+        </div>` : ''}
+      ${change ? html`
+        <div class="change">
+          <span>${change}</span><button class="text-btn" type="button" data-focus-key="undo" @click=${actions.undo}>${t('summaryUndo')}</button>
+        </div>` : ''}
+    </div>`;
   render(summaryHost, JSON.stringify([stats, change, summaryDetails]), build);
 
   announce(summaryHost, change ?? '');
@@ -1275,7 +1227,7 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
     allTags = false;
     const { host, root: shadow } = makeHost('anubis-popover', data.theme);
     // Behind the sheet on a phone: the page, dimmed. A tap on it closes the menu.
-    shadow.append(h('div', { class: 'scrim', attrs: { 'aria-hidden': 'true' }, on: { click: () => closeAndReturn() } }));
+    shadow.insertBefore(h('div', { class: 'scrim', attrs: { 'aria-hidden': 'true' }, on: { click: () => closeAndReturn() } }), viewEnds.get(shadow)!);
     document.documentElement.append(host);
     // The button is inside a closed shadow root, so a press on it reaches the page
     // as a press on its host. That press is the button's to handle: it closes the menu.
@@ -1324,9 +1276,7 @@ export function openPopover(anchor: HTMLElement, data: PopoverData, actions: Pop
   // Keep the old balance so it swings to the new weight instead of jumping.
   const balance = oldBalance ?? pop.querySelector('svg.balance')!;
   if (oldBalance) pop.querySelector('svg.balance')?.replaceWith(oldBalance);
-  oldPop?.remove();
-  root.append(pop);
-  rendered.set(popover.host, pop);
+  commitHost(popover.host, pop);
   if (!placeMenu(popover, anchor, opening)) return;
   if (opening) setBalance(balance, 'normal');
   // The result's whole weight: your ranking, its tags, and its lists.

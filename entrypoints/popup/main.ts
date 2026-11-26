@@ -1,3 +1,4 @@
+import { html, render } from '@/utils/view';
 import { createStore } from '@inglorious/store';
 import { machineTranslationNote } from '@/utils/translated';
 import '@/assets/theme.css';
@@ -84,37 +85,31 @@ async function renderAll() {
   if (ticket !== rendering) return;
   enabled.checked = rules.settings.enabled;
   document.body.classList.toggle('paused', !rules.settings.enabled);
-  $('#status').replaceChildren(
-    h('i', { class: rules.settings.enabled ? 'gem' : 'gem hollow', attrs: { 'aria-hidden': 'true' } }),
-    rules.settings.enabled ? t('popupOn') : t('popupOff'),
-  );
+  render(html`<i class="gem ${rules.settings.enabled ? '' : 'hollow'}" aria-hidden="true"></i>
+    ${rules.settings.enabled ? t('popupOn') : t('popupOff')}`, $('#status'));
 
   const sites = listSites(rules.personalText).reverse();
   const seeAll = $<HTMLButtonElement>('#see-all');
   seeAll.hidden = sites.length <= RECENT;
   seeAll.textContent = t('popupSeeAll', sites.length);
-  list.replaceChildren(
-    ...(sites.length
-      ? sites.slice(0, RECENT).map((entry) => {
-          const level = displayLevel(entry.level);
-          const onlyTag = entry.tags.length === 1 ? rules.tags.get(entry.tags[0]!) : undefined;
-          return h(
-            'li',
-            null,
-            h('span', { class: 'site', title: entry.site }, siteName(entry.site)),
-            level !== 'normal'
-              ? h('span', { class: `level-note ${level}` }, icon(levelIcon(level, levelSteps(entry.level))), LEVEL_CHIPS[level])
-              : entry.level === 'allow'
-                ? h('span', { class: 'level-note' }, t('popupKeptNormal'))
-                : onlyTag
-                  ? h('span', { class: 'tag', style: `--c: ${onlyTag.color}` }, h('i', { class: 'gem' }), onlyTag.label)
-                  : entry.tags.length
-                    ? h('span', { class: 'level-note' }, tn('popupTagCount', entry.tags.length))
-                    : null,
-          );
-        })
-      : [h('li', { class: 'empty' }, balanceSvg({ empty: true }), h('p', null, t('popupNoSites')))]),
-  );
+  render(html`
+    ${sites.length ? sites.slice(0, RECENT).map((entry) => {
+      const level = displayLevel(entry.level);
+      const onlyTag = entry.tags.length === 1 ? rules.tags.get(entry.tags[0]!) : undefined;
+      return html`<li>
+        <span class="site" title=${entry.site}>${siteName(entry.site)}</span>
+        ${level !== 'normal'
+          ? html`<span class=${'level-note ' + level}>${icon(levelIcon(level, levelSteps(entry.level)))}${LEVEL_CHIPS[level]}</span>`
+          : entry.level === 'allow'
+            ? html`<span class="level-note">${t('popupKeptNormal')}</span>`
+            : onlyTag
+              ? html`<span class="tag" style=${'--c:' + onlyTag.color}><i class="gem"></i>${onlyTag.label}</span>`
+              : entry.tags.length
+                ? html`<span class="level-note">${tn('popupTagCount', entry.tags.length)}</span>`
+                : ''}
+      </li>`;
+    }) : html`<li class="empty">${balanceSvg({ empty: true })}<p>${t('popupNoSites')}</p></li>`}
+  `, list);
 
   const subs = rules.lists.filter((l) => !l.personal);
   $('#lists-summary').textContent = t('popupListsAndTags', tn('popupListCount', subs.length), tn('popupTagCount', rules.tags.size));
@@ -265,10 +260,12 @@ function renderHere(rules: RuleSet) {
   });
 
   here.dataset.domain = domain;
-  here.replaceChildren(
-    h('div', { class: 'weigh' }, cartouche, balance, levels, h('p', { class: 'hint' }, hint)),
-    h('div', { class: 'here-tags' }, h('h2', null, t('popupTags')), yourListTag(entry, ['tag', 'fixed']), tagItems, tagForm),
-  );
+  render(html`
+    <div class="weigh">${cartouche}${balance}${levels}<p class="hint">${hint}</p></div>
+    <div class="here-tags">
+      <h2>${t('popupTags')}</h2>${yourListTag(entry, ['tag', 'fixed'])}${tagItems}${tagForm}
+    </div>
+  `, here);
   // At once, not on the next frame: another render could come first and find nothing focused.
   const target = focusKey ? here.querySelector<HTMLElement>(`[data-focus-key="${focusKey}"]`) : null;
   target?.focus();
@@ -288,7 +285,7 @@ function renderPage(next: PageStats | undefined) {
   if (nothingHere) addSection.hidden = false;
   $('#add-toggle').hidden = !addSection.hidden;
   if (!stats) {
-    page.replaceChildren(h('h2', null, t('popupThisPage')), h('p', { class: 'sentence muted' }, t('popupNotSearch')));
+    render(html`<h2>${t('popupThisPage')}</h2><p class="sentence muted">${t('popupNotSearch')}</p>`, page);
     return;
   }
   const current = stats;
@@ -355,18 +352,16 @@ function renderPage(next: PageStats | undefined) {
     );
   });
 
-  page.replaceChildren(
-    h('h2', null, t('popupThisPageOn', current.engine)),
-    h('p', { class: 'sentence' }, summarySentence(current)),
-    ...(current.stopped ? [h('p', { class: 'sentence muted' }, stoppedSentence(current.stopped, current.engine))] : []),
-    ...(actions.length ? [h('div', { class: 'page-actions' }, actions)] : []),
-    ...(filters.length
-      ? [
-          h('h2', { class: 'filters-label' }, t('popupShowOnly')),
-          h('div', { class: 'seg filters', attrs: { role: 'group', 'aria-label': t('summaryFilterLabel') } }, filters),
-        ]
-      : []),
-  );
+  render(html`
+    <h2>${t('popupThisPageOn', current.engine)}</h2>
+    <p class="sentence">${summarySentence(current)}</p>
+    ${current.stopped ? html`<p class="sentence muted">${stoppedSentence(current.stopped, current.engine)}</p>` : ''}
+    ${actions.length ? html`<div class="page-actions">${actions}</div>` : ''}
+    ${filters.length ? html`
+      <h2 class="filters-label">${t('popupShowOnly')}</h2>
+      <div class="seg filters" role="group" aria-label=${t('summaryFilterLabel')}>${filters}</div>
+    ` : ''}
+  `, page);
 }
 
 $<HTMLFormElement>('#add-form').addEventListener('submit', async (e) => {
