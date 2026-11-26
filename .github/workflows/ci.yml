@@ -59,18 +59,15 @@ jobs:
         run: |
           node e2e/run.mjs options
           node e2e/run.mjs welcome
+          mkdir -p extension-preview/screenshots
+          cp -R .output/firefox-mv2 .output/chrome-mv3 extension-preview/
+          cp e2e/shots/options-*.png e2e/shots/popup-*.png e2e/shots/welcome-*.png extension-preview/screenshots/
       - name: Upload trial browser builds
         if: github.event_name == 'push' && github.ref_name == 'inglorious-trial'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: anubis-extension-preview
-          path: |
-            .output/firefox-mv2/
-            .output/chrome-mv3/
-            e2e/shots/options-*.png
-            e2e/shots/popup-*.png
-            e2e/shots/welcome-*.png
-          include-hidden-files: true
+          path: extension-preview/
           if-no-files-found: error
       - name: Capture review screenshots
         if: github.event_name == 'workflow_dispatch' && inputs.screenshots
