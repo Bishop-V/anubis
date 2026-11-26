@@ -316,9 +316,7 @@ Most parts print their findings rather than failing on them, so read the output:
 
 ## Documentation
 
-[Inglorious SSX](site/README.md) builds the wiki from the existing Markdown. Inglorious Web renders the site and the extension’s Options, popup, welcome page, and search overlays. Extension views reuse native controls that manage browser permissions, SVG balance references, and focused fields. WXT still packages the add-on and the browser owns its permissions and storage.
-
-In the extension build, `scripts/extension-lit.ts` gives pinned Lit an inert template parser. Only template literals go through that parser. Bound values go into text nodes or properties after cloning. Firefox validation runs on the packaged result, and the popup browser test checks that markup in a tag name stays literal.
+[Inglorious SSX](site/README.md) builds the wiki from the existing Markdown, and Inglorious Web renders the site. In the extension, Inglorious Store manages list download and WebDAV sync state in Settings and practice state in the welcome tour. Browser storage remains the source for saved rules and subscriptions. The extension renders with the DOM APIs in `utils/dom.ts`, and WXT builds both browser packages.
 
 Run `npm run screenshots` after installing both sets of dependencies to capture Your sites in `e2e/shots/` and the wiki in `site/dist/anubis/screenshots/`. Trial pushes collect the browser builds and extension screenshots in `anubis-extension-preview` and the wiki in `anubis-ssx-preview`. Use `node e2e/run.mjs docs` when updating screenshots embedded in the wiki.
 

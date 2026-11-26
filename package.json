@@ -41,8 +41,6 @@
     "@inglorious/utils": "5.1.0"
   },
   "dependencies": {
-    "@inglorious/store": "12.1.1",
-    "@inglorious/web": "6.11.0",
-    "lit-html": "3.3.3"
+    "@inglorious/store": "12.1.1"
   }
 }

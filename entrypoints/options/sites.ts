@@ -1,5 +1,3 @@
-import { renderNodes } from '@/utils/view';
-import { createStore } from '@inglorious/store';
 import { normalizeSite } from '@/utils/domain';
 import { h, icon, siteName } from '@/utils/dom';
 import { t, tn } from '@/utils/i18n';
@@ -14,20 +12,7 @@ import { rerender } from './flash';
 import { download, helpLink, pageTitle } from './parts';
 
 let editingText = false;
-
-type SiteTableEntity = { type: 'SiteTable'; query: string };
-
-const SiteTable = {
-  searchChanged(table: SiteTableEntity, query: string) {
-    table.query = query;
-  },
-};
-
-// Keep the filter when the options page rebuilds the table after a storage update.
-const siteTable = createStore({
-  types: { SiteTable },
-  entities: { table: { type: 'SiteTable', query: '' } satisfies SiteTableEntity },
-});
+let filter = '';
 
 export async function renderSites(): Promise<HTMLElement> {
   const rules = await loadRuleSet();
@@ -132,19 +117,19 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
   const search = h('input', {
     type: 'search',
     placeholder: tn('sitesFilter', entries.length),
-    value: siteTable.getState().table.query,
+    value: filter,
     attrs: { 'aria-label': t('sitesFilterLabel') },
   });
   const body = h('tbody');
   const tagIds = [...rules.tags.keys()];
 
   const renderRows = () => {
-    const q = siteTable.getState().table.query.trim().toLowerCase();
+    const q = filter.trim().toLowerCase();
     const shown = entries
       .filter((e) => !q || e.site.includes(q) || e.tags.some((id) => id.includes(q)))
       .sort((a, b) => a.site.localeCompare(b.site))
       .slice(0, 500);
-    renderNodes(body, [
+    body.replaceChildren(
       ...shown.map((entry) => {
         const level = displayLevel(entry.level);
         const setLevel = (l: Level) => void editPersonal((text) => setSite(text, entry.site, l, entry.tags));
@@ -204,10 +189,10 @@ function table(rules: RuleSet, entries: SiteEntry[]): HTMLElement {
           ),
         );
       }),
-    ]);
+    );
   };
   search.addEventListener('input', () => {
-    siteTable.notify('#table:searchChanged', search.value);
+    filter = search.value;
     renderRows();
   });
   renderRows();
@@ -246,11 +231,11 @@ function textEditor(rules: RuleSet): HTMLElement {
   const status = h('div');
   const check = () => {
     const parsed = parseList(area.value);
-    renderNodes(status, [
+    status.replaceChildren(
       parsed.errors.length
         ? h('ul', { class: 'errors' }, parsed.errors.slice(0, 20).map((e) => h('li', null, t('listErrorLine', e.line, e.message))))
         : h('p', { class: 'muted', style: 'font-size:12.5px' }, t('sitesTextReadable', tn('listInstructions', parsed.rules.length), tn('popupTagCount', parsed.tags.length))),
-    ]);
+    );
   };
   area.addEventListener('input', check);
   check();

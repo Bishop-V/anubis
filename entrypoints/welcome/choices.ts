@@ -1,4 +1,3 @@
-import { html, render } from '@/utils/view';
 import { h } from '@/utils/dom';
 import { t, type MessageKey } from '@/utils/i18n';
 import type { TagAction } from '@/utils/matcher';
@@ -48,5 +47,5 @@ export async function renderChoices(box: HTMLElement): Promise<void> {
       ),
     ),
   );
-  render(html`<ul class="switches">${rows}</ul>`, box);
+  box.replaceChildren(h('ul', { class: 'switches' }, rows));
 }

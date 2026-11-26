@@ -1,5 +1,3 @@
-import { html, render } from '@/utils/view';
-import { createStore } from '@inglorious/store';
 import { machineTranslationNote } from '@/utils/translated';
 import '@/assets/theme.css';
 import './style.css';
@@ -49,28 +47,14 @@ const RANK_TITLES: Record<Level, MessageKey> = {
   pin: 'popupRankPin',
 };
 
-type PopupView = {
-  type: 'PopupView';
-  tabUrl?: URL;
-  domain?: string;
-  focusKey?: string;
-  stats?: PageStats;
-};
-const PopupView = {
-  tabOpened(state: PopupView, url: URL) { state.tabUrl = url; },
-  siteSelected(state: PopupView, domain: string) { state.domain = domain; },
-  tagEdited(state: PopupView, { domain, id }: { domain: string; id: string }) {
-    state.domain = domain;
-    state.focusKey = `tag-${id}`;
-  },
-  focusRestored(state: PopupView) { state.focusKey = undefined; },
-  pageReported(state: PopupView, stats?: PageStats) { state.stats = stats; },
-};
-const popup: PopupView = { type: 'PopupView' };
-const popupStore = createStore({ types: { PopupView }, entities: { popup } });
-const view = () => popupStore.getState().popup;
+/** The tab's address, when it's a web page. */
+let tabUrl: URL | undefined;
+/** The site under This site, once chosen from the cartouche. */
+let hereDomain: string | undefined;
 /** Kept across renders so it swings to a new ranking instead of jumping. */
 const balance = balanceSvg();
+let stats: PageStats | undefined;
+let hereFocusKey: string | undefined;
 /** Counts renders, so one that a newer render overtook doesn't draw older data over it. */
 let rendering = 0;
 
@@ -85,31 +69,37 @@ async function renderAll() {
   if (ticket !== rendering) return;
   enabled.checked = rules.settings.enabled;
   document.body.classList.toggle('paused', !rules.settings.enabled);
-  render(html`<i class="gem ${rules.settings.enabled ? '' : 'hollow'}" aria-hidden="true"></i>
-    ${rules.settings.enabled ? t('popupOn') : t('popupOff')}`, $('#status'));
+  $('#status').replaceChildren(
+    h('i', { class: rules.settings.enabled ? 'gem' : 'gem hollow', attrs: { 'aria-hidden': 'true' } }),
+    rules.settings.enabled ? t('popupOn') : t('popupOff'),
+  );
 
   const sites = listSites(rules.personalText).reverse();
   const seeAll = $<HTMLButtonElement>('#see-all');
   seeAll.hidden = sites.length <= RECENT;
   seeAll.textContent = t('popupSeeAll', sites.length);
-  render(html`
-    ${sites.length ? sites.slice(0, RECENT).map((entry) => {
-      const level = displayLevel(entry.level);
-      const onlyTag = entry.tags.length === 1 ? rules.tags.get(entry.tags[0]!) : undefined;
-      return html`<li>
-        <span class="site" title=${entry.site}>${siteName(entry.site)}</span>
-        ${level !== 'normal'
-          ? html`<span class=${'level-note ' + level}>${icon(levelIcon(level, levelSteps(entry.level)))}${LEVEL_CHIPS[level]}</span>`
-          : entry.level === 'allow'
-            ? html`<span class="level-note">${t('popupKeptNormal')}</span>`
-            : onlyTag
-              ? html`<span class="tag" style=${'--c:' + onlyTag.color}><i class="gem"></i>${onlyTag.label}</span>`
-              : entry.tags.length
-                ? html`<span class="level-note">${tn('popupTagCount', entry.tags.length)}</span>`
-                : ''}
-      </li>`;
-    }) : html`<li class="empty">${balanceSvg({ empty: true })}<p>${t('popupNoSites')}</p></li>`}
-  `, list);
+  list.replaceChildren(
+    ...(sites.length
+      ? sites.slice(0, RECENT).map((entry) => {
+          const level = displayLevel(entry.level);
+          const onlyTag = entry.tags.length === 1 ? rules.tags.get(entry.tags[0]!) : undefined;
+          return h(
+            'li',
+            null,
+            h('span', { class: 'site', title: entry.site }, siteName(entry.site)),
+            level !== 'normal'
+              ? h('span', { class: `level-note ${level}` }, icon(levelIcon(level, levelSteps(entry.level))), LEVEL_CHIPS[level])
+              : entry.level === 'allow'
+                ? h('span', { class: 'level-note' }, t('popupKeptNormal'))
+                : onlyTag
+                  ? h('span', { class: 'tag', style: `--c: ${onlyTag.color}` }, h('i', { class: 'gem' }), onlyTag.label)
+                  : entry.tags.length
+                    ? h('span', { class: 'level-note' }, tn('popupTagCount', entry.tags.length))
+                    : null,
+          );
+        })
+      : [h('li', { class: 'empty' }, balanceSvg({ empty: true }), h('p', null, t('popupNoSites')))]),
+  );
 
   const subs = rules.lists.filter((l) => !l.personal);
   $('#lists-summary').textContent = t('popupListsAndTags', tn('popupListCount', subs.length), tn('popupTagCount', rules.tags.size));
@@ -133,7 +123,7 @@ function rankingButtons({ domain, r }: { domain: string; r: Ranking }): HTMLElem
           attrs: { 'aria-pressed': String(r.pressed === level) },
           on: {
             click: () => {
-              popupStore.notify('#popup:siteSelected', domain);
+              hereDomain = domain;
               void editPersonal((text) => setSiteLevel(text, domain, nextLevel(level, r)));
             },
           },
@@ -149,7 +139,6 @@ function rankingButtons({ domain, r }: { domain: string; r: Ranking }): HTMLElem
 /** The site in the current tab, when it isn't a search page: rank it for future searches. */
 function renderHere(rules: RuleSet) {
   const here = $('#here');
-  const { tabUrl, domain: hereDomain, focusKey: hereFocusKey } = view();
   const active = document.activeElement;
   const focusKey = hereFocusKey ?? (here.contains(active) && active instanceof HTMLElement ? active.dataset.focusKey : undefined);
   const host = tabUrl && !engineFor(tabUrl.hostname) ? tabUrl.hostname : '';
@@ -170,7 +159,7 @@ function renderHere(rules: RuleSet) {
   const r = rankingOf(entry, baseline);
 
   const cartouche = siteCartouche(domain, choices, (d) => {
-    popupStore.notify('#popup:siteSelected', d);
+    hereDomain = d;
     renderHere(rules);
   });
 
@@ -204,7 +193,8 @@ function renderHere(rules: RuleSet) {
         attrs: { 'aria-pressed': String(on), 'data-focus-key': `tag-${id}` },
         on: {
           click: () => {
-            popupStore.notify('#popup:tagEdited', { domain, id });
+            hereDomain = domain;
+            hereFocusKey = `tag-${id}`;
             void editPersonal((text) => tagSite(text, domain, id, listTagCards(rules.lists)));
           },
         },
@@ -252,7 +242,8 @@ function renderHere(rules: RuleSet) {
     }
     showTagError(null);
     tagInput.value = '';
-    popupStore.notify('#popup:tagEdited', { domain, id });
+    hereDomain = domain;
+    hereFocusKey = `tag-${id}`;
     void editPersonal((text) => {
       const withDefinition = rules.tags.has(id) ? text : upsertTagDef(text, { id, label, color: colorForTag(id) });
       return tagSite(withDefinition, domain, id, listTagCards(rules.lists), true);
@@ -260,24 +251,21 @@ function renderHere(rules: RuleSet) {
   });
 
   here.dataset.domain = domain;
-  render(html`
-    <div class="weigh">${cartouche}${balance}${levels}<p class="hint">${hint}</p></div>
-    <div class="here-tags">
-      <h2>${t('popupTags')}</h2>${yourListTag(entry, ['tag', 'fixed'])}${tagItems}${tagForm}
-    </div>
-  `, here);
+  here.replaceChildren(
+    h('div', { class: 'weigh' }, cartouche, balance, levels, h('p', { class: 'hint' }, hint)),
+    h('div', { class: 'here-tags' }, h('h2', null, t('popupTags')), yourListTag(entry, ['tag', 'fixed']), tagItems, tagForm),
+  );
   // At once, not on the next frame: another render could come first and find nothing focused.
   const target = focusKey ? here.querySelector<HTMLElement>(`[data-focus-key="${focusKey}"]`) : null;
   target?.focus();
   // A tag just created only appears once the change is saved: keep waiting for it.
-  if (target && focusKey === hereFocusKey) popupStore.notify('#popup:focusRestored');
+  if (target && focusKey === hereFocusKey) hereFocusKey = undefined;
   requestAnimationFrame(() => requestAnimationFrame(() => setBalance(balance, verdict.level, verdict.score)));
 }
 
 function renderPage(next: PageStats | undefined) {
   setReportLink(next?.engine);
-  popupStore.notify('#popup:pageReported', next);
-  const { stats } = view();
+  stats = next;
   const page = $('#page');
   const nothingHere = !stats && $('#here').hidden;
   page.hidden = !stats && !nothingHere;
@@ -285,7 +273,7 @@ function renderPage(next: PageStats | undefined) {
   if (nothingHere) addSection.hidden = false;
   $('#add-toggle').hidden = !addSection.hidden;
   if (!stats) {
-    render(html`<h2>${t('popupThisPage')}</h2><p class="sentence muted">${t('popupNotSearch')}</p>`, page);
+    page.replaceChildren(h('h2', null, t('popupThisPage')), h('p', { class: 'sentence muted' }, t('popupNotSearch')));
     return;
   }
   const current = stats;
@@ -352,16 +340,18 @@ function renderPage(next: PageStats | undefined) {
     );
   });
 
-  render(html`
-    <h2>${t('popupThisPageOn', current.engine)}</h2>
-    <p class="sentence">${summarySentence(current)}</p>
-    ${current.stopped ? html`<p class="sentence muted">${stoppedSentence(current.stopped, current.engine)}</p>` : ''}
-    ${actions.length ? html`<div class="page-actions">${actions}</div>` : ''}
-    ${filters.length ? html`
-      <h2 class="filters-label">${t('popupShowOnly')}</h2>
-      <div class="seg filters" role="group" aria-label=${t('summaryFilterLabel')}>${filters}</div>
-    ` : ''}
-  `, page);
+  page.replaceChildren(
+    h('h2', null, t('popupThisPageOn', current.engine)),
+    h('p', { class: 'sentence' }, summarySentence(current)),
+    ...(current.stopped ? [h('p', { class: 'sentence muted' }, stoppedSentence(current.stopped, current.engine))] : []),
+    ...(actions.length ? [h('div', { class: 'page-actions' }, actions)] : []),
+    ...(filters.length
+      ? [
+          h('h2', { class: 'filters-label' }, t('popupShowOnly')),
+          h('div', { class: 'seg filters', attrs: { role: 'group', 'aria-label': t('summaryFilterLabel') } }, filters),
+        ]
+      : []),
+  );
 }
 
 $<HTMLFormElement>('#add-form').addEventListener('submit', async (e) => {
@@ -409,7 +399,7 @@ async function main() {
   const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
   try {
     const url = new URL(tab?.url ?? '');
-    if (/^https?:$/.test(url.protocol)) popupStore.notify('#popup:tabOpened', url);
+    if (/^https?:$/.test(url.protocol)) tabUrl = url;
   } catch {
     // No URL (a browser page, or no access): nothing to rank.
   }

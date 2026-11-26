@@ -1,4 +1,3 @@
-import { html, render } from '@/utils/view';
 import { machineTranslationNote } from '@/utils/translated';
 import '@/assets/theme.css';
 import './style.css';
@@ -63,26 +62,35 @@ async function renderNav() {
     lists: subs.filter((s) => s.enabled).length,
   };
   const active = current().id;
-  render(html`
-    <a class="brand" href=${wiki()} target="_blank" rel="noopener noreferrer" title=${t('settingsBrandTitle')}>
-      <img src="/anubis.svg" alt="" width="36" height="36">
-      <div><h1>Anubis</h1><p>${t('settingsTagline')}</p></div>
-    </a>
-    ${SECTIONS.map((section) => html`
-      <a href=${`#${section.id}`} aria-current=${section.id === active ? 'page' : 'false'}>
-        ${section.label}
-        ${counts[section.id] === undefined ? '' : html`<span class="count">${tNumber(counts[section.id]!)}</span>`}
-      </a>
-    `)}
-    <div class="foot">
-      ${themeButton(rules.settings.theme)}
-      <div class="links">
-        ${external(wiki(), t('welcomeGuide'))}
-        ${external(bugReportLink({ version: browser.runtime.getManifest().version, browser: describeBrowser(navigator.userAgent) }), t('reportProblem'), t('reportProblemTitle'))}
-        ${external(REPO_URL, t('settingsSource'))}
-      </div>
-    </div>
-  `, nav);
+  nav.replaceChildren(
+    // The name opens the wiki, where everything here is explained.
+    h(
+      'a',
+      { class: 'brand', href: wiki(), target: '_blank', rel: 'noopener noreferrer', title: t('settingsBrandTitle') },
+      h('img', { src: '/anubis.svg', alt: '', width: 36, height: 36 }),
+      h('div', null, h('h1', null, 'Anubis'), h('p', null, t('settingsTagline'))),
+    ),
+    ...SECTIONS.map((s) =>
+      h(
+        'a',
+        { href: `#${s.id}`, attrs: { 'aria-current': s.id === active ? 'page' : undefined } },
+        s.label,
+        counts[s.id] !== undefined ? h('span', { class: 'count' }, tNumber(counts[s.id]!)) : null,
+      ),
+    ),
+    h(
+      'div',
+      { class: 'foot' },
+      themeButton(rules.settings.theme),
+      h(
+        'div',
+        { class: 'links' },
+        external(wiki(), t('welcomeGuide')),
+        external(bugReportLink({ version: browser.runtime.getManifest().version, browser: describeBrowser(navigator.userAgent) }), t('reportProblem'), t('reportProblemTitle')),
+        external(REPO_URL, t('settingsSource')),
+      ),
+    ),
+  );
 }
 
 let rendering = 0;
@@ -94,7 +102,7 @@ async function renderMain() {
   if (ticket !== rendering) return;
   if (section.help) el.querySelector('.page-title p')?.append(' ', helpLink(...section.help));
   // Above every section, in a machine translation: use it with caution.
-  render(html`${machineTranslationNote()}${el}`, main);
+  main.replaceChildren(...[machineTranslationNote(), el].filter((x) => !!x));
   document.title = t('settingsPageTitle', section.label);
   window.scrollTo(0, scroll);
 }

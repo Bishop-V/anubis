@@ -1,4 +1,3 @@
-import { html, render, renderNodes } from '@/utils/view';
 import { createStore } from '@inglorious/store';
 import { balanceSvg, setBalance } from '@/utils/balance';
 import { h, icon } from '@/utils/dom';
@@ -112,8 +111,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
   // The tour's tip, moved beside whatever it's about; its words are also said here, as they change.
   const coach = h('div', { class: 'coach' });
   const coachSaid = h('p', { class: 'sr-only', attrs: { role: 'status' } });
-  render(html`<div class="query" aria-hidden="true">${icon(ICON_SEARCH)}${t('welcomeQuery')}</div>
-    ${summaryBox}${list}${coachSaid}`, page);
+  page.append(h('div', { class: 'query', attrs: { 'aria-hidden': 'true' } }, icon(ICON_SEARCH), t('welcomeQuery')), summaryBox, list, coachSaid);
 
   // One menu, moved under whichever result it's open for, so its balance swings from where it was.
   const balance = balanceSvg();
@@ -178,28 +176,28 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
       ...{ engine: '', total: RESULTS.length, tagged: 0, revealed, pages: 1, canGoDeeper: false, loading: false, tags: [], removed: {} },
       ...{ hidden, pinned: count('pin'), raised: count('raise', 'raise2'), lowered: count('lower', 'lower2') },
     };
-    render(html`${summarySentence(stats)}
-      ${hidden ? html`<button type="button" class="text-btn" @click=${toggleHidden}>${revealed ? t('hideAgain') : t('showHidden')}</button>` : ''}
-    `, summary);
-    const sentence = last ? changeSentence({ site: last.host, before: { level: last.before, tags: [] }, after: { level: last.after, tags: [] }, newTags: [] }, (id) => id) : '';
-    render(html`${sentence}${last ? html` <button type="button" class="text-btn" @click=${undo}>${t('summaryUndo')}</button>` : ''}`, said);
+    summary.replaceChildren(summarySentence(stats));
+    if (hidden) summary.append(h('button', { type: 'button', class: 'text-btn', on: { click: toggleHidden } }, revealed ? t('hideAgain') : t('showHidden')));
+    if (!last) return said.replaceChildren();
+    const sentence = changeSentence({ site: last.host, before: { level: last.before, tags: [] }, after: { level: last.after, tags: [] }, newTags: [] }, (id) => id);
+    said.replaceChildren(sentence, ' ', h('button', { type: 'button', class: 'text-btn', on: { click: undo } }, t('summaryUndo')));
   }
 
   /** Each result's button, and the ranking under its title, as on a search page. */
   function drawRow(result: DemoResult) {
     const { row, weigh, chips } = rows.get(result.host)!;
-    const level = displayLevel(state().levels.get(result.host)!);
+    const personal = state().levels.get(result.host)!;
+    const level = displayLevel(personal);
     row.dataset.level = level;
     weigh.dataset.level = level;
-    renderNodes(weigh, icon(WEIGH_ICONS[level]));
+    weigh.replaceChildren(icon(WEIGH_ICONS[level]));
     const label = level === 'normal' ? t('weighLabel', result.host) : t('weighLabelRanked', result.host, LEVEL_CHIPS[level]);
     weigh.title = label;
     weigh.setAttribute('aria-label', label);
     weigh.setAttribute('aria-expanded', String(state().open === result.host));
-    render(html`
-      ${level !== 'normal' ? html`<span class=${'level-note ' + level}>${icon(levelIcon(level, levelSteps(state().levels.get(result.host)!)))}${LEVEL_CHIPS[level]}</span>` : ''}
-      ${result.tag ? tagChip(STARTER_TAGS[result.tag]!) : ''}
-    `, chips);
+    chips.replaceChildren();
+    if (level !== 'normal') chips.append(h('span', { class: `level-note ${level}` }, icon(levelIcon(level, levelSteps(personal))), LEVEL_CHIPS[level]));
+    if (result.tag) chips.append(tagChip(STARTER_TAGS[result.tag]!));
   }
 
   function drawMenu() {
@@ -214,7 +212,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
       button.title = t(RANK_TITLES[level], host);
       button.setAttribute('aria-pressed', String(r.pressed === level));
       // Raise and Lower light one arrow per press.
-      render(html`<span class="level-icon">${icon(rankIcon(level, r.pressed === level ? r.steps : 0))}</span>${LEVEL_LABELS[level]}`, button);
+      button.replaceChildren(h('span', { class: 'level-icon' }, icon(rankIcon(level, r.pressed === level ? r.steps : 0))), LEVEL_LABELS[level]);
     }
     hint.textContent = r.pressed ? t('popupHintMine', host) : t('popupHintNone');
     // Laid out first, so a menu just opened swings from level to the site's ranking.
@@ -229,7 +227,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
     // Putting rows back in the list takes the focus off whatever was in them: keep it.
     const focused = page.contains(document.activeElement) ? (document.activeElement as HTMLElement) : undefined;
     RESULTS.forEach(drawRow);
-    renderNodes(list, order().map((r) => rows.get(r.host)!.row));
+    list.replaceChildren(...order().map((r) => rows.get(r.host)!.row));
     if (open && shown(open)) rows.get(open.host)!.row.append(menu);
     else menu.remove();
     if (focused?.isConnected && document.activeElement !== focused) focused.focus({ preventScroll: true });
@@ -324,7 +322,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
       const says = parts.find((part) => part.classList.contains('says'))!;
       // A new tip arrives with a short fade where it lands; the same one stays put.
       const fresh = coach.textContent !== parts.map((part) => part.textContent).join('') || coach.dataset.point !== tip.point;
-      renderNodes(coach, parts);
+      coach.replaceChildren(...parts);
       coach.dataset.point = tip.point;
       if (coach.parentElement !== tip.at) tip.at.append(coach);
       if (fresh) {
@@ -347,13 +345,17 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
     const tour = state();
     const done = [tour.opened, !!tour.first, tour.hid];
     const next = done.indexOf(false);
-    render(html`${STEPS.map((key, i) => html`
-      <li class=${done[i] ? 'done' : ''} aria-current=${i === next ? 'step' : 'false'}>
-        <span class="mark" aria-hidden="true">${done[i] ? icon(ICON_CHECK) : String(i + 1)}</span>
-        ${t(key)}
-        ${done[i] ? html`<span class="sr-only">${gap()}${t('welcomeStepDone')}</span>` : ''}
-      </li>
-    `)}`, checklist.list);
+    checklist.list.replaceChildren(
+      ...STEPS.map((key, i) =>
+        h(
+          'li',
+          { class: done[i] ? 'done' : undefined, attrs: { 'aria-current': i === next ? 'step' : undefined } },
+          h('span', { class: 'mark', attrs: { 'aria-hidden': 'true' } }, done[i] ? icon(ICON_CHECK) : String(i + 1)),
+          t(key),
+          done[i] ? h('span', { class: 'sr-only' }, `${gap()}${t('welcomeStepDone')}`) : null,
+        ),
+      ),
+    );
     checklist.done.hidden = next !== -1;
   }
 

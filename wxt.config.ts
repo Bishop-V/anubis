@@ -1,6 +1,5 @@
 import { defineConfig } from 'wxt';
 import { english, freshMessages, languages } from './scripts/locales.mjs';
-import { extensionLit } from './scripts/extension-lit';
 import { DOCS_URL } from './utils/links';
 
 // WXT generates manifest.json from this config + the files in entrypoints/.
@@ -9,10 +8,6 @@ import { DOCS_URL } from './utils/links';
 export default defineConfig({
   // Default target for every command. Override per-run with `-b chrome`.
   browser: 'firefox',
-  vite: () => ({
-    plugins: [extensionLit()],
-    optimizeDeps: { exclude: ['@inglorious/web', 'lit-html'] },
-  }),
   // Firefox's add-on reviewers get a zip of the source to rebuild from. Leave out
   // what the build doesn't use: the documentation site (mostly screenshots), the
   // end-to-end harness, store listing assets, agent skills, and local agent notes.

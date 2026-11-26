@@ -166,7 +166,8 @@ await writeFile(join(fontDir, 'inter.css'), fontCss);
 
 const notices = await readFile(join(repo, 'public/THIRD_PARTY_NOTICES.txt'), 'utf8');
 const siteLicenses = [
-  ['Inglorious Motion, UI, and I18n', 'https://github.com/IngloriousCoderz/inglorious-forge', '@inglorious/motion'],
+  ['Inglorious Web, Motion, UI, and I18n', 'https://github.com/IngloriousCoderz/inglorious-forge', '@inglorious/web'],
+  ['Lit', 'https://github.com/lit/lit', 'lit-html'],
   ['i18next', 'https://github.com/i18next/i18next', 'i18next'],
   ['Inter', 'https://rsms.me/inter/', '@fontsource-variable/inter'],
 ];
