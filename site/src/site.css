@@ -1,13 +1,15 @@
 :root {
+  --vp-nav-height: 64px;
+  --vp-font-family-base: system-ui, sans-serif;
+  color-scheme: light;
+}
+:root:not(.dark) {
   --vp-c-text-1: #1f1f22;
   --vp-c-text-2: #5f5f66;
   --vp-c-text-3: #85858c;
   --vp-c-divider: #dcdce0;
   --vp-c-gutter: #dcdce0;
   --vp-c-bg-elv: #fcfcfd;
-  --vp-nav-height: 64px;
-  --vp-font-family-base: system-ui, sans-serif;
-  color-scheme: light;
 }
 :root.dark { --vp-c-text-3: #9d9da3; color-scheme: dark; }
 *, *::before, *::after { box-sizing: border-box; }

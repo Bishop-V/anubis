@@ -75,6 +75,8 @@ try {
     const [text, muted] = mode === 'light' ? ['rgb(31, 31, 34)', 'rgb(95, 95, 102)'] : ['rgb(232, 232, 234)', 'rgb(157, 157, 163)'];
     assert.equal(pin, text);
     assert.deepEqual(scales, [muted, muted, muted]);
+    assert.equal(await demo.locator('.site-name').first().evaluate((el) => getComputedStyle(el).color), text);
+    assert.equal(await demo.locator('.snippet').first().evaluate((el) => getComputedStyle(el).color), muted);
     if (screenshots) await demo.screenshot({ path: join(shotDir, 'ranking-' + mode + '.png'), animations: 'disabled' });
   }
   await page.goto(url + 'guide/introduction');
