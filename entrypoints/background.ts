@@ -1,3 +1,4 @@
+import { createStore } from '@inglorious/store';
 import { browser, defineBackground, storage } from '#imports';
 import { t } from '@/utils/i18n';
 import { readSubscribeLink, subscribeQuery } from '@/utils/links';
@@ -27,6 +28,21 @@ import { changeEncryptionPassphrase, syncChanges, syncIfDue, syncWithServer } fr
 
 const LAST_CHECK = 'local:lastUpdateCheck' as const;
 const CHECK_EVERY_MS = 30 * 60 * 1000;
+
+type ListRefresh = {
+  type: 'ListRefresh';
+  running?: Promise<number>;
+  forced: boolean;
+};
+const ListRefresh = {
+  requested(state: ListRefresh, { running, forced }: { running: Promise<number>; forced: boolean }) {
+    state.running = running;
+    state.forced = forced;
+  },
+  settled(state: ListRefresh, running: Promise<number>) {
+    if (state.running === running) state.running = undefined;
+  },
+};
 
 export default defineBackground(() => {
   // MV3 has `action`; Firefox MV2 has `browserAction`.
@@ -70,10 +86,11 @@ export default defineBackground(() => {
 
   // One update at a time. "Update all" (forced) doesn't settle for a routine check
   // that's already running: it runs straight after it.
-  let running: Promise<number> | undefined;
-  let runningForced = false;
+  const updates: ListRefresh = { type: 'ListRefresh', forced: false };
+  const refreshStore = createStore({ types: { ListRefresh }, entities: { updates } });
   const refresh = (force = false): Promise<number> => {
-    if (running && (runningForced || !force)) return running;
+    const { running, forced } = refreshStore.getState().updates;
+    if (running && (forced || !force)) return running;
     const before = running;
     const run: Promise<number> = (async () => {
       await before;
@@ -84,10 +101,9 @@ export default defineBackground(() => {
         return 0;
       })
       .finally(() => {
-        if (running === run) running = undefined;
+        refreshStore.notify('#updates:settled', run);
       });
-    running = run;
-    runningForced = force;
+    refreshStore.notify('#updates:requested', { running: run, forced: force });
     return run;
   };
 

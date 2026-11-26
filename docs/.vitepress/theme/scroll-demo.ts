@@ -1,6 +1,7 @@
 import { useData } from 'vitepress';
 import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, ref, type VNode } from 'vue';
 import { columnButton, tagMark } from './demo-parts';
+import { PAYWALL, REFERENCE, SCROLL_ITEMS as ITEMS, SCROLL_RANKED as RANKED, SCROLL_SHORT as SHORT, SCROLL_STEPS as STEPS, SCROLL_SUMMARY as SUMMARY, type Tag, type ScrollBlock as Block, type ScrollItem as Item, type ScrollResult as Result } from './demo-data';
 
 // The homepage's demo: one search on a drawn results page that Anubis works through
 // as you scroll. The page's heading (the default slot, from home.ts) is the first
@@ -14,99 +15,6 @@ import { columnButton, tagMark } from './demo-parts';
 // no wordmark. Before Anubis it's as crowded as a real one gets, with panels between
 // the results, and only with kinds of panel clean-up can remove, so the demo doesn't
 // promise more than the extension does.
-
-type Tag = { name: string; color: string };
-type Result = {
-  id: string;
-  site: string;
-  url: string;
-  icon: [bg: string, fg: string, letter: string];
-  title: string;
-  snippet: string;
-  tag?: Tag;
-  hidden?: boolean;
-  pinned?: boolean;
-  raised?: boolean;
-  lowered?: boolean;
-};
-// A panel between the results: `lines` are what it lists, `meta` a line of small
-// print for each (a source, a length, a count).
-type Block = { id: string; kind: 'ai' | 'news' | 'questions' | 'videos' | 'discussions' | 'images'; heading: string; lines: string[]; meta?: string[] };
-type Item = Result | Block;
-
-const REFERENCE: Tag = { name: 'Reference', color: '#2b9aa0' };
-const PAYWALL: Tag = { name: 'Paywalled', color: '#b5452e' };
-
-const ITEMS: Item[] = [
-  {
-    id: 'ai',
-    kind: 'ai',
-    heading: 'AI overview',
-    lines: ['Anubis is the jackal-headed god of the dead in ancient Egyptian religion, linked with mummification and the protection of tombs. He was said to weigh the hearts of the dead against a feather.'],
-    meta: ['Wikipedia', 'Britannica', '+4 sites'],
-  },
-  { id: 'wiki', site: 'Wikipedia', url: 'en.wikipedia.org › wiki › Anubis', icon: ['#ffffff', '#000000', 'W'], title: 'Anubis - Wikipedia', snippet: 'Anubis is the god of funerary rites, protector of graves, and guide to the underworld.', tag: REFERENCE, pinned: true },
-  {
-    id: 'news',
-    kind: 'news',
-    heading: 'Top stories',
-    lines: ['Jackal mummies found in a Saqqara catacomb', 'Museum reopens its gallery of Anubis statues', 'What the weighing of the heart tells us'],
-    meta: ['Heritage Daily', 'The Museum Post', 'Ancient Review'],
-  },
-  { id: 'fandom', site: 'Fandom', url: 'mythology.fandom.com › wiki › Anubis', icon: ['#fa005a', '#ffffff', 'F'], title: 'Anubis | Mythology Wiki | Fandom', snippet: 'Anubis is the Egyptian god of mummification and the afterlife.', hidden: true },
-  {
-    id: 'questions',
-    kind: 'questions',
-    heading: 'People also ask',
-    lines: ['Is Anubis good or evil?', 'Why does Anubis have a jackal head?', 'Who is the wife of Anubis?', 'What is Anubis the god of?'],
-  },
-  { id: 'videos', kind: 'videos', heading: 'Videos', lines: ['Anubis explained', 'Tomb of Anubis', 'The weighing of the heart'], meta: ['6:14', '12:03', '3:47'] },
-  { id: 'brit', site: 'Britannica', url: 'www.britannica.com › topic › Anubis', icon: ['#0f4c81', '#ffffff', 'B'], title: 'Anubis | Egyptian God, Mythology, & Facts', snippet: 'Anubis, also called Anpu, ancient Egyptian god of the dead, represented by a jackal.', tag: REFERENCE },
-  {
-    id: 'discussions',
-    kind: 'discussions',
-    heading: 'Discussions and forums',
-    lines: ['Why is Anubis always shown as a jackal?', 'Best books on Anubis and the afterlife?'],
-    meta: ['Egyptology forum, 38 replies', 'History questions, 12 replies'],
-  },
-  { id: 'nyt', site: 'The New York Times', url: 'www.nytimes.com › 2026 › 03', icon: ['#ffffff', '#000000', 'T'], title: 'Archaeologists Find a Shrine to Anubis', snippet: 'A newly excavated site near Saqqara suggests Anubis was worshipped there for centuries.', tag: PAYWALL, lowered: true },
-  { id: 'images', kind: 'images', heading: 'Images', lines: ['', '', '', '', '', ''] },
-  { id: 'whe', site: 'World History Encyclopedia', url: 'www.worldhistory.org › Anubis', icon: ['#8b1c1c', '#ffffff', 'W'], title: 'Anubis - World History Encyclopedia', snippet: 'Anubis is the Egyptian god of mummification and the afterlife.', tag: REFERENCE, raised: true },
-];
-
-// After the ranking step: pinned first, then raised, lowered last. The hidden site
-// has left the page by then, so its place doesn't matter.
-const RANKED = ['wiki', 'whe', 'fandom', 'brit', 'nyt'];
-
-// In the order the extension names them (CLEANUP in utils/cleanup.ts).
-const REMOVED = 'an AI answer, a video panel, a question list, a discussions panel, a news panel, and an image panel';
-const SUMMARY = [
-  '',
-  '',
-  `Anubis removed ${REMOVED}.`,
-  `Anubis hid 1 of 5 results. It also removed ${REMOVED}.`,
-  `Anubis pinned 1, raised 1, lowered 1, and hid 1 of 5 results. It also removed ${REMOVED}.`,
-  `Anubis pinned 1, raised 1, lowered 1, and hid 1 of 5 results. It also removed ${REMOVED}.`,
-];
-
-// The steps after the heading; the heading is step 1, the page before Anubis.
-// The same in a few words, as the extension says it on phones (shortSummary), with
-// Details for the rest.
-const SHORT = [
-  '',
-  '',
-  'Anubis cleaned up the page.',
-  'Anubis changed 1 of 5 results and cleaned up the page.',
-  'Anubis changed 4 of 5 results and cleaned up the page.',
-  'Anubis changed 4 of 5 results and cleaned up the page.',
-];
-
-const STEPS: { title: string; text: string }[] = [
-  { title: 'Clutter out', text: 'Anubis strips AI answers, question lists, and the panels in between. You pick which.' },
-  { title: 'Done with a site?', text: 'Hide it from the button beside any result. It’s gone from every search after that, and Show hidden brings it back.' },
-  { title: 'Your sites first', text: 'Pin or raise the sites you trust. Lower the ones you put up with. The button by each one shows where it stands.' },
-  { title: 'Know before you click', text: 'Tags from lists mark reference sites, paywalls, and more. The summary says what changed, and Show hidden undoes it.' },
-];
 
 // Everything drawn here copies what the extension puts on a search page, so the demo
 // shows what people will see. Check it against the extension after changing any of

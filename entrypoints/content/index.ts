@@ -1,3 +1,4 @@
+import { createSearchInteraction } from './interaction';
 import { browser, defineContentScript } from '#imports';
 import { NO_CLEANUP, type Cleanup } from '@/utils/cleanup';
 import { fixedEngineFor, storedEngineFixes, type EngineFix } from '@/utils/enginefixes';
@@ -86,13 +87,11 @@ export default defineContentScript({
     const menuTheme = (setting: Theme): PageTheme =>
       setting !== 'auto' ? setting : (scheme ?? browserScheme());
 
-    let reveal = false;
     // Blocks removed by clean-up in the last pass.
     let removed = new Set<HTMLElement>();
-    // Hidden results shown one at a time with their own Show button, by URL. Kept
-    // across passes (engines rewrite the page on hover) until the next search.
-    let shown = new Set<string>();
-    let filter: string | undefined;
+    // Keep per-search controls across engine DOM updates, until the next search.
+    const interaction = createSearchInteraction();
+    const search = () => interaction.getState().search;
     let deeper = freshState(engine);
     // What an automatic Load more results may move once someone is reading (steady.ts).
     let steady = freshSteady();
@@ -138,12 +137,11 @@ export default defineContentScript({
         deeper = freshState(engine);
         steady = freshSteady();
         autoLoad = false;
-        filter = undefined;
-        reveal = false;
-        shown = new Set();
+        interaction.notify('#search:searched');
         change = undefined;
       }
 
+      const { reveal, shown, filter } = search();
       const results = revealResults(engine, findResults(engine));
       // A page you loaded with the engine's own button counts once its results arrive,
       // so the summary's count and the next Load more results start from the pages here.
@@ -212,8 +210,8 @@ export default defineContentScript({
         .map(([id, count]) => ({ id, count, label: rules.tags.get(id)?.label ?? id, color: rules.tags.get(id)?.color ?? colorForTag(id) }))
         .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
       // A filter whose tag left the page (a new search, a list turned off) lapses.
-      if (filter && !tagCounts.has(filter)) filter = undefined;
-      stats.filter = filter;
+      if (filter && !tagCounts.has(filter)) interaction.notify('#search:filterChanged');
+      stats.filter = search().filter;
       applyFilter(results, theme);
 
       // Cards sit in a grid, which reranking's flex column would break: they move with `order` alone,
@@ -231,14 +229,13 @@ export default defineContentScript({
         const changed = change && changeSentence(change, (id) => rules.tags.get(id)?.label ?? id);
         renderSummary(summaryPlace(results, engine, ai), stats, theme, {
           toggleReveal: () => {
-            reveal = !reveal;
-            if (!reveal) shown.clear();
+            interaction.notify('#search:revealChanged', !search().reveal);
             pass();
           },
           settings: () => void send({ type: 'open-options' }),
           deeper: () => goDeeper(1),
           filter: (tag) => {
-            filter = tag;
+            interaction.notify('#search:filterChanged', tag);
             pass();
           },
           undo: () => {
@@ -271,6 +268,7 @@ export default defineContentScript({
 
     /** Results without the filter's tag step aside; the ones it brings back are laid out again. */
     const applyFilter = (results: FoundResult[], theme: PageTheme) => {
+      const { filter } = search();
       for (const result of results) {
         const out = !!filter && !verdictFor(result).tags.includes(filter);
         const wasOut = result.container.hasAttribute('data-anubis-filtered');
@@ -284,6 +282,7 @@ export default defineContentScript({
 
     const applyVerdict = (result: FoundResult, verdict: Verdict, theme: PageTheme) => {
       const { container } = result;
+      const { reveal, shown, filter } = search();
       const revealed = verdict.hidden && (reveal || shown.has(result.url));
       container.setAttribute('data-anubis-result', '');
       const state: string[] = [verdict.level];
@@ -314,7 +313,7 @@ export default defineContentScript({
         belowRow: engine.chipsBelowRow,
         filter,
         onFilter: (tag?: string) => {
-          filter = tag;
+          interaction.notify('#search:filterChanged', tag);
           pass();
         },
       };
@@ -330,6 +329,7 @@ export default defineContentScript({
      * the run is marked data-anubis-grouped and hidden by page.css.
      */
     const renderHiddenRuns = (results: FoundResult[], theme: PageTheme) => {
+      const { reveal, shown } = search();
       const collapsed = (r: FoundResult) => {
         const v = verdictFor(r);
         return v.hidden && !(reveal || shown.has(r.url)) && rules.settings.hideStyle === 'collapse' && !engine.table && !r.card;
@@ -353,7 +353,7 @@ export default defineContentScript({
         result.container.toggleAttribute('data-anubis-grouped', grouped.has(result.container));
         renderHiddenBar(result, verdictFor(result), theme, rules.tags, !!run, {
           reveal: () => {
-            for (const r of run ?? [result]) shown.add(r.url);
+            interaction.notify('#search:resultsShown', (run ?? [result]).map((r) => r.url));
             pass();
           },
         }, run?.slice(1).map(verdictFor));
@@ -606,12 +606,11 @@ export default defineContentScript({
           break;
         case 'set-reveal':
         case 'toggle-reveal':
-          reveal = message.type === 'set-reveal' ? message.on : !reveal;
-          if (!reveal) shown.clear();
+          interaction.notify('#search:revealChanged', message.type === 'set-reveal' ? message.on : !search().reveal);
           pass();
           break;
         case 'set-filter':
-          filter = message.tag;
+          interaction.notify('#search:filterChanged', message.tag);
           pass();
           break;
         case 'go-deeper':

@@ -1,3 +1,4 @@
+import { createStore } from '@inglorious/store';
 import { balanceSvg, setBalance } from '@/utils/balance';
 import { h, icon } from '@/utils/dom';
 import { gap, t, tParts, type MessageKey } from '@/utils/i18n';
@@ -50,13 +51,56 @@ export interface Checklist {
 
 const STEPS: MessageKey[] = ['welcomeStepOpen', 'welcomeStepRank', 'welcomeStepHide'];
 
+type PracticeChange = { host: string; before: PersonalLevel; after: PersonalLevel };
+type Practice = {
+  type: 'Practice';
+  levels: Map<string, PersonalLevel>;
+  revealed: boolean;
+  open?: string;
+  last?: PracticeChange;
+  first?: string;
+  opened: boolean;
+  hid: boolean;
+  skipped: boolean;
+  closed: boolean;
+};
+
+const normalRanks = () => new Map<string, PersonalLevel>(RESULTS.map((result) => [result.host, 'normal']));
+const Practice = {
+  tourEnded(state: Practice, key: 'skipped' | 'closed') { state[key] = true; },
+  menuOpened(state: Practice, host: string) { state.open = host; state.opened = true; },
+  menuClosed(state: Practice) { state.open = undefined; },
+  ranked(state: Practice, change: PracticeChange) {
+    state.levels.set(change.host, change.after);
+    state.last = change;
+    state.first ??= change.host;
+    if (change.after === 'hide') {
+      state.hid = true;
+      if (!state.revealed) state.open = undefined;
+    }
+  },
+  undone(state: Practice) {
+    if (!state.last) return;
+    state.levels.set(state.last.host, state.last.before);
+    state.last = undefined;
+  },
+  revealToggled(state: Practice) {
+    state.revealed = !state.revealed;
+    if (!state.revealed && state.open && state.levels.get(state.open) === 'hide') state.open = undefined;
+  },
+  reset(state: Practice) {
+    Object.assign(state, {
+      levels: normalRanks(), revealed: false, last: undefined, open: undefined,
+      first: undefined, opened: false, hid: false, closed: false,
+    });
+  },
+};
+
 export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Checklist): void {
-  const levels = new Map<string, PersonalLevel>(RESULTS.map((r) => [r.host, 'normal']));
-  let revealed = false;
-  let open: DemoResult | undefined;
-  let last: { host: string; before: PersonalLevel; after: PersonalLevel } | undefined;
-  /** The tour's progress: whether a menu was opened, the first site ranked, whether a site was hidden, and whether it was skipped or closed. */
-  const tour: { opened: boolean; first?: string; hid: boolean; skipped: boolean; closed: boolean } = { opened: false, hid: false, skipped: false, closed: false };
+  const practice: Practice = { type: 'Practice', levels: normalRanks(), revealed: false, opened: false, hid: false, skipped: false, closed: false };
+  const store = createStore({ types: { Practice }, entities: { practice } });
+  const state = () => store.getState().practice;
+  const openResult = () => RESULTS.find((result) => result.host === state().open);
   let beckoning: HTMLElement | undefined;
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -100,7 +144,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
         type: 'button',
         class: 'weigh',
         attrs: { 'aria-expanded': 'false', 'aria-controls': 'demo-menu' },
-        on: { click: () => locked(weigh) || (open === result ? closeMenu(false) : openMenu(result)) },
+        on: { click: () => locked(weigh) || (state().open === result.host ? closeMenu(false) : openMenu(result)) },
       });
       const body = resultBody(result);
       const chips = body.querySelector<HTMLElement>('.chips')!;
@@ -110,14 +154,14 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
   );
 
   const rankingOf = (host: string): Ranking => {
-    const personal = levels.get(host)!;
+    const personal = state().levels.get(host)!;
     return { personal, pressed: personal === 'normal' ? undefined : displayLevel(personal), steps: levelSteps(personal), fromLists: 'normal' };
   };
-  const shown = (r: DemoResult) => revealed || levels.get(r.host) !== 'hide';
+  const shown = (r: DemoResult) => state().revealed || state().levels.get(r.host) !== 'hide';
 
   /** Pinned first, then each result where Raise and Lower put it; hidden ones go, unless shown. */
   function order(): DemoResult[] {
-    const key = (r: DemoResult, i: number) => (levels.get(r.host) === 'pin' ? i - 100 : i + (SHIFT[levels.get(r.host)!] ?? 0));
+    const key = (r: DemoResult, i: number) => (state().levels.get(r.host) === 'pin' ? i - 100 : i + (SHIFT[state().levels.get(r.host)!] ?? 0));
     return RESULTS.map((r, i) => ({ r, k: key(r, i) }))
       .sort((a, b) => a.k - b.k)
       .map(({ r }) => r)
@@ -125,7 +169,8 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
   }
 
   function summarise() {
-    const count = (...of: PersonalLevel[]) => [...levels.values()].filter((l) => of.includes(l)).length;
+    const { revealed, last } = state();
+    const count = (...of: PersonalLevel[]) => [...state().levels.values()].filter((l) => of.includes(l)).length;
     const hidden = count('hide');
     const stats = {
       ...{ engine: '', total: RESULTS.length, tagged: 0, revealed, pages: 1, canGoDeeper: false, loading: false, tags: [], removed: {} },
@@ -141,20 +186,21 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
   /** Each result's button, and the ranking under its title, as on a search page. */
   function drawRow(result: DemoResult) {
     const { row, weigh, chips } = rows.get(result.host)!;
-    const level = displayLevel(levels.get(result.host)!);
+    const level = displayLevel(state().levels.get(result.host)!);
     row.dataset.level = level;
     weigh.dataset.level = level;
     weigh.replaceChildren(icon(WEIGH_ICONS[level]));
     const label = level === 'normal' ? t('weighLabel', result.host) : t('weighLabelRanked', result.host, LEVEL_CHIPS[level]);
     weigh.title = label;
     weigh.setAttribute('aria-label', label);
-    weigh.setAttribute('aria-expanded', String(open === result));
+    weigh.setAttribute('aria-expanded', String(state().open === result.host));
     chips.replaceChildren();
-    if (level !== 'normal') chips.append(h('span', { class: `level-note ${level}` }, icon(levelIcon(level, levelSteps(levels.get(result.host)!))), LEVEL_CHIPS[level]));
+    if (level !== 'normal') chips.append(h('span', { class: `level-note ${level}` }, icon(levelIcon(level, levelSteps(state().levels.get(result.host)!))), LEVEL_CHIPS[level]));
     if (result.tag) chips.append(tagChip(STARTER_TAGS[result.tag]!));
   }
 
   function drawMenu() {
+    const open = openResult();
     if (!open) return;
     const host = open.host;
     const r = rankingOf(host);
@@ -175,6 +221,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
 
   /** Put the rows in order, sliding them from where they were unless motion is reduced. */
   function draw() {
+    const open = openResult();
     const before = new Map([...rows.values()].map(({ row }) => [row, row.getBoundingClientRect().top]));
     // Putting rows back in the list takes the focus off whatever was in them: keep it.
     const focused = page.contains(document.activeElement) ? (document.activeElement as HTMLElement) : undefined;
@@ -189,7 +236,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
     summarise();
     drawTour();
     drawChecklist();
-    reset.hidden = !last && [...levels.values()].every((l) => l === 'normal');
+    reset.hidden = !state().last && [...state().levels.values()].every((l) => l === 'normal');
     if (!still) for (const { row } of rows.values()) if (row.isConnected && before.get(row)) slide(row, before.get(row)!);
   }
 
@@ -208,8 +255,8 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
 
   /** What step 3 says: what the first ranking did, if it still stands, then to hide a site. */
   function nextSays(): (string | Node)[] {
-    const host = tour.first!;
-    const level = levels.get(host);
+    const host = state().first!;
+    const level = state().levels.get(host);
     const done = level === 'pin' ? t('welcomeTourPinned', host) : level?.startsWith('raise') ? t('welcomeTourRaised', host) : level?.startsWith('lower') ? t('welcomeTourLowered', host) : '';
     const find = tParts('welcomeTourFind', weighIcon());
     return done ? [done, gap(), ...find] : find;
@@ -217,13 +264,15 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
 
   /** Where the tour is: its step, what to say, the control to mark, and where the tip goes. Undefined once it's closed. */
   function tourTip(): Tip | undefined {
+    const tour = state();
+    const open = openResult();
     if (tour.skipped || tour.closed) return undefined;
     if (!tour.first) {
       if (!open) return { n: 1, says: tParts('welcomeTourOpen', weighIcon(), TOUR_SITE), target: rows.get(TOUR_SITE)!.weigh, at: rows.get(TOUR_SITE)!.row, point: 'weigh' };
       return { n: 2, says: tParts('welcomeTourRank', open.host), target: rankButtons.get('pin'), at: rows.get(open.host)!.row, point: 'menu-end' };
     }
     if (tour.hid) return { says: tParts('welcomeTourDone', weighIcon()), at: summaryBox, point: 'up' };
-    if (open && levels.get(open.host) === 'normal') {
+    if (open && state().levels.get(open.host) === 'normal') {
       return { n: 3, says: tParts('welcomeTourHide', open.host), target: rankButtons.get('hide'), at: rows.get(open.host)!.row, point: 'menu-start' };
     }
     return { n: 3, says: nextSays(), at: summaryBox, point: 'down' };
@@ -238,7 +287,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
    * focusable, so a keyboard doesn't lose its place, and say they're unavailable.
    */
   function lockTo(tip: Tip | undefined) {
-    const unranked = () => RESULTS.filter((r) => levels.get(r.host) === 'normal').map((r) => rows.get(r.host)!.weigh);
+    const unranked = () => RESULTS.filter((r) => state().levels.get(r.host) === 'normal').map((r) => rows.get(r.host)!.weigh);
     const allowed = tip?.target ? [tip.target, ...(tip.n === 3 ? unranked() : [])] : undefined;
     for (const el of [...[...rows.values()].map((r) => r.weigh), ...rankButtons.values()]) {
       const off = !!allowed && !allowed.includes(el);
@@ -292,6 +341,7 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
 
   /** Tick off each step as it's done, and mark the next. It keeps counting after the tour is skipped. */
   function drawChecklist() {
+    const tour = state();
     const done = [tour.opened, !!tour.first, tour.hid];
     const next = done.indexOf(false);
     checklist.list.replaceChildren(
@@ -309,14 +359,13 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
   }
 
   function endTour(end: 'skipped' | 'closed') {
-    tour[end] = true;
+    store.notify('#practice:tourEnded', end);
     draw();
     page.querySelector<HTMLElement>('.weigh')?.focus();
   }
 
   function openMenu(result: DemoResult) {
-    open = result;
-    tour.opened = true;
+    store.notify('#practice:menuOpened', result.host);
     // The balance starts level and swings to the site's ranking, as the real menu's does.
     setBalance(balance, 'normal');
     draw();
@@ -326,25 +375,22 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
   }
 
   function closeMenu(refocus: boolean) {
-    const was = open;
-    open = undefined;
+    const was = openResult();
+    store.notify('#practice:menuClosed');
     draw();
     if (refocus && was && shown(was)) rows.get(was.host)!.weigh.focus();
   }
 
   function press(level: Level) {
+    const open = openResult();
     if (!open) return;
     const host = open.host;
-    const before = levels.get(host)!;
+    const before = state().levels.get(host)!;
     const after = nextLevel(level, rankingOf(host));
     // Normal on a site that has no ranking changes nothing, so it isn't news.
     if (after === before) return;
-    levels.set(host, after);
-    last = { host, before, after };
-    tour.first ??= host;
-    if (after === 'hide') tour.hid = true;
-    if (after === 'hide' && !revealed) {
-      open = undefined;
+    store.notify('#practice:ranked', { host, before, after });
+    if (after === 'hide' && !state().revealed) {
       draw();
       // The result is gone: Undo, in the summary, is what brings it back.
       said.querySelector('button')?.focus();
@@ -355,28 +401,22 @@ export function renderDemo(page: HTMLElement, reset: HTMLElement, checklist: Che
   }
 
   function undo() {
+    const { last } = state();
     if (!last) return;
-    levels.set(last.host, last.before);
     const host = last.host;
-    last = undefined;
+    store.notify('#practice:undone');
     draw();
     rows.get(host)!.weigh.focus();
   }
 
   function toggleHidden() {
-    revealed = !revealed;
-    if (!revealed && open && levels.get(open.host) === 'hide') open = undefined;
+    store.notify('#practice:revealToggled');
     draw();
     summary.querySelector('button')?.focus();
   }
 
   reset.addEventListener('click', () => {
-    for (const r of RESULTS) levels.set(r.host, 'normal');
-    revealed = false;
-    last = undefined;
-    open = undefined;
-    tour.first = undefined;
-    tour.opened = tour.hid = tour.closed = false;
+    store.notify('#practice:reset');
     draw();
     rows.get(RESULTS[0]!.host)!.weigh.focus();
   });

@@ -4,6 +4,8 @@ The documentation site and its screenshots. Part of [Experiments and decisions](
 
 ## Documentation site
 
+- **English SSX proof of concept (2026-11-26).** SSX renders the English wiki using the same Markdown and fixtures. Its own layout, search, demos, and directory use Inglorious Web and Store. SSX 2.3.2 declares a base path in its types but does not apply it to client routing or the entry script. The preview generates routes under `/anubis/` and packages the runtime alongside them. Heading IDs follow the VitePress rules, and the browser check opens the built directory with the extension to verify the Subscribe handoff.
+
 - **Ranking icons in the light demo (2026-11-25).** The pin and scales used VitePress's own text greys. The demos now use the extension's Graphite text colour for the pin and its muted colour for the scales. The ranking demo's browser check compares both schemes with those colours.
 
 - **Inglorious Store trial (2026-11-25).** The ranking demo uses store events to open its menu, change rankings, and reset on replay. VitePress still renders the demo and Vue measures and moves the pointer. Settings uses a separate store for the Your sites filter and the existing extension storage for saved rankings and tags. Anubis's Firefox lint flagged Lit's template parsing when trying Inglorious Web, so the trial uses Inglorious Store with the existing renderer in each surface. The pinned store and utils versions support Node 22. Run `npm run screenshots` to capture both surfaces for review.

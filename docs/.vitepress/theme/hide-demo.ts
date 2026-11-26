@@ -1,5 +1,6 @@
 import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import { columnButton, fold, html, ICON, menu, placeMenu, tagMark, type Level, type MenuPlace } from './demo-parts';
+import { HIDE_RESULTS as RESULTS, type HideResult as Result } from './demo-data';
 
 // The Introduction's demo: a drawn results page where a pointer opens the button
 // beside a result, presses Hide in its menu, and the page answers: the menu closes,
@@ -12,14 +13,6 @@ import { columnButton, fold, html, ICON, menu, placeMenu, tagMark, type Level, t
 // summary… messages), the button on each result and the result menu (demo-parts.ts,
 // after entrypoints/content/ui.ts and shadow.css, utils/balance.ts, utils/icons.ts).
 // Update it with them.
-
-type Result = { id: string; site: string; url: string; icon: [string, string, string]; title: string; snippet: string; chip?: 'tag' | 'raised' };
-const RESULTS: Result[] = [
-  { id: 'wiki', site: 'Wikipedia', url: 'en.wikipedia.org › wiki › Anubis', icon: ['#ffffff', '#000000', 'W'], title: 'Anubis - Wikipedia', snippet: 'Anubis is the god of funerary rites, protector of graves, and guide to the underworld.', chip: 'tag' },
-  { id: 'fandom', site: 'Fandom', url: 'mythology.fandom.com › wiki › Anubis', icon: ['#fa005a', '#ffffff', 'F'], title: 'Anubis | Mythology Wiki | Fandom', snippet: 'Anubis is the Egyptian god of mummification and the afterlife.' },
-  { id: 'whe', site: 'World History Encyclopedia', url: 'www.worldhistory.org › Anubis', icon: ['#8b1c1c', '#ffffff', 'W'], title: 'Anubis - World History Encyclopedia', snippet: 'Anubis is the Egyptian god of mummification and the afterlife, and guardian of the scales.', chip: 'raised' },
-  { id: 'brit', site: 'Britannica', url: 'www.britannica.com › topic › Anubis', icon: ['#0f4c81', '#ffffff', 'B'], title: 'Anubis | Egyptian God, Mythology, & Facts', snippet: 'Anubis, also called Anpu, ancient Egyptian god of the dead, represented by a jackal.', chip: 'tag' },
-];
 
 export default defineComponent({
   name: 'HideDemo',

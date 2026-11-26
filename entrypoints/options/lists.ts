@@ -1,3 +1,4 @@
+import { createStore } from '@inglorious/store';
 import { browser } from '#imports';
 import { h, icon } from '@/utils/dom';
 import { normalizeDomain } from '@/utils/domain';
@@ -42,16 +43,30 @@ function kindOf(format: string | undefined, lens?: boolean): string {
 }
 
 let directory: DirectoryEntry[] | undefined;
-const busy = new Set<string>();
-/** The list whose Suggest changes form is open, and whether it has just opened (to move focus into it once). */
-let suggesting: string | undefined;
-let justOpened = false;
+type ListsView = {
+  type: 'ListsView';
+  busy: Set<string>;
+  offer?: SubscribeLink;
+  suggesting?: string;
+  justOpened: boolean;
+};
 
-/** The list a subscribe link opened settings for, until you subscribe or cancel. */
-let offer = readSubscribeLink(location.search);
+const ListsView = {
+  downloadStarted(state: ListsView, id: string) { state.busy.add(id); },
+  downloadFinished(state: ListsView, id: string) { state.busy.delete(id); },
+  offerDismissed(state: ListsView) { state.offer = undefined; },
+  suggestionChanged(state: ListsView, id?: string) {
+    state.suggesting = id;
+    state.justOpened = !!id;
+  },
+  suggestionFocused(state: ListsView) { state.justOpened = false; },
+};
+const lists: ListsView = { type: 'ListsView', busy: new Set(), justOpened: false, offer: readSubscribeLink(location.search) };
+const listsStore = createStore({ types: { ListsView }, entities: { lists } });
+const listView = () => listsStore.getState().lists;
 
 function dropOffer(): void {
-  offer = undefined;
+  listsStore.notify('#lists:offerDismissed');
   history.replaceState(null, '', location.pathname + location.hash);
 }
 
@@ -83,7 +98,7 @@ async function subscribe(input: string, entry?: DirectoryEntry, name = entry?.na
     }
   }
   const id = entry?.builtin ? builtinId(entry) : subscriptionId(url);
-  busy.add(id);
+  listsStore.notify('#lists:downloadStarted', id);
   rerender();
   try {
     const download = await downloadList(url);
@@ -98,6 +113,7 @@ async function subscribe(input: string, entry?: DirectoryEntry, name = entry?.na
     );
     const { parsed } = download;
     flash('lists', 'ok', t('listsSubscribed', displayName({ url, name }, parsed.meta), tn('listInstructions', parsed.rules.length), tn('popupTagCount', parsed.tags.length)));
+    const { offer } = listView();
     if (offer && offered(offer).url === url) dropOffer();
   } catch (error) {
     // Built-in lists still work from their bundled copy when the download fails.
@@ -106,12 +122,13 @@ async function subscribe(input: string, entry?: DirectoryEntry, name = entry?.na
         subs.some((s) => s.id === id) ? subs : [...subs, { id, url, enabled: true, addedAt: Date.now(), builtin: true, name: entry.name }],
       );
       flash('lists', 'ok', t('listsSubscribedBundled', entry.name));
+      const { offer } = listView();
       if (offer && offered(offer).url === url) dropOffer();
     } else {
       flash('lists', 'error', t('listsSubscribeFailed', error instanceof Error ? error.message : String(error)));
     }
   } finally {
-    busy.delete(id);
+    listsStore.notify('#lists:downloadFinished', id);
     rerender();
   }
 }
@@ -131,11 +148,13 @@ export async function renderLists(): Promise<HTMLElement> {
     if (urlInput.value.trim()) void subscribe(urlInput.value.trim());
   });
 
+  let { offer } = listView();
   if (offer) {
     const { url, id, name } = offered(offer);
-    if (!busy.has(id) && subs.some((s) => (s.id === id || s.url === url) && s.enabled)) {
+    if (!listView().busy.has(id) && subs.some((s) => (s.id === id || s.url === url) && s.enabled)) {
       flash('lists', 'ok', t('offerAlready', name));
       dropOffer();
+      offer = undefined;
     }
   }
   const notice = flashed('lists');
@@ -221,8 +240,8 @@ function moreLists(discover: DirectoryEntry[]): HTMLElement {
         ),
         h(
           'button',
-          { class: 'text-btn', type: 'button', disabled: busy.has(id), on: { click: () => void subscribe(d.url, d) } },
-          busy.has(id) ? t('offerSubscribing') : t('offerSubscribe'),
+          { class: 'text-btn', type: 'button', disabled: listView().busy.has(id), on: { click: () => void subscribe(d.url, d) } },
+          listView().busy.has(id) ? t('offerSubscribing') : t('offerSubscribe'),
         ),
       );
     }),
@@ -247,15 +266,15 @@ function offerPanel(link: SubscribeLink, notice: HTMLElement | null): HTMLElemen
       { class: 'inline-form' },
       h(
         'button',
-        { class: 'btn primary', type: 'button', disabled: busy.has(id), on: { click: () => void subscribe(url, entry, name) } },
-        busy.has(id) ? t('offerSubscribing') : t('offerSubscribe'),
+        { class: 'btn primary', type: 'button', disabled: listView().busy.has(id), on: { click: () => void subscribe(url, entry, name) } },
+        listView().busy.has(id) ? t('offerSubscribing') : t('offerSubscribe'),
       ),
       h(
         'button',
         {
           class: 'btn',
           type: 'button',
-          disabled: busy.has(id),
+          disabled: listView().busy.has(id),
           on: {
             click: () => {
               dropOffer();
@@ -333,7 +352,7 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
     : null;
   // Only lists that ask for suggestions with `! issues:` offer them: a list that never did may not want them.
   const tracker = meta.issues;
-  const open = !!tracker && suggesting === sub.id;
+  const open = !!tracker && listView().suggesting === sub.id;
   const suggest = tracker
     ? h(
         'button',
@@ -343,8 +362,7 @@ function listCard(sub: Subscription, text: string | undefined, cached: CachedLis
           attrs: { 'aria-label': t('listsSuggestChangesTo', name), 'aria-expanded': String(open) },
           on: {
             click: () => {
-              suggesting = open ? undefined : sub.id;
-              justOpened = !open;
+              listsStore.notify('#lists:suggestionChanged', open ? undefined : sub.id);
               rerender();
             },
           },
@@ -410,7 +428,7 @@ function suggestForm(tracker: string, list: string, parsed: ParsedList | undefin
   const why = h('input', { type: 'text', maxLength: 300 });
   const error = h('p', { class: 'notice error', hidden: true });
   const close = () => {
-    suggesting = undefined;
+    listsStore.notify('#lists:suggestionChanged');
     rerender();
   };
 
@@ -441,8 +459,8 @@ function suggestForm(tracker: string, list: string, parsed: ParsedList | undefin
     if (url) window.open(url, '_blank', 'noopener');
     close();
   });
-  if (justOpened) {
-    justOpened = false;
+  if (listView().justOpened) {
+    listsStore.notify('#lists:suggestionFocused');
     // After the section has replaced the old one.
     setTimeout(() => site.isConnected && site.focus(), 0);
   }

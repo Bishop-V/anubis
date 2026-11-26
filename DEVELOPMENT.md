@@ -314,6 +314,8 @@ Most parts print their findings rather than failing on them, so read the output:
 
 ## Documentation
 
+The English SSX proof of concept is in [site/](site/README.md). It builds from the wiki’s Markdown and shares the demo data and colours with the VitePress site. The extension’s Inglorious stores cover per-search interactions, the popup, Lists presentation, the welcome tour, and in-flight background refresh state. They keep browser APIs and persistent formats at the existing integration points.
+
 Run `npm run screenshots` to build the Chrome extension and the wiki, exercise the Your sites filter and ranking demo, and capture desktop and phone views of Your sites plus the finished ranking demo. It uses Chromium, as the other e2e checks do. The PNGs go to `e2e/shots/` for review. Use `node e2e/run.mjs docs` when updating screenshots embedded in the wiki.
 
 On GitHub, run the **CI** workflow for your branch with **Capture Your sites and the wiki ranking demo** selected. It collects the same PNGs in the `anubis-review-screenshots` artifact.

@@ -1,6 +1,7 @@
 import { createStore } from '@inglorious/store';
 import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, reactive, ref, shallowRef } from 'vue';
 import { columnButton, fold, html, ICON, menu, placeMenu, tagMark, type Level, type MenuPlace } from './demo-parts';
+import { RANK_RESULTS as RESULTS, RANK_STEPS as STEPS, type RankResult as Result } from './demo-data';
 
 // Ranking sites, played out: a pointer opens the button beside the last result and
 // presses Pin, and the result moves to the top in its grey frame. Then it lowers
@@ -13,20 +14,6 @@ import { columnButton, fold, html, ICON, menu, placeMenu, tagMark, type Level, t
 // like it copies what the extension draws: reranking by CSS order, the pinned frame
 // (entrypoints/content/page.css), the summary and its change line (utils/summary.ts),
 // and the result menu. Update it with them.
-
-type Result = { id: string; site: string; host: string; url: string; icon: [string, string, string]; title: string; snippet: string; tag?: [string, string] };
-const RESULTS: Result[] = [
-  { id: 'wiki', site: 'Wikipedia', host: 'wikipedia.org', url: 'en.wikipedia.org › wiki › Anubis', icon: ['#ffffff', '#000000', 'W'], title: 'Anubis - Wikipedia', snippet: 'Anubis is the god of funerary rites, protector of graves, and guide to the underworld.', tag: ['Reference', '#2b9aa0'] },
-  { id: 'pinterest', site: 'Pinterest', host: 'pinterest.com', url: 'www.pinterest.com › ideas › anubis', icon: ['#e60023', '#ffffff', 'P'], title: '500+ Anubis ideas | Egyptian art, Anubis, Egypt', snippet: 'Find and save ideas about Anubis on Pinterest.' },
-  { id: 'brit', site: 'Britannica', host: 'britannica.com', url: 'www.britannica.com › topic › Anubis', icon: ['#0f4c81', '#ffffff', 'B'], title: 'Anubis | Egyptian God, Mythology, & Facts', snippet: 'Anubis, also called Anpu, ancient Egyptian god of the dead, represented by a jackal.', tag: ['Reference', '#2b9aa0'] },
-  { id: 'met', site: 'The Met', host: 'metmuseum.org', url: 'www.metmuseum.org › art › collection', icon: ['#e4002b', '#ffffff', 'M'], title: 'Statuette of Anubis | The Metropolitan Museum of Art', snippet: 'Wood statuette of the jackal-headed god, from the Ptolemaic Period.' },
-];
-
-/** The two changes the pointer makes, in turn. */
-const STEPS: { id: string; level: Level; said: string }[] = [
-  { id: 'met', level: 'pin', said: 'Pinned metmuseum.org.' },
-  { id: 'pinterest', level: 'lower', said: 'Lowered pinterest.com.' },
-];
 
 type RankDemoEntity = {
   type: 'RankDemo';

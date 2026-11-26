@@ -13,3 +13,8 @@ e2e/shots
 # Docs site build
 docs/.vitepress/dist
 docs/.vitepress/cache
+
+# English SSX preview build
+site/dist/
+site/public/
+site/src/pages/

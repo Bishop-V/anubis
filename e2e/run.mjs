@@ -23,6 +23,7 @@ import { delimiter, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ANUBIS_PAGE2, ANUBIS_PAGE3, ANUBIS_RESULTS, JS_MORE, JS_RESULTS, bing, bingChallenge, bingMobile, brave, duckduckgo, duckduckgoAd, duckduckgoHtml, duckduckgoLite, duckduckgoMobile, google, googleMobile, ecosia, startpage, yahoo } from './fixtures.mjs';
 import { ENGINE_TABS, engineTab } from './tab-fixtures.mjs';
+import { builtResource } from './ssx-site.mjs';
 
 const EXT = fileURLToPath(new URL('../.output/chrome-mv3', import.meta.url));
 /** A message as the build shows it, in ANUBIS_LANG's translation where it has the message. */
@@ -2434,6 +2435,35 @@ if (only === 'subscribe') {
   console.log('\n== subscribe:', await opt.locator('.notice').first().textContent({ timeout: 3000 }).catch(() => 'no notice'));
   await opt.screenshot({ path: `${SHOTS}options-subscribed.png`, fullPage: true });
   await opt.close();
+}
+
+if (only === 'ssx-subscribe') {
+  // The packaged extension recognises the public URL. Serve the actual SSX
+  // build there inside Chromium so the handoff exercises both builds.
+  await ctx.route('https://bishop-v.github.io/anubis/**', (route) => {
+    const resource = builtResource(new URL(route.request().url()).pathname);
+    return resource ? route.fulfill(resource) : route.fulfill({ status: 404 });
+  });
+  const catalogue = JSON.parse(readFileSync(new URL('../lists/directory.json', import.meta.url), 'utf8'));
+  const optional = catalogue.lists.find((list) => !list.default);
+  const directoryPage = await ctx.newPage();
+  await directoryPage.goto('https://bishop-v.github.io/anubis/lists');
+  const next = ctx.waitForEvent('page', { timeout: 6000 });
+  await directoryPage.getByRole('link', { name: 'Subscribe to ' + optional.name, exact: true }).click();
+  const settings = await next;
+  await settings.waitForURL('**/options.html?*#lists');
+  await settings.locator('.panel.offer').waitFor();
+  await directoryPage.waitForURL('**/anubis/lists');
+  const url = new URL(settings.url());
+  assertChecks('SSX directory handoff', {
+    addressPassed: url.searchParams.get('url') === optional.url,
+    namePassed: url.searchParams.get('name') === optional.name,
+    noAutomaticSubscription: !(await ctx.serviceWorkers()[0].evaluate(async (wanted) =>
+      (await chrome.storage.sync.get('subscriptions')).subscriptions?.some((sub) => sub.url === wanted), optional.url)),
+  });
+  await settings.close();
+  await directoryPage.close();
+  console.log('\n== SSX directory opened the extension confirmation');
 }
 
 if (!only || only === 'subscribe-link') {

@@ -1,3 +1,4 @@
+import { createStore } from '@inglorious/store';
 import { machineTranslationNote } from '@/utils/translated';
 import '@/assets/theme.css';
 import './style.css';
@@ -47,14 +48,28 @@ const RANK_TITLES: Record<Level, MessageKey> = {
   pin: 'popupRankPin',
 };
 
-/** The tab's address, when it's a web page. */
-let tabUrl: URL | undefined;
-/** The site under This site, once chosen from the cartouche. */
-let hereDomain: string | undefined;
+type PopupView = {
+  type: 'PopupView';
+  tabUrl?: URL;
+  domain?: string;
+  focusKey?: string;
+  stats?: PageStats;
+};
+const PopupView = {
+  tabOpened(state: PopupView, url: URL) { state.tabUrl = url; },
+  siteSelected(state: PopupView, domain: string) { state.domain = domain; },
+  tagEdited(state: PopupView, { domain, id }: { domain: string; id: string }) {
+    state.domain = domain;
+    state.focusKey = `tag-${id}`;
+  },
+  focusRestored(state: PopupView) { state.focusKey = undefined; },
+  pageReported(state: PopupView, stats?: PageStats) { state.stats = stats; },
+};
+const popup: PopupView = { type: 'PopupView' };
+const popupStore = createStore({ types: { PopupView }, entities: { popup } });
+const view = () => popupStore.getState().popup;
 /** Kept across renders so it swings to a new ranking instead of jumping. */
 const balance = balanceSvg();
-let stats: PageStats | undefined;
-let hereFocusKey: string | undefined;
 /** Counts renders, so one that a newer render overtook doesn't draw older data over it. */
 let rendering = 0;
 
@@ -123,7 +138,7 @@ function rankingButtons({ domain, r }: { domain: string; r: Ranking }): HTMLElem
           attrs: { 'aria-pressed': String(r.pressed === level) },
           on: {
             click: () => {
-              hereDomain = domain;
+              popupStore.notify('#popup:siteSelected', domain);
               void editPersonal((text) => setSiteLevel(text, domain, nextLevel(level, r)));
             },
           },
@@ -139,6 +154,7 @@ function rankingButtons({ domain, r }: { domain: string; r: Ranking }): HTMLElem
 /** The site in the current tab, when it isn't a search page: rank it for future searches. */
 function renderHere(rules: RuleSet) {
   const here = $('#here');
+  const { tabUrl, domain: hereDomain, focusKey: hereFocusKey } = view();
   const active = document.activeElement;
   const focusKey = hereFocusKey ?? (here.contains(active) && active instanceof HTMLElement ? active.dataset.focusKey : undefined);
   const host = tabUrl && !engineFor(tabUrl.hostname) ? tabUrl.hostname : '';
@@ -159,7 +175,7 @@ function renderHere(rules: RuleSet) {
   const r = rankingOf(entry, baseline);
 
   const cartouche = siteCartouche(domain, choices, (d) => {
-    hereDomain = d;
+    popupStore.notify('#popup:siteSelected', d);
     renderHere(rules);
   });
 
@@ -193,8 +209,7 @@ function renderHere(rules: RuleSet) {
         attrs: { 'aria-pressed': String(on), 'data-focus-key': `tag-${id}` },
         on: {
           click: () => {
-            hereDomain = domain;
-            hereFocusKey = `tag-${id}`;
+            popupStore.notify('#popup:tagEdited', { domain, id });
             void editPersonal((text) => tagSite(text, domain, id, listTagCards(rules.lists)));
           },
         },
@@ -242,8 +257,7 @@ function renderHere(rules: RuleSet) {
     }
     showTagError(null);
     tagInput.value = '';
-    hereDomain = domain;
-    hereFocusKey = `tag-${id}`;
+    popupStore.notify('#popup:tagEdited', { domain, id });
     void editPersonal((text) => {
       const withDefinition = rules.tags.has(id) ? text : upsertTagDef(text, { id, label, color: colorForTag(id) });
       return tagSite(withDefinition, domain, id, listTagCards(rules.lists), true);
@@ -259,13 +273,14 @@ function renderHere(rules: RuleSet) {
   const target = focusKey ? here.querySelector<HTMLElement>(`[data-focus-key="${focusKey}"]`) : null;
   target?.focus();
   // A tag just created only appears once the change is saved: keep waiting for it.
-  if (target && focusKey === hereFocusKey) hereFocusKey = undefined;
+  if (target && focusKey === hereFocusKey) popupStore.notify('#popup:focusRestored');
   requestAnimationFrame(() => requestAnimationFrame(() => setBalance(balance, verdict.level, verdict.score)));
 }
 
 function renderPage(next: PageStats | undefined) {
   setReportLink(next?.engine);
-  stats = next;
+  popupStore.notify('#popup:pageReported', next);
+  const { stats } = view();
   const page = $('#page');
   const nothingHere = !stats && $('#here').hidden;
   page.hidden = !stats && !nothingHere;
@@ -399,7 +414,7 @@ async function main() {
   const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
   try {
     const url = new URL(tab?.url ?? '');
-    if (/^https?:$/.test(url.protocol)) tabUrl = url;
+    if (/^https?:$/.test(url.protocol)) popupStore.notify('#popup:tabOpened', url);
   } catch {
     // No URL (a browser page, or no access): nothing to rank.
   }
