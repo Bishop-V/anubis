@@ -8,7 +8,7 @@
 ! tag: docs | Official docs | #2f5fae | Documentation published by the project or vendor itself.
 !
 ! Made from DevDocs's scrapers (https://github.com/freeCodeCamp/devdocs),
-! commit 9bb3d79e439cef30570435b2141e7632b63224b4, whose code is under the Mozilla Public License 2.0
+! commit ff4d615758a7c2689e148c51e5e6ac6b75cc0a84, whose code is under the Mozilla Public License 2.0
 ! (https://mozilla.org/MPL/2.0/).
 ! Each rule is an address a scraper reads its docs from. A docs site's whole host
 ! is tagged; docs on a project's main site only under their path ("/docs").
@@ -59,7 +59,6 @@
 /docs^$site=kubernetes.io,tag=docs,boost=1 # DevDocs collects the docs for Kubectl, Kubernetes here.
 /docs^$site=lit.dev,tag=docs,boost=1 # DevDocs collects the docs for Lit here.
 /docs^$site=lodash.com,tag=docs,boost=1 # DevDocs collects the docs for lodash here.
-/docs^$site=marionettejs.com,tag=docs,boost=1 # DevDocs collects the docs for Marionette.js here.
 /docs^$site=modernizr.com,tag=docs,boost=1 # DevDocs collects the docs for Modernizr here.
 /docs^$site=mongoosejs.com,tag=docs,boost=1 # DevDocs collects the docs for Mongoose here.
 /docs^$site=nextjs.org,tag=docs,boost=1 # DevDocs collects the docs for Next.js here.
@@ -83,6 +82,7 @@
 /docs^$site=tailwindcss.com,tag=docs,boost=1 # DevDocs collects the docs for Tailwind CSS here.
 /docs^$site=threejs.org,tag=docs,boost=1 # DevDocs collects the docs for Three.js here.
 /docs^$site=typst.app,tag=docs,boost=1 # DevDocs collects the docs for Typst here.
+/docs^$site=v4.marionettejs.com,tag=docs,boost=1 # DevDocs collects the docs for Marionette.js here.
 /docs^$site=vagrantup.com,tag=docs,boost=1 # DevDocs collects the docs for Vagrant here.
 /docs^$site=varnish-cache.org,tag=docs,boost=1 # DevDocs collects the docs for Varnish here.
 /docs^$site=vertx.io,tag=docs,boost=1 # DevDocs collects the docs for Vert.x here.
