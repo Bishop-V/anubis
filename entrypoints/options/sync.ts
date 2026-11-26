@@ -35,7 +35,7 @@ const SyncView = {
       queueMicrotask(rerender);
     },
     async run() {
-      if (await send<SyncStatus | null>({ type: 'sync-server' }) === undefined) throw new Error('WebDAV worker did not reply');
+      if (await send<SyncStatus | null>({ type: 'sync-server' }) === undefined) throw new Error();
     },
     error() { flash('sync', 'error', t('webdavErrorFailed')); },
     finally(state: SyncView) {
