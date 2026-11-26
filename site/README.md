@@ -1,6 +1,6 @@
 # Anubis on Inglorious
 
-This proof of concept builds Anubis’s public site with Inglorious SSX, Web, and Store. It shares the wiki’s Markdown, Graphite stylesheet, sample results, and lists catalogue with VitePress. Inglorious I18n translates the navigation and search interface. Inglorious UI provides the wiki search and list filter fields, and Inglorious Motion animates ranking changes in the demos.
+This proof of concept builds Anubis’s public site with Inglorious SSX, Web, and Store. It shares the wiki’s Markdown, Graphite stylesheet, sample results, and lists catalogue with VitePress. Inglorious I18n translates the navigation and search interface. Search, appearance, and language are in the header’s menu. Inglorious UI provides the wiki search and list filter fields, and Inglorious Motion animates the demo cursor’s clicks, and result rows slide from their old positions when their order changes.
 
 Use Node 22.12 or newer. From the repository root, run:
 

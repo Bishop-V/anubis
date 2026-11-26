@@ -4,6 +4,8 @@ The documentation site and its screenshots. Part of [Experiments and decisions](
 
 ## Documentation site
 
+- **SSX appearance and motion (2026-11-26).** The preview now shares the full Graphite palette with the VitePress build and serves Inter locally. The header puts Search, Appearance, and language under one menu, with the main links also inside it on phones. Demo rows move from their measured positions when ranked. The guide uses the same menu placement and balance angles as VitePress, and clicks use Inglorious Motion.
+
 - **Multilingual SSX preview (2026-11-26).** SSX builds the five existing wiki languages from Markdown. Inglorious I18n resolves interface strings using the language in the URL. Inglorious UI renders the search and directory inputs with Graphite styles, and Inglorious Motion animates the demos' rank changes with support for reduced motion. The build checks preserve the English-only publishing routes and include a screenshot of German wiki search in the CI artifact.
 
 - **English SSX proof of concept (2026-11-26).** SSX renders the English wiki using the same Markdown and fixtures. Its own layout, search, demos, and directory use Inglorious Web and Store. SSX 2.3.2 declares a base path in its types but does not apply it to client routing or the entry script. The preview generates routes under `/anubis/` and packages the runtime alongside them. Heading IDs follow the VitePress rules, and the browser check opens the built directory with the extension to verify the Subscribe handoff.

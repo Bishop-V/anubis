@@ -53,7 +53,7 @@ const english = {
   publishing: 'Publishing lists', publish: 'Publish a list', directory: 'Lists directory',
   involved: 'Get involved', translate: 'Help translate', experiments: 'Experiments and decisions',
   contributing: 'Contributing', developing: 'Developing Anubis', editLink: 'Edit this page on GitHub',
-  appearance: 'Theme', skip: 'Skip to content', outline: 'On this page', footer: 'Released under the GNU AGPL v3.',
+  appearance: 'Appearance', toLight: 'Switch to light theme', toDark: 'Switch to dark theme', menu: 'Menu', skip: 'Skip to content', outline: 'On this page', footer: 'Released under the GNU AGPL v3.',
   langMenu: 'Change language', search: { button: 'Search' }, lang: 'en', label: 'English',
 };
 

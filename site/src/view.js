@@ -2,7 +2,7 @@ import { Input } from '@inglorious/ui/input';
 import { html } from '@inglorious/web';
 import { unsafeHTML } from '@inglorious/web/directives/unsafe-html';
 import directory from '../../lists/directory.json';
-import { readSubscribeLink, subscribeQuery } from '../../utils/links.ts';
+import { readSubscribeLink, REPO_URL, subscribeQuery } from '../../utils/links.ts';
 import { blankDemo, guideDemo, homeView, playDemo, startScrollDemo } from './demos.js';
 import { translate } from './languages.js';
 import { base, headerLinks, homePath, href, languageMenu, neighbouringPages, pageLink, sidebar } from './navigation.js';
@@ -16,18 +16,44 @@ function matchSearch(index, query) {
   const terms = query.toLowerCase().trim().split(/\s+/);
   return index.flatMap((entry) => {
     const headline = (entry.heading + ' ' + entry.title).toLowerCase();
-    const content = entry.text.toLowerCase();
+    const text = entry.text.trim();
+    const content = text.toLowerCase();
     if (terms.some((term) => !headline.includes(term) && !content.includes(term))) return [];
     const score = terms.filter((term) => headline.includes(term)).length;
-    const offset = Math.max(0, content.indexOf(terms[0]) - 35);
-    return [{ ...entry, score, snippet: (offset ? '…' : '') + entry.text.trim().slice(offset, offset + 135) }];
+    const match = content.indexOf(terms[0]);
+    const offset = match > 35 ? text.indexOf(' ', match - 35) + 1 : 0;
+    const snippet = (offset ? '…' : '') + text.slice(offset);
+    return [{ ...entry, score, snippet }];
   }).sort((a, b) => b.score - a.score).slice(0, 12);
 }
 
 function showSearch() {
   const dialog = searchDialog();
+  const menu = document.querySelector('#site-menu');
+  if (menu.matches(':popover-open')) {
+    menu.hidePopover();
+    document.querySelector('.site-menu-toggle').focus();
+  }
   if (!dialog.open) dialog.showModal();
   dialog.querySelector('input').focus();
+}
+
+function siteMenu(page, dark, t, changeTheme) {
+  return html`<button class="site-menu-toggle" type="button" popovertarget="site-menu" aria-label=${t('menu')}>
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>
+  </button>
+  <div id="site-menu" popover>
+    <nav class="compact-nav" aria-label=${t('mainNavigation')}>${headerLinks(page, t)}</nav>
+    <button type="button" @click=${showSearch}>${t('search.button')}</button>
+    <button class="appearance-toggle" type="button" role="switch" aria-checked=${String(dark)} title=${t(dark ? 'toLight' : 'toDark')} @click=${changeTheme}>
+      ${t('appearance')}
+      ${dark
+        ? html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20.9 14.4A9 9 0 0 1 9.6 3.1 9 9 0 1 0 20.9 14.4Z"/></svg>`
+        : html`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19m0-14-1.5 1.5m-11 11L5 19"/></svg>`}
+    </button>
+    ${languageMenu(page, t)}
+    <a href=${REPO_URL}>GitHub</a>
+  </div>`;
 }
 
 function searchView(entity, emit, t) {
@@ -121,12 +147,18 @@ export function createPage(page) {
     create(entity) {
       Object.assign(entity, {
         query: '', searching: false, matches: [], searchError: false,
-        step: 1, demo: blankDemo(), directoryQuery: '', subscribe: { broken: false },
+        dark: false, step: 1, demo: blankDemo(), directoryQuery: '', subscribe: { broken: false },
       });
     },
     init(entity, _payload, api) {
       const id = entity.id;
       const emit = (event, payload) => api.notify('#' + id + ':' + event, payload);
+      emit('themeRead', document.documentElement.classList.contains('dark'));
+      matchMedia('(prefers-color-scheme: light)').addEventListener('change', (event) => {
+        try { if (localStorage.getItem('anubis-docs-theme')) return; } catch { /* Follow the browser. */ }
+        document.documentElement.classList.toggle('dark', !event.matches);
+        emit('themeRead', !event.matches);
+      });
       if (matchMedia('(max-width: 760px)').matches) {
         const navigation = document.querySelector('.wiki-sidebar details');
         if (navigation) navigation.open = false;
@@ -180,6 +212,11 @@ export function createPage(page) {
       entity.matches = matches;
       entity.searchError = !!error;
     },
+    themeRead(entity, dark) { entity.dark = dark; },
+    themeChanged(entity) {
+      entity.dark = document.documentElement.classList.toggle('dark');
+      try { localStorage.setItem('anubis-docs-theme', entity.dark ? 'dark' : 'light'); } catch { /* The theme still works for this page. */ }
+    },
     directoryFiltered(entity, query) { entity.directoryQuery = query; },
     subscribeRead(entity, subscribe) { entity.subscribe = subscribe; },
     scrollChanged(entity, step) { entity.step = step; },
@@ -192,20 +229,14 @@ export function createPage(page) {
       entity.demo.menu = null;
       entity.demo.said = said;
     },
-    demoFinished(entity) { entity.demo.done = true; entity.demo.pointer = null; },
+    demoFinished(entity) { entity.demo.done = true; },
     render(entity, api) {
       const emit = (event, payload) => api.notify('#' + entity.id + ':' + event, payload);
       return html`<a data-external class="skip-link" href="#content">${t('skip')}</a>
         <header class="site-header">
           <a data-external class="site-brand" href=${href(homePath(page.folder))}><img src=${href('/anubis.svg')} alt="" width="25" height="25"> Anubis</a>
-          <nav aria-label=${t('mainNavigation')}>${headerLinks(page, t)}</nav>
-          <div class="header-actions"><button type="button" @click=${showSearch}>${t('search.button')}</button>
-            <button type="button" @click=${() => {
-              const dark = document.documentElement.classList.toggle('dark');
-              try { localStorage.setItem('anubis-docs-theme', dark ? 'dark' : 'light'); } catch { /* The theme still works for this page. */ }
-            }}>${t('appearance')}</button>
-            ${languageMenu(page, t)}
-          </div>
+          <nav class="primary-nav" aria-label=${t('mainNavigation')}>${headerLinks(page, t)}</nav>
+          ${siteMenu(page, entity.dark, t, () => emit('themeChanged'))}
         </header>
         ${searchView(entity, emit, t)}
         ${page.home ? homeView(page.home, entity.step) : article(page, entity, emit, () => replay(emit), t)}

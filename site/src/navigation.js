@@ -56,7 +56,7 @@ export function languageMenu(page, t) {
   const original = page.folder === 'en' ? page.route : page.route.slice(page.folder.length + 1);
   const translated = TRANSLATED_PAGES.includes(original.slice(1));
   return html`<details class="language-menu">
-    <summary aria-label=${t('langMenu')}>${t('label')}</summary>
+    <summary>${t('langMenu')}</summary>
     <ul>${languages.map(({ folder, label, lang }) => {
       const path = folder === page.folder ? page.route : translated ? localPath(original, folder) : homePath(folder);
       return html`<li><a data-external href=${href(path)} lang=${lang} hreflang=${lang}

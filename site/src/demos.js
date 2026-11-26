@@ -2,11 +2,12 @@ import { withMotion } from '@inglorious/motion';
 import { html } from '@inglorious/web';
 import { repeat } from '@inglorious/web/directives/repeat';
 import { unsafeHTML } from '@inglorious/web/directives/unsafe-html';
-import { ICON, LEVELS, rankIcon, WEIGH } from '../../docs/.vitepress/theme/demo-icons.ts';
+import { ICON, LEVELS, rankIcon, SPARKLE, TAG_MARKS, WEIGH } from '../../docs/.vitepress/theme/demo-icons.ts';
 import {
   HIDE_RESULTS, PAYWALL, RANK_RESULTS, RANK_STEPS, REFERENCE,
   SCROLL_ITEMS, SCROLL_RANKED, SCROLL_SHORT, SCROLL_STEPS, SCROLL_SUMMARY,
 } from '../../docs/.vitepress/theme/demo-data.ts';
+import { balancePosition, placeMenu } from '../../docs/.vitepress/theme/demo-geometry.ts';
 import { href, pageLink } from './navigation.js';
 
 const stores = {
@@ -19,38 +20,59 @@ const fold = (open, className, content) => html`<div class=${'fold ' + className
   <div class="fold-inner">${content}</div>
 </div>`;
 
-const tag = ({ name, color }, count) => html`
-  <span class="demo-tag" style=${'--c:' + color}><span class="diamond"></span>${name}${count ? ' ' + count : ''}</span>
+const tag = ({ name, color }, count, effect) => html`
+  <span class="demo-tag" style=${'--c:' + color}>
+    ${effect ? html`<span class="mark">${unsafeHTML(TAG_MARKS[effect])}</span>` : html`<span class="diamond"></span>`}${name}${count ? ' ' + count : ''}
+  </span>
 `;
 
-function resultRow(result, { level = 'normal', hidden = false, active = false, badge, demo = false } = {}) {
+function resultRow(result, { level = 'normal', hidden = false, active = false, badge, rank = false, guide = false, showBadge = false } = {}) {
   const [background, color, letter] = result.icon;
-  return html`<div class=${'demo-result' + (demo ? ' rd-result' : '') + (level === 'pin' ? ' pinned' : '')}>
-    ${fold(!hidden, 'full', html`
-      <div class="site">
-        <span data-weigh=${result.id} class=${'demo-col ' + level + (active ? ' active' : '')}>${unsafeHTML(WEIGH[level])}</span>
-        <span class="favicon" style=${'background:' + background + ';color:' + color}>${letter}</span>
-        <span class="site-name">${result.site}</span><span class="url">${result.url}</span>
-      </div>
-      <div class="title">${result.title}</div>
-      ${badge ? fold(true, 'chips', tag(badge)) : ''}
-      <div class="snippet">${result.snippet}</div>
-    `)}
+  const badgeMark = badge ? tag(badge, undefined, ['raise', 'lower'].includes(level) ? level : undefined) : '';
+  const content = html`
+    <div class="site">
+      <span data-weigh=${result.id} class=${'demo-col ' + level + (active ? ' active' : '')}>${unsafeHTML(WEIGH[level])}</span>
+      <span class="favicon" style=${'background:' + background + ';color:' + color}>${letter}</span>
+      <span class="site-name">${result.site}</span><span class="url">${result.url}</span>
+    </div>
+    <div class="title">${result.title}</div>
+    ${guide ? badge && html`<div class="hd-chips">${badgeMark}</div>` : fold(showBadge, 'chips', badgeMark)}
+    <div class="snippet">${result.snippet}</div>
+  `;
+  return html`<div data-demo-row=${result.id} class=${'demo-result' + (rank ? ' rd-result' : '') + (level === 'pin' ? ' pinned' : '')}>
+    ${rank ? content : fold(!hidden, 'full', content)}
   </div>`;
 }
 
-const rankMotion = withMotion({
+const cursorClick = withMotion({
   animateOnMount: false,
-  classPrefix: 'rank-motion',
+  classPrefix: 'hd-ripple',
   variants: {
-    pin: { frames: [{ transform: 'translateY(10px)', opacity: 0.7 }, { transform: 'none', opacity: 1 }], options: { duration: 240, easing: 'ease-out' } },
-    raise: { frames: [{ transform: 'translateY(8px)', opacity: 0.75 }, { transform: 'none', opacity: 1 }], options: { duration: 240, easing: 'ease-out' } },
-    lower: { frames: [{ transform: 'translateY(-10px)', opacity: 0.7 }, { transform: 'none', opacity: 1 }], options: { duration: 240, easing: 'ease-out' } },
+    click: { frames: [{ opacity: 0.9, transform: 'scale(0.3)' }, { opacity: 0, transform: 'scale(1.6)' }], options: { duration: 500, easing: 'ease-out' } },
   },
-})({ render: ({ result, props }) => resultRow(result, props) });
+})({ render: () => '' });
 
-function rankedResult(scope, result, props) {
-  return rankMotion.render({ id: scope + '-' + result.id, motionVariant: props.level, result, props });
+const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const rowAnimations = new WeakMap();
+
+// Measure the current screen position, then let the same DOM row glide into its new
+// position. Cancel an interrupted glide after measuring it so reversing scroll is smooth.
+function moveRows(group, selector, update) {
+  if (reducedMotion()) return update();
+  const rows = [...group.querySelectorAll(selector)];
+  const origin = group.getBoundingClientRect().top;
+  const before = rows.map((row) => row.getBoundingClientRect().top - origin);
+  update();
+  const destination = group.getBoundingClientRect().top;
+  for (const [index, row] of rows.entries()) {
+    rowAnimations.get(row)?.cancel();
+    const shift = before[index] - (row.getBoundingClientRect().top - destination);
+    if (Math.abs(shift) < 1) continue;
+    rowAnimations.set(row, row.animate(
+      [{ translate: `0 ${shift}px` }, { translate: '0 0' }],
+      { duration: 700, easing: 'cubic-bezier(0.3, 0.7, 0.2, 1)' },
+    ));
+  }
 }
 
 const panels = {
@@ -64,15 +86,16 @@ const panels = {
 function cleanupPanel(block, step) {
   const [group, item] = panels[block.kind] ?? ['sources', 'source'];
   return fold(step < 2, 'demo-block', html`
-    <div class="block-heading">${block.heading}</div>
+    <div class="block-heading">${block.kind === 'ai' ? html`<span class="sparkle">${unsafeHTML(SPARKLE)}</span>` : ''}${block.heading}</div>
     ${block.kind === 'ai' ? html`<p class="snippet">${block.lines[0]}</p>` : ''}
     <div class=${group}>${(block.kind === 'ai' ? block.meta : block.lines).map((line, i) => html`
-      <span class=${item}>
+      <div class=${item}>
         ${block.kind === 'news' ? html`<span class="card-image"></span>` : ''}
         ${block.kind === 'videos' ? html`<span class="thumb"><span class="length">${block.meta?.[i]}</span></span>` : ''}
         ${block.kind === 'news' ? html`<span class="card-source">${block.meta?.[i]}</span>` : ''}
-        <span class=${block.kind === 'news' ? 'card-title' : ''}>${line}</span>
-      </span>
+        ${block.kind === 'discussions' ? html`<span class="forum">${block.meta?.[i]}</span><span class="thread-title">${line}</span>`
+          : block.kind === 'images' ? '' : html`<span class=${block.kind === 'news' ? 'card-title' : ''}>${line}</span>`}
+      </div>
     `)}</div>
   `);
 }
@@ -87,11 +110,13 @@ function scrollStage(step) {
       ${fold(step >= 5, 'summary-tags', [tag(REFERENCE, 3), tag(PAYWALL, 1)])}
     `)}
     <div class="demo-results">
-      ${SCROLL_ITEMS.map((item, index) => html`<div class="demo-item" style=${'order:' + (step < 4 ? index : SCROLL_RANKED.indexOf(item.id))}>
-        ${'heading' in item ? cleanupPanel(item, step) : rankedResult('home', item, {
+      ${repeat(SCROLL_ITEMS, (item) => item.id, (item, index) => html`<div
+        class=${'demo-item' + (item.raised ? ' lifted' : '')} style=${'order:' + (step < 4 ? index : SCROLL_RANKED.indexOf(item.id))}>
+        ${'heading' in item ? cleanupPanel(item, step) : resultRow(item, {
           level: step >= 4 ? item.pinned ? 'pin' : item.raised ? 'raise' : item.lowered ? 'lower' : 'normal' : 'normal',
           hidden: item.hidden && step >= 3,
-          badge: step >= 5 ? item.tag : undefined,
+          badge: item.tag,
+          showBadge: step >= 5 && !!item.tag,
         })}
       </div>`)}
     </div>
@@ -149,11 +174,17 @@ export function startScrollDemo(emit) {
     rail.style.height = last - first + 'px';
     fill.style.height = Math.min(Math.max(line - first, 0), last - first) + 'px';
     const step = 1 + headings.filter((el) => el.getBoundingClientRect().top < line).length;
-    if (step !== lastStep) emit('scrollChanged', lastStep = step);
+    const crossedRanking = (lastStep >= 4) !== (step >= 4);
+    if (step === lastStep) return;
+    lastStep = step;
+    const render = () => emit('scrollChanged', step);
+    if (crossedRanking) moveRows(document.querySelector('.demo-stage .demo-results'), '.demo-item', render);
+    else render();
   };
   const scroll = () => { frame ||= requestAnimationFrame(update); };
   addEventListener('scroll', scroll, { passive: true });
   addEventListener('resize', scroll, { passive: true });
+  void document.fonts.ready.then(scroll);
   update();
 }
 
@@ -168,35 +199,85 @@ function pointAt(target, stage) {
 
 export async function playDemo(kind, emit) {
   const stage = document.querySelector('.hd-stage');
-  const motion = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const motion = !reducedMotion();
   emit('demoStarted');
-  await delay(400);
+  let position = { x: stage.clientWidth - 40, y: stage.clientHeight - 20 };
+  const pointer = (shown, pressing = false) => emit('pointerMoved', { ...position, shown, pressing });
+  const moveTo = async (target) => {
+    position = pointAt(target, stage) ?? position;
+    pointer(true);
+    await delay(880);
+  };
+  const click = async () => {
+    pointer(true, true);
+    await delay(160);
+    pointer(true);
+  };
+  if (motion) pointer(false);
+  await delay(motion ? 900 : 400);
+  const rows = stage.querySelector('.demo-results');
   for (const step of kind === 'ranking' ? RANK_STEPS : hidingSteps) {
     const anchor = stage.querySelector('[data-weigh=' + step.id + ']');
-    const point = pointAt(anchor, stage);
-    if (motion) emit('pointerMoved', point);
-    await delay(motion ? 800 : 400);
-    emit('demoOpened', { id: step.id, top: point ? point.y + 20 : 32 });
-    await delay(motion ? 650 : 350);
-    if (motion) emit('pointerMoved', pointAt(stage.querySelector('[data-rank=' + step.level + ']'), stage));
+    if (motion) {
+      await moveTo(anchor);
+      await click();
+    }
+    emit('demoOpened', { id: step.id, ...placeMenu(stage, anchor) });
+    await delay(motion ? 550 : 700);
+    if (motion) {
+      await moveTo(stage.querySelector('[data-rank=' + step.level + ']'));
+      await click();
+    }
     emit('rankSelected', step.level);
-    await delay(motion ? 700 : 450);
-    emit('demoRanked', step);
-    await delay(motion ? 800 : 350);
+    await delay(motion ? 700 : 550);
+    const apply = () => emit('demoRanked', step);
+    if (kind === 'ranking') moveRows(rows, '.rd-result', apply);
+    else apply();
+    if (motion) {
+      position = { x: position.x + 40, y: position.y + 28 };
+      pointer(true);
+    }
+    await delay(motion ? 950 : 350);
   }
+  if (motion) pointer(false);
   emit('demoFinished');
+}
+
+function balance(level) {
+  const { tilt, dx, dy } = balancePosition(level);
+  return html`<svg class="hd-balance" viewBox="0 0 132 40" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M66 7v28M56 37h20"/>
+    <circle cx="66" cy="5" r="1.6" fill="currentColor" stroke="none"/>
+    <g class="hd-tilt" style=${`transform:rotate(${tilt}deg);transform-origin:66px 9px;transform-box:view-box`}><path d="M14 9h104"/></g>
+    <g class="hd-tilt" style=${`transform:translate(${dx}px,${-dy}px)`}>
+      <path d="M14 9 7 24M14 9l7 15"/>
+      <path d="M4 24h20a10 5 0 0 1-20 0z" fill="currentColor" fill-opacity="0.14"/>
+      <path d="M14 21.5c-1.8-1.6-3.2-2.6-3.2-4a1.7 1.7 0 0 1 3.2-.8 1.7 1.7 0 0 1 3.2.8c0 1.4-1.4 2.4-3.2 4z" fill="currentColor" stroke="none"/>
+    </g>
+    <g class="hd-tilt" style=${`transform:translate(${-dx}px,${dy}px)`}>
+      <path d="M118 9l-7 15M118 9l7 15"/>
+      <path d="M108 24h20a10 5 0 0 1-20 0z" fill="currentColor" fill-opacity="0.14"/>
+      <path d="M115 22.5c1.5-3.5 3.5-5.8 6-7-.3 3.2-2.4 5.6-6 7zM116.4 20.6l2.4-.4"/>
+    </g>
+  </svg>`;
 }
 
 function rankMenu({ menu, selected }, results) {
   if (!menu) return '';
-  const site = results.find(({ id }) => id === menu.id)?.site;
-  return html`<div class="hd-menu below" style=${'left:8px;top:' + menu.top + 'px;width:min(340px, calc(100% - 16px));--arrow-x:22px'} aria-hidden="true">
+  const result = results.find(({ id }) => id === menu.id);
+  const site = result.host ?? result.url.split(' › ')[0];
+  const edge = menu.below ? 'top' : 'bottom';
+  return html`<div class=${menu.below ? 'hd-menu below' : 'hd-menu'}
+    style=${`left:${menu.left}px;width:${menu.width}px;${edge}:${menu.edge}px;--arrow-x:${menu.arrow}px`} aria-hidden="true">
     <div class="hd-head"><span class="hd-name">${site}</span><span class="hd-close">${unsafeHTML(ICON.close)}</span></div>
-    <div class="ssx-demo-balance">${unsafeHTML(WEIGH[selected ?? 'normal'])}</div>
-    <div class="hd-levels">${LEVELS.map(([level, label]) => html`<span data-rank=${level} class=${'hd-level ' + level + (selected === level ? ' pressed' : '')}>
-      <span class="hd-level-icon">${unsafeHTML(rankIcon(level, selected === level ? 1 : 0))}</span>${label}
-    </span>`)}</div>
-    <p class="hd-hint">Your choice for this site, on every search.</p>
+    ${balance(selected ?? 'normal')}
+    <div class="hd-levels">${LEVELS.map(([level, label]) => html`
+      ${level === 'lower' || level === 'pin' ? html`<span class="hd-sep"></span>` : ''}
+      <span data-rank=${level} class=${'hd-level ' + level + (selected === level ? ' pressed' : '')}>
+        <span class="hd-level-icon">${unsafeHTML(rankIcon(level, selected === level ? 1 : 0))}</span>${label}
+      </span>`)}</div>
+    <p class="hd-hint">Your choice for ${site}, on every search.</p>
+    <div class="hd-menu-tags">${result.tag ? tag({ name: result.tag[0], color: result.tag[1] }) : ''}<span class="hd-add">+ Tag</span></div>
   </div>`;
 }
 
@@ -211,14 +292,19 @@ export function guideDemo(kind, demo, replay, t) {
     ? pinned ? 'Anubis pinned 1' + (lowered ? ' and lowered 1' : '') + ' of 4 results.' : 'Anubis left all 4 results as they were.'
     : 'Anubis raised 1 and hid ' + (demo.levels.fandom ? 3 : 2) + ' of 7 results.';
   return html`<figure class=${'hide-demo' + (rank ? ' rank-demo' : '')} data-guide-demo>
-    <div class="hd-stage" aria-hidden="true">
+    <div class="hd-stage" aria-hidden="true" lang="en">
       <div class="demo-page hd-page">
-        <div class="demo-summary hd-summary"><p>${sentence} ${unsafeHTML(ICON.gear)}</p>
+        <div class="demo-summary hd-summary"><p><span class=${rank ? '' : 'long'}>${sentence}
+          ${rank ? '' : html`<span class="demo-link">Show hidden</span> <span class="demo-link">Load more results</span>`}
+          <span class="hd-gear">${unsafeHTML(ICON.gear)}</span>
+        </span>${rank ? '' : html`<span class="short">Anubis changed ${demo.levels.fandom ? 4 : 3} of 7 results.
+          <span class="demo-link">Show hidden</span> <span class="demo-link">Details</span></span>`}</p>
           ${fold(!!demo.said, 'hd-change', html`${demo.said} <span class="demo-link">Undo</span>`)}
           <div class="summary-tags hd-tags">${tag(REFERENCE, 2)}</div>
         </div>
-        <div class="demo-results">${repeat(ordered, (result) => result.id, (result) => rankedResult(kind, result, {
-          demo: true,
+        <div class="demo-results">${repeat(ordered, (result) => result.id, (result) => resultRow(result, {
+          guide: true,
+          rank,
           level: demo.levels[result.id] ?? (result.chip === 'raised' ? 'raise' : 'normal'),
           hidden: demo.levels[result.id] === 'hide',
           active: demo.menu?.id === result.id,
@@ -226,7 +312,9 @@ export function guideDemo(kind, demo, replay, t) {
         }))}</div>
       </div>
       ${rankMenu(demo, results)}
-      <span class=${'hd-pointer' + (demo.pointer ? ' shown' : '')} style=${demo.pointer ? 'transform:translate(' + demo.pointer.x + 'px,' + demo.pointer.y + 'px)' : ''}>
+      <span class=${'hd-pointer' + (demo.pointer?.shown ? ' shown' : '') + (demo.pointer?.pressing ? ' pressing' : '')}
+        style=${demo.pointer ? `transform:translate(${demo.pointer.x}px,${demo.pointer.y}px)` : ''}>
+        ${cursorClick.render({ id: kind + '-cursor', motionVariant: demo.pointer?.pressing ? 'click' : 'idle' })}
         <svg viewBox="0 0 16 22" width="16" height="22" aria-hidden="true"><path d="M1 1v17l4.4-4.2 3 6.6 2.8-1.3-3-6.4H14z" fill="#fff" stroke="#1c1c1f" stroke-width="1.4"></path></svg>
       </span>
     </div>

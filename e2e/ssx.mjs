@@ -50,14 +50,19 @@ let browser;
 try {
   browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH ?? chromium.executablePath() });
   const errors = [];
-  const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce', colorScheme: 'light' });
   page.setDefaultTimeout(15_000);
   page.on('pageerror', (error) => errors.push(error.message));
   await page.addInitScript(() => {
-    window.rankAnimations = [];
+    window.demoAnimations = [];
     const animate = Element.prototype.animate;
     Element.prototype.animate = function (keyframes, options) {
-      if (this.matches('.rank-motion')) window.rankAnimations.push(this.dataset.motionId);
+      if (this.matches('.demo-item, .rd-result, .hd-ripple')) {
+        window.demoAnimations.push({
+          kind: this.matches('.demo-item') ? 'home' : this.matches('.rd-result') ? 'rank' : 'click',
+          row: this.dataset.demoRow, translation: keyframes[0].translate,
+        });
+      }
       return animate.call(this, keyframes, options);
     };
   });
@@ -66,10 +71,63 @@ try {
   await page.locator('.demo-step').last().scrollIntoViewIfNeeded();
   await page.waitForFunction(() => document.querySelector('.demo-step[aria-current="step"]')?.textContent.includes('Know before you click'));
   await page.evaluate(() => scrollTo(0, 0));
+  await page.evaluate(() => document.fonts.ready);
+  const alignment = await page.evaluate(() => {
+    const box = (selector) => document.querySelector(selector).getBoundingClientRect();
+    const middle = (rect) => (rect.top + rect.bottom) / 2;
+    return {
+      stage: middle(box('.demo-stage')),
+      intro: (box('.home-title').top + box('.demo-cue').bottom) / 2,
+      window: (box('.site-header').bottom + innerHeight) / 2,
+    };
+  });
+  assert.ok(Math.abs(alignment.stage - alignment.intro) <= 1, 'intro is centered beside the demo');
+  assert.ok(Math.abs(alignment.stage - alignment.window) <= 1, 'demo is centered below the header');
   if (screenshots) await page.screenshot({ path: join(shotDir, 'home.png'), animations: 'disabled' });
-  await page.getByRole('button', { name: 'Search', exact: true }).click();
+  const menuToggle = page.locator('.site-menu-toggle');
+  const menu = page.locator('#site-menu');
+  const openMenu = () => menuToggle.click();
+  const palette = () => page.evaluate(() => {
+    const color = (selector, property) => getComputedStyle(document.querySelector(selector))[property];
+    return {
+      page: color('body', 'backgroundColor'), text: color('body', 'color'), line: color('.demo-rail', 'backgroundColor'),
+      marker: color('.demo-marker', 'backgroundColor'), nav: color('.site-header', 'backgroundColor'),
+      font: document.fonts.check('16px "Inter Variable"') && color('body', 'fontFamily').includes('Inter Variable'),
+    };
+  });
+  assert.deepEqual(await palette(), {
+    page: 'rgb(252, 252, 253)', text: 'rgb(31, 31, 34)', line: 'rgb(220, 220, 224)',
+    marker: 'rgb(252, 252, 253)', nav: 'rgb(252, 252, 253)', font: true,
+  });
+  assert.equal(await page.getByRole('button', { name: 'Search', exact: true }).count(), 0, 'utility actions belong inside the menu');
+  await openMenu();
+  const theme = menu.getByRole('switch', { name: 'Appearance' });
+  await theme.click();
+  await page.waitForFunction(() => document.documentElement.classList.contains('dark'));
+  assert.equal(await theme.getAttribute('aria-checked'), 'true');
+  assert.deepEqual(await palette(), {
+    page: 'rgb(28, 28, 31)', text: 'rgb(232, 232, 234)', line: 'rgb(55, 55, 59)',
+    marker: 'rgb(28, 28, 31)', nav: 'rgb(28, 28, 31)', font: true,
+  });
+  if (screenshots) await page.screenshot({ path: join(shotDir, 'home-menu-dark.png'), animations: 'disabled' });
+  await page.reload();
+  await page.waitForFunction(() => document.documentElement.classList.contains('dark'));
+  await openMenu();
+  assert.equal(await theme.getAttribute('aria-checked'), 'true');
+  await theme.click();
+  await page.waitForFunction(() => !document.documentElement.classList.contains('dark'));
+  await page.evaluate(() => localStorage.removeItem('anubis-docs-theme'));
+  await page.keyboard.press('Escape');
+  await menu.waitFor({ state: 'hidden' });
+  await openMenu();
+  await menu.getByRole('button', { name: 'Search', exact: true }).click();
   await page.getByRole('searchbox', { name: 'Search guides' }).fill('hidden results');
   await page.locator('.search-results a[href$="#hidden-results"]').first().waitFor();
+  await page.keyboard.press('Escape');
+  await page.locator('#site-search').waitFor({ state: 'hidden' });
+  assert.ok(await menuToggle.evaluate((el) => el === document.activeElement), 'closing search restores menu focus');
+  await page.keyboard.press('Control+k');
+  await page.getByRole('searchbox', { name: 'Search guides' }).waitFor();
   await page.keyboard.press('Escape');
   await page.locator('#site-search').waitFor({ state: 'hidden' });
   await page.goto(url + 'guide/ranking#hidden-results');
@@ -78,18 +136,39 @@ try {
   await demo.scrollIntoViewIfNeeded();
   const ready = demo.locator('button:enabled');
   await ready.waitFor();
-  assert.equal(await demo.locator('.demo-results > :first-child .pinned').count(), 1);
+  assert.equal(await demo.locator('.demo-results > :first-child.pinned').count(), 1);
   assert.equal(await demo.locator('.demo-results > :last-child .demo-col.lower').count(), 1);
   await ready.click();
   await demo.locator('button:disabled').waitFor();
   await ready.waitFor();
-  assert.deepEqual(await page.evaluate(() => window.rankAnimations), []);
+  assert.deepEqual(await page.evaluate(() => window.demoAnimations), []);
   await page.emulateMedia({ reducedMotion: 'no-preference' });
+  await page.goto(url);
+  await page.locator('.demo-step h2').nth(2).evaluate((heading) => {
+    scrollTo(0, scrollY + heading.getBoundingClientRect().top - innerHeight * 0.45);
+  });
+  await page.waitForFunction(() => window.demoAnimations.some((motion) => motion.kind === 'home'));
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.waitForFunction(() => document.documentElement.classList.contains('dark'));
+  assert.equal(await page.locator('.demo-step.active .demo-marker').evaluate((el) => getComputedStyle(el).backgroundColor), 'rgb(157, 157, 163)');
+  if (screenshots) await page.screenshot({ path: join(shotDir, 'home-steps-dark.png'), animations: 'disabled' });
+  await page.emulateMedia({ colorScheme: 'light' });
   await page.goto(url + 'guide/ranking');
   await demo.scrollIntoViewIfNeeded();
-  await page.waitForFunction(() => window.rankAnimations.some((id) => id.startsWith('ranking-')));
+  await demo.locator('.hd-menu .hd-balance').waitFor({ state: 'attached' });
+  assert.equal(await demo.locator('.hd-menu .hd-tilt').count(), 3);
+  if (screenshots) await demo.screenshot({ path: join(shotDir, 'ranking-menu.png') });
+  await page.waitForFunction(() => {
+    const beam = document.querySelector('.hd-menu .hd-tilt');
+    return beam?.style.transform === 'rotate(13deg)';
+  });
   await ready.waitFor();
-  assert.equal(await demo.locator('.demo-results > :first-child .pinned').count(), 1);
+  const rankingMotion = await page.evaluate(() => window.demoAnimations);
+  assert.ok(rankingMotion.some(({ kind }) => kind === 'click'), 'pointer clicks use Inglorious Motion');
+  assert.ok(rankingMotion.some(({ row, translation }) => row === 'met' && parseFloat(translation.split(' ')[1]) > 100), 'the pinned row slides from its old position');
+  assert.ok(rankingMotion.some(({ row, translation }) => row === 'pinterest' && parseFloat(translation.split(' ')[1]) < -20), 'the lowered row slides down');
+  assert.ok(rankingMotion.some(({ row }) => row === 'brit'), 'neighboring rows move out of the way');
+  assert.equal(await demo.locator('.demo-results > :first-child.pinned').count(), 1);
   for (const mode of ['light', 'dark']) {
     await page.emulateMedia({ colorScheme: mode, reducedMotion: 'reduce' });
     await page.goto(url + 'guide/ranking');
@@ -133,10 +212,12 @@ try {
   assert.equal(await page.locator('main b').count(), 0);
 
   await page.goto(url + 'guide/ranking');
+  await openMenu();
   await page.locator('.language-menu summary').click();
   await page.getByRole('link', { name: 'Deutsch', exact: true }).click();
   await page.waitForURL('**/de/guide/ranking');
-  await page.getByRole('button', { name: 'Suchen', exact: true }).click();
+  await openMenu();
+  await menu.getByRole('button', { name: 'Suchen', exact: true }).click();
   await page.getByRole('searchbox', { name: 'Anleitungen durchsuchen' }).fill('einstufen');
   const germanResult = page.locator('.search-results a').first();
   await germanResult.waitFor();
@@ -156,11 +237,18 @@ try {
         await page.locator('main h1').waitFor();
         assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), route + ' at ' + width + ' in ' + mode);
       }
+      await openMenu();
+      const box = await menu.boundingBox();
+      assert.ok(box && box.x >= 0 && box.x + box.width <= width, 'open menu fits at ' + width);
+      await menu.getByRole('link', { name: 'Wiki', exact: true }).waitFor();
+      if (mode === 'dark' && width === 320 && screenshots) await page.screenshot({ path: join(shotDir, 'menu-mobile-dark.png'), animations: 'disabled' });
+      await page.keyboard.press('Escape');
+      await menu.waitFor({ state: 'hidden' });
     }
   }
   if (screenshots) await page.screenshot({ path: join(shotDir, 'lists-mobile.png'), fullPage: true, animations: 'disabled' });
   assert.deepEqual(errors, []);
-  console.log('All ' + pages.length + ' pages in five languages passed, including local links, search, motion, Subscribe, and responsive layout.');
+  console.log('All ' + pages.length + ' pages in five languages passed, including the utility menu, Graphite palette, search, motion, Subscribe, and responsive layout.');
 } finally {
   await browser?.close();
   server.close();

@@ -1,3 +1,4 @@
+import { SPARKLE } from './demo-icons';
 import { useData } from 'vitepress';
 import { defineComponent, h, nextTick, onBeforeUnmount, onMounted, ref, type VNode } from 'vue';
 import { columnButton, tagMark } from './demo-parts';
@@ -40,7 +41,6 @@ import { PAYWALL, REFERENCE, SCROLL_ITEMS as ITEMS, SCROLL_RANKED as RANKED, SCR
 type Level = 'lower' | 'normal' | 'raise' | 'pin';
 // The AI answer's mark: a plain four-pointed star in blue and violet, a sketch of
 // the one engines put beside their AI answers rather than any engine's own logo.
-const SPARKLE = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><defs><linearGradient id="demo-sparkle" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f8df5"/><stop offset="1" stop-color="#9b72cb"/></linearGradient></defs><path fill="url(#demo-sparkle)" d="M8 0c.6 4.2 3.8 7.4 8 8-4.2.6-7.4 3.8-8 8-.6-4.2-3.8-7.4-8-8 4.2-.6 7.4-3.8 8-8z"/></svg>`;
 
 const isBlock = (item: Item): item is Block => 'heading' in item;
 

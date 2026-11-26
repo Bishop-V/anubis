@@ -113,11 +113,20 @@ await cp(join(docs, 'img'), join(publicDir, 'img'), { recursive: true });
 await cp(join(docs, '.vitepress/theme/brand.css'), join(publicDir, 'brand.css'));
 await cp(join(site, 'src/site.css'), join(publicDir, 'site.css'));
 await cp(join(site, 'src/preferences.js'), join(publicDir, 'preferences.js'));
+const fonts = join(site, 'node_modules/@fontsource-variable/inter');
+const fontDir = join(publicDir, 'fonts');
+const fontCss = (await Promise.all(['wght.css', 'wght-italic.css'].map((file) => readFile(join(fonts, file), 'utf8')))).join('\n');
+const fontFiles = new Set([...fontCss.matchAll(/url\(\.\/files\/([^)]+)\)/g)].map((match) => match[1]));
+await mkdir(join(fontDir, 'files'), { recursive: true });
+await Promise.all([...fontFiles].map((file) => cp(join(fonts, 'files', file), join(fontDir, 'files', file))));
+await writeFile(join(fontDir, 'inter.css'), fontCss);
+
 const notices = await readFile(join(repo, 'public/THIRD_PARTY_NOTICES.txt'), 'utf8');
 const siteLicenses = [
   ['Inglorious Web, Motion, UI, and I18n', 'https://github.com/IngloriousCoderz/inglorious-forge', '@inglorious/web'],
   ['Lit (lit-html, @lit-labs/ssr-client, @lit/reactive-element)', 'https://github.com/lit/lit', 'lit-html'],
   ['i18next', 'https://github.com/i18next/i18next', 'i18next'],
+  ['Inter', 'https://rsms.me/inter/', '@fontsource-variable/inter'],
 ];
 const licenses = await Promise.all(siteLicenses.map(async ([label, url, pkg]) =>
   '\n' + label + '\n' + url + '\n\n' + await readFile(join(site, 'node_modules', pkg, 'LICENSE'), 'utf8'),
